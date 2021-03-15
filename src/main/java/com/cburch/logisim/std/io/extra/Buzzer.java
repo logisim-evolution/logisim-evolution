@@ -75,13 +75,21 @@ public class Buzzer extends InstanceFactory {
       Attributes.forOption(
           "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[]{Hz, dHz});
 
+  private static final AttributeOption Sine = new AttributeOption(BuzzerWaveform.Sine, S.getter("buzzerSine"));
+  private static final AttributeOption Square = new AttributeOption(BuzzerWaveform.Square, S.getter("buzzerSquare"));
+  private static final AttributeOption Triangle = new AttributeOption(BuzzerWaveform.Triangle, S.getter("buzzerTriangle"));
+  private static final AttributeOption Sawtooth = new AttributeOption(BuzzerWaveform.Sawtooth, S.getter("buzzerSawtooth"));
+  private static final Attribute<AttributeOption> WAVEFORM =
+      Attributes.forOption(
+          "waveform", S.getter("buzzerWaveform"), new AttributeOption[]{Sine, Square, Triangle, Sawtooth});
+
   public Buzzer() {
     super("Buzzer", S.getter("buzzerComponent"));
     setAttributes(
         new Attribute[]{
-            StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT
+            StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT, WAVEFORM
         },
-        new Object[]{Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT});
+        new Object[]{Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT, Sine});
     setFacingAttribute(StdAttr.FACING);
     setIconName("buzzer.gif");
   }
@@ -183,7 +191,7 @@ public class Buzzer extends InstanceFactory {
       state.setData(d = new Data());
     }
     d.is_on.set(active);
-
+    d.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
     int freq = (int) state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
       if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) {
@@ -194,7 +202,7 @@ public class Buzzer extends InstanceFactory {
     if (state.getPortValue(VOL).isFullyDefined()) {
       int vol = (int) state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
-      d.vol = ((vol & 0xffffffffL) * 127) / (Math.pow(2, VolumeWidth) - 1);
+      d.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, VolumeWidth) - 1);
     }
     if (active && !d.thread.isAlive()) {
       d.StartThread();
@@ -224,12 +232,30 @@ public class Buzzer extends InstanceFactory {
     StopBuzzerSound(c, state);
   }
 
+  private enum BuzzerWaveform {
+    Sine((i, hz) -> Math.sin(i * hz * Math.PI / Data.SAMPLE_RATE)),
+    Square((i, hz) -> Sine.strategy.amplitude(i, hz) < 0 ? -1 : 1),
+    Triangle((i, hz) -> Math.asin(Sine.strategy.amplitude(i, hz)) * 2 / Math.PI),
+    Sawtooth((i, hz) -> 2 * ((hz * i / Data.SAMPLE_RATE / 2) % 1) - 1);
+
+    BuzzerWaveform(BuzzerWaveformStrategy strategy) {
+      this.strategy = strategy;
+    }
+
+    public final BuzzerWaveformStrategy strategy;
+  }
+
+  private interface BuzzerWaveformStrategy {
+    double amplitude(int i, double hz);
+  }
+
   private static class Data implements InstanceData {
 
     private final AtomicBoolean is_on = new AtomicBoolean(false);
-    private final int SAMPLE_RATE = 44100;
-    private double hz = 523;
-    private double vol = 12;
+    private static final int SAMPLE_RATE = 44100;
+    private int hz = 523;
+    private double vol = 3072;
+    private BuzzerWaveform wf = BuzzerWaveform.Sine;
     private Thread thread;
 
     public Data() {
@@ -251,28 +277,32 @@ public class Buzzer extends InstanceFactory {
               new Runnable() {
                 @Override
                 public void run() {
-                  AudioFormat af = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
+                  AudioFormat af = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);
                   Clip clip = null;
                   AudioInputStream ais = null;
-                  double oldfreq = Double.NaN;
+                  int oldfreq = -1;
                   double oldvol = Double.NaN;
+                  BuzzerWaveform oldwf = null;
                   try {
                     while (is_on.get()) {
-                      if (hz != oldfreq || vol != oldvol) {
+                      if (hz != oldfreq || vol != oldvol || wf != oldwf) {
                         oldfreq = hz;
                         oldvol = vol;
+                        oldwf = wf;
                         int phase = 0;
                         if (clip != null) {
                           phase = (int)(clip.getLongFramePosition() % SAMPLE_RATE);
                         }
-                        byte[] buf = new byte[SAMPLE_RATE];
-                        for (int i = 0; i < SAMPLE_RATE; i++) {
-                          buf[i] = (byte)Math.round(Math.sin((phase + i) * hz * 2 * Math.PI / SAMPLE_RATE) * vol);
+                        byte[] buf = new byte[2 * SAMPLE_RATE];
+                        for (int i = 0; i < SAMPLE_RATE * 2; i += 2) {
+                          short val = (short)Math.round(wf.strategy.amplitude(i + phase, hz) * vol);
+                          buf[i] = (byte) (val & 0xff);
+                          buf[i + 1] = (byte) (val >> 8);
                         }
                         ais = new AudioInputStream(
                             new ByteArrayInputStream(buf),
                             af,
-                            buf.length);
+                            buf.length / 2);
 
                         Clip newClip = AudioSystem.getClip();
                         newClip.open(ais);
