@@ -251,7 +251,7 @@ public class ExpressionRenderData {
      */
     String sub = s.substring(0, end);
     if (replaceSpaces) {
-     sub = sub.replaceAll("[ ()\\u22C5]","_");
+     sub = sub.replaceAll(" ","_");
     }
     AttributedString as = new AttributedString(sub);
     as.addAttribute(TextAttribute.FAMILY, EXPRESSION_BASE_FONT.getFamily());
@@ -308,9 +308,9 @@ public class ExpressionRenderData {
   private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs, ArrayList<Range> marks) {
     if (end == 0) return 0;
     AttributedString as = style(s, end, subs, marks, true);
-    /* The TextLayout class will omit trailing spaces, incorrectly format parenthesis/cdot,
+    /* The TextLayout class will omit trailing spaces,
      * hence the width is incorrectly calculated. Therefore in the previous method we can
-     * replace the spaces and parenthesis by underscores to prevent this problem; maybe
+     * replace the spaces by underscores to prevent this problem; maybe
      * there is a more intelligent way.
      */
     TextLayout layout = new TextLayout(as.getIterator(), ctx);
