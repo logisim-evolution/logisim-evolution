@@ -296,8 +296,8 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     //  Determine the rows to draw within the clipped bounds.
 
     Rectangle clip = g.getClipBounds();
-    int rowStartOffset = component.viewToModel( new Point(0, clip.y) );
-    int endOffset = component.viewToModel( new Point(0, clip.y + clip.height) );
+    int rowStartOffset = component.viewToModel2D( new Point(0, clip.y) );
+    int endOffset = component.viewToModel2D( new Point(0, clip.y + clip.height) );
 
     while (rowStartOffset <= endOffset)
     {
