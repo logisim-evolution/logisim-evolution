@@ -247,7 +247,7 @@ public class Loader implements LibraryLoader {
     // instantiate library
     Library ret;
     try {
-      ret = (Library) retClass.newInstance();
+      ret = (Library) retClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       throw new LoadFailedException(
           StringUtil.format(S.get("jarLibraryNotCreatedError"), className));
