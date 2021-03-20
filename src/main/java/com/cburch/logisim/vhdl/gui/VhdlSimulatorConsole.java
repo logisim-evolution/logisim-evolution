@@ -110,18 +110,6 @@ public class VhdlSimulatorConsole extends JPanel {
   public VhdlSimulatorConsole(Project proj) {
     project = proj;
 
-    show();
-  }
-
-  public void append(String s) {
-    logContent.append(s);
-  }
-
-  public void clear() {
-    logContent.setText("");
-  }
-
-  public void show() {
     this.setLayout(new BorderLayout());
 
     /* Add title */
@@ -141,5 +129,13 @@ public class VhdlSimulatorConsole extends JPanel {
     project.getVhdlSimulator().addVhdlSimStateListener(vhdlSimState);
 
     this.add(vhdlSimState, BorderLayout.PAGE_END);
+  }
+
+  public void append(String s) {
+    logContent.append(s);
+  }
+
+  public void clear() {
+    logContent.setText("");
   }
 }

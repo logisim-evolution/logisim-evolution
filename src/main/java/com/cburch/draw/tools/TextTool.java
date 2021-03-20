@@ -167,7 +167,7 @@ public class TextTool extends AbstractTool {
     double zoom = canvas.getZoomFactor();
     fieldLoc.x = (int) Math.round(mx * zoom - fieldLoc.x);
     fieldLoc.y = (int) Math.round(my * zoom - fieldLoc.y);
-    int caret = field.viewToModel(fieldLoc);
+    int caret = field.viewToModel2D(fieldLoc);
     if (caret >= 0) {
       field.setCaretPosition(caret);
     }

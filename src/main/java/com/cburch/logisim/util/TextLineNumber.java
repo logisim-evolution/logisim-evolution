@@ -51,6 +51,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -296,8 +297,8 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     //  Determine the rows to draw within the clipped bounds.
 
     Rectangle clip = g.getClipBounds();
-    int rowStartOffset = component.viewToModel( new Point(0, clip.y) );
-    int endOffset = component.viewToModel( new Point(0, clip.y + clip.height) );
+    int rowStartOffset = component.viewToModel2D( new Point(0, clip.y) );
+    int endOffset = component.viewToModel2D( new Point(0, clip.y + clip.height) );
 
     while (rowStartOffset <= endOffset)
     {
@@ -369,7 +370,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
   {
     //  Get the bounding rectangle of the row
 
-    Rectangle r = component.modelToView( rowStartOffset );
+    Rectangle r = component.modelToView2D( rowStartOffset ).getBounds();
     int lineHeight = fontMetrics.getHeight();
     int y = r.y + r.height;
     int descent = 0;
@@ -473,7 +474,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
         try
         {
           int endPos = component.getDocument().getLength();
-          Rectangle rect = component.modelToView(endPos);
+          Rectangle rect = component.modelToView2D(endPos).getBounds();
 
           if (rect != null && rect.y != lastHeight)
           {

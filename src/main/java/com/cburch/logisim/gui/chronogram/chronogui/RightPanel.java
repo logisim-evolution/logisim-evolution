@@ -125,9 +125,9 @@ public class RightPanel extends ChronoPanelTemplate {
 
     defineSizes();
 
-    layeredPane.add(mCursor, new Integer(1));
-    layeredPane.add(mTimeLine, new Integer(0));
-    layeredPane.add(rightBox, new Integer(0));
+    layeredPane.add(mCursor, Integer.valueOf(1));
+    layeredPane.add(mTimeLine, Integer.valueOf(0));
+    layeredPane.add(rightBox, Integer.valueOf(0));
 
     this.add(layeredPane, BorderLayout.WEST);
   }

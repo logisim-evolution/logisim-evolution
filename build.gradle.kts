@@ -179,6 +179,9 @@ tasks.register("jpackage") {
 }
 
 tasks {
+    compileJava {
+        options.compilerArgs = listOf("-Xlint:deprecation")
+    }
     jar {
         manifest {
             attributes.putAll(mapOf(
