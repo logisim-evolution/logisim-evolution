@@ -295,7 +295,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
       SocBusState data = getRegPropagateState();
       if (data != null) {
         data.addTransaction(trans);
-        if (myComp.getAttributeSet().getValue(SocBusAttributes.SOC_TRACE_VISABLE))
+        if (myComp.getAttributeSet().getValue(SocBusAttributes.SOC_TRACE_VISIBLE))
           ((InstanceComponent) myComp).getInstance().fireInvalidated();
       }
     }

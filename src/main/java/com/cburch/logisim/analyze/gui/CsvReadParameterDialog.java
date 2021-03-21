@@ -65,11 +65,11 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
   private final CsvParameter param;
   private final String SepSpace;
-  private boolean setVisable;
+  private boolean setVisible;
 
   public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parrentFrame) {
     super(parrentFrame);
-    setVisable = true;
+    setVisible = true;
     this.file = file;
     SepSpace = S.get("seperatorSpace");
     String[] PossibleSeperators = {",", ";", ":", SepSpace, S.get("SeperatorTab")};
@@ -131,7 +131,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     pack();
     updateLabels();
     setModal(true);
-    setVisible(setVisable);
+    setVisible(setVisible);
   }
 
   private void updateLabels() {
@@ -153,7 +153,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
           S.fmt("cantReadMessage", file.getName()),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
-      setVisable = false;
+      setVisible = false;
       if (this.isVisible()) {
         setVisible(false);
         dispose();

@@ -141,7 +141,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   private String SimName = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Direction facing = Direction.EAST;
-  private Boolean labelVisable = false;
+  private Boolean labelVisible = false;
   private HashMap<Attribute<Integer>, Integer> genericValues;
   private List<Attribute<?>> instanceAttrs;
   private VhdlEntityListener listener;
@@ -200,7 +200,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     attr.content = content; // .clone();
     // 	attr.label = unchanged;
     attr.labelFont = labelFont;
-    attr.labelVisable = labelVisable;
+    attr.labelVisible = labelVisible;
     attr.facing = facing;
     attr.instanceAttrs = instanceAttrs;
     attr.genericValues = new HashMap<>();
@@ -227,7 +227,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) labelVisable;
+      return (V) labelVisible;
     }
     if (attr == StdAttr.APPEARANCE) {
       return (V) content.getAppearance();
@@ -271,8 +271,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newvis = (Boolean) value;
-      if (labelVisable.equals(newvis)) return;
-      labelVisable = newvis;
+      if (labelVisible.equals(newvis)) return;
+      labelVisible = newvis;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
