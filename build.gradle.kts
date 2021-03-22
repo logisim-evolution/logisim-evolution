@@ -185,6 +185,14 @@ tasks {
         // for details.
         options.setIncremental(false)
     }
+    compileTestJava {
+        options.compilerArgs = listOf("-Xlint:deprecation")
+        // Until Gradle 7 is released, disable incremental compilation, as it
+        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
+        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
+        // for details.
+        options.setIncremental(false)
+    }
     jar {
         manifest {
             attributes.putAll(mapOf(
