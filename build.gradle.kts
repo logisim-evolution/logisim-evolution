@@ -5,7 +5,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
 plugins {
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
     java
     application
     id("com.github.johnrengelman.shadow") version "6.1.0"
@@ -26,7 +26,7 @@ dependencies {
     })
     implementation("org.hamcrest:hamcrest:2.2")
     implementation("javax.help:javahelp:2.0.05")
-    implementation("com.fifesoft:rsyntaxtextarea:3.1.0")
+    implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
     implementation("net.sf.nimrod:nimrod-laf:1.2")
     implementation("org.drjekyll:colorpicker:1.3")
     implementation("org.drjekyll:fontchooser:2.4")
@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("ch.qos.logback:logback-core:1.2.3")
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.2")
 }
 
 java {
