@@ -19,6 +19,10 @@ plugins {
 
 repositories {
     mavenCentral()
+    // Maven repository providing the lablib-checkboxtree dependency
+    maven {
+        url = uri("https://raw.github.com/nroduit/mvn-repo/master/")
+    }
 }
 
 application {
@@ -39,6 +43,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("com.github.weisj:darklaf-core:2.5.5")
+    implementation("it.cnr.imaa.essi:lablib-checkboxtree:3.3")
 
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
