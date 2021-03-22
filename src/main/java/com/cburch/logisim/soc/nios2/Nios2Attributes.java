@@ -57,12 +57,12 @@ public class Nios2Attributes extends AbstractAttributeSet {
   public static final Attribute<Integer> RESET_VECTOR = Attributes.forHexInteger("resetVector", S.getter("rv32ResetVector"));
   public static final Attribute<Integer> EXCEPTION_VECTOR  = Attributes.forHexInteger("exceptionVector", S.getter("rv32ExceptionVector"));
   public static final Attribute<Integer> BREAK_VECTOR  = Attributes.forHexInteger("breakVector", S.getter("nios2BreakVector"));
-  public static final Attribute<Boolean> NIOS_STATE_VISIBLE = Attributes.forBoolean("stateVisable", S.getter("rv32StateVisable"));
+  public static final Attribute<Boolean> NIOS_STATE_VISIBLE = Attributes.forBoolean("stateVisible", S.getter("rv32StateVisible"));
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = true;
+  private Boolean labelVisible = true;
   private Nios2State upState = new Nios2State();
-  private Boolean stateVisable = true;
+  private Boolean stateVisible = true;
 
   private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
@@ -81,8 +81,8 @@ public class Nios2Attributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet dest) {
     Nios2Attributes d = (Nios2Attributes) dest;
     d.labelFont = labelFont;
-    d.labelVisable = labelVisable;
-    d.stateVisable = stateVisable;
+    d.labelVisible = labelVisible;
+    d.stateVisible = stateVisible;
     d.upState = new Nios2State();
     upState.copyInto(d.upState);
   }
@@ -101,10 +101,10 @@ public class Nios2Attributes extends AbstractAttributeSet {
     if (attr == NR_OF_IRQS) return (V) BitWidth.create(upState.getNrOfIrqs());
     if (attr == StdAttr.LABEL) return (V) upState.getLabel();
     if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisable;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
     if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V)upState.getAttachedBus();
     if (attr == NIOS2_STATE) return (V) upState;
-    if (attr == NIOS_STATE_VISIBLE) return (V) stateVisable;
+    if (attr == NIOS_STATE_VISIBLE) return (V) stateVisible;
     return null;
   }
 
@@ -161,16 +161,16 @@ public class Nios2Attributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean v = (Boolean) value;
-      if (v != labelVisable) {
-        labelVisable = v;
+      if (v != labelVisible) {
+        labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == NIOS_STATE_VISIBLE) {
       Boolean v = (Boolean) value;
-      if (stateVisable != v) {
-        stateVisable = v;
+      if (stateVisible != v) {
+        stateVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;

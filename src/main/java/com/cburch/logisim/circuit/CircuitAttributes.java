@@ -208,7 +208,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   private String label;
   private Direction labelLocation;
   private Font labelFont;
-  private Boolean LabelVisable;
+  private Boolean LabelVisible;
   private MyListener listener;
   private Instance[] pinInstances;
   private boolean NameReadOnly;
@@ -220,7 +220,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     label = "";
     labelLocation = Direction.NORTH;
     labelFont = StdAttr.DEFAULT_LABEL_FONT;
-    LabelVisable = true;
+    LabelVisible = true;
     pinInstances = new Instance[0];
     NameReadOnly = false;
   }
@@ -251,7 +251,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.FACING) return (E) facing;
     if (attr == StdAttr.LABEL) return (E) label;
     if (attr == StdAttr.LABEL_FONT) return (E) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisable;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisible;
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
@@ -313,8 +313,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(StdAttr.LABEL_FONT, val, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean val = (Boolean) value;
-      if (LabelVisable == value) return;
-      LabelVisable = val;
+      if (LabelVisible == value) return;
+      LabelVisible = val;
       fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val, null);
     } else if (attr == LABEL_LOCATION_ATTR) {
       Direction val = (Direction) value;

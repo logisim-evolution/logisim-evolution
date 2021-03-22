@@ -69,7 +69,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   private VhdlContentComponent content;
   private String label = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = false;
+  private Boolean labelVisible = false;
   private String SimName = "";
 
   VhdlEntityAttributes() {
@@ -101,7 +101,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) labelVisable;
+      return (V) labelVisible;
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       return (V) SimName;
@@ -132,8 +132,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newvis = (Boolean) value;
-      if (labelVisable.equals(newvis)) return;
-      labelVisable = newvis;
+      if (labelVisible.equals(newvis)) return;
+      labelVisible = newvis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {

@@ -58,7 +58,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   public static final Attribute<BitWidth> MEM_SIZE = Attributes.forBitWidth("MemSize", S.getter("SocMemSize"), 10, 26);
   
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = true;
+  private Boolean labelVisible = true;
   private SocMemoryState memState = new SocMemoryState();
   private BitWidth memSize = BitWidth.create(10);
   
@@ -76,7 +76,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet dest) {
     SocMemoryAttributes d = (SocMemoryAttributes) dest;
     d.labelFont = labelFont;
-    d.labelVisable = labelVisable;
+    d.labelVisible = labelVisible;
     d.memState = new SocMemoryState();
     d.memSize = memSize;
     d.memState.setSize(memSize);
@@ -97,7 +97,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
 	if (attr == MEM_SIZE) return (V) memSize;
 	if (attr == StdAttr.LABEL) return (V) memState.getLabel();
 	if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
-	if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisable;
+	if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
 	if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V) memState.getSocBusInfo();
 	if (attr == SOCMEM_STATE) return (V) memState;
     return null;
@@ -145,8 +145,8 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean v = (Boolean) value;
-      if (!labelVisable.equals(v)) {
-        labelVisable = v;
+      if (!labelVisible.equals(v)) {
+        labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
