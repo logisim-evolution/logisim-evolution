@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("ch.qos.logback:logback-core:1.2.3")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
 
 java {
