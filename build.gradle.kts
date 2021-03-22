@@ -4,6 +4,12 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
+// The following setting of the deprecated property mainClassName is required
+// by shadow version 6.1.0. This should be fixed in the upcoming version 6.2.0.
+// See [shadow issue #609](https://github.com/johnrengelman/shadow/issues/609)
+// for details.
+project.setProperty("mainClassName", "com.cburch.logisim.Main")
+
 plugins {
     id("com.github.ben-manes.versions") version "0.38.0"
     java
@@ -16,7 +22,7 @@ repositories {
 }
 
 application {
-    mainClassName = "com.cburch.logisim.Main"
+    mainClass.set("com.cburch.logisim.Main")
 }
 
 dependencies {
