@@ -96,7 +96,7 @@ class RomAttributes extends AbstractAttributeSet {
   private Boolean allowMisaligned = false;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisable = false;
+  private Boolean LabelVisible = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
@@ -112,7 +112,7 @@ class RomAttributes extends AbstractAttributeSet {
     d.allowMisaligned = allowMisaligned;
     d.contents = contents.clone();
     d.LabelFont = LabelFont;
-    d.LabelVisable = LabelVisable;
+    d.LabelVisible = LabelVisible;
     d.Appearance = Appearance;
   }
 
@@ -146,7 +146,7 @@ class RomAttributes extends AbstractAttributeSet {
       return (V) LabelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) LabelVisable;
+      return (V) LabelVisible;
     }
     if (attr == StdAttr.APPEARANCE) {
       return (V) Appearance;
@@ -201,8 +201,8 @@ class RomAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newVis = (Boolean) value;
-      if (LabelVisable.equals(newVis)) return;
-      LabelVisable = newVis;
+      if (LabelVisible.equals(newVis)) return;
+      LabelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.APPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;

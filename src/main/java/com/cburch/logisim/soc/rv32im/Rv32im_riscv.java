@@ -145,7 +145,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(), 
     				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
     RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
-    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISABLE), painter.getData());
+    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISIBLE), painter.getData());
   }
 
   @Override

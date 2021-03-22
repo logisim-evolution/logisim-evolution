@@ -58,7 +58,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   private TextField field;
   private Attribute<String> labelAttr;
   private Attribute<Font> fontAttr;
-  private boolean LabelIsVisable = true;
+  private boolean LabelIsVisible = true;
   private Color fontColor;
   private int fieldX;
   private int fieldY;
@@ -84,7 +84,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     } else if (attr == StdAttr.LABEL_COLOR) {
       fontColor = (Color) e.getValue();
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
-      LabelIsVisable = (Boolean) e.getValue();
+      LabelIsVisible = (Boolean) e.getValue();
     }
   }
 
@@ -96,7 +96,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   void draw(Component comp, ComponentDrawContext context) {
-    if (field != null && LabelIsVisable) {
+    if (field != null && LabelIsVisible) {
       Graphics g = context.getGraphics().create();
       Color currentColor = g.getColor();
       if (!context.isPrintView())
@@ -108,7 +108,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   Bounds getBounds(Graphics g) {
-    return field == null || !LabelIsVisable ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
+    return field == null || !LabelIsVisible ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
   }
 
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
@@ -163,7 +163,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     boolean shouldReg = shouldRegister();
     AttributeSet attrs = comp.getAttributeSet();
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
-      LabelIsVisable = attrs.getValue(StdAttr.LABEL_VISIBILITY);
+      LabelIsVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
     if (!wasReg && shouldReg) attrs.addAttributeListener(this);
     if (wasReg && !shouldReg) attrs.removeAttributeListener(this);
 

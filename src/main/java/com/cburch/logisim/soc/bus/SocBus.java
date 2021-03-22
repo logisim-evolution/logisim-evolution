@@ -122,7 +122,7 @@ public class SocBus extends SocInstanceFactory {
           loc.getY(),
           g2,
           painter.getInstance(),
-          painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISABLE),
+          painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISIBLE),
           painter.getData());
   }
 
