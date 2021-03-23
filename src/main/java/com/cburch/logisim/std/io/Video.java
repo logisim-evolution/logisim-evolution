@@ -228,7 +228,6 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   public void draw(ComponentDrawContext context) {
     Location loc = getLocation();
-    int size = getBounds().getWidth();
     State s = getState(context.getCircuitState());
     drawVideo(context, loc.getX(), loc.getY(), s);
   }
