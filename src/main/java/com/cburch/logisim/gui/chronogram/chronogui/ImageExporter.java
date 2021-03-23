@@ -303,8 +303,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     leftPanel.add(table, BorderLayout.CENTER);
   }
 
-  /** Not implemented yet. */
-  private void CreateTimeLine() {}
+  /** TODO Implement void CreateTimeLine() */
 
   /** Create a 20 pixel high strip. */
   private BufferedImage CreateUpperBlankLine(ArrayList<String> valList) {
