@@ -85,6 +85,7 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.swingx.prompt.BuddySupport;
 
 public class VariableTab extends AnalyzerTab {
+  private static final long serialVersionUID = 1L;
   private final VariableList inputs;
   private final VariableList outputs;
   private final JTable inputsTable;
@@ -97,6 +98,8 @@ public class VariableTab extends AnalyzerTab {
     final TableCellEditor ed1 = new SingleClickVarEditor(data);
     final TableCellEditor ed2 = new DoubleClickVarEditor(data);
     JTable table = new JTable(1, 1) {
+      private static final long serialVersionUID = 1L;
+
       public TableCellEditor getCellEditor(int row, int column) {
         return (row == getRowCount() - 1 ? ed1 : ed2);
       }
@@ -125,6 +128,8 @@ public class VariableTab extends AnalyzerTab {
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
     actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx < 0 || idx >= data.vars.size())
@@ -137,6 +142,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx <= 0 || idx > data.vars.size()-1)
@@ -146,6 +153,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.LOWER, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx < 0 || idx >= data.vars.size()-1)
@@ -155,6 +164,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.RAISE_TOP, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx <= 0 || idx > data.vars.size()-1)
@@ -164,6 +175,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.LOWER_BOTTOM, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         int end = data.vars.size() - 1;
@@ -415,7 +428,7 @@ public class VariableTab extends AnalyzerTab {
 
   private static class VariableTableModel
     extends AbstractTableModel implements VariableListListener {
-
+    private static final long serialVersionUID = 1L;
     private final JTable table;
     private final VariableList list;
     private Var[] listCopy;
@@ -497,6 +510,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   public static class VarRenderer extends DefaultTableCellRenderer {
+    private static final long serialVersionUID = 1L;
     Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
     Font plain, italic;
     public VarRenderer() {
@@ -518,6 +532,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   static class BitWidthRenderer extends DefaultListCellRenderer {
+    private static final long serialVersionUID = 1L;
     public BitWidthRenderer() {
     }
     @Override
@@ -529,6 +544,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   public class SingleClickVarEditor extends AbstractCellEditor implements TableCellEditor {
+    private static final long serialVersionUID = 1L;
     JTextField field = new JTextField();
     JComboBox<Integer> width;
     Var editing;
@@ -632,6 +648,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   public class DoubleClickVarEditor extends SingleClickVarEditor {
+    private static final long serialVersionUID = 1L;
     public DoubleClickVarEditor(VariableList data) {
       super(data);
     }
@@ -662,6 +679,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   private class VarTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
     JTable table;
     VariableList data;
     Var pendingDelete;

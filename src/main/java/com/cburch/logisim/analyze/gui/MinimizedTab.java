@@ -493,6 +493,8 @@ class MinimizedTab extends AnalyzerTab {
   };
 
   private class MinimizedTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    
     @Override
     protected Transferable createTransferable(JComponent c) {
       if (minimizedExpr.isFocusOwner()) {
@@ -514,6 +516,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class KmapTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new KmapSelection(karnaughMap);
@@ -521,6 +525,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class ExpressionTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new ExpressionSelection(minimizedExpr.getRenderData());
