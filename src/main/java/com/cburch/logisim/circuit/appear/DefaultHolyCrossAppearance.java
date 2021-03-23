@@ -141,7 +141,6 @@ public class DefaultHolyCrossAppearance {
     edge.put(Direction.WEST, new ArrayList<>());
     int MaxLeftLabelLength = 0;
     int MaxRightLabelLength = 0;
-    String a = "", b = "";
     for (Instance pin : pins) {
       Direction pinEdge;
       String labelString = pin.getAttributeValue(StdAttr.LABEL);
@@ -150,13 +149,11 @@ public class DefaultHolyCrossAppearance {
         pinEdge = Direction.EAST;
         if (LabelWidth > MaxRightLabelLength) {
           MaxRightLabelLength = LabelWidth;
-          b = labelString;
         }
       } else {
         pinEdge = Direction.WEST;
         if (LabelWidth > MaxLeftLabelLength) {
           MaxLeftLabelLength = LabelWidth;
-          a = labelString;
         }
       }
       List<Instance> e = edge.get(pinEdge);
