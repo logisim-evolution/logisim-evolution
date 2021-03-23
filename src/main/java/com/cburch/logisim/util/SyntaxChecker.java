@@ -43,19 +43,15 @@ public class SyntaxChecker {
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
-      boolean ret = true;
       String HDL = CorrectLabel.HDLCorrectLabel(val);
       String Message = "";
       if (!variableMatcher.matches()) {
-        ret = false;
         Message = Message.concat(S.get("variableInvalidCharacters"));
       }
       if (forbiddenMatcher.find()) {
-        ret = false;
         Message = Message.concat(S.get("variableDoubleUnderscore"));
       }
       if (HDL != null) {
-        ret = false;
         Message =
             Message.concat(
                 HDL.equals(HDLGeneratorFactory.VHDL)
@@ -63,7 +59,6 @@ public class SyntaxChecker {
                     : S.get("variableVerilogKeyword"));
       }
       if (val.endsWith("_")) {
-        ret = false;
         Message = Message.concat(S.get("variableEndsWithUndescore"));
       }
       if (Message.length() == 0)
