@@ -435,10 +435,9 @@ public class Attributes {
       this.attr = attr;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Component getListCellRendererComponent(
-        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component ret =
           super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       if (ret instanceof JLabel) {

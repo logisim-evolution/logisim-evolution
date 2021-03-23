@@ -59,7 +59,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
 
   @Override
   public Component getListCellRendererComponent(
-      JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
