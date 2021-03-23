@@ -332,10 +332,9 @@ class MinimizedTab extends AnalyzerTab {
 
     String selected = selector.getSelectedOutput();
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
-    TransferHandler ccpTab, ccpKmap, ccpExpr;
-    setTransferHandler(ccpTab = new MinimizedTransferHandler());
-    karnaughMap.setTransferHandler(ccpKmap = new KmapTransferHandler());
-    minimizedExpr.setTransferHandler(ccpExpr = new ExpressionTransferHandler());
+    setTransferHandler(new MinimizedTransferHandler());
+    karnaughMap.setTransferHandler(new KmapTransferHandler());
+    minimizedExpr.setTransferHandler(new ExpressionTransferHandler());
 
     InputMap inputMap1 = getInputMap();
     InputMap inputMap2 = karnaughMap.getInputMap();
