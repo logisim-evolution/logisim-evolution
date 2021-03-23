@@ -197,8 +197,6 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     JPanel pan = new JPanel();
     pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
     pan.setBackground(Color.white);
-    BufferedImage img = null;
-    BufferedImage img_names = null;
 
     // convert jpanel signals to buffered image
     JFrame fright = new JFrame("Show remain invisible");
