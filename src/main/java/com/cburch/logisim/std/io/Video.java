@@ -371,7 +371,6 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
     AttributeSet attrs = getAttributeSet();
     Object blink_option = attrs.getValue(BLINK_OPTION);
-    Object reset_option = attrs.getValue(RESET_OPTION);
     ColorModel cm = getColorModel(attrs.getValue(COLOR_OPTION));
 
     int s = attrs.getValue(SCALE_OPTION);
