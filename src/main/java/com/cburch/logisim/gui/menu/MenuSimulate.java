@@ -209,7 +209,6 @@ public class MenuSimulate extends Menu {
   void computeEnabled() {
     boolean present = currentState != null;
     Simulator sim = this.currentSim;
-    boolean simRunning = sim != null && sim.isRunning();
     setEnabled(present);
     runToggle.setEnabled(present);
     reset.setEnabled(present);
