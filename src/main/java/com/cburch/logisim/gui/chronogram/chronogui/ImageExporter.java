@@ -130,6 +130,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     }
   }
 
+  @SuppressWarnings("unused")
   private void createAndShowGUI() {
     frame = new JFrame("Configure image");
     // Set up the content pane.
