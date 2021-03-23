@@ -197,7 +197,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     public void SimButtonPressed() { simState.buttonPressed(); }
 
     public void setProgramCounter(int value) {
-      /* TODO: check for misalligned exception */
+      /* TODO: check for misaligned exception */
       pc = value;
     }
 

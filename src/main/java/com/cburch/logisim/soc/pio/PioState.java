@@ -395,7 +395,7 @@ public class PioState implements SocBusSlaveInterface {
                              break;
       case OUT_CLEAR_INDEX : handleOutputBitOperation(trans,true);
                              break;
-      default              : trans.setError(SocBusTransaction.MisallignedAddressError);
+      default              : trans.setError(SocBusTransaction.MisalignedAddressError);
                              break;
     }
   }
