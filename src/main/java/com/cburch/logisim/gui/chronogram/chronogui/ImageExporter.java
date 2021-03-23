@@ -330,7 +330,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
       /*ChronoData chrdata, String name, SignalData sigData,*/ ArrayList<String> valList,
       String name) {
     String prec, suiv;
-    int busCrossingPosition = (tickWidth - 5) < 1 ? 0 : 5;
+    @SuppressWarnings("unused")
+    final int busCrossingPosition = (tickWidth - 5) < 1 ? 0 : 5;
     JPanel mRightPanel = new JPanel();
 
     int posX = 0;
