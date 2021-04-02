@@ -166,20 +166,20 @@ public class BoardManipulator extends JPanel implements MouseListener,
   }
   
   public JList<MapListModel.MapInfo> getUnmappedList() {
-	if (MapInfo == null) return null;
-	unmappedList = new JList<>();
-	unmappedList.setModel(new MapListModel(false,MapInfo.getMappableResources()));
-	unmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	unmappedList.addListSelectionListener(this);
+	   if (MapInfo == null) return null;
+   	unmappedList = new JList<>();
+   	unmappedList.setModel(new MapListModel(false,MapInfo.getMappableResources()));
+   	unmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+   	unmappedList.addListSelectionListener(this);
     return unmappedList;
   }
   
   public JList<MapListModel.MapInfo> getMappedList() {
-	if (MapInfo == null) return null;
-	mappedList = new JList<>();
-	mappedList.setModel(new MapListModel(true,MapInfo.getMappableResources()));
-	mappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	mappedList.addListSelectionListener(this);
+	   if (MapInfo == null) return null;
+	   mappedList = new JList<>();
+	   mappedList.setModel(new MapListModel(true,MapInfo.getMappableResources()));
+	   mappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	   mappedList.addListSelectionListener(this);
     return mappedList;
   }
   

@@ -91,7 +91,7 @@ public class IOComponentsInformation {
   public FPGAIOInformationContainer getHighligted() { return highlighted; }
   
   public boolean tryMap(JPanel parent) {
-	if (!mapMode) return false;
+   	if (!mapMode) return false;
     if (highlighted != null) return highlighted.tryMap(parent);
     return false;
   }

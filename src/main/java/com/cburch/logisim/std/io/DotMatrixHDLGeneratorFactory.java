@@ -62,35 +62,42 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (colbased) {
       for (int r = 0 ; r < rows ; r++)
         for (int c = 0 ; c < cols ; c++) {
-          String Colname = GetBusName(ComponentInfo, c, HDLType, Nets);
+          String Colname = (rows == 1) ? GetNetName(ComponentInfo, c, true, HDLType, Nets)
+                                       : GetBusName(ComponentInfo, c, HDLType, Nets);  
           int idx = r*cols+c+ComponentInfo.GetLocalBubbleOutputStartId();
           if (Colname.isEmpty())
             Contents.add("   "+Preamble+
                 HDLGeneratorFactory.LocalOutputBubbleBusname+OpenBracket+
                 idx+CloseBracket+AssignOperator+Zero+";");
-          else
+          else {
+            String Wire = (rows == 1) ? Colname : Colname+OpenBracket+r+CloseBracket;  
             Contents.add("   "+Preamble+
                          HDLGeneratorFactory.LocalOutputBubbleBusname+OpenBracket+
                          idx+CloseBracket+AssignOperator+
-                         Colname+OpenBracket+r+CloseBracket+";");
+                         Wire+";");
+          }
         }
     } else if (rowbased) {
       for (int r = 0 ; r < rows ; r++) {
-        String Rowname = GetBusName(ComponentInfo, r, HDLType, Nets);
+        String Rowname = (cols == 1) ? GetNetName(ComponentInfo, r, true, HDLType, Nets)
+                                     : GetBusName(ComponentInfo, r, HDLType, Nets);
         for (int c = 0 ; c < cols ; c++) {
           int idx = r*cols+c+ComponentInfo.GetLocalBubbleOutputStartId();
           if (Rowname.isEmpty())
             Contents.add("   "+Preamble+
                 HDLGeneratorFactory.LocalOutputBubbleBusname+OpenBracket+
                 idx+CloseBracket+AssignOperator+Zero+";");
-          else
+          else {
+            String Wire = (cols == 1) ? Rowname : Rowname+OpenBracket+c+CloseBracket;  
             Contents.add("   "+Preamble+
                          HDLGeneratorFactory.LocalOutputBubbleBusname+OpenBracket+
                          idx+CloseBracket+AssignOperator+
-                         Rowname+OpenBracket+c+CloseBracket+";");
+                         Wire+";");
+          }
         }
       }
     } else {
+      /* TODO: fix bug when rows == 1 or cols == 1 */
       String RowName = GetBusName(ComponentInfo, 1, HDLType, Nets);
       String ColName = GetBusName(ComponentInfo, 0, HDLType, Nets);
       if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
