@@ -100,11 +100,11 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   static final Integer[] SIZE_OPTIONS = {2, 4, 8, 16, 32, 64, 128, 256};
 
-  public static final Attribute BLINK_OPTION =
+  public static final Attribute<String> BLINK_OPTION =
       Attributes.forOption("cursor", S.getter("rgbVideoCursor"), BLINK_OPTIONS);
-  public static final Attribute RESET_OPTION =
+  public static final Attribute<String> RESET_OPTION =
       Attributes.forOption("reset", S.getter("rgbVideoReset"), RESET_OPTIONS);
-  public static final Attribute COLOR_OPTION =
+  public static final Attribute<String> COLOR_OPTION =
       Attributes.forOption("color", S.getter("rgbVideoColor"), COLOR_OPTIONS);
   public static final Attribute<Integer> WIDTH_OPTION =
       Attributes.forOption("width", S.getter("rgbVideoWidth"), SIZE_OPTIONS);
@@ -113,7 +113,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   public static final Attribute<Integer> SCALE_OPTION =
       Attributes.forIntegerRange("scale", S.getter("rgbVideoScale"), 1, 8);
 
-  private static final Attribute[] ATTRIBUTES = {
+  private static final Attribute<?>[] ATTRIBUTES = {
     BLINK_OPTION, RESET_OPTION, COLOR_OPTION, WIDTH_OPTION, HEIGHT_OPTION, SCALE_OPTION
   };
 
@@ -228,7 +228,6 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   public void draw(ComponentDrawContext context) {
     Location loc = getLocation();
-    int size = getBounds().getWidth();
     State s = getState(context.getCircuitState());
     drawVideo(context, loc.getX(), loc.getY(), s);
   }
@@ -372,7 +371,6 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
     AttributeSet attrs = getAttributeSet();
     Object blink_option = attrs.getValue(BLINK_OPTION);
-    Object reset_option = attrs.getValue(RESET_OPTION);
     ColorModel cm = getColorModel(attrs.getValue(COLOR_OPTION));
 
     int s = attrs.getValue(SCALE_OPTION);

@@ -30,7 +30,6 @@ package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
-import java.awt.Event;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Iterator;

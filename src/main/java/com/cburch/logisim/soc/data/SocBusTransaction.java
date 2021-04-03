@@ -55,7 +55,7 @@ public class SocBusTransaction {
   public static final int MultipleSlavesError = 3;
   public static final int NoneAtomicReadWriteError = 4;
   public static final int NoSocBusConnectedError = 5;
-  public static final int MisallignedAddressError = 6;
+  public static final int MisalignedAddressError = 6;
   public static final int AccessTypeNotSupportedError = 7;
   public static final int ReadOnlyAccessError = 8;
   public static final int WriteOnlyAccessError = 9;
@@ -108,7 +108,7 @@ public class SocBusTransaction {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswers");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRW");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnected");
-      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddress");
+      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddress");
       case AccessTypeNotSupportedError : 
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupport");
@@ -130,7 +130,7 @@ public class SocBusTransaction {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswersShort");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRWShort");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnectedShort");
-      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddressShort");
+      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddressShort");
       case AccessTypeNotSupportedError : 
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupportShort");

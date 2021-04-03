@@ -88,7 +88,7 @@ class SelectionList extends JList {
 
     @Override
     public java.awt.Component getListCellRendererComponent(
-        JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
+        JList<? extends Object> list, Object value, int index, boolean isSelected, boolean hasFocus) {
       java.awt.Component ret =
           super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
       if (ret instanceof JLabel && value instanceof SelectionItem) {

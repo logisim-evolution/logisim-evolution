@@ -130,6 +130,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     }
   }
 
+  @SuppressWarnings("unused")
   private void createAndShowGUI() {
     frame = new JFrame("Configure image");
     // Set up the content pane.
@@ -197,8 +198,6 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     JPanel pan = new JPanel();
     pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
     pan.setBackground(Color.white);
-    BufferedImage img = null;
-    BufferedImage img_names = null;
 
     // convert jpanel signals to buffered image
     JFrame fright = new JFrame("Show remain invisible");
@@ -305,8 +304,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     leftPanel.add(table, BorderLayout.CENTER);
   }
 
-  /** Not implemented yet. */
-  private void CreateTimeLine() {}
+  /** TODO Implement void CreateTimeLine() */
 
   /** Create a 20 pixel high strip. */
   private BufferedImage CreateUpperBlankLine(ArrayList<String> valList) {
@@ -333,7 +331,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
       /*ChronoData chrdata, String name, SignalData sigData,*/ ArrayList<String> valList,
       String name) {
     String prec, suiv;
-    int busCrossingPosition = (tickWidth - 5) < 1 ? 0 : 5;
+    @SuppressWarnings("unused")
+    final int busCrossingPosition = (tickWidth - 5) < 1 ? 0 : 5;
     JPanel mRightPanel = new JPanel();
 
     int posX = 0;

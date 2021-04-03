@@ -327,7 +327,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
       }
       return;
     }
-    trans.setError(SocBusTransaction.MisallignedAddressError);
+    trans.setError(SocBusTransaction.MisalignedAddressError);
   }
 
   @Override

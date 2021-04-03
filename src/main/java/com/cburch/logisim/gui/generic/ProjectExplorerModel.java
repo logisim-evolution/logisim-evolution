@@ -61,8 +61,12 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     if (root == null || tool == null) return null;
     Enumeration<TreeNode> en = root.depthFirstEnumeration();
     while (en.hasMoreElements()) {
-      Node<?> node = (Node<?>) en.nextElement();
-      if (node.getValue() == tool) return (Node<Tool>) node;
+      final Node<?> node = (Node<?>) en.nextElement();
+      if (node.getValue() == tool) {
+        @SuppressWarnings("unchecked")
+        final Node<Tool> nodeTool = (Node<Tool>) node;
+        return nodeTool;
+      }
     }
     return null;
   }
