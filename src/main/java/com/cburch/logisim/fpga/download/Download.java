@@ -124,13 +124,19 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     this.MyReporter = MyReporter;
     this.MyBoardInformation = MyBoardInformation;
     this.DownloadOnly = DownloadOnly;
-    this.Vendor = MyBoardInformation.fpga.getVendor();
+    this.HdlOnly = gegerateHdlOnly;
+    if (MyBoardInformation == null) {
+      this.HdlOnly = true;
+      this.Vendor = ' ';
+    } else {
+      this.Vendor = MyBoardInformation.fpga.getVendor();
+    }
     this.UseGui = !Main.headless;
     this.TopLevelSheet = TopLevelSheet;
     this.TickFrequency = TickFrequency;
     this.MapFileName = MapFileName;
-    this.HdlOnly = gegerateHdlOnly;
     Circuit RootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    if (RootSheet == null) return;
     int steps = BasicSteps;
     switch (Vendor) {
       case VendorSoftware.VendorAltera:
@@ -224,6 +230,13 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public boolean runtty() {
+    Circuit root = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    if (root != null) {
+      root.Annotate(MyProject,false, MyReporter, false);
+    } else {
+      MyReporter.AddFatalError("Toplevel sheet \""+TopLevelSheet+"\" not found in project!");
+      return false;
+    }
     if (!PrepareDownLoad()) return false;
     if (HdlOnly) return true;
     if (!VendorSoftwarePresent()) return false;

@@ -721,29 +721,33 @@ public class FPGAIOInformationContainer implements Cloneable {
   }
   
   public boolean tryMap(JPanel parent) {
-	if (!selectable) return false;
-	if (selComp == null) return false;
-	MapComponent map = selComp.getMap();
-	if (selComp.getPin() >= 0 && NrOfPins == 1) {
+	   if (!selectable) return false;
+  	 if (selComp == null) return false;
+  	 MapComponent map = selComp.getMap();
+  	 if (selComp.getPin() >= 0 && NrOfPins == 1) {
       /* single pin only */
+  	   map.unmap(selComp.getPin());
       return map.tryMap(selComp.getPin(), this, 0);
-	} 
-	if (map.nrInputs() == nrInputs() && 
+	   } 
+  	 if (map.nrInputs() == nrInputs() && 
         map.nrOutputs() == nrOutputs() &&
         map.nrIOs() == nrIOs()&&
         selComp.getPin() < 0) {
-	  /* complete map */
-	  return map.tryMap(this);
-	}
-	if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
+	     /* complete map */
+  	   map.unmap();
+	     return map.tryMap(this);
+	   }
+	   if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
         map.nrInputs() == nrIOs() && map.nrOutputs() == 0 && selComp.getPin() < 0) {
-	  return map.tryMap(this);
-	}
-	if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
+	     map.unmap();
+	     return map.tryMap(this);
+	   }
+	   if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
         map.nrOutputs() == nrIOs() && map.nrInputs() == 0 && selComp.getPin() < 0) {
-	  return map.tryMap(this);
-	}
-	PartialMapDialog diag = new PartialMapDialog(selComp,this,parent);
+	     map.unmap();
+	     return map.tryMap(this);
+	   }
+	   PartialMapDialog diag = new PartialMapDialog(selComp,this,parent);
     return diag.doit();
   }
   

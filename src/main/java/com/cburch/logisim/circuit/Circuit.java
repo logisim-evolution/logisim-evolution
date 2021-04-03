@@ -334,6 +334,11 @@ public class Circuit {
     return ComponentName;
   }
 
+  public void Annotate(Project proj, boolean ClearExistingLabels, FPGAReport reporter, boolean InsideLibrary) {
+    if (this.proj == null) this.proj = proj;
+    this.Annotate(ClearExistingLabels,reporter,InsideLibrary);
+  }
+  
   public void Annotate(boolean ClearExistingLabels, FPGAReport reporter, boolean InsideLibrary) {
     /* If I am already completely annotated, return */
     if (Annotated) {
@@ -424,7 +429,7 @@ public class Circuit {
     for (String subs : Subcircuits) {
       Circuit circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
       boolean inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(ClearExistingLabels, reporter, inLibrary);
+      circ.Annotate(proj,ClearExistingLabels, reporter, inLibrary);
     }
   }
 
