@@ -66,7 +66,7 @@ public class RamAttributes extends AbstractAttributeSet {
   private AttributeOption Trigger = StdAttr.TRIG_RISING;
   private AttributeOption BusStyle = BUS_SEP;
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisable = false;
+  private Boolean LabelVisible = false;
   private AttributeOption ByteEnables = BUS_WITHOUT_BYTEENABLES;
   private Boolean AsynchronousRead = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
@@ -178,7 +178,7 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) LabelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) LabelVisable;
+      return (V) LabelVisible;
     }
     if (attr == ATTR_ByteEnables) {
       return (V) ByteEnables;
@@ -279,8 +279,8 @@ public class RamAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newVis = (Boolean) value;
-      if (LabelVisable.equals(newVis)) return;
-      LabelVisable = newVis;
+      if (LabelVisible.equals(newVis)) return;
+      LabelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == ATTR_ByteEnables) {
       AttributeOption NewBE = (AttributeOption) value;

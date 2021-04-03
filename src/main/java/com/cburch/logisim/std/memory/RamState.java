@@ -34,10 +34,9 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.std.memory.Mem.MemListener;
 
-public class RamState extends MemState implements InstanceData, AttributeListener {
+public class RamState extends MemState implements AttributeListener {
 
   private Instance parent;
   private final MemListener listener;

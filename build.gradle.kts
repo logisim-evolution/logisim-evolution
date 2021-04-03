@@ -4,20 +4,25 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
+// The following setting of the deprecated property mainClassName is required
+// by shadow version 6.1.0. This should be fixed in the upcoming version 6.2.0.
+// See [shadow issue #609](https://github.com/johnrengelman/shadow/issues/609)
+// for details.
+project.setProperty("mainClassName", "com.cburch.logisim.Main")
+
 plugins {
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
     java
     application
     id("com.github.johnrengelman.shadow") version "6.1.0"
 } 
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 application {
-    mainClassName = "com.cburch.logisim.Main"
+    mainClass.set("com.cburch.logisim.Main")
 }
 
 dependencies {
@@ -26,7 +31,7 @@ dependencies {
     })
     implementation("org.hamcrest:hamcrest:2.2")
     implementation("javax.help:javahelp:2.0.05")
-    implementation("com.fifesoft:rsyntaxtextarea:3.1.0")
+    implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
     implementation("net.sf.nimrod:nimrod-laf:1.2")
     implementation("org.drjekyll:colorpicker:1.3")
     implementation("org.drjekyll:fontchooser:2.4")
@@ -35,9 +40,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("com.github.weisj:darklaf-core:2.5.5")
 
-    testImplementation("ch.qos.logback:logback-classic:1.2.3")
-    testImplementation("ch.qos.logback:logback-core:1.2.3")
-    testImplementation("junit:junit:4.13")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
 
 java {
@@ -179,6 +182,22 @@ tasks.register("jpackage") {
 }
 
 tasks {
+    compileJava {
+        options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+        // Until Gradle 7 is released, disable incremental compilation, as it
+        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
+        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
+        // for details.
+        options.setIncremental(false)
+    }
+    compileTestJava {
+        options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+        // Until Gradle 7 is released, disable incremental compilation, as it
+        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
+        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
+        // for details.
+        options.setIncremental(false)
+    }
     jar {
         manifest {
             attributes.putAll(mapOf(
@@ -199,4 +218,3 @@ tasks {
         }
     }
 }
-

@@ -32,7 +32,6 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;

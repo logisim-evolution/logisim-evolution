@@ -105,7 +105,7 @@ public class MenuSimulate extends Menu {
     menubar.registerItem(LogisimMenuBar.TICK_HALF, tickHalf);
     menubar.registerItem(LogisimMenuBar.TICK_FULL, tickFull);
 
-    int menuMask = getToolkit().getMenuShortcutKeyMask();
+    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     runToggle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask));
     reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask));
     step.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
@@ -208,8 +208,6 @@ public class MenuSimulate extends Menu {
   @Override
   void computeEnabled() {
     boolean present = currentState != null;
-    Simulator sim = this.currentSim;
-    boolean simRunning = sim != null && sim.isRunning();
     setEnabled(present);
     runToggle.setEnabled(present);
     reset.setEnabled(present);
@@ -250,7 +248,7 @@ public class MenuSimulate extends Menu {
     menu.removeAll();
     menu.setEnabled(items.size() > 0);
     boolean first = true;
-    int mask = getToolkit().getMenuShortcutKeyMask();
+    int mask = getToolkit().getMenuShortcutKeyMaskEx();
     for (int i = items.size() - 1; i >= 0; i--) {
       JMenuItem item = items.get(i);
       menu.add(item);

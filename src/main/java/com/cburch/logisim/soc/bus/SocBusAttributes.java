@@ -46,31 +46,31 @@ public class SocBusAttributes extends AbstractAttributeSet {
   public static final Attribute<BitWidth> NrOfTracesAttr =
       Attributes.forBitWidth("TraceSize", S.getter("SocBusTraceSize"));
   public static final Attribute<SocBusInfo> SOC_BUS_ID = new SocBusIdAttribute();
-  public static final Attribute<Boolean> SOC_TRACE_VISABLE =
-      Attributes.forBoolean("TraceVisible", S.getter("SocBusTraceVisable"));
+  public static final Attribute<Boolean> SOC_TRACE_VISIBLE =
+      Attributes.forBoolean("TraceVisible", S.getter("SocBusTraceVisible"));
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
           NrOfTracesAttr,
-          SOC_TRACE_VISABLE,
+          SOC_TRACE_VISIBLE,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
           SOC_BUS_ID);
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisable = true;
+  private Boolean LabelVisible = true;
   private BitWidth TraceSize = BitWidth.create(5);
   private String Label = "";
   private SocBusInfo ID = new SocBusInfo(null);
-  private Boolean traceVisable = true;
+  private Boolean traceVisible = true;
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
     SocBusAttributes d = (SocBusAttributes) dest;
     d.LabelFont = LabelFont;
-    d.LabelVisable = LabelVisable;
+    d.LabelVisible = LabelVisible;
     d.TraceSize = TraceSize;
     d.Label = Label;
-    d.traceVisable = traceVisable;
+    d.traceVisible = traceVisible;
     d.ID = new SocBusInfo(null);
   }
 
@@ -85,7 +85,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     if (attr == NrOfTracesAttr) return (V) TraceSize;
     if (attr == StdAttr.LABEL) return (V) Label;
     if (attr == StdAttr.LABEL_FONT) return (V) LabelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (V) LabelVisable;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) LabelVisible;
     if (attr == SOC_BUS_ID) {
       if (ID.getBusId() == null || ID.getBusId().isEmpty()) {
         Date date = new Date();
@@ -94,7 +94,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
       }
       return (V) ID;
     }
-    if (attr == SOC_TRACE_VISABLE) return (V) traceVisable;
+    if (attr == SOC_TRACE_VISIBLE) return (V) traceVisible;
     return null;
   }
 
@@ -132,8 +132,8 @@ public class SocBusAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean v = (Boolean) value;
-      if (LabelVisable != v) {
-        LabelVisable = v;
+      if (LabelVisible != v) {
+        LabelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
@@ -142,10 +142,10 @@ public class SocBusAttributes extends AbstractAttributeSet {
       ID.setBusId(((SocBusInfo) value).getBusId());
       return;
     }
-    if (attr == SOC_TRACE_VISABLE) {
+    if (attr == SOC_TRACE_VISIBLE) {
       Boolean v = (Boolean) value;
-      if (traceVisable != v) {
-        traceVisable = v;
+      if (traceVisible != v) {
+        traceVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;

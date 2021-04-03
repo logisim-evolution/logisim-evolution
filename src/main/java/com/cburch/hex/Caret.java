@@ -177,7 +177,7 @@ public class Caret {
     public void keyPressed(KeyEvent e) {
       int cols = hex.getMeasures().getColumnCount();
       int rows;
-      boolean shift = (e.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+      boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP:
           if (cursor >= cols) setDot(cursor - cols, shift);
@@ -243,17 +243,17 @@ public class Caret {
     public void keyReleased(KeyEvent e) {}
 
     public void keyTyped(KeyEvent e) {
-      int mask = e.getModifiers();
-      if ((mask & ~InputEvent.SHIFT_MASK) != 0) return;
+      int mask = e.getModifiersEx();
+      if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
 
       char c = e.getKeyChar();
       int cols = hex.getMeasures().getColumnCount();
       switch (c) {
         case ' ':
-          if (cursor >= 0) setDot(cursor + 1, (mask & InputEvent.SHIFT_MASK) != 0);
+          if (cursor >= 0) setDot(cursor + 1, (mask & InputEvent.SHIFT_DOWN_MASK) != 0);
           break;
         case '\n':
-          if (cursor >= 0) setDot(cursor + cols, (mask & InputEvent.SHIFT_MASK) != 0);
+          if (cursor >= 0) setDot(cursor + cols, (mask & InputEvent.SHIFT_DOWN_MASK) != 0);
           break;
         case '\u0008':
         case '\u007f':
@@ -295,7 +295,7 @@ public class Caret {
     public void mousePressed(MouseEvent e) {
       Measures measures = hex.getMeasures();
       long loc = measures.toAddress(e.getX(), e.getY());
-      setDot(loc, (e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+      setDot(loc, (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
       if (!hex.isFocusOwner()) hex.requestFocus();
     }
 

@@ -152,7 +152,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     }
       
     public void setProgramCounter(int value) {
-      /* TODO: check for misalligned exception */
+      /* TODO: check for misaligned exception */
       pc = value;
     }
       

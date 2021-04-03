@@ -332,10 +332,9 @@ class MinimizedTab extends AnalyzerTab {
 
     String selected = selector.getSelectedOutput();
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
-    TransferHandler ccpTab, ccpKmap, ccpExpr;
-    setTransferHandler(ccpTab = new MinimizedTransferHandler());
-    karnaughMap.setTransferHandler(ccpKmap = new KmapTransferHandler());
-    minimizedExpr.setTransferHandler(ccpExpr = new ExpressionTransferHandler());
+    setTransferHandler(new MinimizedTransferHandler());
+    karnaughMap.setTransferHandler(new KmapTransferHandler());
+    minimizedExpr.setTransferHandler(new ExpressionTransferHandler());
 
     InputMap inputMap1 = getInputMap();
     InputMap inputMap2 = karnaughMap.getInputMap();
@@ -494,6 +493,8 @@ class MinimizedTab extends AnalyzerTab {
   };
 
   private class MinimizedTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    
     @Override
     protected Transferable createTransferable(JComponent c) {
       if (minimizedExpr.isFocusOwner()) {
@@ -515,6 +516,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class KmapTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new KmapSelection(karnaughMap);
@@ -522,6 +525,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class ExpressionTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new ExpressionSelection(minimizedExpr.getRenderData());

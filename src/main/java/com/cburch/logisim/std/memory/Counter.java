@@ -405,7 +405,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       String value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.LIGHT_GRAY);
-        value = ((1 << BitNr) & val.toLongValue()) != 0 ? "1" : "0";
+        value = ((1L << BitNr) & val.toLongValue()) != 0 ? "1" : "0";
       } else if (val.isUnknown()) {
         g.setColor(Color.BLUE);
         value = "?";

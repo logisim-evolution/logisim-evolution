@@ -147,10 +147,10 @@ class TextFieldCaret implements Caret, TextFieldListener {
   }
 
   public void keyPressed(KeyEvent e) {
-    int ign = InputEvent.ALT_MASK | InputEvent.META_MASK;
-    if ((e.getModifiers() & ign) != 0) return;
-    boolean shift = ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
-    boolean ctrl = ((e.getModifiers() & InputEvent.CTRL_MASK) != 0);
+    int ign = InputEvent.ALT_DOWN_MASK | InputEvent.META_DOWN_MASK;
+    if ((e.getModifiersEx() & ign) != 0) return;
+    boolean shift = ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
+    boolean ctrl = ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0);
     arrowKeyMaybePressed(e, shift, ctrl);
     if (e.isConsumed()) return;
     if (ctrl) controlKeyPressed(e, shift);
@@ -331,8 +331,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public void keyReleased(KeyEvent e) {}
 
   public void keyTyped(KeyEvent e) {
-    int ign = InputEvent.ALT_MASK | InputEvent.CTRL_MASK | InputEvent.META_MASK;
-    if ((e.getModifiers() & ign) != 0) return;
+    int ign = InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
+    if ((e.getModifiersEx() & ign) != 0) return;
 
     char c = e.getKeyChar();
     if (allowedCharacter(c)) {

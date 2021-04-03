@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -233,7 +232,6 @@ abstract class BufferedLineReader {
 
   private static class Adapter extends InputStream {
     RandomAccessFile r;
-    int n;
 
     Adapter(RandomAccessFile in) {
       r = in;
