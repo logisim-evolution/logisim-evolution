@@ -60,6 +60,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.FloatControl.Type;
 
 public class Buzzer extends InstanceFactory {
 
@@ -266,73 +268,86 @@ public class Buzzer extends InstanceFactory {
       return new Data();
     }
 
+    public void ThreadFunc() {
+      AudioFormat af = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);
+      Clip clip = null;
+      AudioInputStream ais = null;
+      int oldfreq = -1;
+      double oldvol = Double.NaN;
+      BuzzerWaveform oldwf = null;
+      try {
+        while (is_on.get()) {
+          if (hz != oldfreq || vol != oldvol || wf != oldwf) {
+            if (!(hz >= 20 && hz <= 20000))
+              return;
+
+            int phase = 0;
+            if (clip != null) {
+              int oldfw = SAMPLE_RATE / oldfreq;
+              int oldphase = (int)(clip.getLongFramePosition() % (2 * oldfw));
+              var delta = SAMPLE_RATE * Math.asin(BuzzerWaveform.Sine.strategy.amplitude(oldphase, oldfreq)) / (Math.PI * hz);
+              if (Math.abs(oldphase - oldfw) > (oldfw / 2)) {
+                phase = (int) (oldphase - delta);
+              } else {
+                phase = (int) (oldphase + delta - SAMPLE_RATE / hz);
+              }
+            }
+
+            oldfreq = hz;
+            oldvol = vol;
+            oldwf = wf;
+
+            byte[] buf = new byte[2 * SAMPLE_RATE];
+            for (int i = 0; i < buf.length; i += 2) {
+              short val = (short)Math.round(wf.strategy.amplitude(i + phase, hz) * vol);
+              buf[i] = (byte) (val & 0xff);
+              buf[i + 1] = (byte) (val >> 8);
+            }
+
+            var newAis = new AudioInputStream(
+                new ByteArrayInputStream(buf),
+                af,
+                buf.length);
+
+            Clip newClip = AudioSystem.getClip();
+            newClip.open(newAis);
+
+            if (clip != null)
+            {
+              clip.loop(0);
+              newClip.loop(Clip.LOOP_CONTINUOUSLY);
+              clip.close();
+              ais.close();
+            }
+
+            clip = newClip;
+            ais = newAis;
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      } finally {
+        if (clip != null) {
+          clip.loop(0);
+          clip.close();
+        }
+        if (ais != null) {
+          try {
+            ais.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+
     public void StartThread() {
       // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
       if (Thread.activeCount() > 100) {
         return;
       }
-      thread =
-          new Thread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  AudioFormat af = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);
-                  Clip clip = null;
-                  AudioInputStream ais = null;
-                  int oldfreq = -1;
-                  double oldvol = Double.NaN;
-                  BuzzerWaveform oldwf = null;
-                  try {
-                    while (is_on.get()) {
-                      if (hz != oldfreq || vol != oldvol || wf != oldwf) {
-                        oldfreq = hz;
-                        oldvol = vol;
-                        oldwf = wf;
-                        int phase = 0;
-                        if (clip != null) {
-                          phase = (int)(clip.getLongFramePosition() % SAMPLE_RATE);
-                        }
-                        byte[] buf = new byte[2 * SAMPLE_RATE];
-                        for (int i = 0; i < SAMPLE_RATE * 2; i += 2) {
-                          short val = (short)Math.round(wf.strategy.amplitude(i + phase, hz) * vol);
-                          buf[i] = (byte) (val & 0xff);
-                          buf[i + 1] = (byte) (val >> 8);
-                        }
-                        ais = new AudioInputStream(
-                            new ByteArrayInputStream(buf),
-                            af,
-                            buf.length / 2);
-
-                        Clip newClip = AudioSystem.getClip();
-                        newClip.open(ais);
-
-                        if (clip != null) {
-                          clip.stop();
-                          clip.close();
-                          ais.close();
-                        }
-
-                        clip = newClip;
-                      }
-
-                      clip.loop(Clip.LOOP_CONTINUOUSLY);
-                    }
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                  }
-
-                  if (clip != null) {
-                    clip.stop();
-                    clip.close();
-                    try {
-                      ais.close();
-                    } catch (IOException e) {
-                      e.printStackTrace();
-                    }
-                  }
-                }
-              });
+      thread = new Thread(this::ThreadFunc);
       thread.start();
       thread.setName("Sound Thread");
     }
