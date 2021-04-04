@@ -84,7 +84,7 @@ class TablePanel extends LogPanel {
       cellHeight = fm.getHeight();
       cellWidth = 24;
       for (int i = 0; i < columns; i++) {
-        String header = sel.get(i).toShortString();
+        String header = sel.get(i).getShortName();
         cellWidth = Math.max(cellWidth, fm.stringWidth(header));
       }
     }
@@ -93,6 +93,7 @@ class TablePanel extends LogPanel {
     tableHeight = cellHeight * (1 + rowCount) + HEADER_SEP;
     setPreferredSize(new Dimension(tableWidth, tableHeight));
     revalidate();
+    myListener.update();
     repaint();
   }
 
@@ -170,7 +171,7 @@ class TablePanel extends LogPanel {
     int x = left;
     int y = top + headerMetric.getAscent() + 1;
     for (int i = 0; i < columns; i++) {
-      x = paintHeader(sel.get(i).toShortString(), x, y, g, headerMetric);
+      x = paintHeader(sel.get(i).getShortName(), x, y, g, headerMetric);
     }
 
     g.setFont(BODY_FONT);
@@ -183,12 +184,11 @@ class TablePanel extends LogPanel {
     for (int col = 0; col < columns; col++) {
       SelectionItem item = sel.get(col);
       ValueLog log = model.getValueLog(item);
-      int radix = item.getRadix();
       int offs = rowCount - log.size();
       y = y0 + Math.max(offs, firstRow) * cellHeight;
       for (int row = Math.max(offs, firstRow); row < lastRow; row++) {
         Value val = log.get(row - offs);
-        String label = val.toDisplayString(radix);
+        String label = item.format(val);
         int width = bodyMetric.stringWidth(label);
         g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
         y += cellHeight;
@@ -203,7 +203,7 @@ class TablePanel extends LogPanel {
     return x + cellWidth + COLUMN_SEP;
   }
 
-  private class MyListener implements ModelListener {
+  private class MyListener implements Model.Listener {
     private void computeRowCount() {
       Model model = getModel();
       Selection sel = model.getSelection();
@@ -218,7 +218,7 @@ class TablePanel extends LogPanel {
       }
     }
 
-    public void entryAdded(ModelEvent event, Value[] values) {
+    void update() {
       int oldCount = rowCount;
       computeRowCount();
       if (oldCount == rowCount) {
@@ -231,9 +231,17 @@ class TablePanel extends LogPanel {
       }
     }
 
-    public void filePropertyChanged(ModelEvent event) {}
+    public void entryAdded(Model.Event event, Value[] values) {
+      update();
+    }
 
-    public void selectionChanged(ModelEvent event) {
+    public void resetEntries(Model.Event event, Value[] values) {
+      update();
+    }
+
+    public void filePropertyChanged(Model.Event event) {}
+
+    public void selectionChanged(Model.Event event) {
       computeRowCount();
     }
   }

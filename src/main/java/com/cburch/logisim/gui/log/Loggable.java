@@ -29,11 +29,14 @@
 package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 
 public interface Loggable {
   String getLogName(Object option);
 
+  public BitWidth getBitWidth(Object option);
+  
   Object[] getLogOptions(CircuitState state);
 
   Value getLogValue(CircuitState state, Object option);

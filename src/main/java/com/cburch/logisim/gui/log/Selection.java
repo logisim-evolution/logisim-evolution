@@ -29,35 +29,45 @@
 package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.Location;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Selection {
 
   private final CircuitState root;
   private final Model model;
-  private final ArrayList<SelectionItem> components;
+  private final ArrayList<SelectionItem> signals = new ArrayList<>();
 
   public Selection(CircuitState root, Model model) {
     this.root = root;
     this.model = model;
-    components = new ArrayList<>();
+  }
+
+  public void sort() {
+    Location.sortHorizontal(signals);
+    model.fireSelectionChanged(new Model.Event());
   }
 
   public void add(SelectionItem item) {
-    components.add(item);
-    model.fireSelectionChanged(new ModelEvent());
+    if (!signals.contains(item)) {
+      signals.add(item);
+      model.fireSelectionChanged(new Model.Event());
+    }
   }
 
-  public void addModelListener(ModelListener l) {
+  public void addModelListener(Model.Listener l) {
     model.addModelListener(l);
   }
 
   public boolean contains(SelectionItem item) {
-    return components.contains(item);
+    return signals.contains(item);
   }
 
   public SelectionItem get(int index) {
-    return components.get(index);
+    return signals.get(index);
   }
 
   public CircuitState getCircuitState() {
@@ -65,28 +75,74 @@ public class Selection {
   }
 
   public int indexOf(SelectionItem value) {
-    return components.indexOf(value);
+    return signals.indexOf(value);
   }
 
-  public void move(int fromIndex, int toIndex) {
-    if (fromIndex == toIndex) {
-      return;
+  public void addOrMove(List<SelectionItem> items, int idx) {
+    int changed = items.size();
+    for (SelectionItem item : items) {
+      int i = signals.indexOf(item);
+      if (i < 0)
+        signals.add(idx++, item); // put new item at idx
+      else if (i > idx)
+        signals.add(idx++, signals.remove(i)); // move later item up
+      else if (i < idx)
+        signals.add(idx-1, signals.remove(i)); // move earlier item down
+      else
+        changed--;
     }
-    SelectionItem o = components.remove(fromIndex);
-    components.add(toIndex, o);
-    model.fireSelectionChanged(new ModelEvent());
+    if (changed > 0)
+      model.fireSelectionChanged(new Model.Event());
+  }
+
+  public int remove(List<SelectionItem> items) {
+    int count = 0;
+    for (SelectionItem item : items) {
+      if (signals.remove(item))
+        count++;
+    }
+    if (count > 0)
+      model.fireSelectionChanged(new Model.Event());
+    return count;
+  } 
+  
+  public void move(int[] fromIndex, int toIndex) {
+    int n = fromIndex.length;
+    if (n == 0)
+      return;
+    Arrays.sort(fromIndex);
+    int a = fromIndex[0];
+    int b = fromIndex[n-1];
+    if (a < 0 || b > signals.size())
+      return; // invalid selection
+    if (a <= toIndex && toIndex <= b && b-a+1 == n)
+      return; // no-op
+    ArrayList<SelectionItem> items = new ArrayList<>();
+    for (int i = n-1; i >= 0; i--) {
+      if (fromIndex[i] < toIndex)
+        toIndex--;
+      items.add(signals.remove(fromIndex[i]));
+    }
+    for (int i = n-1; i >= 0; i--)
+      signals.add(toIndex++, items.get(i));
+    model.fireSelectionChanged(new Model.Event());
   }
 
   public void remove(int index) {
-    components.remove(index);
-    model.fireSelectionChanged(new ModelEvent());
+    if (signals.remove(index) != null) model.fireSelectionChanged(new Model.Event());
   }
 
-  public void removeModelListener(ModelListener l) {
+  public void remove(SelectionItem item) {
+    if (signals.remove(item))
+      model.fireSelectionChanged(new Model.Event());
+  }
+
+
+  public void removeModelListener(Model.Listener l) {
     model.removeModelListener(l);
   }
 
   public int size() {
-    return components.size();
+    return signals.size();
   }
 }

@@ -51,6 +51,11 @@ public class ShiftRegisterLogger extends InstanceLogger {
   }
 
   @Override
+  public BitWidth getBitWidth(InstanceState state, Object option) {
+    return state.getAttributeValue(StdAttr.WIDTH);
+  }
+  
+  @Override
   public Object[] getLogOptions(InstanceState state) {
     Integer stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
     Object[] ret = new Object[stages.intValue()];

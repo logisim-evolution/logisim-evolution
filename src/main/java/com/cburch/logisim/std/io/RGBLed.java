@@ -34,6 +34,7 @@ import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
@@ -57,16 +58,25 @@ import java.util.ArrayList;
 public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   public static class Logger extends InstanceLogger {
+    static final BitWidth bitwidth = BitWidth.create(3);
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return bitwidth;
+    }
+    
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      if (data == null) return Value.FALSE;
-      return data.getValue() == Value.TRUE ? Value.TRUE : Value.FALSE;
+      int rgb = 0;
+      if (data != null)
+        return Value.createUnknown(bitwidth);
+      else
+        return Value.createKnown(bitwidth, ((Integer)data.getValue()).intValue());
     }
   }
 

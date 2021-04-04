@@ -26,38 +26,15 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.gui.chronogram.chronogui;
+package com.cburch.logisim.gui.chrono;
 
-/** Contains draw data that are common between LeftPanel and RightPanel */
-public class CommonPanelParam {
+import static com.cburch.logisim.gui.Strings.S;
 
-  private int mHeaderHeight;
-  private int mSignalHeight;
+/**
+ * Export chronogram into a png image.
+ *
+ * @author kgs
+ */
+public class ImageExporter {
 
-  /**
-   * CommonPanelParam defines the header and signal height
-   *
-   * @param headerHeight header height in pixel
-   * @param signalHeight signal height in pixel
-   */
-  public CommonPanelParam(int headerHeight, int signalHeight) {
-    mHeaderHeight = headerHeight;
-    mSignalHeight = signalHeight;
-  }
-
-  public int getHeaderHeight() {
-    return mHeaderHeight;
-  }
-
-  public void setHeaderHeight(int height) {
-    mHeaderHeight = height;
-  }
-
-  public int getSignalHeight() {
-    return mSignalHeight;
-  }
-
-  public void setSignalHeight(int height) {
-    mSignalHeight = height;
-  }
 }

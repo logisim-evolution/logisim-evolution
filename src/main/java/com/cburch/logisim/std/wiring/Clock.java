@@ -65,6 +65,11 @@ public class Clock extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       ClockState s = getState(state);
       return s.sending;

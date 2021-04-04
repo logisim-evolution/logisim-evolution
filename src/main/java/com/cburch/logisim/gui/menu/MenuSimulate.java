@@ -447,19 +447,28 @@ public class MenuSimulate extends Menu {
     public void propagationCompleted(SimulatorEvent e) {}
 
     @Override
-    public void simulatorStateChanged(SimulatorEvent e) {
-      Simulator sim = e.getSource();
-      if (sim != currentSim) {
-        return;
-      }
-      computeEnabled();
-      runToggle.setSelected(sim.isRunning());
-      ticksEnabled.setSelected(sim.isTicking());
-      double freq = sim.getTickFrequency();
-      for (TickFrequencyChoice item : tickFreqs) {
-        item.setSelected(freq == item.freq);
-      }
+    public void simulatorReset(SimulatorEvent e) {
+      updateSimulator(e);
     }
+
+   @Override
+    public void simulatorStateChanged(SimulatorEvent e) {
+     updateSimulator(e);
+   }
+
+   void updateSimulator(SimulatorEvent e) {
+     Simulator sim = e.getSource();
+     if (sim != currentSim) {
+       return;
+     }
+     computeEnabled();
+     runToggle.setSelected(sim.isRunning());
+     ticksEnabled.setSelected(sim.isTicking());
+     double freq = sim.getTickFrequency();
+     for (TickFrequencyChoice item : tickFreqs) {
+       item.setSelected(freq == item.freq);
+     }
+   }
 
     @Override
     public void stateChanged(ChangeEvent e) {}

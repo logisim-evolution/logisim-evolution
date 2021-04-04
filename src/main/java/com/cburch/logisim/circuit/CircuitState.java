@@ -113,24 +113,7 @@ public class CircuitState implements InstanceData {
         causes.clear();
       }
 
-      /* Component changed */
-      else if (action == CircuitEvent.ACTION_CHANGE) {
-        Object data = event.getData();
-        if (data instanceof Collection) {
-          @SuppressWarnings("unchecked")
-          Collection<Component> comps = (Collection<Component>) data;
-          markComponentsDirty(comps);
-          if (base != null) {
-            for (Component comp : comps) {
-              base.checkComponentEnds(CircuitState.this, comp);
-            }
-          }
-        } else {
-          Component comp = (Component) event.getData();
-          markComponentAsDirty(comp);
-          if (base != null) base.checkComponentEnds(CircuitState.this, comp);
-        }
-      } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      else if (action == CircuitEvent.ACTION_INVALIDATE) {
         Component comp = (Component) event.getData();
         markComponentAsDirty(comp);
         // TODO detemine if this should really be missing if (base !=
@@ -138,12 +121,12 @@ public class CircuitState implements InstanceData {
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         ReplacementMap map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
-        for (Component comp : map.getReplacedComponents()) {
+        for (Component comp : map.getRemovals()) {
           Object compState = componentData.remove(comp);
           if (compState != null) continue; 
           Class<?> compFactory = comp.getFactory().getClass();
           boolean found = false;
-          for (Component repl : map.get(comp)) {
+          for (Component repl : map.getReplacementsFor(comp)) {
             if (repl.getFactory().getClass() == compFactory) {
               found = true;
               setData(repl, compState);

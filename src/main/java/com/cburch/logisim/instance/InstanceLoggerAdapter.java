@@ -29,6 +29,7 @@
 package com.cburch.logisim.instance;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.log.Loggable;
 import org.slf4j.Logger;
@@ -55,13 +56,13 @@ class InstanceLoggerAdapter implements Loggable {
   }
 
   public String getLogName(Object option) {
-    if (logger != null) {
-      return logger.getLogName(state, option);
-    } else {
-      return null;
-    }
+    return logger == null ? null : logger.getLogName(state, option);
   }
 
+  public BitWidth getBitWidth(Object option) {
+    return logger == null ? null : logger.getBitWidth(state, option);
+  }
+  
   public Object[] getLogOptions(CircuitState circState) {
     if (logger != null) {
       updateState(circState);

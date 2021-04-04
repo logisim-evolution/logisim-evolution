@@ -39,7 +39,6 @@ import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.Options;
-import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Frame;
@@ -114,7 +113,6 @@ public class Project {
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
   private TestFrame testFrame = null;
-  private ChronoFrame chronoFrame = null;
   private Tool tool = null;
   private final LinkedList<ActionData> undoLog = new LinkedList<>();
   private int undoMods = 0;
@@ -264,13 +262,6 @@ public class Project {
     // We can redo
     // Otherwise we can't.
     return redoLog.size() > 0;
-  }
-
-  public ChronoFrame getChronoFrame(boolean create) {
-    if (logFrame == null) logFrame = new LogFrame(this);
-    if (chronoFrame != null) chronoFrame.dispose();
-    if (create) chronoFrame = new ChronoFrame(this, logFrame);
-    return chronoFrame;
   }
 
   public List<CircuitState> getRootCircuitStates() {

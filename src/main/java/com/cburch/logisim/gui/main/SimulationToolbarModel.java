@@ -42,7 +42,7 @@ import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
+public class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
   private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
   private static final SimulationIcon EnableDisableIcon =
       new SimulationIcon(SimulationIcon.SIM_ENABLE);

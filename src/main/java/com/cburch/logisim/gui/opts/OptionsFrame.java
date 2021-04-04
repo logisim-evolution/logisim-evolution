@@ -55,7 +55,6 @@ import javax.swing.JTabbedPane;
 
 public class OptionsFrame extends LFrame {
   private static final long serialVersionUID = 1L;
-  private final Project project;
   private final LogisimFile file;
   private final MyListener myListener = new MyListener();
   private final WindowMenuManager windowManager = new WindowMenuManager();
@@ -64,7 +63,6 @@ public class OptionsFrame extends LFrame {
 
   public OptionsFrame(Project project) {
     super(false, project);
-    this.project = project;
     this.file = project.getLogisimFile();
     file.addLibraryListener(myListener);
     panels =
@@ -105,10 +103,6 @@ public class OptionsFrame extends LFrame {
 
   OptionsPanel[] getPrefPanels() {
     return panels;
-  }
-
-  public Project getProject() {
-    return project;
   }
 
   @Override

@@ -144,9 +144,12 @@ public class FPGACommander
 
   @Override
   public void simulatorStateChanged(SimulatorEvent e) {
-  FrequencyPanel.setSelectedFrequency();
+    FrequencyPanel.setSelectedFrequency();
   }
 
+  @Override
+  public void simulatorReset(SimulatorEvent e) { }
+  
   @Override
   public void tickCompleted(SimulatorEvent e) {}
 

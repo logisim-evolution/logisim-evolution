@@ -35,7 +35,7 @@ import com.cburch.logisim.data.Location;
 import java.awt.Graphics;
 import java.util.List;
 
-public interface Component {
+public interface Component extends Location.At {
   // listener methods
   void addComponentListener(ComponentListener l);
 
@@ -84,9 +84,6 @@ public interface Component {
    *     <code>null</code> if it does not support the feature.
    */
   Object getFeature(Object key);
-
-  // location/extent methods
-  Location getLocation();
 
   void propagate(CircuitState state);
 

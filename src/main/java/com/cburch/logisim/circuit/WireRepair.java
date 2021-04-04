@@ -43,11 +43,7 @@ import java.util.TreeSet;
 class WireRepair extends CircuitTransaction {
 
   private static class MergeSets {
-    private final HashMap<Wire, ArrayList<Wire>> map;
-
-    MergeSets() {
-      map = new HashMap<>();
-    }
+    private final HashMap<Wire, ArrayList<Wire>> map = new HashMap<>();
 
     Collection<ArrayList<Wire>> getMergeSets() {
       IdentityHashMap<ArrayList<Wire>, Boolean> lists;

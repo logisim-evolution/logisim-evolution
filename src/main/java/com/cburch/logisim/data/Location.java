@@ -28,6 +28,10 @@
 
 package com.cburch.logisim.data;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import com.cburch.logisim.util.Cache;
 
 /**
@@ -159,4 +163,45 @@ public class Location implements Comparable<Location> {
     if (dx == 0 && dy == 0) return this;
     return Location.create(x + dx, y + dy);
   }
+  
+  public interface At {
+    public Location getLocation();
+  }
+
+  // Left before right, ties broken top before bottom, ties broken with hashcode
+  // (same as default ordering using Location.compareTo() except hashcode).
+  private static class Horizontal implements Comparator<At> {
+    public int compare(At a, At b) {
+      Location aloc = a.getLocation();
+      Location bloc = b.getLocation();
+      if (aloc.x != bloc.x)
+        return aloc.x - bloc.x;
+      else if (aloc.y != bloc.y)
+        return aloc.y - bloc.y;
+      else
+        return a.hashCode() - b.hashCode();
+    }
+  }
+  public static final Comparator<At> CompareHorizontal = new Horizontal();
+  public static <T extends At> void sortHorizontal(List<T> list) {
+    Collections.sort(list, CompareHorizontal);
+  }
+
+  // Top before bottom, ties broken left before right, ties broken with hashcode.
+  private static class Vertical implements Comparator<At> {
+    public int compare(At a, At b) {
+      Location aloc = a.getLocation();
+      Location bloc = b.getLocation();
+      if (aloc.y != bloc.y)
+        return aloc.y - bloc.y;
+      else if (aloc.x != bloc.x)
+        return aloc.x - bloc.x;
+      else
+        return a.hashCode() - b.hashCode();
+    }
+  }
+  public static final Comparator<At> CompareVertical = new Vertical();
+  public static <T extends At> void sortVertical(List<T> list) {
+    Collections.sort(list, CompareVertical);
+  } 
 }

@@ -39,10 +39,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
 import java.util.List;
 
-public class Instance {
-  public static Component getComponentFor(Instance instance) {
-    return instance.comp;
-  }
+public final class Instance implements Location.At {
 
   public static Instance getInstanceFor(Component comp) {
     if (comp instanceof InstanceComponent) {
@@ -52,11 +49,14 @@ public class Instance {
     }
   }
 
-  private final InstanceComponent comp;
-
-  Instance(InstanceComponent comp) {
-    this.comp = comp;
+  public static InstanceComponent getComponentFor(Instance instance) {
+    return instance.comp;
   }
+
+  static Instance makeFor(InstanceComponent comp) { return new Instance(comp); }
+  private Instance(InstanceComponent comp) { this.comp = comp; }
+
+  private InstanceComponent comp;
 
   public void addAttributeListener() {
     comp.addAttributeListener(this);

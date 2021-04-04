@@ -104,7 +104,7 @@ public class Simulator {
             if (propagator != null) {
               propagator.reset();
             }
-            firePropagationCompleted();
+            fireSimulatorReset();
             propagateRequested |= isRunning;
           }
           // TODO: fix unsynchronized access to shared variables
@@ -126,10 +126,6 @@ public class Simulator {
                   try {
                     exceptionEncountered = false;
                     if (propagator != null) propagator.propagate();
-                  } catch (UnsupportedOperationException thr) {
-                    thr.printStackTrace();
-                    exceptionEncountered = true;
-                    setIsRunning(false);
                   } catch (Exception thr) {
                     thr.printStackTrace();
                     exceptionEncountered = true;
@@ -206,8 +202,7 @@ public class Simulator {
     try {
       manager.setPriority(manager.getPriority() - 1);
       ticker.setPriority(ticker.getPriority() - 1);
-    } catch (SecurityException e) {
-    } catch (IllegalArgumentException e) {
+    } catch (SecurityException | IllegalArgumentException e) {
     }
 
     manager.start();
@@ -223,6 +218,13 @@ public class Simulator {
 
   public void drawStepPoints(ComponentDrawContext context) {
     manager.stepPoints.draw(context);
+  }
+  
+  void fireSimulatorReset() {
+    SimulatorEvent e = new SimulatorEvent(this);
+    for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
+      l.simulatorReset(e);
+    }
   }
 
   void firePropagationCompleted() {

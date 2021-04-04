@@ -1143,6 +1143,10 @@ public class Canvas extends JPanel
     public void tickCompleted(SimulatorEvent e) {
       waitForRepaintDone();
     }
+    @Override
+    public void simulatorReset(SimulatorEvent e) {
+      waitForRepaintDone();
+    }
   }
 
   private class MyViewport extends JViewport {

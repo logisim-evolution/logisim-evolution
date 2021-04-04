@@ -374,4 +374,7 @@ public class AssemblyWindow
 
   @Override
   public void windowOpened(WindowEvent e) {}
+
+  @Override
+  public void simulatorReset(SimulatorEvent e) {}
 }

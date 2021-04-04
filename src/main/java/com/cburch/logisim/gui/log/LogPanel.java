@@ -28,11 +28,12 @@
 
 package com.cburch.logisim.gui.log;
 
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
-abstract class LogPanel extends JPanel {
+public abstract class LogPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   private final LogFrame logFrame;
 
@@ -48,19 +49,23 @@ abstract class LogPanel extends JPanel {
 
   public abstract String getHelpText();
 
-  LogFrame getLogFrame() {
+  protected LogFrame getLogFrame() {
     return logFrame;
   }
+  
+  protected LogisimMenuBar getLogisimMenuBar() {
+    return logFrame.getLogisimMenuBar();
+  }
 
-  Model getModel() {
+  protected Model getModel() {
     return logFrame.getModel();
   }
 
-  Project getProject() {
+  protected Project getProject() {
     return logFrame.getProject();
   }
 
-  Selection getSelection() {
+  protected Selection getSelection() {
     return logFrame.getModel().getSelection();
   }
 

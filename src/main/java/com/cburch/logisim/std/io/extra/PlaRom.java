@@ -160,6 +160,12 @@ public class PlaRom extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      PlaRomData data = getPlaRomData(state);
+      return BitWidth.create(data.getOutputs());
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       return state.getPortValue(1);
     }

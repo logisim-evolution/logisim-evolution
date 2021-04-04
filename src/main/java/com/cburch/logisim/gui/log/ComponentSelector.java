@@ -34,18 +34,25 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.StdAttr;
+
+import java.awt.Dimension;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.List;
+
+import javax.swing.DropMode;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTree;
+import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 class ComponentSelector extends JTree {
   private static final long serialVersionUID = 1L;
@@ -58,13 +65,17 @@ class ComponentSelector extends JTree {
     setRootVisible(false);
     setLogModel(logModel);
     setCellRenderer(new MyCellRenderer());
+    setDragEnabled(true);
+    setDropMode(DropMode.ON_OR_INSERT);
+    setTransferHandler(new ComponentTransferHandler());
+    getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
   }
 
-  public List<SelectionItem> getSelectedItems() {
+  public SelectionItems getSelectedItems() {
     TreePath[] sel = getSelectionPaths();
-    if (sel == null || sel.length == 0) return Collections.emptyList();
+    if (sel == null || sel.length == 0) return new SelectionItems();
 
-    ArrayList<SelectionItem> ret = new ArrayList<>();
+    SelectionItems ret = new SelectionItems();
     for (TreePath path : sel) {
       Object last = path.getLastPathComponent();
       ComponentNode n = null;
@@ -82,13 +93,14 @@ class ComponentSelector extends JTree {
         for (CircuitNode cur = n.parent; cur != null; cur = cur.parent) {
           count++;
         }
-        Component[] nPath = new Component[count - 1];
+        Component[] nPath = new Component[count];
+        nPath[nPath.length-1] = n.comp;
         CircuitNode cur = n.parent;
-        for (int j = nPath.length - 1; j >= 0; j--) {
+        for (int j = nPath.length - 2; j >= 0; j--) {
           nPath[j] = cur.subcircComp;
           cur = cur.parent;
         }
-        ret.add(new SelectionItem(logModel, nPath, n.comp, opt));
+        ret.add(new SelectionItem(logModel, nPath, opt));
       }
     }
     return ret.size() == 0 ? null : ret;
@@ -370,7 +382,11 @@ class ComponentSelector extends JTree {
           icon.setTriangleState(
               expanded ? ComponentIcon.TRIANGLE_OPEN : ComponentIcon.TRIANGLE_CLOSED);
         }
-        ((JLabel) ret).setIcon(icon);
+        JLabel label = (JLabel)ret;
+        label.setIcon(icon);
+        Dimension d = label.getPreferredSize();
+        d.width = Math.max(d.width, tree.getWidth());
+        label.setPreferredSize(d);
       }
       return ret;
     }
@@ -418,4 +434,43 @@ class ComponentSelector extends JTree {
       return option.toString();
     }
   }
+  
+  
+  class ComponentTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    boolean sending;
+
+    public ComponentTransferHandler() { }
+
+    @Override
+    public boolean canImport(TransferHandler.TransferSupport support) {
+      return !sending && support.isDataFlavorSupported(SelectionItems.dataFlavor);
+    }
+
+    @Override
+    protected Transferable createTransferable(JComponent c) {
+      sending = true;
+      ComponentSelector tree = (ComponentSelector)c;
+      SelectionItems items = tree.getSelectedItems();
+      return items.isEmpty() ? null : items;
+    }
+
+    @Override
+    protected void exportDone(JComponent source, Transferable data, int action) {
+      sending = false;
+    }
+
+    @Override
+    public int getSourceActions(JComponent c) {
+      return COPY;
+    }
+
+    @Override
+    public boolean importData(TransferHandler.TransferSupport support) { 
+      sending = false;
+      return false;
+    }
+
+  }
+
 }

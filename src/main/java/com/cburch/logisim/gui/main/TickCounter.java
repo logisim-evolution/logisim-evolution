@@ -104,7 +104,7 @@ class TickCounter implements SimulatorListener {
     }
   }
 
-  public void propagationCompleted(SimulatorEvent e) {
+  public void updateSimulator(SimulatorEvent e) {
     Simulator sim = e.getSource();
     if (!sim.isTicking()) {
       queueSize = 0;
@@ -145,9 +145,18 @@ class TickCounter implements SimulatorListener {
   }
 
   public void simulatorStateChanged(SimulatorEvent e) {
-    propagationCompleted(e);
+    updateSimulator(e);
   }
 
+  @Override
+  public void simulatorReset(SimulatorEvent e) {
+    updateSimulator(e);
+  }
+
+  @Override
+  public void propagationCompleted(SimulatorEvent e) {}
+
+  @Override
   public void tickCompleted(SimulatorEvent e) {
     Simulator sim = e.getSource();
     if (!sim.isTicking()) {

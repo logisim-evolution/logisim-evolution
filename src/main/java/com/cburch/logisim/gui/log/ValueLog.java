@@ -54,6 +54,12 @@ class ValueLog {
     }
   }
 
+  public void reset(Value val) {
+    curSize = 0;
+    firstIndex = 0;
+    log[curSize++] = val;
+  }
+
   public Value get(int index) {
     int i = firstIndex + index;
     if (i >= LOG_SIZE) i -= LOG_SIZE;

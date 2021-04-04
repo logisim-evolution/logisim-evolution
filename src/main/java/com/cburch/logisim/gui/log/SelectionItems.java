@@ -28,4 +28,44 @@
 
 package com.cburch.logisim.gui.log;
 
-public class ModelEvent {}
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.ArrayList;
+
+
+public class SelectionItems extends ArrayList<SelectionItem> implements Transferable
+{
+  private static final long serialVersionUID = 1L;
+  public static final DataFlavor dataFlavor;
+  static {
+    DataFlavor f = null;
+    try {
+        f = new DataFlavor(
+            String.format("%s;class=\"%s\"",
+              DataFlavor.javaJVMLocalObjectMimeType,
+              SelectionItems.class.getName()));
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+    dataFlavor = f;
+  }
+  public static final DataFlavor[] dataFlavors = new DataFlavor[] { dataFlavor };
+
+  @Override
+  public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+    if(!isDataFlavorSupported(flavor))
+      throw new UnsupportedFlavorException(flavor);
+    return this;
+  }
+
+  @Override
+  public DataFlavor[] getTransferDataFlavors() {
+    return dataFlavors;
+  }
+
+  @Override
+  public boolean isDataFlavorSupported(DataFlavor flavor) {
+    return dataFlavor.equals(flavor);
+  }
+}

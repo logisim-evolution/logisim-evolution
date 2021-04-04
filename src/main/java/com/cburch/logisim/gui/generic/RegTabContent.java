@@ -212,6 +212,11 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   }
 
   @Override
+  public void simulatorReset(SimulatorEvent e) {
+    fillArray();
+  }
+
+  @Override
   public void propagationCompleted(SimulatorEvent e) {
     // throw new UnsupportedOperationException("Not supported yet.");
     fillArray();

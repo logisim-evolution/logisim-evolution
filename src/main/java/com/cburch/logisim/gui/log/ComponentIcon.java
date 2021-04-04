@@ -34,7 +34,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.Icon;
 
-class ComponentIcon implements Icon {
+public class ComponentIcon implements Icon {
   public static final int TRIANGLE_NONE = 0;
   public static final int TRIANGLE_CLOSED = 1;
   public static final int TRIANGLE_OPEN = 2;
@@ -42,7 +42,7 @@ class ComponentIcon implements Icon {
   private final Component comp;
   private int triangleState = TRIANGLE_NONE;
 
-  ComponentIcon(Component comp) {
+  public ComponentIcon(Component comp) {
     this.comp = comp;
   }
 

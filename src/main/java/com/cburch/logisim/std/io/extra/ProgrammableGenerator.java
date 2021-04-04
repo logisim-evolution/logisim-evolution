@@ -67,10 +67,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class ProgrammableGenerator extends InstanceFactory {
-  public static class ClockLogger extends InstanceLogger {
+  public abstract class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
+    }
+
+    @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
     }
 
     @Override

@@ -63,7 +63,6 @@ import javax.swing.JPanel;
 public class TestFrame extends LFrame {
 
   private static final long serialVersionUID = 1L;
-  private final Project project;
   private final Map<Circuit, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final WindowMenuManager windowManager;
@@ -83,7 +82,6 @@ public class TestFrame extends LFrame {
 
   public TestFrame(Project project) {
     super(false, project);
-    this.project = project;
     this.windowManager = new WindowMenuManager();
     project.addProjectListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
@@ -132,10 +130,6 @@ public class TestFrame extends LFrame {
 
   Model getModel() {
     return curModel;
-  }
-
-  public Project getProject() {
-    return project;
   }
 
   private void setSimulator(Simulator value, Circuit circuit) {
@@ -247,18 +241,27 @@ public class TestFrame extends LFrame {
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(
-            event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
+        setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }
     }
 
+    @Override
+    public void simulatorReset(SimulatorEvent e) {
+      // ? curModel.propagationCompleted();
+    }
+
+    @Override
     public void propagationCompleted(SimulatorEvent e) {
       // curModel.propagationCompleted();
     }
 
+    @Override
     public void simulatorStateChanged(SimulatorEvent e) {}
+
+    @Override
+    public void tickCompleted(SimulatorEvent e) {}
 
     public void testingChanged() {
       if (getModel().isRunning() && !getModel().isPaused()) {
@@ -279,8 +282,6 @@ public class TestFrame extends LFrame {
       fail.setText(StringUtil.format(S.get("failMessage"), Integer.toString(numFail)));
       finished = numPass + numFail;
     }
-
-    public void tickCompleted(SimulatorEvent e) {}
 
     public void vectorChanged() {}
   }

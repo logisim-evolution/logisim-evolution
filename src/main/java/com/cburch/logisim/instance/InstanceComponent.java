@@ -63,7 +63,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-public class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
+public final class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
   private InstanceFactory factory;
   private final Instance instance;
@@ -84,7 +84,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
     this.factory = factory;
-    this.instance = new Instance(this);
+    this.instance = Instance.makeFor(this);
     this.loc = loc;
     this.bounds = factory.getOffsetBounds(attrs).translate(loc.getX(), loc.getY());
     this.portList = factory.getPorts();
@@ -461,11 +461,8 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   }
 
   public String toString() {
-    return "InstanceComponent{factory="
-        + factory.getName()
-        + ",loc=("
-        + loc
-        + "),instance="
-        + instance;
+    String label = attrs.getValue(StdAttr.LABEL);
+    return "InstanceComponent{factory="+factory.getName()
+        +",loc=("+loc+"),label="+label+"}@"+super.toString();
   }
 }
