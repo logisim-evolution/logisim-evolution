@@ -50,10 +50,6 @@ abstract class OptionsPanel extends JPanel {
 
   public abstract String getHelpText();
 
-  LogisimFile getLogisimFile() {
-    return optionsFrame.getLogisimFile();
-  }
-
   Options getOptions() {
     return optionsFrame.getOptions();
   }

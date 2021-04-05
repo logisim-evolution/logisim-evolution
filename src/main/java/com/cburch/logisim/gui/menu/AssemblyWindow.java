@@ -134,7 +134,7 @@ public class AssemblyWindow
     fileMenu.addSeparator();
     fileMenu.add(close);
 
-    windows = new LFrame(false, null);
+    windows = new LFrame.Dialog(null);
     windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();

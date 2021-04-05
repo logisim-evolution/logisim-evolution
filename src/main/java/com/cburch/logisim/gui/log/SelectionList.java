@@ -75,20 +75,26 @@ import javax.swing.table.TableCellEditor;
 
 public class SelectionList extends JTable {
   private static final long serialVersionUID = 1L;
-  private Selection selection;
+  private Model logModel;
 
   private class SelectionListModel extends AbstractTableModel implements Model.Listener {
   
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void resetEntries(Model.Event event, Value[] values) {}
-
+    public void modeChanged(Model.Event event) { }
+    
     @Override
-    public void entryAdded(Model.Event event, Value[] values) {}
-
+    public void signalsExtended(Model.Event event) { }
+    
+    @Override
+    public void signalsReset(Model.Event event) { }
+    
     @Override
     public void filePropertyChanged(Model.Event event) {}
+    
+    @Override
+    public void historyLimitChanged(Model.Event event) { }
 
     @Override
     public void selectionChanged(Model.Event event) {
@@ -100,13 +106,13 @@ public class SelectionList extends JTable {
     @Override
     public String getColumnName(int column) { return ""; }
     @Override
-    public Class<?> getColumnClass(int columnIndex) { return SelectionItem.class; }
+    public Class<?> getColumnClass(int columnIndex) { return SignalInfo.class; }
     @Override
-    public int getRowCount() { return selection == null ? 0 : selection.size(); }
+    public int getRowCount() { return logModel == null ? 0 : logModel.getSignalCount(); }
 
     @Override
     public Object getValueAt(int row, int col) {
-      return selection.get(row);
+      return logModel.getItem(row);
     }
 
     @Override
@@ -120,7 +126,7 @@ public class SelectionList extends JTable {
     }
   }
 
-  private class SelectionItemRenderer extends DefaultTableCellRenderer {
+  private class SignalInfoRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -128,9 +134,9 @@ public class SelectionList extends JTable {
         JTable table,Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       java.awt.Component ret =
           super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      if (ret instanceof JLabel && value instanceof SelectionItem) {
+      if (ret instanceof JLabel && value instanceof SignalInfo) {
         JLabel label = (JLabel) ret;
-        SelectionItem item = (SelectionItem) value;
+        SignalInfo item = (SignalInfo) value;
         label.setIcon(new ComponentIcon(item.getComponent()));
         label.setText(item.toString()+" ["+item.getRadix().toDisplayString()+"]");
       }
@@ -138,17 +144,17 @@ public class SelectionList extends JTable {
     }
   }
   
-  class SelectionItemEditor extends AbstractCellEditor implements TableCellEditor {
+  class SignalInfoEditor extends AbstractCellEditor implements TableCellEditor {
     private static final long serialVersionUID = 1L;
     JPanel panel = new JPanel();
     JLabel label = new JLabel();
     JButton button = new JButton(Icons.getIcon("dropdown.png"));
     JPopupMenu popup = new JPopupMenu("Options");
-    SelectionItem item;
-    SelectionItems items;
+    SignalInfo item;
+    SignalInfo.List items;
     HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
     
-    public SelectionItemEditor() {
+    public SignalInfoEditor() {
       panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
       label.setFont(label.getFont().deriveFont(Font.PLAIN));
@@ -163,7 +169,7 @@ public class SelectionList extends JTable {
         m.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {              
-            for (SelectionItem s : items)
+            for (SignalInfo s : items)
               s.setRadix(r);
             if (item != null)
               label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
@@ -219,7 +225,7 @@ public class SelectionList extends JTable {
       label.setMaximumSize(new Dimension(d.width - button.getWidth(), d.height));
 
       panel.setBackground(isSelected ? getSelectionBackground() : getBackground());
-      item = (SelectionItem)value;
+      item = (SignalInfo)value;
       items = getSelectedValuesList();
       if (!items.contains(item)) {
         items.clear();
@@ -244,10 +250,9 @@ public class SelectionList extends JTable {
   } 
 
   public SelectionList() {
-    selection = null;
     setModel(new SelectionListModel());
-    setDefaultRenderer(SelectionItem.class, new SelectionItemRenderer());
-    setDefaultEditor(SelectionItem.class, new SelectionItemEditor());
+    setDefaultRenderer(SignalInfo.class, new SignalInfoRenderer());
+    setDefaultEditor(SignalInfo.class, new SignalInfoEditor());
     setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     getTableHeader().setUI(null);
     setRowHeight(24);
@@ -273,13 +278,13 @@ public class SelectionList extends JTable {
 
   void removeSelected() {
     int idx = 0;
-    SelectionItems items = getSelectedValuesList();
-    for (SelectionItem item : items) {
-      idx = Math.max(idx, selection.indexOf(item));
+    SignalInfo.List items = getSelectedValuesList();
+    for (SignalInfo item : items) {
+      idx = Math.max(idx, logModel.indexOf(item));
     }
-    int count = selection.remove(items);
-    if (count > 0 && selection.size() > 0) {
-      idx = Math.min(idx+1-count, selection.size()-1);
+    int count = logModel.remove(items);
+    if (count > 0 && logModel.getSignalCount() > 0) {
+      idx = Math.min(idx+1-count, logModel.getSignalCount()-1);
       setRowSelectionInterval(idx, idx);
     }
     repaint();
@@ -289,21 +294,23 @@ public class SelectionList extends JTable {
     repaint();
   }
 
-  public void setSelection(Selection value) {
-    if (selection != value) {
-      SelectionListModel model = (SelectionListModel) getModel();
-      if (selection != null) selection.removeModelListener(model);
-      selection = value;
-      if (selection != null) selection.addModelListener(model);
-      model.selectionChanged(null);
+  public void setLogModel(Model m) {
+    if (logModel != m) {
+      SelectionListModel listModel = (SelectionListModel) getModel();
+      if (logModel != null)
+        logModel.removeModelListener(listModel);
+      logModel = m;
+      if (logModel != null)
+        logModel.addModelListener(listModel);
+      listModel.selectionChanged(null);
     }
   }
 
-  SelectionItems getSelectedValuesList() {
-    SelectionItems items = new SelectionItems();
+  SignalInfo.List getSelectedValuesList() {
+    SignalInfo.List items = new SignalInfo.List();
     int[] sel = getSelectedRows();
     for (int i : sel)
-      items.add(selection.get(i));
+      items.add(logModel.getItem(i));
     return items;
   }
 
@@ -319,7 +326,7 @@ public class SelectionList extends JTable {
     @Override
     public Transferable createTransferable(JComponent comp) {
       removing = true;
-      SelectionItems items = new SelectionItems();
+      SignalInfo.List items = new SignalInfo.List();
       items.addAll(getSelectedValuesList());
       return items.isEmpty() ? null : items;
     }
@@ -327,27 +334,27 @@ public class SelectionList extends JTable {
     @Override
     public void exportDone(JComponent comp, Transferable trans, int action) {
       if (removing)
-        selection.remove(getSelectedValuesList());
+        logModel.remove(getSelectedValuesList());
       removing = false;
     }
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
-      return support.isDataFlavorSupported(SelectionItems.dataFlavor);
+      return support.isDataFlavorSupported(SignalInfo.List.dataFlavor);
     }
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
       removing = false;
       try {
-        SelectionItems items =
-            (SelectionItems)support.getTransferable().getTransferData(
-                SelectionItems.dataFlavor);
-        int newIdx = selection.size();
+        SignalInfo.List items =
+            (SignalInfo.List)support.getTransferable().getTransferData(
+                SignalInfo.List.dataFlavor);
+        int newIdx = logModel.getSignalCount();
         if (support.isDrop()) {
           try {
             JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
-            newIdx = Math.min(dl.getRow(), selection.size());
+            newIdx = Math.min(dl.getRow(), logModel.getSignalCount());
           } catch (ClassCastException e) {
           }
         }
@@ -360,11 +367,11 @@ public class SelectionList extends JTable {
     }
   }
 
-  private void addOrMove(SelectionItems items, int idx) {
-    selection.addOrMove(items, idx);
+  private void addOrMove(SignalInfo.List items, int idx) {
+    logModel.addOrMove(items, idx);
     clearSelection();
-    for (SelectionItem item : items) {
-      int i = selection.indexOf(item);
+    for (SignalInfo item : items) {
+      int i = logModel.indexOf(item);
       addRowSelectionInterval(i, i);
     }
   }

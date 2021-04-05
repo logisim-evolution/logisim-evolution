@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.log;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JDialogOk;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -50,8 +51,8 @@ class SelectionPanel extends LogPanel {
     super(window);
     selector = new ComponentSelector(getModel());
     list = new SelectionList();
-    list.setSelection(getSelection());
-
+    list.setLogModel(getModel());
+    
     JScrollPane explorerPane =
         new JScrollPane(
             selector,
@@ -125,13 +126,28 @@ class SelectionPanel extends LogPanel {
 
   @Override
   public void modelChanged(Model oldModel, Model newModel) {
-    if (getModel() == null) {
-      selector.setLogModel(newModel);
-      list.setSelection(null);
-    } else {
-      selector.setLogModel(newModel);
-      list.setSelection(getSelection());
-    }
+    selector.setLogModel(newModel);
+    list.setLogModel(newModel);
   }
 
+  static class SelectionDialog extends JDialogOk {
+    private static final long serialVersionUID = 1L;
+    SelectionPanel selPanel;
+    SelectionDialog(LogFrame logFrame) {
+      super("Signal Selection", false);
+      selPanel = new SelectionPanel(logFrame);
+      selPanel.localeChanged();
+      getContentPane().add(selPanel);
+      setMinimumSize(new Dimension(350, 300));
+      setSize(400, 400);
+      pack();
+    }
+    public void cancelClicked() { okClicked(); }
+    public void okClicked() { }
+  }
+
+  public static void doDialog(LogFrame logFrame) {
+    SelectionDialog d = new SelectionDialog(logFrame);
+    d.setVisible(true);
+  }
 }

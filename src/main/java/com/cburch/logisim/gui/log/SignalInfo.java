@@ -28,6 +28,10 @@
 
 package com.cburch.logisim.gui.log;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -43,13 +47,13 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
-//Notes: The item belongs to a particular model, for a particular simulation
-//of a particular top-level circuit. Thus:
-//  model --> circuitState --> top-level circuit
+//Notes: Each SignalInfo belongs to a particular model, for a particular
+//simulation of a particular top-level circuit. Thus:
+//model --> circuitState --> top-level circuit
 //
 //The path[] must not be empty. If it contains one component (e.g. a Pin or
 //Led), then that component is one that appears in the top-level circuit.
@@ -64,16 +68,16 @@ import com.cburch.logisim.instance.StdAttr;
 //
 //To summarize:
 //
-//   (top)              (A)              (B)              (C)
-//  circ[0]       .-> circ[1]      .-> circ[2]      .-> circ[3]     
-//   |holds      /     |holds     /     |holds     /     |holds     
-//   |        is/      |       is/      |       is/      |           
-//   v     ____/       v     ___/       v     ___/       v           
-// path[0]           path[1]          path[2]          path[3]
+// (top)              (A)              (B)              (C)
+//circ[0]       .-> circ[1]      .-> circ[2]      .-> circ[3]     
+// |holds      /     |holds     /     |holds     /     |holds     
+// |        is/      |       is/      |       is/      |           
+// v     ____/       v     ___/       v     ___/       v           
+//path[0]           path[1]          path[2]          path[3]
 //(subcirc A)       (subcirc B)      (subcirc C)         (Pin)
 //
 
-public class SelectionItem implements AttributeListener, CircuitListener, Location.At {
+public class SignalInfo implements AttributeListener, CircuitListener, Location.At {
   private final Model model;
   private int n;
   private Component[] path; // n-1 subcircuit Components, then a Loggable Component
@@ -84,7 +88,7 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
   private String fullname; // a path-like name, with slashes, ending with the nickname
   private int width = -1; // stored here so we can monitor for changes
 
-  public SelectionItem(Model m, Component[] p, Object o) {
+  public SignalInfo(Model m, Component[] p, Object o) {
     model = m;
     path = p;
     option = o;
@@ -104,14 +108,12 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
     // nested subcircuit of the top-level and that entire subcircuit component,
     // i.e., path[0], might get removed from the top-level circuit. Also listen
     // to each other circuit at each level of the path, for similar reasons.
-    for (Circuit t : circ)
-      t.addCircuitListener(this);
+    for (Circuit t : circ) t.addCircuitListener(this);
 
     // Listen to attributes of subcircuits, at each level of the path, including
     // the final component at the end of the path, because it affects our name
     // via changes to the location coordinates and/or labels.
-    for (Component c : path)
-      c.getAttributeSet().addAttributeListener(this);
+    for (Component c : path) c.getAttributeSet().addAttributeListener(this);
   }
   
   public void attributeListChanged(AttributeEvent e) { }
@@ -121,7 +123,7 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
   }
 
   public void circuitChanged(CircuitEvent event) {
-    int index = model.getSelection().indexOf(this);
+    int index = model.indexOf(this);
     if (index < 0) {
       return; // this SelectionItem doesn't appear to be alive any more
     }
@@ -266,6 +268,11 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
     return path[n-1];
   }
 
+  public boolean isInput(Object option) {
+    Loggable log = (Loggable) path[n-1].getFeature(Loggable.class);
+    return log != null && log.isInput(option);
+  }
+
   public RadixOption getRadix() {
     return radix;
   }
@@ -305,9 +312,9 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
   public boolean equals(Object other) {
     if (other == this)
       return true;
-    if (other == null || !(other instanceof SelectionItem))
+    if (other == null || !(other instanceof SignalInfo))
       return false;
-    SelectionItem o = (SelectionItem)other;
+    SignalInfo o = (SignalInfo)other;
     return model.equals(o.model)
         && Arrays.equals(path, o.path)
         && Objects.equals(option, o.option);
@@ -319,12 +326,47 @@ public class SelectionItem implements AttributeListener, CircuitListener, Locati
   }
 
   private void remove() {
-    int index = model.getSelection().indexOf(this);
-    model.getSelection().remove(index);
+    int index = model.indexOf(this);
+    model.remove(index);
     for (Circuit t : circ)
       t.removeCircuitListener(this);
     for (Component c : path)
       c.getAttributeSet().removeAttributeListener(this);
+  }
+
+  public static class List extends ArrayList<SignalInfo> implements Transferable
+  {
+    public static final DataFlavor dataFlavor;
+    static {
+      DataFlavor f = null;
+      try {
+        f = new DataFlavor(
+            String.format("%s;class=\"%s\"",
+              DataFlavor.javaJVMLocalObjectMimeType,
+              SignalInfo.List.class.getName()));
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+      dataFlavor = f;
+    }
+    public static final DataFlavor[] dataFlavors = new DataFlavor[] { dataFlavor };
+
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+      if(!isDataFlavorSupported(flavor))
+        throw new UnsupportedFlavorException(flavor);
+      return this;
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+      return dataFlavors;
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+      return dataFlavor.equals(flavor);
+    }
   }
 
 }

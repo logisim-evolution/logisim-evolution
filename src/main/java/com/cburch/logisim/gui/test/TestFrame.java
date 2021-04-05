@@ -60,7 +60,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class TestFrame extends LFrame {
+public class TestFrame extends LFrame.SubWindowWithSimulation {
 
   private static final long serialVersionUID = 1L;
   private final Map<Circuit, Model> modelMap = new HashMap<>();
@@ -81,7 +81,7 @@ public class TestFrame extends LFrame {
   private File curFile;
 
   public TestFrame(Project project) {
-    super(false, project);
+    super(project);
     this.windowManager = new WindowMenuManager();
     project.addProjectListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
@@ -137,8 +137,7 @@ public class TestFrame extends LFrame {
       if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
     }
 
-    // LogisimMenuBar menubar = (LogisimMenuBar) getJMenuBar();
-    // menubar.setCircuitState(value, state);
+    menubar.setCircuitState(value, value.getCircuitState());
 
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);

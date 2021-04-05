@@ -63,7 +63,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Analyzer extends LFrame {
+public class Analyzer extends LFrame.SubWindow {
   private final AnalyzerMenuListener menuListener;
 
   private class MyChangeListener implements ChangeListener {
@@ -190,7 +190,7 @@ public class Analyzer extends LFrame {
   private final ExportLatexButton exportTex;
 
   Analyzer() {
-    super(true,null);
+    super(null);
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);

@@ -63,6 +63,10 @@ class InstanceLoggerAdapter implements Loggable {
     return logger == null ? null : logger.getBitWidth(state, option);
   }
   
+  public boolean isInput(Object option) {
+    return logger == null ? false : logger.isInput(state, option);
+  }
+
   public Object[] getLogOptions(CircuitState circState) {
     if (logger != null) {
       updateState(circState);

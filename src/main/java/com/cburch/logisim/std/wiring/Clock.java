@@ -74,6 +74,11 @@ public class Clock extends InstanceFactory {
       ClockState s = getState(state);
       return s.sending;
     }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      return true;
+    }
   }
 
   public static class ClockPoker extends InstancePoker {

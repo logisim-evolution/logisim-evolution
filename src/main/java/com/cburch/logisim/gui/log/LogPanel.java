@@ -28,8 +28,11 @@
 
 package com.cburch.logisim.gui.log;
 
+import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.proj.Project;
+
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
@@ -49,6 +52,24 @@ public abstract class LogPanel extends JPanel {
 
   public abstract String getHelpText();
 
+  void updateTab() {
+    EditHandler h = getEditHandler();
+    if (h != null)
+      h.computeEnabled();
+  }
+
+  public EditHandler getEditHandler() {
+    return null;
+  }
+
+  public PrintHandler getPrintHandler() {
+    return null;
+  }
+
+// SimulationHandler getSimulationHandler() {
+//   return null;
+// }
+
   protected LogFrame getLogFrame() {
     return logFrame;
   }
@@ -63,10 +84,6 @@ public abstract class LogPanel extends JPanel {
 
   protected Project getProject() {
     return logFrame.getProject();
-  }
-
-  protected Selection getSelection() {
-    return logFrame.getModel().getSelection();
   }
 
   public abstract String getTitle();

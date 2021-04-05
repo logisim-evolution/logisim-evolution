@@ -31,6 +31,7 @@ package com.cburch.logisim;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.MacCompatibility;
 import com.github.weisj.darklaf.LafManager;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -94,6 +95,7 @@ public class Main {
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
+  public static boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean hasGui() { return !headless; }
 
   /** URL for the automatic updater */

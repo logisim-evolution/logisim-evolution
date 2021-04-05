@@ -281,6 +281,12 @@ public class Pin extends InstanceFactory {
       PinState s = getState(state);
       return s.intendedValue;
     }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+      return attrs.type == EndData.INPUT_ONLY;
+    }
   }
 
   public static class PinPoker extends InstancePoker {

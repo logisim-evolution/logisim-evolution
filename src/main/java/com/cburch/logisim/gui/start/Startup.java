@@ -944,9 +944,9 @@ public class Startup implements AWTEventListener {
     }
     WindowManagers.initialize();
     if (MacCompatibility.isSwingUsingScreenMenuBar()) {
-      MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null));
+      MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null, null, null));
     } else {
-      new LogisimMenuBar(null, null);
+      new LogisimMenuBar(null, null, null, null);
       // most of the time occupied here will be in loading menus, which
       // will occur eventually anyway; we might as well do it when the
       // monitor says we are

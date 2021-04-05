@@ -39,4 +39,6 @@ public abstract class InstanceLogger {
   public Object[] getLogOptions(InstanceState state) { return null; }
   
   public abstract Value getLogValue(InstanceState state, Object option);
+  
+  public boolean isInput(InstanceState state, Object option) { return false; }
 }

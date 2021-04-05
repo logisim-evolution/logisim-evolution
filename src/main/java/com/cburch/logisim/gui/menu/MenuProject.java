@@ -82,9 +82,7 @@ class MenuProject extends Menu {
     menubar.registerItem(LogisimMenuBar.EDIT_LAYOUT, layout);
     menubar.registerItem(LogisimMenuBar.EDIT_APPEARANCE, appearance);
     menubar.registerItem(LogisimMenuBar.TOGGLE_APPEARANCE, toggleLayoutAppearance);
-    if (Main.ANALYZE) {
-      menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
-    }
+    if (Main.ANALYZE)  menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
     menubar.registerItem(LogisimMenuBar.CIRCUIT_STATS, stats);
     options.addActionListener(myListener);
 
@@ -107,14 +105,12 @@ class MenuProject extends Menu {
     add(layout);
     add(appearance);
     addSeparator();
-    if (Main.ANALYZE) {
-      add(analyze);
-    }
+    if (Main.ANALYZE) add(analyze);
     add(stats);
     addSeparator();
     add(options);
 
-    boolean known = menubar.getProject() != null;
+    boolean known = menubar.getSaveProject() != null;
     loadLibrary.setEnabled(known);
     loadBuiltin.setEnabled(known);
     loadLogisim.setEnabled(known);
@@ -127,7 +123,7 @@ class MenuProject extends Menu {
   @Override
   void computeEnabled() {
     setEnabled(
-        menubar.getProject() != null
+        menubar.getSaveProject() != null
             || addCircuit.hasListeners()
             || addVhdl.hasListeners()
             || importVhdl.hasListeners()
@@ -160,6 +156,7 @@ class MenuProject extends Menu {
     revertAppearance.setText(S.get("projectRevertAppearanceItem"));
     layout.setText(S.get("projectEditCircuitLayoutItem"));
     appearance.setText(S.get("projectEditCircuitAppearanceItem"));
+    toggleLayoutAppearance.setText(S.get("projectToggleCircuitAppearanceItem"));
     analyze.setText(S.get("projectAnalyzeCircuitItem"));
     stats.setText(S.get("projectGetCircuitStatisticsItem"));
     options.setText(S.get("projectOptionsItem"));
@@ -168,7 +165,8 @@ class MenuProject extends Menu {
   private class MyListener implements ActionListener {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
-      Project proj = menubar.getProject();
+      Project proj = menubar.getSaveProject();
+      if (proj == null) return;
       if (src == loadBuiltin) {
         ProjectLibraryActions.doLoadBuiltinLibrary(proj);
       } else if (src == loadLogisim) {
@@ -178,8 +176,7 @@ class MenuProject extends Menu {
       } else if (src == unload) {
         ProjectLibraryActions.doUnloadLibraries(proj);
       } else if (src == options) {
-        JFrame frame = proj.getOptionsFrame(true);
-        frame.setVisible(true);
+        proj.getOptionsFrame().setVisible(true);
       }
     }
   }

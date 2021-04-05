@@ -71,11 +71,11 @@ class ComponentSelector extends JTree {
     getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
   }
 
-  public SelectionItems getSelectedItems() {
+  public SignalInfo.List getSelectedItems() {
     TreePath[] sel = getSelectionPaths();
-    if (sel == null || sel.length == 0) return new SelectionItems();
+    if (sel == null || sel.length == 0) return new SignalInfo.List();
 
-    SelectionItems ret = new SelectionItems();
+    SignalInfo.List ret = new SignalInfo.List();
     for (TreePath path : sel) {
       Object last = path.getLastPathComponent();
       ComponentNode n = null;
@@ -100,7 +100,7 @@ class ComponentSelector extends JTree {
           nPath[j] = cur.subcircComp;
           cur = cur.parent;
         }
-        ret.add(new SelectionItem(logModel, nPath, opt));
+        ret.add(new SignalInfo(logModel, nPath, opt));
       }
     }
     return ret.size() == 0 ? null : ret;
@@ -444,14 +444,14 @@ class ComponentSelector extends JTree {
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
-      return !sending && support.isDataFlavorSupported(SelectionItems.dataFlavor);
+      return !sending && support.isDataFlavorSupported(SignalInfo.List.dataFlavor);
     }
 
     @Override
     protected Transferable createTransferable(JComponent c) {
       sending = true;
       ComponentSelector tree = (ComponentSelector)c;
-      SelectionItems items = tree.getSelectedItems();
+      SignalInfo.List items = tree.getSelectedItems();
       return items.isEmpty() ? null : items;
     }
 

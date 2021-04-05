@@ -53,7 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class HexFrame extends LFrame {
+public class HexFrame extends LFrame.SubWindow {
   private static final long serialVersionUID = 1L;
   private final WindowMenuManager windowManager = new WindowMenuManager();
   private final EditListener editListener = new EditListener();
@@ -66,11 +66,8 @@ public class HexFrame extends LFrame {
   private final Instance instance;
   
   public HexFrame(Project project, Instance instance, HexModel model) {
-    super(false, project);
+    super(project);
     setDefaultCloseOperation(HIDE_ON_CLOSE);
-
-    LogisimMenuBar menubar = new LogisimMenuBar(this, project);
-    setJMenuBar(menubar);
 
     this.model = model;
     this.editor = new HexEditor(model);

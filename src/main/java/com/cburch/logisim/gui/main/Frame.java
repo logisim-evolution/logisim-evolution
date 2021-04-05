@@ -94,7 +94,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Frame extends LFrame implements LocaleListener {
+public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
   public static final String EDITOR_VIEW = "editorView";
@@ -136,7 +136,7 @@ public class Frame extends LFrame implements LocaleListener {
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
 
   public Frame(Project project) {
-    super(true, project);
+    super(project);
     this.project = project;
 
     setBackground(Color.white);

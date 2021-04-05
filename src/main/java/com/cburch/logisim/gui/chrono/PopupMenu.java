@@ -41,11 +41,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.gui.log.SelectionItems;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.gui.log.SignalInfo;
 
 public class PopupMenu extends MouseAdapter {
 
   private class PopupContents extends JPopupMenu {
+    private static final long serialVersionUID = 1L;
     public PopupContents() {
       super("Options");
       RadixOption radix = signals.get(0).info.getRadix();
@@ -62,7 +64,7 @@ public class PopupMenu extends MouseAdapter {
         m.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {              
-            for (ChronoData.Signal s : signals)
+            for (Signal s : signals)
               s.info.setRadix(r);
           }
         });
@@ -73,19 +75,19 @@ public class PopupMenu extends MouseAdapter {
       m.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {              
-          SelectionItems items = new SelectionItems();
-          for (ChronoData.Signal s : signals)
+          SignalInfo.List items = new SignalInfo.List();
+          for (Signal s : signals)
             items.add(s.info);
-          chronoPanel.getSelection().remove(items);
+          chronoPanel.getModel().remove(items);
         }
       });
     }
   }
 
-  private List<ChronoData.Signal> signals;
+  private List<Signal> signals;
   private ChronoPanel chronoPanel;
   
-  public PopupMenu(ChronoPanel p, List<ChronoData.Signal> s) {
+  public PopupMenu(ChronoPanel p, List<Signal> s) {
     chronoPanel = p;
     signals = s;
   }
