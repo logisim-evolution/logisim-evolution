@@ -102,7 +102,7 @@ public class CircuitPins {
         if (removed) {
           comp.removeComponentListener(myComponentListener);
           in.getAttributeSet().removeAttributeListener(myComponentListener);
-          Collection<Component> rs = repl.getComponentsReplacing(comp);
+          Collection<Component> rs = repl.getReplacementsFor(comp);
           if (rs.isEmpty()) {
             removes.add(in);
           } else {

@@ -66,6 +66,12 @@ public class Probe extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      StateData data = (StateData) state.getData();
+      return data == null || data.curValue == null ? null : data.curValue.getBitWidth();
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       return getValue(state);
     }

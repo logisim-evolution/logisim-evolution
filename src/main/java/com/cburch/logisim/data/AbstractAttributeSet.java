@@ -41,6 +41,10 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     listeners.add(l);
   }
 
+  public boolean amIListening(AttributeListener l) {
+    return listeners.contains(l);
+  }
+
   @Override
   public Object clone() {
     AbstractAttributeSet ret;

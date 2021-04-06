@@ -35,12 +35,10 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
-import com.cburch.logisim.gui.log.LogFrame;
-import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -110,7 +108,7 @@ public class MenuSimulate extends Menu {
     reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask));
     step.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
     tickHalf.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask));
-    tickFull.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
+    tickFull.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
     ticksEnabled.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
 
     ButtonGroup bgroup = new ButtonGroup();
@@ -234,9 +232,7 @@ public class MenuSimulate extends Menu {
     tickFull.setText(S.get("simulateTickFullItem"));
     ticksEnabled.setText(S.get("simulateTickItem"));
     tickFreq.setText(S.get("simulateTickFreqMenu"));
-    for (TickFrequencyChoice freq : tickFreqs) {
-      freq.localeChanged();
-    }
+    for (TickFrequencyChoice freq : tickFreqs)  freq.localeChanged();
     downStateMenu.setText(S.get("simulateDownStateMenu"));
     upStateMenu.setText(S.get("simulateUpStateMenu"));
     log.setText(S.get("simulateLogItem"));
@@ -306,7 +302,7 @@ public class MenuSimulate extends Menu {
       if (currentSim != null) {
         currentSim.addSimulatorListener(myListener);
       }
-      myListener.simulatorStateChanged(new SimulatorEvent(sim));
+      myListener.simulatorStateChanged(new Simulator.Event(sim, false, false, false));
     }
 
     clearItems(downStateItems);
@@ -357,79 +353,61 @@ public class MenuSimulate extends Menu {
     }
   }
 
-  private class MyListener implements ActionListener, SimulatorListener, ChangeListener {
+  private class MyListener implements ActionListener, Simulator.Listener, ChangeListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
-      Project proj = menubar.getProject();
-      Simulator sim = proj == null ? null : proj.getSimulator();
-      if (src == LogisimMenuBar.SIMULATE_STOP) {
-        if (sim != null) {
-          sim.setIsRunning(false);
-          proj.repaintCanvas();
-        }
-      } else if (src == LogisimMenuBar.SIMULATE_RUN) {
-        if (sim != null) {
-          sim.setIsRunning(true);
-          proj.repaintCanvas();
-        }
-      } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
-        if (sim != null) {
-          sim.setIsRunning(!sim.isRunning());
-          proj.repaintCanvas();
-        }
-      } else if (src == reset) {
-        if (sim != null) {
 
-          /* Restart VHDL simulation (in QuestaSim) */
-          if (sim.getCircuitState().getProject().getVhdlSimulator().isRunning()) {
-            sim.getCircuitState().getProject().getVhdlSimulator().reset();
-            /*
-             * We have to wait until the restart finishes, otherwise
-             * the signal reset will be sent to the VHDL simulator
-             * before the sim is loaded and errors will occur Time
-             * (0,5s) is arbitrary
-             *
-             * FIXME: if you find a way to make a blocking reset
-             * until it's restarted, feel free to go on
-             */
-            try {
-              Thread.sleep(500);
-            } catch (InterruptedException ex) {
-              Thread.currentThread().interrupt();
-            }
-          }
-          sim.requestReset();
-        }
-      } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
-        if (sim != null) {
-          sim.setIsRunning(false);
-          sim.step();
-        }
-      } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
-        if (sim != null) {
-          sim.tick(1);
-        }
-      } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
-        if (sim != null) {
-          sim.tick(2);
-        }
-      } else if (src == simulate_vhdl_enable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE) {
-        if (proj.getVhdlSimulator() != null) {
-          proj.getVhdlSimulator().setEnabled(!proj.getVhdlSimulator().isEnabled());
-        }
-      } else if (src == vhdl_sim_files || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES) {
-        if (proj.getVhdlSimulator() != null) {
-          proj.getVhdlSimulator().restart();
-        }
-      } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
-        if (sim != null) {
-          sim.setIsTicking(!sim.isTicking());
-        }
+      Project proj = menubar.getSimulationProject();
+      if (proj == null)
+        return;
+      VhdlSimulatorTop vhdl = proj.getVhdlSimulator();
+      if (vhdl != null && (src == simulate_vhdl_enable
+          || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
+        vhdl.setEnabled(!vhdl.isEnabled());
+      } else if (vhdl != null && (src == vhdl_sim_files
+          || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
+        vhdl.restart();
       } else if (src == log) {
-        LogFrame frame = menubar.getProject().getLogFrame();
-        frame.setVisible(true);
+        proj.getLogFrame().setVisible(true);
+      } else if (src == test) {
+        proj.getTestFrame().setVisible(true);
+      }
+      Simulator sim = proj.getSimulator();
+      if (sim == null) {
+        return;
+      } else if (src == LogisimMenuBar.SIMULATE_STOP) {
+        sim.setAutoPropagation(false);
+        proj.repaintCanvas();
+      } else if (src == LogisimMenuBar.SIMULATE_RUN) {
+        sim.setAutoPropagation(true);
+        proj.repaintCanvas();
+      } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
+        sim.setAutoPropagation(!sim.isAutoPropagating());
+        proj.repaintCanvas();
+      } else if (src == reset) {
+        /* Restart VHDL simulation (in QuestaSim) */
+        if (vhdl != null && vhdl.isRunning()) {
+          vhdl.reset();
+          // Wait until the restart finishes, otherwise the signal reset will be
+          // sent to the VHDL simulator before the sim is loaded and errors will
+          // occur. Wait time (0.5 sec) is arbitrary.
+          // FIXME: Find a better way to do blocking reset.
+          try { Thread.sleep(500); }
+          catch (InterruptedException ex) { Thread.currentThread().interrupt(); }
+        }
+        sim.reset();
+        proj.repaintCanvas();
+      } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
+        sim.setAutoPropagation(false);
+        sim.step();
+      } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
+        sim.tick(1);
+      } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
+        sim.tick(2);
+      } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
+        sim.setAutoTicking(!sim.isAutoTicking());
       } else if (src == assemblyWindow) {
         if (assWin == null || assWin.isVisible() == false) {
           assWin = new AssemblyWindow(proj);
@@ -437,35 +415,39 @@ public class MenuSimulate extends Menu {
         } else {
           assWin.toFront();
         }
-      } else if (src == test) {
-        TestFrame frame = menubar.getProject().getTestFrame(true);
-        frame.setVisible(true);
       }
     }
 
     @Override
-    public void propagationCompleted(SimulatorEvent e) {}
+    public void propagationCompleted(Simulator.Event e) {}
 
     @Override
-    public void simulatorStateChanged(SimulatorEvent e) {
-      Simulator sim = e.getSource();
-      if (sim != currentSim) {
-        return;
-      }
-      computeEnabled();
-      runToggle.setSelected(sim.isRunning());
-      ticksEnabled.setSelected(sim.isTicking());
-      double freq = sim.getTickFrequency();
-      for (TickFrequencyChoice item : tickFreqs) {
-        item.setSelected(freq == item.freq);
-      }
+    public void simulatorReset(Simulator.Event e) {
+      updateSimulator(e);
     }
+
+   @Override
+    public void simulatorStateChanged(Simulator.Event e) {
+     updateSimulator(e);
+   }
+
+   void updateSimulator(Simulator.Event e) {
+     Simulator sim = e.getSource();
+     if (sim != currentSim) {
+       return;
+     }
+     computeEnabled();
+     runToggle.setSelected(sim.isAutoPropagating());
+     ticksEnabled.setSelected(sim.isAutoTicking());
+     double freq = sim.getTickFrequency();
+     for (TickFrequencyChoice item : tickFreqs) {
+       item.setSelected(freq == item.freq);
+     }
+   }
 
     @Override
     public void stateChanged(ChangeEvent e) {}
 
-    @Override
-    public void tickCompleted(SimulatorEvent e) {}
   }
 
   private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {

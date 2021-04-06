@@ -28,67 +28,47 @@
 
 package com.cburch.logisim.gui.log;
 
-import com.cburch.logisim.gui.menu.EditHandler;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.gui.menu.PrintHandler;
-import com.cburch.logisim.proj.Project;
 
-import java.awt.LayoutManager;
-import javax.swing.JPanel;
+public class LogMenuListener extends MenuListener {
 
-public abstract class LogPanel extends JPanel {
-  private static final long serialVersionUID = 1L;
-  private final LogFrame logFrame;
-
-  public LogPanel(LogFrame frame) {
-    super();
-    this.logFrame = frame;
+  protected class FileListener implements ActionListener {
+    public void actionPerformed(ActionEvent event) {
+      if (printer != null)
+        printer.actionPerformed(event);
+    }
+    boolean registered;
+    public void register(boolean en) {
+      if (registered == en)
+        return;
+      registered = en;
+      if (en) {
+        menubar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
+        menubar.addActionListener(LogisimMenuBar.PRINT, this);
+      } else {
+        menubar.removeActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
+        menubar.removeActionListener(LogisimMenuBar.PRINT, this);
+      }
+    }
   }
 
-  public LogPanel(LogFrame frame, LayoutManager manager) {
-    super(manager);
-    this.logFrame = frame;
+  private FileListener fileListener = new FileListener();
+  private PrintHandler printer;
+
+  public LogMenuListener(LogisimMenuBar menubar) {
+    super(menubar);
+    fileListener.register(false);
+    editListener.register();
   }
 
-  public abstract String getHelpText();
-
-  void updateTab() {
-    EditHandler h = getEditHandler();
-    if (h != null)
-      h.computeEnabled();
+  public void setPrintHandler(PrintHandler printer) {
+    this.printer = printer;
+    fileListener.register(printer != null);
   }
 
-  public EditHandler getEditHandler() {
-    return null;
-  }
-
-  public PrintHandler getPrintHandler() {
-    return null;
-  }
-
-// SimulationHandler getSimulationHandler() {
-//   return null;
-// }
-
-  public LogFrame getLogFrame() {
-    return logFrame;
-  }
-  
-  protected LogisimMenuBar getLogisimMenuBar() {
-    return logFrame.getLogisimMenuBar();
-  }
-
-  protected Model getModel() {
-    return logFrame.getModel();
-  }
-
-  protected Project getProject() {
-    return logFrame.getProject();
-  }
-
-  public abstract String getTitle();
-
-  public abstract void localeChanged();
-
-  public abstract void modelChanged(Model oldModel, Model newModel);
 }

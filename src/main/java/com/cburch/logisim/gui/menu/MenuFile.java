@@ -96,7 +96,7 @@ class MenuFile extends Menu implements ActionListener {
       add(quit);
     }
 
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
     newi.addActionListener(this);
     open.addActionListener(this);
     if (proj == null) {
@@ -118,13 +118,19 @@ class MenuFile extends Menu implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
+    Project baseProj = menubar.getBaseProject();
     if (src == newi) {
-      ProjectActions.doNew(proj);
+      ProjectActions.doNew(baseProj);
     } else if (src == merge) {
-      ProjectActions.doMerge(proj == null ? null : proj.getFrame().getCanvas(), proj);
+      ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      ProjectActions.doOpen(proj == null ? null : proj.getFrame().getCanvas(), proj);
+      Project newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      if (newProj != null && proj != null
+          && !proj.isFileDirty()
+          && proj.getLogisimFile().getLoader().getMainFile() == null) {
+        proj.getFrame().dispose();
+      }
     } else if (src == close && proj != null) {
       int result = 0;
       Frame frame = proj.getFrame();
@@ -162,12 +168,10 @@ class MenuFile extends Menu implements ActionListener {
 
         // Close the current project
         frame.dispose();
-        OptionsFrame f = proj.getOptionsFrame(false);
-        if (f != null) f.dispose();
       }
-    } else if (src == save) {
+    } else if (src == save && proj != null) {
       ProjectActions.doSave(proj);
-    } else if (src == saveAs) {
+    } else if (src == saveAs && proj != null) {
       ProjectActions.doSaveAs(proj);
     } else if (src == prefs) {
       PreferencesFrame.showPreferences();

@@ -30,8 +30,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
@@ -55,7 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /** @author YSY */
-public class RegTabContent extends JScrollPane implements LocaleListener, SimulatorListener {
+public class RegTabContent extends JScrollPane implements LocaleListener, Simulator.Listener {
   private static final long serialVersionUID = 1L;
   private static final HashMap<String, Component> registers = new HashMap<>();
   private final JPanel panel = new JPanel(new GridBagLayout());
@@ -212,18 +211,18 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   }
 
   @Override
-  public void propagationCompleted(SimulatorEvent e) {
+  public void simulatorReset(Simulator.Event e) {
+    fillArray();
+  }
+
+  @Override
+  public void propagationCompleted(Simulator.Event e) {
     // throw new UnsupportedOperationException("Not supported yet.");
     fillArray();
   }
 
   @Override
-  public void simulatorStateChanged(SimulatorEvent e) {
-    // throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void tickCompleted(SimulatorEvent e) {
+  public void simulatorStateChanged(Simulator.Event e) {
     // throw new UnsupportedOperationException("Not supported yet.");
   }
 

@@ -98,7 +98,7 @@ class MenuEdit extends Menu {
     add(addCtrl);
     add(remCtrl);
 
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
     if (proj != null) {
       proj.addProjectListener(myListener);
       undo.addActionListener(myListener);
@@ -125,7 +125,7 @@ class MenuEdit extends Menu {
   @Override
   void computeEnabled() {
     setEnabled(
-        menubar.getProject() != null
+        menubar.getSaveProject() != null
             || cut.hasListeners()
             || copy.hasListeners()
             || paste.hasListeners()
@@ -161,20 +161,15 @@ class MenuEdit extends Menu {
 
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
-      Project proj = menubar.getProject();
-      if (src == undo) {
-        if (proj != null) {
-          proj.undoAction();
-        }
-      } else if (src == redo) {
-        if (proj != null) {
-          proj.redoAction();
-        }
-      }
+      Project proj = menubar.getSaveProject();
+      if (src == undo && proj != null)
+        proj.undoAction();
+      else if (src == redo && proj != null)
+        proj.redoAction();
     }
 
     public void projectChanged(ProjectEvent e) {
-      Project proj = menubar.getProject();
+      Project proj = menubar.getSaveProject();
       Action last = proj == null ? null : proj.getLastAction();
       if (last == null) {
         undo.setText(S.get("editCantUndoItem"));

@@ -102,7 +102,6 @@ public class Netlist implements CircuitListener {
               }
             }
             break;
-          case CircuitEvent.ACTION_CHANGE:
           case CircuitEvent.ACTION_CLEAR:
           case CircuitEvent.ACTION_INVALIDATE:
             DRCStatus = DRC_REQUIRED;

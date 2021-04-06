@@ -30,201 +30,137 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
-import java.awt.Component;
-import java.awt.FlowLayout;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.icons.FatArrowIcon;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JDialogOk;
+
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.DefaultComboBoxModel;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
 
-class SelectionPanel extends LogPanel {
+public class SelectionPanel extends LogPanel {
   private static final long serialVersionUID = 1L;
-  private final Listener listener = new Listener();
   private final ComponentSelector selector;
-  private final JButton addTool;
-  private final JButton changeBase;
-  private final JButton moveUp;
-  private final JButton moveDown;
-  private final JButton remove;
   private final SelectionList list;
-  private final JCheckBox enableChoosePanelCheckBox;
-  private final JLabel enableChoosePanelCheckLabel;
-  private final JPanel enableChoosePanelCheckPanel;
-  private final JLabel chooseClkLabel;
-  private final JPanel chooseClkPanel;
-
-  @SuppressWarnings("rawtypes")
-  private final JComboBox chooseClkCombo;
-
-  private final JLabel chooseClkFrequencyLabel;
-  private final JTextField chooseClkFrequencyTF;
-
-  @SuppressWarnings("rawtypes")
-  private final JComboBox chooseClkUnitCombo;
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  private JLabel selectDesc, exploreLabel, listLabel;
+  
   public SelectionPanel(LogFrame window) {
     super(window);
-    selector = new ComponentSelector(getModel());
-    addTool = new JButton();
-    changeBase = new JButton();
-    moveUp = new JButton();
-    moveDown = new JButton();
-    remove = new JButton();
+    selector = new ComponentSelector(getModel().getCircuit(), ComponentSelector.ANY_SIGNAL);
     list = new SelectionList();
-    list.setSelection(getSelection());
+    list.setLogModel(getModel());
 
-    JPanel buttons = new JPanel(new GridLayout(5, 1));
-    buttons.add(addTool);
-    buttons.add(changeBase);
-    buttons.add(moveUp);
-    buttons.add(moveDown);
-    buttons.add(remove);
-
-    addTool.addActionListener(listener);
-    changeBase.addActionListener(listener);
-    moveUp.addActionListener(listener);
-    moveDown.addActionListener(listener);
-    remove.addActionListener(listener);
-    selector.addMouseListener(listener);
-    selector.addTreeSelectionListener(listener);
-    list.addListSelectionListener(listener);
-    listener.computeEnabled();
-
-    // === setup clk panel === //
-    // enable area
-    enableChoosePanelCheckPanel = new JPanel(new FlowLayout());
-    enableChoosePanelCheckLabel = new JLabel(S.get("timeSelectionEnable"));
-    enableChoosePanelCheckBox = new JCheckBox();
-    enableChoosePanelCheckBox.setSelected(false);
-    enableChoosePanelCheckBox.addItemListener(listener);
-    enableChoosePanelCheckPanel.add(enableChoosePanelCheckLabel);
-    enableChoosePanelCheckPanel.add(enableChoosePanelCheckBox);
-    // freq area
-    chooseClkLabel = new JLabel();
-    chooseClkCombo = new JComboBox<>();
-    chooseClkPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    chooseClkFrequencyLabel = new JLabel();
-    chooseClkFrequencyTF = new JTextField(5);
-    chooseClkFrequencyTF.setText("1");
-    chooseClkUnitCombo = new JComboBox(TimelineParam.units);
-    chooseClkUnitCombo.setSelectedIndex(0);
-    chooseClkPanel.add(chooseClkLabel);
-    chooseClkPanel.add(chooseClkCombo);
-    chooseClkPanel.add(chooseClkFrequencyLabel);
-    chooseClkPanel.add(chooseClkFrequencyTF);
-    chooseClkPanel.add(chooseClkUnitCombo);
-    // disable all component in chooseClkPanel
-    for (Component com : chooseClkPanel.getComponents()) {
-      com.setEnabled(false);
-    }
+    JScrollPane explorerPane = new JScrollPane(selector,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    JScrollPane listPane = new JScrollPane(list,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     GridBagLayout gridbag = new GridBagLayout();
     GridBagConstraints gbc = new GridBagConstraints();
     setLayout(gridbag);
-    JScrollPane explorerPane =
-        new JScrollPane(
-            selector,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    JScrollPane listPane =
-        new JScrollPane(
-            list,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    gbc.fill = GridBagConstraints.BOTH;
-    gbc.weightx = 1.0;
-    gbc.weighty = 1.0;
-    gridbag.setConstraints(explorerPane, gbc);
-    add(explorerPane);
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.anchor = GridBagConstraints.NORTH;
-    gbc.weightx = 0.0;
-    gridbag.setConstraints(buttons, gbc);
-    add(buttons);
-    gbc.fill = GridBagConstraints.BOTH;
-    gbc.weightx = 1.0;
-    gridbag.setConstraints(listPane, gbc);
-    add(listPane);
 
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.weightx = 0.0;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.insets = new Insets(15, 10, 0, 10);
+
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.gridwidth = 3;
+    selectDesc = new JLabel();
+    gridbag.setConstraints(selectDesc, gbc);
+    add(selectDesc);
     gbc.gridwidth = 1;
+
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gridbag.setConstraints(enableChoosePanelCheckPanel, gbc);
-    add(enableChoosePanelCheckPanel);
+    exploreLabel = new JLabel();
+    gridbag.setConstraints(exploreLabel, gbc);
+    add(exploreLabel);
 
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.weightx = 0.0;
-    gbc.gridwidth = 3;
+    gbc.gridx = 2;
+    gbc.gridy = 1;
+    listLabel = new JLabel();
+    gridbag.setConstraints(listLabel, gbc);
+    add(listLabel);
+
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = gbc.weighty = 1.0;
+    gbc.insets = new Insets(10, 10, 10, 10);
     gbc.gridx = 0;
     gbc.gridy = 2;
-    gridbag.setConstraints(chooseClkPanel, gbc);
-    add(chooseClkPanel);
-  }
+    gridbag.setConstraints(explorerPane, gbc);
+    add(explorerPane);
+    explorerPane.setPreferredSize(new Dimension(120, 200));
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private void createClkChooser(Selection selection) {
-    ArrayList<String> allSelected = new ArrayList<>();
-    for (int i = 0; i < selection.size(); ++i) {
-      String name = selection.get(i).toString();
-      if (!name.equalsIgnoreCase("sysclk")) {
-        allSelected.add(name);
+    JButton addArrow = new JButton(new FatArrowIcon(Direction.EAST));
+    JButton delArrow = new JButton(new FatArrowIcon(Direction.WEST));
+    addArrow.setBorder(BorderFactory.createEmptyBorder());
+    delArrow.setBorder(BorderFactory.createEmptyBorder());
+    addArrow.setContentAreaFilled(false);
+    delArrow.setContentAreaFilled(false);
+    addArrow.setEnabled(false);
+    delArrow.setEnabled(false);
+    selector.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty());
       }
-    }
-    chooseClkCombo.removeAll();
-    chooseClkCombo.setModel(new DefaultComboBoxModel(allSelected.toArray()));
-    int defaultPos = allSelected.indexOf("clk");
-    if (defaultPos != -1) {
-      chooseClkCombo.setSelectedIndex(defaultPos);
-    }
+    });
+    list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty());
+      }
+    });
+    addArrow.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        list.add(selector.getSelectedItems());
+      }
+    });
+    delArrow.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        list.removeSelected();
+      }
+    });
+
+    Box arrowBox = new Box(BoxLayout.Y_AXIS);
+    arrowBox.add(addArrow);
+    arrowBox.add(delArrow);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    gbc.gridx = 1;
+    gbc.gridy = 2;
+    gridbag.setConstraints(arrowBox, gbc);
+    add(arrowBox);
+
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = gbc.weighty = 1.0;
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.gridx = 2;
+    gbc.gridy = 2;
+    gridbag.setConstraints(listPane, gbc);
+    add(listPane);
+    listPane.setPreferredSize(new Dimension(AppPreferences.getScaled(180), AppPreferences.getScaled(200)));
   }
 
   @Override
   public String getHelpText() {
     return S.get("selectionHelp");
-  }
-
-  public TimelineParam getTimelineParam() {
-    String selFreqUnit = (String) chooseClkUnitCombo.getSelectedItem();
-    String selClk = (String) chooseClkCombo.getSelectedItem();
-    int selFreq = 0;
-    try {
-      selFreq = Integer.parseInt(chooseClkFrequencyTF.getText());
-    } catch (Exception e) {
-    }
-
-    if (enableChoosePanelCheckBox.isSelected()
-        && selFreqUnit != null
-        && selClk != null
-        && selFreq > 0) {
-      return new TimelineParam(selFreqUnit, selClk, selFreq);
-    } else {
-      return null;
-    }
   }
 
   @Override
@@ -234,132 +170,37 @@ class SelectionPanel extends LogPanel {
 
   @Override
   public void localeChanged() {
-    addTool.setText(S.get("selectionAdd"));
-    changeBase.setText(S.get("selectionChangeBase"));
-    moveUp.setText(S.get("selectionMoveUp"));
-    moveDown.setText(S.get("selectionMoveDown"));
-    remove.setText(S.get("selectionRemove"));
-    chooseClkLabel.setText(S.get("timeSelectionClock"));
-    chooseClkFrequencyLabel.setText(S.get("timeSelectionFrequency"));
+    selectDesc.setText(S.get("selectionDesc"));
+    exploreLabel.setText(S.get("exploreLabel"));
+    listLabel.setText(S.get("listLabel"));
     selector.localeChanged();
     list.localeChanged();
   }
 
   @Override
   public void modelChanged(Model oldModel, Model newModel) {
-    if (getModel() == null) {
-      selector.setLogModel(newModel);
-      list.setSelection(null);
-    } else {
-      selector.setLogModel(newModel);
-      list.setSelection(getSelection());
-    }
-    listener.computeEnabled();
+    selector.setRootCircuit(newModel.getCircuit());
+    list.setLogModel(newModel);
   }
 
-  private class Listener extends MouseAdapter
-      implements ActionListener, TreeSelectionListener, ListSelectionListener, ItemListener {
-
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == addTool) {
-        doAdd(selector.getSelectedItems());
-      } else if (src == changeBase) {
-        SelectionItem sel = (SelectionItem) list.getSelectedValue();
-        if (sel != null) {
-          int radix = sel.getRadix();
-          switch (radix) {
-            case 2:
-              sel.setRadix(10);
-              break;
-            case 10:
-              sel.setRadix(16);
-              break;
-            default:
-              sel.setRadix(2);
-          }
-        }
-      } else if (src == moveUp) {
-        doMove(-1);
-      } else if (src == moveDown) {
-        doMove(1);
-      } else if (src == remove) {
-        Selection sel = getSelection();
-        Object[] toRemove = list.getSelectedValuesList().toArray();
-        boolean changed = false;
-        for (Object o : toRemove) {
-          int index = sel.indexOf((SelectionItem) o);
-          if (index >= 0) {
-            sel.remove(index);
-            changed = true;
-          }
-        }
-        if (changed) {
-          list.clearSelection();
-        }
-        createClkChooser(getSelection());
-      }
+  static class SelectionDialog extends JDialogOk {
+    private static final long serialVersionUID = 1L;
+    SelectionPanel selPanel;
+    SelectionDialog(LogFrame logFrame) {
+      super("Signal Selection", false);
+      selPanel = new SelectionPanel(logFrame);
+      selPanel.localeChanged();
+      getContentPane().add(selPanel);
+      setMinimumSize(new Dimension(350, 300));
+      setSize(400, 400);
+      pack();
     }
+    public void cancelClicked() { okClicked(); }
+    public void okClicked() { }
+  }
 
-    private void computeEnabled() {
-      int index = list.getSelectedIndex();
-      addTool.setEnabled(selector.hasSelectedItems());
-      changeBase.setEnabled(index >= 0);
-      moveUp.setEnabled(index > 0);
-      moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
-      remove.setEnabled(index >= 0);
-    }
-
-    private void doAdd(List<SelectionItem> selectedItems) {
-      if (selectedItems != null && selectedItems.size() > 0) {
-        SelectionItem last = null;
-        for (SelectionItem item : selectedItems) {
-          if (!getSelection().contains(item)) {
-            getSelection().add(item);
-            last = item;
-          }
-        }
-        list.setSelectedValue(last, true);
-        createClkChooser(getSelection());
-      }
-    }
-
-    private void doMove(int delta) {
-      Selection sel = getSelection();
-      int oldIndex = list.getSelectedIndex();
-      int newIndex = oldIndex + delta;
-      if (oldIndex >= 0 && newIndex >= 0 && newIndex < sel.size()) {
-        sel.move(oldIndex, newIndex);
-        list.setSelectedIndex(newIndex);
-      }
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-      Object source = e.getItemSelectable();
-      if (source == enableChoosePanelCheckBox) {
-        for (Component com : chooseClkPanel.getComponents()) {
-          com.setEnabled(enableChoosePanelCheckBox.isSelected());
-        }
-      }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-      if (e.getClickCount() == 2) {
-        TreePath path = selector.getPathForLocation(e.getX(), e.getY());
-        if (path != null && listener != null) {
-          doAdd(selector.getSelectedItems());
-        }
-      }
-    }
-
-    public void valueChanged(ListSelectionEvent event) {
-      computeEnabled();
-    }
-
-    public void valueChanged(TreeSelectionEvent event) {
-      computeEnabled();
-    }
+  public static void doDialog(LogFrame logFrame) {
+    SelectionDialog d = new SelectionDialog(logFrame);
+    d.setVisible(true);
   }
 }

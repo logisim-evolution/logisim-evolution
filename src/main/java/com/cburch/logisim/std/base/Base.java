@@ -44,21 +44,38 @@ import java.util.List;
 
 public class Base extends Library {
   private final List<Tool> tools;
+  private final AddTool textAdder = new AddTool(Text.FACTORY);
+  private final SelectTool selectTool = new SelectTool();
 
   public Base() {
     setHidden();
-    SelectTool select = new SelectTool();
     WiringTool wiring = new WiringTool();
 
-    tools =
-        Arrays.asList(
-            new PokeTool(),
-            new EditTool(select, wiring),
-            select,
-            wiring,
-            new TextTool(),
-            new MenuTool(),
-            new AddTool(Text.FACTORY));
+    tools = Arrays.asList(new Tool[] {
+        new PokeTool(),
+        new EditTool(selectTool, wiring),
+        // Select by itself is kind of useless. It can select and move things, or
+        // click to edit attributes. But it can't modify wires like EditTool can.
+        /* select, */
+        wiring,
+        new TextTool(),
+        new MenuTool(),
+        // TextTool uses internall Text.FACTORY, but also supports click-to-edit,
+        // custom cursor, etc. A dedicated "add text tool" is useless.
+        /* new AddTool(Text.FACTORY), */
+      });
+    }
+
+    @Override
+    public Tool getTool(String name) {
+      Tool t = super.getTool(name);
+      if (t == null) {
+        if (name.equals("Text"))
+          return textAdder; // needed by XmlCircuitReader
+        if (name.equals("Select Tool"))
+          return selectTool; // not sure if this is necessary
+      }
+    return t;
   }
 
   @Override

@@ -29,7 +29,10 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
+
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -123,16 +126,16 @@ public class ReplacementMap {
     frozen = true;
   }
 
-  public Collection<Component> get(Component prev) {
-    return map.get(prev);
-  }
-
   public Collection<? extends Component> getAdditions() {
     return inverse.keySet();
   }
 
-  public Collection<Component> getComponentsReplacing(Component comp) {
-    return map.get(comp);
+  public Collection<Component> getReplacementsFor(Component a) {
+    return map.get(a);
+  }
+
+  public Collection<Component> getReplacedBy(Component b) {
+    return inverse.get(b);
   }
 
   ReplacementMap getInverseMap() {
@@ -143,67 +146,73 @@ public class ReplacementMap {
     return map.keySet();
   }
 
-  public Collection<Component> getReplacedComponents() {
-    return map.keySet();
-  }
-
   public boolean isEmpty() {
     return map.isEmpty() && inverse.isEmpty();
   }
 
   public void print(PrintStream out) {
     boolean found = false;
-    for (Component c : getRemovals()) {
+    for (Component a : getRemovals()) {
       if (!found) out.println("  removals:");
       found = true;
-      out.println("    " + c.toString());
+      out.println("    " + a.toString());
+      for (Component b : map.get(a))
+        out.println("     `--> " + b.toString());
     }
     if (!found) out.println("  removals: none");
 
     found = false;
-    for (Component c : getAdditions()) {
+    for (Component b : getAdditions()) {
       if (!found) out.println("  additions:");
       found = true;
-      out.println("    " + c.toString());
+      out.println("    " + b.toString());
+      for (Component a : inverse.get(b))
+        out.println("     ^-- " + a.toString());
     }
     if (!found) out.println("  additions: none");
   }
 
-  public void put(Component prev, Collection<? extends Component> next) {
-    if (frozen) {
+  public void put(Component a, Collection<? extends Component> bs) {
+    if (frozen)
       throw new IllegalStateException("cannot change map after frozen");
-    }
 
-    HashSet<Component> repl = map.get(prev);
-    if (repl == null) {
-      repl = new HashSet<>(next.size());
-      map.put(prev, repl);
+    HashSet<Component> oldBs = map.get(a);
+    if (oldBs == null) {
+      oldBs = new HashSet<Component>(bs.size());
+      map.put(a, oldBs);
     }
-    repl.addAll(next);
+    oldBs.addAll(bs);
 
-    for (Component n : next) {
-      repl = inverse.get(n);
-      if (repl == null) {
-        repl = new HashSet<>(3);
-        inverse.put(n, repl);
+    for (Component b : bs) {
+      HashSet<Component> oldAs = inverse.get(b);
+      if (oldAs == null) {
+        oldAs = new HashSet<Component>(3);
+        inverse.put(b, oldAs);
       }
-      repl.add(prev);
+      oldAs.add(a);
     }
   }
 
-  public void remove(Component comp) {
-    if (frozen) {
-      throw new IllegalStateException("cannot change map after frozen");
-    }
-    map.put(comp, new HashSet<>(3));
+  public void remove(Component a) {
+    if (frozen) throw new IllegalStateException("cannot change map after frozen");
+    map.put(a, new HashSet<>(3));
   }
 
-  public void replace(Component prev, Component next) {
-    put(prev, Collections.singleton(next));
+  public void replace(Component a, Component b) {
+    put(a, Collections.singleton(b));
   }
 
   public void reset() {
     map.clear();
     inverse.clear();
+  }
+
+  public String toString() {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try (PrintStream p = new PrintStream(out, true, "UTF-8")) {
+        print(p);
+    } catch (Exception e) {
+    }
+    return new String(out.toByteArray(), StandardCharsets.UTF_8);
   }
 }

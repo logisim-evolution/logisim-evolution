@@ -74,7 +74,13 @@ public class CircuitState implements InstanceData {
       /* Component was removed */
       else if (action == CircuitEvent.ACTION_REMOVE) {
         Component comp = (Component) event.getData();
+        if (comp == temporaryClock)
+          temporaryClock = null;
+        if (comp.getFactory() instanceof Clock) {
+          knownClocks = false; // just in case, will be recomputed by simulator
+        }
         if (comp.getFactory() instanceof SubcircuitFactory) {
+          knownClocks = false; // just in case, will be recomputed by simulator
           // disconnect from tree
           CircuitState substate = (CircuitState) getData(comp);
           if (substate != null && substate.parentComp == comp) {
@@ -97,6 +103,8 @@ public class CircuitState implements InstanceData {
 
       /* Whole circuit was cleared */
       else if (action == CircuitEvent.ACTION_CLEAR) {
+        temporaryClock = null;
+        knownClocks = false;
         substates.clear();
         wireData = null;
         for (Component c : componentData.keySet()) {
@@ -113,37 +121,24 @@ public class CircuitState implements InstanceData {
         causes.clear();
       }
 
-      /* Component changed */
-      else if (action == CircuitEvent.ACTION_CHANGE) {
-        Object data = event.getData();
-        if (data instanceof Collection) {
-          @SuppressWarnings("unchecked")
-          Collection<Component> comps = (Collection<Component>) data;
-          markComponentsDirty(comps);
-          if (base != null) {
-            for (Component comp : comps) {
-              base.checkComponentEnds(CircuitState.this, comp);
-            }
-          }
-        } else {
-          Component comp = (Component) event.getData();
-          markComponentAsDirty(comp);
-          if (base != null) base.checkComponentEnds(CircuitState.this, comp);
-        }
-      } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      else if (action == CircuitEvent.ACTION_INVALIDATE) {
         Component comp = (Component) event.getData();
         markComponentAsDirty(comp);
+        // If simulator is in single step mode, we want to hilight the
+        // invalidated components (which are likely Pins, Buttons, or other
+        // inputs), so pass this component to the simulator for display.
+        proj.getSimulator().addPendingInput(CircuitState.this, comp);
         // TODO detemine if this should really be missing if (base !=
         // null) base.checkComponentEnds(CircuitState.this, comp);
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         ReplacementMap map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
-        for (Component comp : map.getReplacedComponents()) {
+        for (Component comp : map.getRemovals()) {
           Object compState = componentData.remove(comp);
           if (compState != null) continue; 
           Class<?> compFactory = comp.getFactory().getClass();
           boolean found = false;
-          for (Component repl : map.get(comp)) {
+          for (Component repl : map.getReplacementsFor(comp)) {
             if (repl.getFactory().getClass() == compFactory) {
               found = true;
               setData(repl, compState);
@@ -425,6 +420,7 @@ public class CircuitState implements InstanceData {
   }
 
   void reset() {
+    temporaryClock = null;
     wireData = null;
     for (Component comp : componentData.keySet()) {
       if (comp.getFactory() instanceof Ram) {
@@ -517,17 +513,61 @@ public class CircuitState implements InstanceData {
     wireData = data;
   }
 
-  boolean tick(int ticks) {
+  boolean toggleClocks(int ticks) {
     boolean ret = false;
-    for (Component clock : circuit.getClocks()) {
+    if (temporaryClock != null)
+      ret |= temporaryClockValidateOrTick(ticks);
+
+    for (Component clock : circuit.getClocks())
       ret |= Clock.tick(this, ticks, clock);
-    }
 
     CircuitState[] subs = new CircuitState[substates.size()];
-    for (CircuitState substate : substates.toArray(subs)) {
-      ret |= substate.tick(ticks);
-    }
+    for (CircuitState substate : substates.toArray(subs)) 
+      ret |= substate.toggleClocks(ticks);
     return ret;
+  }
+
+  private boolean temporaryClockValidateOrTick(int ticks) {
+    // temporaryClock.getFactory() will be Pin, normally a 1 bit input
+    Pin pin;
+    try {
+      pin = (Pin)temporaryClock.getFactory();
+    } catch (ClassCastException e) {
+      temporaryClock = null;
+      return false;
+    }
+    Instance i = Instance.getInstanceFor(temporaryClock);
+    if (i == null || !pin.isInputPin(i) || pin.getWidth(i).getWidth() != 1) {
+      temporaryClock = null;
+      return false;
+    }
+    if (ticks >= 0) {
+      InstanceState state = getInstanceState(i);
+      // Value v = pin.getValue(state);
+      pin.setValue(state, ticks%2==0 ? Value.FALSE : Value.TRUE);
+      state.fireInvalidated();
+    }
+    return true;
+  }
+
+  private boolean knownClocks;
+  private Component temporaryClock;
+
+  public boolean hasKnownClocks() {
+    return knownClocks || temporaryClock != null;
+  }
+
+  public void markKnownClocks() {
+    knownClocks = true;
+  }
+
+  public boolean setTemporaryClock(Component clk) {
+    temporaryClock = clk;
+    return clk == null ? true : temporaryClockValidateOrTick(-1);
+  }
+
+  public Component getTemporaryClock() {
+    return temporaryClock;
   }
 
   @Override

@@ -288,19 +288,7 @@ public class Analyze {
    * order, with ties broken left-right).
    */
   public static SortedMap<Instance, String> getPinLabels(Circuit circuit) {
-    Comparator<Instance> locOrder =
-        new Comparator<Instance>() {
-          public int compare(Instance ac, Instance bc) {
-            Location a = ac.getLocation();
-            Location b = bc.getLocation();
-            if (a.getY() < b.getY()) return -1;
-            if (a.getY() > b.getY()) return 1;
-            if (a.getX() < b.getX()) return -1;
-            if (a.getX() > b.getX()) return 1;
-            return a.hashCode() - b.hashCode();
-          }
-        };
-    SortedMap<Instance, String> ret = new TreeMap<>(locOrder);
+    SortedMap<Instance, String> ret = new TreeMap<>(Location.CompareVertical);
 
     // Put the pins into the TreeMap, with null labels
     for (Instance pin : circuit.getAppearance().getPortOffsets(Direction.EAST).values()) {

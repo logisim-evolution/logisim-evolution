@@ -272,9 +272,20 @@ public class Pin extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return state.getAttributeValue(StdAttr.WIDTH);
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       PinState s = getState(state);
       return s.intendedValue;
+    }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+      return attrs.type == EndData.INPUT_ONLY;
     }
   }
 

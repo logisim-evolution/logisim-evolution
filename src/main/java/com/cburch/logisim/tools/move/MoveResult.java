@@ -30,7 +30,6 @@ package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -87,32 +86,12 @@ public class MoveResult {
     return ret;
   }
 
-  public Collection<Wire> getWiresToRemove() {
-    @SuppressWarnings("unchecked")
-    Collection<Wire> ret = (Collection<Wire>) replacements.getAdditions();
-    return ret;
-  }
-
   public void print(PrintStream out) {
-    boolean printed = false;
-    for (Component w : replacements.getAdditions()) {
-      printed = true;
-      out.println("add " + w);
-    }
-    for (Component w : replacements.getRemovals()) {
-      printed = true;
-      out.println("del " + w);
-    }
-    for (Component w : replacements.getReplacedComponents()) {
-      printed = true;
-      out.print("repl " + w + " by");
-      for (Component w2 : replacements.getComponentsReplacing(w)) {
-        out.print(" " + w2);
-      }
-      out.println();
-    }
-    if (!printed) {
-      out.println("no replacements");
-    }
+    out.print("MoveResult: ");
+    replacements.print(out);
+  }
+  
+  public String toString() {
+    return "MoveResult: " + replacements.toString();
   }
 }

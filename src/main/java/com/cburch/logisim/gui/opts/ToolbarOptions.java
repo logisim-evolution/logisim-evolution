@@ -32,8 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.file.ToolbarData;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
-import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
-import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
@@ -139,7 +137,7 @@ class ToolbarOptions extends OptionsPanel {
     list.localeChanged();
   }
 
-  private class Listener implements ProjectExplorerListener, ActionListener, ListSelectionListener {
+  private class Listener implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == addTool) {
@@ -167,7 +165,7 @@ class ToolbarOptions extends OptionsPanel {
       remove.setEnabled(index >= 0);
     }
 
-    public void deleteRequested(ProjectExplorerEvent event) {}
+    public void deleteRequested(ProjectExplorer.Event event) {}
 
     private void doAddTool(Tool tool) {
       if (tool != null) {
@@ -185,7 +183,7 @@ class ToolbarOptions extends OptionsPanel {
       }
     }
 
-    public void doubleClicked(ProjectExplorerEvent event) {
+    public void doubleClicked(ProjectExplorer.Event event) {
       Object target = event.getTarget();
       if (target instanceof ProjectExplorerToolNode) {
         Tool tool = ((ProjectExplorerToolNode) target).getValue();
@@ -193,13 +191,13 @@ class ToolbarOptions extends OptionsPanel {
       }
     }
 
-    public JPopupMenu menuRequested(ProjectExplorerEvent event) {
+    public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
 
-    public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {}
+    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
 
-    public void selectionChanged(ProjectExplorerEvent event) {
+    public void selectionChanged(ProjectExplorer.Event event) {
       computeEnabled();
     }
 

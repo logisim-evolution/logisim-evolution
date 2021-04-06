@@ -235,6 +235,8 @@ class CanvasPainter implements PropertyChangeListener {
     circState.drawOscillatingPoints(ptContext);
     gScaled.setColor(Color.BLUE);
     proj.getSimulator().drawStepPoints(ptContext);
+    gScaled.setColor(Color.MAGENTA); // fixme
+    proj.getSimulator().drawPendingInputs(ptContext);
     gScaled.dispose();
   }
 

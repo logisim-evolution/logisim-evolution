@@ -42,7 +42,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-public class PreferencesFrame extends LFrame {
+public class PreferencesFrame extends LFrame.Dialog {
 
   private static final long serialVersionUID = 1L;
   private static WindowMenuManager MENU_MANAGER = null;
@@ -52,7 +52,7 @@ public class PreferencesFrame extends LFrame {
   private int FpgaTabIdx = -1;
 
   private PreferencesFrame() {
-    super(false, null);
+    super(null);
 
     panels =
         new OptionsPanel[] {

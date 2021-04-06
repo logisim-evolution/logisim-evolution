@@ -49,4 +49,13 @@ public class CircuitTransactionResult {
   public CircuitTransaction getReverseTransaction() {
     return mutator.getReverseTransaction();
   }
+  
+  public String toString() {
+    String s = "CircuitTransactionResult affecting...";
+    for (Circuit c : getModifiedCircuits()) {
+      s += "\n    - circuit " + c + " with replacements...";
+      s += "\n" +getReplacementMap(c);
+    }
+    return s;
+  }
 }

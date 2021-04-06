@@ -32,8 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -60,10 +58,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class TestFrame extends LFrame {
+public class TestFrame extends LFrame.SubWindowWithSimulation {
 
   private static final long serialVersionUID = 1L;
-  private final Project project;
   private final Map<Circuit, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final WindowMenuManager windowManager;
@@ -82,8 +79,7 @@ public class TestFrame extends LFrame {
   private File curFile;
 
   public TestFrame(Project project) {
-    super(false, project);
-    this.project = project;
+    super(project);
     this.windowManager = new WindowMenuManager();
     project.addProjectListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
@@ -134,17 +130,12 @@ public class TestFrame extends LFrame {
     return curModel;
   }
 
-  public Project getProject() {
-    return project;
-  }
-
   private void setSimulator(Simulator value, Circuit circuit) {
     if ((value == null) == (curModel == null)) {
       if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
     }
 
-    // LogisimMenuBar menubar = (LogisimMenuBar) getJMenuBar();
-    // menubar.setCircuitState(value, state);
+    menubar.setCircuitState(value, value.getCircuitState());
 
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);
@@ -175,7 +166,7 @@ public class TestFrame extends LFrame {
   }
 
   private class MyListener
-      implements ActionListener, ProjectListener, SimulatorListener, LocaleListener, ModelListener {
+      implements ActionListener, ProjectListener, Simulator.Listener, LocaleListener, ModelListener {
 
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
@@ -247,18 +238,24 @@ public class TestFrame extends LFrame {
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(
-            event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
+        setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }
     }
 
-    public void propagationCompleted(SimulatorEvent e) {
+    @Override
+    public void simulatorReset(Simulator.Event e) {
+      // ? curModel.propagationCompleted();
+    }
+
+    @Override
+    public void propagationCompleted(Simulator.Event e) {
       // curModel.propagationCompleted();
     }
 
-    public void simulatorStateChanged(SimulatorEvent e) {}
+    @Override
+    public void simulatorStateChanged(Simulator.Event e) {}
 
     public void testingChanged() {
       if (getModel().isRunning() && !getModel().isPaused()) {
@@ -279,8 +276,6 @@ public class TestFrame extends LFrame {
       fail.setText(StringUtil.format(S.get("failMessage"), Integer.toString(numFail)));
       finished = numPass + numFail;
     }
-
-    public void tickCompleted(SimulatorEvent e) {}
 
     public void vectorChanged() {}
   }

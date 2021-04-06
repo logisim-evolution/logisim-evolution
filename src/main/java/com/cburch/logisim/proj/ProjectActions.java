@@ -277,7 +277,7 @@ public class ProjectActions {
     }
   }
 
-  public static boolean doOpen(Component parent, Project baseProject) {
+  public static Project doOpen(Component parent, Project baseProject) {
     JFileChooser chooser;
     if (baseProject != null) {
       Loader oldLoader = baseProject.getLogisimFile().getLoader();
@@ -292,13 +292,10 @@ public class ProjectActions {
     chooser.setDialogTitle(S.get("FileOpenItem"));
 
     int returnVal = chooser.showOpenDialog(parent);
-    if (returnVal != JFileChooser.APPROVE_OPTION) return false;
+    if (returnVal != JFileChooser.APPROVE_OPTION) return null;
     File selected = chooser.getSelectedFile();
-    if (selected != null) {
-      doOpen(parent, baseProject, selected);
-    }
-
-    return true;
+    if (selected == null) return null;
+    return doOpen(parent, baseProject, selected);
   }
 
   public static Project doOpen(Component parent, Project baseProject, File f) {

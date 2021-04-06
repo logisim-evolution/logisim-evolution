@@ -225,7 +225,7 @@ public class Selection extends SelectionBase {
         ArrayList<Component> oldAnchored;
         oldAnchored = new ArrayList<>(getComponents());
         for (Component comp : oldAnchored) {
-          Collection<Component> replacedBy = repl.get(comp);
+          Collection<Component> replacedBy = repl.getReplacementsFor(comp);
           if (replacedBy != null) {
             change = true;
             selected.remove(comp);

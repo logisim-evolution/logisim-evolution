@@ -127,7 +127,7 @@ public class TestBench {
 
     VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
     vsim.enable();
-    sim.setIsRunning(true);
+    sim.setAutoPropagation(true);
     /* TODO Timeout */
     while (vsim.isEnabled()) {
       Thread.yield();

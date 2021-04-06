@@ -85,7 +85,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private final MyListener myListener = new MyListener();
   private final MyCellRenderer renderer = new MyCellRenderer();
   private final DeleteAction deleteAction = new DeleteAction();
-  private ProjectExplorerListener listener = null;
+  private Listener listener = null;
   private Tool haloedTool = null;
   public ProjectExplorer(Project proj) {
     super();
@@ -143,7 +143,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     haloedTool = t;
   }
 
-  public void setListener(ProjectExplorerListener value) {
+  public void setListener(Listener value) {
     listener = value;
   }
 
@@ -154,7 +154,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void actionPerformed(ActionEvent event) {
       TreePath path = getSelectionPath();
       if (listener != null && path != null && path.getPathCount() == 2) {
-        listener.deleteRequested(new ProjectExplorerEvent(path));
+        listener.deleteRequested(new Event(path));
       }
 
       ProjectExplorer.this.requestFocus();
@@ -229,7 +229,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       if (e.isPopupTrigger()) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
         if (path != null && listener != null) {
-          JPopupMenu menu = listener.menuRequested(new ProjectExplorerEvent(path));
+          JPopupMenu menu = listener.menuRequested(new Event(path));
           if (menu != null) {
             menu.show(ProjectExplorer.this, e.getX(), e.getY());
           }
@@ -241,7 +241,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       if (e.getClickCount() == 2) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
         if (path != null && listener != null) {
-          listener.doubleClicked(new ProjectExplorerEvent(path));
+          listener.doubleClicked(new Event(path));
         }
       }
     }
@@ -295,7 +295,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void valueChanged(TreeSelectionEvent e) {
       TreePath path = e.getNewLeadSelectionPath();
       if (listener != null) {
-        listener.selectionChanged(new ProjectExplorerEvent(path));
+        listener.selectionChanged(new Event(path));
       }
     }
   }
@@ -451,4 +451,22 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
   }
+
+  public static interface Listener {
+    public void deleteRequested(Event event);
+    public void doubleClicked(Event event);
+    public JPopupMenu menuRequested(Event event);
+    public void moveRequested(Event event, AddTool dragged, AddTool target);
+    public void selectionChanged(Event event);
+  }
+
+  public static class Event {
+    private TreePath path;
+    public Event(TreePath p) { path = p; }
+    public TreePath getTreePath() { return path; }
+    public Object getTarget() {
+      return path == null ? null : path.getLastPathComponent();
+    }
+  }
+
 }

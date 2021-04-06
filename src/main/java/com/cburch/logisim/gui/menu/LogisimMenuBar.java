@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.menu;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.fpga.menu.MenuFPGA;
+import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -39,7 +40,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
@@ -85,8 +85,7 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem REMOVE_CIRCUIT = new LogisimMenuItem("RemoveCircuit");
   public static final LogisimMenuItem EDIT_LAYOUT = new LogisimMenuItem("EditLayout");
   public static final LogisimMenuItem EDIT_APPEARANCE = new LogisimMenuItem("EditAppearance");
-  public static final LogisimMenuItem TOGGLE_APPEARANCE =
-      new LogisimMenuItem("ToggleEditLayoutAppearance");
+  public static final LogisimMenuItem TOGGLE_APPEARANCE = new LogisimMenuItem("ToggleEditLayoutAppearance");
   public static final LogisimMenuItem REVERT_APPEARANCE = new LogisimMenuItem("RevertAppearance");
   public static final LogisimMenuItem ANALYZE_CIRCUIT = new LogisimMenuItem("AnalyzeCircuit");
   public static final LogisimMenuItem CIRCUIT_STATS = new LogisimMenuItem("GetCircuitStatistics");
@@ -94,10 +93,8 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem SIMULATE_RUN = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_RUN_TOGGLE = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_STEP = new LogisimMenuItem("SimulateStep");
-  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE =
-      new LogisimMenuItem("SimulateVhdlEnable");
-  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES =
-      new LogisimMenuItem("GenerateVhdlSimFiles");
+  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE = new LogisimMenuItem("SimulateVhdlEnable");
+  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES = new LogisimMenuItem("GenerateVhdlSimFiles");
   public static final LogisimMenuItem TICK_ENABLE = new LogisimMenuItem("TickEnable");
   public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
   public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
@@ -107,24 +104,25 @@ public class LogisimMenuBar extends JMenuBar {
   public final MenuSimulate simulate;
   public final MenuHelp help;
   public final MenuFPGA fpga;
-  private final JFrame parent;
+  private final LFrame parent;
   private final MyListener listener;
-  private final Project proj;
-  private final HashMap<LogisimMenuItem, MenuItem> menuItems =
-      new HashMap<>();
+  private final Project saveProj, baseProj, simProj;
+  private final HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<>();
   private final ArrayList<ChangeListener> enableListeners;
   private SimulateListener simulateListener = null;
 
-  public LogisimMenuBar(JFrame parent, Project proj) {
+  public LogisimMenuBar(LFrame parent, Project saveProj, Project baseProj, Project simProj) {
     this.parent = parent;
     this.listener = new MyListener();
-    this.proj = proj;
+    this.saveProj = saveProj;
+    this.baseProj = baseProj;
+    this.simProj = simProj;
     this.enableListeners = new ArrayList<>();
     add(file = new MenuFile(this));
     add(edit = new MenuEdit(this));
     add(project = new MenuProject(this));
     add(simulate = new MenuSimulate(this));
-    add(fpga = new MenuFPGA(parent, this, proj));
+    add(fpga = new MenuFPGA(parent, this, saveProj));
     add(new WindowMenu(parent));
     add(help = new MenuHelp(this));
 
@@ -172,12 +170,20 @@ public class LogisimMenuBar extends JMenuBar {
     }
   }
 
-  JFrame getParentWindow() {
+  LFrame getParentFrame() {
     return parent;
   }
 
-  public Project getProject() {
-    return proj;
+  public Project getSaveProject() {
+    return saveProj;
+  }
+
+  public Project getBaseProject() {
+    return baseProj;
+  }
+
+  public Project getSimulationProject() {
+    return simProj;
   }
 
   public boolean isEnabled(LogisimMenuItem item) {

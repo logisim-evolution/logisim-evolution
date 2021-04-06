@@ -34,8 +34,6 @@ import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.AttrTableModel;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
-import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
-import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.main.AttrTableToolModel;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -283,7 +281,7 @@ class MouseOptions extends OptionsPanel {
           MouseListener,
           ListSelectionListener,
           MouseMappings.MouseMappingsListener,
-          ProjectExplorerListener {
+          ProjectExplorer.Listener {
     //
     // ActionListener method
     //
@@ -299,11 +297,11 @@ class MouseOptions extends OptionsPanel {
       }
     }
 
-    public void deleteRequested(ProjectExplorerEvent event) {}
+    public void deleteRequested(ProjectExplorer.Event event) {}
 
-    public void doubleClicked(ProjectExplorerEvent event) {}
+    public void doubleClicked(ProjectExplorer.Event event) {}
 
-    public JPopupMenu menuRequested(ProjectExplorerEvent event) {
+    public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
 
@@ -334,12 +332,12 @@ class MouseOptions extends OptionsPanel {
 
     public void mouseReleased(MouseEvent e) {}
 
-    public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {}
+    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
 
     //
     // Explorer.Listener methods
     //
-    public void selectionChanged(ProjectExplorerEvent event) {
+    public void selectionChanged(ProjectExplorer.Event event) {
       Object target = event.getTarget();
       if (target instanceof ProjectExplorerToolNode) {
         Tool tool = ((ProjectExplorerToolNode) target).getValue();

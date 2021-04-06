@@ -63,6 +63,11 @@ public class Switch extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       return state.getPortValue(1);
     }

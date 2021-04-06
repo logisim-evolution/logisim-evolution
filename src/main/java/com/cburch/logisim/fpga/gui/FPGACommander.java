@@ -33,8 +33,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -75,7 +74,7 @@ public class FPGACommander
     implements ActionListener,
         LibraryListener,
         ProjectListener,
-        SimulatorListener,
+        Simulator.Listener,
         CircuitListener,
         WindowListener,
         LocaleListener,
@@ -140,16 +139,16 @@ public class FPGACommander
   }
 
   @Override
-  public void propagationCompleted(SimulatorEvent e) {}
+  public void propagationCompleted(Simulator.Event e) {}
 
   @Override
-  public void simulatorStateChanged(SimulatorEvent e) {
-  FrequencyPanel.setSelectedFrequency();
+  public void simulatorStateChanged(Simulator.Event e) {
+    FrequencyPanel.setSelectedFrequency();
   }
 
   @Override
-  public void tickCompleted(SimulatorEvent e) {}
-
+  public void simulatorReset(Simulator.Event e) { }
+  
   @Override
   public void circuitChanged(CircuitEvent event) {
     int act = event.getAction();

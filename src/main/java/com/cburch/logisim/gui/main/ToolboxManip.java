@@ -41,9 +41,7 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.AttrTableModel;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
-import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
 import com.cburch.logisim.gui.generic.ProjectExplorerLibraryNode;
-import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.menu.Popups;
 import com.cburch.logisim.gui.menu.ProjectCircuitActions;
@@ -61,7 +59,7 @@ import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import javax.swing.JPopupMenu;
 
-class ToolboxManip implements ProjectExplorerListener {
+class ToolboxManip implements ProjectExplorer.Listener {
   private final Project proj;
   private final ProjectExplorer explorer;
   private final MyListener myListener = new MyListener();
@@ -90,7 +88,7 @@ class ToolboxManip implements ProjectExplorerListener {
     }
   }
 
-  public void deleteRequested(ProjectExplorerEvent event) {
+  public void deleteRequested(ProjectExplorer.Event event) {
     Object request = event.getTarget();
     if (request instanceof ProjectExplorerLibraryNode) {
       Library lib = ((ProjectExplorerLibraryNode) request).getValue();
@@ -107,7 +105,7 @@ class ToolboxManip implements ProjectExplorerListener {
     }
   }
 
-  public void doubleClicked(ProjectExplorerEvent event) {
+  public void doubleClicked(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
       ((ProjectExplorerToolNode) clicked).fireNodeChanged();
@@ -128,7 +126,7 @@ class ToolboxManip implements ProjectExplorerListener {
     }
   }
 
-  public JPopupMenu menuRequested(ProjectExplorerEvent event) {
+  public JPopupMenu menuRequested(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
       Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
@@ -160,7 +158,7 @@ class ToolboxManip implements ProjectExplorerListener {
     }
   }
 
-  public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {
+  public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
     LogisimFile file = proj.getLogisimFile();
     int draggedIndex = file.getTools().indexOf(dragged);
     int targetIndex = file.getTools().indexOf(target);
@@ -168,7 +166,7 @@ class ToolboxManip implements ProjectExplorerListener {
     proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
   }
 
-  public void selectionChanged(ProjectExplorerEvent event) {
+  public void selectionChanged(ProjectExplorer.Event event) {
     if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
       lastSelected = proj.getTool();
     }

@@ -77,15 +77,20 @@ public abstract class JDialogOk extends JDialog {
   protected Window parent;
   
   public JDialogOk(String title) {
+    this(title,true);
+  }
+  public JDialogOk(String title, boolean withCancel) {
     super(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
         title, Dialog.ModalityType.APPLICATION_MODAL);
     parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-    configure();
+    configure(withCancel);
   }
+  
+  
 
-public void cancelClicked() {}
+  public void cancelClicked() {}
 
-  private void configure() {
+  private void configure(boolean withCancel) {
     MyListener listener = new MyListener();
     this.addWindowListener(listener);
     ok.addActionListener(listener);
@@ -95,8 +100,10 @@ public void cancelClicked() {}
     buttons.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     buttons.add(Box.createHorizontalGlue());
     buttons.add(ok);
-    buttons.add(Box.createHorizontalStrut(10));
-    buttons.add(cancel);
+    if (withCancel) {
+      buttons.add(Box.createHorizontalStrut(10));
+      buttons.add(cancel);
+    }
     buttons.add(Box.createHorizontalGlue());
 
     Container pane = super.getContentPane();

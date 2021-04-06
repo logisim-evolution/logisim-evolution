@@ -514,7 +514,7 @@ public class TtyInterface {
       }
       prevOutputs = curOutputs;
       tickCount++;
-      prop.tick();
+      prop.toggleClocks();
       prop.propagate();
     }
     long elapse = System.currentTimeMillis() - start;

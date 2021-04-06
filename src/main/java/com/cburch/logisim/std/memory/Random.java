@@ -64,12 +64,22 @@ public class Random extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return state.getAttributeValue(StdAttr.WIDTH);
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
       if (dataWidth == null) dataWidth = BitWidth.create(0);
       StateData data = (StateData) state.getData();
       if (data == null) return Value.createKnown(dataWidth, 0);
       return Value.createKnown(dataWidth, data.value);
+    }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      return true;
     }
   }
 

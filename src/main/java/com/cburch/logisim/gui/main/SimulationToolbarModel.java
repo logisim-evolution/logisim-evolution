@@ -42,7 +42,7 @@ import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
+public class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
   private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
   private static final SimulationIcon EnableDisableIcon =
       new SimulationIcon(SimulationIcon.SIM_ENABLE);
@@ -114,8 +114,8 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
 
   public void stateChanged(ChangeEvent e) {
     Simulator sim = project.getSimulator();
-    boolean running = sim != null && sim.isRunning();
-    boolean ticking = sim != null && sim.isTicking();
+    boolean running = sim != null && sim.isAutoPropagating();
+    boolean ticking = sim != null && sim.isAutoTicking();
     if (running) {
       RunToggleIcon.setType(SimulationIcon.SIM_PAUSE);
       simRunToggle.setToolTip(S.getter("simulateStopTip"));

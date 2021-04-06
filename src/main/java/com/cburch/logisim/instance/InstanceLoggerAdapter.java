@@ -29,6 +29,7 @@
 package com.cburch.logisim.instance;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.log.Loggable;
 import org.slf4j.Logger;
@@ -49,47 +50,39 @@ class InstanceLoggerAdapter implements Loggable {
       this.logger = loggerClass.getDeclaredConstructor().newInstance();
       this.state = new InstanceStateImpl(null, comp);
     } catch (Exception t) {
-      handleError(t, loggerClass);
+      String className = loggerClass.getName();
+      loggerS.error("Error while instantiating logger {}: {}", className,
+          t.getClass().getName());
+      String msg = t.getMessage();
+      if (msg != null)
+        loggerS.error("  ({})", msg); // OK
       logger = null;
     }
   }
 
   public String getLogName(Object option) {
-    if (logger != null) {
-      return logger.getLogName(state, option);
-    } else {
-      return null;
-    }
+    return logger == null ? null : logger.getLogName(state, option);
   }
 
-  public Object[] getLogOptions(CircuitState circState) {
-    if (logger != null) {
-      updateState(circState);
-      return logger.getLogOptions(state);
-    } else {
-      return null;
-    }
+  public BitWidth getBitWidth(Object option) {
+    return logger == null ? null : logger.getBitWidth(state, option);
+  }
+  
+  public boolean isInput(Object option) {
+    return logger == null ? false : logger.isInput(state, option);
+  }
+
+  public Object[] getLogOptions() {
+    return logger == null ? null : logger.getLogOptions(state);
   }
 
   public Value getLogValue(CircuitState circuitState, Object option) {
     if (logger != null) {
-      updateState(circuitState);
+      if (state.getCircuitState() != circuitState)
+        state.repurpose(circuitState, comp);
       return logger.getLogValue(state, option);
     } else {
       return Value.UNKNOWN;
-    }
-  }
-
-  private void handleError(Throwable t, Class<? extends InstanceLogger> loggerClass) {
-    String className = loggerClass.getName();
-    loggerS.error("Error while instantiating logger {}: {}", className, t.getClass().getName());
-    String msg = t.getMessage();
-    if (msg != null) loggerS.error("  ({})", msg); // OK
-  }
-
-  private void updateState(CircuitState circuitState) {
-    if (state.getCircuitState() != circuitState) {
-      state.repurpose(circuitState, comp);
     }
   }
 }

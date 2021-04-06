@@ -53,7 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class HexFrame extends LFrame {
+public class HexFrame extends LFrame.SubWindow {
   private static final long serialVersionUID = 1L;
   private final WindowMenuManager windowManager = new WindowMenuManager();
   private final EditListener editListener = new EditListener();
@@ -64,19 +64,14 @@ public class HexFrame extends LFrame {
   private final JButton save = new JButton();
   private final JButton close = new JButton();
   private final Instance instance;
-  private final Project proj;
-
-  public HexFrame(Project proj, Instance instance, HexModel model) {
-    super(false, proj);
+  
+  public HexFrame(Project project, Instance instance, HexModel model) {
+    super(project);
     setDefaultCloseOperation(HIDE_ON_CLOSE);
-
-    LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
-    setJMenuBar(menubar);
 
     this.model = model;
     this.editor = new HexEditor(model);
     this.instance = instance;
-    this.proj = proj;
 
     JPanel buttonPanel = new JPanel();
     buttonPanel.add(open);
@@ -113,7 +108,7 @@ public class HexFrame extends LFrame {
     editor.getCaret().addChangeListener(editListener);
     editor.getCaret().setDot(0, false);
     editListener.register(menubar);
-    setLocationRelativeTo(proj.getFrame());
+    setLocationRelativeTo(project.getFrame());
   }
 
   public void closeAndDispose() {
@@ -182,9 +177,9 @@ public class HexFrame extends LFrame {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == open) {
-        HexFile.open((MemContents) model, HexFrame.this, proj, instance);
+        HexFile.open((MemContents) model, HexFrame.this, project, instance);
       } else if (src == save) {
-        HexFile.save((MemContents) model, HexFrame.this, proj, instance);
+        HexFile.save((MemContents) model, HexFrame.this, project, instance);
       } else if (src == close) {
         WindowEvent e = new WindowEvent(HexFrame.this, WindowEvent.WINDOW_CLOSING);
         HexFrame.this.processWindowEvent(e);

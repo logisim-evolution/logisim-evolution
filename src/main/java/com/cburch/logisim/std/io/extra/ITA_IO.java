@@ -53,7 +53,7 @@ public class ITA_IO extends Library {
 
   private List<Tool> tools = null;
   private final Tool[] ADD_TOOLS = {
-    new AddTool(ProgrammableGenerator.FACTORY),
+//    new AddTool(ProgrammableGenerator.FACTORY), /* TODO: Broken component, fix */
   };
 
   @Override

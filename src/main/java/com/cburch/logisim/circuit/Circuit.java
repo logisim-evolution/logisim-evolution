@@ -345,7 +345,7 @@ public class Circuit {
       reporter.AddInfo("Nothing to do !");
       return;
     }
-    SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
+    SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
     HashMap<String, AutoLabel> lablers = new HashMap<>();
     Set<String> LabelNames = new LinkedHashSet<>();
     Set<String> Subcircuits = new LinkedHashSet<>();
@@ -512,7 +512,7 @@ public class Circuit {
       thr.printStackTrace();
     }
 
-    if (prop.isOscillating()) throw new TestException("oscilation detected");
+    if (prop.isOscillating()) throw new TestException("oscillation detected");
 
     FailException err = null;
 

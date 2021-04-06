@@ -33,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -63,9 +64,19 @@ public class Button extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
       return data == null ? Value.FALSE : (Value) data.getValue();
+    }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      return true;
     }
   }
 
