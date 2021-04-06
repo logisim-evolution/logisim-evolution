@@ -32,8 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -168,7 +166,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private class MyListener
-      implements ActionListener, ProjectListener, SimulatorListener, LocaleListener, ModelListener {
+      implements ActionListener, ProjectListener, Simulator.Listener, LocaleListener, ModelListener {
 
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
@@ -247,20 +245,17 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     }
 
     @Override
-    public void simulatorReset(SimulatorEvent e) {
+    public void simulatorReset(Simulator.Event e) {
       // ? curModel.propagationCompleted();
     }
 
     @Override
-    public void propagationCompleted(SimulatorEvent e) {
+    public void propagationCompleted(Simulator.Event e) {
       // curModel.propagationCompleted();
     }
 
     @Override
-    public void simulatorStateChanged(SimulatorEvent e) {}
-
-    @Override
-    public void tickCompleted(SimulatorEvent e) {}
+    public void simulatorStateChanged(Simulator.Event e) {}
 
     public void testingChanged() {
       if (getModel().isRunning() && !getModel().isPaused()) {

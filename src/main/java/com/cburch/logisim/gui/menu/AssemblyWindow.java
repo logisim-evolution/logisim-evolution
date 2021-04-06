@@ -30,8 +30,8 @@ package com.cburch.logisim.gui.menu;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
+import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.circuit.Simulator.Event;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -74,7 +74,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 
 public class AssemblyWindow
-    implements ActionListener, WindowListener, SimulatorListener, KeyListener {
+    implements ActionListener, WindowListener, Simulator.Listener, KeyListener {
 
   private static Circuit curCircuit;
   private static CircuitState curCircuitState;
@@ -291,8 +291,8 @@ public class AssemblyWindow
   }
 
   @Override
-  public void propagationCompleted(SimulatorEvent e) {
-    if (e.getSource().isRunning()) {
+  public void propagationCompleted(Simulator.Event e) {
+    if (e.getSource().isAutoTicking()) {
       updateHighlightLine();
     }
   }
@@ -302,15 +302,12 @@ public class AssemblyWindow
   }
 
   @Override
-  public void simulatorStateChanged(SimulatorEvent e) {}
+  public void simulatorStateChanged(Simulator.Event e) {}
 
   /*
    * Track the movement of the Caret by painting a background line at the
    * current caret position.
    */
-
-  @Override
-  public void tickCompleted(SimulatorEvent e) {}
 
   public void toFront() {
     if (windows != null) {
@@ -376,5 +373,5 @@ public class AssemblyWindow
   public void windowOpened(WindowEvent e) {}
 
   @Override
-  public void simulatorReset(SimulatorEvent e) {}
+  public void simulatorReset(Event e) { }
 }

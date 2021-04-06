@@ -30,6 +30,8 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.icons.FatArrowIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 
@@ -37,11 +39,20 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-class SelectionPanel extends LogPanel {
+public class SelectionPanel extends LogPanel {
   private static final long serialVersionUID = 1L;
   private final ComponentSelector selector;
   private final SelectionList list;
@@ -49,24 +60,21 @@ class SelectionPanel extends LogPanel {
   
   public SelectionPanel(LogFrame window) {
     super(window);
-    selector = new ComponentSelector(getModel());
+    selector = new ComponentSelector(getModel().getCircuit(), ComponentSelector.ANY_SIGNAL);
     list = new SelectionList();
     list.setLogModel(getModel());
-    
-    JScrollPane explorerPane =
-        new JScrollPane(
-            selector,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    JScrollPane listPane =
-        new JScrollPane(
-            list,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    
+
+    JScrollPane explorerPane = new JScrollPane(selector,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    JScrollPane listPane = new JScrollPane(list,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
     GridBagLayout gridbag = new GridBagLayout();
     GridBagConstraints gbc = new GridBagConstraints();
     setLayout(gridbag);
+
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.weightx = gbc.weighty = 0.0;
     gbc.insets = new Insets(15, 10, 0, 10);
@@ -78,23 +86,68 @@ class SelectionPanel extends LogPanel {
     gridbag.setConstraints(selectDesc, gbc);
     add(selectDesc);
     gbc.gridwidth = 1;
+
     gbc.gridx = 0;
     gbc.gridy = 1;
     exploreLabel = new JLabel();
     gridbag.setConstraints(exploreLabel, gbc);
     add(exploreLabel);
+
     gbc.gridx = 2;
     gbc.gridy = 1;
     listLabel = new JLabel();
     gridbag.setConstraints(listLabel, gbc);
     add(listLabel);
+
     gbc.fill = GridBagConstraints.BOTH;
     gbc.weightx = gbc.weighty = 1.0;
-    gbc.insets = new Insets(10, 10, 10, 10);    gbc.gridx = 0;
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.gridx = 0;
     gbc.gridy = 2;
     gridbag.setConstraints(explorerPane, gbc);
     add(explorerPane);
-    explorerPane.setPreferredSize(new Dimension(AppPreferences.getScaled(120), AppPreferences.getScaled(200)));
+    explorerPane.setPreferredSize(new Dimension(120, 200));
+
+    JButton addArrow = new JButton(new FatArrowIcon(Direction.EAST));
+    JButton delArrow = new JButton(new FatArrowIcon(Direction.WEST));
+    addArrow.setBorder(BorderFactory.createEmptyBorder());
+    delArrow.setBorder(BorderFactory.createEmptyBorder());
+    addArrow.setContentAreaFilled(false);
+    delArrow.setContentAreaFilled(false);
+    addArrow.setEnabled(false);
+    delArrow.setEnabled(false);
+    selector.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty());
+      }
+    });
+    list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty());
+      }
+    });
+    addArrow.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        list.add(selector.getSelectedItems());
+      }
+    });
+    delArrow.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        list.removeSelected();
+      }
+    });
+
+    Box arrowBox = new Box(BoxLayout.Y_AXIS);
+    arrowBox.add(addArrow);
+    arrowBox.add(delArrow);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = gbc.weighty = 0.0;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    gbc.gridx = 1;
+    gbc.gridy = 2;
+    gridbag.setConstraints(arrowBox, gbc);
+    add(arrowBox);
+
     gbc.fill = GridBagConstraints.BOTH;
     gbc.weightx = gbc.weighty = 1.0;
     gbc.insets = new Insets(10, 10, 10, 10);
@@ -126,7 +179,7 @@ class SelectionPanel extends LogPanel {
 
   @Override
   public void modelChanged(Model oldModel, Model newModel) {
-    selector.setLogModel(newModel);
+    selector.setRootCircuit(newModel.getCircuit());
     list.setLogModel(newModel);
   }
 

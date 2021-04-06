@@ -32,12 +32,11 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.gui.chrono.ChronoPanel;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -53,6 +52,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ import javax.swing.event.ChangeListener;
 public class LogFrame extends LFrame.SubWindowWithSimulation {
   private LogMenuListener menuListener;
 
-  private class MyListener implements ProjectListener, LibraryListener, SimulatorListener, LocaleListener {
+  private class MyListener implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
@@ -96,22 +97,32 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
 
     @Override
-    public void simulatorReset(SimulatorEvent e) {
+    public void simulatorReset(Simulator.Event e) {
       curModel.simulatorReset();
     }
 
     @Override
-    public void propagationCompleted(SimulatorEvent e) {
-      curModel.propagationCompleted();
+    public void propagationCompleted(Simulator.Event e) {
+      curModel.propagationCompleted(e.didTick(), e.didSingleStep(), e.didPropagate());
     }
 
     @Override
-    public void simulatorStateChanged(SimulatorEvent e) {
-      setSimulator(project.getSimulator(), project.getCircuitState());
+    public boolean wantProgressEvents() {
+      return curModel.isFine();
     }
 
     @Override
-    public void tickCompleted(SimulatorEvent e) {}
+    public void propagationInProgress(Simulator.Event e) {
+      curModel.propagationCompleted(false, true, false); // treat as a single-step
+    }
+
+    @Override
+    public void simulatorStateChanged(Simulator.Event e) {
+      if (setSimulator(project.getSimulator(), project.getCircuitState()))
+        return;
+      if (curModel != null)
+        curModel.checkForClocks();
+    }
   }
 
   // TODO should automatically repaint icons when component attr change
@@ -183,7 +194,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   public JButton makeSelectionButton() {
-    JButton button = new JButton("Add or Remove Signals");
+    JButton button = new JButton(S.get("addRemoveSignals"));
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         SelectionPanel.doDialog(LogFrame.this);
@@ -200,12 +211,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     project.addLibraryListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState());
 
-    // selPanel = new SelectionPanel(this);
     panels = new LogPanel[] {
-      // selPanel,
       new OptionsPanel(this),
-      new TablePanel(this),
-      new FilePanel(this),
       new ChronoPanel(this),
     };
     tabbedPane = new JTabbedPane();
@@ -244,6 +251,18 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     setLocation(x, y);
     setMinimumSize(new Dimension(300, 200));
+    // set initial focus to first panel
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowOpened(WindowEvent e) {
+        e.getWindow().removeWindowListener(this);
+        myChangeListener.stateChanged(null);
+      }
+    });
+  }
+
+  public LogisimMenuBar getLogisimMenuBar() {
+    return menubar;
   }
 
   public LogMenuListener getMenuListener() {
@@ -258,10 +277,10 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     return panels;
   }
 
-  private void setSimulator(Simulator value, CircuitState state) {
+  private boolean setSimulator(Simulator value, CircuitState state) {
     if ((value == null) == (curModel == null)) {
       if (value == null || value.getCircuitState() == curModel.getCircuitState())
-      return;
+      return false;
     }
     menubar.setCircuitState(value, state);
     
@@ -292,6 +311,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
         panels[i].modelChanged(oldModel, curModel);
       }
     }
+    return true;
   }
 
   @Override
@@ -301,6 +321,13 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     super.setVisible(value);
   }
+  
+  @Override
+  public void requestClose() {
+    super.requestClose();
+    dispose();
+  }
+
   private class MyChangeListener implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
       Object selected = tabbedPane.getSelectedComponent();

@@ -34,28 +34,36 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.Box;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JViewport;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.log.LogPanel;
 import com.cburch.logisim.gui.log.Model;
@@ -63,49 +71,30 @@ import com.cburch.logisim.gui.log.Signal;
 import com.cburch.logisim.gui.log.SignalInfo;
 import com.cburch.logisim.gui.main.SimulationToolbarModel;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.PrintHandler;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.gui.menu.EditHandler;
 
 
-public class ChronoPanel extends LogPanel implements KeyListener, Model.Listener {
-
-  private class MyListener implements ActionListener, AdjustmentListener {
-
-    @Override
-    public void actionPerformed(ActionEvent e) { }
-    /**
-     * rightScroll horizontal movement
-     */
-    @Override
-    public void adjustmentValueChanged(AdjustmentEvent e) {
-      if (rightPanel != null) rightPanel.adjustmentValueChanged(e.getValue());
-    }
-  }
+public class ChronoPanel extends LogPanel implements Model.Listener {
 
 private static final long serialVersionUID = 1L;
 public static final int HEADER_HEIGHT = 20;
 public static final int SIGNAL_HEIGHT = 30;
 public static final int GAP = 2;
 public static final int INITIAL_SPLIT = 150;
-private Simulator simulator;
 private Model model;
-// button bar
-private JPanel buttonBar = new JPanel();
-private JButton chooseFileButton = new JButton();
-private JButton exportDataInFile = new JButton();
-private JButton exportDataToImage = new JButton();
 private RightPanel rightPanel;
 private LeftPanel leftPanel;
 private JScrollPane leftScroll, rightScroll;
 private JSplitPane splitPane;
 // listeners
-private MyListener myListener = new MyListener();
 
 public ChronoPanel(LogFrame logFrame) {
   super(logFrame);
   SELECT_BG = UIManager.getDefaults().getColor("List.selectionBackground");
   SELECT_HI = darker(SELECT_BG);
   SELECT = new Color[] { SELECT_BG, SELECT_HI, SELECT_LINE, SELECT_ERR, SELECT_ERRLINE, SELECT_UNK, SELECT_UNKLINE };
-  simulator = getProject().getSimulator();
   setModel(logFrame.getModel());
   configure();
   resplit();
@@ -115,28 +104,6 @@ public ChronoPanel(LogFrame logFrame) {
  
 private void configure() {
   setLayout(new BorderLayout());
-  setFocusable(true);
-  requestFocusInWindow();
-  addKeyListener(this);
-  // button bar
-  Dimension buttonSize = new Dimension(150, 25);
-  buttonBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-  chooseFileButton.setActionCommand("load");
-  chooseFileButton.addActionListener(myListener);
-  chooseFileButton.setPreferredSize(buttonSize);
-  chooseFileButton.setFocusable(false);
-
-  exportDataInFile.setActionCommand("export");
-  exportDataInFile.addActionListener(myListener);
-  exportDataInFile.setPreferredSize(buttonSize);
-  exportDataInFile.setFocusable(false);
-
-  exportDataToImage.setActionCommand("exportImg");
-  exportDataToImage.addActionListener(myListener);
-  exportDataToImage.setPreferredSize(buttonSize);
-  exportDataToImage.setFocusable(false);
-  // menu and simulation toolbar
   LogFrame logFrame = getLogFrame();
   SimulationToolbarModel simTools;
   simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
@@ -152,9 +119,13 @@ private void configure() {
   toolpanel.add(toolbar);
 
   JButton b = logFrame.makeSelectionButton();
+  b.setFont(b.getFont().deriveFont(10.0f));
+  Insets insets = gc.insets;
+  gc.insets = new Insets(2, 0, 2, 0);
   gc.gridx = 1;
   gb.setConstraints(b, gc);
   toolpanel.add(b);
+  gc.insets = insets;
 
   Component filler = Box.createHorizontalGlue();
   gc.fill = GridBagConstraints.HORIZONTAL;
@@ -164,22 +135,27 @@ private void configure() {
   toolpanel.add(filler);
   add(toolpanel, BorderLayout.NORTH);
 
-  buttonBar.add(chooseFileButton);
-  buttonBar.add(exportDataInFile);
-  buttonBar.add(exportDataToImage);
-  add(BorderLayout.SOUTH, buttonBar);
-
   // panels
   splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
   splitPane.setDividerSize(5);
   splitPane.setResizeWeight(0.0);
   add(BorderLayout.CENTER, splitPane);
+  InputMap inputMap = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+  ActionMap actionMap = getActionMap();
+  inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ClearSelection");
+  actionMap.put("ClearSelection", new AbstractAction() {
+    private static final long serialVersionUID = 1L;
+    public void actionPerformed(ActionEvent e) {
+      System.out.println("chrono clear");
+      leftPanel.clearSelection();
+    }
+  });
 }
 
 private void resplit() {
   leftPanel = new LeftPanel(this);
   leftScroll = new JScrollPane(leftPanel,
-      ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+      ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
   int p = rightScroll == null ? 0 : rightScroll.getHorizontalScrollBar().getValue();
@@ -188,18 +164,48 @@ private void resplit() {
   rightScroll = new JScrollPane(rightPanel,
       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-  rightScroll.getHorizontalScrollBar().addAdjustmentListener(myListener);
 
   // Synchronize the two scrollbars
+  leftScroll.getVerticalScrollBar().setUI(null);
   leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
+
+  // zoom on control+scrollwheel
+  MouseAdapter zoomer = new MouseAdapter() {
+    public void mouseWheelMoved(MouseWheelEvent e) {
+      if (e.isControlDown()) {
+        e.consume();
+        rightPanel.zoom(e.getWheelRotation() > 0 ? -1 : +1, e.getPoint().x);
+      }
+      else
+        e.getComponent().getParent().dispatchEvent(e);
+    }
+  };
+  // We can't put it on the scroll pane, because ordering of listeners isn's
+  // specified and we need to be first to prevent default scroll behavior
+  // when control is down.
+  // leftScroll.addMouseWheelListener(zoomer);
+  // rightScroll.addMouseWheelListener(zoomer);
+  leftPanel.addMouseWheelListener(zoomer);
+  rightPanel.addMouseWheelListener(zoomer);
+  leftPanel.getTableHeader().addMouseWheelListener(zoomer);
+  rightPanel.getTimelineHeader().addMouseWheelListener(zoomer);
 
   splitPane.setLeftComponent(leftScroll);
   splitPane.setRightComponent(rightScroll);
 
+  leftScroll.setWheelScrollingEnabled(true);
+  rightScroll.setWheelScrollingEnabled(true);
+
   setSignalCursorX(Integer.MAX_VALUE);
   // put right scrollbar into same position
   rightScroll.getHorizontalScrollBar().setValue(p);
-  rightScroll.getHorizontalScrollBar().setValue(p);
+  
+  leftPanel.getSelectionModel().addListSelectionListener(
+    new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        editHandler.computeEnabled();
+      }
+    });
 }
 
 public LeftPanel getLeftPanel() {
@@ -226,44 +232,26 @@ public int getVisibleSignalsWidth() {
   return splitPane.getRightComponent().getWidth();
 }
 
-@Override
-public void keyPressed(KeyEvent ke) {
-  int keyCode = ke.getKeyCode();
-  if (keyCode == KeyEvent.VK_F2) {
-    simulator.tick(2);
+  @Override
+  public String getTitle() {
+    return S.get("ChronoTitle");
   }
-}
 
-@Override
-public void keyReleased(KeyEvent ke) {}
+  @Override
+  public String getHelpText() {
+    return S.get("ChronoTitle");  
+  }
 
-@Override
-public void keyTyped(KeyEvent ke) { }
+  @Override
+  public void localeChanged() { }
 
-@Override
-public String getTitle() {
-  return S.get("ChronoTitle");
-}
-
-@Override
-public String getHelpText() {
-  return S.get("ChronoTitle");
-}
-
-@Override
-public void localeChanged() {
-  chooseFileButton.setText(S.get("ButtonLoad"));
-  exportDataInFile.setText(S.get("ButtonExport"));
-  exportDataToImage.setText(S.get("ButtonExportAsImage"));
-}
-
-@Override
-public void modelChanged(Model oldModel, Model newModel) {
-  setModel(newModel);
-  setSignalCursorX(Integer.MAX_VALUE);
-  leftPanel.updateSignals();
-  rightPanel.updateSignals();
-}
+  @Override
+  public void modelChanged(Model oldModel, Model newModel) {
+    setModel(newModel);
+    rightPanel.setModel(newModel);
+    leftPanel.setModel(newModel);
+    editHandler.computeEnabled();
+  }
 
   public void changeSpotlight(Signal s) {
     Signal old = model.setSpotlight(s);
@@ -280,20 +268,18 @@ public void modelChanged(Model oldModel, Model newModel) {
   }
 
   @Override
-  public void modeChanged(Model.Event event) {
-    System.out.println("todo");
-  }
+  public void modeChanged(Model.Event event) { }
 
   @Override
   public void signalsExtended(Model.Event event) {
     leftPanel.updateSignalValues();
-    rightPanel.updateWaveforms();
+    rightPanel.updateWaveforms(true);
   }
 
   @Override
   public void signalsReset(Model.Event event) {
     setSignalCursorX(Integer.MAX_VALUE);
-    rightPanel.updateWaveforms();
+    rightPanel.updateWaveforms(true);
   }
 
   @Override
@@ -302,16 +288,15 @@ public void modelChanged(Model oldModel, Model newModel) {
   @Override
   public void historyLimitChanged(Model.Event event) {
      setSignalCursorX(Integer.MAX_VALUE);
-     rightPanel.updateWaveforms();
+     rightPanel.updateWaveforms(false);
   }
   
   @Override
   public void selectionChanged(Model.Event event) {
     leftPanel.updateSignals();
     rightPanel.updateSignals();
+    editHandler.computeEnabled();
   }
-
-  public void toggleBusExpand(Signal s, boolean expand) {}
 
   public Model getModel() {
     return model;
@@ -385,12 +370,83 @@ public void modelChanged(Model oldModel, Model newModel) {
       setEnabled(LogisimMenuBar.DUPLICATE, false);
       setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
       // todo: raise/lower handlers
-      setEnabled(LogisimMenuBar.RAISE, false);
-      setEnabled(LogisimMenuBar.LOWER, false);
-      setEnabled(LogisimMenuBar.RAISE_TOP, false);
-      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+      setEnabled(LogisimMenuBar.RAISE, sel);
+      setEnabled(LogisimMenuBar.LOWER, sel);
+      setEnabled(LogisimMenuBar.RAISE_TOP, sel);
+      setEnabled(LogisimMenuBar.LOWER_BOTTOM, sel);
       setEnabled(LogisimMenuBar.ADD_CONTROL, false);
       setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Object action = e.getSource();
+      leftPanel.getActionMap().get(action).actionPerformed(e);
+    }
+  };
+  
+  @Override
+  public PrintHandler getPrintHandler() {
+    return printHandler;
+  }
+
+  PrintHandler printHandler = new PrintHandler() {
+    @Override
+    public Dimension getExportImageSize() {
+      Dimension l = leftPanel.getPreferredSize();
+      Dimension r = rightPanel.getPreferredSize();
+      int width = l.width + 3 + r.width;
+      int height = HEADER_HEIGHT + l.height;
+      return new Dimension(width, height);
+    }
+
+    @Override
+    public void paintExportImage(BufferedImage img, Graphics2D g) {
+      Dimension l = leftPanel.getPreferredSize();
+      Dimension r = rightPanel.getPreferredSize();
+
+      g.setClip(0, 0, l.width, HEADER_HEIGHT);
+      leftPanel.getTableHeader().print(g); 
+
+      g.setClip(l.width + 3, 0, r.width, HEADER_HEIGHT);
+      g.translate(l.width + 3, 0);
+      rightPanel.getTimelineHeader().print(g);
+      g.translate(-(l.width + 3), 0);
+
+      g.setClip(0, HEADER_HEIGHT, l.width, l.height);
+      g.translate(0, HEADER_HEIGHT);
+      leftPanel.print(g);
+      g.translate(0, -HEADER_HEIGHT);
+
+      g.setClip(l.width + 3, HEADER_HEIGHT, r.width, l.height);
+      g.translate(l.width + 3, HEADER_HEIGHT);
+      rightPanel.print(g);
+      g.translate(-(l.width + 3), -HEADER_HEIGHT);
+    }
+
+    @Override
+    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+      if (pageNum != 0)
+        return Printable.NO_SUCH_PAGE;
+
+      // shrink horizontally to fit
+      FontMetrics fm = g.getFontMetrics();
+      Dimension d = getExportImageSize();
+      double headerHeight = fm.getHeight() * 1.5;
+      double scale = 1.0;
+      if (d.width > w || d.height > (h-headerHeight))
+        scale = Math.min(w / d.width, (h-headerHeight) / d.height);
+
+      GraphicsUtil.drawText(g,
+          S.fmt("ChronoPrintTitle",
+              model.getCircuit().getName(),
+              getProject().getLogisimFile().getDisplayName()),
+          (int)(w/2), 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+
+      g.translate(0, fm.getHeight() * 1.5);
+      g.scale(scale, scale);
+      paintExportImage(null, g);
+
+      return Printable.PAGE_EXISTS;
     }
   };
 }

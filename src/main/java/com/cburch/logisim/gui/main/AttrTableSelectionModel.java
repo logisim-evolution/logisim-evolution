@@ -41,6 +41,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -76,6 +77,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     ComponentFactory wireFactory = null;
     ComponentFactory factory = null;
     String label = null;
+    Location loc = null;
     int factoryCount = 0;
     int totalCount = 0;
     boolean variousFound = false;
@@ -94,6 +96,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
         factory = fact;
         factoryCount = 1;
         label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+        loc = comp.getLocation();
       } else {
         variousFound = true;
       }
@@ -123,10 +126,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       }
     } else if (factoryCount == 1) {
       SetInstance(factory);
-      return S.fmt(
-          "selectionOne",
-          factory.getDisplayName()
-              + ((label != null && label.length() > 0) ? " \"" + label + "\"" : ""));
+      if (label != null && label.length() > 0)
+        return S.fmt("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
+      else if (loc != null)
+        return S.fmt("selectionOne", factory.getDisplayName() + " " + loc);
+      else
+        return S.fmt( "selectionOne", factory.getDisplayName());
     } else {
       SetInstance(factory);
       return S.fmt("selectionMultiple", factory.getDisplayName(), "" + factoryCount);

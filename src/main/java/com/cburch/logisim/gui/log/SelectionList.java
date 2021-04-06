@@ -29,8 +29,6 @@
 package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Icons;
 
 import java.awt.Color;
@@ -74,25 +72,19 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 public class SelectionList extends JTable {
-  private static final long serialVersionUID = 1L;
-  private Model logModel;
 
-  private class SelectionListModel extends AbstractTableModel implements Model.Listener {
-  
+  private class SelectionListModel
+    extends AbstractTableModel implements Model.Listener {
     private static final long serialVersionUID = 1L;
 
     @Override
     public void modeChanged(Model.Event event) { }
-    
     @Override
     public void signalsExtended(Model.Event event) { }
-    
     @Override
     public void signalsReset(Model.Event event) { }
-    
     @Override
-    public void filePropertyChanged(Model.Event event) {}
-    
+    public void filePropertyChanged(Model.Event event) { }
     @Override
     public void historyLimitChanged(Model.Event event) { }
 
@@ -107,45 +99,36 @@ public class SelectionList extends JTable {
     public String getColumnName(int column) { return ""; }
     @Override
     public Class<?> getColumnClass(int columnIndex) { return SignalInfo.class; }
+
     @Override
     public int getRowCount() { return logModel == null ? 0 : logModel.getSignalCount(); }
+    @Override
+    public Object getValueAt(int row, int col) { return logModel.getItem(row); }
+    @Override
+    public void setValueAt(Object o, int row, int column) { /* nothing to do */ }
 
     @Override
-    public Object getValueAt(int row, int col) {
-      return logModel.getItem(row);
-    }
+    public boolean isCellEditable(int row, int column) { return true; }
 
-    @Override
-    public void setValueAt(Object o, int row, int column) {
-      // nothing to do
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-      return true;
-    }
   }
 
   private class SignalInfoRenderer extends DefaultTableCellRenderer {
-    private static final long serialVersionUID = 1L;
-
     @Override
-    public java.awt.Component getTableCellRendererComponent(
-        JTable table,Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      java.awt.Component ret =
-          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    public java.awt.Component getTableCellRendererComponent(JTable table,
+        Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      java.awt.Component ret = super.getTableCellRendererComponent(table,
+          value, isSelected, hasFocus, row, column);
       if (ret instanceof JLabel && value instanceof SignalInfo) {
         JLabel label = (JLabel) ret;
-        SignalInfo item = (SignalInfo) value;
-        label.setIcon(new ComponentIcon(item.getComponent()));
-        label.setText(item.toString()+" ["+item.getRadix().toDisplayString()+"]");
+        SignalInfo item = (SignalInfo)value;
+        label.setIcon(item.icon);
+        label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
       }
       return ret;
     }
   }
-  
+
   class SignalInfoEditor extends AbstractCellEditor implements TableCellEditor {
-    private static final long serialVersionUID = 1L;
     JPanel panel = new JPanel();
     JLabel label = new JLabel();
     JButton button = new JButton(Icons.getIcon("dropdown.png"));
@@ -153,7 +136,7 @@ public class SelectionList extends JTable {
     SignalInfo item;
     SignalInfo.List items;
     HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
-    
+
     public SignalInfoEditor() {
       panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -170,7 +153,7 @@ public class SelectionList extends JTable {
           @Override
           public void actionPerformed(ActionEvent e) {              
             for (SignalInfo s : items)
-              s.setRadix(r);
+              logModel.setRadix(s, r);
             if (item != null)
               label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
             SelectionList.this.repaint();
@@ -232,8 +215,9 @@ public class SelectionList extends JTable {
         items.add(item);
       }
       radixMenuItems.get(item.getRadix()).setSelected(true);
-      label.setIcon(new ComponentIcon(item.getComponent()));
+      label.setIcon(item.icon);
       label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
+      //width.setSelectedItem(item.getRadix());
       return panel;
     }
 
@@ -242,13 +226,17 @@ public class SelectionList extends JTable {
        super.stopCellEditing();
        return true;
      }
-
      @Override
-    public boolean isCellEditable(EventObject e) {
-      return true;
-    }
-  } 
+     public boolean isCellEditable(EventObject e) {
+       return true;
+     }
+  }
 
+  private static final long serialVersionUID = 1L;
+
+  private Model logModel;
+
+  @SuppressWarnings("unchecked")
   public SelectionList() {
     setModel(new SelectionListModel());
     setDefaultRenderer(SignalInfo.class, new SignalInfoRenderer());
@@ -268,13 +256,11 @@ public class SelectionList extends JTable {
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
     ActionMap actionMap = getActionMap();
     actionMap.put("Delete", new AbstractAction() {
-      private static final long serialVersionUID = 1L;
-
       public void actionPerformed(ActionEvent e) {
         removeSelected();
       }
     });
- }
+  }
 
   void removeSelected() {
     int idx = 0;
@@ -289,7 +275,7 @@ public class SelectionList extends JTable {
     }
     repaint();
   }
-  
+
   public void localeChanged() {
     repaint();
   }
@@ -315,7 +301,6 @@ public class SelectionList extends JTable {
   }
 
   private class SelectionTransferHandler extends TransferHandler {
-    private static final long serialVersionUID = 1L;
     boolean removing;
 
     @Override
@@ -368,6 +353,8 @@ public class SelectionList extends JTable {
   }
 
   private void addOrMove(SignalInfo.List items, int idx) {
+    if (items == null || items.size() == 0)
+      return;
     logModel.addOrMove(items, idx);
     clearSelection();
     for (SignalInfo item : items) {
@@ -376,7 +363,11 @@ public class SelectionList extends JTable {
     }
   }
 
-  private static final Font MSG_FONT = AppPreferences.getScaledFont(new Font("Sans Serif", Font.ITALIC, 12));
+  public void add(SignalInfo.List items) {
+    addOrMove(items, logModel.getSignalCount());
+  }
+
+  private static final Font MSG_FONT = new Font("Sans Serif", Font.ITALIC, 12);
 
   @Override
   public void paintComponent(Graphics g) {
@@ -398,4 +389,5 @@ public class SelectionList extends JTable {
     g.drawString("drag here to add", 10, getRowHeight() * getRowCount() + 20);
     g.setFont(f);
     g.setColor(c);
-  }}
+  }
+}

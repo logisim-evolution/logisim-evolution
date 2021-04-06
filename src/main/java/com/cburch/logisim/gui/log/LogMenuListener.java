@@ -57,19 +57,7 @@ public class LogMenuListener extends MenuListener {
     }
   }
 
-  // protected class SimulateMenuListener implements SimulateListener {
-  //   void register() {
-  //     menubar.setSimulateListener(this);
-  //     menubar.setCircuitState(proj.getSimulator(), proj.getCircuitState());
-  //   }
-  //   public void stateChangeRequested(Simulator sim, CircuitState state) {
-  //     System.out.println("state change requested?");
-  //     // todo: notify LogFrame?
-  //   }
-  // }
-
   private FileListener fileListener = new FileListener();
-  // private SimulateMenuListener simulateListener = new SimulateMenuListener();
   private PrintHandler printer;
 
   public LogMenuListener(LogisimMenuBar menubar) {

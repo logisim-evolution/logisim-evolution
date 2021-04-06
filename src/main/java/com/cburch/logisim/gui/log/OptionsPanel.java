@@ -32,7 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -43,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -54,7 +54,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -68,11 +67,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
-import javax.swing.text.NumberFormatter;
 
 import com.cburch.logisim.comp.ComponentEvent;
 
-class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
+class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, Model.Listener {
 
   // [ ] Stop-motion mode [ time_scale: 5ms ]
   //   [ ] Coarse-grained summary
@@ -117,11 +115,20 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
   JCheckBox clockFine = new JCheckBox();
 
   TimeSelector stepScale = new TimeSelector("timeScale", 5000);
-  TimeSelector stepGate = new TimeSelector("gateDelay", 10);
+  TimeSelector stepGate = new TimeSelector("gateDelay", 200);
   TimeSelector realScale = new TimeSelector("timeScale", 5000, "perSecond");
   TimeSelector clockScale = new TimeSelector("timeScale", 5000, "perTick");
-  TickSelector clockTicks = new TickSelector("cycleLength", 2);
-  TimeSelector clockGate = new TimeSelector("gateDelay", 10);
+  TimeSelector clockGate = new TimeSelector("gateDelay", 200);
+  JLabel clockSrcLabel = new JLabel();
+  JButton clockSrcButton = new JButton();
+  String[] clockDisciplineNames = new String[] {
+      "clockDisciplineDual", "clockDisciplineRising", "clockDisciplineFalling",
+      "clockDisciplineHigh", "clockDisciplineLow" };
+  int[] clockDisciplines = new int[] {
+    Model.CLOCK_DUAL, Model.CLOCK_RISING, Model.CLOCK_FALLING,
+    Model.CLOCK_HIGH, Model.CLOCK_LOW };
+  JLabeledComboBox<String> clockDiscipline = new JLabeledComboBox<>("clockDisciplineLabel", clockDisciplineNames);
+  JLabel clockTicks = new JLabel();
   
   JCheckBox unlimited = new JCheckBox();
   JSpinner limit = new JSpinner();
@@ -156,6 +163,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     
     // middle has timing options for each mode
     stepFine.setAlignmentX(0.0f); 
+    stepFine.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     stepOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     stepOptionsPanel.add(stepFine);
     stepOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -164,7 +172,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     stepOptionsPanel.add(stepGate.getPanel());
     stepOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-    realFine.setAlignmentX(0.0f); 
+    realFine.setAlignmentX(0.0f);
+    realFine.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     realOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     realOptionsPanel.add(realFine);
     realOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -172,14 +181,27 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     realOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
     clockFine.setAlignmentX(0.0f); 
+    clockFine.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockFine);
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockScale.getPanel());
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-    clockOptionsPanel.add(clockTicks.getPanel());
-    clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockGate.getPanel());
+    clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+    Box clockSrcBox = new Box(BoxLayout.X_AXIS);
+    clockSrcBox.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+    clockSrcBox.setAlignmentX(0.0f); 
+    clockSrcBox.add(clockSrcLabel);
+    clockSrcBox.add(Box.createRigidArea(new Dimension(6, 0)));
+    clockSrcBox.add(clockSrcButton);
+    clockOptionsPanel.add(clockSrcBox);
+    clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+    clockOptionsPanel.add(clockDiscipline.getPanel());
+    clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+    clockTicks.setAlignmentX(0.0f);
+    clockTicks.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+    clockOptionsPanel.add(clockTicks);
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
     optionsPanel.add(stepOptionsPanel, "stepTime");
@@ -189,8 +211,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     // right side has history options
     limit.setModel(new SpinnerNumberModel(400, 10, Integer.MAX_VALUE, 100));
     limit.setEditor(new JSpinner.NumberEditor(limit, "####"));
-    JFormattedTextField txt = ((JSpinner.NumberEditor)limit.getEditor()).getTextField();
-    ((NumberFormatter)txt.getFormatter()).setAllowsInvalid(false);
+    limit.setMaximumSize(limit.getPreferredSize());
     unlimited.setAlignmentX(0.0f);
     Box limitBox = new Box(BoxLayout.X_AXIS);
     limitBox.add(limitLabel);
@@ -231,7 +252,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     gb.setConstraints(historyPanel, gc);
     inner.add(historyPanel);
 
-    Component fill = Box.createGlue();
+    java.awt.Component fill = Box.createGlue();
     gc.gridx = 3;
     gb.setConstraints(fill, gc);
     inner.add(fill);
@@ -263,8 +284,9 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     stepGate.addActionListener(this);
     realScale.addActionListener(this);
     clockScale.addActionListener(this);
-    clockTicks.addActionListener(this);
     clockGate.addActionListener(this);
+    clockSrcButton.addActionListener(this);
+    clockDiscipline.addActionListener(this);
 
     stepTime.setSelected(false);
     realTime.setSelected(false);
@@ -326,19 +348,32 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     }
   }
 
+  private void doClockSourceDialog() {
+    Model m = getLogFrame().getModel();
+    SignalInfo item = ClockSource.doClockObserverDialog(m.getCircuit());
+    if (item == null)
+      return;
+    m.setClockSourceInfo(item);
+  }
+
   @Override
   public void actionPerformed(ActionEvent e) {              
     Model m = getLogFrame().getModel();
     if (e.getSource() == unlimited) {
       stateChanged(null);
+    } else if (e.getSource() == clockSrcButton) {
+      doClockSourceDialog();
     } else {
-      if (stepTime.isSelected())
-        m.setStepMode(stepScale.getValue(), stepFine.isSelected() ? stepGate.getValue() : 0);
-      else if (realTime.isSelected())
+      if (stepTime.isSelected()) {
+        m.setStepMode(stepFine.isSelected(), stepScale.getValue(), stepGate.getValue());
+      } else if (realTime.isSelected()) {
         m.setRealMode(realScale.getValue(), realFine.isSelected());
-      else
-        m.setClockMode(clockScale.getValue(), clockTicks.getValue(),
-            clockFine.isSelected() ? clockGate.getValue() : 0);
+      } else {
+        String d = clockDiscipline.getValue();
+        int discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
+        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(), 
+            clockGate.getValue());
+      }
       updateDescription();
     }
   }
@@ -432,7 +467,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
       return (E)getSelectedItem();
     }
     String renderAsText(E v) {
-      return v.toString();
+      return (v instanceof String) ? S.get((String)v) : v.toString();
     }
     String getText() {
       return renderAsText(getValue());
@@ -444,7 +479,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
       private static final long serialVersionUID = 1L;
 
       @Override
-      public Component getListCellRendererComponent(JList<?> list,
+      public java.awt.Component getListCellRendererComponent(JList<?> list,
           Object w, int index, boolean isSelected, boolean cellHasFocus) {
         String s = renderAsText((E)w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -456,11 +491,12 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     private static final long serialVersionUID = 1L;
     String suffix;
     static final Long[] defaultVals = new Long[] {
-      1L, 5L, 10L, 50L, 100L, 500L,  // ns
-          1000L, 5000L, 10000L, 50000L, 100000L, 500000L, // us
-          1000000L, 5000000L, 10000000L, 50000000L, 100000000L, 500000000L, // ms
+        1L, 2L, 5L, 10L, 50L, 100L, 200L, 500L,  // ns
+        1000L, 2000L, 5000L, 10000L, 20000L, 50000L, 100000L, 200000L, 500000L, // us
+        1000000L, 2000000L, 5000000L, 10000000L, 20000000L, 50000000L, 100000000L, 200000000L, 500000000L, // ms
           1000000000L // s
     };
+ 
     TimeSelector(String labelKey, long nsDefault, String suffix) {
       super(labelKey, defaultVals);
       setSelectedItem(nsDefault);
@@ -476,20 +512,6 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
       if (suffix != null)
         s = s + " " + S.get(suffix);
       return s;
-    }
-  }
-
-  static class TickSelector extends JLabeledComboBox<Integer> {
-    private static final long serialVersionUID = 1L;
-    static final Integer[] defaultVals = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    TickSelector(String labelKey, int tickDefault) {
-      super(labelKey, defaultVals);
-      setSelectedItem(tickDefault);
-      setEditable(false);
-    }
-    @Override
-    String renderAsText(Integer v) {
-      return S.fmt("tickFormat", v);
     }
   }
 
@@ -519,12 +541,13 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
 
     unlimited.setText(S.get("historyUnlimited"));
     limitLabel.setText(S.get("historyLimit"));
+    
+    clockSrcLabel.setText(S.get("clockSourceLabel"));
 
     stepScale.localeChanged();
     stepGate.localeChanged();
     realScale.localeChanged();
     clockScale.localeChanged();
-    clockTicks.localeChanged();
     clockGate.localeChanged();
 
     updateDescription();
@@ -562,15 +585,40 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
     } else {
       mode = "clockTime";
       boolean fine = clockFine.isSelected();
-      clockGate.setEnabled(fine);
+      String disciplineName = clockDiscipline.getValue();
+      int discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
+      boolean levelSensitive = (discipline == Model.CLOCK_HIGH || discipline == Model.CLOCK_LOW);
+      clockGate.setEnabled(fine || levelSensitive);
+      int ticks = 2;
+
+      Model m = getLogFrame().getModel();
+      SignalInfo clockSource = m.getClockSourceInfo();
+      if (clockSource == null) {
+        clockSrcButton.setIcon(null);
+        clockSrcButton.setText(S.get("clockSourceNone"));
+      } else {
+        clockSrcButton.setIcon(clockSource.icon);
+        clockSrcButton.setText(clockSource.getDisplayName());
+        ticks = ClockSource.getCycleInfo(clockSource).ticks;
+      }
+      clockTicks.setText(S.fmt("cycleLength", ticks));
+
+      String dgate = clockGate.getText();
+      long t = clockScale.getValue();
+      String dcycle = clockScale.renderAsText(t * ticks);
+      String dtick = clockScale.renderAsText(t);
       if (fine)
-        d = S.fmt("clockFineDescription", clockGate.getText(),
-          clockScale.renderAsText(clockScale.getValue() * clockTicks.getValue()),
-          clockScale.getText());
+        d = S.fmt("clockFineDescription", dgate, dcycle, dtick);
+      else if (discipline == Model.CLOCK_DUAL)
+        d = S.fmt("clockCoarseDescriptionDual", dcycle, dtick);
+      else if (discipline == Model.CLOCK_RISING)
+        d = S.fmt("clockCoarseDescriptionRising", dcycle, dtick);
+      else if (discipline == Model.CLOCK_FALLING)
+        d = S.fmt("clockCoarseDescriptionFalling", dcycle, dtick);
+      else if (discipline == Model.CLOCK_HIGH)
+        d = S.fmt("clockCoarseDescriptionHigh", dgate, dcycle, dtick);
       else
-        d = S.fmt("clockCoarseDescription", clockTicks.getText(),
-          clockScale.renderAsText(clockScale.getValue() * clockTicks.getValue()),
-          clockScale.getText());
+        d = S.fmt("clockCoarseDescriptionLow", dgate, dcycle, dtick);
       stepFine.setSelected(fine);
       realFine.setSelected(fine);
       stepScale.setSelectedItem(clockScale.getValue());
@@ -585,26 +633,58 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener {
 
   @Override
   public void modelChanged(Model oldModel, Model newModel) {
+    if (oldModel != null)
+      oldModel.removeModelListener(this);
+    if (newModel != null)
+      newModel.addModelListener(this);
+    modeChanged(null);
     stepScale.setSelectedItem(newModel.getTimeScale());
     realScale.setSelectedItem(newModel.getTimeScale());
     clockScale.setSelectedItem(newModel.getTimeScale());
-    stepGate.setSelectedItem(newModel.getTimeScale());
-    clockGate.setSelectedItem(newModel.getTimeScale());
-    clockTicks.setSelectedItem(newModel.getCycleLength());
+    stepGate.setSelectedItem(newModel.getGateDelay());
+    clockGate.setSelectedItem(newModel.getGateDelay());
     stepFine.setSelected(newModel.isFine());
     realFine.setSelected(newModel.isFine());
     clockFine.setSelected(newModel.isFine());
-    if (newModel.isStepMode())
-      stepTime.setSelected(true);
-    else if (newModel.isRealMode())
-      realTime.setSelected(true);
-    else
-      clockTime.setSelected(true);
     updateDescription();
     int n = newModel.getHistoryLimit();
     unlimited.setSelected(n == 0);
     if (n > 0)
       limit.setValue(n);
+    SignalInfo clockSource = newModel.getClockSourceInfo();
+    if (clockSource == null) {
+      clockSrcButton.setIcon(null);
+      clockSrcButton.setText(S.get("clockSourceNone"));
+    } else {
+      clockSrcButton.setIcon(clockSource.icon);
+      clockSrcButton.setText(clockSource.getDisplayName());
+    }
   }
 
+  // Other than mode, which can spontaneously move from CLOCK to STEP, we don't
+  // care about any other changes to the model.
+  @Override
+  public void signalsReset(Model.Event event) { }
+  @Override
+  public void signalsExtended(Model.Event event) { }
+  @Override
+  public void filePropertyChanged(Model.Event event) { }
+  @Override
+  public void selectionChanged(Model.Event event) { }
+  @Override
+  public void modeChanged(Model.Event event) {
+    Model m = getLogFrame().getModel();
+    if (m.isStepMode())
+      stepTime.setSelected(true);
+    else if (m.isRealMode())
+      realTime.setSelected(true);
+    else
+      clockTime.setSelected(true);
+    int discipline = m.getClockDiscipline();
+    for (int i = 0; i < clockDisciplines.length; i++)
+      if (discipline == clockDisciplines[i])
+        clockDiscipline.setSelectedItem(clockDisciplineNames[i]);
+  }
+  @Override
+  public void historyLimitChanged(Model.Event event) { }
 }

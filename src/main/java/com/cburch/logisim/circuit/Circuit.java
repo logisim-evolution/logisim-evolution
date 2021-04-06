@@ -512,7 +512,7 @@ public class Circuit {
       thr.printStackTrace();
     }
 
-    if (prop.isOscillating()) throw new TestException("oscilation detected");
+    if (prop.isOscillating()) throw new TestException("oscillation detected");
 
     FailException err = null;
 

@@ -70,7 +70,7 @@ public abstract class LogPanel extends JPanel {
 //   return null;
 // }
 
-  protected LogFrame getLogFrame() {
+  public LogFrame getLogFrame() {
     return logFrame;
   }
   

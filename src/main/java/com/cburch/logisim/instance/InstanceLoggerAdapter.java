@@ -50,7 +50,12 @@ class InstanceLoggerAdapter implements Loggable {
       this.logger = loggerClass.getDeclaredConstructor().newInstance();
       this.state = new InstanceStateImpl(null, comp);
     } catch (Exception t) {
-      handleError(t, loggerClass);
+      String className = loggerClass.getName();
+      loggerS.error("Error while instantiating logger {}: {}", className,
+          t.getClass().getName());
+      String msg = t.getMessage();
+      if (msg != null)
+        loggerS.error("  ({})", msg); // OK
       logger = null;
     }
   }
@@ -67,34 +72,17 @@ class InstanceLoggerAdapter implements Loggable {
     return logger == null ? false : logger.isInput(state, option);
   }
 
-  public Object[] getLogOptions(CircuitState circState) {
-    if (logger != null) {
-      updateState(circState);
-      return logger.getLogOptions(state);
-    } else {
-      return null;
-    }
+  public Object[] getLogOptions() {
+    return logger == null ? null : logger.getLogOptions(state);
   }
 
   public Value getLogValue(CircuitState circuitState, Object option) {
     if (logger != null) {
-      updateState(circuitState);
+      if (state.getCircuitState() != circuitState)
+        state.repurpose(circuitState, comp);
       return logger.getLogValue(state, option);
     } else {
       return Value.UNKNOWN;
-    }
-  }
-
-  private void handleError(Throwable t, Class<? extends InstanceLogger> loggerClass) {
-    String className = loggerClass.getName();
-    loggerS.error("Error while instantiating logger {}: {}", className, t.getClass().getName());
-    String msg = t.getMessage();
-    if (msg != null) loggerS.error("  ({})", msg); // OK
-  }
-
-  private void updateState(CircuitState circuitState) {
-    if (state.getCircuitState() != circuitState) {
-      state.repurpose(circuitState, comp);
     }
   }
 }

@@ -143,7 +143,7 @@ class SimulateOptions extends OptionsPanel {
       } else if (source == MemUnknown) {
         AppPreferences.Memory_Startup_Unknown.set(MemUnknown.isSelected());
         Simulator sim = getProject().getSimulator();
-        if (sim != null) sim.requestReset();
+        if (sim != null) sim.reset();
       }
     }
 

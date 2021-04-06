@@ -114,8 +114,8 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
 
   public void stateChanged(ChangeEvent e) {
     Simulator sim = project.getSimulator();
-    boolean running = sim != null && sim.isRunning();
-    boolean ticking = sim != null && sim.isTicking();
+    boolean running = sim != null && sim.isAutoPropagating();
+    boolean ticking = sim != null && sim.isAutoTicking();
     if (running) {
       RunToggleIcon.setType(SimulationIcon.SIM_PAUSE);
       simRunToggle.setToolTip(S.getter("simulateStopTip"));

@@ -156,7 +156,7 @@ public class Propagator {
   private boolean isOscillating = false;
   private boolean oscAdding = false;
   private PropagationPoints oscPoints = new PropagationPoints();
-  private int ticks = 0;
+  private int halfClockCycles = 0;
   private final Random noiseSource = new Random();
   private int noiseCount = 0;
 
@@ -222,14 +222,6 @@ public class Propagator {
     }
   }
 
-  private void clearDirtyComponents() {
-    root.processDirtyComponents();
-  }
-
-  private void clearDirtyPoints() {
-    root.processDirtyPoints();
-  }
-
   public void drawOscillatingPoints(ComponentDrawContext context) {
     if (isOscillating) oscPoints.draw(context);
   }
@@ -242,7 +234,7 @@ public class Propagator {
   }
 
   public int getTickCount() {
-    return ticks;
+    return halfClockCycles;
   }
 
   public boolean isOscillating() {
@@ -285,15 +277,21 @@ public class Propagator {
     if (oscAdding) oscPoints.add(state, loc);
   }
 
-  public void propagate() {
+  public boolean propagate() {
+    return propagate(null, null);
+  }
+
+  public boolean propagate(Simulator.Listener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
 
     int oscThreshold = simLimit;
     int logThreshold = 3 * oscThreshold / 4;
     int iters = 0;
     while (!toProcess.isEmpty()) {
+      if (iters > 0 && propListener != null)
+        propListener.propagationInProgress(propEvent);
       iters++;
 
       if (iters < logThreshold) {
@@ -304,12 +302,13 @@ public class Propagator {
       } else {
         isOscillating = true;
         oscAdding = false;
-        return;
+        return true;
       }
     }
     isOscillating = false;
     oscAdding = false;
     oscPoints.clear();
+    return iters > 0;
   }
 
   private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
@@ -335,6 +334,7 @@ public class Propagator {
   }
 
   void reset() {
+    halfClockCycles = 0;
     toProcess.clear();
     root.reset();
     isOscillating = false;
@@ -371,10 +371,13 @@ public class Propagator {
     setDataSerialNumber++;
   }
 
-  void step(PropagationPoints changedPoints) {
+  boolean step(PropagationPoints changedPoints) {
     oscPoints.clear();
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
+
+    if (toProcess.isEmpty())
+      return false;
 
     PropagationPoints oldOsc = oscPoints;
     oscAdding = changedPoints != null;
@@ -382,6 +385,7 @@ public class Propagator {
     stepInternal(changedPoints);
     oscAdding = false;
     oscPoints = oldOsc;
+    return true;
   }
 
   private void stepInternal(PropagationPoints changedPoints) {
@@ -429,13 +433,13 @@ public class Propagator {
       }
     }
 
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
   }
 
-  public boolean tick() {
-    ticks++;
-    return root.tick(ticks);
+  public boolean toggleClocks() {
+    halfClockCycles++;
+    return root.toggleClocks(halfClockCycles);
   }
 
   @Override

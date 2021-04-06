@@ -28,324 +28,570 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.log.ClockSource;
+import com.cburch.logisim.gui.log.ComponentSelector;
+import com.cburch.logisim.gui.log.SignalInfo;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 public class Simulator {
 
-  class PropagationManager extends UniquelyNamedThread {
+  public static class Event {
+    private Simulator source;
+    private boolean didTick, didSingleStep, didPropagate;
 
-    private Propagator propagator = null;
+    public Event(Simulator src, boolean t, boolean s, boolean p) {
+      source = src;
+      didTick = t;
+      didSingleStep = s;
+      didPropagate = p;
+    }
+
+    public Simulator getSource() { return source; }
+    public boolean didTick() { return didTick; }
+    public boolean didSingleStep() { return didSingleStep; }
+    public boolean didPropagate() { return didPropagate; }
+  }
+
+  public static interface Listener {
+    public void simulatorReset(Event e);
+    default public boolean wantProgressEvents() { return false; }
+    default public void propagationInProgress(Event e) { };
+    public void propagationCompleted(Event e);
+    public void simulatorStateChanged(Event e);
+  }
+  
+  // This thread keeps track of the current stepPoints (when running in step
+  // mode), and it invokes various Propagator methods:
+  //
+  //     propagator.reset() -- clears all signal values
+  //     propagator.toggleClocks() -- toggles clock components
+  //     propagator.propagate() -- auto-propagates until signals are stable
+  //     propagator.step(stepPoints) -- propagates a single step
+  //     propagator.isPending() -- checks if more signal changes are pending
+  //
+  // The thread will invoked these in response to various events:
+  //
+  // [auto-tick]   If autoTicking is on and autoPropagation is on, the thread
+  //               periodically wakes up and invokes toggleClocks() then
+  //               propagate().
+  //
+  // [manual-tick] If the User/GUI requests a tick happen and autoPropagation is
+  //               on, the thread wakes up and invokes toggleClocks() then
+  //               propagate(). If autoPropagation is off, thread will wake up
+  //               and call toggleClocks() then step().
+  //
+  // [nudge]       If the user makes a circuit change, the thread wakes up and
+  //               invokes propagate() or step().
+  //
+  // [reset]       If the User/GUI requests a reset, the thread wakes up and
+  //               invokes reset() and maybe also propagate().
+  //
+  // [single-step] If the User/GUI requests a single-step propagation (this
+  //               only happens when autoTicking is off), the thread wakes up
+  //               and invokes step(). If if autoTicking is on and signals are
+  //               stable, then toggleClocks() is also called before step().
+  private static class SimThread extends UniquelyNamedThread {
+
+    private Simulator sim;
+    private long lastTick = System.nanoTime();
+
+    // NOTE: These variables must only be accessed with lock held.
+    private Propagator _propagator = null;
+    private boolean _autoPropagating = true;
+    private boolean _autoTicking = false;
+    private double _autoTickFreq = 1.0; // Hz
+    private long _autoTickNanos = (long)Math.round(1e9 / (2*_autoTickFreq));
+    private int _manualTicksRequested = 0;
+    private int _manualStepsRequested = 0;
+    private boolean _nudgeRequested = false;
+    private boolean _resetRequested = false;
+    private boolean _complete = false;
+    private boolean _oops = false;
+
+    // This last one should be made thread-safe, but it isn't for now.
     private final PropagationPoints stepPoints = new PropagationPoints();
-    private volatile int ticksRequested = 0;
-    private volatile int stepsRequested = 0;
-    private volatile boolean resetRequested = false;
-    private volatile boolean propagateRequested = false;
-    private volatile boolean complete = false;
+    SimThread(Simulator s) {
+      super("SimThread");
+      sim = s;
+    }
 
-    private void doTick() {
-      synchronized (this) {
-        ticksRequested--;
+    synchronized Propagator getPropagator() { return _propagator; }
+    synchronized boolean isExceptionEncountered() { return _oops; }
+    synchronized boolean isAutoTicking() { return _autoTicking; }
+    synchronized boolean isAutoPropagating() { return _autoPropagating; }
+    synchronized double getTickFrequency() { return _autoTickFreq; }
+
+    synchronized void drawStepPoints(ComponentDrawContext context) {
+      if (!_autoPropagating)
+        stepPoints.draw(context);
       }
-      propagator.tick();
+
+    synchronized void drawPendingInputs(ComponentDrawContext context) {
+      if (!_autoPropagating)
+        stepPoints.drawPendingInputs(context);
     }
 
-    public PropagationManager() {
-      super("PropagationManager");
+    synchronized void addPendingInput(CircuitState state, Component comp) {
+      stepPoints.addPendingInput(state, comp);
     }
 
-    public Propagator getPropagator() {
-      return propagator;
+    synchronized String getSingleStepMessage() {
+      return _autoPropagating ? "" : stepPoints.getSingleStepMessage();
     }
 
-    public synchronized void requestPropagate() {
-      if (!propagateRequested) {
-        propagateRequested = true;
-        notifyAll();
-      }
+    synchronized boolean setPropagator(Propagator value) {
+      if (_propagator == value)
+        return false;
+      _propagator = value;
+      _manualTicksRequested = 0;
+      _manualStepsRequested = 0;
+      notifyAll();
+      return true;
     }
 
-    public synchronized void requestReset() {
-      if (!resetRequested) {
-        resetRequested = true;
-        notifyAll();
-      }
+    synchronized boolean setAutoPropagation(boolean value) {
+      if (_autoPropagating == value)
+        return false;
+      _autoPropagating = value;
+      if (_autoPropagating)
+        _manualStepsRequested = 0; // manual steps not allowed in autoPropagating mode
+      else
+        _nudgeRequested = false; // nudges not allowed in single-step mode
+      notifyAll();
+      return true;
     }
 
-    public synchronized void requestTick() {
-      if (ticksRequested < 16) {
-        ticksRequested++;
-      }
+    synchronized boolean setAutoTicking(boolean value) {
+      if (_autoTicking == value)
+        return false;
+      _autoTicking = value;
+      notifyAll();
+      return true;
+    }
+
+    synchronized boolean setTickFrequency(double freq) {
+      if (_autoTickFreq == freq)
+        return false;
+      _autoTickFreq = freq;
+      _autoTickNanos = freq <= 0 ? 0 : (long)Math.round(1e9 / (2*_autoTickFreq));
+      notifyAll();
+      return true;
+    }
+
+    synchronized void requestStep() {
+      _manualStepsRequested++;
+      _autoPropagating = false;
       notifyAll();
     }
 
-    @Override
-    public void run() {
-      while (!complete) {
-        try {
-          synchronized (this) {
-            while (!complete
-                && !propagateRequested
-                && !resetRequested
-                && ticksRequested == 0
-                && stepsRequested == 0) {
-              try {
-                wait();
-              } catch (InterruptedException e) {
-              }
-            }
-          }
+    synchronized void requestTick(int count) {
+      _manualTicksRequested += count;
+      notifyAll();
+    }
 
-          if (resetRequested) {
-            resetRequested = false;
-            if (propagator != null) {
-              propagator.reset();
-            }
-            fireSimulatorReset();
-            propagateRequested |= isRunning;
+    synchronized void requestReset() {
+      _resetRequested = true;
+      _manualTicksRequested = 0;
+      _manualStepsRequested = 0;
+      notifyAll();
+    }
+
+    synchronized boolean requestNudge() {
+      if (!_autoPropagating)
+        return false;
+      _nudgeRequested = true;
+      notifyAll();
+      return true;
+    }
+
+    synchronized void requestShutDown() {
+      _complete = true;
+      notifyAll();
+    }
+
+    private boolean loop() {
+
+    Propagator prop = null;
+    boolean doReset = false;
+    boolean doNudge = false;
+    boolean doTick = false;
+    boolean doTickIfStable = false;
+    boolean doStep = false;
+    boolean doProp = false;
+    long now = 0;
+
+    synchronized (this) {
+
+      boolean ready = false;
+      do {
+        if (_complete)
+          return false;
+
+        prop = _propagator;
+        now = System.nanoTime();
+
+        if (_resetRequested) {
+          _resetRequested = false;
+          doReset = true;
+          doProp = _autoPropagating;
+          ready = true;
+        }
+        if (_nudgeRequested) {
+          _nudgeRequested = false;
+          doNudge = true;
+          ready = true;
+        }
+        if (_manualStepsRequested > 0) {
+          _manualStepsRequested--;
+          doTickIfStable = _autoTicking;
+          doStep = true;
+          ready = true;
+        }
+
+        if (_manualTicksRequested > 0) {
+          // variable is decremented below
+          doTick = true;
+          doProp = _autoPropagating;
+          doStep = !_autoPropagating;
+          ready = true;
+        }
+
+        long delta = 0;
+        if (_autoTicking && _autoPropagating && _autoTickNanos > 0) {
+          // see if it is time to do an auto-tick
+          long deadline = lastTick + _autoTickNanos;
+          delta = deadline - now;
+          if (delta <= 0) {
+            doTick = true;
+            doProp = true;
+            ready = true;
           }
-          // TODO: fix unsynchronized access to shared variables
-          if (propagateRequested || ticksRequested > 0 || stepsRequested > 0) {
-            boolean ticked = false;
-            if (isRunning) {
-              stepPoints.clear();
-              stepsRequested = 0;
-              if (propagator == null) {
-                propagateRequested = false;
-                ticksRequested = 0;
-              } else {
-                ticked = ticksRequested > 0;
-                if (ticked) {
-                  doTick();
-                }
-                do {
-                  propagateRequested = false;
-                  try {
-                    exceptionEncountered = false;
-                    if (propagator != null) propagator.propagate();
-                  } catch (Exception thr) {
-                    thr.printStackTrace();
-                    exceptionEncountered = true;
-                    setIsRunning(false);
-                  }
-                } while (propagateRequested);
-                if (isOscillating()) {
-                  setIsRunning(false);
-                  ticksRequested = 0;
-                  propagateRequested = false;
-                }
-              }
-            } else if (stepsRequested > 0) {
-                if (ticksRequested > 0 || (isTicking && !propagateRequested)) {
-                  ticksRequested = 1;
-                  doTick();
-                }
-                propagateRequested = false;
-                synchronized (this) {
-                  stepsRequested--;
-                }
-                exceptionEncountered = false;
-                try {
-                  stepPoints.clear();
-                  propagator.step(stepPoints);
-                  propagateRequested |= propagator.isPending();
-                } catch (Exception thr) {
-                  thr.printStackTrace();
-                  exceptionEncountered = true;
-              }
-            }
-            if (ticked) {
-              fireTickCompleted();
-            }
-            firePropagationCompleted();
+        }
+
+        if (!ready) {
+          // LockSupport.parkNanos(delta);
+          try {
+            if (delta > 0)
+              wait(delta/1000000, (int)(delta%1000000));
+            else
+              wait();
           }
-        } catch (Throwable e) {
+          catch (InterruptedException e) { } // yes, we swallow the interrupt
+        }
+      } while (!ready);
+
+      _oops = false;
+    }
+    // DEBUGGING
+    // System.out.printf("%d nudge %s tick %s prop %s step %s\n", cnt++, doNudge, doTick, doProp, doStep);
+
+    boolean oops = false;
+    boolean osc = false;
+    boolean ticked = false;
+    boolean stepped = false;
+    boolean propagated = false;
+    boolean hasClocks = true;
+
+    if (doReset) try {
+      stepPoints.clear();
+      if (prop != null)
+        prop.reset();
+      sim._fireSimulatorReset(); // todo: fixme: ack, wrong thread!
+    } catch (Exception err) {
+      oops = true;
+      err.printStackTrace();
+    }
+
+    if (doTick || (doTickIfStable && prop != null && !prop.isPending())) {
+      lastTick = now;
+      ticked = true;
+      if (prop != null)
+        hasClocks = prop.toggleClocks();
+    }
+
+    if (doProp || doNudge) try {
+      propagated = doProp;
+     // todo: need to fire events in here for chrono fine grained
+      Listener p = sim.getPropagationListener();
+      Event evt = p == null ? null : new Event(sim, false, false, false);
+      stepPoints.clear();
+      if (prop != null)
+        propagated |= prop.propagate(p, evt); // todo: need to fire events in here for chrono fine grained
+    } catch (Exception err) {
+      oops = true;
+      err.printStackTrace();
+    }
+
+    if (doStep) try {
+      stepped = true;
+      stepPoints.clear();
+      if (prop != null)
+        prop.step(stepPoints);
+      if (prop == null || !prop.isPending())
+        propagated = true;
+    } catch (Exception err) {
+      oops = true;
+      err.printStackTrace();
+    }
+
+    osc = prop != null && prop.isOscillating();
+
+    boolean clockDied = false;
+    synchronized (this) {
+      _oops = oops;
+      if (osc) {
+        _autoPropagating = false;
+        _nudgeRequested = false;
+      }
+      if (ticked && _manualTicksRequested > 0)
+        _manualTicksRequested--;
+      if (_autoTicking && !hasClocks) {
+        _autoTicking = false;
+        clockDied = true;
+      }
+    }
+
+    // We report nudges, but we report them as no-ops, unless they were
+    // accompanied by a tick, step, or propagate. That allows for a repaint in
+    // some components.
+    if (ticked || stepped || propagated || doNudge)
+      sim._firePropagationCompleted(ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
+    if (clockDied)
+      sim.fireSimulatorStateChanged(); ; // todo: fixme: ack, wrong thread!
+
+    return true;
+  }
+
+  @Override
+  public void run() {
+    for (;;) {
+      try {
+        if (!loop())
+          return;
+      } catch (Throwable e) {
           e.printStackTrace();
-          exceptionEncountered = true;
-          setIsRunning(false);
-          javax.swing.SwingUtilities.invokeLater(
-              new Runnable() {
-                public void run() {
+          synchronized(this) {
+            _oops = true;
+            _autoPropagating = false;
+            _autoTicking = false;
+            _manualTicksRequested = 0;
+            _manualStepsRequested = 0;
+            _nudgeRequested = false;
+          }
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
                   OptionPane.showMessageDialog(
                       null, "The simulator has crashed. Save your work and restart Logisim.");
-                }
-              });
+            }
+          });
         }
       }
     }
 
-    public void setPropagator(Propagator value) {
-      propagator = value;
-    }
-
-    public synchronized void shutDown() {
-      complete = true;
-      notifyAll();
-    }
   }
 
-  private boolean isRunning = true;
-  private boolean isTicking = false;
-  private boolean exceptionEncountered = false;
-  private double tickFrequency = 1.0;
-  private final PropagationManager manager;
-  private final SimulatorTicker ticker;
-  private final ArrayList<SimulatorListener> listeners = new ArrayList<>();
+  //
+  // Everything below here is invoked and accessed only by the User/GUI thread.
+  //
 
+  private SimThread simThread;
+
+  // listeners is protected by a lock because simThread calls the _fire*()
+  // methods, but the gui thread can call add/removeSimulateorListener() at any
+  // time. Really, the _fire*() methods should be done on the gui thread, I
+  // suspect.
+  private ArrayList<Listener> listeners = new ArrayList<>();
+  private Object lock = new Object();
+  
   public Simulator() {
-    manager = new PropagationManager();
-    ticker = new SimulatorTicker(manager);
+    simThread = new SimThread(this);
 
     try {
-      manager.setPriority(manager.getPriority() - 1);
-      ticker.setPriority(ticker.getPriority() - 1);
-    } catch (SecurityException | IllegalArgumentException e) {
-    }
+      simThread.setPriority(simThread.getPriority() - 1);
+    } catch (IllegalArgumentException | SecurityException e) { }
 
-    manager.start();
-    ticker.start();
+    simThread.start();
 
-    tickFrequency = 0.0;
     setTickFrequency(AppPreferences.TICK_FREQUENCY.get().doubleValue());
   }
 
-  public void addSimulatorListener(SimulatorListener l) {
-    listeners.add(l);
+  public void addSimulatorListener(Listener l) {
+    synchronized(lock) {
+      listeners.add(l);
+    }
   }
 
-  public void drawStepPoints(ComponentDrawContext context) {
-    manager.stepPoints.draw(context);
+  public void removeSimulatorListener(Listener l) {
+    synchronized(lock) {
+      listeners.remove(l);
+    }
   }
   
-  void fireSimulatorReset() {
-    SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
+  public void drawStepPoints(ComponentDrawContext context) {
+    simThread.drawStepPoints(context);
+  }
+
+  public void drawPendingInputs(ComponentDrawContext context) {
+    simThread.drawPendingInputs(context);
+  }
+
+  public String getSingleStepMessage() {
+    return simThread.getSingleStepMessage();
+  }
+
+  public void addPendingInput(CircuitState state, Component comp) {
+    simThread.addPendingInput(state, comp);
+  }
+
+  private ArrayList<Listener> copyListeners() {
+    ArrayList<Listener> copy;
+    synchronized (lock) {
+      copy = new ArrayList<Listener>(listeners);
+    }
+    return copy;
+  }
+
+  // called from simThread, but probably should not be
+  private void _fireSimulatorReset() {
+    Event e = new Event(this, false, false, false);
+    for (Listener l : copyListeners())
       l.simulatorReset(e);
-    }
   }
 
-  void firePropagationCompleted() {
-    SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<>(listeners)) {
+  //called from simThread, but probably should not be
+  private void _firePropagationCompleted(boolean t, boolean s, boolean p) {
+    Event e = new Event(this, t, s, p);
+    for (Listener l : copyListeners())
       l.propagationCompleted(e);
-    }
   }
 
-  void fireSimulatorStateChanged() {
-    SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<>(listeners)) {
+  // called from simThread (via Propagator.propagate()), but probably should not be
+  // void _firePropagationInProgress() {
+  //   Event e = new Event(this, false, false, false);
+  //   for (Listener l : copyListeners())
+  //     l.propagationInProgress(e);
+  // }
+  // called from simThread, but probably should not be
+  private Listener getPropagationListener() {
+    Listener p = null;
+    for (Listener l : copyListeners()) {
+      if (l.wantProgressEvents()) {
+        if (p != null)
+          throw new IllegalStateException("only one chronogram listener supported");
+        else
+          p = l;
+      }
+    }
+    return p;
+  }
+
+  // called only from gui thread, but need copy here anyway because listeners
+  // can add/remove from listeners list?
+  private void fireSimulatorStateChanged() {
+    Event e = new Event(this, false, false, false);
+    for (Listener l : copyListeners())
       l.simulatorStateChanged(e);
-    }
-  }
-
-  void fireTickCompleted() {
-    SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<>(listeners)) {
-      l.tickCompleted(e);
-    }
-  }
-
-  public CircuitState getCircuitState() {
-    Propagator prop = manager.getPropagator();
-    return prop == null ? null : prop.getRootState();
   }
 
   public double getTickFrequency() {
-    return tickFrequency;
+    return simThread.getTickFrequency();
   }
 
   public boolean isExceptionEncountered() {
-    return exceptionEncountered;
+    return simThread.isExceptionEncountered();
   }
 
   public boolean isOscillating() {
-    Propagator prop = manager.getPropagator();
+    Propagator prop = simThread.getPropagator();
     return prop != null && prop.isOscillating();
   }
 
-  public boolean isRunning() {
-    return isRunning;
+  public CircuitState getCircuitState() {
+    Propagator prop = simThread.getPropagator();
+    return prop == null ? null : prop.getRootState();
   }
 
-  public boolean isTicking() {
-    return isTicking;
+  public boolean isAutoPropagating() {
+    return simThread.isAutoPropagating();
   }
 
-  public void removeSimulatorListener(SimulatorListener l) {
-    listeners.remove(l);
-  }
-
-  private void renewTickerAwake() {
-    ticker.setAwake(isRunning && isTicking && tickFrequency > 0);
-  }
-
-  public void requestPropagate() {
-    manager.requestPropagate();
-  }
-
-  public void requestReset() {
-    manager.requestReset();
+  public boolean isAutoTicking() {
+    return simThread.isAutoTicking();
   }
 
   public void setCircuitState(CircuitState state) {
-    manager.setPropagator(state == null ? null : state.getPropagator());
-    renewTickerAwake();
-  }
-
-  public void setIsRunning(boolean value) {
-    if (isRunning != value) {
-      isRunning = value;
-      renewTickerAwake();
-      /*
-       * DEBUGGING - comment out: if (!value) flushLog(); //
-       */
+    if (simThread.setPropagator(state == null ? null : state.getPropagator()))
       fireSimulatorStateChanged();
-    }
   }
 
-  public void setIsTicking(boolean value) {
-    if (isTicking != value) {
-      isTicking = value;
-      renewTickerAwake();
+  public void setAutoPropagation(boolean value) {
+    if (simThread.setAutoPropagation(value))
       fireSimulatorStateChanged();
-    }
   }
 
-  // TODO: convert half-cycle frequency to full-cycle frequency
+  public void setAutoTicking(boolean value) {
+    if (value && !ensureClocks())
+      return;
+    if (simThread.setAutoTicking(value))
+      fireSimulatorStateChanged();
+  }
+
   public void setTickFrequency(double freq) {
-    if (tickFrequency != freq) {
-      long nanos = Math.round(1e9 / freq);
-      int ticks;
-      if (nanos > 0) {
-        ticks = 1;
-      } else {
-        nanos = 1;
-        ticks = (int) Math.round(freq / 1e9);
-      }
-
-      tickFrequency = freq;
-      ticker.setTickFrequency(nanos, ticks);
-      renewTickerAwake();
+    if (simThread.setTickFrequency(freq))
       fireSimulatorStateChanged();
-    }
-  }
-
-  public void shutDown() {
-    ticker.shutDown();
-    manager.shutDown();
   }
 
   public void step() {
-    synchronized (manager) {
-      manager.stepsRequested++;
-      manager.notifyAll();
-    }
+    simThread.requestStep();
   }
 
   public void tick(int count) {
-	    ticker.tick(count);
+    if (!ensureClocks())
+      return;
+    simThread.requestTick(count);
   }
+
+  // User/GUI manually requests a reset
+  public void reset() {
+    simThread.requestReset();
+  }
+
+  // Circuit changed, nudge the signals if needed to fix any pending changes
+  public boolean nudge() {
+    return simThread.requestNudge();
+  }
+
+  public void shutDown() {
+    simThread.requestShutDown();
+  }
+  
+  private boolean ensureClocks() {
+    CircuitState cs = getCircuitState();
+    if (cs == null)
+      return false;
+    if (cs.hasKnownClocks())
+      return true;
+    Circuit circ = cs.getCircuit();
+    ArrayList<SignalInfo> clocks = ComponentSelector.findClocks(circ);
+    if (clocks != null && clocks.size() >= 1) {
+      cs.markKnownClocks();
+      return true;
+    }
+
+    Component clk = ClockSource.doClockDriverDialog(circ);
+    if (clk == null)
+      return false;
+    if (!cs.setTemporaryClock(clk))
+      return false;
+    fireSimulatorStateChanged();
+    return true;
+  }
+
 }

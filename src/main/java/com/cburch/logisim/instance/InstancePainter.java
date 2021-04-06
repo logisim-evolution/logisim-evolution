@@ -223,7 +223,7 @@ public class InstancePainter implements InstanceState {
     return context.getShowState();
   }
 
-  public long getTickCount() {
+  public int getTickCount() {
     return context.getCircuitState().getPropagator().getTickCount();
   }
 

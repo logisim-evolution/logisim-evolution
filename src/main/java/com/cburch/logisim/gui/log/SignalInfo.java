@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.gui.log;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -35,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+
+import javax.swing.Icon;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
@@ -44,6 +48,7 @@ import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.BitWidth;
@@ -51,9 +56,9 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
-//Notes: Each SignalInfo belongs to a particular model, for a particular
-//simulation of a particular top-level circuit. Thus:
-//model --> circuitState --> top-level circuit
+//SignalInfo identifies a component within a top-level circuit or one of the
+//nested sub-circuits within that top-level circuit. The path[] identifies how
+//to get from the top-level circuit to the identified component.
 //
 //The path[] must not be empty. If it contains one component (e.g. a Pin or
 //Led), then that component is one that appears in the top-level circuit.
@@ -78,7 +83,6 @@ import com.cburch.logisim.instance.StdAttr;
 //
 
 public class SignalInfo implements AttributeListener, CircuitListener, Location.At {
-  private final Model model;
   private int n;
   private Component[] path; // n-1 subcircuit Components, then a Loggable Component
   private Circuit[] circ; // top-level circuit, then circuits for first n-1 path Components
@@ -88,14 +92,21 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private String fullname; // a path-like name, with slashes, ending with the nickname
   private int width = -1; // stored here so we can monitor for changes
 
-  public SignalInfo(Model m, Component[] p, Object o) {
-    model = m;
+  private boolean obsoleted;
+  private Listener listener; // only one supported, for now, usally just the LogModel
+
+  public static interface Listener {
+    public void signalInfoNameChanged(SignalInfo s);
+    public void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
+  }
+
+  public SignalInfo(Circuit root, Component[] p, Object o) {
     path = p;
     option = o;
     n = path.length;
     circ = new Circuit[n];
 
-    circ[0] = model.getCircuitState().getCircuit();
+    circ[0] = root;
     for (int i = 1; i < n; i++) {
       SubcircuitFactory f = (SubcircuitFactory)path[i-1].getFactory();
       circ[i] = f.getSubcircuit();
@@ -116,6 +127,12 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     for (Component c : path) c.getAttributeSet().addAttributeListener(this);
   }
   
+  public void setListener(Listener l) {
+    if (listener != null && l != null && l != listener)
+      throw new IllegalStateException("already have a different listener");
+    listener = l;
+  }
+
   public void attributeListChanged(AttributeEvent e) { }
   
   public void attributeValueChanged(AttributeEvent e) {
@@ -123,8 +140,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public void circuitChanged(CircuitEvent event) {
-    int index = model.indexOf(this);
-    if (index < 0) {
+    if (obsoleted) {
       return; // this SelectionItem doesn't appear to be alive any more
     }
     int action = event.getAction();
@@ -186,7 +202,8 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     }
     if (changed) {
       computeName();
-      model.fireSelectionChanged(new Model.Event()); // always, even if same name
+      if (listener != null)
+        listener.signalInfoNameChanged(this);
     }
   } else if (action == CircuitEvent.ACTION_INVALIDATE) {
       // This happens for seemingly many kinds of changes to component, e.g.,
@@ -214,7 +231,8 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private boolean recomputeName() {
     if (computeName()) {
       // System.out.println(">>>>> new name is " + fullname);
-      model.fireSelectionChanged(new Model.Event());
+      if (listener != null)
+        listener.signalInfoNameChanged(this);
       return true;
     }
     return false;
@@ -256,7 +274,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public Value fetchValue(CircuitState root) {
-    Loggable log = (Loggable) path[n-1].getFeature(Loggable.class);
+    Loggable log = (Loggable)path[n-1].getFeature(Loggable.class);
     if (log == null) return Value.NIL;
     CircuitState cur = root;
     for (int i = 0; i < n-1; i++)
@@ -268,8 +286,16 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     return path[n-1];
   }
 
+  public Circuit getTopLevelCircuit() {
+    return circ[0];
+  }
+  
+  public int getDepth() {
+    return n;
+  }
+
   public boolean isInput(Object option) {
-    Loggable log = (Loggable) path[n-1].getFeature(Loggable.class);
+    Loggable log = (Loggable)path[n-1].getFeature(Loggable.class);
     return log != null && log.isInput(option);
   }
 
@@ -281,10 +307,10 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     return radix.toString(v);
   }
 
-  public void setRadix(RadixOption value) {
-    if (value == radix) return;
+  public boolean setRadix(RadixOption value) {
+    if (value == radix) return false;
     radix = value;
-    model.fireSelectionChanged(new Model.Event());
+    return true;
   }
 
   public String getShortName() {
@@ -307,6 +333,37 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public int getWidth() {
     return width;
   }
+  
+  public Object getOption() {
+    return option;
+  }
+  
+  public final Icon icon = new Icon() {
+    @Override
+    public int getIconHeight() { return 20; }
+    @Override
+    public int getIconWidth() { return 20; }
+    @Override
+    public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
+      SignalInfo.paintIcon(path[n-1], option, c, g, x, y);
+    }
+  };
+
+  public static void paintIcon(Component comp, Object opt,
+      java.awt.Component c, Graphics g, int x, int y) {
+    if (comp == null)
+      return;
+    if (opt != null) {
+      // todo
+      g.setColor(Color.MAGENTA);
+      g.fillRect(x+3, x+3, 15, 15);
+    } else {
+      Graphics g2 = g.create();
+      ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g2);
+      comp.getFactory().paintIcon(context, x, y, comp.getAttributeSet());
+      g2.dispose();
+    }
+  }
 
   @Override
   public boolean equals(Object other) {
@@ -315,23 +372,24 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     if (other == null || !(other instanceof SignalInfo))
       return false;
     SignalInfo o = (SignalInfo)other;
-    return model.equals(o.model)
-        && Arrays.equals(path, o.path)
-        && Objects.equals(option, o.option);
+    return Arrays.equals(path, o.path) && Objects.equals(option, o.option);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(model, Arrays.hashCode(path), option);
+    return Objects.hash(Arrays.hashCode(path), option);
   }
 
   private void remove() {
-    int index = model.indexOf(this);
-    model.remove(index);
+    if (obsoleted)
+      return;
+    obsoleted = true;
     for (Circuit t : circ)
       t.removeCircuitListener(this);
     for (Component c : path)
       c.getAttributeSet().removeAttributeListener(this);
+    if (listener != null)
+      listener.signalInfoObsoleted(this);
   }
 
   public static class List extends ArrayList<SignalInfo> implements Transferable

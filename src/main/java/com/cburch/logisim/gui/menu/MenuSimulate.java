@@ -35,8 +35,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
@@ -110,7 +108,7 @@ public class MenuSimulate extends Menu {
     reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask));
     step.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
     tickHalf.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask));
-    tickFull.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
+    tickFull.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
     ticksEnabled.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
 
     ButtonGroup bgroup = new ButtonGroup();
@@ -304,7 +302,7 @@ public class MenuSimulate extends Menu {
       if (currentSim != null) {
         currentSim.addSimulatorListener(myListener);
       }
-      myListener.simulatorStateChanged(new SimulatorEvent(sim));
+      myListener.simulatorStateChanged(new Simulator.Event(sim, false, false, false));
     }
 
     clearItems(downStateItems);
@@ -355,7 +353,7 @@ public class MenuSimulate extends Menu {
     }
   }
 
-  private class MyListener implements ActionListener, SimulatorListener, ChangeListener {
+  private class MyListener implements ActionListener, Simulator.Listener, ChangeListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -380,13 +378,13 @@ public class MenuSimulate extends Menu {
       if (sim == null) {
         return;
       } else if (src == LogisimMenuBar.SIMULATE_STOP) {
-        sim.setIsRunning(false);
+        sim.setAutoPropagation(false);
         proj.repaintCanvas();
       } else if (src == LogisimMenuBar.SIMULATE_RUN) {
-        sim.setIsRunning(true);
+        sim.setAutoPropagation(true);
         proj.repaintCanvas();
       } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
-        sim.setIsRunning(!sim.isRunning());
+        sim.setAutoPropagation(!sim.isAutoPropagating());
         proj.repaintCanvas();
       } else if (src == reset) {
         /* Restart VHDL simulation (in QuestaSim) */
@@ -399,17 +397,17 @@ public class MenuSimulate extends Menu {
           try { Thread.sleep(500); }
           catch (InterruptedException ex) { Thread.currentThread().interrupt(); }
         }
-        sim.requestReset();
+        sim.reset();
         proj.repaintCanvas();
       } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
-        sim.setIsRunning(false);
+        sim.setAutoPropagation(false);
         sim.step();
       } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
         sim.tick(1);
       } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
         sim.tick(2);
       } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
-        sim.setIsTicking(!sim.isTicking());
+        sim.setAutoTicking(!sim.isAutoTicking());
       } else if (src == assemblyWindow) {
         if (assWin == null || assWin.isVisible() == false) {
           assWin = new AssemblyWindow(proj);
@@ -421,26 +419,26 @@ public class MenuSimulate extends Menu {
     }
 
     @Override
-    public void propagationCompleted(SimulatorEvent e) {}
+    public void propagationCompleted(Simulator.Event e) {}
 
     @Override
-    public void simulatorReset(SimulatorEvent e) {
+    public void simulatorReset(Simulator.Event e) {
       updateSimulator(e);
     }
 
    @Override
-    public void simulatorStateChanged(SimulatorEvent e) {
+    public void simulatorStateChanged(Simulator.Event e) {
      updateSimulator(e);
    }
 
-   void updateSimulator(SimulatorEvent e) {
+   void updateSimulator(Simulator.Event e) {
      Simulator sim = e.getSource();
      if (sim != currentSim) {
        return;
      }
      computeEnabled();
-     runToggle.setSelected(sim.isRunning());
-     ticksEnabled.setSelected(sim.isTicking());
+     runToggle.setSelected(sim.isAutoPropagating());
+     ticksEnabled.setSelected(sim.isAutoTicking());
      double freq = sim.getTickFrequency();
      for (TickFrequencyChoice item : tickFreqs) {
        item.setSelected(freq == item.freq);
@@ -450,8 +448,6 @@ public class MenuSimulate extends Menu {
     @Override
     public void stateChanged(ChangeEvent e) {}
 
-    @Override
-    public void tickCompleted(SimulatorEvent e) {}
   }
 
   private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {

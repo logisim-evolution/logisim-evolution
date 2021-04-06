@@ -41,6 +41,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.gui.log.SelectionPanel;
 import com.cburch.logisim.gui.log.Signal;
 import com.cburch.logisim.gui.log.SignalInfo;
 
@@ -50,14 +51,18 @@ public class PopupMenu extends MouseAdapter {
     private static final long serialVersionUID = 1L;
     public PopupContents() {
       super("Options");
-      RadixOption radix = signals.get(0).info.getRadix();
-      for (int i = 1; i < signals.size(); i++)
-        if (signals.get(i).info.getRadix() != radix)
-          radix = null;
+      RadixOption radix = null;
+      if (signals.size() > 0) {
+        radix = signals.get(0).info.getRadix();
+        for (int i = 1; i < signals.size(); i++)
+          if (signals.get(i).info.getRadix() != radix)
+            radix = null;
+      }
       ButtonGroup g = new ButtonGroup();
       for (RadixOption r : RadixOption.OPTIONS) {
         JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString()); 
         add(m);
+        m.setEnabled(signals.size() > 0);
         g.add(m);
         if (r == radix)
           m.setSelected(true);
@@ -69,9 +74,11 @@ public class PopupMenu extends MouseAdapter {
           }
         });
       }
+      JMenuItem m;
       addSeparator();
-      JMenuItem m = new JMenuItem("Delete");
+      m = new JMenuItem(S.get("editClearItem"));
       add(m);
+      m.setEnabled(signals.size() > 0);
       m.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {              
@@ -81,6 +88,16 @@ public class PopupMenu extends MouseAdapter {
           chronoPanel.getModel().remove(items);
         }
       });
+      addSeparator();
+      m = new JMenuItem(S.get("addRemoveSignals"));
+      add(m);
+      m.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          SelectionPanel.doDialog(chronoPanel.getLogFrame());
+        }
+      });
+
     }
   }
 
@@ -93,8 +110,6 @@ public class PopupMenu extends MouseAdapter {
   }
 
   public void doPop(MouseEvent e) {
-    if (signals.size() == 0)
-      return;
     PopupContents menu = new PopupContents();
     menu.show(e.getComponent(), e.getX(), e.getY());
   }
