@@ -137,7 +137,8 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-	if (attrs == null) return false;
+	   if (attrs == null) return false;
+	   if (attrs.getValue(Mem.LINE_ATTR) == null) return false;
     return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);
   }
 }
