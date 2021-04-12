@@ -62,7 +62,7 @@ public class Base extends Library {
         new MenuTool(),
         // TextTool uses internall Text.FACTORY, but also supports click-to-edit,
         // custom cursor, etc. A dedicated "add text tool" is useless.
-        /* new AddTool(Text.FACTORY), */
+        new AddTool(Text.FACTORY), //TODO: remove
       });
     }
 

@@ -73,8 +73,9 @@ public class Ram extends Mem {
 
     @Override
     public BitWidth getBitWidth(InstanceState state, Object option) {
-      MemState s = (MemState)state.getData();
-      return BitWidth.create(s.getDataBits());
+//      MemState s = (MemState)state.getData();
+//      return BitWidth.create(s.getDataBits());
+      return state.getAttributeValue(Mem.DATA_ATTR);
     }
 
     @Override
@@ -207,7 +208,7 @@ public class Ram extends Mem {
 
   @Override
   MemState getState(Instance instance, CircuitState state) {
-	return getState(state.getInstanceState(instance));
+	   return getState(state.getInstanceState(instance));
   }
 
   @Override
