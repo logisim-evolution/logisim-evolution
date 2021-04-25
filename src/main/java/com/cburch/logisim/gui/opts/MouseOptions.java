@@ -83,7 +83,7 @@ class MouseOptions extends OptionsPanel {
   public MouseOptions(OptionsFrame window) {
     super(window, new GridLayout(1, 3));
 
-    explorer = new ProjectExplorer(getProject());
+    explorer = new ProjectExplorer(getProject(),true);
     explorer.setListener(listener);
 
     // Area for adding mappings

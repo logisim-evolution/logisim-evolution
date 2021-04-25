@@ -61,7 +61,7 @@ class ToolbarOptions extends OptionsPanel {
 
   public ToolbarOptions(OptionsFrame window) {
     super(window);
-    explorer = new ProjectExplorer(getProject());
+    explorer = new ProjectExplorer(getProject(),true);
     addTool = new JButton();
     addSeparator = new JButton();
     moveUp = new JButton();
