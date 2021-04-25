@@ -87,11 +87,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private final DeleteAction deleteAction = new DeleteAction();
   private Listener listener = null;
   private Tool haloedTool = null;
-  public ProjectExplorer(Project proj) {
+  
+  public ProjectExplorer(Project proj, boolean showMouseTools) {
     super();
     this.proj = proj;
 
-    setModel(new ProjectExplorerModel(proj, this));
+    setModel(new ProjectExplorerModel(proj, this, showMouseTools));
     setRootVisible(true);
     addMouseListener(myListener);
     ToolTipManager.sharedInstance().registerComponent(this);

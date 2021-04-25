@@ -35,6 +35,7 @@ package com.cburch.logisim.gui.generic;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import java.util.ArrayList;
@@ -50,25 +51,29 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private static final long serialVersionUID = 1L;
   private LogisimFile file;
   private JTree guiElement = null;
+  private boolean showMouseTools;
 
-  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui) {
+  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);
     guiElement = gui;
     if (lib instanceof LogisimFile) {
       file = (LogisimFile) lib;
       file.addLibraryListener(this);
     }
+    this.showMouseTools = showMouseTools;
     buildChildren();
   }
 
   private void buildChildren() {
     Library lib = getValue();
-    if (lib != null && !(lib.isHidden())) {
-      buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
-      buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null, guiElement),
-          lib.getLibraries(),
-          lib.getTools().size());
+    if (lib != null) {
+      boolean showLib = (showMouseTools & lib instanceof Base) || !lib.isHidden();
+      if (showLib) {
+        buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
+        buildChildren(
+          new ProjectExplorerLibraryNode(getModel(), null, guiElement, showMouseTools),
+            lib.getLibraries(), lib.getTools().size());
+      }
     }
   }
 
@@ -100,7 +105,10 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     oldPos = startIndex;
 
     for (T tool : items) {
-      if (tool instanceof Library && ((Library) tool).isHidden()) continue;
+      if (tool instanceof Library && ((Library) tool).isHidden()) {
+        if (!showMouseTools) continue;
+        else if (!(((Library) tool) instanceof Base)) continue;
+      }
       if (tool instanceof AddTool) {
         AddTool a = (AddTool) tool;
         a.registerParrent(guiElement);
@@ -195,7 +203,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
   @Override
   ProjectExplorerLibraryNode create(Library userObject) {
-    return new ProjectExplorerLibraryNode(getModel(), userObject, guiElement);
+    return new ProjectExplorerLibraryNode(getModel(), userObject, guiElement, showMouseTools);
   }
 
   @Override

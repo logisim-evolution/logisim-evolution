@@ -48,10 +48,13 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private static final long serialVersionUID = 1L;
   private final JTree GuiElement;
   private Project proj;
-  ProjectExplorerModel(Project proj, JTree gui) {
+  private boolean showMouseTools;
+  
+  ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
     super(null);
     this.proj = proj;
-    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui));
+    this.showMouseTools = showMouseTools;
+    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui, showMouseTools));
     proj.addProjectListener(this);
     GuiElement = gui;
   }
@@ -105,7 +108,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     if (file == null) {
       setRoot(null);
     } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file, GuiElement));
+      setRoot(new ProjectExplorerLibraryNode(this, file, GuiElement,showMouseTools));
     }
 
     fireStructureChanged();
