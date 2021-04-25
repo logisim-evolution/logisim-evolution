@@ -30,6 +30,7 @@ package com.cburch.logisim.std.base;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -54,27 +55,24 @@ public class Base extends Library {
     tools = Arrays.asList(new Tool[] {
         new PokeTool(),
         new EditTool(selectTool, wiring),
-        // Select by itself is kind of useless. It can select and move things, or
-        // click to edit attributes. But it can't modify wires like EditTool can.
-        /* select, */
         wiring,
         new TextTool(),
         new MenuTool(),
-        // TextTool uses internall Text.FACTORY, but also supports click-to-edit,
-        // custom cursor, etc. A dedicated "add text tool" is useless.
-        new AddTool(Text.FACTORY), //TODO: remove
       });
     }
+  
+  @Override
+  public boolean contains(ComponentFactory querry) {
+    return super.contains(querry) || (querry instanceof Text);
+  }
 
-    @Override
-    public Tool getTool(String name) {
-      Tool t = super.getTool(name);
-      if (t == null) {
-        if (name.equals("Text"))
-          return textAdder; // needed by XmlCircuitReader
-        if (name.equals("Select Tool"))
-          return selectTool; // not sure if this is necessary
-      }
+  @Override
+  public Tool getTool(String name) {
+    Tool t = super.getTool(name);
+    if (t == null) {
+      if (name.equals("Text"))
+        return textAdder; // needed by XmlCircuitReader
+    }
     return t;
   }
 
