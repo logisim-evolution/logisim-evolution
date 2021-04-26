@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
 
@@ -44,35 +45,30 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
-    String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
       Contents.add(
           "   "
-              + Preamble
+              + HDL.assignPreamble()
               + HDLGeneratorFactory.LocalOutputBubbleBusname
-              + OpenBracket
+              + HDL.BracketOpen()
               + (ComponentInfo.GetLocalBubbleOutputStartId() + i)
-              + CloseBracket
-              + AssignOperator
-              + GetNetName(ComponentInfo, i, true, HDLType, Nets)
+              + HDL.BracketClose()
+              + HDL.assignOperator()
+              + GetNetName(ComponentInfo, i, true, Nets)
               + ";");
     }
     return Contents;
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 }

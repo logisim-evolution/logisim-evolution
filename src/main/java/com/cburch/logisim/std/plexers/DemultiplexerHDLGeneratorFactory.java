@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -60,8 +61,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     String Space = "  ";
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
@@ -70,8 +70,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       if (i == 10) {
         Space = " ";
       }
-      String binValue = IntToBin(i, nr_of_select_bits, HDLType);
-      if (HDLType.equals(VHDL)) {
+      String binValue = IntToBin(i, nr_of_select_bits);
+      if (HDL.isVHDL()) {
         Contents.add("   DemuxOut_" + i + Space + "<= DemuxIn WHEN sel = " + binValue + " AND");
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           Contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
@@ -121,8 +121,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -131,29 +130,19 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     int select_input_index = (1 << nr_of_select_bits);
     // begin with connecting all outputs of demultiplexer
     for (int i = 0; i < select_input_index; i++)
-      PortMap.putAll(
-          GetNetMap(
-              "DemuxOut_" + i, true, ComponentInfo, i, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap("DemuxOut_" + i, true, ComponentInfo, i, Reporter, Nets));
     // now select..
     PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, HDLType, Nets));
+        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, Nets));
     // now connect enable input...
-    if (ComponentInfo.GetComponent()
-        .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)
-        .booleanValue()) {
-      PortMap.putAll(
-          GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Reporter, HDLType, Nets));
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Reporter, Nets));
     } else {
-      String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-      PortMap.put("Enable", SetBit);
-      select_input_index--; // decrement pin index because enable doesn't
-      // exist...
+      PortMap.put("Enable", HDL.oneBit());
+      select_input_index--; // decrement pin index because enable doesn't exist...
     }
     // finally input
-    PortMap.putAll(
-        GetNetMap("DemuxIn", true, ComponentInfo, select_input_index + 2, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DemuxIn", true, ComponentInfo, select_input_index + 2, Reporter, Nets));
     return PortMap;
   }
 
@@ -163,7 +152,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

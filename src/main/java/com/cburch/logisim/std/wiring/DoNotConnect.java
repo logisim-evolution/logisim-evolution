@@ -49,7 +49,7 @@ public class DoNotConnect extends InstanceFactory {
 	
   private static class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 	  @Override
-	  public boolean IsOnlyInlined(String HDLType) {
+	  public boolean IsOnlyInlined() {
 	    return true;
 	  }
   }
@@ -90,9 +90,9 @@ public class DoNotConnect extends InstanceFactory {
   public void propagate(InstanceState state) { }
 	
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new DoNotConnectGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
 }

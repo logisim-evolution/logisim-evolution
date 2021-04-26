@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -61,11 +62,10 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   s_extended_dataA <= \"0\"&DataA;");
       Contents.add("   s_extended_dataB <= \"0\"&DataB;");
       Contents.add("   s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+");
@@ -113,16 +113,15 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Reporter, Nets));
+    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Reporter, Nets));
+    PortMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Reporter, Nets));
+    PortMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Reporter, Nets));
     return PortMap;
   }
 
@@ -141,7 +140,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

@@ -33,7 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -68,30 +68,30 @@ public class Ttl7451HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   Y1 <= (A1 AND B1) NOR (C1 AND D1);");
-    Contents.add("   Y2 <= (A2 AND B2) NOR (C2 AND D2);");
+    Contents.add("   "+HDL.assignPreamble()+"Y1"+HDL.assignOperator()+HDL.notOperator()+
+        "((A1"+HDL.andOperator()+"B1)"+HDL.orOperator()+"(C1"+HDL.andOperator()+"D1));");
+    Contents.add("   "+HDL.assignPreamble()+"Y2"+HDL.assignOperator()+HDL.notOperator()+
+        "((A2"+HDL.andOperator()+"B2)"+HDL.orOperator()+"(C2"+HDL.andOperator()+"D2));");
     return Contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 0, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 9, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("C1", true, ComponentInfo, 7, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 8, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Y1", true, ComponentInfo, 6, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 2, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("C2", true, ComponentInfo, 3, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 4, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Y2", true, ComponentInfo, 5, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 0, Reporter, Nets));
+    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 9, Reporter, Nets));
+    PortMap.putAll(GetNetMap("C1", true, ComponentInfo, 7, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 8, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Y1", true, ComponentInfo, 6, Reporter, Nets));
+    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 1, Reporter, Nets));
+    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 2, Reporter, Nets));
+    PortMap.putAll(GetNetMap("C2", true, ComponentInfo, 3, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 4, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Y2", true, ComponentInfo, 5, Reporter, Nets));
     return PortMap;
   }
 
@@ -105,9 +105,9 @@ public class Ttl7451HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND) && (HDLType.equals(HDLGeneratorFactory.VHDL)));
+    return (!attrs.getValue(TTL.VCC_GND));
   }
 }

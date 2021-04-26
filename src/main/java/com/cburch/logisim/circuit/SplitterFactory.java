@@ -144,7 +144,7 @@ public class SplitterFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 
@@ -155,4 +155,5 @@ public class SplitterFactory extends AbstractComponentFactory {
       toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
     }
   }
+
 }

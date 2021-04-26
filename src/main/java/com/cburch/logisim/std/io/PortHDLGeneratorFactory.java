@@ -35,18 +35,19 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
 
 public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
   
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
   
@@ -56,14 +57,8 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
-    String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
-    String Downto = (HDLType.equals(VHDL)) ? " DOWNTO " : ":";
     AttributeOption dir = ComponentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
     int size = ComponentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
     int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
@@ -73,9 +68,9 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         int end = start-1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
-        Contents.add("   "+Preamble+GetBusName(ComponentInfo, i, HDLType, Nets)+
-                     AssignOperator+HDLGeneratorFactory.LocalInputBubbleBusname+
-                     OpenBracket+end+Downto+CloseBracket+";");
+        Contents.add("   "+HDL.assignPreamble()+GetBusName(ComponentInfo, i, Nets)+
+                     HDL.assignOperator()+HDLGeneratorFactory.LocalInputBubbleBusname+
+                     HDL.BracketOpen()+end+HDL.vectorLoopId()+"0"+HDL.BracketClose()+";");
       }
     } else if (dir == PortIO.OUTPUT) {
       for (int i = 0 ; i < nBus ; i++) {
@@ -83,9 +78,9 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         int end = start-1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
-        Contents.add("   "+Preamble+HDLGeneratorFactory.LocalOutputBubbleBusname+
-                     AssignOperator+GetBusName(ComponentInfo, i, HDLType, Nets)+
-                     OpenBracket+end+Downto+CloseBracket+";");
+        Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+
+                     HDL.assignOperator()+GetBusName(ComponentInfo, i, Nets)+
+                     HDL.BracketOpen()+end+HDL.vectorLoopId()+"0"+HDL.BracketClose()+";");
       }
     } else {
       for (int i = 0 ; i < nBus ; i++) {
@@ -96,31 +91,31 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         int enableIndex = (dir == PortIO.INOUTSE) ? 0 : i*2;
         int inputIndex = (dir == PortIO.INOUTSE) ? i+1 : i*2+1;
         int outputIndex = (dir == PortIO.INOUTSE) ? 1+nBus+i : 2*nBus+i;
-        String InputName = GetBusName(ComponentInfo, inputIndex, HDLType, Nets);
-        String OutputName = GetBusName(ComponentInfo, outputIndex, HDLType, Nets);
-        String EnableName = (dir == PortIO.INOUTSE) ? GetNetName(ComponentInfo, enableIndex, true, HDLType, Nets) :
-                                                      GetBusName(ComponentInfo, enableIndex, HDLType, Nets);
-        Contents.add("   "+Preamble+OutputName+AssignOperator+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                     OpenBracket+end+Downto+start+CloseBracket+";");
+        String InputName = GetBusName(ComponentInfo, inputIndex, Nets);
+        String OutputName = GetBusName(ComponentInfo, outputIndex, Nets);
+        String EnableName = (dir == PortIO.INOUTSE) ? GetNetName(ComponentInfo, enableIndex, true, Nets) :
+                                                      GetBusName(ComponentInfo, enableIndex, Nets);
+        Contents.add("   "+HDL.assignPreamble()+OutputName+HDL.assignOperator()+HDLGeneratorFactory.LocalInOutBubbleBusname+
+                     HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+";");
         if (dir == PortIO.INOUTSE) {
-          if (HDLType.equals(VHDL)) {
+          if (HDL.isVHDL()) {
             Contents.add("   "+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                         OpenBracket+end+Downto+start+CloseBracket+" <= "+
+                         HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+" <= "+
             		     InputName+" WHEN "+EnableName+" = '1' ELSE (OTHERS => 'Z');"); 
           } else {
-            Contents.add("   "+Preamble+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                         OpenBracket+end+Downto+start+CloseBracket+" = ("+EnableName+
+            Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalInOutBubbleBusname+
+                         HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+" = ("+EnableName+
                          ") ? "+InputName+" : "+nbits+"'bZ;");
           }
         } else {
           for (int bit = 0 ; bit < nbits ; bit++) {
-            if (HDLType.equals(VHDL)) {
+            if (HDL.isVHDL()) {
               Contents.add("   "+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                           OpenBracket+(start+bit)+CloseBracket+" <= "+
+                           HDL.BracketOpen()+(start+bit)+HDL.BracketClose()+" <= "+
               		       InputName+"("+bit+") WHEN "+EnableName+"("+bit+") = '1' ELSE 'Z';"); 
             } else {
-              Contents.add("   "+Preamble+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                           OpenBracket+(start+bit)+CloseBracket+" = ("+EnableName+
+              Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalInOutBubbleBusname+
+                           HDL.BracketOpen()+(start+bit)+HDL.BracketClose()+" = ("+EnableName+
                            "["+bit+"]) ? "+InputName+"["+bit+"] : 1'bZ;");
             }
           }

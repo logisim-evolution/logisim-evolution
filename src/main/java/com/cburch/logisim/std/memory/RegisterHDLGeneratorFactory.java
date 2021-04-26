@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
@@ -63,10 +64,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   Q <= s_state_reg;");
       Contents.add("");
       Contents.add("   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )");
@@ -185,18 +185,13 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
     Boolean HasClock = true;
     Boolean ActiveLow = false;
-    String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
-    String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-    String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
-    String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(Register.CK)) {
       Reporter.AddSevereWarning(
@@ -211,77 +206,77 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     if (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING
         || attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_LOW) ActiveLow = true;
-    PortMap.putAll(GetNetMap("Reset", true, ComponentInfo, Register.CLR, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Reset", true, ComponentInfo, Register.CLR, Reporter, Nets));
     PortMap.putAll(
-        GetNetMap("ClockEnable", false, ComponentInfo, Register.EN, Reporter, HDLType, Nets));
+        GetNetMap("ClockEnable", false, ComponentInfo, Register.EN, Reporter, Nets));
 
     if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
-        PortMap.put("Tick", SetBit);
+        PortMap.put("Tick", HDL.oneBit());
       } else {
         if (ActiveLow)
           PortMap.put(
               "Tick",
               ClockNetName
-                  + BracketOpen
+                  + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
-                  + BracketClose);
+                  + HDL.BracketClose());
         else
           PortMap.put(
               "Tick",
               ClockNetName
-                  + BracketOpen
+                  + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
-                  + BracketClose);
+                  + HDL.BracketClose());
       }
       PortMap.put(
           "Clock",
           ClockNetName
-              + BracketOpen
+              + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GlobalClockIndex
-              + BracketClose);
+              + HDL.BracketClose());
     } else if (!HasClock) {
-      PortMap.put("Tick", ZeroBit);
-      PortMap.put("Clock", ZeroBit);
+      PortMap.put("Tick", HDL.zeroBit());
+      PortMap.put("Clock", HDL.zeroBit());
     } else {
-      PortMap.put("Tick", SetBit);
+      PortMap.put("Tick", HDL.oneBit());
       if (!GatedClock) {
         if (ActiveLow)
           PortMap.put(
               "Clock",
               ClockNetName
-                  + BracketOpen
+                  + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
-                  + BracketClose);
+                  + HDL.BracketClose());
         else
           PortMap.put(
               "Clock",
               ClockNetName
-                  + BracketOpen
+                  + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.DerivedClockIndex
-                  + BracketClose);
+                  + HDL.BracketClose());
       } else {
-        PortMap.put("Clock", GetNetName(ComponentInfo, Register.CK, true, HDLType, Nets));
+        PortMap.put("Clock", GetNetName(ComponentInfo, Register.CK, true, Nets));
       }
     }
     String Input = "D";
     String Output = "Q";
-    if (HDLType.equals(VHDL)
+    if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       Input += "(0)";
       Output += "(0)";
     }
-    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Register.IN, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Register.OUT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Register.IN, Reporter, Nets));
+    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Register.OUT, Reporter, Nets));
     return PortMap;
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_state_reg", NrOfBitsId);
-    if (HDLType.equals(VERILOG) & Netlist.IsFlipFlop(attrs))
+    if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
       Regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return Regs;
   }
@@ -292,7 +287,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

@@ -33,18 +33,19 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 
 public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
   
@@ -54,27 +55,26 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String TriName = GetNetName(ComponentInfo,2,true, HDLType, Nets);
+    String TriName = GetNetName(ComponentInfo,2,true, Nets);
     String InpName = "";
     String OutpName = "";
     String TriState = ""; 
     int nrBits = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth(); 
     if (nrBits > 1) {
-      InpName = GetBusName(ComponentInfo,1, HDLType, Nets);
-      OutpName = GetBusName(ComponentInfo,0, HDLType, Nets);
-      TriState = HDLType.equals(VHDL) ? "(OTHERS => 'Z')" : nrBits+"'bZ";
+      InpName = GetBusName(ComponentInfo,1, Nets);
+      OutpName = GetBusName(ComponentInfo,0, Nets);
+      TriState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits+"'bZ";
     } else {
-      InpName = GetNetName(ComponentInfo,1,true, HDLType, Nets);
-      OutpName = GetNetName(ComponentInfo,0,true, HDLType, Nets);
-      TriState = HDLType.equals(VHDL) ? "'Z'" : "1'bZ";
+      InpName = GetNetName(ComponentInfo,1,true, Nets);
+      OutpName = GetNetName(ComponentInfo,0,true, Nets);
+      TriState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
     if (ComponentInfo.EndIsConnected(2) && ComponentInfo.EndIsConnected(0)) {
       String invert = ((ControlledBuffer)ComponentInfo.GetComponent().getFactory()).isInverter() ?
-        (HDLType.equals(VHDL) ? " NOT " : " ~ ") : "";
-      if (HDLType.equals(VHDL)) {
+        HDL.notOperator() : "";
+      if (HDL.isVHDL()) {
         Contents.add("   "+OutpName+ "<= "+invert+InpName+" WHEN "+TriName+
                      " = '1' ELSE "+TriState+";");
       } else {

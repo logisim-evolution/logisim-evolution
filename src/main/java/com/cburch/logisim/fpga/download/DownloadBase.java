@@ -128,7 +128,7 @@ public abstract class DownloadBase {
       DRCResult |= Netlist.DRC_ERROR;
     } else {
       root.getNetList().clear();
-      DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter, HDLType, true, SheetNames);
+      DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter, true, SheetNames);
     }
     return (DRCResult == Netlist.DRC_PASSED);
   }
@@ -177,14 +177,12 @@ public abstract class DownloadBase {
 
     Set<String> GeneratedHDLComponents = new HashSet<>();
     HDLGeneratorFactory Worker =
-        RootSheet.getSubcircuitFactory()
-            .getHDLGenerator(AppPreferences.HDL_Type.get(), RootSheet.getStaticAttributes());
+        RootSheet.getSubcircuitFactory().getHDLGenerator(RootSheet.getStaticAttributes());
     if (Worker == null) {
       MyReporter.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
-    if (!Worker.GenerateAllHDLDescriptions(
-        GeneratedHDLComponents, ProjectDir, null, MyReporter, AppPreferences.HDL_Type.get())) {
+    if (!Worker.GenerateAllHDLDescriptions(GeneratedHDLComponents, ProjectDir, null, MyReporter)) {
       return false;
     }
     /* Here we generate the top-level shell */
@@ -194,29 +192,25 @@ public abstract class DownloadBase {
               MyBoardInformation.fpga.getClockFrequency(),
               frequency /* , boardFreq.isSelected() */);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
-          ProjectDir + Ticker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
+          ProjectDir + Ticker.GetRelativeDirectory(),
           Ticker.GetEntity(
               RootSheet.getNetList(),
               null,
               Ticker.getComponentStringIdentifier(),
-              MyReporter,
-              AppPreferences.HDL_Type.get()),
+              MyReporter),
           Ticker.getComponentStringIdentifier(),
-          MyReporter,
-          AppPreferences.HDL_Type.get())) {
+          MyReporter)) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          ProjectDir + Ticker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
+          ProjectDir + Ticker.GetRelativeDirectory(),
           Ticker.GetArchitecture(
               RootSheet.getNetList(),
               null,
               Ticker.getComponentStringIdentifier(),
-              MyReporter,
-              AppPreferences.HDL_Type.get()),
+              MyReporter),
           Ticker.getComponentStringIdentifier(),
-          MyReporter,
-          AppPreferences.HDL_Type.get())) {
+          MyReporter)) {
         return false;
       }
 
@@ -225,27 +219,20 @@ public abstract class DownloadBase {
               .GetAllClockSources()
               .get(0)
               .getFactory()
-              .getHDLGenerator(
-                  AppPreferences.HDL_Type.get(),
-                  RootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
+              .getHDLGenerator(RootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
       String CompName =
           RootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
-          ProjectDir + ClockGen.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-          ClockGen.GetEntity(
-              RootSheet.getNetList(), null, CompName, MyReporter, AppPreferences.HDL_Type.get()),
-          CompName,
-          MyReporter,
-          AppPreferences.HDL_Type.get())) {
+          ProjectDir + ClockGen.GetRelativeDirectory(),
+          ClockGen.GetEntity(RootSheet.getNetList(), null, CompName, MyReporter),
+          CompName, MyReporter)) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          ProjectDir + ClockGen.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-          ClockGen.GetArchitecture(
-              RootSheet.getNetList(), null, CompName, MyReporter, AppPreferences.HDL_Type.get()),
+          ProjectDir + ClockGen.GetRelativeDirectory(),
+          ClockGen.GetArchitecture(RootSheet.getNetList(), null, CompName, MyReporter),
           CompName,
-          MyReporter,
-          AppPreferences.HDL_Type.get())) {
+          MyReporter)) {
         return false;
       }
     }
@@ -253,29 +240,17 @@ public abstract class DownloadBase {
         new ToplevelHDLGeneratorFactory(
             MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
     if (!AbstractHDLGeneratorFactory.WriteEntity(
-        ProjectDir + Worker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-        Worker.GetEntity(
-            RootSheet.getNetList(),
-            null,
-            ToplevelHDLGeneratorFactory.FPGAToplevelName,
-            MyReporter,
-            AppPreferences.HDL_Type.get()),
+        ProjectDir + Worker.GetRelativeDirectory(),
+        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName,MyReporter),
         Worker.getComponentStringIdentifier(),
-        MyReporter,
-        AppPreferences.HDL_Type.get())) {
+        MyReporter)) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
-        ProjectDir + Worker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-        Worker.GetArchitecture(
-            RootSheet.getNetList(),
-            null,
-            ToplevelHDLGeneratorFactory.FPGAToplevelName,
-            MyReporter,
-            AppPreferences.HDL_Type.get()),
+        ProjectDir + Worker.GetRelativeDirectory(),
+        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName,MyReporter),
         Worker.getComponentStringIdentifier(),
-        MyReporter,
-        AppPreferences.HDL_Type.get());
+        MyReporter);
   }
 
   protected boolean GenDirectory(String dir) {

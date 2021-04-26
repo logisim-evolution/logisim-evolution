@@ -62,21 +62,18 @@ public interface HDLGeneratorFactory {
       Set<String> HandledComponents,
       String WorkingDir,
       ArrayList<String> Hierarchy,
-      FPGAReport Reporter,
-      String HDLType);
+      FPGAReport Reporter);
 
   ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName,
-      FPGAReport Reporter,
-      String HDLType);
+      FPGAReport Reporter);
 
   ArrayList<String> GetComponentInstantiation(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      String HDLType);
+      String ComponentName);
 
   ArrayList<String> GetComponentMap(
       Netlist Nets,
@@ -84,8 +81,7 @@ public interface HDLGeneratorFactory {
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
       FPGAReport Reporter,
-      String Name,
-      String HDLType);
+      String Name);
 
   String getComponentStringIdentifier();
 
@@ -93,22 +89,20 @@ public interface HDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName,
-      FPGAReport Reporter,
-      String HDLType);
+      FPGAReport Reporter);
 
   ArrayList<String> GetInlinedCode(
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
-      String HDLType);
+      String CircuitName);
 
-  String GetRelativeDirectory(String HDLType);
+  String GetRelativeDirectory();
 
-  boolean HDLTargetSupported(String HDLType, AttributeSet attrs);
+  boolean HDLTargetSupported(AttributeSet attrs);
 
-  boolean IsOnlyInlined(String HDLType);
+  boolean IsOnlyInlined();
 
-  boolean IsOnlyInlined(String HDLType, IOComponentTypes map);
+  boolean IsOnlyInlined(IOComponentTypes map);
 }

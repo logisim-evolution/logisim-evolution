@@ -69,26 +69,24 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     return MyOutputs;
   }
 
-  public ArrayList<String> GetLogicFunction(int index, String HDLType) {
+  public ArrayList<String> GetLogicFunction(int index) {
     return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
       Contents.addAll(
-          MakeRemarkBlock("Here gate " + i + " is described", 3, HDLType));
-      Contents.addAll(GetLogicFunction(i, HDLType));
+          MakeRemarkBlock("Here gate " + i + " is described", 3));
+      Contents.addAll(GetLogicFunction(i));
     }
     return Contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -104,7 +102,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 ComponentInfo,
                 inindex,
                 Reporter,
-                HDLType,
                 Nets));
         PortMap.putAll(
             GetNetMap(
@@ -113,7 +110,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 ComponentInfo,
                 outindex,
                 Reporter,
-                HDLType,
                 Nets));
       } else {
         int inindex1 = (i < 2) ? i * 3 : i * 3 + 1;
@@ -126,7 +122,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 ComponentInfo,
                 inindex1,
                 Reporter,
-                HDLType,
                 Nets));
         PortMap.putAll(
             GetNetMap(
@@ -135,7 +130,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 ComponentInfo,
                 inindex2,
                 Reporter,
-                HDLType,
                 Nets));
         PortMap.putAll(
             GetNetMap(
@@ -144,7 +138,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 ComponentInfo,
                 outindex,
                 Reporter,
-                HDLType,
                 Nets));
       }
     }
@@ -161,7 +154,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return !attrs.getValue(TTL.VCC_GND);

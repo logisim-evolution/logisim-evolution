@@ -34,6 +34,7 @@ import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics2D;
@@ -48,20 +49,15 @@ class NandGate extends AbstractGate {
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
-      String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
-      String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
-      String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
       StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation + NotOperation + "(");
+      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.andOperator() + HDL.notOperator() + "(");
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
         if (!first) {
-          OneLine.append(AndOperation);
+          OneLine.append(HDL.andOperator());
           Contents.add(OneLine.toString());
           OneLine.setLength(0);
           while (OneLine.length() < TabWidth) {
@@ -107,9 +103,9 @@ class NandGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new NandGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

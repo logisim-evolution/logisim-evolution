@@ -31,6 +31,7 @@ package com.cburch.logisim.fpga.designrulecheck;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.Arrays;
@@ -46,8 +47,8 @@ public class CorrectLabel {
   }
 
   public static boolean IsCorrectLabel(
-      String Label, String HDLIdentifier, String ErrorIdentifierString, FPGAReport Reporter) {
-    String err = NameErrors(Label, HDLIdentifier, ErrorIdentifierString);
+      String Label, String ErrorIdentifierString, FPGAReport Reporter) {
+    String err = NameErrors(Label, ErrorIdentifierString);
     if (err != null) {
       Reporter.AddFatalError(err);
       return false;
@@ -56,11 +57,10 @@ public class CorrectLabel {
   }
 
   public static String VhdlNameErrors(String Label) {
-    return NameErrors(Label, HDLGeneratorFactory.VHDL, "VHDL entity name");
+    return NameErrors(Label, "VHDL entity name");
   }
 
-  public static String NameErrors(
-      String Label, String HDLIdentifier, String ErrorIdentifierString) {
+  public static String NameErrors(String Label, String ErrorIdentifierString) {
     if (Label.isEmpty()) return null;
     for (int i = 0; i < Label.length(); i++) {
       if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
@@ -68,12 +68,12 @@ public class CorrectLabel {
         return ErrorIdentifierString + S.fmt("IllegalChar", Label.substring(i, i + 1));
       }
     }
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
+    if (HDL.isVHDL()) {
       if (VHDLKeywords.contains(Label.toLowerCase())) {
         return ErrorIdentifierString + S.get("ReservedVHDLKeyword");
       }
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         if (VerilogKeywords.contains(Label)) {
           return ErrorIdentifierString + S.get("ReservedVerilogKeyword");
         }

@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -79,13 +80,9 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(
-        MakeRemarkBlock(
-            "Here the output signals are defines; we synchronize them all on the main clock",
-            3, HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock",3));
 /*    if (TheNetlist.RawFPGAClock()) {
       if (HighTicks != LowTicks) {
         Reporter.AddFatalError("Clock component detected with " +HighTicks+":"+LowTicks+ " hi:lo duty cycle,"
@@ -100,7 +97,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("");
       return Contents;
     }
-*/    if (HDLType.equals(VHDL)) {
+*/    if (HDL.isVHDL()) {
       Contents.add("   ClockBus <= GlobalClock&s_output_regs;");
       Contents.add("   makeOutputs : PROCESS( GlobalClock )");
       Contents.add("   BEGIN");
@@ -126,8 +123,8 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("   end");
     }
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add("   s_counter_is_zero    <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,"
               + NrOfBitsStr
               + ")) ELSE '0';");
@@ -154,8 +151,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add(
           "                                                           " + HighTickStr + " - 1;");
       Contents.add("");
-      Contents.addAll(
-          MakeRemarkBlock("Here the initial values are defined (for simulation only)", 3, HDLType));
+      Contents.addAll(MakeRemarkBlock("Here the initial values are defined (for simulation only)", 3));
       Contents.add("   initial");
       Contents.add("   begin");
       Contents.add("      s_output_regs = 0;");
@@ -164,8 +160,8 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("   end");
     }
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the state registers are defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the state registers are defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add("   makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,");
       Contents.add("                               s_derived_clock_reg)");
       Contents.add("   BEGIN");
@@ -256,8 +252,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -268,7 +263,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_output_regs", NrOfClockBits - 1);
     Regs.put("s_buf_regs", 2);
@@ -295,7 +290,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

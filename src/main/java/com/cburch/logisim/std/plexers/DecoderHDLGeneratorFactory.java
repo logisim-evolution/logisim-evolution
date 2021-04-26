@@ -33,6 +33,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -53,16 +55,15 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
     String Space = " ";
     for (int i = 0; i < num_outputs; i++) {
-      String binValue = IntToBin(i, nr_of_select_bits, HDLType);
+      String binValue = IntToBin(i, nr_of_select_bits);
       if (i == 10) Space = "";
-      if (HDLType.equals(VHDL)) {
+      if (HDL.isVHDL()) {
         Contents.add("   DecoderOut_" + i + Space + "<= '1' WHEN sel = " + binValue + " AND");
         Contents.add(Space + "                             Enable = '1' ELSE '0';");
       } else {
@@ -88,8 +89,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -105,23 +105,15 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               ComponentInfo,
               i,
               Reporter,
-              HDLType,
               Nets));
     // select..
-    PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, Nets));
 
     // now connect enable input...
-    if (ComponentInfo.GetComponent()
-        .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)
-        .booleanValue()) {
-      PortMap.putAll(
-          GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Reporter, HDLType, Nets));
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Reporter, Nets));
     } else {
-      String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-      PortMap.put("Enable", SetBit);
+      PortMap.put("Enable", HDL.oneBit());
     }
     return PortMap;
   }
@@ -132,7 +124,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

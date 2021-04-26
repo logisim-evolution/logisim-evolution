@@ -33,7 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -83,8 +83,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   enable <= tick and NOT(nCLKen);");
     Contents.add("   nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;");
@@ -107,8 +106,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -133,7 +131,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
       PortMap.put("tick", "'0'");
     } else if (GatedClock) {
       PortMap.put("tick", "'1'");
-      PortMap.put("CLK", GetNetName(ComponentInfo, ClockPinIndex, true, HDLType, Nets));
+      PortMap.put("CLK", GetNetName(ComponentInfo, ClockPinIndex, true, Nets));
     } else {
       if (Nets.RequiresGlobalClockConnection()) {
         PortMap.put("tick", "'1'");
@@ -149,22 +147,22 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
           "CLK",
           ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
     }
-    PortMap.putAll(GetNetMap("D0", true, ComponentInfo, 2, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 3, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 6, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D3", true, ComponentInfo, 7, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D4", true, ComponentInfo, 11, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D5", true, ComponentInfo, 12, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D6", true, ComponentInfo, 15, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D7", true, ComponentInfo, 16, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q0", true, ComponentInfo, 1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 4, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 5, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q3", true, ComponentInfo, 8, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q4", true, ComponentInfo, 10, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q5", true, ComponentInfo, 13, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q6", true, ComponentInfo, 14, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q7", true, ComponentInfo, 17, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("D0", true, ComponentInfo, 2, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 3, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 6, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D3", true, ComponentInfo, 7, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D4", true, ComponentInfo, 11, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D5", true, ComponentInfo, 12, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D6", true, ComponentInfo, 15, Reporter, Nets));
+    PortMap.putAll(GetNetMap("D7", true, ComponentInfo, 16, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q0", true, ComponentInfo, 1, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 4, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 5, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q3", true, ComponentInfo, 8, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q4", true, ComponentInfo, 10, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q5", true, ComponentInfo, 13, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q6", true, ComponentInfo, 14, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Q7", true, ComponentInfo, 17, Reporter, Nets));
     return PortMap;
   }
 
@@ -178,9 +176,9 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND) && (HDLType.equals(HDLGeneratorFactory.VHDL)));
+    return (!attrs.getValue(TTL.VCC_GND) && (HDL.isVHDL()));
   }
 }

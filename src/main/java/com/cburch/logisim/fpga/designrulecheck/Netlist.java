@@ -326,16 +326,14 @@ public class Netlist implements CircuitListener {
     }
   }
 
-  public int DesignRuleCheckResult(
-      FPGAReport Reporter, String HDLIdentifier, boolean IsTopLevel, ArrayList<String> Sheetnames) {
+  public int DesignRuleCheckResult(FPGAReport Reporter, boolean IsTopLevel, ArrayList<String> Sheetnames) {
     ArrayList<String> CompName = new ArrayList<>();
     Map<String, Component> Labels = new HashMap<>();
     ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
     int CommonDRCStatus = DRC_PASSED;
     /* First we go down the tree and get the DRC status of all sub-circuits */
     for (Circuit circ : MySubCircuitMap.keySet()) {
-      CommonDRCStatus |=
-          circ.getNetList().DesignRuleCheckResult(Reporter, HDLIdentifier, false, Sheetnames);
+      CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(Reporter, false, Sheetnames);
     }
     /* Check if we are okay */
     if (DRCStatus == DRC_PASSED) {
@@ -419,7 +417,7 @@ public class Netlist implements CircuitListener {
        * Here we check if the components are supported for the HDL
        * generation
        */
-      if (!comp.getFactory().HDLSupportedComponent(HDLIdentifier, comp.getAttributeSet())) {
+      if (!comp.getFactory().HDLSupportedComponent(comp.getAttributeSet())) {
         drc.get(5).AddMarkComponent(comp);
         DRCStatus |= DRC_ERROR;
       }
@@ -440,7 +438,7 @@ public class Netlist implements CircuitListener {
             drc.get(1).AddMarkComponent(comp);
             DRCStatus |= DRC_ERROR;
           }
-          if (!CorrectLabel.IsCorrectLabel(Label, HDLIdentifier)) {
+          if (!CorrectLabel.IsCorrectLabel(Label)) {
             /* this should not happen anymore */
             drc.get(2).AddMarkComponent(comp);
             DRCStatus |= DRC_ERROR;
@@ -461,7 +459,6 @@ public class Netlist implements CircuitListener {
           }
           if (!CorrectLabel.IsCorrectLabel(
               comp.getFactory().getName(),
-              HDLIdentifier,
               S.fmt("FoundBadComponent", comp.getFactory().getName(), MyCircuit.getName()),
               Reporter)) {
             DRCStatus |= DRC_ERROR;
@@ -494,7 +491,7 @@ public class Netlist implements CircuitListener {
      * the net list
      */
     Reporter.AddInfo(S.fmt("BuildingNetlistFor", MyCircuit.getName()));
-    if (!this.GenerateNetlist(Reporter, HDLIdentifier)) {
+    if (!this.GenerateNetlist(Reporter)) {
       this.clear();
       DRCStatus = DRC_ERROR;
       /*
@@ -674,7 +671,7 @@ public class Netlist implements CircuitListener {
     return null;
   }
 
-  private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
+  private boolean GenerateNetlist(FPGAReport Reporter) {
     ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
     boolean errors = false;
     CircuitName = MyCircuit.getName();
@@ -1172,7 +1169,7 @@ public class Netlist implements CircuitListener {
         }
       } else if ((comp.getFactory() instanceof Pin)
           || comp.getAttributeSet().containsAttribute(StdAttr.MAPINFO)
-          || (comp.getFactory().getHDLGenerator(HDLIdentifier, comp.getAttributeSet()) != null)) {
+          || (comp.getFactory().getHDLGenerator(comp.getAttributeSet()) != null)) {
         if (!ProcessNormalComponent(comp, Reporter)) {
           this.clear();
           return false;

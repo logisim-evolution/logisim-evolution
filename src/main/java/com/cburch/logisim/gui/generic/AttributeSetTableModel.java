@@ -37,7 +37,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.gui.HDLColorRenderer;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.awt.Component;
 import java.awt.Window;
 import java.util.ArrayList;
@@ -288,17 +287,14 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public String getLabel() {
-      if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VHDL, attrs))
-        return HDLColorRenderer.VHDLSupportString;
-      return HDLColorRenderer.NoSupportString;
+      return S.get("FPGA_Supported");
     }
 
     @Override
     public String getValue() {
       if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VERILOG, attrs))
-        return HDLColorRenderer.VHDLSupportString;
+      if (CompInst.HDLSupportedComponent(attrs))
+        return HDLColorRenderer.SupportString;
       return HDLColorRenderer.NoSupportString;
     }
 

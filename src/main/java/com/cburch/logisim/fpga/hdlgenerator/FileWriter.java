@@ -29,6 +29,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.fpga.gui.FPGAReport;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,10 +39,9 @@ import java.util.ArrayList;
 
 public class FileWriter {
 
-  public static boolean CopyArchitecture(
-      String source, String dest, String componentName, FPGAReport reporter, String HDLType) {
+  public static boolean CopyArchitecture(String source, String dest, String componentName, FPGAReport reporter) {
     try {
-      if (HDLType.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         reporter.AddFatalError("Empty VHDL box not supported in verilog.");
         return false;
       }
@@ -84,8 +84,7 @@ public class FileWriter {
       String TargetDirectory,
       String ComponentName,
       boolean IsEntity,
-      FPGAReport MyReporter,
-      String HDLType) {
+      FPGAReport MyReporter) {
     try {
       File OutDir = new File(TargetDirectory);
       if (!OutDir.exists()) {
@@ -99,15 +98,15 @@ public class FileWriter {
       }
       FileName += ComponentName;
       if (IsEntity) {
-        if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+        if (HDL.isVHDL()) {
           FileName += EntityExtension;
         }
       } else {
-        if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+        if (HDL.isVHDL()) {
           FileName += ArchitectureExtension;
         }
       }
-      if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+      if (HDL.isVHDL()) {
         FileName += ".vhd";
       } else {
         FileName += ".v";
@@ -151,10 +150,9 @@ public class FileWriter {
     }
   }
 
-  public static ArrayList<String> getGenerateRemark(
-      String compName, String HDLIdentifier, String projName) {
+  public static ArrayList<String> getGenerateRemark(String compName, String projName) {
     ArrayList<String> Lines = new ArrayList<>();
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
+    if (HDL.isVHDL()) {
       Lines.add("--==============================================================================");
       Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
       Lines.add("--==                                                                          ==");
@@ -179,7 +177,7 @@ public class FileWriter {
       Lines.add("--==============================================================================");
       Lines.add("");
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         Lines.add(
             "/******************************************************************************");
         Lines.add(
@@ -213,8 +211,7 @@ public class FileWriter {
     return Lines;
   }
 
-  public static boolean WriteContents(
-      File outfile, ArrayList<String> Contents, FPGAReport MyReporter) {
+  public static boolean WriteContents(File outfile, ArrayList<String> Contents, FPGAReport MyReporter) {
     try {
       FileOutputStream output = new FileOutputStream(outfile);
       for (String ThisLine : Contents) {

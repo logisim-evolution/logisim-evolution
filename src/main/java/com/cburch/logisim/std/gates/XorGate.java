@@ -46,13 +46,12 @@ import java.util.ArrayList;
 class XorGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
       if (is_one_hot) {
-        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1, HDLType));
+        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1));
       } else {
-        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1, HDLType));
+        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
       }
       Contents.add("");
       return Contents;
@@ -113,9 +112,9 @@ class XorGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

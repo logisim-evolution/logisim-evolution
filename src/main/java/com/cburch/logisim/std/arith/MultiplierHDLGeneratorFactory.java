@@ -33,6 +33,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -60,10 +62,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
       Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
       Contents.add("                    std_logic_vector(signed(INP_A)*signed(INP_B));");
@@ -151,20 +152,15 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(
-        GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Reporter, Nets));
+    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Reporter, Nets));
     return PortMap;
   }
 
@@ -183,7 +179,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

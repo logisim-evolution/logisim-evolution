@@ -70,21 +70,18 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? "<=" : "=";
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the Output is defined", 3, HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the Output is defined", 3));
     if (TheNetlist.RequiresGlobalClockConnection()) {
-      Contents.add("   " + Preamble + "FPGATick " + AssignOperator + " '1';");
+      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
-      Contents.add("   " + Preamble + "FPGATick " + AssignOperator + " s_tick_reg;");
+      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
     }
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add(
           "   s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0,"
               + NrOfCounterBitsStr
@@ -101,7 +98,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       Contents.add("   assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;");
       Contents.add("   assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;");
       Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the simulation only initial is defined", 3, HDLType));
+      Contents.addAll(MakeRemarkBlock("Here the simulation only initial is defined", 3));
       Contents.add("   initial");
       Contents.add("   begin");
       Contents.add("      s_count_reg = 0;");
@@ -109,8 +106,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       Contents.add("   end");
       Contents.add("");
     }
-    Contents.addAll(MakeRemarkBlock("Here the flipflops are defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the flipflops are defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add("   make_tick : PROCESS( FPGAClock , s_tick_next )");
       Contents.add("   BEGIN");
       Contents.add("      IF (FPGAClock'event AND (FPGAClock = '1')) THEN");
@@ -167,8 +164,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGAClock);
     PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGATick);
@@ -176,7 +172,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_tick_reg", 1);
     Regs.put("s_count_reg", NrOfCounterBitsId);
@@ -197,7 +193,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

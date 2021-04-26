@@ -34,6 +34,7 @@ import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.fpga.designrulecheck.BubbleInformationContainer;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
@@ -497,23 +498,21 @@ public class MapComponent {
     return s.toString();
   }
   
-  public String getHdlSignalName(int pin, String HDLType) {
-	if (pin < 0 || pin >= NrOfPins) return null;
-    String BracketOpen = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "(" : "[";
-    String BracketClose = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? ")" : "]";
+  public String getHdlSignalName(int pin) {
+   	if (pin < 0 || pin >= NrOfPins) return null;
     if (MyInputBubles.containsKey(pin) && MyInputBubles.get(pin) >= 0) {
-      return "s_"+HDLGeneratorFactory.LocalInputBubbleBusname+BracketOpen+ MyInputBubles.get(pin) +BracketClose;
+      return "s_"+HDLGeneratorFactory.LocalInputBubbleBusname+HDL.BracketOpen()+MyInputBubles.get(pin)+HDL.BracketClose();
     }
     if (MyOutputBubles.containsKey(pin) && MyOutputBubles.get(pin) >= 0) {
-      return "s_"+HDLGeneratorFactory.LocalOutputBubbleBusname+BracketOpen+ MyOutputBubles.get(pin)
-          +BracketClose;
+      return "s_"+HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+ MyOutputBubles.get(pin)
+          +HDL.BracketClose();
     }
     StringBuffer s = new StringBuffer();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
     for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i));
     if (NrOfPins > 1)
-      s.append(BracketOpen+ pin +BracketClose);
+      s.append(HDL.BracketOpen()+pin+HDL.BracketClose());
     return s.toString();
   }
   

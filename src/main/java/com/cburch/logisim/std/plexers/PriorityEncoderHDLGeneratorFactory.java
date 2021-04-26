@@ -33,6 +33,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -58,10 +60,9 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   -- Output Signals");
       Contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
       Contents.add("   EnableOut   <= s_in_is_zero AND enable;");
@@ -170,8 +171,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -183,11 +183,10 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             ComponentInfo,
             nr_of_bits + PriorityEncoder.EN_IN,
             Reporter,
-            HDLType,
             Nets));
     StringBuffer VectorList = new StringBuffer();
     for (int i = nr_of_bits - 1; i >= 0; i--) {
-      if (HDLType.equals(VHDL))
+      if (HDL.isVHDL())
         PortMap.putAll(
             GetNetMap(
                 "input_vector(" + i + ")",
@@ -195,14 +194,13 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
                 ComponentInfo,
                 i,
                 Reporter,
-                HDLType,
                 Nets));
       else {
         if (VectorList.length() > 0) VectorList.append(",");
-        VectorList.append(GetNetName(ComponentInfo, i, true, HDLType, Nets));
+        VectorList.append(GetNetName(ComponentInfo, i, true, Nets));
       }
     }
-    if (HDLType.equals(VERILOG)) PortMap.put("input_vector", VectorList.toString());
+    if (HDL.isVerilog()) PortMap.put("input_vector", VectorList.toString());
     PortMap.putAll(
         GetNetMap(
             "GroupSelect",
@@ -210,7 +208,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             ComponentInfo,
             nr_of_bits + PriorityEncoder.GS,
             Reporter,
-            HDLType,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -219,7 +216,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             ComponentInfo,
             nr_of_bits + PriorityEncoder.EN_OUT,
             Reporter,
-            HDLType,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -228,7 +224,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             ComponentInfo,
             nr_of_bits + PriorityEncoder.OUT,
             Reporter,
-            HDLType,
             Nets));
     return PortMap;
   }
@@ -251,7 +246,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

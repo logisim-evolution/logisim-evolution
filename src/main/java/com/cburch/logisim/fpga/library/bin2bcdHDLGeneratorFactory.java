@@ -34,6 +34,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -79,8 +81,8 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 
   @Override
@@ -93,14 +95,13 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
-    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Reporter, Nets));
     for (int i = 1; i <= NrOfPorts; i++)
       PortMap.putAll(
           GetNetMap(
@@ -109,7 +110,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               ComponentInfo,
               i,
               Reporter,
-              HDLType,
               Nets));
     return PortMap;
   }
@@ -153,12 +153,11 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
     ArrayList<String> Contents = new ArrayList<>();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       switch (NrOfPorts) {
         case 2:
           Contents.add("   s_level_0(6 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");

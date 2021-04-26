@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
@@ -45,13 +46,12 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
     String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    String BusName = GetBusName(ComponentInfo, HexDigit.HEX, HDLType, Nets);
-    String DPName = GetNetName(ComponentInfo, HexDigit.DP, true, HDLType, Nets);
-    if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+    String BusName = GetBusName(ComponentInfo, HexDigit.HEX, Nets);
+    String DPName = GetNetName(ComponentInfo, HexDigit.DP, true, Nets);
+    if (HDL.isVHDL()) {
       Contents.add(" ");
       if (ComponentInfo.EndIsConnected(HexDigit.HEX)) {
         Contents.add("   WITH ("+BusName+") SELECT "+HDLGeneratorFactory.LocalOutputBubbleBusname+"( "+
@@ -129,12 +129,12 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 }

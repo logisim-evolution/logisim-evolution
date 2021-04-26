@@ -45,14 +45,13 @@ public class Ttl74377 extends AbstractOctalFlops {
     }
 
     @Override
-    public SortedMap<String, String> GetPortMap(
-          Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
       SortedMap<String, String> PortMap = new TreeMap<>();
       if (!(MapInfo instanceof NetlistComponent)) return PortMap;
       NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter, HDLType));
+      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter));
       PortMap.put("nCLR", "'1'");
-      PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Reporter, Nets));
       return PortMap;
     }
   }
@@ -70,8 +69,8 @@ public class Ttl74377 extends AbstractOctalFlops {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74377HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

@@ -35,6 +35,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,10 +49,9 @@ public class DFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public Map<String, String> GetInputMaps(
-        NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter) {
       Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("D", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap("D", true, ComponentInfo, 0, Reporter, Nets));
       return PortMap;
     }
 
@@ -63,10 +63,9 @@ public class DFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic(String HDLType) {
+    public ArrayList<String> GetUpdateLogic() {
       ArrayList<String> Contents = new ArrayList<>();
-      if (HDLType.endsWith(VHDL)) Contents.add("   s_next_state <= D;");
-      else Contents.add("   assign s_next_state = D;");
+      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+"D;");
       return Contents;
     }
   }
@@ -86,8 +85,8 @@ public class DFlipFlop extends AbstractFlipFlop {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new DFFHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

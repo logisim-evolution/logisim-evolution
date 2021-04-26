@@ -135,15 +135,6 @@ public abstract class TclComponent extends InstanceFactory {
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
   }
 
-  /**
-   * We cannot make a VHDL architecture equivalent to the TCL script
-   *
-   * @return false
-   */
-  @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
-    return false;
-  }
 
   /**
    * This was taken from VHDL component

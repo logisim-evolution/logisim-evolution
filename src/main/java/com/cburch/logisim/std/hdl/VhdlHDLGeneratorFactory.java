@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -47,10 +47,9 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName,
-      FPGAReport Reporter,
-      String HDLType) {
+      FPGAReport Reporter) {
     ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+    contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
 
     VhdlContentComponent content =
         attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
@@ -88,8 +87,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -101,8 +99,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Port[] outputs = content.getOutputs();
 
     for (int i = 0; i < inputs.length; i++)
-      PortMap.putAll(
-          GetNetMap(inputs[i].getToolTip(), true, ComponentInfo, i, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap(inputs[i].getToolTip(), true, ComponentInfo, i, Reporter, Nets));
     for (int i = 0; i < outputs.length; i++)
       PortMap.putAll(
           GetNetMap(
@@ -111,7 +108,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               ComponentInfo,
               i + inputs.length,
               Reporter,
-              HDLType,
               Nets));
 
     return PortMap;
@@ -123,7 +119,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(HDLGeneratorFactory.VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }
