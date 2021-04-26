@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -64,7 +64,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.add("   Q <= s_state_reg;");
@@ -156,8 +156,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int ActiveLevel = 1;
     Boolean GatedClock = false;
@@ -167,7 +166,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (ClockNetName.isEmpty()) {
       GatedClock = true;
       if (Netlist.IsFlipFlop(attrs))
-        Reporter.AddWarning(
+        Reporter.Report.AddWarning(
             "Found a gated clock for component \"Register\" in circuit \""
                 + Nets.getCircuitName()
                 + "\"");
@@ -185,7 +184,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -194,7 +193,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Boolean ActiveLow = false;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(Register.CK)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
@@ -206,9 +205,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     if (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING
         || attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_LOW) ActiveLow = true;
-    PortMap.putAll(GetNetMap("Reset", true, ComponentInfo, Register.CLR, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Reset", true, ComponentInfo, Register.CLR, Nets));
     PortMap.putAll(
-        GetNetMap("ClockEnable", false, ComponentInfo, Register.EN, Reporter, Nets));
+        GetNetMap("ClockEnable", false, ComponentInfo, Register.EN, Nets));
 
     if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
@@ -267,8 +266,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Input += "(0)";
       Output += "(0)";
     }
-    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Register.IN, Reporter, Nets));
-    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Register.OUT, Reporter, Nets));
+    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Register.IN, Nets));
+    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Register.OUT, Nets));
     return PortMap;
   }
 

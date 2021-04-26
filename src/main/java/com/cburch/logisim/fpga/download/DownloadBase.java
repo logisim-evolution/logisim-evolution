@@ -36,7 +36,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
@@ -55,7 +55,6 @@ import java.util.Set;
 public abstract class DownloadBase {
 
   protected Project MyProject;
-  protected FPGAReport MyReporter;
   protected BoardInformation MyBoardInformation = null;
   protected MappableResourcesContainer MyMappableResources;
   static String[] HDLPaths = {
@@ -83,18 +82,18 @@ public abstract class DownloadBase {
     LogisimFile myfile = MyProject.getLogisimFile();
     Circuit RootSheet = myfile.getCircuit(CircuitName);
     if (RootSheet == null) {
-      MyReporter.AddError("INTERNAL ERROR: Circuit not found ?!?");
+      Reporter.Report.AddError("INTERNAL ERROR: Circuit not found ?!?");
       return false;
     }
     if (MyBoardInformation == null) {
-      MyReporter.AddError("INTERNAL ERROR: No board information available ?!?");
+      Reporter.Report.AddError("INTERNAL ERROR: No board information available ?!?");
       return false;
     }
 
     Map<String, ArrayList<Integer>> BoardComponents = MyBoardInformation.GetComponents();
-    MyReporter.AddInfo("The Board " + MyBoardInformation.getBoardName() + " has:");
+    Reporter.Report.AddInfo("The Board " + MyBoardInformation.getBoardName() + " has:");
     for (String key : BoardComponents.keySet()) {
-      MyReporter.AddInfo(BoardComponents.get(key).size() + " " + key + "(s)");
+      Reporter.Report.AddInfo(BoardComponents.get(key).size() + " " + key + "(s)");
     }
     /*
      * At this point I require 2 sorts of information: 1) A hierarchical
@@ -128,7 +127,7 @@ public abstract class DownloadBase {
       DRCResult |= Netlist.DRC_ERROR;
     } else {
       root.getNetList().clear();
-      DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter, true, SheetNames);
+      DRCResult = root.getNetList().DesignRuleCheckResult(true, SheetNames);
     }
     return (DRCResult == Netlist.DRC_PASSED);
   }
@@ -148,7 +147,7 @@ public abstract class DownloadBase {
         AppPreferences.FPGA_Workspace.get()
             + File.separator
             + MyProject.getLogisimFile().getName())) {
-      MyReporter.AddFatalError(
+      Reporter.Report.AddFatalError(
           "Unable to create directory: \""
               + AppPreferences.FPGA_Workspace.get()
               + File.separator
@@ -159,17 +158,17 @@ public abstract class DownloadBase {
     String ProjectDir = GetProjDir(selectedCircuit);
     Circuit RootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!CleanDirectory(ProjectDir)) {
-      MyReporter.AddFatalError(
+      Reporter.Report.AddFatalError(
           "Unable to cleanup old project files in directory: \"" + ProjectDir + "\"");
       return false;
     }
     if (!GenDirectory(ProjectDir)) {
-      MyReporter.AddFatalError("Unable to create directory: \"" + ProjectDir + "\"");
+      Reporter.Report.AddFatalError("Unable to create directory: \"" + ProjectDir + "\"");
       return false;
     }
     for (String hdlPath : HDLPaths) {
       if (!GenDirectory(ProjectDir + hdlPath)) {
-        MyReporter.AddFatalError(
+        Reporter.Report.AddFatalError(
             "Unable to create directory: \"" + ProjectDir + hdlPath + "\"");
         return false;
       }
@@ -179,10 +178,10 @@ public abstract class DownloadBase {
     HDLGeneratorFactory Worker =
         RootSheet.getSubcircuitFactory().getHDLGenerator(RootSheet.getStaticAttributes());
     if (Worker == null) {
-      MyReporter.AddFatalError("Internal error on HDL generation, null pointer exception");
+      Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
-    if (!Worker.GenerateAllHDLDescriptions(GeneratedHDLComponents, ProjectDir, null, MyReporter)) {
+    if (!Worker.GenerateAllHDLDescriptions(GeneratedHDLComponents, ProjectDir, null)) {
       return false;
     }
     /* Here we generate the top-level shell */
@@ -196,10 +195,8 @@ public abstract class DownloadBase {
           Ticker.GetEntity(
               RootSheet.getNetList(),
               null,
-              Ticker.getComponentStringIdentifier(),
-              MyReporter),
-          Ticker.getComponentStringIdentifier(),
-          MyReporter)) {
+              Ticker.getComponentStringIdentifier()),
+          Ticker.getComponentStringIdentifier())) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
@@ -207,10 +204,8 @@ public abstract class DownloadBase {
           Ticker.GetArchitecture(
               RootSheet.getNetList(),
               null,
-              Ticker.getComponentStringIdentifier(),
-              MyReporter),
-          Ticker.getComponentStringIdentifier(),
-          MyReporter)) {
+              Ticker.getComponentStringIdentifier()),
+          Ticker.getComponentStringIdentifier())) {
         return false;
       }
 
@@ -224,15 +219,14 @@ public abstract class DownloadBase {
           RootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
           ProjectDir + ClockGen.GetRelativeDirectory(),
-          ClockGen.GetEntity(RootSheet.getNetList(), null, CompName, MyReporter),
-          CompName, MyReporter)) {
+          ClockGen.GetEntity(RootSheet.getNetList(), null, CompName),
+          CompName)) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
           ProjectDir + ClockGen.GetRelativeDirectory(),
-          ClockGen.GetArchitecture(RootSheet.getNetList(), null, CompName, MyReporter),
-          CompName,
-          MyReporter)) {
+          ClockGen.GetArchitecture(RootSheet.getNetList(), null, CompName),
+          CompName)) {
         return false;
       }
     }
@@ -241,16 +235,14 @@ public abstract class DownloadBase {
             MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
     if (!AbstractHDLGeneratorFactory.WriteEntity(
         ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName,MyReporter),
-        Worker.getComponentStringIdentifier(),
-        MyReporter)) {
+        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Worker.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
         ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName,MyReporter),
-        Worker.getComponentStringIdentifier(),
-        MyReporter);
+        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Worker.getComponentStringIdentifier());
   }
 
   protected boolean GenDirectory(String dir) {
@@ -261,7 +253,7 @@ public abstract class DownloadBase {
       }
       return Dir.mkdirs();
     } catch (Exception e) {
-      MyReporter.AddFatalError("Could not check/create directory :" + dir);
+      Reporter.Report.AddFatalError("Could not check/create directory :" + dir);
       return false;
     }
   }
@@ -324,7 +316,7 @@ public abstract class DownloadBase {
       }
       return thisDir.delete();
     } catch (Exception e) {
-      MyReporter.AddFatalError("Could not remove directory tree :" + dir);
+      Reporter.Report.AddFatalError("Could not remove directory tree :" + dir);
       return false;
     }
   }

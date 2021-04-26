@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
@@ -80,7 +79,7 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Sega  <= segments(0);");
     Contents.add("   Segb  <= segments(1);");
@@ -121,24 +120,24 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("BCD0", true, ComponentInfo, 6, Reporter, Nets));
-    PortMap.putAll(GetNetMap("BCD1", true, ComponentInfo, 0, Reporter, Nets));
-    PortMap.putAll(GetNetMap("BCD2", true, ComponentInfo, 1, Reporter, Nets));
-    PortMap.putAll(GetNetMap("BCD3", true, ComponentInfo, 5, Reporter, Nets));
-    PortMap.putAll(GetNetMap("LT", false, ComponentInfo, 2, Reporter, Nets));
-    PortMap.putAll(GetNetMap("BI", false, ComponentInfo, 3, Reporter, Nets));
-    PortMap.putAll(GetNetMap("RBI", false, ComponentInfo, 4, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Sega", true, ComponentInfo, 11, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Segb", true, ComponentInfo, 10, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Segc", true, ComponentInfo, 9, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Segd", true, ComponentInfo, 8, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Sege", true, ComponentInfo, 7, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Segf", true, ComponentInfo, 13, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Segg", true, ComponentInfo, 12, Reporter, Nets));
+    PortMap.putAll(GetNetMap("BCD0", true, ComponentInfo, 6, Nets));
+    PortMap.putAll(GetNetMap("BCD1", true, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("BCD2", true, ComponentInfo, 1, Nets));
+    PortMap.putAll(GetNetMap("BCD3", true, ComponentInfo, 5, Nets));
+    PortMap.putAll(GetNetMap("LT", false, ComponentInfo, 2, Nets));
+    PortMap.putAll(GetNetMap("BI", false, ComponentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("RBI", false, ComponentInfo, 4, Nets));
+    PortMap.putAll(GetNetMap("Sega", true, ComponentInfo, 11, Nets));
+    PortMap.putAll(GetNetMap("Segb", true, ComponentInfo, 10, Nets));
+    PortMap.putAll(GetNetMap("Segc", true, ComponentInfo, 9, Nets));
+    PortMap.putAll(GetNetMap("Segd", true, ComponentInfo, 8, Nets));
+    PortMap.putAll(GetNetMap("Sege", true, ComponentInfo, 7, Nets));
+    PortMap.putAll(GetNetMap("Segf", true, ComponentInfo, 13, Nets));
+    PortMap.putAll(GetNetMap("Segg", true, ComponentInfo, 12, Nets));
     return PortMap;
   }
 

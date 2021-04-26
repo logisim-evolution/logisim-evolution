@@ -37,7 +37,7 @@ import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 
 import java.io.File;
@@ -79,35 +79,33 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public static boolean WriteArchitecture(
       String TargetDirectory,
       ArrayList<String> Contents,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     if (Contents == null || Contents.isEmpty()) {
-      Reporter.AddFatalError(
+      Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Empty behavior description for Component '"
               + ComponentName
               + "' received!");
       return false;
     }
-    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false, Reporter);
+    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false);
     if (OutFile == null) {
       return false;
     }
-    return FileWriter.WriteContents(OutFile, Contents, Reporter);
+    return FileWriter.WriteContents(OutFile, Contents);
   }
 
   public static boolean WriteEntity(
       String TargetDirectory,
       ArrayList<String> Contents,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     if (!HDL.isVHDL()) return true;
     if (Contents.isEmpty()) {
-      Reporter.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
-    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true, Reporter);
+    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true);
     if (OutFile == null) return false;
-    return FileWriter.WriteContents(OutFile, Contents, Reporter);
+    return FileWriter.WriteContents(OutFile, Contents);
   }
 
   public static final int MaxLineLength = 80;
@@ -116,16 +114,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
-      ArrayList<String> Hierarchy,
-      FPGAReport Reporter) {
+      ArrayList<String> Hierarchy) {
     return true;
   }
 
   public ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     ArrayList<String> Contents = new ArrayList<>();
     Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs); 
     Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
@@ -171,7 +167,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           OneLine.append("_vector( ");
           if (WireList.get(Wire) < 0) {
             if (!ParameterList.containsKey(WireList.get(Wire))) {
-              Reporter.AddFatalError(
+              Reporter.Report.AddFatalError(
                   "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               Contents.clear();
               return Contents;
@@ -201,7 +197,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           OneLine.append("_vector( ");
           if (RegList.get(Reg) < 0) {
             if (!ParameterList.containsKey(RegList.get(Reg))) {
-              Reporter.AddFatalError(
+              Reporter.Report.AddFatalError(
                   "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               Contents.clear();
               return Contents;
@@ -232,7 +228,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       Contents.add("");
       Contents.add("BEGIN");
-      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs, Reporter));
+      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs));
       Contents.add("END PlatformIndependent;");
     } else {
       String Preamble = "module " + ComponentName + "( ";
@@ -274,7 +270,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (ThisLine.length() != 0) {
           Contents.add(ThisLine.toString() + ");");
         } else {
-          Reporter.AddError("Internale Error in Verilog Architecture generation!");
+          Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
         }
       }
       if (!ParameterList.isEmpty()) {
@@ -294,7 +290,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
           if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents;
           }
@@ -324,7 +320,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
           if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents;
           }
@@ -354,7 +350,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
           if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.AddFatalError(
+            Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents;
@@ -385,7 +381,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
           if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.AddFatalError(
+            Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents;
@@ -415,7 +411,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
           if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.AddFatalError(
+            Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents;
@@ -442,7 +438,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       if (!firstline) {
         Contents.add("");
       }
-      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs, Reporter));
+      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs));
       Contents.add("");
       Contents.add("endmodule");
     }
@@ -571,11 +567,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
-      FPGAReport Reporter,
       String Name) {
     ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> ParameterMap = GetParameterMap(Nets, ComponentInfo, Reporter);
-    Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo, Reporter);
+    Map<String, Integer> ParameterMap = GetParameterMap(Nets, ComponentInfo);
+    Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
     String CompName = (Name != null && !Name.isEmpty()) ? Name :
         (ComponentInfo == null)
             ? this.getComponentStringIdentifier()
@@ -724,8 +719,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public ArrayList<String> GetEntity(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
@@ -748,7 +742,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName) {
     return new ArrayList<>();
   }
@@ -792,7 +785,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
-  public ArrayList<String> GetModuleFunctionality( Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality( Netlist TheNetlist, AttributeSet attrs) {
     /*
      * In this method the functionality of the black-box is described. It is
      * used for both VHDL and VERILOG.
@@ -805,11 +798,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       boolean FloatingPinTiedToGround,
       NetlistComponent comp,
       int EndIndex,
-      FPGAReport Reporter,
       Netlist TheNets) {
     Map<String, String> NetMap = new HashMap<>();
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
-      Reporter.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      Reporter.Report.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return NetMap;
     }
     ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
@@ -1003,8 +995,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     /*
      * This method returns the assigned parameter/generic values used for
      * the given component, the key is the name of the parameter/generic,
@@ -1013,7 +1004,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     /*
      * This method returns the assigned input/outputs of the component, the
      * key is the name of the input/output (bit), and the value represent
@@ -1322,11 +1313,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents;
   }
 
-  public static ArrayList<String> GetToplevelCode(FPGAReport Reporter, MapComponent Component) {
+  public static ArrayList<String> GetToplevelCode(MapComponent Component) {
     StringBuffer Temp = new StringBuffer();
     ArrayList<String> contents = new ArrayList<>();
     if (Component.getNrOfPins() <= 0) {
-      Reporter.AddError("BUG: Found a component with not pins");
+      Reporter.Report.AddError("BUG: Found a component with not pins");
       return contents;
     }
     for (int i = 0 ; i < Component.getNrOfPins() ; i++) {

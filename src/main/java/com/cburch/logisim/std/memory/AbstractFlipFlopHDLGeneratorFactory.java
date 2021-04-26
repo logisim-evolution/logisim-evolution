@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -66,7 +66,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return Inputs;
   }
 
-  public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter) {
+  public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
     return new HashMap<>();
   }
 
@@ -75,7 +75,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     String SelectOperator = (HDL.isVHDL()) ? "" : "[" + ActivityLevelStr + "]";
     Contents.addAll(MakeRemarkBlock("Here the output signals are defined", 3));
@@ -173,8 +173,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int ActivityLevel = 1;
     Boolean GatedClock = false;
@@ -200,7 +199,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -210,7 +209,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     int nr_of_pins = ComponentInfo.NrOfEnds();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(ComponentInfo.NrOfEnds() - 5)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
               + "\" in circuit \""
@@ -231,9 +230,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
       }
     }
     PortMap.putAll(
-        GetNetMap("Reset", true, ComponentInfo, nr_of_pins - 2, Reporter, Nets));
+        GetNetMap("Reset", true, ComponentInfo, nr_of_pins - 2, Nets));
     PortMap.putAll(
-        GetNetMap("Preset", true, ComponentInfo, nr_of_pins - 1, Reporter, Nets));
+        GetNetMap("Preset", true, ComponentInfo, nr_of_pins - 1, Nets));
     if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
         PortMap.put(
@@ -288,9 +287,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
         PortMap.put("Clock", GetNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, true, Nets));
       }
     }
-    PortMap.putAll(GetInputMaps(ComponentInfo, Nets, Reporter));
-    PortMap.putAll(GetNetMap("Q", true, ComponentInfo, nr_of_pins - 4, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Q_bar", true, ComponentInfo, nr_of_pins - 3, Reporter, Nets));
+    PortMap.putAll(GetInputMaps(ComponentInfo, Nets));
+    PortMap.putAll(GetNetMap("Q", true, ComponentInfo, nr_of_pins - 4, Nets));
+    PortMap.putAll(GetNetMap("Q_bar", true, ComponentInfo, nr_of_pins - 3, Nets));
     return PortMap;
   }
 

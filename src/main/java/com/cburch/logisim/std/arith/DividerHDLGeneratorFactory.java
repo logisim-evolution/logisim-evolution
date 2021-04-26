@@ -31,7 +31,6 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -62,7 +61,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.add(
@@ -102,8 +101,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
@@ -121,15 +119,15 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Reporter, Nets));
-    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Reporter, Nets));
+    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Nets));
+    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Nets));
+    PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Nets));
+    PortMap.putAll(GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Nets));
+    PortMap.putAll(GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Nets));
     return PortMap;
   }
 

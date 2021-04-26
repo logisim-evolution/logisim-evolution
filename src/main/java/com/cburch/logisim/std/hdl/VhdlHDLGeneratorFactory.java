@@ -31,7 +31,6 @@ package com.cburch.logisim.std.hdl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -46,8 +45,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     ArrayList<String> contents = new ArrayList<>();
     contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
 
@@ -87,7 +85,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -99,7 +97,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Port[] outputs = content.getOutputs();
 
     for (int i = 0; i < inputs.length; i++)
-      PortMap.putAll(GetNetMap(inputs[i].getToolTip(), true, ComponentInfo, i, Reporter, Nets));
+      PortMap.putAll(GetNetMap(inputs[i].getToolTip(), true, ComponentInfo, i, Nets));
     for (int i = 0; i < outputs.length; i++)
       PortMap.putAll(
           GetNetMap(
@@ -107,7 +105,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               true,
               ComponentInfo,
               i + inputs.length,
-              Reporter,
               Nets));
 
     return PortMap;

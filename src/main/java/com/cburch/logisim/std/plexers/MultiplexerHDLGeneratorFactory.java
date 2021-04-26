@@ -31,7 +31,6 @@ package com.cburch.logisim.std.plexers;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -62,7 +61,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
@@ -130,8 +129,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
@@ -140,7 +138,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -151,10 +149,10 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     for (int i = 0; i < select_input_index; i++)
       PortMap.putAll(
           GetNetMap(
-              "MuxIn_" + i, true, ComponentInfo, i, Reporter, Nets));
+              "MuxIn_" + i, true, ComponentInfo, i, Nets));
     // now select..
     PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, Nets));
+        GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
     // now connect enable input...
     if (ComponentInfo.GetComponent()
         .getAttributeSet()
@@ -162,13 +160,13 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         .booleanValue()) {
       PortMap.putAll(
           GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Reporter, Nets));
+              "Enable", false, ComponentInfo, select_input_index + 1, Nets));
     } else {
       PortMap.put("Enable", HDL.oneBit());
       select_input_index--; // decrement pin index because enable doesn't exist...
     }
     // finally output
-    PortMap.putAll(GetNetMap("MuxOut", true, ComponentInfo, select_input_index + 2, Reporter, Nets));
+    PortMap.putAll(GetNetMap("MuxOut", true, ComponentInfo, select_input_index + 2, Nets));
     return PortMap;
   }
 

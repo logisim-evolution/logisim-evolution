@@ -31,7 +31,6 @@ package com.cburch.logisim.std.gates;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -54,7 +53,6 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
     String TriName = GetNetName(ComponentInfo,2,true, Nets);

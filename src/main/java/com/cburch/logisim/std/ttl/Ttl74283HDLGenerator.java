@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   oppA   <= \"0\"&A4&A3&A2&A1;");
     Contents.add("   oppB   <= \"0\"&B4&B3&B2&B1;");
@@ -97,24 +96,24 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 4, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 2, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A3", true, ComponentInfo, 12, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A4", true, ComponentInfo, 10, Reporter, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 5, Reporter, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 1, Reporter, Nets));
-    PortMap.putAll(GetNetMap("B3", true, ComponentInfo, 13, Reporter, Nets));
-    PortMap.putAll(GetNetMap("B4", true, ComponentInfo, 9, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, 6, Reporter, Nets));
-    PortMap.putAll(GetNetMap("S1", true, ComponentInfo, 3, Reporter, Nets));
-    PortMap.putAll(GetNetMap("S2", true, ComponentInfo, 0, Reporter, Nets));
-    PortMap.putAll(GetNetMap("S3", true, ComponentInfo, 11, Reporter, Nets));
-    PortMap.putAll(GetNetMap("S4", true, ComponentInfo, 8, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Cout", true, ComponentInfo, 7, Reporter, Nets));
+    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 4, Nets));
+    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 2, Nets));
+    PortMap.putAll(GetNetMap("A3", true, ComponentInfo, 12, Nets));
+    PortMap.putAll(GetNetMap("A4", true, ComponentInfo, 10, Nets));
+    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 5, Nets));
+    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 1, Nets));
+    PortMap.putAll(GetNetMap("B3", true, ComponentInfo, 13, Nets));
+    PortMap.putAll(GetNetMap("B4", true, ComponentInfo, 9, Nets));
+    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, 6, Nets));
+    PortMap.putAll(GetNetMap("S1", true, ComponentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("S2", true, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("S3", true, ComponentInfo, 11, Nets));
+    PortMap.putAll(GetNetMap("S4", true, ComponentInfo, 8, Nets));
+    PortMap.putAll(GetNetMap("Cout", true, ComponentInfo, 7, Nets));
     return PortMap;
   }
 

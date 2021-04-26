@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -106,7 +106,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
@@ -283,7 +283,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -292,14 +292,14 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, Nets));
+    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Nets));
     int DinPin = RamAppearance.getDataInIndex(0, attrs);
-    PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, DinPin, Reporter, Nets));
-    PortMap.putAll(GetNetMap("WE", true, ComponentInfo, RamAppearance.getWEIndex(0, attrs), Reporter, Nets));
-    PortMap.putAll(GetNetMap("OE", true, ComponentInfo, RamAppearance.getOEIndex(0, attrs), Reporter, Nets));
+    PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, DinPin, Nets));
+    PortMap.putAll(GetNetMap("WE", true, ComponentInfo, RamAppearance.getWEIndex(0, attrs), Nets));
+    PortMap.putAll(GetNetMap("OE", true, ComponentInfo, RamAppearance.getOEIndex(0, attrs), Nets));
     if (!asynch) {
       if (!ComponentInfo.EndIsConnected(RamAppearance.getClkIndex(0, attrs))) {
-        Reporter.AddError(
+        Reporter.Report.AddError(
             "Component \"RAM\" in circuit \""
                 + Nets.getCircuitName()
                 + "\" has no clock connection!");
@@ -308,7 +308,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         String ClockNetName = GetClockNetName(ComponentInfo, RamAppearance.getClkIndex(0, attrs), Nets);
         if (ClockNetName.isEmpty()) {
-          PortMap.putAll(GetNetMap("Clock", true, ComponentInfo, RamAppearance.getClkIndex(0, attrs), Reporter, Nets));
+          PortMap.putAll(GetNetMap("Clock", true, ComponentInfo, RamAppearance.getClkIndex(0, attrs), Nets));
           PortMap.put("Tick", HDL.oneBit());
         } else {
           int ClockBusIndex;
@@ -341,11 +341,10 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 false,
                 ComponentInfo,
                 ByteEnableOffset + NrOfByteEnables - i - 1,
-                Reporter,
                 Nets));
       }
     }
-    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Reporter, Nets));
+    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Nets));
     return PortMap;
   }
 

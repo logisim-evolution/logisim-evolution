@@ -31,7 +31,6 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -61,7 +60,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
@@ -135,8 +134,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int IsSigned = 0;
@@ -152,15 +150,15 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Reporter, Nets));
-    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Reporter, Nets));
-    PortMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Reporter, Nets));
+    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
+    PortMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Nets));
+    PortMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Nets));
     return PortMap;
   }
 

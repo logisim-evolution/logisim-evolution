@@ -40,7 +40,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.io.File;
@@ -64,16 +64,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public boolean GenerateAllHDLDescriptions(
 	      Set<String> HandledComponents,
 	      String WorkingDir,
-	      ArrayList<String> Hierarchy,
-	      FPGAReport Reporter) {
-	   return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy,Reporter, false);
+	      ArrayList<String> Hierarchy) {
+	   return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
   }
   
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
       ArrayList<String> Hierarchy,
-      FPGAReport Reporter,
       boolean gatedInstance) {
     if (MyCircuit == null) {
       return false;
@@ -102,7 +100,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .getFactory()
                 .getHDLGenerator(ThisComponent.GetComponent().getAttributeSet());
         if (Worker == null) {
-          Reporter.AddFatalError(
+          Reporter.Report.AddFatalError(
               "INTERNAL ERROR: Cannot find the VHDL generator factory for component "
                   + ComponentName);
           return false;
@@ -113,10 +111,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Worker.GetEntity(
                   MyNetList,
                   ThisComponent.GetComponent().getAttributeSet(),
-                  ComponentName,
-                  Reporter),
-              ComponentName,
-              Reporter)) {
+                  ComponentName),
+              ComponentName)) {
             return false;
           }
           if (!WriteArchitecture(
@@ -124,10 +120,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Worker.GetArchitecture(
                   MyNetList,
                   ThisComponent.GetComponent().getAttributeSet(),
-                  ComponentName,
-                  Reporter),
-              ComponentName,
-              Reporter)) {
+                  ComponentName),
+              ComponentName)) {
             return false;
           }
         }
@@ -141,7 +135,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .getFactory()
               .getHDLGenerator(ThisCircuit.GetComponent().getAttributeSet());
       if (Worker == null) {
-        Reporter.AddFatalError(
+        Reporter.Report.AddFatalError(
             "INTERNAL ERROR: Unable to get a subcircuit VHDL generator for '"
                 + ThisCircuit.GetComponent().getFactory().getName()
                 + "'");
@@ -151,7 +145,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CorrectLabel.getCorrectLabel(
               ThisCircuit.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       if (!Worker.GenerateAllHDLDescriptions(
-          HandledComponents, WorkingDir, Hierarchy, Reporter, ThisCircuit.IsGatedInstance())) {
+          HandledComponents, WorkingDir, Hierarchy, ThisCircuit.IsGatedInstance())) {
         return false;
       }
       Hierarchy.remove(Hierarchy.size() - 1);
@@ -162,9 +156,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!HandledComponents.contains(ComponentName)) {
       if (!WriteEntity(
           WorkPath + GetRelativeDirectory(),
-          GetEntity(MyNetList, null, ComponentName, Reporter),
-          ComponentName,
-          Reporter)) {
+          GetEntity(MyNetList, null, ComponentName),
+          ComponentName)) {
         return false;
       }
 
@@ -174,15 +167,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
       if (!ArchName.isEmpty()) {
         if (!FileWriter.CopyArchitecture(
-            ArchName, WorkPath + GetRelativeDirectory(), ComponentName, Reporter)) {
+            ArchName, WorkPath + GetRelativeDirectory(), ComponentName)) {
           return false;
         }
       } else {
         if (!WriteArchitecture(
             WorkPath + GetRelativeDirectory(),
-            GetArchitecture(MyNetList, null, ComponentName, Reporter),
-            ComponentName,
-            Reporter)) {
+            GetArchitecture(MyNetList, null, ComponentName),
+            ComponentName)) {
           return false;
         }
       }
@@ -388,7 +380,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     boolean FirstLine = true;
     StringBuffer Temp = new StringBuffer();
@@ -402,12 +394,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (!ClockSource.EndIsConnected(0)) {
         if (ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL).equals("sysclk")) {
-          Reporter.AddInfo(
+          Reporter.Report.AddInfo(
               "Clock component found with no connection, skipping: '"
                   + ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
                   + "'");
         } else {
-          Reporter.AddWarning(
+          Reporter.Report.AddWarning(
               "Clock component found with no connection, skipping: '"
                   + ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
                   + "'");
@@ -416,7 +408,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       String ClockNet = GetClockNetName(ClockSource, 0, TheNetlist);
       if (ClockNet.isEmpty()) {
-        Reporter.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
+        Reporter.Report.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
       String ConnectedNet = GetNetName(ClockSource, 0, true, TheNetlist);
       Temp.setLength(0);
@@ -468,7 +460,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 MyInput,
                 0,
                 3,
-                Reporter,
                 TheNetlist));
     }
     /* Now we define all output signals; hence Internal Net -> Input port */
@@ -487,7 +478,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               MyOutput,
               0,
               3,
-              Reporter,
               TheNetlist));
     }
     /* Here all in-lined components are generated */
@@ -515,7 +505,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             FirstLine = false;
           }
           Contents.addAll(
-              Worker.GetInlinedCode(TheNetlist, id++, comp, Reporter, InlinedName));
+              Worker.GetInlinedCode(TheNetlist, id++, comp, InlinedName));
           CompIds.remove(InlinedId);
           CompIds.put(InlinedId, id);
         }
@@ -543,7 +533,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Contents.addAll(MakeRemarkBlock("Here all normal components are defined", 3));
             FirstLine = false;
           }
-          Contents.addAll(Worker.GetComponentMap(TheNetlist, id++, comp, null, Reporter, CompName));
+          Contents.addAll(Worker.GetComponentMap(TheNetlist, id++, comp, null, CompName));
           CompIds.remove(CompId);
           CompIds.put(CompId, id);
         }
@@ -565,7 +555,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         } else {
           id = (long) 1;
         }
-        ArrayList<String> CompMap = Worker.GetComponentMap(TheNetlist, id++, comp, null, Reporter, CompName);
+        ArrayList<String> CompMap = Worker.GetComponentMap(TheNetlist, id++, comp, null, CompName);
         if (!CompMap.isEmpty()) {
           if (FirstLine) {
             Contents.add("");
@@ -606,7 +596,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (MapInfo == null) return null;
     boolean topLevel = MapInfo instanceof MappableResourcesContainer;
@@ -659,7 +649,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               }
             }
             if (map == null || compPin < 0) {
-              Reporter.AddError("BUG: did not find IOpin");
+              Reporter.Report.AddError("BUG: did not find IOpin");
               continue;
             }
             if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
@@ -698,12 +688,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
               if (endid < 0) {
-                Reporter.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
+                Reporter.Report.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                       + PinLabel
                       + "'");
             
               } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, Nets));
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
               }
             }
           }
@@ -722,12 +712,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
               if (endid < 0) {
-                Reporter.AddFatalError(
+                Reporter.Report.AddFatalError(
                     "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                         + PinLabel
                         + "'");
               } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, Nets));
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
               }
             }
           }
@@ -745,12 +735,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
               if (endid < 0) {
-                Reporter.AddFatalError(
+                Reporter.Report.AddFatalError(
                     "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                         + PinLabel
                         + "'");
               } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, Nets));
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
               }
             }
           }
@@ -764,14 +754,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       NetlistComponent comp,
       int EndIndex,
       int TabSize,
-      FPGAReport Reporter,
       Netlist TheNets) {
     StringBuffer Contents = new StringBuffer();
     StringBuffer Source = new StringBuffer();
     StringBuffer Destination = new StringBuffer();
     StringBuffer Tab = new StringBuffer();
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
-      Reporter.AddFatalError(
+      Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"
               + comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
               + "'");
@@ -793,7 +782,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Destination.append(GetNetName(comp, EndIndex, true, TheNets));
       } else {
         if (!comp.EndIsConnected(EndIndex)) {
-          Reporter.AddSevereWarning("Found an unconnected output pin, tied the pin to ground!");
+          Reporter.Report.AddSevereWarning("Found an unconnected output pin, tied the pin to ground!");
         }
         Source.append(GetNetName(comp, EndIndex, true, TheNets));
         Destination.append(PortName);
@@ -822,7 +811,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         if (IsOutput) {
           return Contents.toString();
         } else {
-          Reporter.AddSevereWarning(
+          Reporter.Report.AddSevereWarning(
               "Found an unconnected output bus pin, tied all the pin bits to ground!");
         }
         Destination.append(PortName);
@@ -873,7 +862,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (IsOutput) {
                 continue;
               } else {
-                Reporter.AddSevereWarning(
+                Reporter.Report.AddSevereWarning(
                     "Found an unconnected output bus pin, tied bit "
                         + bit
                         + " to ground!");

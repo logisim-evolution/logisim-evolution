@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -70,7 +70,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock(
@@ -246,8 +246,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     int mode = 0;
@@ -269,13 +268,13 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(Counter.CK)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
@@ -285,7 +284,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       String ClockNetName = GetClockNetName(ComponentInfo, Counter.CK, Nets);
       if (ClockNetName.isEmpty()) {
         PortMap.putAll(
-            GetNetMap("GlobalClock", true, ComponentInfo, Counter.CK, Reporter, Nets));
+            GetNetMap("GlobalClock", true, ComponentInfo, Counter.CK, Nets));
         PortMap.put("ClockEnable", HDL.oneBit());
       } else {
         int ClockBusIndex = ClockHDLGeneratorFactory.DerivedClockIndex;
@@ -314,18 +313,18 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       Input += "(0)";
-    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Counter.IN, Reporter, Nets));
-    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Counter.CLR, Reporter, Nets));
-    PortMap.putAll(GetNetMap("load", true, ComponentInfo, Counter.LD, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, Counter.EN, Reporter, Nets));
+    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Counter.IN, Nets));
+    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Counter.CLR, Nets));
+    PortMap.putAll(GetNetMap("load", true, ComponentInfo, Counter.LD, Nets));
+    PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, Counter.EN, Nets));
     PortMap.putAll(
-        GetNetMap("Up_n_Down", false, ComponentInfo, Counter.UD, Reporter, Nets));
+        GetNetMap("Up_n_Down", false, ComponentInfo, Counter.UD, Nets));
     String Output = "CountValue";
     if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       Output += "(0)";
-    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Counter.OUT, Reporter, Nets));
-    PortMap.putAll(GetNetMap("CompareOut", true, ComponentInfo, Counter.CARRY, Reporter, Nets));
+    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Counter.OUT, Nets));
+    PortMap.putAll(GetNetMap("CompareOut", true, ComponentInfo, Counter.CARRY, Nets));
     return PortMap;
   }
 

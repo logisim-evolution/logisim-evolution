@@ -31,7 +31,7 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -84,7 +84,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Q7  <= CurState(0);\n");
     Contents.add("   Q7n <= NOT(CurState(0));\n");
@@ -105,7 +105,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -113,7 +113,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
     Boolean HasClock = true;
     int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[0];
     if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \"TTL74165\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
@@ -144,19 +144,19 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
           "CK",
           ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
     }
-    PortMap.putAll(GetNetMap("SHnLD", true, ComponentInfo, 0, Reporter, Nets));
-    PortMap.putAll(GetNetMap("CKIh", true, ComponentInfo, 13, Reporter, Nets));
-    PortMap.putAll(GetNetMap("SER", true, ComponentInfo, 8, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P0", true, ComponentInfo, 9, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P1", true, ComponentInfo, 10, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P2", true, ComponentInfo, 11, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P3", true, ComponentInfo, 12, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P4", true, ComponentInfo, 2, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P5", true, ComponentInfo, 3, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P6", true, ComponentInfo, 4, Reporter, Nets));
-    PortMap.putAll(GetNetMap("P7", true, ComponentInfo, 5, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Q7n", true, ComponentInfo, 6, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Q7", true, ComponentInfo, 7, Reporter, Nets));
+    PortMap.putAll(GetNetMap("SHnLD", true, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("CKIh", true, ComponentInfo, 13, Nets));
+    PortMap.putAll(GetNetMap("SER", true, ComponentInfo, 8, Nets));
+    PortMap.putAll(GetNetMap("P0", true, ComponentInfo, 9, Nets));
+    PortMap.putAll(GetNetMap("P1", true, ComponentInfo, 10, Nets));
+    PortMap.putAll(GetNetMap("P2", true, ComponentInfo, 11, Nets));
+    PortMap.putAll(GetNetMap("P3", true, ComponentInfo, 12, Nets));
+    PortMap.putAll(GetNetMap("P4", true, ComponentInfo, 2, Nets));
+    PortMap.putAll(GetNetMap("P5", true, ComponentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("P6", true, ComponentInfo, 4, Nets));
+    PortMap.putAll(GetNetMap("P7", true, ComponentInfo, 5, Nets));
+    PortMap.putAll(GetNetMap("Q7n", true, ComponentInfo, 6, Nets));
+    PortMap.putAll(GetNetMap("Q7", true, ComponentInfo, 7, Nets));
     return PortMap;
   }
 

@@ -31,7 +31,6 @@ package com.cburch.logisim.std.gates;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -74,7 +73,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     int Bitwidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     int NrOfInputs =
@@ -228,8 +227,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     boolean is_bus = is_bus(ComponentInfo.GetComponent().getAttributeSet());
     AttributeSet Myattrs = ComponentInfo.GetComponent().getAttributeSet();
@@ -304,7 +302,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -329,10 +327,9 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
               InputFloatingValues[i - 1],
               ComponentInfo,
               i,
-              Reporter,
               Nets));
     }
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 0, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 0, Nets));
 
     return PortMap;
   }

@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
@@ -63,7 +63,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock("This is a multicycle implementation of the Random Component", 3));
@@ -232,8 +232,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
@@ -245,7 +244,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -253,7 +252,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Boolean HasClock = true;
     Boolean ActiveLow = false;
     if (!ComponentInfo.EndIsConnected(Random.CK)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
@@ -262,11 +261,11 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String ClockNetName = GetClockNetName(ComponentInfo, Random.CK, Nets);
     if (ClockNetName.isEmpty()) {
       GatedClock = true;
-      Reporter.AddError(
+      Reporter.Report.AddError(
           "Found a gated clock for component \"Random\" in circuit \""
               + Nets.getCircuitName()
               + "\"");
-      Reporter.AddError("This RNG will not work!");
+      Reporter.Report.AddError("This RNG will not work!");
     }
     if (ComponentInfo.GetComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
       ActiveLow =
@@ -307,13 +306,13 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + HDL.BracketClose());
       }
     }
-    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Random.RST, Reporter, Nets));
-    PortMap.putAll(GetNetMap("enable", false, ComponentInfo, Random.NXT, Reporter, Nets));
+    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Random.RST, Nets));
+    PortMap.putAll(GetNetMap("enable", false, ComponentInfo, Random.NXT, Nets));
     String output = "Q";
     if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
-    PortMap.putAll(GetNetMap(output, true, ComponentInfo, Random.OUT, Reporter, Nets));
+    PortMap.putAll(GetNetMap(output, true, ComponentInfo, Random.OUT, Nets));
     return PortMap;
   }
 

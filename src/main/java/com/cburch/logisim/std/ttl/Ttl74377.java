@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -45,13 +44,13 @@ public class Ttl74377 extends AbstractOctalFlops {
     }
 
     @Override
-    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
       SortedMap<String, String> PortMap = new TreeMap<>();
       if (!(MapInfo instanceof NetlistComponent)) return PortMap;
       NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter));
+      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo));
       PortMap.put("nCLR", "'1'");
-      PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Reporter, Nets));
+      PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Nets));
       return PortMap;
     }
   }

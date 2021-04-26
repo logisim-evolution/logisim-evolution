@@ -38,7 +38,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -60,7 +60,6 @@ public class XilinxDownload implements VendorDownload {
   private final String ProjectPath;
   private final String SandboxPath;
   private final String UcfPath;
-  private final FPGAReport Reporter;
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
   private final BoardInformation BoardInfo;
@@ -81,7 +80,6 @@ public class XilinxDownload implements VendorDownload {
 
   public XilinxDownload(
       String ProjectPath,
-      FPGAReport Reporter,
       Netlist RootNetList,
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
@@ -92,7 +90,6 @@ public class XilinxDownload implements VendorDownload {
     this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
     this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
     this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCFPath);
-    this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -166,11 +163,11 @@ public class XilinxDownload implements VendorDownload {
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
     } else {
-      Reporter.ClsScr();
+      Reporter.Report.ClsScr();
       /* Here we do the USBTMC Download */
       boolean usbtmcdevice = new File("/dev/usbtmc0").exists();
       if (!usbtmcdevice) {
-        Reporter.AddFatalError(S.get("XilinxUsbTmc"));
+        Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
       File bitfile =
@@ -181,7 +178,7 @@ public class XilinxDownload implements VendorDownload {
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
+        Reporter.Report.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
         return null;
       }
       File usbtmc = new File("/dev/usbtmc0");
@@ -197,7 +194,7 @@ public class XilinxDownload implements VendorDownload {
         usbtmc_out.close();
         bitfile_in.close();
       } catch (IOException e) {
-        Reporter.AddFatalError(S.get("XilinxUsbTmcError"));
+        Reporter.Report.AddFatalError(S.get("XilinxUsbTmcError"));
       }
     }
     return null;
@@ -206,10 +203,10 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     String JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
-    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file, Reporter);
-    File VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file, Reporter);
-    File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file, Reporter);
-    File DownloadFile = FileWriter.GetFilePointer(ScriptPath, download_file, Reporter);
+    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file);
+    File VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file);
+    File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file);
+    File DownloadFile = FileWriter.GetFilePointer(ScriptPath, download_file);
     if (ScriptFile == null || VhdlListFile == null || UcfFile == null || DownloadFile == null) {
       ScriptFile = new File(ScriptPath + script_file);
       VhdlListFile = new File(ScriptPath + vhdl_list_file);
@@ -227,7 +224,7 @@ public class XilinxDownload implements VendorDownload {
     for (String architecture : Architectures) {
       Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
     }
-    if (!FileWriter.WriteContents(VhdlListFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(VhdlListFile, Contents)) return false;
     Contents.clear();
     Contents.add(
         "run -top "
@@ -237,12 +234,12 @@ public class XilinxDownload implements VendorDownload {
             + vhdl_list_file
             + " -ifmt mixed -p "
             + GetFPGADeviceString(BoardInfo));
-    if (!FileWriter.WriteContents(ScriptFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(ScriptFile, Contents)) return false;
     Contents.clear();
     Contents.add("setmode -bscan");
     if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
       if (BoardInfo.fpga.getFlashName() == null) {
-        Reporter.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
+        Reporter.Report.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
       }
       String FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
       String McsFile = ScriptPath + File.separator + mcs_file;
@@ -283,7 +280,7 @@ public class XilinxDownload implements VendorDownload {
       }
     }
     Contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(DownloadFile, Contents)) return false;
     Contents.clear();
     if (RootNetList.NumberOfClockTrees() > 0) {
       Contents.add(
@@ -309,7 +306,7 @@ public class XilinxDownload implements VendorDownload {
       Contents.add("");
     }
     Contents.addAll(GetPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, Contents, Reporter);
+    return FileWriter.WriteContents(UcfFile, Contents);
   }
   
   private ArrayList<String> GetPinLocStrings() {

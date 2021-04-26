@@ -31,7 +31,6 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
@@ -61,7 +60,6 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();

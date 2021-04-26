@@ -30,7 +30,7 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -46,11 +46,10 @@ public class CorrectLabel {
     return result.toString();
   }
 
-  public static boolean IsCorrectLabel(
-      String Label, String ErrorIdentifierString, FPGAReport Reporter) {
+  public static boolean IsCorrectLabel(String Label, String ErrorIdentifierString) {
     String err = NameErrors(Label, ErrorIdentifierString);
     if (err != null) {
-      Reporter.AddFatalError(err);
+      Reporter.Report.AddFatalError(err);
       return false;
     }
     return true;
@@ -89,18 +88,6 @@ public class CorrectLabel {
     return null;
   }
 
-  public static boolean IsCorrectLabel(String Label) {
-    if (Label.isEmpty()) return true;
-    for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return false;
-      }
-    }
-    if (VHDLKeywords.contains(Label.toLowerCase())) return false;
-    return !VerilogKeywords.contains(Label);
-  }
-
   public static String FirstInvalidCharacter(String Label) {
     if (Label.isEmpty()) return "";
     for (int i = 0; i < Label.length(); i++) {
@@ -112,7 +99,7 @@ public class CorrectLabel {
     return "";
   }
 
-  public static boolean IsCorrectLabel(String Label, String HDLIdentifier) {
+  public static boolean IsCorrectLabel(String Label) {
     if (Label.isEmpty()) return true;
     for (int i = 0; i < Label.length(); i++) {
       if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
@@ -120,10 +107,10 @@ public class CorrectLabel {
         return false;
       }
     }
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
+    if (HDL.isVHDL()) {
       return !VHDLKeywords.contains(Label.toLowerCase());
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         return !VerilogKeywords.contains(Label);
       }
     }

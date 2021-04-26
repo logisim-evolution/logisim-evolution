@@ -31,7 +31,7 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
@@ -44,13 +44,12 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
     int NrOfPins = ComponentInfo.NrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
       if (!ComponentInfo.EndIsConnected(i)) {
-        Reporter.AddError(
+        Reporter.Report.AddError(
             "Bit Extender component has floating input connection in circuit \""
                 + CircuitName
                 + "\"!");

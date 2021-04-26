@@ -31,7 +31,6 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
@@ -44,7 +43,6 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
     for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {

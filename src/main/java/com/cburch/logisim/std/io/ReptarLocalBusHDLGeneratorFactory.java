@@ -31,7 +31,6 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -46,8 +45,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   public ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
@@ -115,8 +113,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   public ArrayList<String> GetEntity(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter) {
+      String ComponentName) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
     Contents.addAll(FileWriter.getExtendedLibrary());
@@ -158,7 +155,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.add(" ");
@@ -180,7 +177,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -215,7 +212,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nCS3_o,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -223,7 +219,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nADV_ALE_o,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -231,7 +226,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_RE_nOE_o,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -239,7 +233,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nWE_o,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -247,7 +240,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_WAIT3_i,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -255,7 +247,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_o,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -263,7 +254,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_i,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
@@ -271,13 +261,12 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_tris_i,
-            Reporter,
             Nets));
     PortMap.putAll(
         GetNetMap(
-            "Addr_LB_o", true, ComponentInfo, ReptarLocalBus.Addr_LB_o, Reporter, Nets));
+            "Addr_LB_o", true, ComponentInfo, ReptarLocalBus.Addr_LB_o, Nets));
     PortMap.putAll(
-        GetNetMap("IRQ_i", true, ComponentInfo, ReptarLocalBus.IRQ_i, Reporter, Nets));
+        GetNetMap("IRQ_i", true, ComponentInfo, ReptarLocalBus.IRQ_i, Nets));
     return PortMap;
   }
 

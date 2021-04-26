@@ -34,7 +34,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import java.util.ArrayList;
@@ -49,10 +48,10 @@ public class JKFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter) {
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
       Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("J", true, ComponentInfo, 0, Reporter, Nets));
-      PortMap.putAll(GetNetMap("K", true, ComponentInfo, 1, Reporter, Nets));
+      PortMap.putAll(GetNetMap("J", true, ComponentInfo, 0, Nets));
+      PortMap.putAll(GetNetMap("K", true, ComponentInfo, 1, Nets));
       return PortMap;
     }
 

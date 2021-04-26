@@ -31,7 +31,6 @@ package com.cburch.logisim.std.gates;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
@@ -68,7 +67,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     PLATable tt = attrs.getValue(PLA.ATTR_TABLE);
     int outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
@@ -99,12 +98,12 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo, FPGAReport Reporter) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("Index", true, ComponentInfo, PLA.IN_PORT, Reporter, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, PLA.OUT_PORT, Reporter, Nets));
+    PortMap.putAll(GetNetMap("Index", true, ComponentInfo, PLA.IN_PORT, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, PLA.OUT_PORT, Nets));
     return PortMap;
   }
 

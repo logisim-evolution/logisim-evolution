@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -61,14 +60,12 @@ public interface HDLGeneratorFactory {
   boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
-      ArrayList<String> Hierarchy,
-      FPGAReport Reporter);
+      ArrayList<String> Hierarchy);
 
   ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter);
+      String ComponentName);
 
   ArrayList<String> GetComponentInstantiation(
       Netlist TheNetlist,
@@ -80,7 +77,6 @@ public interface HDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
-      FPGAReport Reporter,
       String Name);
 
   String getComponentStringIdentifier();
@@ -88,14 +84,12 @@ public interface HDLGeneratorFactory {
   ArrayList<String> GetEntity(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter);
+      String ComponentName);
 
   ArrayList<String> GetInlinedCode(
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
       String CircuitName);
 
   String GetRelativeDirectory();

@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.fpga.gui.FPGAReport;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,17 +35,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.cburch.logisim.fpga.gui.Reporter;
+
 public class FileWriter {
 
-  public static boolean CopyArchitecture(String source, String dest, String componentName, FPGAReport reporter) {
+  public static boolean CopyArchitecture(String source, String dest, String componentName) {
     try {
       if (HDL.isVerilog()) {
-        reporter.AddFatalError("Empty VHDL box not supported in verilog.");
+        Reporter.Report.AddFatalError("Empty VHDL box not supported in verilog.");
         return false;
       }
       File inFile = new File(source);
       if (!inFile.exists()) {
-        reporter.AddFatalError("Source file \"" + source + "\" does not exist!");
+        Reporter.Report.AddFatalError("Source file \"" + source + "\" does not exist!");
         return false;
       }
       // copy file
@@ -62,10 +62,10 @@ public class FileWriter {
       }
       in.close();
       out.close();
-      reporter.AddInfo("\"" + source + "\" successfully copied to \"" + destPath + "\"");
+      Reporter.Report.AddInfo("\"" + source + "\" successfully copied to \"" + destPath + "\"");
       return true;
     } catch (Exception e) {
-      reporter.AddFatalError("Unable to copy file!");
+      Reporter.Report.AddFatalError("Unable to copy file!");
       return false;
     }
   }
@@ -83,8 +83,7 @@ public class FileWriter {
   public static File GetFilePointer(
       String TargetDirectory,
       String ComponentName,
-      boolean IsEntity,
-      FPGAReport MyReporter) {
+      boolean IsEntity) {
     try {
       File OutDir = new File(TargetDirectory);
       if (!OutDir.exists()) {
@@ -112,19 +111,19 @@ public class FileWriter {
         FileName += ".v";
       }
       File OutFile = new File(FileName);
-      MyReporter.AddInfo("Creating HDL file : \"" + FileName + "\"");
+      Reporter.Report.AddInfo("Creating HDL file : \"" + FileName + "\"");
       if (OutFile.exists()) {
-        MyReporter.AddWarning("HDL file \"" + FileName + "\" already exists");
+        Reporter.Report.AddWarning("HDL file \"" + FileName + "\" already exists");
         return null;
       }
       return OutFile;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Unable to create file!");
+      Reporter.Report.AddFatalError("Unable to create file!");
       return null;
     }
   }
 
-  public static File GetFilePointer(String TargetDirectory, String Name, FPGAReport MyReporter) {
+  public static File GetFilePointer(String TargetDirectory, String Name) {
     try {
       File OutDir = new File(TargetDirectory);
       if (!OutDir.exists()) {
@@ -138,14 +137,14 @@ public class FileWriter {
       }
       FileName += Name;
       File OutFile = new File(FileName);
-      MyReporter.AddInfo("Creating file : \"" + FileName + "\"");
+      Reporter.Report.AddInfo("Creating file : \"" + FileName + "\"");
       if (OutFile.exists()) {
-        MyReporter.AddWarning("File \"" + FileName + "\" already exists");
+        Reporter.Report.AddWarning("File \"" + FileName + "\" already exists");
         return null;
       }
       return OutFile;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Unable to create file!");
+      Reporter.Report.AddFatalError("Unable to create file!");
       return null;
     }
   }
@@ -211,7 +210,7 @@ public class FileWriter {
     return Lines;
   }
 
-  public static boolean WriteContents(File outfile, ArrayList<String> Contents, FPGAReport MyReporter) {
+  public static boolean WriteContents(File outfile, ArrayList<String> Contents) {
     try {
       FileOutputStream output = new FileOutputStream(outfile);
       for (String ThisLine : Contents) {
@@ -224,7 +223,7 @@ public class FileWriter {
       output.close();
       return true;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
+      Reporter.Report.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
       return false;
     }
   }
