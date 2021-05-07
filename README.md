@@ -1,9 +1,9 @@
 Logisim-evolution
 =================
 
-Branch [`master`](https://github.com/reds-heig/logisim-evolution/tree/master): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution)
+Branch [`master`](https://github.com/reds-heig/logisim-evolution/tree/master): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution) ![GitHub Actions](https://github.com/reds-heig/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)
 
-Branch [`develop`](https://github.com/reds-heig/logisim-evolution/tree/develop): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=develop)](https://travis-ci.org/reds-heig/logisim-evolution)
+Branch [`develop`](https://github.com/reds-heig/logisim-evolution/tree/develop): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=develop)](https://travis-ci.org/reds-heig/logisim-evolution) ![GitHub Actions](https://github.com/reds-heig/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=develop)
 
 Logisim is an educational tool for designing and simulating digital logic circuits. It was originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011. After this date, the author focused on other projects and the development has been [officially stopped](http://www.cburch.com/logisim/retire-note.html).
 
