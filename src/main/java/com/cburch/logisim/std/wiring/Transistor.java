@@ -232,10 +232,11 @@ public class Transistor extends InstanceFactory {
     if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == StdAttr.WIDTH || attr == ATTR_TYPE) {
+    } else if (attr == StdAttr.WIDTH) {
       updatePorts(instance);
     } else if (attr == ATTR_TYPE) {
       instance.fireInvalidated();
+      updatePorts(instance);
     }
   }
 

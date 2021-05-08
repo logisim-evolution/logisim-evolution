@@ -144,7 +144,7 @@ public class Decoder extends InstanceFactory {
     if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT_LOC || attr == Plexers.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == Plexers.ATTR_SELECT || attr == Plexers.ATTR_ENABLE) {
+    } else if (attr == Plexers.ATTR_ENABLE) {
       updatePorts(instance);
     } else if (attr == Plexers.ATTR_TRISTATE || attr == Plexers.ATTR_DISABLED) {
       instance.fireInvalidated();
