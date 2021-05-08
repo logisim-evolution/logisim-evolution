@@ -271,9 +271,7 @@ public class Analyze {
       Circuit circuit, Set<LocationBit> pointsToProcess) {
     HashSet<Component> dirtyComponents = new HashSet<>();
     for (LocationBit point : pointsToProcess) {
-      for (Component comp : circuit.getNonWires(point.loc)) {
-        dirtyComponents.add(comp);
-      }
+      dirtyComponents.addAll(circuit.getNonWires(point.loc));
     }
     return dirtyComponents;
   }

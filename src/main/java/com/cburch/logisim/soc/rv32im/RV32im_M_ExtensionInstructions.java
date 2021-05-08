@@ -37,6 +37,7 @@ import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -62,8 +63,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    opcodes.addAll(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

@@ -181,9 +181,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     instanceAttrs.add(StdAttr.FACING);
     instanceAttrs.add(StdAttr.APPEARANCE);
     instanceAttrs.add(VhdlSimConstants.SIM_NAME_ATTR);
-    for (Attribute<Integer> a : genericAttrs) {
-      instanceAttrs.add(a);
-    }
+    instanceAttrs.addAll(genericAttrs);
     if (genericValues == null) genericValues = new HashMap<>();
     ArrayList<Attribute<Integer>> toRemove = new ArrayList<>();
     for (Attribute<Integer> a : genericValues.keySet()) {

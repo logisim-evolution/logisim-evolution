@@ -311,9 +311,7 @@ class Connector {
       ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
     ArrayList<Wire> pathWires = new ArrayList<>();
     for (ConnectionData conn : connects) {
-      for (Wire w : conn.getWirePath()) {
-        pathWires.add(w);
-      }
+      pathWires.addAll(conn.getWirePath());
     }
 
     ArrayList<ConnectionData> impossible = new ArrayList<>();

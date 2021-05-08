@@ -48,6 +48,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -730,9 +731,7 @@ class CircuitWires {
       for (WireBundle b : map.getBundles()) {
         WireThread[] th = b.threads;
         if (b.isValid() && th != null) {
-          for (WireThread t : th) {
-            dirtyThreads.add(t);
-          }
+          dirtyThreads.addAll(Arrays.asList(th));
         }
       }
       circState.setWireData(s);
@@ -756,9 +755,7 @@ class CircuitWires {
             }
           }
         } else {
-          for (WireThread t : th) {
-            dirtyThreads.add(t);
-          }
+          dirtyThreads.addAll(Arrays.asList(th));
         }
       }
     }

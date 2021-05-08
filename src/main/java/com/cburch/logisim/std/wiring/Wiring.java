@@ -39,6 +39,7 @@ import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Wiring extends Library {
@@ -91,9 +92,7 @@ public class Wiring extends Library {
   public List<Tool> getTools() {
     if (tools == null) {
       List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
-      for (Tool a : ADD_TOOLS) {
-        ret.add(a);
-      }
+      ret.addAll(Arrays.asList(ADD_TOOLS));
       ret.addAll(FactoryDescription.getTools(Wiring.class, DESCRIPTIONS));
       tools = ret;
     }
