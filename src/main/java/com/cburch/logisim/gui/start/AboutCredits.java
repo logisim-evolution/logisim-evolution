@@ -107,16 +107,16 @@ class AboutCredits extends JComponent {
     linesHeight = 0; // computed in paintComponent
     lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
     lines.add(new CreditsLine(1, "College of the Holy Cross"));
-    lines.add(new CreditsLine(2, "http://www.holycross.edu"));
+    lines.add(new CreditsLine(2, "https://www.holycross.edu"));
     lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/"));
     lines.add(new CreditsLine(1, "Berner Fachhochschule"));
-    lines.add(new CreditsLine(2, "http://www.bfh.ch"));
+    lines.add(new CreditsLine(2, "https://www.bfh.ch"));
     lines.add(new CreditsLine(1, "Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
     lines.add(new CreditsLine(1, "et d'architecture de Gen\u00E8ve"));
-    lines.add(new CreditsLine(2, "http://hepia.hesge.ch"));
+    lines.add(new CreditsLine(2, "https://hepia.hesge.ch"));
     lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
     lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
-    lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));
+    lines.add(new CreditsLine(2, "https://www.heig-vd.ch"));
 
     /*
      * If you fork Logisim, feel free to change the above lines, but please

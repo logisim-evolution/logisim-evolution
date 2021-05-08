@@ -38,8 +38,8 @@ import javax.swing.Icon;
 
 public class BoardIcon implements Icon {
   private Image image;
-  private final int icon_width = 240;
-  private final int icon_height = 130;
+  private static final int ICON_WIDTH = 240;
+  private static final int ICON_HEIGHT = 130;
 
   public BoardIcon(BufferedImage BoardImage) {
     if (BoardImage == null) image = null;
@@ -50,11 +50,11 @@ public class BoardIcon implements Icon {
   }
 
   public int getIconHeight() {
-    return AppPreferences.getScaled(icon_height);
+    return AppPreferences.getScaled(ICON_HEIGHT);
   }
 
   public int getIconWidth() {
-    return AppPreferences.getScaled(icon_width);
+    return AppPreferences.getScaled(ICON_WIDTH);
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {

@@ -172,10 +172,7 @@ public class Analyzer extends LFrame.SubWindow {
   public static final int TABLE_TAB = 1;
   public static final int EXPRESSION_TAB = 2;
   public static final int MINIMIZED_TAB = 3;
-  
-  private final MyLocaleListener myLocaleListener = new MyLocaleListener();
-  private final MyChangeListener myChangeListener = new MyChangeListener();
-  private final TableListener tableListener = new TableListener();
+
   private final AnalyzerModel model = new AnalyzerModel();
 
   private JTabbedPane tabbedPane = new JTabbedPane();
@@ -191,6 +188,7 @@ public class Analyzer extends LFrame.SubWindow {
 
   Analyzer() {
     super(null);
+    TableListener tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
@@ -226,9 +224,10 @@ public class Analyzer extends LFrame.SubWindow {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    
+    MyLocaleListener myLocaleListener = new MyLocaleListener();
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
+    MyChangeListener myChangeListener = new MyChangeListener();
     tabbedPane.addChangeListener(myChangeListener);
     setSelectedTab(0);
     myChangeListener.stateChanged(null);

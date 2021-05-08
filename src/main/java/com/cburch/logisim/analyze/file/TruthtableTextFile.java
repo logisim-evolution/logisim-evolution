@@ -164,7 +164,7 @@ public class TruthtableTextFile {
   }
 
   static final Pattern NAME_FORMAT =
-      Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)\\]");
+      Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
       throws IOException {

@@ -713,7 +713,7 @@ class XmlReader {
     }
 
     // If the string has a ! or ~ symbol, then replace it with "NOT"
-    label = label.replaceAll("[\\!~]", "NOT_");
+    label = label.replaceAll("[!~]", "NOT_");
 
     // Force string to start with a letter
     if (!label.matches("^[A-Za-z].*$")) label = "L_" + label;

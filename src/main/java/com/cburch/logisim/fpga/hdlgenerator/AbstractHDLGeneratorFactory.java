@@ -727,10 +727,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             for (int vectorentries = 0; vectorentries < VectorList.length; vectorentries++) {
               String Entry = VectorList[vectorentries];
               if (Entry.contains("{")) {
-                Entry.replaceAll("{", "");
+                Entry = Entry.replace("{", "");
               }
               if (Entry.contains("}")) {
-                Entry.replaceAll("}", "");
+                Entry = Entry.replace("}", "");
               }
               OneLine.append(Entry);
               if (vectorentries < VectorList.length - 1) {

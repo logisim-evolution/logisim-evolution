@@ -161,7 +161,7 @@ public class VhdlParser {
   private static Pattern regex(String pattern) {
     pattern = pattern.trim();
     pattern = "^ " + pattern;
-    pattern = pattern.replaceAll("  ", "\\\\s+"); // Two spaces = required whitespace
+    pattern = pattern.replaceAll(" {2}", "\\\\s+"); // Two spaces = required whitespace
     pattern = pattern.replaceAll(" ", "\\\\s*"); // One space = optional whitespace
     return Pattern.compile(pattern, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
   }

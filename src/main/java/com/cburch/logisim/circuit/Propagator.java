@@ -142,7 +142,7 @@ public class Propagator {
   private final CircuitState root; // root of state tree
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
-  private final int simLimit = 1000;
+  private static final int simLimit = 1000;
 
   /**
    * On average, one out of every 2**simRandomShift propagations through a component is delayed one

@@ -249,7 +249,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
           && server_response.length() > 0
           && !server_response.equals("sync")) {
 
-        String[] parameters = server_response.split("\\:");
+        String[] parameters = server_response.split(":");
 
         String busValue = parameters[1];
 

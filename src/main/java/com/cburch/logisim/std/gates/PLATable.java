@@ -346,8 +346,8 @@ public class PLATable {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private final float smallFont = 9.5f;
-    private final float tinyFont = 8.8f;
+    private static final float smallFont = 9.5f;
+    private static final float tinyFont = 8.8f;
     private final HeaderPanel hdrPanel;
     private final TablePanel ttPanel;
     private final JPanel ttScrollPanel;
