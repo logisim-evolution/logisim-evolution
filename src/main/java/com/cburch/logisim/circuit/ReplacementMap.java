@@ -209,7 +209,7 @@ public class ReplacementMap {
 
   public String toString() {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    try (PrintStream p = new PrintStream(out, true, "UTF-8")) {
+    try (PrintStream p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
         print(p);
     } catch (Exception e) {
     }

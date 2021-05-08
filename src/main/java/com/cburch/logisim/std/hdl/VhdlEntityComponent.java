@@ -57,6 +57,7 @@ import java.awt.Window;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -363,7 +364,8 @@ public class VhdlEntityComponent extends InstanceFactory {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = attrs.getValue(CONTENT_ATTR).getContent();
 

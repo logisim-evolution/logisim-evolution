@@ -623,7 +623,7 @@ public abstract class Expression {
       }
     });
     badness = badnessList.toArray(new Integer[badnessList.size()]);
-    return notation.equals(Notation.LaTeX) ?"$"+text.toString()+"$" : text.toString();
+    return notation.equals(Notation.LaTeX) ?"$"+ text +"$" : text.toString();
   }
   
   public Integer[] getBadness() {

@@ -846,7 +846,7 @@ public class RamAppearance {
       if (drawDin)
         GraphicsUtil.drawText(
               g,
-              dinLabel.toString()+BEIndex+DLabel,
+              dinLabel +BEIndex+DLabel,
               x + (seperate ? 3 :  Mem.SymbolWidth-3),
               y + (seperate ? 10 : 13),
               seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,

@@ -279,8 +279,8 @@ public class AnalyzerTexWriter {
     }
     content.append(
         "\\draw[kmbox] (" + df.format(-0.5) + "," + df.format((double) kmapRows + 0.5) + ")\n");
-    content.append("   node[below left]{" + leftVars.toString() + "}\n");
-    content.append("   node[above right]{" + topVars.toString() + "} +(-0.2,0.2)\n");
+    content.append("   node[below left]{" + leftVars + "}\n");
+    content.append("   node[above right]{" + topVars + "} +(-0.2,0.2)\n");
     content.append("   node[above left]{" + name + "};");
     content.append(
         "\\draw (0," + kmapRows + ") -- (-0.7," + df.format((double) kmapRows + 0.7) + ");\n");

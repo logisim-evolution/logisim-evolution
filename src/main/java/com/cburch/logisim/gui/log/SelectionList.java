@@ -94,7 +94,8 @@ public class SelectionList extends JTable {
     }
 
     @Override
-    public int getColumnCount() { return 1; };
+    public int getColumnCount() { return 1; }
+
     @Override
     public String getColumnName(int column) { return ""; }
     @Override
@@ -122,7 +123,7 @@ public class SelectionList extends JTable {
         JLabel label = (JLabel) ret;
         SignalInfo item = (SignalInfo)value;
         label.setIcon(item.icon);
-        label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
+        label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
       }
       return ret;
     }
@@ -155,7 +156,7 @@ public class SelectionList extends JTable {
             for (SignalInfo s : items)
               logModel.setRadix(s, r);
             if (item != null)
-              label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
+              label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
             SelectionList.this.repaint();
           }
         });

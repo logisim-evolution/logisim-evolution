@@ -61,6 +61,7 @@ import java.awt.Graphics;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -315,7 +316,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = this.content.getContent();
 

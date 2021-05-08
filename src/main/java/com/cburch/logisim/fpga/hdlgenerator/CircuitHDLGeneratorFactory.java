@@ -309,7 +309,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (HDLType.equals(VHDL)) {
               String line =
                   "   "
-                      + OneLine.toString()
+                      + OneLine
                       + "<= "
                       + BusName
                       + TheNets.GetNetId(Source.GetParrentNet())
@@ -321,7 +321,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               String line =
                   "   assign "
-                      + OneLine.toString()
+                      + OneLine
                       + "= "
                       + BusName
                       + TheNets.GetNetId(Source.GetParrentNet())
@@ -360,10 +360,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               OneLine.append(NetName + TheNets.GetNetId(ThisNet));
             }
             if (HDLType.equals(VHDL)) {
-              String line = "   " + OneLine.toString() + ";";
+              String line = "   " + OneLine + ";";
               if (!Contents.contains(line)) Contents.add(line);
             } else {
-              String line = "   assign " + OneLine.toString() + ";";
+              String line = "   assign " + OneLine + ";";
               if (!Contents.contains(line)) Contents.add(line);
             }
           }
@@ -474,7 +474,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + Preamble
-                + Temp.toString()
+                + Temp
                 + AssignmentOperator
                 + ClockNet
                 + OpenBracket
@@ -485,7 +485,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + Preamble
-                + Temp.toString()
+                + Temp
                 + AssignmentOperator
                 + TickComponentHDLGeneratorFactory.FPGAClock
                 + ";");
@@ -867,7 +867,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       while (Destination.length() < SallignmentSize) {
         Destination.append(" ");
       }
-      Contents.append(Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+      Contents.append(Tab + AssignCommand + Destination + AssignOperator + Source + ";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -893,9 +893,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Destination.append(" ");
         }
         Contents.append(
-            Tab.toString()
+            Tab
                 + AssignCommand
-                + Destination.toString()
+                + Destination
                 + AssignOperator
                 + GetZeroVector(NrOfBits, true, HDLType)
                 + ";");
@@ -919,7 +919,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Destination.append(" ");
           }
           Contents.append(
-              Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+              Tab + AssignCommand + Destination + AssignOperator + Source + ";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (int bit = 0; bit < NrOfBits; bit++) {
@@ -982,7 +982,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Contents.append("\n");
             }
             Contents.append(
-                Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+                Tab + AssignCommand + Destination + AssignOperator + Source + ";");
           }
         }
       }

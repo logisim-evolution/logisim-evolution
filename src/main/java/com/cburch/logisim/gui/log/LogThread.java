@@ -82,7 +82,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
           if (i > 0) buf.append("\t");
           buf.append(model.getItem(i).getDisplayName());
         }
-        writer.println(buf.toString());
+        writer.println(buf);
       }
       headerDirty = false;
     }
@@ -107,7 +107,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
           duration = cur[i].duration;
       }
       // todo: only write duration if not in coarse-step or coarse-clock mode?
-      writer.println(buf.toString() + "\t# " + Model.formatDuration(duration));
+      writer.println(buf + "\t# " + Model.formatDuration(duration));
       for (Signal.Iterator c : cur)
         c.advance(duration);
       tNextWrite += duration;

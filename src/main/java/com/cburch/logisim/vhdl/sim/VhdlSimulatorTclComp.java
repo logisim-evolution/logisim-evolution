@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
@@ -116,7 +117,7 @@ public class VhdlSimulatorTclComp {
 
     PrintWriter writer;
     try {
-      writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl", "UTF-8");
+      writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl", StandardCharsets.UTF_8);
       writer.print(template);
       writer.close();
     } catch (FileNotFoundException e) {

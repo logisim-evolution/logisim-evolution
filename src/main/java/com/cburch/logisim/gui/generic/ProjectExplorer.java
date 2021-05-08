@@ -453,12 +453,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
   }
 
-  public static interface Listener {
-    public void deleteRequested(Event event);
-    public void doubleClicked(Event event);
-    public JPopupMenu menuRequested(Event event);
-    public void moveRequested(Event event, AddTool dragged, AddTool target);
-    public void selectionChanged(Event event);
+  public interface Listener {
+    void deleteRequested(Event event);
+    void doubleClicked(Event event);
+    JPopupMenu menuRequested(Event event);
+    void moveRequested(Event event, AddTool dragged, AddTool target);
+    void selectionChanged(Event event);
   }
 
   public static class Event {

@@ -434,7 +434,7 @@ public class Analyze {
       } else {// just ignore any other characters
       }
     }
-    if (end != null && ret.length() > 0) ret.append(end.toString());
+    if (end != null && ret.length() > 0) ret.append(end);
     if (ret.length() == 0) return null;
     return ret.toString();
   }

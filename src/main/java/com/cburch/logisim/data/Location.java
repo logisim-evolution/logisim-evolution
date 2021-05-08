@@ -165,7 +165,7 @@ public class Location implements Comparable<Location> {
   }
   
   public interface At {
-    public Location getLocation();
+    Location getLocation();
   }
 
   // Left before right, ties broken top before bottom, ties broken with hashcode

@@ -519,11 +519,11 @@ public class HexFile {
       if (desc.startsWith("Binary")) {
         String endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
 
-        File other = new File(tmp.toString() + ".xxd");
+        File other = new File(tmp + ".xxd");
         Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
         compare(false, "v3.0 hex bytes addressed " + endian, other, addrSize, wordSize, vals);
 
-        File plain = new File(tmp.toString() + ".xxd-plain");
+        File plain = new File(tmp + ".xxd-plain");
         Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
         compare(false, "v3.0 hex bytes plain " + endian, plain, addrSize, wordSize, vals);
       }

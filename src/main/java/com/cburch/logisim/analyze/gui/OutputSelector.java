@@ -72,7 +72,7 @@ class OutputSelector {
 
       @Override
       public Component getListCellRendererComponent(
-          JList<? extends Object> list,
+          JList<?> list,
           Object value,
           int index,
           boolean isSelected,

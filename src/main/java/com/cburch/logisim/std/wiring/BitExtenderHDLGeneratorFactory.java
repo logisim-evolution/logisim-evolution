@@ -124,7 +124,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                   + Preamble
                   + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
                   + AssignOperator
-                  + Replacement.toString()
+                  + Replacement
                   + ";");
         }
       }

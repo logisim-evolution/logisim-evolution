@@ -33,10 +33,10 @@ import com.cburch.logisim.data.Direction;
 import java.awt.event.KeyEvent;
 
 public class DirectionConfigurator implements KeyConfigurator, Cloneable {
-  private final Attribute<? extends Object> attr;
+  private final Attribute<?> attr;
   private final int modsEx;
 
-  public DirectionConfigurator(Attribute<? extends Object> attr, int modifiersEx) {
+  public DirectionConfigurator(Attribute<?> attr, int modifiersEx) {
     this.attr = attr;
     this.modsEx = modifiersEx;
   }

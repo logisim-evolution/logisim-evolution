@@ -268,7 +268,7 @@ class ExpressionTab extends AnalyzerTab {
         Object value, boolean isSelected, int row, int column) {
       newExpr = null;
       oldExpr = (NamedExpression)value;
-      label.setText(" " + Expressions.variable(oldExpr.name).toString() + " = ");
+      label.setText(" " + Expressions.variable(oldExpr.name) + " = ");
       if (oldExpr.expr != null)
         field.setText(oldExpr.expr.toString());
       else

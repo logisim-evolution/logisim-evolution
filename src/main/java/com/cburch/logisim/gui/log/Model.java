@@ -60,15 +60,15 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int COARSE = 1;
   public static final int FINE = 2;
   
-  public static class Event {};
-  
+  public static class Event {}
+
   public interface Listener{
-    public void signalsReset(Event event);
-    public void signalsExtended(Event event);
-    public void filePropertyChanged(Event event);
-    public void selectionChanged(Event event);    
-    public void modeChanged(Event event);
-    public void historyLimitChanged(Event event);
+    void signalsReset(Event event);
+    void signalsExtended(Event event);
+    void filePropertyChanged(Event event);
+    void selectionChanged(Event event);
+    void modeChanged(Event event);
+    void historyLimitChanged(Event event);
   }
   
   CircuitState circuitState;
@@ -298,7 +298,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public void remove(int idx) {
     if (spotlight != null && signals.get(idx) == spotlight)
       spotlight = null;
-    info.remove(idx).setListener(null);;
+    info.remove(idx).setListener(null);
     signals.remove(idx);
     renumberSignals();
     fireSelectionChanged(null);

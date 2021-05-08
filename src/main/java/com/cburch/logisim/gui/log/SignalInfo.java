@@ -95,9 +95,9 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private boolean obsoleted;
   private Listener listener; // only one supported, for now, usally just the LogModel
 
-  public static interface Listener {
-    public void signalInfoNameChanged(SignalInfo s);
-    public void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
+  public interface Listener {
+    void signalInfoNameChanged(SignalInfo s);
+    void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
   }
 
   public SignalInfo(Circuit root, Component[] p, Object o) {

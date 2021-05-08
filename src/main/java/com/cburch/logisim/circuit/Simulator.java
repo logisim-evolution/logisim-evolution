@@ -61,12 +61,13 @@ public class Simulator {
     public boolean didPropagate() { return didPropagate; }
   }
 
-  public static interface Listener {
-    public void simulatorReset(Event e);
-    default public boolean wantProgressEvents() { return false; }
-    default public void propagationInProgress(Event e) { };
-    public void propagationCompleted(Event e);
-    public void simulatorStateChanged(Event e);
+  public interface Listener {
+    void simulatorReset(Event e);
+    default boolean wantProgressEvents() { return false; }
+    default void propagationInProgress(Event e) { }
+
+    void propagationCompleted(Event e);
+    void simulatorStateChanged(Event e);
   }
   
   // This thread keeps track of the current stepPoints (when running in step
@@ -366,7 +367,7 @@ public class Simulator {
     if (ticked || stepped || propagated || doNudge)
       sim._firePropagationCompleted(ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
     if (clockDied)
-      sim.fireSimulatorStateChanged(); ; // todo: fixme: ack, wrong thread!
+      sim.fireSimulatorStateChanged(); // todo: fixme: ack, wrong thread!
 
     return true;
   }

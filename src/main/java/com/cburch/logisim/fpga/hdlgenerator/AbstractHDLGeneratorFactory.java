@@ -199,7 +199,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           OneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL " + OneLine.toString());
+        Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
       for (String Reg : RegList.keySet()) {
@@ -229,7 +229,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           OneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL " + OneLine.toString());
+        Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
       for (String Mem : MemList.keySet()) {
@@ -240,7 +240,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(": ");
         OneLine.append(GetType(MemList.get(Mem)));
         OneLine.append(";");
-        Contents.add("   SIGNAL " + OneLine.toString());
+        Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
       Contents.add("");
@@ -261,31 +261,31 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble + inp);
           } else {
-            Contents.add(ThisLine.toString() + ",");
+            Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting.toString() + inp);
+            ThisLine.append(Indenting + inp);
           }
         }
         for (String outp : OutputsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble + outp);
           } else {
-            Contents.add(ThisLine.toString() + ",");
+            Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting.toString() + outp);
+            ThisLine.append(Indenting + outp);
           }
         }
         for (String io : InOutsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble + io);
           } else {
-            Contents.add(ThisLine.toString() + ",");
+            Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting.toString() + io);
+            ThisLine.append(Indenting + io);
            }
         }
         if (ThisLine.length() != 0) {
-          Contents.add(ThisLine.toString() + ");");
+          Contents.add(ThisLine + ");");
         } else {
           Reporter.AddError("Internale Error in Verilog Architecture generation!");
         }
@@ -734,7 +734,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               }
               OneLine.append(Entry);
               if (vectorentries < VectorList.length - 1) {
-                Contents.add(OneLine.toString() + ",");
+                Contents.add(OneLine + ",");
                 OneLine.setLength(0);
                 while (OneLine.length() < TabSize) {
                   OneLine.append(" ");

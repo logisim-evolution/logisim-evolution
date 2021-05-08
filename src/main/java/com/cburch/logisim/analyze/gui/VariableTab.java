@@ -536,7 +536,7 @@ public class VariableTab extends AnalyzerTab {
     public BitWidthRenderer() {
     }
     @Override
-    public Component getListCellRendererComponent(JList<? extends Object> list,
+    public Component getListCellRendererComponent(JList<?> list,
         Object w, int index, boolean isSelected, boolean cellHasFocus) {
       String s = ((Integer)w) == 1 ? ("1 bit") : (w + " bits");
       return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);

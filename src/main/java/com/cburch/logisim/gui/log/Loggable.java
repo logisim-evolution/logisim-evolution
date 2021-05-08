@@ -35,11 +35,11 @@ import com.cburch.logisim.data.Value;
 public interface Loggable {
   String getLogName(Object option);
 
-  public BitWidth getBitWidth(Object option);
+  BitWidth getBitWidth(Object option);
   
   Object[] getLogOptions();
 
   Value getLogValue(CircuitState state, Object option);
   
-  public boolean isInput(Object option);
+  boolean isInput(Object option);
 }

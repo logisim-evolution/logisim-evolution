@@ -195,7 +195,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (nrBytesWritten > 0) newLineNum = addLine(lines,"\n",newLineNum,true);
             if (nrBytesWritten >= 0) 
               for (int sp = 0 ; sp < maxLabelSize ; sp++) newLineNum = addLine(lines," ",newLineNum,false);
-            newLineNum = addLine(lines," "+type+" \""+str.toString()+"\"\n",newLineNum,true);
+            newLineNum = addLine(lines," "+type+" \""+ str +"\"\n",newLineNum,true);
             nrBytesWritten = 0;
           }
         }
@@ -355,7 +355,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             StringBuffer label = new StringBuffer();
             if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label.append(labels.get(SocSupport.convUnsignedLong(addr))+":");
             while (label.length() <= maxLabelSize) label.append(" ");
-            line.append(label.toString()+" ");
+            line.append(label +" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
             if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
@@ -373,7 +373,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append("# "+String.format("0x%08X", SocSupport.convUnsignedLong(startAddress+((long)pc<<2))));
             line.append(" "+String.format("0x%08X", contents[pc]));
             validDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
-            lineNum = addLine(lines,line.toString()+"\n",lineNum,true);
+            lineNum = addLine(lines, line +"\n",lineNum,true);
           }
         } else lineNum = getData(!sh.isWritable(),contents,size,startAddress,labels,maxLabelSize,lines,lineNum);
       }

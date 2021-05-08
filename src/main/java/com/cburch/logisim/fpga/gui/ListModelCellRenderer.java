@@ -59,7 +59,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
 
   @Override
   public Component getListCellRendererComponent(
-      JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
@@ -129,7 +129,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
         Line.append(msg.GetCircuit().getName() + ": ");
       }
     }
-    Line.append(value.toString());
+    Line.append(value);
     setText(Line.toString());
     setEnabled(list.isEnabled());
     setFont(list.getFont());

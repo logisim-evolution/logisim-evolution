@@ -167,7 +167,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
      extention.append("Hz");
      DecimalFormat df = new DecimalFormat("#.#####");
      df.setRoundingMode(RoundingMode.HALF_UP);
-     String tick = df.format(work)+extention.toString();
+     String tick = df.format(work)+ extention;
      frequenciesList.setSelectedItem(tick);
   }
   
