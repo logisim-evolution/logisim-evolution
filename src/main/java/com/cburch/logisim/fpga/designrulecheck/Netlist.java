@@ -375,7 +375,6 @@ public class Netlist implements CircuitListener {
         CompName.add(ComponentName);
       }
     }
-    drc.clear();
     drc.add(
         new SimpleDRCContainer(
             MyCircuit,
@@ -710,7 +709,6 @@ public class Netlist implements CircuitListener {
     Set<Location> InputsList = new HashSet<>();
     Set<Component> TunnelList = new HashSet<>();
     MyComplexSplitters.clear();
-    drc.clear();
     drc.add(
         new SimpleDRCContainer(
             MyCircuit,

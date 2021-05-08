@@ -401,7 +401,7 @@ public class Startup implements AWTEventListener {
         i++;
         if (i >= args.length) printUsage();
 
-        if (args[i].toUpperCase().endsWith("MAP.xml")) {
+        if (args[i].toUpperCase().endsWith("MAP.XML")) {
           ret.testCircuitImpMapFile = args[i];
           i++;
           if (i >= args.length) printUsage();
