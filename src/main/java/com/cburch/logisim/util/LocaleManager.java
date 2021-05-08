@@ -43,8 +43,8 @@ import javax.swing.UIManager;
 
 public class LocaleManager {
   private static class LocaleGetter implements StringGetter {
-    LocaleManager source;
-    String key;
+    final LocaleManager source;
+    final String key;
 
     LocaleGetter(LocaleManager source, String key) {
       this.source = source;
@@ -58,7 +58,7 @@ public class LocaleManager {
 
   /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
-    String arg;
+    final String arg;
 
     LocaleFormatterWithString(LocaleManager source, String key, String arg) {
       super(source, key);
@@ -71,7 +71,7 @@ public class LocaleManager {
   }
 
   private static class LocaleFormatterWithGetter extends LocaleGetter {
-    StringGetter arg;
+    final StringGetter arg;
 
     LocaleFormatterWithGetter(LocaleManager source, String key, StringGetter arg) {
       super(source, key);

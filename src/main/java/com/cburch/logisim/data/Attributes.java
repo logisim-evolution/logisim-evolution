@@ -341,8 +341,8 @@ public class Attributes {
 
   private static class IntegerRangeAttribute extends Attribute<Integer> {
     Integer[] options = null;
-    int start;
-    int end;
+    final int start;
+    final int end;
 
     private IntegerRangeAttribute(String name, StringGetter disp, int start, int end) {
       super(name, disp);
@@ -429,7 +429,7 @@ public class Attributes {
 
   private static class OptionComboRenderer<V> extends BasicComboBoxRenderer {
     private static final long serialVersionUID = 1L;
-    Attribute<V> attr;
+    final Attribute<V> attr;
 
     OptionComboRenderer(Attribute<V> attr) {
       this.attr = attr;

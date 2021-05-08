@@ -358,7 +358,7 @@ public int getVisibleSignalsWidth() {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean empty = model.getSignalCount() == 0;
@@ -389,7 +389,7 @@ public int getVisibleSignalsWidth() {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       Dimension l = leftPanel.getPreferredSize();

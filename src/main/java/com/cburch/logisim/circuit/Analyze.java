@@ -57,8 +57,8 @@ import java.util.TreeMap;
 
 public class Analyze {
   public static class LocationBit {
-    Location loc;
-    int bit;
+    final Location loc;
+    final int bit;
 
     public LocationBit(Location l, int b) {
       loc = l;

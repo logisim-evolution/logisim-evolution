@@ -33,9 +33,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class MenuListener {
-  protected LogisimMenuBar menubar;
-  protected ArrayList<EnabledListener> listeners;
-  protected EditListener editListener = new EditListener();
+  protected final LogisimMenuBar menubar;
+  protected final ArrayList<EnabledListener> listeners;
+  protected final EditListener editListener = new EditListener();
 
   public MenuListener(LogisimMenuBar menubar) {
     this.menubar = menubar;

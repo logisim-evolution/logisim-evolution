@@ -128,7 +128,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   // TODO should automatically repaint icons when component attr change
   // TODO ? moving a component using Select tool removes it from selection
   private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
-    Project proj;
+    final Project proj;
     WindowMenuManager(Project p) {
       super(S.get("logFrameMenuItem"), false);
       proj = p;
@@ -178,7 +178,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
-    SelectionPanel selPanel;
+    final SelectionPanel selPanel;
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);

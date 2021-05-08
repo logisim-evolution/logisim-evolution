@@ -249,8 +249,8 @@ class ExpressionTab extends AnalyzerTab {
 
   public class ExpressionEditor extends AbstractCellEditor implements TableCellEditor {
     private static final long serialVersionUID = 1L;
-    JTextField field = new JTextField();
-    JLabel label = new JLabel();
+    final JTextField field = new JTextField();
+    final JLabel label = new JLabel();
     NamedExpression oldExpr, newExpr;
 
     public ExpressionEditor() {
@@ -464,7 +464,7 @@ class ExpressionTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     public void computeEnabled() {
       boolean viewing = table.getSelectedRow() >= 0;
       boolean editing = table.isEditing();
@@ -576,7 +576,7 @@ class ExpressionTab extends AnalyzerTab {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int width = table.getWidth();

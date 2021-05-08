@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 class ProjectsDirty {
   private static class DirtyListener implements LibraryListener {
-    Project proj;
+    final Project proj;
 
     DirtyListener(Project proj) {
       this.proj = proj;

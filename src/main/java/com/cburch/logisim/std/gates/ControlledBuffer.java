@@ -67,8 +67,8 @@ class ControlledBuffer extends InstanceFactory {
           S.getter("controlledControlOption"),
           new AttributeOption[] {RIGHT_HANDED, LEFT_HANDED});
 
-  public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
-  public static ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
+  public static final ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
+  public static final ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
 
   private final boolean isInverter;
 

@@ -229,7 +229,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
-    LinkedList<CellEditorListener> listeners = new LinkedList<>();
+    final LinkedList<CellEditorListener> listeners = new LinkedList<>();
     AttrTableModelRow currentRow;
     AttrTableModelRow[] currentRows;
     int[] currentRowIndexes;
@@ -439,8 +439,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private class TableModelAdapter implements TableModel, AttrTableModelListener {
 
-    Window parent;
-    LinkedList<TableModelListener> listeners;
+    final Window parent;
+    final LinkedList<TableModelListener> listeners;
     AttrTableModel attrModel;
 
     TableModelAdapter(Window parent, AttrTableModel attrModel) {

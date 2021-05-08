@@ -62,8 +62,8 @@ import org.slf4j.LoggerFactory;
 class CircuitWires {
 
   static class BundleMap {
-    HashMap<Location, WireBundle> pointBundles = new HashMap<>();
-    HashSet<WireBundle> bundles = new HashSet<>();
+    final HashMap<Location, WireBundle> pointBundles = new HashMap<>();
+    final HashSet<WireBundle> bundles = new HashSet<>();
     boolean isValid = true;
     // NOTE: It would make things more efficient if we also had
     // a set of just the first bundle in each tree.
@@ -117,7 +117,7 @@ class CircuitWires {
   }
 
   static class SplitterData {
-    WireBundle[] end_bundle; // PointData associated with each end
+    final WireBundle[] end_bundle; // PointData associated with each end
 
     SplitterData(int fan_out) {
       end_bundle = new WireBundle[fan_out + 1];
@@ -125,8 +125,8 @@ class CircuitWires {
   }
 
   static class State {
-    BundleMap bundleMap;
-    HashMap<WireThread, Value> thr_values = new HashMap<>();
+    final BundleMap bundleMap;
+    final HashMap<WireThread, Value> thr_values = new HashMap<>();
 
     State(BundleMap bundleMap) {
       this.bundleMap = bundleMap;
@@ -141,8 +141,8 @@ class CircuitWires {
   }
 
   static class ThreadBundle {
-    int loc;
-    WireBundle b;
+    final int loc;
+    final WireBundle b;
 
     ThreadBundle(int loc, WireBundle b) {
       this.loc = loc;

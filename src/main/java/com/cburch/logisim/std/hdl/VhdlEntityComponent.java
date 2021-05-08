@@ -96,7 +96,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static class VhdlEntityListener implements HdlModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     VhdlEntityListener(Instance instance) {
       this.instance = instance;

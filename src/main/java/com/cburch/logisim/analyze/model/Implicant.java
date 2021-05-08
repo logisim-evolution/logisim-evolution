@@ -42,7 +42,7 @@ import java.util.TreeMap;
 
 public class Implicant implements Comparable<Implicant> {
   private static class TermIterator implements Iterable<Implicant>, Iterator<Implicant> {
-    Implicant source;
+    final Implicant source;
     int currentMask = 0;
 
     TermIterator(Implicant source) {
@@ -283,8 +283,8 @@ public class Implicant implements Comparable<Implicant> {
     }
   }
 
-  static Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
-  static List<Implicant> MINIMAL_LIST = Arrays.asList(MINIMAL_IMPLICANT);
+  static final Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
+  static final List<Implicant> MINIMAL_LIST = Arrays.asList(MINIMAL_IMPLICANT);
 
   final int unknowns, values;
 

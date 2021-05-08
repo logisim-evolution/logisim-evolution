@@ -138,7 +138,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   abstract static class Node<T> extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1L;
-    ProjectExplorerModel model;
+    final ProjectExplorerModel model;
     int oldIndex;
     int newIndex;
 

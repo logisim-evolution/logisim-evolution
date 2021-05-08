@@ -276,7 +276,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     /** */
     private static final long serialVersionUID = 1L;
     
-    Entry myEntry;
+    final Entry myEntry;
 
     SquareButton(Entry e) {
       super(e.getDescription());
@@ -708,7 +708,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean sel = caret.hasSelection();
@@ -763,7 +763,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int width = tableWidth;

@@ -64,7 +64,7 @@ public class AnalyzerTexWriter {
   private static final String SUB_SECTION_SEP =
       "%-------------------------------------------------------------------------------";
 
-  public static int MAX_TRUTH_TABLE_ROWS = 64;
+  public static final int MAX_TRUTH_TABLE_ROWS = 64;
 
   public static final FileFilter FILE_FILTER =
       new TruthtableFileFilter(S.getter("tableLatexFilter"), ".tex");

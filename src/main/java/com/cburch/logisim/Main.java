@@ -95,7 +95,7 @@ public class Main {
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
-  public static boolean MacOS = MacCompatibility.isRunningOnMac();
+  public static final boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean hasGui() { return !headless; }
 
   /** URL for the automatic updater */

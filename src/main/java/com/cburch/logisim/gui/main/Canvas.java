@@ -122,7 +122,7 @@ public class Canvas extends JPanel
   private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
-  public static Color defaultzoomButtonColor = Color.WHITE;
+  public static final Color defaultzoomButtonColor = Color.WHITE;
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;

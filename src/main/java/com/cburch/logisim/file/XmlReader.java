@@ -79,8 +79,8 @@ import org.xml.sax.SAXException;
 class XmlReader {
 
   static class CircuitData {
-    Element circuitElement;
-    Circuit circuit;
+    final Element circuitElement;
+    final Circuit circuit;
     Map<Element, Component> knownComponents;
     List<AbstractCanvasObject> appearance;
 
@@ -91,9 +91,9 @@ class XmlReader {
   }
 
   class ReadContext {
-    LogisimFile file;
+    final LogisimFile file;
     LogisimVersion sourceVersion;
-    HashMap<String, Library> libs = new HashMap<>();
+    final HashMap<String, Library> libs = new HashMap<>();
     private final ArrayList<String> messages;
 
     ReadContext(LogisimFile file) {

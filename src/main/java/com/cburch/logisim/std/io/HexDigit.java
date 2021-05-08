@@ -183,13 +183,13 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     return segs;
   }
   
-  public static int SEG_A_MASK = 0x10000;
-  public static int SEG_B_MASK = 0x10;
-  public static int SEG_C_MASK = 0x1;
-  public static int SEG_D_MASK = 0x100;
-  public static int SEG_E_MASK = 0x100000;
-  public static int SEG_F_MASK = 0x1000000;
-  public static int SEG_G_MASK = 0x1000;
+  public static final int SEG_A_MASK = 0x10000;
+  public static final int SEG_B_MASK = 0x10;
+  public static final int SEG_C_MASK = 0x1;
+  public static final int SEG_D_MASK = 0x100;
+  public static final int SEG_E_MASK = 0x100000;
+  public static final int SEG_F_MASK = 0x1000000;
+  public static final int SEG_G_MASK = 0x1000;
 
   @Override
   public void propagate(InstanceState state) {

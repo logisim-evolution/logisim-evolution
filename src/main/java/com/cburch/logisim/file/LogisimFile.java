@@ -113,8 +113,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   private static class WritingThread extends UniquelyNamedThread {
-    OutputStream out;
-    LogisimFile file;
+    final OutputStream out;
+    final LogisimFile file;
 
     WritingThread(OutputStream out, LogisimFile file) {
       super("WritingThread");

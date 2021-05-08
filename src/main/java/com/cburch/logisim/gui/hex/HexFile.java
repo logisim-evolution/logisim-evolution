@@ -971,7 +971,7 @@ public class HexFile {
   }
 
   static class FormatOptions {
-    HashMap<String, String> tags = new HashMap<>();
+    final HashMap<String, String> tags = new HashMap<>();
     // "version" -->  "v2.0", "v3.0",
     // "radix" --> "hex", "raw", "binary" (or null), or "ascii"
     // "size" --> "bytes", "words"
@@ -1091,12 +1091,12 @@ public class HexFile {
   private static class HexReader extends FormatOptions {
 
     private final long[] data = new long[4096];
-    BufferedLineReader in;
-    MemContents dst;
+    final BufferedLineReader in;
+    final MemContents dst;
     int decodedWordCount;
-    StringWriter warnings = new StringWriter();
+    final StringWriter warnings = new StringWriter();
     int numWarnings = 0;
-    byte[] bytes = new byte[4096];
+    final byte[] bytes = new byte[4096];
     int bLen;
     long mAddr, mMaxAddr;
     long mAddrFrac; // portion of the next address already set
@@ -1641,8 +1641,8 @@ public class HexFile {
   }
 
   public static class ParseResult {
-    public MemContents model;
-    public int numWords;
+    public final MemContents model;
+    public final int numWords;
 
     ParseResult(MemContents m, int n) {
       model = m;
@@ -1651,12 +1651,13 @@ public class HexFile {
   }
 
   private static class HexWriter extends FormatOptions {
-    MemContents src;
-    byte[] bytes = new byte[4096];
-    int bLen, mWidth;
+    final MemContents src;
+    final byte[] bytes = new byte[4096];
+    int bLen;
+    final int mWidth;
     long mAddr, mEnd;
     int mAddrFrac;
-    boolean bigEndian;
+    final boolean bigEndian;
     PrintWriter cOut;
     OutputStream bOut;
 
@@ -1867,9 +1868,9 @@ public class HexFile {
 
   private static class Preview extends JPanel implements PropertyChangeListener {
     private static final long serialVersionUID = 1L;
-    JFileChooser chooser;
-    JTextArea preview;
-    MemContents m;
+    final JFileChooser chooser;
+    final JTextArea preview;
+    final MemContents m;
 
     Preview(JFileChooser chooser, MemContents m) {
       this.chooser = chooser;

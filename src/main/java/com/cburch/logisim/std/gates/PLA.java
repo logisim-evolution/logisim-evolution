@@ -76,9 +76,9 @@ class PLA extends InstanceFactory {
       Attributes.forBitWidth("in_width", S.getter("plaBitWidthIn"));
   static final Attribute<BitWidth> ATTR_OUT_WIDTH =
       Attributes.forBitWidth("out_width", S.getter("plaBitWidthOut"));
-  static Attribute<PLATable> ATTR_TABLE = new TruthTableAttribute();
+  static final Attribute<PLATable> ATTR_TABLE = new TruthTableAttribute();
 
-  public static InstanceFactory FACTORY = new PLA();
+  public static final InstanceFactory FACTORY = new PLA();
 
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
 

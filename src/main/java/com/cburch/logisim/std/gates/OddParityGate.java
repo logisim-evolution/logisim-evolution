@@ -51,7 +51,7 @@ class OddParityGate extends AbstractGate {
     }
   }
 
-  public static OddParityGate FACTORY = new OddParityGate();
+  public static final OddParityGate FACTORY = new OddParityGate();
   private final String ODD_PARITY_LABEL = "2k+1";
 
   private OddParityGate() {

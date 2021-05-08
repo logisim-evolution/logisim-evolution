@@ -51,7 +51,7 @@ public class IteratorUtil {
 
   private static class IteratorUnion<E> implements Iterator<E> {
     Iterator<? extends E> cur;
-    Iterator<? extends E> next;
+    final Iterator<? extends E> next;
 
     private IteratorUnion(Iterator<? extends E> cur, Iterator<? extends E> next) {
       this.cur = cur;

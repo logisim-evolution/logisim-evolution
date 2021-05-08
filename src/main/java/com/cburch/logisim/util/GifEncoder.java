@@ -81,8 +81,8 @@ import javax.swing.ProgressMonitor;
  */
 public class GifEncoder {
   private static class BitFile {
-    OutputStream output_;
-    byte[] buffer_;
+    final OutputStream output_;
+    final byte[] buffer_;
     int index_, bitsLeft_;
 
     BitFile(OutputStream output) {
@@ -155,8 +155,11 @@ public class GifEncoder {
   }
 
   private static class ImageDescriptor {
-    byte separator_;
-    short leftPosition_, topPosition_, width_, height_;
+    final byte separator_;
+    final short leftPosition_;
+    final short topPosition_;
+    final short width_;
+    final short height_;
     private byte byte_;
 
     ImageDescriptor(short width, short height, char separator) {
@@ -261,9 +264,9 @@ public class GifEncoder {
     private static final short HASHSIZE = 9973;
 
     private static final short HASHSTEP = 2039;
-    byte[] strChr_;
-    short[] strNxt_;
-    short[] strHsh_;
+    final byte[] strChr_;
+    final short[] strNxt_;
+    final short[] strHsh_;
 
     short numStrings_;
 
@@ -315,9 +318,9 @@ public class GifEncoder {
   }
 
   private static class MyGrabber extends PixelGrabber {
-    ProgressMonitor monitor;
+    final ProgressMonitor monitor;
     int progress;
-    int goal;
+    final int goal;
 
     MyGrabber(
         ProgressMonitor monitor,
@@ -358,9 +361,11 @@ public class GifEncoder {
   }
 
   private static class ScreenDescriptor {
-    short localScreenWidth_, localScreenHeight_;
+    final short localScreenWidth_;
+    final short localScreenHeight_;
     private byte byte_;
-    byte backgroundColorIndex_, pixelAspectRatio_;
+    final byte backgroundColorIndex_;
+    final byte pixelAspectRatio_;
 
     ScreenDescriptor(short width, short height, int numColors) {
       localScreenWidth_ = width;

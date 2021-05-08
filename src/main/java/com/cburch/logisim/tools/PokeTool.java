@@ -73,10 +73,10 @@ public class PokeTool extends Tool {
 
   private static class WireCaret extends AbstractCaret {
     //
-    Canvas canvas;
-    Wire wire;
-    int x;
-    int y;
+    final Canvas canvas;
+    final Wire wire;
+    final int x;
+    final int y;
 
     WireCaret(Canvas c, Wire w, int x, int y, AttributeSet opts) {
       canvas = c;

@@ -41,7 +41,7 @@ public class NetlistComponent {
   private final int nr_of_ends;
   private final Component CompReference;
   private final ArrayList<ConnectionEnd> Ends;
-  ComponentMapInformationContainer MyMapInformation;
+  final ComponentMapInformationContainer MyMapInformation;
   private Map<ArrayList<String>, BubbleInformationContainer> GlobalIds;
   private BubbleInformationContainer LocalId;
   private boolean IsGatedInstance;

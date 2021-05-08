@@ -579,9 +579,9 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX1;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX2;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
     RadixOption[] radixOptions = RadixOption.OPTIONS;

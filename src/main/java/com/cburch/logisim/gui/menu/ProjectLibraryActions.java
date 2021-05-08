@@ -173,7 +173,7 @@ public class ProjectLibraryActions {
   }
 
   private static class BuiltinOption {
-    Library lib;
+    final Library lib;
 
     BuiltinOption(Library lib) {
       this.lib = lib;

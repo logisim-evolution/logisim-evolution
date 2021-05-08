@@ -69,7 +69,7 @@ public class RightPanel extends JPanel {
   private static final int CURSOR_GAP = 20;
   private static final int TIMELINE_SPACING = 80;
   private final ChronoPanel chronoPanel;
-  DefaultListSelectionModel selectionModel;
+  final DefaultListSelectionModel selectionModel;
   private Model model;
   private final ArrayList<Waveform> rows = new ArrayList<>();
   private int curX = Integer.MAX_VALUE; // pixel coordinate of cursor, or MAX_VALUE to pin at right

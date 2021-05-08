@@ -75,7 +75,7 @@ class NorGate extends AbstractGate {
     }
   }
 
-  public static NorGate FACTORY = new NorGate();
+  public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
     super("NOR Gate", S.getter("norGateComponent"));

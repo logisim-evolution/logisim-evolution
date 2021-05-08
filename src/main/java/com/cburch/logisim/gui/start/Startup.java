@@ -112,7 +112,7 @@ public class Startup implements AWTEventListener {
   private final HashMap<File, File> substitutions = new HashMap<>();
   private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
-  boolean isTty;
+  final boolean isTty;
   private File templFile = null;
   private boolean templEmpty = false;
   private boolean templPlain = false;

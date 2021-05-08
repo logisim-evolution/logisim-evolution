@@ -400,7 +400,7 @@ public class VariableTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
@@ -510,8 +510,9 @@ public class VariableTab extends AnalyzerTab {
 
   public static class VarRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
-    Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-    Font plain, italic;
+    final Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+    final Font plain;
+    final Font italic;
     public VarRenderer() {
       setBorder(border);
       plain = AppPreferences.getScaledFont(getFont());
@@ -544,10 +545,10 @@ public class VariableTab extends AnalyzerTab {
 
   public class SingleClickVarEditor extends AbstractCellEditor implements TableCellEditor {
     private static final long serialVersionUID = 1L;
-    JTextField field = new JTextField();
-    JComboBox<Integer> width;
+    final JTextField field = new JTextField();
+    final JComboBox<Integer> width;
     Var editing;
-    VariableList data;
+    final VariableList data;
     
     public SingleClickVarEditor(VariableList data) {
       field.setBorder(BorderFactory.createCompoundBorder(
@@ -679,8 +680,8 @@ public class VariableTab extends AnalyzerTab {
 
   private class VarTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
-    JTable table;
-    VariableList data;
+    final JTable table;
+    final VariableList data;
     Var pendingDelete;
 
     VarTransferHandler(JTable table, VariableList data) {

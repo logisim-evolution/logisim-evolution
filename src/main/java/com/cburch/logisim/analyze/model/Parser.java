@@ -39,9 +39,9 @@ public class Parser {
   // parsing code
   //
   private static class Context {
-    int level;
-    Expression current;
-    Token cause;
+    final int level;
+    final Expression current;
+    final Token cause;
 
     Context(Expression current, int level, Token cause) {
       this.level = level;
@@ -52,10 +52,10 @@ public class Parser {
 
   private static class Token {
     int type;
-    int offset;
-    int length;
+    final int offset;
+    final int length;
     int precedence;
-    String text;
+    final String text;
 
     Token(int type, int offset, int length, String text, int precedence) {
       this.type = type;

@@ -51,7 +51,7 @@ public class TruthTable {
 
   private static class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
-    Entry[] inputs;
+    final Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
       inputs = new Entry[numInputs];

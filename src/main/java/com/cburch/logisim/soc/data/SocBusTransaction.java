@@ -45,9 +45,9 @@ public class SocBusTransaction {
   public static final int BLOCK_MARKER = 14;
   public static final int BLOCK_HEX = 78;
 
-  public static int READTransaction = 1;
-  public static int WRITETransaction = 2;
-  public static int ATOMICTransaction = 4;
+  public static final int READTransaction = 1;
+  public static final int WRITETransaction = 2;
+  public static final int ATOMICTransaction = 4;
   
   public static final int NoError = 0;
   public static final int NoResponsError = 1;

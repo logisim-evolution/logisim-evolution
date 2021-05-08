@@ -114,7 +114,7 @@ class XmlWriter {
     else return a.compareTo(b);
   }
 
-  static Comparator<Node> nodeComparator =
+  static final Comparator<Node> nodeComparator =
       new Comparator<Node>() {
         public int compare(Node a, Node b) {
           String na = a.getNodeName();

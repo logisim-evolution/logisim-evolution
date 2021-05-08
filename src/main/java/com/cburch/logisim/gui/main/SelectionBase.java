@@ -66,7 +66,7 @@ class SelectionBase {
   // Components
   final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
   private final ArrayList<Selection.Listener> listeners = new ArrayList<>();
-  Project proj;
+  final Project proj;
   // Components
   // removed
   private Bounds bounds = Bounds.EMPTY_BOUNDS;

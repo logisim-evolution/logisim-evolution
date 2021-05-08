@@ -65,19 +65,19 @@ public class IoStandards {
     return result;
   }
 
-  public static String IOAttributeString = "FPGAPinIOStandard";
-  public static char DefaulStandard = 0;
+  public static final String IOAttributeString = "FPGAPinIOStandard";
+  public static final char DefaulStandard = 0;
   public static char LVCMOS12 = 1;
   public static char LVCMOS15 = 2;
   public static char LVCMOS18 = 3;
   public static char LVCMOS25 = 4;
   public static char LVCMOS33 = 5;
 
-  public static char LVTTL = 6;
+  public static final char LVTTL = 6;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {
+  public static final String[] Behavior_strings = {
     "Default", "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33", "LVTTL"
   };
 }

@@ -53,11 +53,11 @@ public class PinActivity {
     return result;
   }
 
-  public static String ActivityAttributeString = "ActivityLevel";
-  public static char ActiveLow = 0;
-  public static char ActiveHigh = 1;
+  public static final String ActivityAttributeString = "ActivityLevel";
+  public static final char ActiveLow = 0;
+  public static final char ActiveHigh = 1;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Active low", "Active high"};
+  public static final String[] Behavior_strings = {"Active low", "Active high"};
 }

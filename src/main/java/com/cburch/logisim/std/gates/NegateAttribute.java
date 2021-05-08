@@ -38,7 +38,7 @@ import com.cburch.logisim.util.StringUtil;
 class NegateAttribute extends Attribute<Boolean> {
   private static final Attribute<Boolean> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
 
-  int index;
+  final int index;
   private final Direction side;
 
   public NegateAttribute(int index, Direction side) {

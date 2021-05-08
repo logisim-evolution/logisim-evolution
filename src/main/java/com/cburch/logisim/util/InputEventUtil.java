@@ -137,17 +137,17 @@ public class InputEventUtil {
     }
   }
 
-  public static String CTRL = "Ctrl";
+  public static final String CTRL = "Ctrl";
 
-  public static String SHIFT = "Shift";
+  public static final String SHIFT = "Shift";
 
-  public static String ALT = "Alt";
+  public static final String ALT = "Alt";
 
-  public static String BUTTON1 = "Button1";
+  public static final String BUTTON1 = "Button1";
 
-  public static String BUTTON2 = "Button2";
+  public static final String BUTTON2 = "Button2";
 
-  public static String BUTTON3 = "Button3";
+  public static final String BUTTON3 = "Button3";
 
   private InputEventUtil() {}
 }

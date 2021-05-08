@@ -161,14 +161,14 @@ public class CircuitBuilder {
     // (or edge corresponding to input)
 
     // initialized by self
-    int width;
-    int height;
-    ComponentFactory factory;
-    AttributeSet attrs;
-    int outputY; // where output is relative to my top edge
-    int subX; // where right edge of sublayouts should be relative to my
+    final int width;
+    final int height;
+    final ComponentFactory factory;
+    final AttributeSet attrs;
+    final int outputY; // where output is relative to my top edge
+    final int subX; // where right edge of sublayouts should be relative to my
     // left edge
-    Layout[] subLayouts;
+    final Layout[] subLayouts;
     String inputName; // for references directly to inputs
     boolean inverted;
 
@@ -198,9 +198,9 @@ public class CircuitBuilder {
   }
 
   private static class SingleInput {
-    int spineX;
+    final int spineX;
     int spineY;
-    ArrayList<Location> ys = new ArrayList<>();
+    final ArrayList<Location> ys = new ArrayList<>();
 
     SingleInput(int spineX) {
       this.spineX = spineX;

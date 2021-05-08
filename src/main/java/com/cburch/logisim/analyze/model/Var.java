@@ -88,8 +88,8 @@ public class Var implements Iterable<String> {
   }
   
   public static class Bit {
-    public String name;
-    public int b; // -1 means no index
+    public final String name;
+    public final int b; // -1 means no index
     public Bit(String name, int b) {
       this.name = name;
       this.b = b;

@@ -231,7 +231,7 @@ abstract class BufferedLineReader {
   }
 
   private static class Adapter extends InputStream {
-    RandomAccessFile r;
+    final RandomAccessFile r;
 
     Adapter(RandomAccessFile in) {
       r = in;

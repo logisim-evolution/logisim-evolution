@@ -79,7 +79,7 @@ class NandGate extends AbstractGate {
     }
   }
 
-  public static NandGate FACTORY = new NandGate();
+  public static final NandGate FACTORY = new NandGate();
 
   private NandGate() {
     super("NAND Gate", S.getter("nandGateComponent"));

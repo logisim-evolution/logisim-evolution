@@ -171,7 +171,7 @@ public class CircuitState implements InstanceData {
   private final Map<Location, Value> values = new HashMap<>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
   private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
-  HashMap<Location, SetData> causes = new HashMap<>();
+  final HashMap<Location, SetData> causes = new HashMap<>();
 
   private static int lastId = 0;
   private final int id = lastId++;

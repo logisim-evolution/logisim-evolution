@@ -38,7 +38,7 @@ public class VendorSoftware {
   public static final char VendorXilinx = 1;
   public static final char VendorVivado = 2;
   public static final char VendorUnknown = 255;
-  public static String[] Vendors = {"Altera", "Xilinx", "Vivado"};
+  public static final String[] Vendors = {"Altera", "Xilinx", "Vivado"};
   private static final String XilinxName = "XilinxToolsPath";
   private static final String AlteraName = "AlteraToolsPath";
   private static final String VivadoName = "VivadoToolsPath";

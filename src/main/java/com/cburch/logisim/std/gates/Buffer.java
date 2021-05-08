@@ -96,7 +96,7 @@ class Buffer extends InstanceFactory {
     return AbstractGate.pullOutput(repaired, outType);
   }
 
-  public static InstanceFactory FACTORY = new Buffer();
+  public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
     super("Buffer", S.getter("bufferComponent"));

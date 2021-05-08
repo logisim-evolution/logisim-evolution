@@ -464,7 +464,7 @@ class MinimizedTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean viewing = minimizedExpr.isFocusOwner()
@@ -600,7 +600,7 @@ class MinimizedTab extends AnalyzerTab {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int kWidth = karnaughMap.getKMapDim().width;

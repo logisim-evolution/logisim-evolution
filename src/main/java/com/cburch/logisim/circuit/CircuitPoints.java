@@ -42,8 +42,8 @@ import java.util.Set;
 class CircuitPoints {
   private static class LocationData {
     BitWidth width = BitWidth.UNKNOWN;
-    ArrayList<Component> components = new ArrayList<>(4);
-    ArrayList<EndData> ends = new ArrayList<>(4);
+    final ArrayList<Component> components = new ArrayList<>(4);
+    final ArrayList<EndData> ends = new ArrayList<>(4);
     // these lists are parallel - ends corresponding to wires are null
   }
 

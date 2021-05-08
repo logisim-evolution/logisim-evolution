@@ -68,8 +68,8 @@ public class ZoomControl extends JPanel implements LocaleListener {
   private final Canvas canvas;
   private final JButton plus;
   private final JButton minus;
-  public AutoZoomButton ZoomButton;
-  public ResetZoomButton ResetButton;
+  public final AutoZoomButton ZoomButton;
+  public final ResetZoomButton ResetButton;
   private ZoomModel model;
   private SliderModel sliderModel;
 
@@ -302,7 +302,7 @@ public class ZoomControl extends JPanel implements LocaleListener {
 
   private class ZoomButton extends JButton {
     private static final long serialVersionUID = 1L;
-    boolean out;
+    final boolean out;
 
     public ZoomButton(Icon icon, boolean left) {
       super(icon);

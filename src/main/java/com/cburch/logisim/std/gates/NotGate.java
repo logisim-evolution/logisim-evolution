@@ -108,7 +108,7 @@ class NotGate extends InstanceFactory {
 
   //	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
-  public static InstanceFactory FACTORY = new NotGate();
+  public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
     super("NOT Gate", S.getter("notGateComponent"));

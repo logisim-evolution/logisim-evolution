@@ -366,7 +366,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   private class ToolIcon implements Icon {
 
-    Tool tool;
+    final Tool tool;
     Circuit circ = null;
     VhdlContent vhdl = null;
 

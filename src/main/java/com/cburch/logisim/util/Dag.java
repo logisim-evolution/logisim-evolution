@@ -38,7 +38,7 @@ public class Dag {
     @SuppressWarnings("unused")
     Object data;
 
-    HashSet<Node> succs = new HashSet<>(); // of Nodes
+    final HashSet<Node> succs = new HashSet<>(); // of Nodes
     int numPreds = 0;
     boolean mark;
 

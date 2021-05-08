@@ -44,8 +44,8 @@ import java.util.Random;
 
 public class Propagator {
   private static class ComponentPoint {
-    Component cause;
-    Location loc;
+    final Component cause;
+    final Location loc;
 
     public ComponentPoint(Component cause, Location loc) {
       this.cause = cause;
@@ -66,7 +66,7 @@ public class Propagator {
   }
 
   private static class Listener implements AttributeListener {
-    WeakReference<Propagator> prop;
+    final WeakReference<Propagator> prop;
 
     public Listener(Propagator propagator) {
       prop = new WeakReference<>(propagator);
@@ -85,11 +85,11 @@ public class Propagator {
   }
 
   static class SetData implements Comparable<SetData> {
-    int time;
-    int serialNumber;
-    CircuitState state; // state of circuit containing component
-    Component cause; // component emitting the value
-    Location loc; // the location at which value is emitted
+    final int time;
+    final int serialNumber;
+    final CircuitState state; // state of circuit containing component
+    final Component cause; // component emitting the value
+    final Location loc; // the location at which value is emitted
     Value val; // value being emitted
     SetData next = null;
 
@@ -163,7 +163,7 @@ public class Propagator {
   private int setDataSerialNumber = 0;
   static int lastId = 0;
 
-  int id = lastId++;
+  final int id = lastId++;
 
   public Propagator(CircuitState root) {
     this.root = root;

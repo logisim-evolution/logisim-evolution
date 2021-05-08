@@ -130,13 +130,13 @@ public class SelectionList extends JTable {
   }
 
   class SignalInfoEditor extends AbstractCellEditor implements TableCellEditor {
-    JPanel panel = new JPanel();
-    JLabel label = new JLabel();
-    JButton button = new JButton(Icons.getIcon("dropdown.png"));
-    JPopupMenu popup = new JPopupMenu("Options");
+    final JPanel panel = new JPanel();
+    final JLabel label = new JLabel();
+    final JButton button = new JButton(Icons.getIcon("dropdown.png"));
+    final JPopupMenu popup = new JPopupMenu("Options");
     SignalInfo item;
     SignalInfo.List items;
-    HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
+    final HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
 
     public SignalInfoEditor() {
       panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));

@@ -70,7 +70,7 @@ class XorGate extends AbstractGate {
     return ret;
   }
 
-  public static XorGate FACTORY = new XorGate();
+  public static final XorGate FACTORY = new XorGate();
 
   private XorGate() {
     super("XOR Gate", S.getter("xorGateComponent"), true);

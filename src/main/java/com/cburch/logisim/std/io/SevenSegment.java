@@ -139,7 +139,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   static Bounds[] SEGMENTS = null;
 
-  static Color DEFAULT_OFF = new Color(220, 220, 220);
+  static final Color DEFAULT_OFF = new Color(220, 220, 220);
   
   public static final Attribute<Boolean> ATTR_DP = 
     Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));

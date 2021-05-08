@@ -64,15 +64,15 @@ public class DriveStrength {
     return result;
   }
 
-  public static String DriveAttributeString = "FPGAPinDriveStrength";
-  public static char DefaulStength = 0;
+  public static final String DriveAttributeString = "FPGAPinDriveStrength";
+  public static final char DefaulStength = 0;
   public static char Drive_2 = 1;
   public static char Drive_4 = 2;
   public static char Drive_8 = 3;
   public static char Drive_16 = 4;
-  public static char Drive_24 = 5;
+  public static final char Drive_24 = 5;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
+  public static final String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
 }

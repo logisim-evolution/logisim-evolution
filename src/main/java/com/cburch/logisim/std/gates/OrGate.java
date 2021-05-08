@@ -76,7 +76,7 @@ class OrGate extends AbstractGate {
     }
   }
 
-  public static OrGate FACTORY = new OrGate();
+  public static final OrGate FACTORY = new OrGate();
 
   private OrGate() {
     super("OR Gate", S.getter("orGateComponent"));

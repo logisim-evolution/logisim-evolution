@@ -187,7 +187,7 @@ public class SelectionPanel extends LogPanel {
 
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
-    SelectionPanel selPanel;
+    final SelectionPanel selPanel;
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);

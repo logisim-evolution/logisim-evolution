@@ -128,9 +128,9 @@ public class VhdlParser {
 
   public static class GenericDescription {
 
-    protected String name;
-    protected String type;
-    protected int dval;
+    protected final String name;
+    protected final String type;
+    protected final int dval;
 
     public GenericDescription(String name, String type, int dval) {
       this.name = name;

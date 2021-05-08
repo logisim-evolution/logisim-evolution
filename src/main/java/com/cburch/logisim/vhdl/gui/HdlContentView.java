@@ -58,8 +58,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class HdlContentView extends JPanel implements DocumentListener, HdlModelListener {
 
   private class HdlEditAction extends Action {
-    HdlModel model;
-    String original;
+    final HdlModel model;
+    final String original;
 
     HdlEditAction(HdlModel model, String original) {
       this.model = model;

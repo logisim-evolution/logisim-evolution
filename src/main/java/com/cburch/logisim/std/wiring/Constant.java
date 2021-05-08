@@ -129,7 +129,7 @@ public class Constant extends InstanceFactory {
   public static final Attribute<Long> ATTR_VALUE =
       Attributes.forHexLong("value", S.getter("constantValueAttr"));
 
-  public static InstanceFactory FACTORY = new Constant();
+  public static final InstanceFactory FACTORY = new Constant();
 
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);

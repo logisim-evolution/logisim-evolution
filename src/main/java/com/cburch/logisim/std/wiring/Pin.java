@@ -93,10 +93,10 @@ public class Pin extends InstanceFactory {
 
     private final JFormattedTextField text;
     private final int bitWidth;
-    PinState pinState;
-    InstanceState state;
-    RadixOption radix;
-    boolean tristate;
+    final PinState pinState;
+    final InstanceState state;
+    final RadixOption radix;
+    final boolean tristate;
     private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
     private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
     final JButton ok;

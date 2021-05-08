@@ -84,7 +84,7 @@ public class ComponentSelector extends JTable {
 
   static class TableTreeModel extends AbstractTableModel {
     TreeNode<CircuitNode> root;
-    ArrayList<TreeNode<?>> rows = new ArrayList<>();
+    final ArrayList<TreeNode<?>> rows = new ArrayList<>();
 
     TableTreeModel() { }
 
@@ -159,8 +159,8 @@ public class ComponentSelector extends JTable {
   //   OptionNode (e.g. one location in a Ram component)
   
   private static class TreeNode<P extends TreeNode<?>> {
-    P parent;
-    int depth;
+    final P parent;
+    final int depth;
     boolean expanded;
     ArrayList<TreeNode<?>> children = new ArrayList<>();
 
@@ -177,7 +177,7 @@ public class ComponentSelector extends JTable {
 
   private class ComponentNode extends TreeNode<CircuitNode> {
 
-    Component comp;
+    final Component comp;
 
     public ComponentNode(CircuitNode p, Component c) {
       super(p);
@@ -208,8 +208,8 @@ public class ComponentSelector extends JTable {
   private class CircuitNode extends TreeNode<CircuitNode>
     implements CircuitListener {
 
-    Circuit circ;
-    Component comp;
+    final Circuit circ;
+    final Component comp;
 
     public CircuitNode(CircuitNode p, Circuit t, Component c) {
       super(p);

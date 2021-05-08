@@ -142,11 +142,11 @@ public class Print {
   }
 
   private static class MyPrintable implements Printable {
-    Project proj;
-    List<Circuit> circuits;
-    String header;
-    boolean rotateToFit;
-    boolean printerView;
+    final Project proj;
+    final List<Circuit> circuits;
+    final String header;
+    final boolean rotateToFit;
+    final boolean printerView;
 
     MyPrintable(
         Project proj,
@@ -244,11 +244,11 @@ public class Print {
 
   private static class ParmsPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    JCheckBox rotateToFit;
-    JCheckBox printerView;
-    JTextField header;
-    GridBagLayout gridbag;
-    GridBagConstraints gbc;
+    final JCheckBox rotateToFit;
+    final JCheckBox printerView;
+    final JTextField header;
+    final GridBagLayout gridbag;
+    final GridBagConstraints gbc;
 
     @SuppressWarnings("rawtypes")
     ParmsPanel(JList list) {

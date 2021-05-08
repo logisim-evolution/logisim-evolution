@@ -126,7 +126,10 @@ public class ClockSource extends JDialogOk {
   }
   
   public static class CycleInfo {
-    public int hi, lo, phase, ticks;
+    public final int hi;
+    public final int lo;
+    public final int phase;
+    public final int ticks;
     public CycleInfo(int h, int l, int p) {
       hi = h;
       lo = l;

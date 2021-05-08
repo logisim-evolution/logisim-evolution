@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class ClockSourceContainer {
 
-  ArrayList<Component> sources;
+  final ArrayList<Component> sources;
   boolean RequiresFPGAGlobalClock;
 
   public ClockSourceContainer() {

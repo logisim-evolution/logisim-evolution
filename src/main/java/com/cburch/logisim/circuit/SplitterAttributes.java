@@ -44,7 +44,7 @@ import java.util.List;
 
 public class SplitterAttributes extends AbstractAttributeSet {
   public static class BitOutAttribute extends Attribute<Integer> {
-    int which;
+    final int which;
     BitOutOption[] options;
 
     private BitOutAttribute(int which, BitOutOption[] options) {
@@ -113,9 +113,9 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
 
   private static class BitOutOption {
-    int value;
-    boolean isVertical;
-    boolean isLast;
+    final int value;
+    final boolean isVertical;
+    final boolean isLast;
 
     BitOutOption(int value, boolean isVertical, boolean isLast) {
       this.value = value;
