@@ -638,9 +638,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(generic);
-          for (int i = generic.length(); i < SallignmentSize; i++) {
-            OneLine.append(" ");
-          }
+          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - generic.length())));
           OneLine.append("=> ").append(ParameterMap.get(generic));
         }
         OneLine.append(")");
@@ -663,9 +661,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(port);
-          for (int i = port.length(); i < SallignmentSize; i++) {
-            OneLine.append(" ");
-          }
+          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - port.length())));
           OneLine.append("=> ").append(PortMap.get(port));
         }
         OneLine.append(");");
@@ -1146,9 +1142,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(ParameterList.get(generic));
-        for (int i = ParameterList.get(generic).length(); i < PallignmentSize; i++) {
-          OneLine.append(" ");
-        }
+        OneLine.append(
+            " ".repeat(Math.max(0, PallignmentSize - ParameterList.get(generic).length())));
         OneLine.append(": INTEGER");
       }
       OneLine.append(");");
@@ -1172,9 +1167,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(input);
-        for (int i = input.length(); i < PallignmentSize; i++) {
-          OneLine.append(" ");
-        }
+        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - input.length())));
         OneLine.append(": IN  std_logic");
         nr_of_bits = InputsList.get(input);
         if (nr_of_bits < 0) {
@@ -1208,9 +1201,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(inout);
-        for (int i = inout.length(); i < PallignmentSize; i++) {
-          OneLine.append(" ");
-        }
+        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - inout.length())));
         OneLine.append(": INOUT  std_logic");
         nr_of_bits = InOutsList.get(inout);
         if (nr_of_bits < 0) {
@@ -1244,9 +1235,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(output);
-        for (int i = output.length(); i < PallignmentSize; i++) {
-          OneLine.append(" ");
-        }
+        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - output.length())));
         OneLine.append(": OUT std_logic");
         nr_of_bits = OutputsList.get(output);
         if (nr_of_bits < 0) {
@@ -1303,9 +1292,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       } else {
         if ((NrOfBits % 4) > 0) {
           Contents.append("\"");
-          for (int i = 0; i < (NrOfBits % 4); i++) {
-            Contents.append(FillValue);
-          }
+          Contents.append(FillValue.repeat((NrOfBits % 4)));
           Contents.append("\"");
           if (NrOfBits > 3) {
             Contents.append("&");
@@ -1313,9 +1300,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         }
         if ((NrOfBits / 4) > 0) {
           Contents.append("X\"");
-          for (int i = 0; i < (NrOfBits / 4); i++) {
-            Contents.append(HexFillValue);
-          }
+          Contents.append(HexFillValue.repeat((NrOfBits / 4)));
           Contents.append("\"");
         }
       }

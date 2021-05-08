@@ -346,7 +346,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           /* second pass, we are going to insert the code into the buffer */
           StringBuffer remark = new StringBuffer();
           int remarkOffset = Math.max((2 * maxLabelSize) + 23, 60);
-          for (int i = 0 ; i <  remarkOffset ; i++) remark.append(" ");
+          remark.append(" ".repeat(remarkOffset));
           remark.append("#    pc:       opcode:\n");
           lineNum = addLine(lines,remark.toString(),lineNum,true);
           for (int pc = 0 ; pc < (size>>2) ; pc++) {

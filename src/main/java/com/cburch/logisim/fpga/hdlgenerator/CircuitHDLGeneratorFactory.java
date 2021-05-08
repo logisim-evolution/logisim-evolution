@@ -829,9 +829,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "'");
       return "";
     }
-    for (int i = 0; i < TabSize; i++) {
-      Tab.append(" ");
-    }
+    Tab.append(" ".repeat(TabSize));
     ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
     boolean IsOutput = ConnectionInformation.IsOutputEnd();
     int NrOfBits = ConnectionInformation.NrOfBits();

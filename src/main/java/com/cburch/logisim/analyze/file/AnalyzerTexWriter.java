@@ -93,9 +93,9 @@ public class AnalyzerTexWriter {
     out.append("\\begin{tabular}{");
     int NrInCols = NrOfInCols(model);
     int NrOutCols = NrOfOutCols(model);
-    for (int i = 0; i < NrInCols; i++) out.append("c");
+    out.append("c".repeat(NrInCols));
     out.append("|");
-    for (int i = 0; i < NrOutCols; i++) out.append("c");
+    out.append("c".repeat(NrOutCols));
     out.append("}\n");
     /* Make the header text */
     List<Var> inputVars = model.getInputs().vars;

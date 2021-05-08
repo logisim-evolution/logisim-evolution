@@ -413,7 +413,7 @@ public class CsvInterpretor {
         } else {
           if (nrofcontquotes > 1) {
             int quotestoprint = nrofcontquotes >> 1;
-            for (int i = 0; i < quotestoprint; i++) working.append(quote);
+            working.append(String.valueOf(quote).repeat(quotestoprint));
             nrofcontquotes -= quotestoprint << 1;
           }
           if (nrofcontquotes == 1) {

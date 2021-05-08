@@ -162,17 +162,13 @@ public class FileWriter {
       StringBuilder ThisLine = new StringBuilder("--== Project   : ");
       int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
       ThisLine.append(projName);
-      for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine.append(" ");
-      }
+      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
       ThisLine.append("==");
       Lines.add(ThisLine.toString());
       ThisLine = new StringBuilder("--== Component : ");
       nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
       ThisLine.append(compName);
-      for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine.append(" ");
-      }
+      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
       ThisLine.append("==");
       Lines.add(ThisLine.toString());
       Lines.add("--==                                                                          ==");
@@ -189,9 +185,7 @@ public class FileWriter {
         StringBuilder ThisLine = new StringBuilder(" ** Component : ");
         int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
         ThisLine.append(compName);
-        for (int i = 0; i < nr_of_spaces; i++) {
-          ThisLine.append(" ");
-        }
+        ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
         ThisLine.append("**");
         Lines.add(ThisLine.toString());
         Lines.add(

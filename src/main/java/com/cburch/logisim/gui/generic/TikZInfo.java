@@ -324,7 +324,7 @@ public class TikZInfo implements Cloneable {
     StringBuffer chars = new StringBuffer();
     int repeat = i / 26;
     int charId = i % 26;
-    for (int j = 0; j <= repeat; j++) chars.append((char) (charId + 'A'));
+    chars.append(String.valueOf((char) (charId + 'A')).repeat(repeat + 1));
     return chars.toString();
   }
 

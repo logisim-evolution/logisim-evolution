@@ -60,7 +60,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static String zeros(int sz) {
     StringBuilder s = new StringBuilder();
-    for (int i = 0; i < sz; i++) s.append('0');
+    s.append("0".repeat(sz));
     if (sz == 1) return "'" + s + "'";
     else return "\"" + s + "\"";
   }

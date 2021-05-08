@@ -98,7 +98,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 + NrOfInputs
                 + "));");
         StringBuilder WhenLineBegin = new StringBuilder();
-        for (int i = 0; i < 21 + AllignmentSpaces.length(); i++) WhenLineBegin.append(" ");
+        WhenLineBegin.append(" ".repeat(21 + AllignmentSpaces.length()));
         for (int i = 0; i < NrOfInputs; i++) {
           String LocalSpaces;
           if (i < 10) LocalSpaces = AllignmentSpaces;

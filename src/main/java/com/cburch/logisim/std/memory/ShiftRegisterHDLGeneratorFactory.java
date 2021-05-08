@@ -521,7 +521,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         Temp.append("0");
       } else {
         Temp.append("\"");
-        for (int i = 0; i < NrOfBits * NrOfStages; i++) Temp.append("0");
+        Temp.append("0".repeat(NrOfBits * NrOfStages));
         Temp.append("\"");
       }
       PortMap.put("D", Temp.toString());
