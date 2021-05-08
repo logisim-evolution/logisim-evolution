@@ -141,7 +141,7 @@ abstract class BufferedLineReader {
       ret.append(buf, initPos, bufPos - initPos);
 
       // refill buffer, if necessary and possible
-      if (bufPos >= bufCount && !refill())
+      if (!refill())
         return ret.toString(); // note: file ended without newline
     }
   }

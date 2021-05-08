@@ -242,7 +242,7 @@ abstract class AbstractGate extends InstanceFactory {
 
     int skipStart;
     int skipDist;
-    int skipLowerEven = 10;
+    int skipLowerEven;
     if (inputs <= 3) {
       if (size < 40) {
         skipStart = -5;

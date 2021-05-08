@@ -76,7 +76,6 @@ public class AppearanceSvgReader {
         System.out.println(e.getMessage());
         return null;
       }
-      if (path == null) return null;
       int x = (int) Double.parseDouble(elt.getAttribute("x").trim());
       int y = (int) Double.parseDouble(elt.getAttribute("y").trim());
       DynamicElement shape;

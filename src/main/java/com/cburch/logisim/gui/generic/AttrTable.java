@@ -294,9 +294,9 @@ public class AttrTable extends JPanel implements LocaleListener {
     //
     @Override
     public void focusLost(FocusEvent e) {
-      Object dst = e.getOppositeComponent();
-      if (dst instanceof Component) {
-        Component p = (Component) dst;
+      Component dst = e.getOppositeComponent();
+      if (dst != null) {
+        Component p = dst;
         while (p != null && !(p instanceof Window)) {
           if (p == AttrTable.this) {
             // switch to another place in this table,

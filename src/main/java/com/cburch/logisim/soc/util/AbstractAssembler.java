@@ -224,7 +224,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           while (label.length() < maxLabelSize) label.append(" ");
           if (nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,"\n",newLineNum,true);
           if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,label.toString(),newLineNum,false);
-          if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines," .byte ",newLineNum,false);
+          newLineNum = addLine(lines," .byte ",newLineNum,false);
           nrBytesWritten = 0;
         }
         if (nrBytesWritten > 0) newLineNum = addLine(lines,", ",newLineNum,false);

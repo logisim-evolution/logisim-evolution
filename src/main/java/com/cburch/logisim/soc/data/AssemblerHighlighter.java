@@ -152,7 +152,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
     }
     if (RSyntaxUtilities.isHexCharacter(kar) && currentTokenType == Token.LITERAL_NUMBER_HEXADECIMAL)
       return currentTokenType;
-    if (currentTokenType != Token.NULL && currentTokenType != Token.IDENTIFIER)
+    if (currentTokenType != Token.NULL)
       addToken(text,start,index-1,currentTokenType,newStart);
     return Token.IDENTIFIER;
   }
