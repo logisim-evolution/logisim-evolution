@@ -124,11 +124,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
     @Override
     public void run() {
-      try {
-        file.write(out, file.loader);
-      } catch (IOException e) {
-        file.loader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
-      }
+      file.write(out, file.loader);
       try {
         out.close();
       } catch (IOException e) {
@@ -637,7 +633,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   //
   // other methods
   //
-  void write(OutputStream out, LibraryLoader loader) throws IOException {
+  void write(OutputStream out, LibraryLoader loader) {
     write(out, loader, null);
   }
 

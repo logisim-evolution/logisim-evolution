@@ -139,8 +139,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       String ComponentName,
       FPGAReport Reporter,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs); 
+    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs);
     Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
     Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
     Map<Integer, String> ParameterList = GetParameterList(attrs);
@@ -148,7 +147,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     Map<String, Integer> RegList = GetRegList(attrs, HDLType);
     Map<String, Integer> MemList = GetMemList(attrs, HDLType);
     StringBuffer OneLine = new StringBuffer();
-    Contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+    ArrayList<String> Contents = new ArrayList<>(
+        FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
     if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
       ArrayList<String> libs = GetExtraLibraries();
       if (!libs.isEmpty()) {

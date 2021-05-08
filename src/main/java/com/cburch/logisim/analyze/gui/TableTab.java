@@ -272,7 +272,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     }
   }
 
-  private class SquareButton extends TightButton implements Entry.EntryChangedListener {
+  private static class SquareButton extends TightButton implements Entry.EntryChangedListener {
     /** */
     private static final long serialVersionUID = 1L;
     

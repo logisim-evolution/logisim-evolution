@@ -50,8 +50,8 @@ public class TFlipFlop extends AbstractFlipFlop {
     @Override
     public Map<String, String> GetInputMaps(
         NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+      Map<String, String> PortMap = new HashMap<>(
+          GetNetMap("T", true, ComponentInfo, 0, Reporter, HDLType, Nets));
       return PortMap;
     }
 

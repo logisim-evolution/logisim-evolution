@@ -512,7 +512,7 @@ public class ComponentSelector extends JTable {
     tableModel.setRoot(new CircuitNode(null, rootCircuit, null));
   }
 
-  class ComponentTransferHandler extends TransferHandler {
+  static class ComponentTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
     boolean sending;
 

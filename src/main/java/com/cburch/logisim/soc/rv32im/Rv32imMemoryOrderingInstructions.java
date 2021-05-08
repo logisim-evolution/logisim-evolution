@@ -59,8 +59,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   private int operation;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    opcodes.addAll(Arrays.asList(AsmOpcodes));
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

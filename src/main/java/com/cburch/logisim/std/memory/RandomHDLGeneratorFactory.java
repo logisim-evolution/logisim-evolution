@@ -64,8 +64,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(
+    ArrayList<String> Contents = new ArrayList<>(
         MakeRemarkBlock("This is a multicycle implementation of the Random Component", 3, HDLType));
     Contents.add("");
     if (HDLType.equals(VHDL)) {

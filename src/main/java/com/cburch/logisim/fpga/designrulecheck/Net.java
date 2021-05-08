@@ -180,10 +180,9 @@ public class Net {
   }
 
   public ArrayList<ConnectionPoint> GetBitSinks(int bitIndex) {
-    ArrayList<ConnectionPoint> sinks = new ArrayList<>();
     if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
       return new ArrayList<>();
-    sinks.addAll(SinkList.get(bitIndex).GetConnections());
+    ArrayList<ConnectionPoint> sinks = new ArrayList<>(SinkList.get(bitIndex).GetConnections());
     return sinks;
   }
 

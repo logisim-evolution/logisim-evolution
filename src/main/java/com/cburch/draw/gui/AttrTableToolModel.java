@@ -31,7 +31,6 @@ package com.cburch.draw.gui;
 import com.cburch.draw.tools.AbstractTool;
 import com.cburch.draw.tools.DrawingAttributeSet;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableToolModel extends AttributeSetTableModel {

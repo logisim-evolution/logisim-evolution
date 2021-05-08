@@ -82,8 +82,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public boolean isPcRelative;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    opcodes.addAll(Arrays.asList(AsmOpcodes));
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

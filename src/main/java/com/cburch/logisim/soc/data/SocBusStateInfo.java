@@ -77,7 +77,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   
   public static class SocBusState implements InstanceData,Cloneable,ComponentDataGuiProvider {
     
-    public class SocBusStateTrace extends JPanel {
+    public static class SocBusStateTrace extends JPanel {
       private static final long serialVersionUID = 1L;
 	  private final SocBusTransaction action;
       private final long index;
@@ -172,11 +172,11 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
       if (index < 0 || index >= trace.size()) {
     	if (index == 0)
-    	  return new SocBusStateTrace(null,0,model);
+    	  return new SocBusStateTrace(null, 0, model);
         return null;
       }
       long indx = startTraceIndex+trace.size()-index-1;
-      return new SocBusStateTrace(trace.get(trace.size()-index-1),indx,model);
+      return new SocBusStateTrace(trace.get(trace.size() - index - 1), indx, model);
     }
 
     @Override

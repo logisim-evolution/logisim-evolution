@@ -477,9 +477,8 @@ public class Assembler extends AbstractParser implements LocaleListener {
   public ElfSectionHeader getSectionHeader() { return assemblerInfo.getSectionHeader(); }
 
   @Override
-  public void localeChanged() { 
-    HashMap<GutterIconInfo,StringGetter> oldSet = new HashMap<>();
-    oldSet.putAll(errorMarkers);
+  public void localeChanged() {
+    HashMap<GutterIconInfo, StringGetter> oldSet = new HashMap<>(errorMarkers);
     errorMarkers.clear();
     for (GutterIconInfo error : oldSet.keySet()) {
       pane.getGutter().removeTrackingIcon(error);

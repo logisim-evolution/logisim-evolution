@@ -58,8 +58,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       String ComponentName,
       FPGAReport Reporter,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+    ArrayList<String> Contents = new ArrayList<>(
+        FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
     if (HDLType.equals(VHDL)) {
       Contents.add("ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS");
       Contents.add("");

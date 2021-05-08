@@ -44,8 +44,8 @@ class EvenParityGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.addAll(GetParity(true, nr_of_inputs, bitwidth > 1, HDLType));
+      ArrayList<String> Contents = new ArrayList<>(
+          GetParity(true, nr_of_inputs, bitwidth > 1, HDLType));
       Contents.add("");
       return Contents;
     }

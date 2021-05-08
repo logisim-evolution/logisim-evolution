@@ -1796,7 +1796,7 @@ public class HexFile {
       escaper.close();
     }
 
-    void saveHexPlain() throws IOException {
+    void saveHexPlain() {
       if (tagged("size", "words")) saveHexWords(false);
       else saveHexBytes(false);
     }
@@ -1860,7 +1860,7 @@ public class HexFile {
       if (col != 0) cOut.printf("\n");
     }
 
-    void saveHexAddressed() throws IOException {
+    void saveHexAddressed() {
       if (tagged("size", "words")) saveHexWords(true);
       else saveHexBytes(true);
     }

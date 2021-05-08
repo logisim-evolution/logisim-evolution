@@ -71,7 +71,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     }
   }
   
-  public class SlaveInfoRenderer extends JLabel implements TableCellRenderer {
+  public static class SlaveInfoRenderer extends JLabel implements TableCellRenderer {
 
     private static final long serialVersionUID = 1L;
 
@@ -167,7 +167,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     }
   }
   
-  private class SlaveMap {
+  private static class SlaveMap {
     private final LinkedList<SlaveInfo> slaves;
     
     public SlaveMap() {

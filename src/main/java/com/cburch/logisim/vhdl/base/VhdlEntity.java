@@ -59,6 +59,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -325,14 +326,9 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
     }
   }
 

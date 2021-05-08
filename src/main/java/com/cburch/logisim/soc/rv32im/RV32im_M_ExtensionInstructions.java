@@ -62,8 +62,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source2;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    opcodes.addAll(Arrays.asList(AsmOpcodes));
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

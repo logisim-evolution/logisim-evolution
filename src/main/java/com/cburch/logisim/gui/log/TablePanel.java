@@ -207,7 +207,7 @@ class TablePanel extends LogPanel {
     }
   }
 
-  private class MyListener implements Model.Listener {
+  private static class MyListener implements Model.Listener {
     private void computeRowCount() { }
 
     void update() { }

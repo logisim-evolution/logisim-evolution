@@ -483,7 +483,7 @@ public class TikZWriter extends Graphics2D {
   }
 
   public void WriteSvg(int width, int height, File outfile)
-      throws IOException, ParserConfigurationException, TransformerException {
+      throws ParserConfigurationException, TransformerException {
     MyInfo.WriteSvg(width, height, outfile);
   }
 }

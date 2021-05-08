@@ -71,13 +71,11 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(
-        MakeRemarkBlock(
-            "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
-                + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down",
-            3,
-            HDLType));
+    ArrayList<String> Contents = new ArrayList<>(MakeRemarkBlock(
+        "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
+            + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down",
+        3,
+        HDLType));
     if (HDLType.equals(VHDL)) {
       Contents.add("");
       Contents.add("   CompareOut   <= s_carry;");

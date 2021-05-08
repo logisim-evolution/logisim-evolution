@@ -81,11 +81,9 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(
-        MakeRemarkBlock(
-            "Here the output signals are defines; we synchronize them all on the main clock",
-            3, HDLType));
+    ArrayList<String> Contents = new ArrayList<>(MakeRemarkBlock(
+        "Here the output signals are defines; we synchronize them all on the main clock",
+        3, HDLType));
 /*    if (TheNetlist.RawFPGAClock()) {
       if (HighTicks != LowTicks) {
         Reporter.AddFatalError("Clock component detected with " +HighTicks+":"+LowTicks+ " hi:lo duty cycle,"

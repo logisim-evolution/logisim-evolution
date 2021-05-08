@@ -83,8 +83,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private boolean valid = false;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    opcodes.addAll(Arrays.asList(AsmOpcodes));
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

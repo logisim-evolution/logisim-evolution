@@ -120,11 +120,7 @@ public class VhdlSimulatorTclComp {
       writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl", StandardCharsets.UTF_8);
       writer.print(template);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create run.tcl file : {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create run.tcl file : {}", e.getMessage());
       e.printStackTrace();
       return;

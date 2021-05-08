@@ -136,10 +136,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
     /* First we process all components */
-    Contents.addAll(MakeRemarkBlock("Here all signal adaptations are performed", 3, HDLType));
+    ArrayList<String> Contents = new ArrayList<>(
+        MakeRemarkBlock("Here all signal adaptations are performed", 3, HDLType));
     for (ArrayList<String> key : MyIOComponents.getMappableResources().keySet()) {
       MapComponent comp = MyIOComponents.getMappableResources().get(key);
       Contents.addAll(AbstractHDLGeneratorFactory.GetToplevelCode(HDLType, Reporter, comp));

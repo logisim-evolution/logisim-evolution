@@ -55,6 +55,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Window;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -373,11 +374,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
       return;

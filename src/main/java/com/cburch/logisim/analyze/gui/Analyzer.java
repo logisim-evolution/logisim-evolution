@@ -282,7 +282,7 @@ public class Analyzer extends LFrame.SubWindow {
       worker =
           new SwingWorker<T, Void>() {
             @Override
-            protected T doInBackground() throws Exception {
+            protected T doInBackground() {
               return PleaseWait.this.doInBackground();
             }
 
