@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -126,7 +127,7 @@ public class AppPreferences {
       } else if (prop.equals(TEMPLATE_FILE)) {
         File oldValue = templateFile;
         File value = convertFile(prefs.get(TEMPLATE_FILE, null));
-        if (value == null ? oldValue != null : !value.equals(oldValue)) {
+        if (!Objects.equals(value, oldValue)) {
           templateFile = value;
           if (templateType == TEMPLATE_CUSTOM) {
             customTemplate = null;
@@ -316,7 +317,7 @@ public class AppPreferences {
   public static void setTemplateFile(File value, Template template) {
     getPrefs();
     if (value != null && !value.canRead()) value = null;
-    if (value == null ? templateFile != null : !value.equals(templateFile)) {
+    if (!Objects.equals(value, templateFile)) {
       try {
         customTemplateFile = template == null ? null : value;
         customTemplate = template;

@@ -28,12 +28,13 @@
 
 package com.cburch.logisim.prefs;
 
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 class PrefMonitorString extends AbstractPrefMonitor<String> {
   private static boolean isSame(String a, String b) {
-    return a == null ? b == null : a.equals(b);
+    return Objects.equals(a, b);
   }
 
   private final String dflt;

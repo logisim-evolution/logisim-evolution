@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
@@ -59,7 +60,7 @@ class RecentProjects implements PreferenceChangeListener {
   }
 
   private static boolean isSame(Object a, Object b) {
-    return a == null ? b == null : a.equals(b);
+    return Objects.equals(a, b);
   }
 
   private static final String BASE_PROPERTY = "recent";

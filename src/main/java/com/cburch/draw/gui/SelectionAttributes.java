@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class SelectionAttributes extends AbstractAttributeSet {
@@ -125,7 +126,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     Object[] values = this.selValues;
     for (int i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
-        boolean same = value == null ? values[i] == null : value.equals(values[i]);
+        boolean same = Objects.equals(value, values[i]);
         if (!same) {
           values[i] = value;
           for (AttributeSet objAttrs : selected.keySet()) {

@@ -50,6 +50,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -93,7 +94,7 @@ public class Analyze {
     public Expression put(LocationBit point, Expression expression) {
       Expression ret = super.put(point, expression);
       if (currentCause != null) causes.put(point, currentCause);
-      if (ret == null ? expression != null : !ret.equals(expression)) {
+      if (!Objects.equals(ret, expression)) {
         dirtyPoints.add(point);
       }
       return ret;

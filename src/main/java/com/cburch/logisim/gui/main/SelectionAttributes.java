@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 class SelectionAttributes extends AbstractAttributeSet {
@@ -173,7 +174,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         }
         Object ov = oldValues[j];
         Object nv = entry.getValue();
-        if (ov == null ? nv != null : !ov.equals(nv)) {
+        if (!Objects.equals(ov, nv)) {
           return false;
         }
       }
@@ -341,7 +342,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         for (i = 0; i < oldValues.length; i++) {
           Object oldVal = oldValues[i];
           Object newVal = newValues[i];
-          boolean sameVals = oldVal == null ? newVal == null : oldVal.equals(newVal);
+          boolean sameVals = Objects.equals(oldVal, newVal);
           if (!sameVals) {
             @SuppressWarnings("unchecked")
             Attribute<Object> attr = (Attribute<Object>) oldAttrs[i];

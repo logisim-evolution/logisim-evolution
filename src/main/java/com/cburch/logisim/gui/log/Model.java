@@ -46,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Model implements CircuitListener, SignalInfo.Listener {
 
@@ -719,7 +720,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   public void setFile(File value) {
-    if (file == null ? value == null : file.equals(value)) return;
+    if (Objects.equals(file, value)) return;
     file = value;
     fileEnabled = file != null;
     fireFilePropertyChanged(null);

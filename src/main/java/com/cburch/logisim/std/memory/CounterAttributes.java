@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.util.List;
+import java.util.Objects;
 
 class CounterAttributes extends AbstractAttributeSet {
 
@@ -106,7 +107,7 @@ class CounterAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     Object oldValue = base.getValue(attr);
-    if (oldValue == null ? value == null : oldValue.equals(value)) return;
+    if (Objects.equals(oldValue, value)) return;
 
     Long newMax = null;
     if (attr == StdAttr.WIDTH) {
