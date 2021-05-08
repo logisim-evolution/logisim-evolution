@@ -151,7 +151,7 @@ public class AssemblerAsmInstruction {
                  case AssemblerToken.MATH_ADD        : result = beforeValue+afterValue; break;
                  case AssemblerToken.MATH_SUBTRACT   : result = beforeValue-afterValue; break;
                  case AssemblerToken.MATH_SHIFT_LEFT : result = beforeValue<<afterValue; break;
-                 case AssemblerToken.MATH_SHIFT_RIGHT: result = beforeValue<<afterValue; break;
+                 case AssemblerToken.MATH_SHIFT_RIGHT: result = beforeValue>>afterValue; break;
                  case AssemblerToken.MATH_MUL        : result = beforeValue*afterValue; break;
                  case AssemblerToken.MATH_DIV        : if (afterValue == 0) 
                                                          errors.put(parameter[i+1], S.getter("AssemblerDivZero"));
