@@ -289,7 +289,7 @@ public class CsvInterpretor {
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
-          if (sels.get(BitIndex) == true) {
+          if (sels.get(BitIndex)) {
             OptionPane.showMessageDialog(
                 parent,
                 S.fmt("CsvDuplicatedBit", 1, FileName, BitIndex, name),

@@ -409,7 +409,7 @@ public class MenuSimulate extends Menu {
       } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
         sim.setAutoTicking(!sim.isAutoTicking());
       } else if (src == assemblyWindow) {
-        if (assWin == null || assWin.isVisible() == false) {
+        if (assWin == null || !assWin.isVisible()) {
           assWin = new AssemblyWindow(proj);
           assWin.setVisible(true);
         } else {

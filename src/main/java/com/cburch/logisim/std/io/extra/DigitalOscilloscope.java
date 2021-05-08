@@ -323,7 +323,7 @@ public class DigitalOscilloscope extends InstanceFactory {
           if (diagramstate.getusedcell() < length - 1)
             diagramstate.setusedcell((byte) (diagramstate.getusedcell() + 1));
           // move back all old values
-          if (diagramstate.getmoveback() == true) {
+          if (diagramstate.getmoveback()) {
             diagramstate.moveback();
             if (clock == Value.TRUE)
               diagramstate.setclocknumber((byte) (diagramstate.getclocknumber() + 1));
