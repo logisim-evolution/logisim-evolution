@@ -1165,12 +1165,9 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
     // Start off in the proper state.
     int state = Token.NULL;
-    switch (initialTokenType) {
-        /* No multi-line comments */
-        /* No documentation comments */
-      default:
-        state = Token.NULL;
-    }
+    /* No multi-line comments */
+    /* No documentation comments */
+    state = Token.NULL;
 
     s = text;
     try {

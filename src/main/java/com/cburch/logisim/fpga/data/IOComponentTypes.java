@@ -144,10 +144,10 @@ public enum IOComponentTypes {
   }
   
   public static String getIOLabel(int nrPins, int id, IOComponentTypes comp) {
-    switch (comp) {
-      case LocalBus : return ReptarLocalBus.getIOLabel(id);
-      default       : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+    if (comp == IOComponentTypes.LocalBus) {
+      return ReptarLocalBus.getIOLabel(id);
     }
+    return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
   
   public static int GetNrOfFPGAPins(IOComponentTypes comp) {

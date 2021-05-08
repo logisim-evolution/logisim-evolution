@@ -162,14 +162,12 @@ public class CircuitChange {
   }
 
   boolean concernsSiblingComponents() {
-    switch (type) {
-      case SET:
-        return (comp.getFactory() instanceof SubcircuitFactory
-                && attr == CircuitAttributes.APPEARANCE_ATTR)
-            || (comp.getFactory() instanceof VhdlEntity && attr == StdAttr.APPEARANCE);
-      default:
-        return false;
+    if (type == SET) {
+      return (comp.getFactory() instanceof SubcircuitFactory
+          && attr == CircuitAttributes.APPEARANCE_ATTR)
+          || (comp.getFactory() instanceof VhdlEntity && attr == StdAttr.APPEARANCE);
     }
+    return false;
   }
 
   void execute(CircuitMutator mutator, ReplacementMap prevReplacements) {

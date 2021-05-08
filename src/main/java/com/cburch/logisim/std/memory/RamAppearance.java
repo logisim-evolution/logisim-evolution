@@ -114,11 +114,11 @@ public class RamAppearance {
            getNrClkPorts(attrs)+getNrLEPorts(attrs)+getNrBEPorts(attrs)+getNrClrPorts(attrs);
   }
   
-  public static int getAddrIndex(int portIndex, AttributeSet attrs) { 
-    switch (portIndex) {
-      case 0  : return 0;
-      default : return -1;
+  public static int getAddrIndex(int portIndex, AttributeSet attrs) {
+    if (portIndex == 0) {
+      return 0;
     }
+    return -1;
   }
   public static int getDataInIndex(int portIndex, AttributeSet attrs) {
     if (!seperatedBus(attrs)) 

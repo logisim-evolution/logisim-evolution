@@ -211,12 +211,11 @@ public class WiringTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent event) {
-    switch (event.getKeyCode()) {
-      case KeyEvent.VK_BACK_SPACE:
-        if (lastAction != null && canvas.getProject().getLastAction() == lastAction) {
-          canvas.getProject().undoAction();
-          lastAction = null;
-        }
+    if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+      if (lastAction != null && canvas.getProject().getLastAction() == lastAction) {
+        canvas.getProject().undoAction();
+        lastAction = null;
+      }
     }
   }
 

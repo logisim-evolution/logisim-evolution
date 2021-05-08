@@ -81,12 +81,10 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("rawtypes")
   private static class FormatModel extends AbstractListModel implements ComboBoxModel {
     static int getFormatIndex(int choice) {
-      switch (choice) {
-        case AnalyzerModel.FORMAT_PRODUCT_OF_SUMS:
-          return 1;
-        default:
-          return 0;
+      if (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
+        return 1;
       }
+      return 0;
     }
 
     private static final long serialVersionUID = 1L;
@@ -105,12 +103,10 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     int getSelectedFormat() {
-      switch (selected) {
-        case 1:
-          return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
-        default:
-          return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+      if (selected == 1) {
+        return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
       }
+      return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
     }
 
     public Object getSelectedItem() {
