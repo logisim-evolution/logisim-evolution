@@ -1119,12 +1119,11 @@ public class TikZInfo implements Cloneable {
       ne.setAttribute("stroke", filled ? "none" : "rgb(" + customColors.get(color) + ")");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", Double.toString(rounded(width)));
-      StringBuffer content = new StringBuffer();
       String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
-      content.append("M").append(startPos.getX()).append(",").append(startPos.getY());
-      content.append(" A").append(xRad).append(",").append(yRad).append(" ").append(this.startAngle)
-          .append(info).append(stopPos.getX()).append(",").append(stopPos.getY());
-      ne.setAttribute("d", content.toString());
+      String content = "M" + startPos.getX() + "," + startPos.getY()
+          + " A" + xRad + "," + yRad + " " + this.startAngle
+          + info + stopPos.getX() + "," + stopPos.getY();
+      ne.setAttribute("d", content);
     }
   }
 

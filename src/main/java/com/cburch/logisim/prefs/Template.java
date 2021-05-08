@@ -59,13 +59,12 @@ public class Template {
 
   public static Template createEmpty() {
     String circName = S.get("newCircuitName");
-    StringBuilder buf = new StringBuilder();
-    buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    buf.append("<project source=\"").append(Main.VERSION.mainVersion())
-        .append("\" version=\"1.0\">");
-    buf.append(" <circuit name=\"").append(circName).append("\" />");
-    buf.append("</project>");
-    return new Template(buf.toString());
+    String buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<project source=\"" + Main.VERSION.mainVersion()
+        + "\" version=\"1.0\">"
+        + " <circuit name=\"" + circName + "\" />"
+        + "</project>";
+    return new Template(buf);
   }
 
   static final Logger logger = LoggerFactory.getLogger(Template.class);

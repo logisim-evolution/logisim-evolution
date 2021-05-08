@@ -391,7 +391,7 @@ public class ComponentSelector extends JTable {
       } else if (node instanceof CircuitNode) {
         comp = ((CircuitNode)node).comp;
       } else if (node instanceof OptionNode) {
-        comp = ((OptionNode)node).parent.comp;
+        comp = node.parent.comp;
         opt = ((OptionNode)node).option;
       } else {
         return; // null node?
@@ -474,7 +474,7 @@ public class ComponentSelector extends JTable {
     ComponentNode n = null;
     Object opt = null;
     if (node instanceof OptionNode) {
-      n = ((OptionNode)node).parent;
+      n = node.parent;
       opt = ((OptionNode)node).option;
     } else if (node instanceof ComponentNode) {
       n = (ComponentNode)node;

@@ -104,9 +104,11 @@ public class CorrectLabel {
   public static String FirstInvalidCharacter(String Label) {
     if (Label.isEmpty()) return "";
     for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return Label.toLowerCase().substring(i, i + 1);
+      var str = Label.substring(i, i + 1);
+      var low = str.toLowerCase();
+      if (!Chars.contains(low)
+          && !Numbers.contains(str)) {
+        return low;
       }
     }
     return "";

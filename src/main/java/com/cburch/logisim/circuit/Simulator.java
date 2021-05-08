@@ -110,7 +110,7 @@ public class Simulator {
     private boolean _autoPropagating = true;
     private boolean _autoTicking = false;
     private double _autoTickFreq = 1.0; // Hz
-    private long _autoTickNanos = (long)Math.round(1e9 / (2*_autoTickFreq));
+    private long _autoTickNanos = Math.round(1e9 / (2*_autoTickFreq));
     private int _manualTicksRequested = 0;
     private int _manualStepsRequested = 0;
     private boolean _nudgeRequested = false;
@@ -183,7 +183,7 @@ public class Simulator {
       if (_autoTickFreq == freq)
         return false;
       _autoTickFreq = freq;
-      _autoTickNanos = freq <= 0 ? 0 : (long)Math.round(1e9 / (2*_autoTickFreq));
+      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / (2*_autoTickFreq));
       notifyAll();
       return true;
     }

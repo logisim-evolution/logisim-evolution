@@ -1424,7 +1424,7 @@ public class HexFile {
         // File appears to contain no data, only maybe some whitespace,
         // comments, and/or a header line.
         return;
-      } else if (curLine.indexOf(":") >= 0) {
+      } else if (curLine.contains(":")) {
         reset();
         decodeHexAddressed();
       } else {

@@ -112,7 +112,6 @@ public class CsvInterpretor {
     }
     if (!getInputsOutputs() || !CheckEntries()) {
       content = new ArrayList<>();
-      return;
     }
   }
 

@@ -369,7 +369,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public boolean equals(Object other) {
     if (other == this)
       return true;
-    if (other == null || !(other instanceof SignalInfo))
+    if (!(other instanceof SignalInfo))
       return false;
     SignalInfo o = (SignalInfo)other;
     return Arrays.equals(path, o.path) && Objects.equals(option, o.option);

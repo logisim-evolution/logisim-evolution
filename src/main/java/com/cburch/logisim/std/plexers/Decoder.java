@@ -100,10 +100,8 @@ public class Decoder extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
-    return CompleteName.toString();
+    return CorrectLabel.getCorrectLabel(this.getName())
+        + "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
   }
 
   @Override

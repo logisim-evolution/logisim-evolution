@@ -213,6 +213,6 @@ public class ReplacementMap {
         print(p);
     } catch (Exception ignored) {
     }
-    return new String(out.toByteArray(), StandardCharsets.UTF_8);
+    return out.toString(StandardCharsets.UTF_8);
   }
 }

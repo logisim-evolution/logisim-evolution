@@ -263,12 +263,11 @@ public class AppPreferences {
   public static Template getTemplate() {
     getPrefs();
     switch (templateType) {
-      case TEMPLATE_PLAIN:
-        return getPlainTemplate();
       case TEMPLATE_EMPTY:
         return getEmptyTemplate();
       case TEMPLATE_CUSTOM:
         return getCustomTemplate();
+      case TEMPLATE_PLAIN:
       default:
         return getPlainTemplate();
     }

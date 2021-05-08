@@ -465,13 +465,12 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
-    result.append(CurrentBoard.fpga.getPart());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getPackage());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getSpeedGrade());
-    return result.toString();
+    String result = CurrentBoard.fpga.getPart()
+        + "-"
+        + CurrentBoard.fpga.getPackage()
+        + "-"
+        + CurrentBoard.fpga.getSpeedGrade();
+    return result;
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {

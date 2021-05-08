@@ -475,7 +475,6 @@ abstract class AbstractGate extends InstanceFactory {
     else
       paintIconANSI(g,AppPreferences.getIconSize()-(border<<1),border,AppPreferences.getScaled(4));
     g.dispose();
-    return;
   }
   
   protected static void paintIconIEC(Graphics2D g, String label, boolean negateOutput, boolean singleInput) {

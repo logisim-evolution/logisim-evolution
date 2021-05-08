@@ -204,7 +204,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public void RemoveListener(ActionListener listener) {
-    if (Listeners.contains(listener)) Listeners.remove(listener);
+    Listeners.remove(listener);
   }
 
   private void fireEvent(ActionEvent e) {
