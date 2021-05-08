@@ -48,7 +48,7 @@ import java.util.ArrayList;
 
 public class ReptarLocalBus extends InstanceFactory {
 
-  public static final String getInputLabel(int id) {
+  public static String getInputLabel(int id) {
     if (id < 5)
       switch (id) {
         case 0 : return "SP6_LB_nCS3_i";
@@ -60,7 +60,7 @@ public class ReptarLocalBus extends InstanceFactory {
     return "Undefined";
   }
   
-  public static final String getOutputLabel(int id) {
+  public static String getOutputLabel(int id) {
     switch(id) {
       case 0  : return "SP6_LB_WAIT3_o";
       case 1  : return "IRQ_o";
@@ -68,7 +68,7 @@ public class ReptarLocalBus extends InstanceFactory {
     }
   }
   
-  public static final String getIOLabel(int id) {
+  public static String getIOLabel(int id) {
     if (id < 16) return "Addr_Data_LB_io_" + id;
     return "Undefined";
   }

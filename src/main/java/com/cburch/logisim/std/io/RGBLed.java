@@ -80,7 +80,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public static final ArrayList<String> GetLabels() {
+  public static ArrayList<String> GetLabels() {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 3; i++) LabelNames.add("");
     LabelNames.set(RED, "RED");
@@ -89,7 +89,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     return LabelNames;
   }
   
-  public static final String getLabel(int id) {
+  public static String getLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
   }

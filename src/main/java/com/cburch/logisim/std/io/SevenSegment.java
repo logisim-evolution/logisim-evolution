@@ -108,7 +108,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     }
   }
 
-  public static final ArrayList<String> GetLabels() {
+  public static ArrayList<String> GetLabels() {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 8; i++) LabelNames.add("");
     LabelNames.set(Segment_A, "Segment_A");
@@ -122,7 +122,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return LabelNames;
   }
   
-  public static final String getOutputLabel(int id) {
+  public static String getOutputLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
   }
@@ -206,7 +206,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return attrs.getValue(Io.ATTR_ACTIVE);
   }
 
-  public static final void computeTextField(Instance instance) {
+  public static void computeTextField(Instance instance) {
     Direction facing = instance.getAttributeValue(StdAttr.FACING);
     Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
