@@ -209,7 +209,7 @@ public class AssemblerPanel extends JPanel
     textFile = chooser.getSelectedFile();
     try {
       BufferedReader reader = new BufferedReader(new FileReader(textFile));
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       String st;
       while ((st = reader.readLine()) != null) s.append(st).append("\n");
       reader.close();

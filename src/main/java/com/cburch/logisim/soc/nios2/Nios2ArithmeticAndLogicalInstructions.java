@@ -186,7 +186,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     if (OpcCodes.get(operation) == PSEUDO_INSTR) {

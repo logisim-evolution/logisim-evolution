@@ -141,7 +141,7 @@ class Buffer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     CompleteName.append("_COMPONENT");
     BitWidth width = attrs.getValue(StdAttr.WIDTH);

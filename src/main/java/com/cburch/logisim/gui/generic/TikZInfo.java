@@ -321,7 +321,7 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getCharRepresentation(int i) {
-    StringBuffer chars = new StringBuffer();
+    StringBuilder chars = new StringBuilder();
     int repeat = i / 26;
     int charId = i % 26;
     chars.append(String.valueOf((char) (charId + 'A')).repeat(repeat + 1));
@@ -329,7 +329,7 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getFontDefinition(int i) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     boolean replaced = false;
     content.append("\\def\\logisimfont").append(getCharRepresentation(i))
         .append("#1{\\fontfamily{");
@@ -354,7 +354,7 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getColorDefinitions() {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (String key : customColors.keySet())
       content.append("\\definecolor{").append(key).append("}{RGB}{").append(customColors.get(key))
           .append("}\n");
@@ -580,7 +580,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      StringBuffer contents = new StringBuffer();
+      StringBuilder contents = new StringBuilder();
       if (filled) contents.append("\\fill ");
       else contents.append("\\draw ");
       contents.append("[line width=");
@@ -605,7 +605,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public void getSvgCommand(Document root, Element e) {
-      StringBuffer content = new StringBuffer();
+      StringBuilder content = new StringBuilder();
       Element ne = root.createElement(close ? "polygon" : "polyline");
       e.appendChild(ne);
       ne.setAttribute("fill", filled ? "rgb(" + customColors.get(color) + ")" : "none");
@@ -698,7 +698,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      StringBuffer contents = new StringBuffer();
+      StringBuilder contents = new StringBuilder();
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
@@ -722,7 +722,7 @@ public class TikZInfo implements Cloneable {
       double width = strokeWidth * BASIC_STROKE_WIDTH;
       ne.setAttribute("stroke-width", Double.toString(rounded(width)));
       ne.setAttribute("stroke-linecap", "square");
-      StringBuffer content = new StringBuffer();
+      StringBuilder content = new StringBuilder();
       for (BezierInfo point : myPath) {
         content.append(point.getSvgPath());
       }
@@ -817,7 +817,7 @@ public class TikZInfo implements Cloneable {
       }
 
       public String getTikZCommand() {
-        StringBuffer contents = new StringBuffer();
+        StringBuilder contents = new StringBuilder();
         if (closePath) {
           contents.append("-- cycle ");
         } else if (startPoint != null) {
@@ -836,7 +836,7 @@ public class TikZInfo implements Cloneable {
       }
 
       public String getSvgPath() {
-        StringBuffer contents = new StringBuffer();
+        StringBuilder contents = new StringBuilder();
         if (closePath) {
           contents.append(" Z");
         } else if (startPoint != null) {
@@ -911,7 +911,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      StringBuffer contents = new StringBuffer();
+      StringBuilder contents = new StringBuilder();
       if (rad == null) {
         contents.append(filled ? "\\fill " : "\\draw ");
         contents.append("[line width=");
@@ -1002,7 +1002,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      StringBuffer contents = new StringBuffer();
+      StringBuilder contents = new StringBuilder();
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
@@ -1096,7 +1096,7 @@ public class TikZInfo implements Cloneable {
 
     @Override
     public String getTikZCommand() {
-      StringBuffer contents = new StringBuffer();
+      StringBuilder contents = new StringBuilder();
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth * BASIC_STROKE_WIDTH;
@@ -1181,7 +1181,7 @@ public class TikZInfo implements Cloneable {
     private String getAttrString(boolean svg, Document root, Element e) {
       /* this is a very simplified implementation that should suffice for logisim evolution */
       sIter.first();
-      StringBuffer content = new StringBuffer();
+      StringBuilder content = new StringBuilder();
       Element tspan = null;
       if (!svg) content.append("$\\text{");
       else tspan = root.createElement("tspan");
@@ -1191,7 +1191,7 @@ public class TikZInfo implements Cloneable {
             if (content.length() > 0) {
               e.appendChild(tspan);
               tspan.setTextContent(content.toString());
-              content = new StringBuffer();
+              content = new StringBuilder();
             }
             tspan = root.createElement("tspan");
             tspan.setAttribute("dy", "3");
@@ -1209,7 +1209,7 @@ public class TikZInfo implements Cloneable {
             if (content.length() > 0) {
               e.appendChild(tspan);
               tspan.setTextContent(content.toString());
-              content = new StringBuffer();
+              content = new StringBuilder();
               tspan = root.createElement("tspan");
               tspan.setAttribute("dy", "-3");
             } else tspan = root.createElement("tspan");
@@ -1232,14 +1232,14 @@ public class TikZInfo implements Cloneable {
       else if (content.length() > 0) {
         e.appendChild(tspan);
         tspan.setTextContent(content.toString());
-        content = new StringBuffer();
+        content = new StringBuilder();
       }
       return content.toString();
     }
 
     @Override
     public String getTikZCommand() {
-      StringBuffer content = new StringBuffer();
+      StringBuilder content = new StringBuilder();
       content.append("\\logisimfont").append(getCharRepresentation(fIndex)).append("{");
       content.append("\\fontsize{").append(fSize).append("pt}{").append(fSize).append("pt}");
       if (fBold) content.append("\\fontseries{bx}");

@@ -287,7 +287,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
         || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {

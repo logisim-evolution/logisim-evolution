@@ -101,7 +101,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
 
   public String getAsmInstruction() {
 	if (!valid) return null;
-	StringBuffer s = new StringBuffer();
+	StringBuilder s = new StringBuilder();
 	s.append("custom");
 	while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
 	s.append(n).append(",");

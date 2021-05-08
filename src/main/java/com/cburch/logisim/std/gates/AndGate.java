@@ -55,7 +55,7 @@ class AndGate extends AbstractGate {
       String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
-      StringBuffer OneLine = new StringBuffer();
+      StringBuilder OneLine = new StringBuilder();
       OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation);
       int TabWidth = OneLine.length();
       boolean first = true;

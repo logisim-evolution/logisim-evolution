@@ -148,7 +148,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public String getAsmInstruction() {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
@@ -176,7 +176,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public String getAsmInstruction( String label ) {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");

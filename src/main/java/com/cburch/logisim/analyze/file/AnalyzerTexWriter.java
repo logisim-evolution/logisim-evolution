@@ -88,7 +88,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String TruthTableHeader(AnalyzerModel model) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     out.append("\\begin{center}\n");
     out.append("\\begin{tabular}{");
     int NrInCols = NrOfInCols(model);
@@ -125,7 +125,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getCompactTruthTable(TruthTable tt, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int row = 0; row < tt.getVisibleRowCount(); row++) {
       for (int col = 0; col < NrOfInCols(model); col++) {
         Entry val = tt.getVisibleInputEntry(row, col);
@@ -141,7 +141,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getCompleteTruthTable(TruthTable tt, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int row = 0; row < tt.getRowCount(); row++) {
       for (int col = 0; col < NrOfInCols(model); col++) {
         Entry val = tt.getInputEntry(row, col);
@@ -205,7 +205,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKarnaughInputs(AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     int[] reorder = reordered(model.getInputs().bits.size());
     for (int i = 0; i < model.getInputs().bits.size(); i++) {
       try {
@@ -233,13 +233,13 @@ public class AnalyzerTexWriter {
   }
 
   private static String getNumberedHeader(String name, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     TruthTable table = model.getTruthTable();
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     content.append("\n");
-    StringBuffer leftVars = new StringBuffer();
-    StringBuffer topVars = new StringBuffer();
+    StringBuilder leftVars = new StringBuilder();
+    StringBuilder topVars = new StringBuilder();
     int nrLeftVars = KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     int count = 0;
     for (Var inp : table.getInputVariables()) {
@@ -284,7 +284,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKarnaughEmpty(String name, boolean lined, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
     content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
     content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)
@@ -297,7 +297,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKValues(int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int i = 0; i < model.getTruthTable().getRowCount(); i++) {
       int idx = reorderedIndex(model.getInputs().bits.size(), i);
       content.append(model.getTruthTable().getOutputEntry(idx, outcol).getDescription());
@@ -306,7 +306,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKarnaugh(String name, boolean lined, int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
     content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
     content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)
@@ -322,7 +322,7 @@ public class AnalyzerTexWriter {
   private static final double OFFSET = 0.2;
 
   private static String getCovers(String name, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     TruthTable table = model.getTruthTable();
     if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return content.toString();
     KMapGroups groups = new KMapGroups(model);
@@ -349,7 +349,7 @@ public class AnalyzerTexWriter {
 
   private static String getKarnaughGroups(
       String output, String name, boolean lined, int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
     content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
     content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)

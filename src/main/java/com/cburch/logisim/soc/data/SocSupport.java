@@ -106,7 +106,7 @@ public class SocSupport {
       states.add(s);
       s = s.getParentState();
     }
-    StringBuffer name = new StringBuffer();
+    StringBuilder name = new StringBuilder();
     name.append(s.getCircuit().getName()).append(":");
     for (int i = states.size()-1 ; i >= 0 ; i--) {
       for (Component c : s.getCircuit().getNonWires()) {

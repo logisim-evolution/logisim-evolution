@@ -282,7 +282,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ArrayList<String> GetHDLWiring(String HDLType, Netlist TheNets) {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
     /* we cycle through all nets with a forcedrootnet annotation */
@@ -424,7 +424,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     boolean FirstLine = true;
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     Map<String, Long> CompIds = new HashMap<>();
     /* we start with the connection of the clock sources */
     for (NetlistComponent ClockSource : TheNetlist.GetClockSources()) {
@@ -688,7 +688,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (NrOfIOBubbles > 0) {
         if (topLevel) {
-          StringBuffer vector = new StringBuffer();
+          StringBuilder vector = new StringBuilder();
           for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
             /* first pass find the component which is connected to this io */
             int compPin = -1;
@@ -814,10 +814,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       FPGAReport Reporter,
       String HDLType,
       Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
-    StringBuffer Source = new StringBuffer();
-    StringBuffer Destination = new StringBuffer();
-    StringBuffer Tab = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
+    StringBuilder Source = new StringBuilder();
+    StringBuilder Destination = new StringBuilder();
+    StringBuilder Tab = new StringBuilder();
     String AssignCommand = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? "<= " : "= ";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";

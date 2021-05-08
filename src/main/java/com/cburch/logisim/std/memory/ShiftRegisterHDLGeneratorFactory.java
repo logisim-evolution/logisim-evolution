@@ -430,7 +430,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     PortMap.putAll(
         GetNetMap(ShiftName, true, ComponentInfo, ShiftRegister.IN, Reporter, HDLType, Nets));
     if (HasParallelLoad) {
-      StringBuffer Vector = new StringBuffer();
+      StringBuilder Vector = new StringBuilder();
       if (NrOfBits == 1) {
         if (HDLType.equals(VHDL)) {
           for (int i = 0; i < NrOfStages; i++) {
@@ -516,7 +516,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
     } else {
       PortMap.put("Q", (HDLType.equals(VHDL)) ? "OPEN" : "");
-      StringBuffer Temp = new StringBuffer();
+      StringBuilder Temp = new StringBuilder();
       if (HDLType.equals(VERILOG)) {
         Temp.append("0");
       } else {

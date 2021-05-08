@@ -270,7 +270,7 @@ public class ElfHeader {
   public String getErrorString() {
     if (status == ELF_HEADER_CORRECT)
       return S.get("ElfHeaderNoErrors");
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     boolean insertNl = false;
     if (status == EI_ERROR_READING_FILE) {
       s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderReadingFileError"));

@@ -132,7 +132,7 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));

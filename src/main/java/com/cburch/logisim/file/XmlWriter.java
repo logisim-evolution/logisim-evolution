@@ -241,7 +241,7 @@ class XmlWriter {
             value = (outFP.relativize(attrValP)).toString();
             a.setAttribute("val", value);
           } else {
-            if (value.indexOf("\n") >= 0) {
+            if (value.contains("\n")) {
               a.appendChild(doc.createTextNode(value));
             } else {
               a.setAttribute("val", attr.toStandardString(val));

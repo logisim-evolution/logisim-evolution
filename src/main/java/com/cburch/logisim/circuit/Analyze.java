@@ -316,12 +316,12 @@ public class Analyze {
       String defaultList;
       if (Pin.FACTORY.isInputPin(pin)) {
         defaultList = S.get("defaultInputLabels");
-        if (defaultList.indexOf(",") < 0) {
+        if (!defaultList.contains(",")) {
           defaultList = "a,b,c,d,e,f,g,h";
         }
       } else {
         defaultList = S.get("defaultOutputLabels");
-        if (defaultList.indexOf(",") < 0) {
+        if (!defaultList.contains(",")) {
           defaultList = "x,y,z,u,v,w,s,t";
         }
       }

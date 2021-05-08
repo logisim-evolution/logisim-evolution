@@ -120,7 +120,7 @@ abstract class BufferedLineReader {
     }
     skipNextNewline = false;
 
-    StringBuffer ret = new StringBuffer(100);
+    StringBuilder ret = new StringBuilder(100);
     for (; ; ) {
       // scan buffered data looking for end of line
       int initPos = bufPos;

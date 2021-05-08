@@ -212,7 +212,7 @@ abstract class AbstractGate extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     GateAttributes myattrs = (GateAttributes) attrs;
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     BitWidth width = myattrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) CompleteName.append("_BUS");

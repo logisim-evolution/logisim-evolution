@@ -213,8 +213,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     };
     tabbedPane = new JTabbedPane();
     // tabbedPane.setFont(new Font("Dialog", Font.BOLD, 9));
-    for (int index = 0; index < panels.length; index++) {
-      LogPanel panel = panels[index];
+    for (LogPanel panel : panels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
     tabbedPane.addChangeListener(myChangeListener);
@@ -303,8 +302,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       curModel.setSelected(true);
     setTitle(computeTitle(curModel, project));
     if (panels != null) {
-      for (int i = 0; i < panels.length; i++) {
-        panels[i].modelChanged(oldModel, curModel);
+      for (LogPanel panel : panels) {
+        panel.modelChanged(oldModel, curModel);
       }
     }
     return true;

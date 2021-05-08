@@ -649,7 +649,7 @@ public class KarnaughMapPanel extends JPanel
   private AttributedString Styled(String header, Font font) {
     ArrayList<Integer> starts = new ArrayList<>();
     ArrayList<Integer> stops = new ArrayList<>();
-    StringBuffer str = new StringBuffer();
+    StringBuilder str = new StringBuilder();
     int idx = 0;
     while (header != null && idx < header.length()) {
       if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {

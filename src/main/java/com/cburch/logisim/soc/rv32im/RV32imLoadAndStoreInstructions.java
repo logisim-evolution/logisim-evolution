@@ -123,7 +123,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   
   private boolean transactionHasError(SocBusTransaction trans) {
     if (trans.hasError()) {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       if (trans.isReadTransaction())
         s.append(S.get("LoadStoreErrorInReadTransaction")).append("\n");
       else
@@ -137,7 +137,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   public String getAsmInstruction() {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");

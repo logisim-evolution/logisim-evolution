@@ -107,7 +107,7 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     s.append(Nios2State.registerABINames[sourceC]).append(",");

@@ -404,7 +404,7 @@ public class CsvInterpretor {
     boolean inQuote = false;
     int nrofcontquotes = 0;
 
-    StringBuffer working = new StringBuffer();
+    StringBuilder working = new StringBuilder();
     List<String> result = new ArrayList<>();
     for (char kar : line.toCharArray()) {
       if (inQuote) {
@@ -422,7 +422,7 @@ public class CsvInterpretor {
               if (working.length() == 0) result.add(null);
               else {
                 result.add(working.toString());
-                working = new StringBuffer();
+                working = new StringBuilder();
               }
             } else {
               working.append(kar);
@@ -435,7 +435,7 @@ public class CsvInterpretor {
           if (working.length() == 0) result.add(null);
           else {
             result.add(working.toString());
-            working = new StringBuffer();
+            working = new StringBuilder();
           }
         } else if (kar == quote) {
           inQuote = true;

@@ -163,7 +163,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     int imm = ((immediate << 16) >> 16)+4;
@@ -382,7 +382,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction(String label) {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {

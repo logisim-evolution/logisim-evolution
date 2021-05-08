@@ -51,7 +51,7 @@ class NorGate extends AbstractGate {
       String OrOperation = (HDLType.equals(VHDL) ? " OR" : " |");
       String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
-      StringBuffer OneLine = new StringBuffer();
+      StringBuilder OneLine = new StringBuilder();
       OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation)
           .append(NotOperation).append("(");
       int TabWidth = OneLine.length();

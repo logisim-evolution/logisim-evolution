@@ -789,8 +789,8 @@ public class RamAppearance {
     int height = 20;
     g.setFont(g.getFont().deriveFont(9.0f));
     int nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    StringBuffer doutLabel = new StringBuffer();
-    StringBuffer dinLabel = new StringBuffer();
+    StringBuilder doutLabel = new StringBuilder();
+    StringBuilder dinLabel = new StringBuilder();
     doutLabel.append("A");
     dinLabel.append("A");
     int cidx = 1;

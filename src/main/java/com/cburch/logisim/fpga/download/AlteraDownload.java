@@ -282,7 +282,7 @@ public class AlteraDownload implements VendorDownload {
   
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {

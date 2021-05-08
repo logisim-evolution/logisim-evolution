@@ -144,7 +144,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       boolean stringFound = false;
       boolean zerosFound = false;
       if (labels.containsKey(SocSupport.convUnsignedLong(startAddress+i))) {
-        StringBuffer label = new StringBuffer();
+        StringBuilder label = new StringBuilder();
         label.append(labels.get(SocSupport.convUnsignedLong(startAddress + i))).append(":");
         while (label.length() < maxLabelSize) label.append(" ");
         if (nrBytesWritten != 0)  newLineNum = addLine(lines,"\n",newLineNum,true);
@@ -154,7 +154,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       int kar = getByte(contents,i); 
       if (lookForStrings) {
         if (kar >= 32 && kar <= 127) {
-          StringBuffer str = new StringBuffer();
+          StringBuilder str = new StringBuilder();
           if (kar == 34 || kar == 92) str.append('\\');
           str.append((char)kar);
           int j = i+1;
@@ -220,7 +220,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       }
       if (!stringFound && !zerosFound) {
         if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
-          StringBuffer label = new StringBuffer();
+          StringBuilder label = new StringBuilder();
           while (label.length() < maxLabelSize) label.append(" ");
           if (nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,"\n",newLineNum,true);
           if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,label.toString(),newLineNum,false);
@@ -344,15 +344,15 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (label.length() > maxLabelSize) maxLabelSize = label.length();
           }
           /* second pass, we are going to insert the code into the buffer */
-          StringBuffer remark = new StringBuffer();
+          StringBuilder remark = new StringBuilder();
           int remarkOffset = Math.max((2 * maxLabelSize) + 23, 60);
           remark.append(" ".repeat(remarkOffset));
           remark.append("#    pc:       opcode:\n");
           lineNum = addLine(lines,remark.toString(),lineNum,true);
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
-          StringBuffer line = new StringBuffer();
+          StringBuilder line = new StringBuilder();
           long addr = startAddress+(((long)pc)<<2);
-            StringBuffer label = new StringBuffer();
+            StringBuilder label = new StringBuilder();
             if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label
                 .append(labels.get(SocSupport.convUnsignedLong(addr))).append(":");
             while (label.length() <= maxLabelSize) label.append(" ");

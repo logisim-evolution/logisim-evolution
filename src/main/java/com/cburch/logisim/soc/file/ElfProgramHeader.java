@@ -131,7 +131,7 @@ public class ElfProgramHeader {
     }
     
     public String toString() {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       s.append("Program Header Info:\np_type   : ");
       s.append(PT_TYPES.getOrDefault(p_type, "unknown"));
       s.append("\np_flags  : ");

@@ -39,7 +39,7 @@ import java.util.List;
 public class CorrectLabel {
   public static String getCorrectLabel(String Label) {
     if (Label.isEmpty()) return Label;
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     if (Numbers.contains(Label.substring(0, 1))) result.append("L_");
     result.append(Label.replace(" ", "_").replace("-", "_"));
     return result.toString();

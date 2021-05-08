@@ -490,7 +490,7 @@ public class MapComponent {
   
   public String getHdlString(int pin) {
 	if (pin < 0 || pin >= NrOfPins) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     /* The first element is the BoardName, so we skip */
     for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
     s.append(s.length() == 0 ? "" : "_").append(pinLabels.get(pin));
@@ -508,7 +508,7 @@ public class MapComponent {
       return "s_"+HDLGeneratorFactory.LocalOutputBubbleBusname+BracketOpen+ MyOutputBubles.get(pin)
           +BracketClose;
     }
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
     for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
@@ -518,7 +518,7 @@ public class MapComponent {
   }
   
   public String getDisplayString(int pin) {
-	StringBuffer s = new StringBuffer();
+	StringBuilder s = new StringBuilder();
 	/* The first element is the BoardName, so we skip */
 	for (int i = 1 ; i < myName.size() ; i++) s.append("/").append(myName.get(i));
     if (pin >= 0) {
@@ -593,9 +593,9 @@ public class MapComponent {
         Map.setAttribute(COMPLETE_MAP, rect.getXpos()+","+rect.getYpos());
       }
     } else {
-      StringBuffer s = null;
+      StringBuilder s = null;
       for (int i = 0 ; i < NrOfPins ; i++) {
-        if (s == null) s = new StringBuffer(); 
+        if (s == null) s = new StringBuilder();
         else s.append(",");
         if (opens.get(i)) s.append(OPEN_KEY);
         else if (constants.get(i)>= 0) s.append(constants.get(i));
@@ -612,10 +612,10 @@ public class MapComponent {
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
     ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
-      StringBuffer s = null;
+      StringBuilder s = null;
       for (CircuitMapInfo pinmap : pinmaps) {
         if (s == null)
-          s = new StringBuffer();
+          s = new StringBuilder();
         else
           s.append(",");
         if (pinmap == null) {

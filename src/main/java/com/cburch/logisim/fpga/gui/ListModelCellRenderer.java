@@ -63,7 +63,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     if (value instanceof SimpleDRCContainer) {
       msg = (SimpleDRCContainer) value;
     }

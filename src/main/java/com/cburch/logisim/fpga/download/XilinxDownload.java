@@ -314,7 +314,7 @@ public class XilinxDownload implements VendorDownload {
   
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -474,7 +474,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     result.append("LOC = \"").append(CurrentBoard.fpga.getClockPinLocation()).append("\"");
     if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
       result.append(" | PULLUP");

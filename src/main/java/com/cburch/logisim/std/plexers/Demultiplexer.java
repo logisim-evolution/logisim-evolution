@@ -106,7 +106,7 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
     CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());

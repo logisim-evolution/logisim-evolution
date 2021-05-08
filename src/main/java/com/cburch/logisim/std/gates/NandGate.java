@@ -55,7 +55,7 @@ class NandGate extends AbstractGate {
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
       String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
-      StringBuffer OneLine = new StringBuffer();
+      StringBuilder OneLine = new StringBuilder();
       OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation)
           .append(NotOperation).append("(");
       int TabWidth = OneLine.length();

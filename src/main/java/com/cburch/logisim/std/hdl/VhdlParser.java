@@ -299,9 +299,9 @@ public class VhdlParser {
   }
 
   private String removeComments() throws IllegalVhdlContentException {
-    StringBuffer input;
+    StringBuilder input;
     try {
-      input = new StringBuffer(source);
+      input = new StringBuilder(source);
     } catch (NullPointerException ex) {
       throw new IllegalVhdlContentException(S.get("emptySourceException"));
     }

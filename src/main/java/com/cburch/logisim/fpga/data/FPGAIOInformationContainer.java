@@ -376,7 +376,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.InputSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins ; i++)
           if (MyInputPins.contains(i)) {
@@ -389,7 +389,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyOutputPins != null && !MyOutputPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.OutputSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins; i++)
           if (MyOutputPins.contains(i)) {
@@ -402,7 +402,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyIOPins != null && !MyIOPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.IOSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins; i++)
           if (MyIOPins.contains(i)) {

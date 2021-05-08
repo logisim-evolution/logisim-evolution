@@ -52,7 +52,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   protected static String IntToBin(int value, int nr_of_bits, String HDLType) {
     int mask = 1 << (nr_of_bits - 1);
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     int align = (7 - nr_of_bits) >> 1;
     while ((result.length() < align) && HDLType.equals(HDLGeneratorFactory.VHDL)) {
       result.append(" ");
@@ -146,7 +146,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     Map<String, Integer> WireList = GetWireList(attrs, TheNetlist);
     Map<String, Integer> RegList = GetRegList(attrs, HDLType);
     Map<String, Integer> MemList = GetMemList(attrs, HDLType);
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     ArrayList<String> Contents = new ArrayList<>(
         FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
     if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
@@ -249,14 +249,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.add("END PlatformIndependent;");
     } else {
       String Preamble = "module " + ComponentName + "( ";
-      StringBuffer Indenting = new StringBuffer();
+      StringBuilder Indenting = new StringBuilder();
       while (Indenting.length() < Preamble.length()) {
         Indenting.append(" ");
       }
       if (InputsList.isEmpty() && OutputsList.isEmpty() && InOutsList.isEmpty()) {
         Contents.add(Preamble + " );");
       } else {
-        StringBuffer ThisLine = new StringBuffer();
+        StringBuilder ThisLine = new StringBuilder();
         for (String inp : InputsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(inp);
@@ -473,7 +473,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       int bitindex,
       String HDLType,
       Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
     String BracketOpen = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? ")" : "]";
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
@@ -561,7 +561,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
     if ((TheNets.GetCurrentHierarchyLevel() != null)
         && (EndIndex >= 0)
         && (EndIndex < comp.NrOfEnds())) {
@@ -617,7 +617,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                 .getFactory()
                 .getHDLName(ComponentInfo.GetComponent().getAttributeSet());
     String ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     int TabLength;
     boolean first;
     if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
@@ -887,7 +887,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           /* The last case, we have to enumerate through each bit */
           if (HDLType.equals(VHDL)) {
-            StringBuffer SourceNetName = new StringBuffer();
+            StringBuilder SourceNetName = new StringBuilder();
             for (int i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */
               SourceNetName.setLength(0);
@@ -959,7 +959,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               }
             }
             /* Finally we can put all together */
-            StringBuffer Vector = new StringBuffer();
+            StringBuilder Vector = new StringBuilder();
             Vector.append("{");
             for (int i = NrOfBits; i > 0; i--) {
               Vector.append(SeperateSignals.get(i - 1));
@@ -982,7 +982,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       boolean FloatingNetTiedToGround,
       String HDLType,
       Netlist MyNetlist) {
-    StringBuffer Contents = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
     String ZeroValue = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
     String OneValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
@@ -1117,7 +1117,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
     Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
     Map<Integer, String> ParameterList = GetParameterList(attrs);
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     int IdentSize;
     String CompTab = (IsEntity) ? "" : "   ";
     boolean first;
@@ -1283,7 +1283,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public String GetZeroVector(int NrOfBits, boolean FloatingPinTiedToGround, String HDLType) {
-    StringBuffer Contents = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
     if (HDLType.equals(VHDL)) {
       String FillValue = (FloatingPinTiedToGround) ? "0" : "1";
       String HexFillValue = (FloatingPinTiedToGround) ? "0" : "F";
@@ -1333,7 +1333,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     int RemarkOverhead = (HDLType.equals(VHDL)) ? 3 : 4;
     int MaxRemarkLength = MaxLineLength - 2 * RemarkOverhead - NrOfIndentSpaces;
     String[] RemarkWords = RemarkText.split(" ");
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     ArrayList<String> Contents = new ArrayList<>();
     int maxWordLength = 0;
     for (String word : RemarkWords) {
