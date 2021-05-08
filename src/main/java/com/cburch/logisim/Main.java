@@ -56,13 +56,7 @@ public class Main {
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12))); 
       }
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (UnsupportedLookAndFeelException e) {
+    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
       e.printStackTrace();
     }
     Startup startup = Startup.parseArgs(args);

@@ -126,7 +126,7 @@ public class TruthTable {
     }
 
     public Iterator<Integer> iterator() {
-      return new Iterator<Integer>() {
+      return new Iterator<>() {
         final int base = baseIndex();
         final int mask = dcMask();
         final int nbits = inputs.length;
@@ -143,7 +143,9 @@ public class TruthTable {
           int add = iter;
           int keep = 0;
           for (int b = 0; b < nbits; b++) {
-            if ((mask & (1 << b)) == 0) add = ((add & ~keep) << 1) | (add & keep);
+            if ((mask & (1 << b)) == 0) {
+              add = ((add & ~keep) << 1) | (add & keep);
+            }
             keep |= (1 << b);
           }
           iter++;

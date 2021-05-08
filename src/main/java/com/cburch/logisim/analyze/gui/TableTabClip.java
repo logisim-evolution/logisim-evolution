@@ -157,9 +157,7 @@ class TableTabClip implements ClipboardOwner {
           }
           entries[i] = row;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -195,9 +193,7 @@ class TableTabClip implements ClipboardOwner {
           entries[cur] = ents;
           cur++;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else {

@@ -141,7 +141,7 @@ public class Var implements Iterable<String> {
   }
 
   public Iterator<String> iterator() {
-    return new Iterator<String>() {
+    return new Iterator<>() {
       int b = width - 1;
 
       @Override

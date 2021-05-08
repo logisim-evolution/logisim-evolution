@@ -93,18 +93,14 @@ class Clip implements ClipboardOwner {
         int addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
         pasted = MemContents.create(addrBits, model.getValueWidth());
         pasted.set(0, data);
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
       String buf;
       try {
         buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
 

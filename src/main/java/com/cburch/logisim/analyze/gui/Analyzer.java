@@ -280,7 +280,7 @@ public class Analyzer extends LFrame.SubWindow {
       super(null, title, ModalityType.APPLICATION_MODAL);
       this.parent = parent;
       worker =
-          new SwingWorker<T, Void>() {
+          new SwingWorker<>() {
             @Override
             protected T doInBackground() {
               return PleaseWait.this.doInBackground();
@@ -288,8 +288,11 @@ public class Analyzer extends LFrame.SubWindow {
 
             @Override
             protected void done() {
-              if (PleaseWait.this.isVisible()) PleaseWait.this.dispose();
-              else PleaseWait.this.alreadyFinished = true;
+              if (PleaseWait.this.isVisible()) {
+                PleaseWait.this.dispose();
+              } else {
+                PleaseWait.this.alreadyFinished = true;
+              }
             }
           };
     }

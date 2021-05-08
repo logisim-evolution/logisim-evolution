@@ -49,15 +49,33 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
           ".8byte",".dword",".quad",".balign",".zero",".org"};
   
   @SuppressWarnings("serial")
-  public static final HashSet<String> BYTES = new HashSet<String>() {{add(".byte");}};
+  public static final HashSet<String> BYTES = new HashSet<>() {{
+    add(".byte");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> SHORTS = new HashSet<String>() {{add(".half"); add(".2byte"); add(".short");}};
+  public static final HashSet<String> SHORTS = new HashSet<>() {{
+    add(".half");
+    add(".2byte");
+    add(".short");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> INTS = new HashSet<String>() {{add(".word"); add(".4byte"); add(".long");}};
+  public static final HashSet<String> INTS = new HashSet<>() {{
+    add(".word");
+    add(".4byte");
+    add(".long");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> LONGS = new HashSet<String>() {{add(".dword"); add(".8byte"); add(".quad");}};
+  public static final HashSet<String> LONGS = new HashSet<>() {{
+    add(".dword");
+    add(".8byte");
+    add(".quad");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> STRINGS = new HashSet<String>() {{add(".ascii"); add(".asciz"); add(".string");}};
+  public static final HashSet<String> STRINGS = new HashSet<>() {{
+    add(".ascii");
+    add(".asciz");
+    add(".string");
+  }};
   
   
   @Override

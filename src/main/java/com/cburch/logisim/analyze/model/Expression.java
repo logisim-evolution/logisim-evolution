@@ -230,29 +230,35 @@ public abstract class Expression {
     final HashSet<Expression> visited = new HashSet<>();
     visited.add(this);
     Object loop = new Object();
-    return loop == visit(new Visitor<Object>() {
+    return loop == visit(new Visitor<>() {
       @Override
       public Object visitBinary(Expression a, Expression b, Op op) {
-        if (!visited.add(a)) 
+        if (!visited.add(a)) {
           return loop;
-        if (a.visit(this) == loop)
+        }
+        if (a.visit(this) == loop) {
           return loop;
+        }
         visited.remove(a);
 
-        if (!visited.add(b))
+        if (!visited.add(b)) {
           return loop;
-        if (b.visit(this) == loop)
+        }
+        if (b.visit(this) == loop) {
           return loop;
+        }
         visited.remove(b);
         return null;
       }
 
       @Override
       public Object visitNot(Expression a) {
-        if (!visited.add(a))
+        if (!visited.add(a)) {
           return loop;
-        if (a.visit(this) == loop)
+        }
+        if (a.visit(this) == loop) {
           return loop;
+        }
         visited.remove(a);
         return null;
       }
@@ -261,17 +267,19 @@ public abstract class Expression {
 
   public boolean isCnf() {
     Object cnf = new Object();
-    return cnf == visit(new Visitor<Object>() {
+    return cnf == visit(new Visitor<>() {
       int level = 0;
 
       @Override
       public Object visitAnd(Expression a, Expression b) {
-         if (level > 1) return null;
-         int oldLevel = level;
-         level = 1;
-         Object ret = a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
-         level = oldLevel;
-         return ret;
+        if (level > 1) {
+          return null;
+        }
+        int oldLevel = level;
+        level = 1;
+        Object ret = a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
+        level = oldLevel;
+        return ret;
       }
 
       @Override
@@ -281,7 +289,9 @@ public abstract class Expression {
 
       @Override
       public Object visitNot(Expression a) {
-        if (level == 2) return null;
+        if (level == 2) {
+          return null;
+        }
         int oldLevel = level;
         level = 2;
         Object ret = a.visit(this);
@@ -291,25 +301,27 @@ public abstract class Expression {
 
       @Override
       public Object visitOr(Expression a, Expression b) {
-        if (level > 0) return null;
+        if (level > 0) {
+          return null;
+        }
         return a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
       }
 
       @Override
       public Object visitVariable(String name) {
-         return cnf;
+        return cnf;
       }
 
       @Override
       public Object visitXor(Expression a, Expression b) {
         return null;
       }
-              
+
       @Override
       public Object visitXnor(Expression a, Expression b) {
         return null;
       }
-              
+
       @Override
       public Object visitEq(Expression a, Expression b) {
         return null;
@@ -318,13 +330,17 @@ public abstract class Expression {
   }
 
   Expression removeVariable(final String input) {
-    return visit(new Visitor<Expression>() {
+    return visit(new Visitor<>() {
       @Override
       public Expression visitAnd(Expression a, Expression b) {
         Expression l = a.visit(this);
         Expression r = b.visit(this);
-        if (l == null) return r;
-        if (r == null) return l;
+        if (l == null) {
+          return r;
+        }
+        if (r == null) {
+          return l;
+        }
         return Expressions.and(l, r);
       }
 
@@ -336,7 +352,9 @@ public abstract class Expression {
       @Override
       public Expression visitNot(Expression a) {
         Expression l = a.visit(this);
-        if (l == null) return null;
+        if (l == null) {
+          return null;
+        }
         return Expressions.not(l);
       }
 
@@ -344,8 +362,12 @@ public abstract class Expression {
       public Expression visitOr(Expression a, Expression b) {
         Expression l = a.visit(this);
         Expression r = b.visit(this);
-        if (l == null) return r;
-        if (r == null) return l;
+        if (l == null) {
+          return r;
+        }
+        if (r == null) {
+          return l;
+        }
         return Expressions.or(l, r);
       }
 
@@ -358,37 +380,45 @@ public abstract class Expression {
       public Expression visitXor(Expression a, Expression b) {
         Expression l = a.visit(this);
         Expression r = b.visit(this);
-        if (l == null) return r;
-        if (r == null) return l;
+        if (l == null) {
+          return r;
+        }
+        if (r == null) {
+          return l;
+        }
         return Expressions.xor(l, r);
       }
-      
+
       @Override
       public Expression visitXnor(Expression a, Expression b) {
         Expression l = a.visit(this);
         Expression r = b.visit(this);
-        if (l == null)
+        if (l == null) {
           return r;
-        if (r == null)
+        }
+        if (r == null) {
           return l;
+        }
         return Expressions.xnor(l, r);
       }
-      
+
       @Override
       public Expression visitEq(Expression a, Expression b) {
         Expression l = a.visit(this);
         Expression r = b.visit(this);
-        if (l == null)
-           return r;
-        if (r == null)
+        if (l == null) {
+          return r;
+        }
+        if (r == null) {
           return l;
+        }
         return Expressions.eq(l, r);
       }
     });
   }
 
   Expression replaceVariable(final String oldName, final String newName) {
-    return visit(new Visitor<Expression>() {
+    return visit(new Visitor<>() {
       @Override
       public Expression visitAnd(Expression a, Expression b) {
         Expression l = a.visit(this);
@@ -425,7 +455,7 @@ public abstract class Expression {
         Expression r = b.visit(this);
         return Expressions.xor(l, r);
       }
-      
+
       @Override
       public Expression visitXnor(Expression a, Expression b) {
         Expression l = a.visit(this);

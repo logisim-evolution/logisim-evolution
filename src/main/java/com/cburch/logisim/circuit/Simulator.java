@@ -452,7 +452,7 @@ public class Simulator {
   private ArrayList<Listener> copyListeners() {
     ArrayList<Listener> copy;
     synchronized (lock) {
-      copy = new ArrayList<Listener>(listeners);
+      copy = new ArrayList<>(listeners);
     }
     return copy;
   }

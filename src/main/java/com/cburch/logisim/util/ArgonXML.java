@@ -63,11 +63,7 @@ public class ArgonXML {
       if (!rootElement.getNodeName().equals(rootName))
         throw new RuntimeException("Could not find root node: " + rootName);
       return rootElement;
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    } catch (ParserConfigurationException exception) {
-      throw new RuntimeException(exception);
-    } catch (SAXException exception) {
+    } catch (IOException | SAXException | ParserConfigurationException exception) {
       throw new RuntimeException(exception);
     } finally {
       if (inputStream != null) {

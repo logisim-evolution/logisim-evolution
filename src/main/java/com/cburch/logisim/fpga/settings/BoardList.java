@@ -87,8 +87,6 @@ public class BoardList {
     ZipFile zf;
     try {
       zf = new ZipFile(Dir);
-    } catch (ZipException e) {
-      throw new Error(e);
     } catch (IOException e) {
       throw new Error(e);
     }
