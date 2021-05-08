@@ -171,11 +171,6 @@ public class ProjectActions {
     } catch (IOException ex) {
       displayException(baseProject.getFrame(), ex);
       file = createEmptyFile(loader, baseProject);
-    } catch (LoadFailedException ex) {
-      if (!ex.isShown()) {
-        displayException(baseProject.getFrame(), ex);
-      }
-      file = createEmptyFile(loader, baseProject);
     } finally {
       try {
         templReader.close();
@@ -214,8 +209,6 @@ public class ProjectActions {
     try {
       file = loader.openLogisimFile(templReader);
     } catch (IOException ex) {
-      displayException(monitor, ex);
-    } catch (LoadFailedException ex) {
       displayException(monitor, ex);
     } finally {
       try {

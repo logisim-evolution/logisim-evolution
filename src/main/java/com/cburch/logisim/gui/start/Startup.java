@@ -417,8 +417,7 @@ public class Startup implements AWTEventListener {
         if (i < args.length) {
           if (!args[i].startsWith("-")) {
             try {
-              int freq = Integer.parseUnsignedInt(args[i]);
-              ret.testTickFrequency = freq;
+              ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
             } catch (NumberFormatException e) {
             }

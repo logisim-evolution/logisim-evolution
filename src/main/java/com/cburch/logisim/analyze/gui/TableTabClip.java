@@ -55,7 +55,7 @@ class TableTabClip implements ClipboardOwner {
     }
 
     public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException {
+        throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return this;
       } else if (flavor == DataFlavor.stringFlavor) {

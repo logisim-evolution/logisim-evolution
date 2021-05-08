@@ -378,7 +378,7 @@ public class TikZInfo implements Cloneable {
   }
 
   public void WriteSvg(int width, int height, File outfile)
-      throws IOException, ParserConfigurationException, TransformerException {
+      throws ParserConfigurationException, TransformerException {
     optimize();
     DocumentBuilderFactory factory;
     DocumentBuilder parser;

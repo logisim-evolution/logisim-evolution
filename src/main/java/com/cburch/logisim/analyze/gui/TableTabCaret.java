@@ -90,7 +90,7 @@ class TableTabCaret {
           (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
                 private static final long serialVersionUID = 1L;
 				@Override
-                public Void doInBackground() throws Exception {
+                public Void doInBackground() {
                   tt.compactVisibleRows();
                   return null;
                 }

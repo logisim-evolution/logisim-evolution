@@ -325,7 +325,7 @@ public class Loader implements LibraryLoader {
     }
   }
 
-  public LogisimFile openLogisimFile(InputStream reader) throws LoadFailedException, IOException {
+  public LogisimFile openLogisimFile(InputStream reader) throws IOException {
     LogisimFile ret = null;
     try {
       ret = LogisimFile.load(reader, this);
@@ -363,15 +363,6 @@ public class Loader implements LibraryLoader {
       File oldFile = getMainFile();
       setMainFile(dest);
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
-    } catch (IOException e) {
-      if (backupCreated) recoverBackup(backup, dest);
-      if (dest.exists() && dest.length() == 0) dest.delete();
-      OptionPane.showMessageDialog(
-          parent,
-          StringUtil.format(S.get("fileSaveError"), e.toString()),
-          S.get("fileSaveErrorTitle"),
-          OptionPane.ERROR_MESSAGE);
-      return false;
     } finally {
       if (fwrite != null) {
         try {

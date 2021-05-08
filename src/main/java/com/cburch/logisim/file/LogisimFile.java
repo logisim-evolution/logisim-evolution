@@ -641,7 +641,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     write(out, loader, null);
   }
 
-  void write(OutputStream out, LibraryLoader loader, File dest) throws IOException {
+  void write(OutputStream out, LibraryLoader loader, File dest) {
     try {
       XmlWriter.write(this, out, loader, dest);
     } catch (TransformerConfigurationException e) {

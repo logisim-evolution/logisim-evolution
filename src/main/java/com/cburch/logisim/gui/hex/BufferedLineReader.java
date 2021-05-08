@@ -225,7 +225,7 @@ abstract class BufferedLineReader {
       return cin.read(cbuf, off, len);
     }
 
-    int underlyingReadBytes(byte[] bbuf, int off, int len) throws IOException {
+    int underlyingReadBytes(byte[] bbuf, int off, int len) {
       return bin.read(bbuf, off, len);
     }
   }

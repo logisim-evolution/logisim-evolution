@@ -441,7 +441,7 @@ class MinimizedTab extends AnalyzerTab {
     if (model.getTruthTable().getRowCount() > 4096) {
       (new Analyzer.PleaseWait<Void>(S.get("expressionCalc"), this) {
             @Override
-            public Void doInBackground() throws Exception {
+            public Void doInBackground() {
               model.getOutputExpressions().getExpression(output);
               return null;
             }
@@ -549,7 +549,7 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     @Override
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (!DataFlavor.imageFlavor.equals(flavor)) {
         throw new UnsupportedFlavorException(flavor);
       }

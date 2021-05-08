@@ -113,8 +113,7 @@ public class Analyze {
    * Checks whether any of the recently placed expressions in the expression map are
    * self-referential; if so, return it.
    */
-  private static Expression checkForCircularExpressions(ExpressionMap expressionMap)
-      throws AnalyzeException {
+  private static Expression checkForCircularExpressions(ExpressionMap expressionMap) {
     for (LocationBit point : expressionMap.dirtyPoints) {
       Expression expr = expressionMap.get(point);
       if (expr.isCircular()) return expr;
@@ -270,7 +269,7 @@ public class Analyze {
 
   // computes outputs of affected components
   private static HashSet<Component> getDirtyComponents(
-      Circuit circuit, Set<LocationBit> pointsToProcess) throws AnalyzeException {
+      Circuit circuit, Set<LocationBit> pointsToProcess) {
     HashSet<Component> dirtyComponents = new HashSet<>();
     for (LocationBit point : pointsToProcess) {
       for (Component comp : circuit.getNonWires(point.loc)) {

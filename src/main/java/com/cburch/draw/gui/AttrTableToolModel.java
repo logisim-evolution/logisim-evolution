@@ -56,7 +56,7 @@ class AttrTableToolModel extends AttributeSetTableModel {
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(Attribute<Object> attr, Object value) {
     defaults.setValue(attr, value);
   }
 }

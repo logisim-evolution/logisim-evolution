@@ -261,12 +261,12 @@ public class VhdlParser {
       throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
   }
 
-  private void parseArchitecture(Scanner input) throws IllegalVhdlContentException {
+  private void parseArchitecture(Scanner input) {
     if (input.next(ARCHITECTURE)) architecture = input.match().group();
     else architecture = "";
   }
 
-  private void parseLibraries(Scanner input) throws IllegalVhdlContentException {
+  private void parseLibraries(Scanner input) {
     StringBuilder result = new StringBuilder();
     while (input.next(LIBRARY) || input.next(USING)) {
       result.append(input.match().group().trim().replaceAll("\\s+", " "));

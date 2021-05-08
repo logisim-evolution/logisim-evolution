@@ -180,7 +180,7 @@ class Clip implements ClipboardOwner {
     }
 
     public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException {
+        throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return data;
       } else if (flavor == DataFlavor.stringFlavor) {

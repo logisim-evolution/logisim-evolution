@@ -272,7 +272,7 @@ public class Analyzer extends LFrame.SubWindow {
     private final SwingWorker<T, Void> worker;
     private final java.awt.Component parent;
 
-    public abstract T doInBackground() throws Exception;
+    public abstract T doInBackground();
 
     private boolean alreadyFinished = false;
 

@@ -1144,7 +1144,7 @@ public class HexFile {
       numWarnings++;
     }
 
-    MemContents warnAndAsk(String errmsg) throws IOException {
+    MemContents warnAndAsk(String errmsg) {
       if (Main.headless) {
         System.out.println(errmsg);
         System.out.println("Warnings:\n" + warnings.toString());
@@ -1751,7 +1751,7 @@ public class HexFile {
       }
     }
 
-    void saveRaw() throws IOException {
+    void saveRaw() {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       while (mEnd > 0 && src.get(mEnd) == 0) mEnd--;
       int tokens = 0;
@@ -1806,7 +1806,7 @@ public class HexFile {
       return "%0" + w + "x: ";
     }
 
-    void saveHexBytes(boolean addressed) throws IOException {
+    void saveHexBytes(boolean addressed) {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       String afmt = addrfmt(mEnd);
       int col = 0;
@@ -1839,7 +1839,7 @@ public class HexFile {
     // 0000000 0000001 0000002 0000003 0000004 0000005 0000006 0000007
     // 00000000 00000001 00000002 00000003 00000004 00000005 00000006 00000007
 
-    void saveHexWords(boolean addressed) throws IOException {
+    void saveHexWords(boolean addressed) {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       String afmt = addrfmt(mEnd);
       int col = 0;

@@ -289,9 +289,8 @@ public class RightPanel extends JPanel {
   public void paintComponent(Graphics gr) {
     Graphics2D g = (Graphics2D)gr;
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-    Graphics2D g2 = (Graphics2D)g;
-    g2.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight()); // entire viewport, not just (width, height)
     g.setColor(Color.BLACK);
@@ -630,9 +629,8 @@ public class RightPanel extends JPanel {
       Graphics2D g = buf.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
           RenderingHints.VALUE_STROKE_DEFAULT);
-      Graphics2D g2 = (Graphics2D)g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       boolean bold = model.getSpotlight() == signal;
       Color[] colors = chronoPanel.rowColors(signal.info, selected);
       g.setColor(Color.WHITE);
@@ -717,11 +715,10 @@ public class RightPanel extends JPanel {
     public void paintComponent(Graphics gr) {
       Graphics2D g = (Graphics2D)gr;
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-      Graphics2D g2 = (Graphics2D)g;
-      g2.setRenderingHint(
+      g.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING,
           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(
+      g.setRenderingHint(
           RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON);
       g.setColor(getBackground());
