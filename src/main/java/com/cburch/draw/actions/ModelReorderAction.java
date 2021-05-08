@@ -75,7 +75,7 @@ public class ModelReorderAction extends ModelAction {
     Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
     for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
       CanvasObject obj = entry.getKey();
-      int from = entry.getValue().intValue();
+      int from = entry.getValue();
       CanvasObject above = ZOrder.getObjectBelow(obj, model, objects);
       if (above != null) {
         int to = ZOrder.getZIndex(above, model);
@@ -101,7 +101,7 @@ public class ModelReorderAction extends ModelAction {
     int to = 0;
     for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
       CanvasObject obj = entry.getKey();
-      int from = entry.getValue().intValue();
+      int from = entry.getValue();
       reqs.add(new ReorderRequest(obj, from, to));
     }
     if (reqs.isEmpty()) {
@@ -119,7 +119,7 @@ public class ModelReorderAction extends ModelAction {
     Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
     for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
       CanvasObject obj = entry.getKey();
-      int from = entry.getValue().intValue();
+      int from = entry.getValue();
       CanvasObject above = ZOrder.getObjectAbove(obj, model, objects);
       if (above != null) {
         int to = ZOrder.getZIndex(above, model);
@@ -145,7 +145,7 @@ public class ModelReorderAction extends ModelAction {
     int to = model.getObjectsFromBottom().size() - 1;
     for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
       CanvasObject obj = entry.getKey();
-      int from = entry.getValue().intValue();
+      int from = entry.getValue();
       reqs.add(new ReorderRequest(obj, from, to));
     }
     if (reqs.isEmpty()) {

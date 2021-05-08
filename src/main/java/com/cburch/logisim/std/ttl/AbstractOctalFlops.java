@@ -85,7 +85,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
+      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         int index = getIndex(state, e);
         TTLRegisterData myState = (TTLRegisterData) state.getData();

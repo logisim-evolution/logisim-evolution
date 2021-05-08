@@ -360,7 +360,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   @Override
   public void updateValue(Attribute<?> attr, Object value) {
     if (attr == DrawAttr.STROKE_WIDTH) {
-      strokeWidth = ((Integer) value).intValue();
+      strokeWidth = (Integer) value;
     } else if (attr == ATTR_LABEL) {
       labelLoc = (AttributeOption) value;
     } else if (attr == StdAttr.LABEL_FONT) {

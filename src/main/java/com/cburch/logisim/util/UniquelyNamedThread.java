@@ -39,7 +39,7 @@ public class UniquelyNamedThread extends Thread {
     int id = 0;
     synchronized (lock) {
       Integer i = lastID.get(prefix);
-      if (i != null) id = i.intValue() + 1;
+      if (i != null) id = i + 1;
       lastID.put(prefix, id);
     }
     return prefix + "-" + id;

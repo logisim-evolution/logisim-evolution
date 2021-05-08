@@ -167,18 +167,18 @@ class SimulateOptions extends OptionsPanel {
 
     @SuppressWarnings("rawtypes")
     private void loadSimLimit(Integer val) {
-      int value = val.intValue();
+      int value = val;
       ComboBoxModel model = simLimit.getModel();
       for (int i = 0; i < model.getSize(); i++) {
         Integer opt = (Integer) model.getElementAt(i);
-        if (opt.intValue() == value) {
+        if (opt == value) {
           simLimit.setSelectedItem(opt);
         }
       }
     }
 
     private void loadSimRandomness(Integer val) {
-      simRandomness.setSelected(val.intValue() > 0);
+      simRandomness.setSelected(val > 0);
     }
   }
 }

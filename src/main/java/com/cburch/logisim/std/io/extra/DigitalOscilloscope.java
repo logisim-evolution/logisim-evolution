@@ -130,11 +130,11 @@ public class DigitalOscilloscope extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    int width = attrs.getValue(ATTR_NSTATE).intValue() * 30 + 2 * border + 15;
+    int width = attrs.getValue(ATTR_NSTATE) * 30 + 2 * border + 15;
     int height =
         attrs.getValue(SHOW_CLOCK)
-            ? (attrs.getValue(ATTR_INPUTS).intValue() + 1) * 30 + 3 * border + 2
-            : attrs.getValue(ATTR_INPUTS).intValue() * 30 + 3 * border;
+            ? (attrs.getValue(ATTR_INPUTS) + 1) * 30 + 3 * border + 2
+            : attrs.getValue(ATTR_INPUTS) * 30 + 3 * border;
     byte showclock = (byte) (attrs.getValue(SHOW_CLOCK) ? 32 : 0);
     return Bounds.create(0, -border - showclock, width, height);
   }

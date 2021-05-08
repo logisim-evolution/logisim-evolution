@@ -81,7 +81,7 @@ public class Drawing implements CanvasModel {
     if (!shapes.isEmpty() && isChangeAllowed(e)) {
       for (Map.Entry<? extends CanvasObject, Integer> entry : shapes.entrySet()) {
         CanvasObject shape = entry.getKey();
-        int index = entry.getValue().intValue();
+        int index = entry.getValue();
         canvasObjects.add(index, shape);
         overlaps.addShape(shape);
       }

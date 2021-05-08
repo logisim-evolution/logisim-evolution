@@ -140,8 +140,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     // now connect enable input...
     if (ComponentInfo.GetComponent()
         .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)
-        .booleanValue()) {
+        .getValue(Plexers.ATTR_ENABLE)) {
       PortMap.putAll(
           GetNetMap(
               "Enable", false, ComponentInfo, select_input_index + 1, Reporter, HDLType, Nets));

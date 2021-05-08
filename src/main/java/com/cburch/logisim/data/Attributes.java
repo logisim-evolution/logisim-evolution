@@ -55,12 +55,12 @@ public class Attributes {
     @Override
     public Boolean parse(String value) {
       Boolean b = Boolean.valueOf(value);
-      return vals[b.booleanValue() ? 0 : 1];
+      return vals[b ? 0 : 1];
     }
 
     @Override
     public String toDisplayString(Boolean value) {
-      if (value.booleanValue()) return S.get("booleanTrueOption");
+      if (value) return S.get("booleanTrueOption");
       else return S.get("booleanFalseOption");
     }
   }
@@ -268,7 +268,7 @@ public class Attributes {
 
     @Override
     public String toDisplayString(Integer value) {
-      int val = value.intValue();
+      int val = value;
       return "0x" + Integer.toHexString(val);
     }
 
@@ -318,7 +318,7 @@ public class Attributes {
 
     @Override
     public String toDisplayString(Long value) {
-      long val = value.longValue();
+      long val = value;
       return "0x" + Long.toHexString(val);
     }
 

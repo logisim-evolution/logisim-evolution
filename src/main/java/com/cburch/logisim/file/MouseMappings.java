@@ -116,11 +116,11 @@ public class MouseMappings {
   }
 
   public Tool getToolFor(Integer mods) {
-    if (mods.intValue() == cache_mods) {
+    if (mods == cache_mods) {
       return cache_tool;
     } else {
       Tool ret = map.get(mods);
-      cache_mods = mods.intValue();
+      cache_mods = mods;
       cache_tool = ret;
       return ret;
     }
@@ -185,7 +185,7 @@ public class MouseMappings {
   }
 
   public void setToolFor(Integer mods, Tool tool) {
-    if (mods.intValue() == cache_mods) cache_mods = -1;
+    if (mods == cache_mods) cache_mods = -1;
 
     if (tool == null) {
       Object old = map.remove(mods);

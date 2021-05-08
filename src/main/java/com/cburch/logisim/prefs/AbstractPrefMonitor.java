@@ -43,7 +43,7 @@ abstract class AbstractPrefMonitor<E> implements PrefMonitor<E> {
   }
 
   public boolean getBoolean() {
-    return ((Boolean) get()).booleanValue();
+    return (Boolean) get();
   }
 
   public String getIdentifier() {

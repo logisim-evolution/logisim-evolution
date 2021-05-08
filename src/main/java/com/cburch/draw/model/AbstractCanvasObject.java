@@ -219,12 +219,12 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
 
     Integer width = getValue(DrawAttr.STROKE_WIDTH);
-    if (width != null && width.intValue() > 0) {
+    if (width != null && width > 0) {
       Color color = getValue(DrawAttr.STROKE_COLOR);
       if (color != null && color.getAlpha() == 0) {
         return false;
       } else {
-        GraphicsUtil.switchToWidth(g, width.intValue());
+        GraphicsUtil.switchToWidth(g, width);
         if (color != null) g.setColor(color);
         return true;
       }

@@ -199,7 +199,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     painter.drawClockSymbol(xpos + 20, ypos + 80);
     painter.drawClockSymbol(xpos + 20, ypos + 90);
     /* Draw Label */
-    long max = painter.getAttributeValue(ATTR_MAX).longValue();
+    long max = painter.getAttributeValue(ATTR_MAX);
     boolean IsCTRm = (max == painter.getAttributeValue(StdAttr.WIDTH).getMask());
     Object onGoal = painter.getAttributeValue(ATTR_ON_GOAL);
     IsCTRm |= onGoal == ON_GOAL_CONT;
@@ -266,7 +266,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.fillOval(xpos + 32 + SymbolWidth(width), ypos + 47, 6, 6);
     String MaxVal =
         "3CT=0x"
-            + Long.toHexString(painter.getAttributeValue(ATTR_MAX).longValue()).toUpperCase();
+            + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
     GraphicsUtil.drawText(
         g,
         MaxVal,
@@ -544,7 +544,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    BigInteger max = new BigInteger(Long.toUnsignedString(state.getAttributeValue(ATTR_MAX).longValue()));
+    BigInteger max = new BigInteger(Long.toUnsignedString(state.getAttributeValue(ATTR_MAX)));
     Value clock = state.getPortValue(CK);
     boolean triggered = data.updateClock(clock, triggerType);
 

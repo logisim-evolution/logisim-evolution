@@ -136,7 +136,7 @@ public class Keyboard extends InstanceFactory {
   }
 
   private static int getBufferLength(Object bufferAttr) {
-    if (bufferAttr instanceof Integer) return ((Integer) bufferAttr).intValue();
+    if (bufferAttr instanceof Integer) return (Integer) bufferAttr;
     else return 32;
   }
 
@@ -262,7 +262,7 @@ public class Keyboard extends InstanceFactory {
     int[] px = new int[3];
     int[] py = new int[3];
     for (Integer special : specials) {
-      int code = special.intValue();
+      int code = special;
       int pos = code & 0xFF;
       int w0;
       int w1;

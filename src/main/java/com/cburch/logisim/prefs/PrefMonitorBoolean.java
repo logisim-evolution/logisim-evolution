@@ -72,7 +72,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
   }
 
   public void set(Boolean newValue) {
-    boolean newVal = newValue.booleanValue();
+    boolean newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
     }

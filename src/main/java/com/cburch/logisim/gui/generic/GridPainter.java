@@ -265,10 +265,10 @@ public class GridPainter {
       String prop = event.getPropertyName();
       Object val = event.getNewValue();
       if (prop.equals(ZoomModel.ZOOM)) {
-        setZoomFactor(((Double) val).doubleValue());
+        setZoomFactor((Double) val);
         destination.repaint();
       } else if (prop.equals(ZoomModel.SHOW_GRID)) {
-        setShowGrid(((Boolean) val).booleanValue());
+        setShowGrid((Boolean) val);
         destination.repaint();
       }
     }

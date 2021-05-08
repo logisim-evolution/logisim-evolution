@@ -470,7 +470,7 @@ public class EditTool extends Tool {
           lastX = snapx;
           lastY = snapy;
           Location oldWireLoc = wireLoc;
-          boolean ret = ((Boolean) o).booleanValue();
+          boolean ret = (Boolean) o;
           wireLoc = ret ? snap : NULL_LOCATION;
           repaintIndicators(canvas, oldWireLoc, wireLoc);
           return ret;

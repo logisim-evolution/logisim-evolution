@@ -72,7 +72,7 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getHorizontalAlign() {
-    return ((Integer) halign.getValue()).intValue();
+    return (Integer) halign.getValue();
   }
 
   Bounds getOffsetBounds() {
@@ -94,7 +94,7 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getVerticalAlign() {
-    return ((Integer) valign.getValue()).intValue();
+    return (Integer) valign.getValue();
   }
 
   boolean setOffsetBounds(Bounds value) {

@@ -196,7 +196,7 @@ public class Multiplexer extends InstanceFactory {
     boolean wide = size == Plexers.SIZE_WIDE;
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
     int inputs = 1 << select.getWidth();
 
     // draw stubs for select/enable inputs that aren't on instance boundary
@@ -280,7 +280,7 @@ public class Multiplexer extends InstanceFactory {
   public void propagate(InstanceState state) {
     BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
     int inputs = 1 << select.getWidth();
     Value en = enable ? state.getPortValue(inputs + 1) : Value.TRUE;
     Value out;
@@ -313,7 +313,7 @@ public class Multiplexer extends InstanceFactory {
     int selMult = botLeft ? 1 : -1;
     BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
 
     int inputs = 1 << select.getWidth();
     Port[] ps = new Port[inputs + (enable ? 3 : 2)];

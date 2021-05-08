@@ -53,7 +53,7 @@ public class BasicZoomModel implements ZoomModel {
     showGrid = true;
     canvas = pane;
 
-    setZoomFactor(zoomPref.get().doubleValue());
+    setZoomFactor(zoomPref.get());
     setShowGrid(gridPref.getBoolean());
   }
 

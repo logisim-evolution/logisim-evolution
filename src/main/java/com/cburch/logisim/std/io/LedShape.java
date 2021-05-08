@@ -91,7 +91,7 @@ public class LedShape extends DynamicElement {
       g.setColor(DynamicElement.COLOR);
     } else {
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
-      Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
+      Object desired = activ ? Value.TRUE : Value.FALSE;
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       Value val = data == null ? Value.FALSE : (Value) data.getValue();
       g.setColor(val == desired ? onColor : offColor);

@@ -450,7 +450,7 @@ public class Propagator {
   private void updateRandomness() {
     Options opts = root.getProject().getOptions();
     Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    int val = ((Integer) rand).intValue();
+    int val = (Integer) rand;
     int logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;

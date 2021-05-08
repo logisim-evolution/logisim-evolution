@@ -54,12 +54,12 @@ import java.awt.Graphics;
 
 public class Tty extends InstanceFactory  implements DynamicElementProvider {
   private static int getColumnCount(Object val) {
-    if (val instanceof Integer) return ((Integer) val).intValue();
+    if (val instanceof Integer) return (Integer) val;
     else return 16;
   }
 
   private static int getRowCount(Object val) {
-    if (val instanceof Integer) return ((Integer) val).intValue();
+    if (val instanceof Integer) return (Integer) val;
     else return 4;
   }
 

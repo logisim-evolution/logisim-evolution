@@ -418,7 +418,7 @@ public class Simulator {
 
     simThread.start();
 
-    setTickFrequency(AppPreferences.TICK_FREQUENCY.get().doubleValue());
+    setTickFrequency(AppPreferences.TICK_FREQUENCY.get());
   }
 
   public void addSimulatorListener(Listener l) {

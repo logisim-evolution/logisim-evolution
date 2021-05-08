@@ -76,7 +76,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
       if (data != null)
         return Value.createUnknown(bitwidth);
       else
-        return Value.createKnown(bitwidth, ((Integer)data.getValue()).intValue());
+        return Value.createKnown(bitwidth, (Integer) data.getValue());
     }
   }
 
@@ -199,13 +199,13 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void paintInstance(InstancePainter painter) {
     InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-    int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+    int summ = (data == null ? 0 : (Integer) data.getValue());
     Bounds bds = painter.getBounds().expand(-1);
 
     Graphics g = painter.getGraphics();
     if (painter.getShowState()) {
       Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-      int mask = activ.booleanValue() ? 0 : 7;
+      int mask = activ ? 0 : 7;
       summ ^= mask;
       int red = ((summ >> RED) & 1) * 0xFF;
       int green = ((summ >> GREEN) & 1) * 0xFF;

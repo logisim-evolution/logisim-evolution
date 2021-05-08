@@ -95,7 +95,7 @@ class SelectionBase {
     Boolean shouldSnapValue =
         (Boolean)
             comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
-    return shouldSnapValue == null || shouldSnapValue.booleanValue();
+    return shouldSnapValue == null || shouldSnapValue;
   }
 
   //
@@ -209,7 +209,7 @@ class SelectionBase {
       int newX = oldLoc.getX() + dx;
       int newY = oldLoc.getY() + dy;
       Object snap = comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, attrs);
-      if (snap == null || ((Boolean) snap).booleanValue()) {
+      if (snap == null || (Boolean) snap) {
         newX = Canvas.snapXToGrid(newX);
         newY = Canvas.snapYToGrid(newY);
       }

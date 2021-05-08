@@ -108,7 +108,7 @@ abstract class AbstractGate extends InstanceFactory {
   private void computeLabel(Instance instance) {
     GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
     Direction facing = attrs.facing;
-    int baseWidth = ((Integer) attrs.size.getValue()).intValue();
+    int baseWidth = (Integer) attrs.size.getValue();
 
     int axis = baseWidth / 2 + (negateOutput ? 10 : 0);
     int perp = 0;
@@ -236,7 +236,7 @@ abstract class AbstractGate extends InstanceFactory {
   Location getInputOffset(GateAttributes attrs, int index) {
     int inputs = attrs.inputs;
     Direction facing = attrs.facing;
-    int size = ((Integer) attrs.size.getValue()).intValue();
+    int size = (Integer) attrs.size.getValue();
     int axisLength = size + bonusWidth + (negateOutput ? 10 : 0);
     long negated = attrs.negated;
 
@@ -333,7 +333,7 @@ abstract class AbstractGate extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
     GateAttributes attrs = (GateAttributes) attrsBase;
     Direction facing = attrs.facing;
-    int size = ((Integer) attrs.size.getValue()).intValue();
+    int size = (Integer) attrs.size.getValue();
     int inputs = attrs.inputs;
     if (inputs % 2 == 0) {
       inputs++;

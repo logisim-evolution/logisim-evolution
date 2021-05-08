@@ -58,7 +58,7 @@ public class ShiftRegisterLogger extends InstanceLogger {
   @Override
   public Object[] getLogOptions(InstanceState state) {
     Integer stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-    Object[] ret = new Object[stages.intValue()];
+    Object[] ret = new Object[stages];
     for (int i = 0; i < ret.length; i++) {
       ret[i] = i;
     }
@@ -73,7 +73,7 @@ public class ShiftRegisterLogger extends InstanceLogger {
     if (data == null) {
       return Value.createKnown(dataWidth, 0);
     } else {
-      int index = option == null ? 0 : ((Integer) option).intValue();
+      int index = option == null ? 0 : (Integer) option;
       return data.get(index);
     }
   }
