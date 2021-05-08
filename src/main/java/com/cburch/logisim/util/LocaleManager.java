@@ -326,7 +326,7 @@ public class LocaleManager {
       }
     }
 
-    return retl.toArray(new Locale[retl.size()]);
+    return retl.toArray(new Locale[0]);
   }
 
   public StringGetter getter(String key) {

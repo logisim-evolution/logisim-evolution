@@ -504,7 +504,7 @@ public class VariableTab extends AnalyzerTab {
     }
 
     private void updateCopy() {
-      listCopy = list.vars.toArray(new Var[list.vars.size()]);
+      listCopy = list.vars.toArray(new Var[0]);
     }
   }
 

@@ -172,7 +172,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
       paths.add(path);
     }
-    return paths.toArray(new TreePath[paths.size()]);
+    return paths.toArray(new TreePath[0]);
   }
 
   private void apply() {

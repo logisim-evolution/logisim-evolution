@@ -44,12 +44,12 @@ class SelectionSave {
 
     Collection<Component> lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
-      save.floating = lifted.toArray(new Component[lifted.size()]);
+      save.floating = lifted.toArray(new Component[0]);
     }
 
     Collection<Component> selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
-      save.anchored = selected.toArray(new Component[selected.size()]);
+      save.anchored = selected.toArray(new Component[0]);
     }
 
     return save;
