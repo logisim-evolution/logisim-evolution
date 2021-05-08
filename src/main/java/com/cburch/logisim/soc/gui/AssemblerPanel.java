@@ -211,7 +211,7 @@ public class AssemblerPanel extends JPanel
       BufferedReader reader = new BufferedReader(new FileReader(textFile));
       StringBuffer s = new StringBuffer();
       String st;
-      while ((st = reader.readLine()) != null) s.append(st + "\n");
+      while ((st = reader.readLine()) != null) s.append(st).append("\n");
       reader.close();
       asmWindow.setText(s.toString());
     } catch (IOException e) {

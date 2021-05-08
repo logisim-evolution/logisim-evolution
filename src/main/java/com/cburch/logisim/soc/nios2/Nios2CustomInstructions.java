@@ -104,10 +104,10 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
 	StringBuffer s = new StringBuffer();
 	s.append("custom");
 	while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-	s.append(n+",");
-	s.append((writerc ? "c" : "r")+regC+",");
-	s.append((readra ? "c" : "r")+regA+",");
-	s.append((readrb ? "c" : "r")+regB);
+	s.append(n).append(",");
+	s.append(writerc ? "c" : "r").append(regC).append(",");
+	s.append(readra ? "c" : "r").append(regA).append(",");
+	s.append(readrb ? "c" : "r").append(regB);
     return s.toString();
   }
 

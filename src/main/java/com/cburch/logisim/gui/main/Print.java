@@ -123,16 +123,16 @@ public class Print {
           ret.append(circName);
           break;
         case 'p':
-          ret.append("" + index);
+          ret.append("").append(index);
           break;
         case 'P':
-          ret.append("" + max);
+          ret.append("").append(max);
           break;
         case '%':
           ret.append("%");
           break;
         default:
-          ret.append("%" + header.charAt(mark + 1));
+          ret.append("%").append(header.charAt(mark + 1));
       }
     }
     if (start < header.length()) {

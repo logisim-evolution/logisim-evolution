@@ -260,10 +260,10 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
     StringBuilder buf = new StringBuilder();
     for (int i = 0; i < n-1; i++)
-      buf.append(logName(path[i], null) + "/");
+      buf.append(logName(path[i], null)).append("/");
     buf.append(nickname);
     if (width > 1)
-      buf.append("[" + (width-1) + "..0]");
+      buf.append("[").append(width - 1).append("..0]");
     String f = buf.toString();
     if (!f.equals(fullname)) {
       changed = true;

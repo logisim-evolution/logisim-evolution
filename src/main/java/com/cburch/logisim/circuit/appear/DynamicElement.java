@@ -103,12 +103,12 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     public String toSvgString() {
-      String s = "";
+      StringBuilder s = new StringBuilder();
       for (InstanceComponent instanceComponent : elt) {
         Location loc = instanceComponent.getLocation();
-        s += "/" + escape(instanceComponent.getFactory().getName()) + loc;
+        s.append("/").append(escape(instanceComponent.getFactory().getName())).append(loc);
       }
-      return s;
+      return s.toString();
     }
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {

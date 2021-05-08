@@ -175,11 +175,11 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append((immediate << 2));
                            break;
-      case INSTR_BR      : s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      case INSTR_BR      : s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
-                           s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
+                           s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
     }
     return s.toString();
@@ -394,8 +394,8 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append(label);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
                            s.append(label);
                            break;
     }

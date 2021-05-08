@@ -125,9 +125,9 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     if (trans.hasError()) {
       StringBuffer s = new StringBuffer();
       if (trans.isReadTransaction())
-        s.append(S.get("LoadStoreErrorInReadTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInReadTransaction")).append("\n");
       else
-        s.append(S.get("LoadStoreErrorInWriteTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInWriteTransaction")).append("\n");
       s.append(trans.getErrorMessage());
       errorMessage = s.toString();
     }
@@ -141,9 +141,9 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+",");
+    s.append(RV32im_state.registerABINames[destination]).append(",");
     s.append(immediate);
-    s.append("("+RV32im_state.registerABINames[base]+")");
+    s.append("(").append(RV32im_state.registerABINames[base]).append(")");
     return s.toString();
   }
 

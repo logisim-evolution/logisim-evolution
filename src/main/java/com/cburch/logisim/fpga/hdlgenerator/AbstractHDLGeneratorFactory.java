@@ -189,7 +189,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               Contents.clear();
               return Contents;
             }
-            OneLine.append("(" + ParameterList.get(WireList.get(Wire)) + "-1)");
+            OneLine.append("(").append(ParameterList.get(WireList.get(Wire))).append("-1)");
           } else {
             if (WireList.get(Wire) == 0) {
               OneLine.append("0");
@@ -219,7 +219,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               Contents.clear();
               return Contents;
             }
-            OneLine.append("(" + ParameterList.get(RegList.get(Reg)) + "-1)");
+            OneLine.append("(").append(ParameterList.get(RegList.get(Reg))).append("-1)");
           } else {
             if (RegList.get(Reg) == 0) {
               OneLine.append("0");
@@ -259,29 +259,29 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         StringBuffer ThisLine = new StringBuffer();
         for (String inp : InputsList.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble + inp);
+            ThisLine.append(Preamble).append(inp);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting + inp);
+            ThisLine.append(Indenting).append(inp);
           }
         }
         for (String outp : OutputsList.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble + outp);
+            ThisLine.append(Preamble).append(outp);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting + outp);
+            ThisLine.append(Indenting).append(outp);
           }
         }
         for (String io : InOutsList.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble + io);
+            ThisLine.append(Preamble).append(io);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting + io);
+            ThisLine.append(Indenting).append(io);
            }
         }
         if (ThisLine.length() != 0) {
@@ -314,17 +314,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("[" + ParameterList.get(nr_of_bits) + "-1:0]");
+          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
-            OneLine.append("[" + (nr_of_bits - 1) + ":0]");
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append("  " + inp + ";");
+        OneLine.append("  ").append(inp).append(";");
         if (firstline) {
           firstline = false;
           Contents.add("");
@@ -345,17 +345,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("[" + ParameterList.get(nr_of_bits) + "-1:0]");
+          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
-            OneLine.append("[" + (nr_of_bits - 1) + ":0]");
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" " + outp + ";");
+        OneLine.append(" ").append(outp).append(";");
         if (firstline) {
           firstline = false;
           Contents.add("");
@@ -376,17 +376,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("[" + ParameterList.get(nr_of_bits) + "-1:0]");
+          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
-            OneLine.append("[" + (nr_of_bits - 1) + ":0]");
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" " + io + ";");
+        OneLine.append(" ").append(io).append(";");
         if (firstline) {
           firstline = false;
           Contents.add("");
@@ -407,17 +407,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("[" + ParameterList.get(nr_of_bits) + "-1:0]");
+          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
-            OneLine.append("[" + (nr_of_bits - 1) + ":0]");
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" " + wire + ";");
+        OneLine.append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
           Contents.add("");
@@ -437,17 +437,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("[" + ParameterList.get(nr_of_bits) + "-1:0]");
+          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
-            OneLine.append("[" + (nr_of_bits - 1) + ":0]");
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" " + reg + ";");
+        OneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
           Contents.add("");
@@ -500,14 +500,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           Net ConnectedNet = ThisEnd.GetConnection((byte) bitindex).GetParrentNet();
           int ConnectedNetBitIndex = ThisEnd.GetConnection((byte) bitindex).GetParrentNetBitIndex();
           if (!ConnectedNet.isBus()) {
-            Contents.append(NetName + TheNets.GetNetId(ConnectedNet));
+            Contents.append(NetName).append(TheNets.GetNetId(ConnectedNet));
           } else {
-            Contents.append(
-                BusName
-                    + TheNets.GetNetId(ConnectedNet)
-                    + BracketOpen
-                    + ConnectedNetBitIndex
-                    + BracketClose);
+            Contents.append(BusName).append(TheNets.GetNetId(ConnectedNet)).append(BracketOpen)
+                .append(ConnectedNetBitIndex).append(BracketClose);
           }
         }
       }
@@ -578,7 +574,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             TheNets.GetClockSourceId(
                 TheNets.GetCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
-          Contents.append(ClockTreeName + clocksourceid);
+          Contents.append(ClockTreeName).append(clocksourceid);
         }
       }
     }
@@ -645,7 +641,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           for (int i = generic.length(); i < SallignmentSize; i++) {
             OneLine.append(" ");
           }
-          OneLine.append("=> " + ParameterMap.get(generic));
+          OneLine.append("=> ").append(ParameterMap.get(generic));
         }
         OneLine.append(")");
         Contents.add(OneLine.toString());
@@ -670,14 +666,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           for (int i = port.length(); i < SallignmentSize; i++) {
             OneLine.append(" ");
           }
-          OneLine.append("=> " + PortMap.get(port));
+          OneLine.append("=> ").append(PortMap.get(port));
         }
         OneLine.append(");");
         Contents.add(OneLine.toString());
         OneLine.setLength(0);
       }
     } else {
-      OneLine.append("   " + CompName);
+      OneLine.append("   ").append(CompName);
       if (!ParameterMap.isEmpty()) {
         OneLine.append(" #(");
         TabLength = OneLine.length();
@@ -693,14 +689,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           } else {
             first = false;
           }
-          OneLine.append(
-              "." + parameter + "(" + ParameterMap.get(parameter) + ")");
+          OneLine.append(".").append(parameter).append("(").append(ParameterMap.get(parameter))
+              .append(")");
         }
         OneLine.append(")");
         Contents.add(OneLine.toString());
         OneLine.setLength(0);
       }
-      OneLine.append("      " + ThisInstanceIdentifier + " (");
+      OneLine.append("      ").append(ThisInstanceIdentifier).append(" (");
       if (!PortMap.isEmpty()) {
         TabLength = OneLine.length();
         first = true;
@@ -715,7 +711,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           } else {
             first = false;
           }
-          OneLine.append("." + port + "(");
+          OneLine.append(".").append(port).append("(");
           String MappedSignal = PortMap.get(port);
           if (!MappedSignal.contains(",")) {
             OneLine.append(MappedSignal);
@@ -899,7 +895,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             for (int i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */
               SourceNetName.setLength(0);
-              SourceNetName.append(SourceName + "(" + i + ") ");
+              SourceNetName.append(SourceName).append("(").append(i).append(") ");
               ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) i);
               if (SolderPoint.GetParrentNet() == null) {
                 /* The net is not connected */
@@ -1016,16 +1012,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
            */
           if (SolderPoint.GetParrentNet().BitWidth() == 1) {
             /* The connection is to a Net */
-            Contents.append(
-                NetName + MyNetlist.GetNetId(SolderPoint.GetParrentNet()));
+            Contents.append(NetName).append(MyNetlist.GetNetId(SolderPoint.GetParrentNet()));
           } else {
             /* The connection is to an entry of a bus */
-            Contents.append(
-                BusName
-                    + MyNetlist.GetNetId(SolderPoint.GetParrentNet())
-                    + BracketOpen
-                    + SolderPoint.GetParrentNetBitIndex()
-                    + BracketClose);
+            Contents.append(BusName).append(MyNetlist.GetNetId(SolderPoint.GetParrentNet()))
+                .append(BracketOpen).append(SolderPoint.GetParrentNetBitIndex())
+                .append(BracketClose);
           }
         }
       }
@@ -1139,7 +1131,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.add("   COMPONENT " + ComponentName);
     }
     if (!ParameterList.isEmpty()) {
-      OneLine.append(CompTab + "   GENERIC ( ");
+      OneLine.append(CompTab).append("   GENERIC ( ");
       IdentSize = OneLine.length();
       first = true;
       for (int generic : ParameterList.keySet()) {
@@ -1165,7 +1157,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     if (!InputsList.isEmpty() || !OutputsList.isEmpty() || !InOutsList.isEmpty()) {
       int nr_of_bits;
-      OneLine.append(CompTab + "   PORT ( ");
+      OneLine.append(CompTab).append("   PORT ( ");
       IdentSize = OneLine.length();
       first = true;
       for (String input : InputsList.keySet()) {
@@ -1191,11 +1183,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("_vector( (" + ParameterList.get(nr_of_bits) + "-1) DOWNTO 0 )");
+          OneLine.append("_vector( (").append(ParameterList.get(nr_of_bits))
+              .append("-1) DOWNTO 0 )");
         } else {
           if (nr_of_bits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( " + (nr_of_bits - 1) + " DOWNTO 0 )");
+            OneLine.append("_vector( ").append(nr_of_bits - 1).append(" DOWNTO 0 )");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("_vector( 0 DOWNTO 0 )");
@@ -1226,11 +1219,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("_vector( (" + ParameterList.get(nr_of_bits) + "-1) DOWNTO 0 )");
+          OneLine.append("_vector( (").append(ParameterList.get(nr_of_bits))
+              .append("-1) DOWNTO 0 )");
         } else {
           if (nr_of_bits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( " + (nr_of_bits - 1) + " DOWNTO 0 )");
+            OneLine.append("_vector( ").append(nr_of_bits - 1).append(" DOWNTO 0 )");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("_vector( 0 DOWNTO 0 )");
@@ -1261,11 +1255,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             Contents.clear();
             return Contents;
           }
-          OneLine.append("_vector( (" + ParameterList.get(nr_of_bits) + "-1) DOWNTO 0 )");
+          OneLine.append("_vector( (").append(ParameterList.get(nr_of_bits))
+              .append("-1) DOWNTO 0 )");
         } else {
           if (nr_of_bits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( " + (nr_of_bits - 1) + " DOWNTO 0 )");
+            OneLine.append("_vector( ").append(nr_of_bits - 1).append(" DOWNTO 0 )");
           } else {
             if (nr_of_bits == 0) {
               OneLine.append("_vector( 0 DOWNTO 0 )");
@@ -1304,7 +1299,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       String FillValue = (FloatingPinTiedToGround) ? "0" : "1";
       String HexFillValue = (FloatingPinTiedToGround) ? "0" : "F";
       if (NrOfBits == 1) {
-        Contents.append("'" + FillValue + "'");
+        Contents.append("'").append(FillValue).append("'");
       } else {
         if ((NrOfBits % 4) > 0) {
           Contents.append("\"");
@@ -1325,7 +1320,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         }
       }
     } else {
-      Contents.append(NrOfBits + "'d");
+      Contents.append(NrOfBits).append("'d");
       if (FloatingPinTiedToGround) {
         Contents.append("0");
       } else {
@@ -1416,7 +1411,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           OneLine.append(" ");
         }
       } else {
-        OneLine.append(remarkWord + " ");
+        OneLine.append(remarkWord).append(" ");
       }
     }
     if (OneLine.length() > (NrOfIndentSpaces + RemarkOverhead)) {
@@ -1469,7 +1464,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     for (int i = 0 ; i < Component.getNrOfPins() ; i++) {
       Temp.setLength(0);
-      Temp.append("   "+Preamble);
+      Temp.append("   ").append(Preamble);
       /* IO-pins need to be mapped directly to the top-level component and cannot be
        * passed by signals, so we skip them.
        */
@@ -1480,7 +1475,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Temp.append(Component.getHdlSignalName(i,HDLType));
         allign(Temp);
         Temp.append(AssignOperator);
-        Temp.append(ZeroValue+";");
+        Temp.append(ZeroValue).append(";");
         contents.add(Temp.toString());
         continue;
       }
@@ -1491,7 +1486,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (Component.IsConstantMapped(i)) {
           Temp.append(Component.isZeroConstantMap(i) ? ZeroValue : OneValue);
         } else {
-          if (Component.isExternalInverted(i)) Temp.append(NotOperator+"n_");
+          if (Component.isExternalInverted(i)) Temp.append(NotOperator).append("n_");
           Temp.append(Component.getHdlString(i));
         }
         Temp.append(";");
@@ -1504,7 +1499,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       allign(Temp);
       Temp.append(AssignOperator);
       if (Component.isExternalInverted(i)) Temp.append(NotOperator);
-      Temp.append(Component.getHdlSignalName(i, HDLType)+";");
+      Temp.append(Component.getHdlSignalName(i, HDLType)).append(";");
       contents.add(Temp.toString());
     }
     contents.add(" ");

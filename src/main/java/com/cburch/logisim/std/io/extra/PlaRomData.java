@@ -206,7 +206,7 @@ public class PlaRomData implements InstanceData {
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
     boolean dirty = false;
-    String data = "";
+    StringBuilder data = new StringBuilder();
     // input-and matrix
     for (int i = 0; i < size1; i++) {
       row = i / getInputs();
@@ -226,9 +226,9 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size1 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size1 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size1 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
@@ -250,15 +250,15 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size2 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size2 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size2 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
     }
-    if (!dirty) data = "";
-    SavedData = data;
+    if (!dirty) data = new StringBuilder();
+    SavedData = data.toString();
   }
 
   public void setAndOutputValue(int row, int column, boolean b) {

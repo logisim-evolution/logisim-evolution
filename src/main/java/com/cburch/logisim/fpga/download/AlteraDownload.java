@@ -289,7 +289,7 @@ public class AlteraDownload implements VendorDownload {
         Temp.setLength(0);
         Temp.append("    set_location_assignment ");
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
-          Temp.append(map.getPinLocation(i)+" -to ");
+          Temp.append(map.getPinLocation(i)).append(" -to ");
           if (map.isExternalInverted(i)) Temp.append("n_");
           Temp.append(map.getHdlString(i));
           Contents.add(Temp.toString());

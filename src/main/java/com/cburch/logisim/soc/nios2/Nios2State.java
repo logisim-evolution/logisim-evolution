@@ -320,7 +320,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
         StringBuffer s = new StringBuffer();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
-          s.append("\n"+exe.getErrorMessage());
+          s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(null,s.toString(),
         SocSupport.getMasterName(cState,Nios2State.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();

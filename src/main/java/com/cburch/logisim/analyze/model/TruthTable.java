@@ -90,26 +90,26 @@ public class TruthTable {
 
     @Override
     public String toString() {
-      String s = "row[";
+      StringBuilder s = new StringBuilder("row[");
       for (int i = 0; i < inputs.length; i++) {
-        if (i != 0) s += " ";
-        s += inputs[i].getDescription();
+        if (i != 0) s.append(" ");
+        s.append(inputs[i].getDescription());
       }
-      s += "]";
-      s += " dup=" + duplicity();
-      s += String.format(" base=%x dcmask=%x", baseIndex(), dcMask());
-      return s;
+      s.append("]");
+      s.append(" dup=").append(duplicity());
+      s.append(String.format(" base=%x dcmask=%x", baseIndex(), dcMask()));
+      return s.toString();
     }
 
     public String toBitString(List<Var> vars) {
-      String s = null;
+      StringBuilder s = null;
       int i = 0;
       for (Var v : vars) {
-        if (s == null) s = "";
-        else s += " ";
-        for (int j = 0; j < v.width; j++) s += inputs[i++].toBitString();
+        if (s == null) s = new StringBuilder();
+        else s.append(" ");
+        for (int j = 0; j < v.width; j++) s.append(inputs[i++].toBitString());
       }
-      return s;
+      return s.toString();
     }
 
     public boolean contains(int idx) {
@@ -281,10 +281,10 @@ public class TruthTable {
   public String getVisibleOutputs(int row) {
     Row r = rows.get(row);
     int idx = r.baseIndex();
-    String s = "";
+    StringBuilder s = new StringBuilder();
     for (Entry[] column : columns)
-      s += (column == null ? DEFAULT_ENTRY : column[idx]).getDescription();
-    return s;
+      s.append((column == null ? DEFAULT_ENTRY : column[idx]).getDescription());
+    return s.toString();
   }
 
   public Entry getVisibleInputEntry(int row, int col) {

@@ -62,7 +62,7 @@ public class Splitter extends ManagedComponent
     if (start == end) {
       buf.append(start);
     } else {
-      buf.append(start + "-" + end);
+      buf.append(start).append("-").append(end);
     }
   }
 

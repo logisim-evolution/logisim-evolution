@@ -192,26 +192,29 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
     if (OpcCodes.get(operation) == PSEUDO_INSTR) {
       if (operation != INSTR_NOP) {
         if (operation == INSTR_MOV) {
-          s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]);
+          s.append(Nios2State.registerABINames[destination]).append(",")
+              .append(Nios2State.registerABINames[sourceA]);
         } else {
           int imm = immediate;
           if (OpxCodes.get(operation) == SIGN_EXTEND) {
             imm <<=16;
             imm >>= 16;
           }
-          s.append(Nios2State.registerABINames[destination]+","+imm);
+          s.append(Nios2State.registerABINames[destination]).append(",").append(imm);
         }
       }
     } else if (OpcCodes.get(operation) == 0x3A) {
-      s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]);
-      s.append(","+Nios2State.registerABINames[sourceB]);
+      s.append(Nios2State.registerABINames[destination]).append(",")
+          .append(Nios2State.registerABINames[sourceA]);
+      s.append(",").append(Nios2State.registerABINames[sourceB]);
     } else {
       int imm = immediate;
       if (OpxCodes.get(operation) == SIGN_EXTEND) {
         imm = immediate << 16;
         imm >>= 16;
       }
-      s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]+","+imm);
+      s.append(Nios2State.registerABINames[destination]).append(",")
+          .append(Nios2State.registerABINames[sourceA]).append(",").append(imm);
     }
     return s.toString();
   }

@@ -294,14 +294,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           for (ConnectionPoint Source : ThisNet.GetSourceNets(bit)) {
             OneLine.setLength(0);
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + BracketOpen
-                      + bit
-                      + BracketClose);
+              OneLine.append(BusName).append(TheNets.GetNetId(ThisNet)).append(BracketOpen)
+                  .append(bit).append(BracketClose);
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
@@ -335,12 +331,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
             OneLine.setLength(0);
-            OneLine.append(
-                BusName
-                    + TheNets.GetNetId(Source.GetParrentNet())
-                    + BracketOpen
-                    + Source.GetParrentNetBitIndex()
-                    + BracketClose);
+            OneLine.append(BusName).append(TheNets.GetNetId(Source.GetParrentNet()))
+                .append(BracketOpen).append(Source.GetParrentNetBitIndex()).append(BracketClose);
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
@@ -350,14 +342,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               OneLine.append("= ");
             }
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + BracketOpen
-                      + bit
-                      + BracketClose);
+              OneLine.append(BusName).append(TheNets.GetNetId(ThisNet)).append(BracketOpen)
+                  .append(bit).append(BracketClose);
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             String line;
             if (HDLType.equals(VHDL)) {
@@ -733,7 +721,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
               else {
                 if (vector.length() != 0) vector.append(",");
-                vector.append((map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+                vector.append(map.isExternalInverted(compPin) ? "n_" : "")
+                    .append(map.getHdlString(compPin));
               }
             }
           }
@@ -867,7 +856,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       while (Destination.length() < SallignmentSize) {
         Destination.append(" ");
       }
-      Contents.append(Tab + AssignCommand + Destination + AssignOperator + Source + ";");
+      Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+          .append(Source).append(";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -892,13 +882,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         while (Destination.length() < SallignmentSize) {
           Destination.append(" ");
         }
-        Contents.append(
-            Tab
-                + AssignCommand
-                + Destination
-                + AssignOperator
-                + GetZeroVector(NrOfBits, true, HDLType)
-                + ";");
+        Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+            .append(GetZeroVector(NrOfBits, true, HDLType)).append(";");
       } else {
         /*
          * There are connections, we detect if it is a continues bus
@@ -918,17 +903,17 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           while (Destination.length() < SallignmentSize) {
             Destination.append(" ");
           }
-          Contents.append(
-              Tab + AssignCommand + Destination + AssignOperator + Source + ";");
+          Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+              .append(Source).append(";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (int bit = 0; bit < NrOfBits; bit++) {
             Source.setLength(0);
             Destination.setLength(0);
             if (IsOutput) {
-              Source.append(PortName + BracketOpen + bit + BracketClose);
+              Source.append(PortName).append(BracketOpen).append(bit).append(BracketClose);
             } else {
-              Destination.append(PortName + BracketOpen + bit + BracketClose);
+              Destination.append(PortName).append(BracketOpen).append(bit).append(BracketClose);
             }
             ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) bit);
             if (SolderPoint.GetParrentNet() == null) {
@@ -950,28 +935,20 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (SolderPoint.GetParrentNet().BitWidth() == 1) {
                 /* The connection is to a Net */
                 if (IsOutput) {
-                  Destination.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 } else {
-                  Source.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (IsOutput) {
-                  Destination.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
-                          + BracketOpen
-                          + SolderPoint.GetParrentNetBitIndex()
-                          + BracketClose);
+                  Destination.append(BusName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                      .append(BracketOpen).append(SolderPoint.GetParrentNetBitIndex())
+                      .append(BracketClose);
                 } else {
-                  Source.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
-                          + BracketOpen
-                          + SolderPoint.GetParrentNetBitIndex()
-                          + BracketClose);
+                  Source.append(BusName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                      .append(BracketOpen).append(SolderPoint.GetParrentNetBitIndex())
+                      .append(BracketClose);
                 }
               }
             }
@@ -981,8 +958,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (bit != 0) {
               Contents.append("\n");
             }
-            Contents.append(
-                Tab + AssignCommand + Destination + AssignOperator + Source + ";");
+            Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+                .append(Source).append(";");
           }
         }
       }

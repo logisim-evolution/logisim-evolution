@@ -118,7 +118,7 @@ public class Shifter extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     StringBuffer CompleteName = new StringBuffer();
-    CompleteName.append("Shifter_" + attrs.getValue(StdAttr.WIDTH).getWidth() + "_bit");
+    CompleteName.append("Shifter_").append(attrs.getValue(StdAttr.WIDTH).getWidth()).append("_bit");
     return CompleteName.toString();
   }
 

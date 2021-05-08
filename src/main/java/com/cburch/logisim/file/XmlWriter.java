@@ -102,9 +102,7 @@ class XmlWriter {
       lst.add(attrToString((Attr) a.item(i)));
     }
     Collections.sort(lst);
-    String s = lst.get(0);
-    for (int i = 1; i < n; i++) s = s + " " + lst.get(i);
-    return s;
+    return String.join(" ", lst);
   }
 
   static int stringCompare(String a, String b) {

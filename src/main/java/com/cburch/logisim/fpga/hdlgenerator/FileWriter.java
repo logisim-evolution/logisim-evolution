@@ -159,22 +159,22 @@ public class FileWriter {
       Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
       Lines.add("--==                                                                          ==");
       Lines.add("--==                                                                          ==");
-      String ThisLine = "--== Project   : ";
+      StringBuilder ThisLine = new StringBuilder("--== Project   : ");
       int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
-      ThisLine += projName;
+      ThisLine.append(projName);
       for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine += " ";
+        ThisLine.append(" ");
       }
-      ThisLine += "==";
-      Lines.add(ThisLine);
-      ThisLine = "--== Component : ";
+      ThisLine.append("==");
+      Lines.add(ThisLine.toString());
+      ThisLine = new StringBuilder("--== Component : ");
       nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
-      ThisLine += compName;
+      ThisLine.append(compName);
       for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine += " ";
+        ThisLine.append(" ");
       }
-      ThisLine += "==";
-      Lines.add(ThisLine);
+      ThisLine.append("==");
+      Lines.add(ThisLine.toString());
       Lines.add("--==                                                                          ==");
       Lines.add("--==============================================================================");
       Lines.add("");
@@ -186,14 +186,14 @@ public class FileWriter {
             " ** Logisim goes FPGA automatic generated Verilog code                       **");
         Lines.add(
             " **                                                                          **");
-        String ThisLine = " ** Component : ";
+        StringBuilder ThisLine = new StringBuilder(" ** Component : ");
         int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
-        ThisLine += compName;
+        ThisLine.append(compName);
         for (int i = 0; i < nr_of_spaces; i++) {
-          ThisLine += " ";
+          ThisLine.append(" ");
         }
-        ThisLine += "**";
-        Lines.add(ThisLine);
+        ThisLine.append("**");
+        Lines.add(ThisLine.toString());
         Lines.add(
             " **                                                                          **");
         Lines.add(

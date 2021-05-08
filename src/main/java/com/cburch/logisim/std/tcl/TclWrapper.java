@@ -157,12 +157,12 @@ public class TclWrapper {
                     new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
                 try {
-                  String errorMessage = "";
+                  StringBuilder errorMessage = new StringBuilder();
 
                   /* Here we check that the wrapper has correctly started */
                   while ((line = reader.readLine()) != null) {
 
-                    errorMessage += "\n" + line;
+                    errorMessage.append("\n").append(line);
                     if (line.contains("TCL_WRAPPER_RUNNING")) {
 
                       new Thread(
@@ -195,7 +195,7 @@ public class TclWrapper {
 
                   MessageBox userInfoBox =
                       new MessageBox(
-                          "Error starting TCL wrapper", errorMessage, OptionPane.ERROR_MESSAGE);
+                          "Error starting TCL wrapper", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
                   userInfoBox.show();
 
                 } catch (IOException e) {

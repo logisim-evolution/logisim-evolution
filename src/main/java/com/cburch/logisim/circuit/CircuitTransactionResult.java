@@ -51,11 +51,11 @@ public class CircuitTransactionResult {
   }
   
   public String toString() {
-    String s = "CircuitTransactionResult affecting...";
+    StringBuilder s = new StringBuilder("CircuitTransactionResult affecting...");
     for (Circuit c : getModifiedCircuits()) {
-      s += "\n    - circuit " + c + " with replacements...";
-      s += "\n" +getReplacementMap(c);
+      s.append("\n    - circuit ").append(c).append(" with replacements...");
+      s.append("\n").append(getReplacementMap(c));
     }
-    return s;
+    return s.toString();
   }
 }

@@ -153,9 +153,9 @@ public class PLATable {
   }
 
   public String toStandardString() {
-    String ret = "";
-    for (Row r : rows) ret += r.toStandardString() + "\n";
-    return ret;
+    StringBuilder ret = new StringBuilder();
+    for (Row r : rows) ret.append(r.toStandardString()).append("\n");
+    return ret.toString();
   }
 
   public static PLATable parse(String str) {
@@ -303,10 +303,10 @@ public class PLATable {
     }
 
     public String toStandardString() {
-      String i = "";
-      for (char inBit : inBits) i = inBit + i;
-      String o = "";
-      for (char outBit : outBits) o = outBit + o;
+      StringBuilder i = new StringBuilder();
+      for (char inBit : inBits) i.insert(0, inBit);
+      StringBuilder o = new StringBuilder();
+      for (char outBit : outBits) o.insert(0, outBit);
       String ret = i + " " + o;
       if (!comment.trim().equals("")) ret += " # " + comment.trim();
       return ret;

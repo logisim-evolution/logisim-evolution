@@ -61,8 +61,9 @@ public class Template {
     String circName = S.get("newCircuitName");
     StringBuilder buf = new StringBuilder();
     buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    buf.append("<project source=\"" + Main.VERSION.mainVersion() + "\" version=\"1.0\">");
-    buf.append(" <circuit name=\"" + circName + "\" />");
+    buf.append("<project source=\"").append(Main.VERSION.mainVersion())
+        .append("\" version=\"1.0\">");
+    buf.append(" <circuit name=\"").append(circName).append("\" />");
     buf.append("</project>");
     return new Template(buf.toString());
   }

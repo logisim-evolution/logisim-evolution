@@ -107,13 +107,13 @@ public class SocSupport {
       s = s.getParentState();
     }
     StringBuffer name = new StringBuffer();
-    name.append(s.getCircuit().getName()+":");
+    name.append(s.getCircuit().getName()).append(":");
     for (int i = states.size()-1 ; i >= 0 ; i--) {
       for (Component c : s.getCircuit().getNonWires()) {
         if (c.getFactory() instanceof SubcircuitFactory) {
           CircuitState tmp = (CircuitState)s.getData(c);
           if (tmp.equals(states.get(i)))
-            name.append(getComponentName(c)+":");
+            name.append(getComponentName(c)).append(":");
         }
       }
       s = states.get(i);

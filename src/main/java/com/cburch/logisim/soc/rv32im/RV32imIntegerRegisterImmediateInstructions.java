@@ -140,18 +140,20 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
       s.append(" ");
     switch (operation) {
       case INSTR_NOP  : break;
-      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]+","+immediate);
+      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(immediate);
                         break;
       case INSTR_LUI  :
-      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]+","+((immediate>>12)&0xFFFFF));
+      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append((immediate >> 12) & 0xFFFFF);
                         break;
       case INSTR_MV   :
       case INSTR_NOT  :
-      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]);
+      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]);
                         break;
-      default         : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]+","+immediate);
+      default         : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]).append(",").append(immediate);
     }
     return s.toString();
   }

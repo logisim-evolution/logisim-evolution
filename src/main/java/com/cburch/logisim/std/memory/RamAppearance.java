@@ -799,20 +799,20 @@ public class RamAppearance {
     boolean drawDin = attrs.containsAttribute(RamAttributes.ATTR_DBUS);
     boolean seperate = seperatedBus(attrs) || !drawDin;
     for (int i = 0 ; i < getNrClkPorts(attrs) ; i++) {
-      if (!async) doutLabel.append(","+cidx);
-      dinLabel.append(","+cidx);
+      if (!async) doutLabel.append(",").append(cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrOEPorts(attrs); i++) {
-      doutLabel.append(","+cidx);
+      doutLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrWEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrLEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     boolean appendBE = getNrBEPorts(attrs) > 0;

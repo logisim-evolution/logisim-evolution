@@ -199,9 +199,7 @@ class Clip implements ClipboardOwner {
           if (i > 0) {
             buf.append(i % 8 == 0 ? '\n' : ' ');
           }
-          String s = Long.toHexString(data[i]);
-          while (s.length() < chars) s = "0" + s;
-          buf.append(s);
+          buf.append(String.format("%0" + chars + "x", data[i]));
         }
         return buf.toString();
       } else {

@@ -148,9 +148,9 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     if (trans.hasError()) {
       StringBuffer s = new StringBuffer();
       if (trans.isReadTransaction())
-        s.append(S.get("LoadStoreErrorInReadTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInReadTransaction")).append("\n");
       else
-        s.append(S.get("LoadStoreErrorInWriteTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInWriteTransaction")).append("\n");
       s.append(trans.getErrorMessage());
       errorMessage = s.toString();
     }
@@ -162,8 +162,8 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
 	StringBuffer s = new StringBuffer();
 	s.append(Opcodes.get(operation));
 	while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-	s.append(Nios2State.registerABINames[destination]+","+immediate+"(");
-	s.append(Nios2State.registerABINames[base]+")");
+	s.append(Nios2State.registerABINames[destination]).append(",").append(immediate).append("(");
+	s.append(Nios2State.registerABINames[base]).append(")");
     return s.toString();
   }
 

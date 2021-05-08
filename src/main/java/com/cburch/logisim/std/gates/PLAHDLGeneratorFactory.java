@@ -52,15 +52,15 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private static String bits(char[] b) {
-    String s = "";
-    for (char c : b) s = ((c == '0' || c == '1') ? c : '-') + s;
+    StringBuilder s = new StringBuilder();
+    for (char c : b) s.insert(0, ((c == '0' || c == '1') ? c : '-'));
     if (b.length == 1) return "'" + s + "'";
     else return "\"" + s + "\"";
   }
 
   private static String zeros(int sz) {
-    String s = "";
-    for (int i = 0; i < sz; i++) s += '0';
+    StringBuilder s = new StringBuilder();
+    for (int i = 0; i < sz; i++) s.append('0');
     if (sz == 1) return "'" + s + "'";
     else return "\"" + s + "\"";
   }

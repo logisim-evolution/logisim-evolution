@@ -446,16 +446,18 @@ public class KarnaughMapPanel extends JPanel
     if (row < 0) return null;
     int col = getOutputColumn(event);
     Entry entry = table.getOutputEntry(row, col);
-    String s = entry.getErrorMessage();
-    if (s == null) s = "";
-    else s += "<br>";
-    s += output + " = " + entry.getDescription();
+    StringBuilder s = new StringBuilder(
+        entry.getErrorMessage() == null
+            ? ""
+            : entry.getErrorMessage() + "<br>");
+    s.append(output).append(" = ").append(entry.getDescription());
     List<String> inputs = model.getInputs().bits;
     if (inputs.size() == 0) return "<html>" + s + "</html>";
-    s += "<br>When:";
+    s.append("<br>When:");
     int n = inputs.size();
     for (int i = 0; i < MAX_VARS && i < inputs.size(); i++) {
-      s += "<br>&nbsp;&nbsp;&nbsp;&nbsp;" + inputs.get(i) + " = " + ((row >> (n - i - 1)) & 1);
+      s.append("<br>&nbsp;&nbsp;&nbsp;&nbsp;").append(inputs.get(i)).append(" = ")
+          .append((row >> (n - i - 1)) & 1);
     }
     return "<html>" + s + "</html>";
   }

@@ -117,9 +117,9 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+","+
-             ((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1]+",")+
-             RV32im_state.registerABINames[source2]);
+    s.append(RV32im_state.registerABINames[destination]).append(",")
+        .append((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1] + ",")
+        .append(RV32im_state.registerABINames[source2]);
     return s.toString();
   }
 

@@ -159,12 +159,12 @@ public class ElfProgramHeader {
           s.append(PF_FLAGS.get(i));
         }
       }
-      s.append("\np_offset : "+String.format("0x%X", p_offset)+"\n");
-      s.append("p_vaddr  : "+String.format("0x%X", p_vaddr)+"\n");
-      s.append("p_paddr  : "+String.format("0x%X", p_paddr)+"\n");
-      s.append("p_filesz : "+String.format("0x%X", p_filesz)+"\n");
-      s.append("p_memsz  : "+String.format("0x%X", p_memsz)+"\n");
-      s.append("p_align  : "+String.format("0x%X", p_align)+"\n\n");
+      s.append("\np_offset : ").append(String.format("0x%X", p_offset)).append("\n");
+      s.append("p_vaddr  : ").append(String.format("0x%X", p_vaddr)).append("\n");
+      s.append("p_paddr  : ").append(String.format("0x%X", p_paddr)).append("\n");
+      s.append("p_filesz : ").append(String.format("0x%X", p_filesz)).append("\n");
+      s.append("p_memsz  : ").append(String.format("0x%X", p_memsz)).append("\n");
+      s.append("p_align  : ").append(String.format("0x%X", p_align)).append("\n\n");
       return s.toString();
     }
     

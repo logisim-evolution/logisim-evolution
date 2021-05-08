@@ -124,8 +124,9 @@ public class VhdlSimulatorTclBinder {
                     new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
                 try {
-                  String errorMessage =
-                      "You may disable VHDL simulation in the simulation menu if this occurs again\n\n";
+                  StringBuilder errorMessage =
+                      new StringBuilder(
+                          "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
 
                   /* Here we check that the binder has correctly started */
                   while ((line = reader.readLine()) != null) {
@@ -135,7 +136,7 @@ public class VhdlSimulatorTclBinder {
                       vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
                     }
 
-                    errorMessage += "\n" + line;
+                    errorMessage.append("\n").append(line);
                     if (line.contains("TCL_BINDER_RUNNING")) {
                       running = true;
 
@@ -168,7 +169,7 @@ public class VhdlSimulatorTclBinder {
 
                   MessageBox userInfoBox =
                       new MessageBox(
-                          "Error starting VHDL simulator", errorMessage, OptionPane.ERROR_MESSAGE);
+                          "Error starting VHDL simulator", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
                   userInfoBox.show();
                   vsim.setState(State.ENABLED);
 

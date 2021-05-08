@@ -145,7 +145,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       boolean zerosFound = false;
       if (labels.containsKey(SocSupport.convUnsignedLong(startAddress+i))) {
         StringBuffer label = new StringBuffer();
-        label.append(labels.get(SocSupport.convUnsignedLong(startAddress+i))+":");
+        label.append(labels.get(SocSupport.convUnsignedLong(startAddress + i))).append(":");
         while (label.length() < maxLabelSize) label.append(" ");
         if (nrBytesWritten != 0)  newLineNum = addLine(lines,"\n",newLineNum,true);
         newLineNum = addLine(lines,label.toString(),newLineNum,false);
@@ -353,9 +353,10 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           StringBuffer line = new StringBuffer();
           long addr = startAddress+(((long)pc)<<2);
             StringBuffer label = new StringBuffer();
-            if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label.append(labels.get(SocSupport.convUnsignedLong(addr))+":");
+            if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label
+                .append(labels.get(SocSupport.convUnsignedLong(addr))).append(":");
             while (label.length() <= maxLabelSize) label.append(" ");
-            line.append(label +" ");
+            line.append(label).append(" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
             if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
@@ -370,8 +371,9 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             } else if (exe != null) line.append(exe.getAsmInstruction());
             else line.append(S.get("UnknownInstruction"));
             while (line.length() < remarkOffset) line.append(" ");
-            line.append("# "+String.format("0x%08X", SocSupport.convUnsignedLong(startAddress+((long)pc<<2))));
-            line.append(" "+String.format("0x%08X", contents[pc]));
+            line.append("# ").append(String
+                .format("0x%08X", SocSupport.convUnsignedLong(startAddress + ((long) pc << 2))));
+            line.append(" ").append(String.format("0x%08X", contents[pc]));
             validDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
             lineNum = addLine(lines, line +"\n",lineNum,true);
           }

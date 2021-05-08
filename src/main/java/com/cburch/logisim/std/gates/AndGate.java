@@ -56,7 +56,7 @@ class AndGate extends AbstractGate {
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
       StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation);
+      OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation);
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
@@ -70,7 +70,7 @@ class AndGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());

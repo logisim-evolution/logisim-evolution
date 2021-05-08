@@ -110,8 +110,8 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
     StringBuffer s = new StringBuffer();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-    s.append(Nios2State.registerABINames[sourceC]+",");
-    s.append(Nios2State.registerABINames[sourceA]+",");
+    s.append(Nios2State.registerABINames[sourceC]).append(",");
+    s.append(Nios2State.registerABINames[sourceA]).append(",");
     if (operation < INSTR_ROLI) {
       s.append(Nios2State.registerABINames[sourceB]);
     } else {

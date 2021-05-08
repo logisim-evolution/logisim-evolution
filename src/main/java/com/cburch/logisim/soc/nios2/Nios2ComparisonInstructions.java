@@ -148,8 +148,8 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     StringBuffer s = new StringBuffer();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-    s.append(Nios2State.registerABINames[destination]+",");
-    s.append(Nios2State.registerABINames[sourceA]+",");
+    s.append(Nios2State.registerABINames[destination]).append(",");
+    s.append(Nios2State.registerABINames[sourceA]).append(",");
     if (operation >= INSTR_CMPEQI) {
       int imm = OpxCodes.get(operation) != SIGN_EXTEND ? immediate &0xFFFF : ((immediate<<16)>>16);
       s.append(imm);

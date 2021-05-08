@@ -218,7 +218,7 @@ abstract class AbstractGate extends InstanceFactory {
     if (width.getWidth() > 1) CompleteName.append("_BUS");
     Integer inputCount = myattrs.getValue(GateAttributes.ATTR_INPUTS);
     if (inputCount > 2) {
-      CompleteName.append("_" + inputCount + "_INPUTS");
+      CompleteName.append("_").append(inputCount).append("_INPUTS");
     }
     if (myattrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       if (myattrs.getValue(GateAttributes.ATTR_XOR).equals(GateAttributes.XOR_ONE)) {

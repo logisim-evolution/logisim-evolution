@@ -91,7 +91,8 @@ public class VhdlSimulatorTclComp {
           componentName =
               ((VhdlEntityComponent) fact).GetSimName(state.getInstance().getAttributeSet());
 
-        comp_files.append("vcom -reportprogress 300 -work work ../src/" + componentName + ".vhdl");
+        comp_files.append("vcom -reportprogress 300 -work work ../src/").append(componentName)
+            .append(".vhdl");
         comp_files.append(System.getProperty("line.separator"));
       }
     }

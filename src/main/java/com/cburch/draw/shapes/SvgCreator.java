@@ -94,7 +94,7 @@ public class SvgCreator {
     boolean first = true;
     for (Handle h : poly.getHandles(null)) {
       if (!first) points.append(" ");
-      points.append(h.getX() + "," + h.getY());
+      points.append(h.getX()).append(",").append(h.getY());
       first = false;
     }
     elt.setAttribute("points", points.toString());

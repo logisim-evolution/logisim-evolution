@@ -240,7 +240,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         StringBuffer s = new StringBuffer();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
-          s.append("\n"+exe.getErrorMessage());
+          s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(null,s.toString(),
               SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();

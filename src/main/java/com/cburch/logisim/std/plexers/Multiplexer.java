@@ -124,8 +124,7 @@ public class Multiplexer extends InstanceFactory {
     StringBuffer CompleteName = new StringBuffer();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
-    CompleteName.append(
-        "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+    CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
     return CompleteName.toString();
   }
 

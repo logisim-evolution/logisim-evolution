@@ -80,10 +80,9 @@ public class StringUtil {
 
   public static String toHexString(int bits, long value) {
     if (bits < 64) value &= (1L << bits) - 1;
-    String ret = Long.toHexString(value);
     int len = (bits + 3) / 4;
-    while (ret.length() < len) ret = "0" + ret;
-    if (ret.length() > len) ret = ret.substring(ret.length() - len);
+    String ret = String.format("%0" + len + "x", value);
+    if (ret.length() > len) return ret.substring(ret.length() - len);
     return ret;
   }
 
