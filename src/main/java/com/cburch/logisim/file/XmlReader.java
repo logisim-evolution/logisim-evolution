@@ -637,9 +637,7 @@ class XmlReader {
 
     List<String> initialLabels = getXMLLabels(root, nodeType, attrType);
 
-    Iterator<String> iterator = initialLabels.iterator();
-    while (iterator.hasNext()) {
-      String label = iterator.next();
+    for (String label : initialLabels) {
       if (!validLabels.containsKey(label)) {
         // Check if the name is invalid, in which case create
         // a valid version and put it in the map

@@ -1050,9 +1050,7 @@ public class Netlist implements CircuitListener {
      * In this round we only process the evident splitters and remove them
      * from the list
      */
-    Iterator<Component> MySplitters = MyComplexSplitters.iterator();
-    while (MySplitters.hasNext()) {
-      Component com = MySplitters.next();
+    for (Component com : MyComplexSplitters) {
       /*
        * Currently by definition end(0) is the combined end of the
        * splitter
@@ -1094,7 +1092,7 @@ public class Netlist implements CircuitListener {
       }
       boolean unconnectedEnds = false;
       boolean connectedUnknownEnds = false;
-      SplitterAttributes sattrs = (SplitterAttributes)com.getAttributeSet();
+      SplitterAttributes sattrs = (SplitterAttributes) com.getAttributeSet();
       for (int i = 1; i < ends.size(); i++) {
         int ConnectedNet = Connections.get(i - 1);
         if (ConnectedNet >= 0) {
@@ -1132,8 +1130,8 @@ public class Netlist implements CircuitListener {
                 S.get("NetList_NoEndSplitterConnections"),
                 SimpleDRCContainer.LEVEL_SEVERE,
                 SimpleDRCContainer.MARK_INSTANCE);
-         warn.AddMarkComponent(com);
-         Reporter.AddWarning(warn);
+        warn.AddMarkComponent(com);
+        Reporter.AddWarning(warn);
       }
     }
     if (progress != null) {
