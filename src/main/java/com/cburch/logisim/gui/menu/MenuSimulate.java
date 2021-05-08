@@ -38,7 +38,6 @@ import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;

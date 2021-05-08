@@ -32,8 +32,6 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ElfHeader {

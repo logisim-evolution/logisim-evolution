@@ -37,7 +37,6 @@ import com.cburch.logisim.gui.log.SignalInfo;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
-
 import javax.swing.SwingUtilities;
 
 public class Simulator {

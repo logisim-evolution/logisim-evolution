@@ -28,13 +28,12 @@
 
 package com.cburch.logisim.gui.log;
 
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.ArrayList;
-
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Value;
 
 public class Signal {
 

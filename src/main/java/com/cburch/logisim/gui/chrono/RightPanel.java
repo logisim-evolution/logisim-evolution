@@ -30,6 +30,9 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.log.Model;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,7 +48,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -54,10 +56,6 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.cburch.logisim.gui.log.Model;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class RightPanel extends JPanel {
 

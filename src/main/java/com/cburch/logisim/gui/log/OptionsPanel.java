@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.comp.ComponentEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -43,7 +44,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.text.ParseException;
 import java.util.Arrays;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -67,8 +67,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
-
-import com.cburch.logisim.comp.ComponentEvent;
 
 class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, Model.Listener {
 

@@ -30,8 +30,10 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.gui.log.SelectionPanel;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.gui.log.SignalInfo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -39,11 +41,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-
-import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.gui.log.SelectionPanel;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.gui.log.SignalInfo;
 
 public class PopupMenu extends MouseAdapter {
 

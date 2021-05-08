@@ -29,7 +29,6 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;

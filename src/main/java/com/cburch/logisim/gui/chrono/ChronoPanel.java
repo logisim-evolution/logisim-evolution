@@ -30,6 +30,17 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.draw.toolbar.Toolbar;
+import com.cburch.logisim.gui.log.LogFrame;
+import com.cburch.logisim.gui.log.LogPanel;
+import com.cburch.logisim.gui.log.Model;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.gui.log.SignalInfo;
+import com.cburch.logisim.gui.main.SimulationToolbarModel;
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.PrintHandler;
+import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -46,7 +57,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Box;
@@ -60,20 +70,6 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.logisim.gui.log.LogFrame;
-import com.cburch.logisim.gui.log.LogPanel;
-import com.cburch.logisim.gui.log.Model;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.gui.log.SignalInfo;
-import com.cburch.logisim.gui.main.SimulationToolbarModel;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.PrintHandler;
-import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.gui.menu.EditHandler;
 
 
 public class ChronoPanel extends LogPanel implements Model.Listener {
