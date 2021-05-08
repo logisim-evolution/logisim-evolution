@@ -205,14 +205,14 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
 
     HashSet<Library> changes = new HashSet<>(old.getLibraries());
-    changes.removeAll(base.getLibraries());
+    base.getLibraries().forEach(changes::remove);
     for (Library lib : changes) {
       fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);
     }
 
     changes.clear();
     changes.addAll(base.getLibraries());
-    changes.removeAll(old.getLibraries());
+    old.getLibraries().forEach(changes::remove);
     for (Library lib : changes) {
       fireLibraryEvent(LibraryEvent.ADD_LIBRARY, lib);
     }

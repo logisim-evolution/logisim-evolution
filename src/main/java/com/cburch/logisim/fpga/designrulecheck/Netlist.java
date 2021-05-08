@@ -2040,12 +2040,12 @@ public class Netlist implements CircuitListener {
             boolean HasSink = false;
             ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
             HasSink |= !Sinks.isEmpty();
-            MySinks.removeAll(Sinks);
+            Sinks.forEach(MySinks::remove);
             ArrayList<ConnectionPoint> HiddenSinkNets =
                 GetHiddenSinks(
                     ThisNet, (byte) i, MyComplexSplitters, new HashSet<>(), true);
             HasSink |= !HiddenSinkNets.isEmpty();
-            MySinks.removeAll(HiddenSinkNets);
+            HiddenSinkNets.forEach(MySinks::remove);
             if (!HasSink) {
               SimpleDRCContainer warn =
                   new SimpleDRCContainer(

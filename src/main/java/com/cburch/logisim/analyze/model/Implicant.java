@@ -284,7 +284,7 @@ public class Implicant implements Comparable<Implicant> {
   }
 
   static final Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
-  static final List<Implicant> MINIMAL_LIST = Arrays.asList(MINIMAL_IMPLICANT);
+  static final List<Implicant> MINIMAL_LIST = Collections.singletonList(MINIMAL_IMPLICANT);
 
   final int unknowns, values;
 
