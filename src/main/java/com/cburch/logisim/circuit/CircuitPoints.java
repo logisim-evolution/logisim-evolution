@@ -199,9 +199,7 @@ class CircuitPoints {
   }
 
   boolean hasConflict(Component comp) {
-    if (comp instanceof Wire) {
-      return false;
-    } else {
+    if (!(comp instanceof Wire)) {
       for (EndData endData : comp.getEnds()) {
         if (endData != null
             && endData.isExclusive()
@@ -209,8 +207,8 @@ class CircuitPoints {
           return true;
         }
       }
-      return false;
     }
+    return false;
   }
 
   void remove(Component comp) {

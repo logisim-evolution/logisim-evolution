@@ -141,12 +141,11 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     if (!neg_active) {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawLine(x, y + 70, x + 9, y + 70);
-      GraphicsUtil.switchToWidth(g, 1);
     } else {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawOval(x, y + 65, 10, 10);
-      GraphicsUtil.switchToWidth(g, 1);
     }
+    GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void DrawRegisterClassic(InstancePainter painter) {

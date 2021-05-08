@@ -359,13 +359,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName + TheNets.GetNetId(ThisNet));
             }
+            String line;
             if (HDLType.equals(VHDL)) {
-              String line = "   " + OneLine + ";";
-              if (!Contents.contains(line)) Contents.add(line);
+              line = "   " + OneLine + ";";
             } else {
-              String line = "   assign " + OneLine + ";";
-              if (!Contents.contains(line)) Contents.add(line);
+              line = "   assign " + OneLine + ";";
             }
+            if (!Contents.contains(line)) Contents.add(line);
           }
         }
       }

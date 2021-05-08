@@ -154,10 +154,8 @@ public class GraphicsUtil {
       ((Graphics2D) g).setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
       ((Graphics2D) g).setPaint(fg);
-      g.drawString(text, bd.x, bd.y + tm.ascent);
-    } else {
-      g.drawString(text, bd.x, bd.y + tm.ascent);
     }
+    g.drawString(text, bd.x, bd.y + tm.ascent);
   }
 
   public static void outlineText(Graphics g, String text, int x, int y, Color fg, Color bg) {

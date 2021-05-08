@@ -338,7 +338,6 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "                        s_stage_0_shiftin&DataA("
               + (NrOfBits - 1)
               + " DOWNTO 1);");
-      Contents.add("");
     } else {
       Contents.add(
           "   s_stage_"
@@ -401,8 +400,8 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + " DOWNTO "
               + nr_of_bits_to_shift
               + " );");
-      Contents.add("");
     }
+    Contents.add("");
     return Contents;
   }
 

@@ -56,7 +56,6 @@ public class RGBLedShape extends LedShape {
       g.setColor(Color.lightGray);
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
-      g.drawOval(x, y, w, h);
     } else {
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
@@ -69,8 +68,8 @@ public class RGBLedShape extends LedShape {
       g.setColor(new Color(red, green, blue));
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);
-      g.drawOval(x, y, w, h);
     }
+    g.drawOval(x, y, w, h);
     drawLabel(g);
   }
 

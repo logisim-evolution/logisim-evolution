@@ -70,9 +70,7 @@ public class Poly extends FillableCanvasObject {
   public Handle canDeleteHandle(Location loc) {
     int minHandles = closed ? 3 : 2;
     Handle[] hs = handles;
-    if (hs.length <= minHandles) {
-      return null;
-    } else {
+    if (hs.length > minHandles) {
       int qx = loc.getX();
       int qy = loc.getY();
       int w = Math.max(Line.ON_LINE_THRESH, getStrokeWidth() / 2);
@@ -83,8 +81,8 @@ public class Poly extends FillableCanvasObject {
           return h;
         }
       }
-      return null;
     }
+    return null;
   }
 
   @Override

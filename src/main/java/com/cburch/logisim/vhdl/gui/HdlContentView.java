@@ -190,11 +190,10 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
     if (lang.equals("vhdl")) {
       ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new VhdlSyntax());
-      editor.setCodeFoldingEnabled(true);
     } else {
       editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_DELPHI);
-      editor.setCodeFoldingEnabled(true);
     }
+    editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(this);
 

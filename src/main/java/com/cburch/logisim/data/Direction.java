@@ -84,7 +84,6 @@ public class Direction implements AttributeOptionInterface {
     if (this == Direction.EAST) return Direction.SOUTH;
     if (this == Direction.WEST) return Direction.NORTH;
     if (this == Direction.NORTH) return Direction.EAST;
-    if (this == Direction.SOUTH) return Direction.WEST;
     return Direction.WEST;
   }
 

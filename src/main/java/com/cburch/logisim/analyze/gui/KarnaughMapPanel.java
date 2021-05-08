@@ -506,21 +506,22 @@ public class KarnaughMapPanel extends JPanel
       return;
     }
 
+    int x;
+    int y;
     if (KMapLined) {
-      int x = KLinedInfo.getXOffset();
-      int y = KLinedInfo.getYOffset();
+      x = KLinedInfo.getXOffset();
+      y = KLinedInfo.getYOffset();
       drawLinedHeader(g2, x, y);
       x += KLinedInfo.getHeaderHeight() + 11;
       y += KLinedInfo.getHeaderHeight() + 11;
-      PaintKMap(g2, x, y, table);
     } else {
-      int x = KNumberedInfo.getXOffset();
-      int y = KNumberedInfo.getYOffset();
+      x = KNumberedInfo.getXOffset();
+      y = KNumberedInfo.getYOffset();
       drawNumberedHeader(g2, x, y);
       x += KNumberedInfo.getHeaderWidth() + cellWidth;
       y += KNumberedInfo.getHeaderHeight() + cellHeight;
-      PaintKMap(g2, x, y, table);
     }
+    PaintKMap(g2, x, y, table);
     if (!selectionBlock)
       return;
     Expression expr = kMapGroups.GetHighlightedExpression();

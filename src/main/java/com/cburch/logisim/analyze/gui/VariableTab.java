@@ -453,12 +453,11 @@ public class VariableTab extends AnalyzerTab {
       if (row == listCopy.length) {
         list.add(newVar);
         table.changeSelection(row+1, column, false, false);
-        table.grabFocus();
       } else {
         list.replace(oldVar, newVar);
         table.changeSelection(row, column, false, false);
-        table.grabFocus();
       }
+      table.grabFocus();
     }
 
     public Object getValueAt(int row, int col) {

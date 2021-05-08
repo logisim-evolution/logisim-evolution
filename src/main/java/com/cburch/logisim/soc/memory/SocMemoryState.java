@@ -316,12 +316,11 @@ public class SocMemoryState implements SocBusSlaveInterface {
 	    if (bit1 == 1) {
 	      oldData &= 0xFFFF;
 	      mdata <<= 16;
-	      wdata = oldData|mdata;
-	    } else {
+      } else {
 	      oldData = ((oldData >>16)&0xFFFF)<<16;
-	      wdata = oldData|mdata;
-	    }
-	  } else {
+      }
+      wdata = oldData|mdata;
+    } else {
 	    int byte0 = oldData&0xFF;
 	    int byte1 = ((oldData>>8)&0xFF)<<8;
 	    int byte2 = ((oldData>>16)&0xFF)<<16;

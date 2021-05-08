@@ -267,11 +267,10 @@ public class Multiplexer extends InstanceFactory {
     int lean;
     if (inputs == 2) {
       lean = (size == Plexers.SIZE_NARROW ? 7 : 10);
-      Plexers.drawTrapezoid(g, bds, facing, lean);
     } else {
       lean = (size == Plexers.SIZE_NARROW ? 10 : 20);
-      Plexers.drawTrapezoid(g, bds, facing, lean);
     }
+    Plexers.drawTrapezoid(g, bds, facing, lean);
     if (size == Plexers.SIZE_WIDE)
       GraphicsUtil.drawCenteredText(
           g, "MUX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);

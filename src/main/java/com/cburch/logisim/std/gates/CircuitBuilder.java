@@ -675,7 +675,6 @@ public class CircuitBuilder {
 
         // advance y and forbid spine intersections for next pin
         forbiddenYs.addAll(singleInput.ys);
-        curY += MINIMAL_PIN_DISTANCE;
       } else {
         /* first place the input and the splitter */
         String name = inp.name;
@@ -712,8 +711,8 @@ public class CircuitBuilder {
           forbiddenYs.addAll(singleInput.ys);
         }
         busY -= SPLITTER_HEIGHT;
-        curY += MINIMAL_PIN_DISTANCE;
       }
+      curY += MINIMAL_PIN_DISTANCE;
     }
   }
 

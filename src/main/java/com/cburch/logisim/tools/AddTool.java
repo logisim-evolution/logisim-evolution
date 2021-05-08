@@ -340,9 +340,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
 
   public ComponentFactory getFactory() {
     ComponentFactory ret = factory;
-    if (ret != null || sourceLoadAttempted) {
-      return ret;
-    } else {
+    if (ret == null && !sourceLoadAttempted) {
       ret = description.getFactory(descriptionBase);
       if (ret != null) {
         AttributeSet base = getBaseAttributes();
@@ -351,8 +349,8 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
       }
       factory = ret;
       sourceLoadAttempted = true;
-      return ret;
     }
+    return ret;
   }
 
   public ComponentFactory getFactory(boolean forceLoad) {

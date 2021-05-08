@@ -89,7 +89,6 @@ public class LedShape extends DynamicElement {
       g.setColor(offColor);
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
-      g.drawOval(x, y, w, h);
     } else {
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
       Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
@@ -98,8 +97,8 @@ public class LedShape extends DynamicElement {
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);
-      g.drawOval(x, y, w, h);
     }
+    g.drawOval(x, y, w, h);
     drawLabel(g);
   }
 

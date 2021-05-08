@@ -676,7 +676,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
         OneLine.setLength(0);
       }
-      Contents.add("");
     } else {
       OneLine.append("   " + CompName);
       if (!ParameterMap.isEmpty()) {
@@ -749,8 +748,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
-      Contents.add("");
     }
+    Contents.add("");
     return Contents;
   }
 
