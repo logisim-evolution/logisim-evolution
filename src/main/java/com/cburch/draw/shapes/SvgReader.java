@@ -214,7 +214,7 @@ public class SvgReader {
     String fontStyle = elt.getAttribute("font-style");
     String fontWeight = elt.getAttribute("font-weight");
     String fontSize = elt.getAttribute("font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size = Integer.parseInt(fontSize);
@@ -257,7 +257,7 @@ public class SvgReader {
     String fontWeight = elt.getAttribute(prefix + "font-weight");
     if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
     String fontSize = elt.getAttribute(prefix + "font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size =
