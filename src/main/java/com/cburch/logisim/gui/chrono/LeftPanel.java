@@ -238,9 +238,9 @@ public class LeftPanel extends JTable {
       selectAll();
     }
   });
-  actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
-  actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-  actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+  actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
+  actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+  actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
   actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
     public void actionPerformed(ActionEvent e) {
       raiseOrLower(-1);
