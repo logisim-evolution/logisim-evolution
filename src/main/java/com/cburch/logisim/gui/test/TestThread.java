@@ -172,7 +172,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
           if (canceled) return;
           try {
             Thread.sleep(1000);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
         }
         try {

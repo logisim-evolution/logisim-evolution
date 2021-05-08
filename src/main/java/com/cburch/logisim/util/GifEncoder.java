@@ -478,7 +478,7 @@ public class GifEncoder {
     try {
       if (!grabber.grabPixels())
         throw new AWTException(S.get("grabberError") + ": " + grabber.status());
-    } catch (InterruptedException e) {
+    } catch (InterruptedException ignored) {
     }
 
     byte[][] r = new byte[width_][height_];

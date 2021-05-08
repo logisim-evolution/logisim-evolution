@@ -341,7 +341,7 @@ public class SelectionList extends JTable {
           try {
             JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
             newIdx = Math.min(dl.getRow(), logModel.getSignalCount());
-          } catch (ClassCastException e) {
+          } catch (ClassCastException ignored) {
           }
         }
         addOrMove(items, newIdx);

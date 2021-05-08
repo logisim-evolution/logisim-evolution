@@ -190,7 +190,7 @@ class FilePanel extends LogPanel {
             try {
               FileWriter delete = new FileWriter(file);
               delete.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
           } else if (option == 1) {
             // do nothing

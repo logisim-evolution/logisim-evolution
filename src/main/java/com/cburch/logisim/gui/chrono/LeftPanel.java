@@ -426,7 +426,7 @@ public class LeftPanel extends JTable {
           try {
             JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
             newIdx = Math.min(newIdx, dl.getRow());
-          } catch (ClassCastException e) {
+          } catch (ClassCastException ignored) {
           }
         } else {
           int[] sel = getSelectedRows();

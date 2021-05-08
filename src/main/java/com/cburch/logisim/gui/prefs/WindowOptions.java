@@ -169,7 +169,7 @@ class WindowOptions extends OptionsPanel {
     } catch (IllegalAccessException
         | UnsupportedLookAndFeelException
         | InstantiationException
-        | ClassNotFoundException e) {
+        | ClassNotFoundException ignored) {
     }
     previewContainer.repaint();
     previewContainer.revalidate();

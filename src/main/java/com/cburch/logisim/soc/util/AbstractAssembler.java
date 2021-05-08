@@ -333,7 +333,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (label != null && label.startsWith("logisim_label_")) {
               int index = 0;
               try { index = Integer.parseUnsignedInt(label.substring(14)); }
-              catch (NumberFormatException e) {}
+              catch (NumberFormatException ignored) {}
               if (index >= offset) offset = index+1;
             }
           }

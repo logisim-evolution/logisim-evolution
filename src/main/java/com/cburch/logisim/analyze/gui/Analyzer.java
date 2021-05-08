@@ -309,7 +309,7 @@ public class Analyzer extends LFrame.SubWindow {
       try {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
+        } catch (TimeoutException ignored) {
         }
         if (!alreadyFinished) setVisible(true);
         return worker.get();

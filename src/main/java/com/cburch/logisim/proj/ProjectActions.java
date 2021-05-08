@@ -144,7 +144,7 @@ public class ProjectActions {
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     return file;
@@ -174,7 +174,7 @@ public class ProjectActions {
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     return file;
@@ -213,7 +213,7 @@ public class ProjectActions {
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     if (file == null) file = createEmptyFile(loader, null);

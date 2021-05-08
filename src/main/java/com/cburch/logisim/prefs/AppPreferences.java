@@ -154,7 +154,7 @@ public class AppPreferences {
     Preferences p = getPrefs(true);
     try {
       p.clear();
-    } catch (BackingStoreException e) {
+    } catch (BackingStoreException ignored) {
     }
   }
 
@@ -235,7 +235,7 @@ public class AppPreferences {
           if (shouldClear) {
             try {
               p.clear();
-            } catch (BackingStoreException e) {
+            } catch (BackingStoreException ignored) {
             }
           }
           myListener = new MyListener();
@@ -296,7 +296,7 @@ public class AppPreferences {
     try {
       System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
       System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
-    } catch (Exception t) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -322,7 +322,7 @@ public class AppPreferences {
         customTemplateFile = template == null ? null : value;
         customTemplate = template;
         getPrefs().put(TEMPLATE_FILE, value == null ? "" : value.getCanonicalPath());
-      } catch (IOException ex) {
+      } catch (IOException ignored) {
       }
     }
   }
@@ -345,7 +345,7 @@ public class AppPreferences {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();
         component.repaint();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }

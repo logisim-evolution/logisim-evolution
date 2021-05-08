@@ -303,7 +303,7 @@ public class LocaleManager {
     String locs = null;
     try {
       if (settings != null) locs = settings.getString("locales");
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     if (locs == null) return new Locale[] {};
 
@@ -345,19 +345,19 @@ public class LocaleManager {
     if (settings == null) {
       try {
         settings = ResourceBundle.getBundle(dir_name + "/" + SETTINGS_NAME);
-      } catch (java.util.MissingResourceException e) {
+      } catch (java.util.MissingResourceException ignored) {
       }
     }
 
     try {
       loadLocale(Locale.getDefault());
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     try {
       loadLocale(Locale.ENGLISH);
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     Locale[] choices = getLocaleOptions();
     if (choices != null && choices.length > 0) loadLocale(choices[0]);

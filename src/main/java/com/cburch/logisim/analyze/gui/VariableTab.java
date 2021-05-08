@@ -705,7 +705,7 @@ public class VariableTab extends AnalyzerTab {
         try {
           JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
           newIdx = Math.min(dl.getRow(), data.vars.size());
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
       }
 

@@ -286,7 +286,7 @@ public class Simulator {
             else
               wait();
           }
-          catch (InterruptedException e) { } // yes, we swallow the interrupt
+          catch (InterruptedException ignored) { } // yes, we swallow the interrupt
         }
       } while (!ready);
 
@@ -418,7 +418,7 @@ public class Simulator {
 
     try {
       simThread.setPriority(simThread.getPriority() - 1);
-    } catch (IllegalArgumentException | SecurityException e) { }
+    } catch (IllegalArgumentException | SecurityException ignored) { }
 
     simThread.start();
 

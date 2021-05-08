@@ -164,7 +164,7 @@ class TemplateOptions extends OptionsPanel {
             LogisimFile.load(reader2, loader); // to see if OK
             AppPreferences.setTemplateFile(file, template);
             AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
-          } catch (LoaderException ex) {
+          } catch (LoaderException ignored) {
           } catch (IOException ex) {
             OptionPane.showMessageDialog(
                 getPreferencesFrame(),
@@ -174,11 +174,11 @@ class TemplateOptions extends OptionsPanel {
           } finally {
             try {
               if (reader != null) reader.close();
-            } catch (IOException ex) {
+            } catch (IOException ignored) {
             }
             try {
               if (reader != null) reader2.close();
-            } catch (IOException ex) {
+            } catch (IOException ignored) {
             }
           }
         }

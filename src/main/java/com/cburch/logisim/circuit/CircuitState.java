@@ -402,7 +402,7 @@ public class CircuitState implements InstanceData {
           // try again...
           try {
             Thread.sleep(1);
-          } catch (InterruptedException e2) {
+          } catch (InterruptedException ignored) {
           }
           if (i == 0) e.printStackTrace();
         }

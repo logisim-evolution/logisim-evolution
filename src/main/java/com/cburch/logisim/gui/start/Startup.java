@@ -419,7 +419,7 @@ public class Startup implements AWTEventListener {
             try {
               ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
@@ -1069,7 +1069,7 @@ public class Startup implements AWTEventListener {
             container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
             container.revalidate();
             container.repaint();
-          } catch (Exception e) {
+          } catch (Exception ignored) {
           }
         }
         if (container instanceof JOptionPane) {

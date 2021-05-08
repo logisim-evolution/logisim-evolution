@@ -218,6 +218,6 @@ public class ProcessorReadElf {
   private void close() {
     try {
       elfFileStream.close();
-    } catch (IOException e) {}
+    } catch (IOException ignored) {}
   }
 }

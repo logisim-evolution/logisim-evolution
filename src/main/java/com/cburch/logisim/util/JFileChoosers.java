@@ -104,7 +104,7 @@ public class JFileChoosers {
         if (t.getCause() instanceof IOException) {
           try {
             return create();
-          } catch (RuntimeException u) {
+          } catch (RuntimeException ignored) {
           }
         }
         throw t;

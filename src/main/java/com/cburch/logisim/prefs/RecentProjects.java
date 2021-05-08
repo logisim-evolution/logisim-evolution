@@ -91,7 +91,7 @@ class RecentProjects implements PreferenceChangeListener {
       long time = Long.parseLong(encoding.substring(0, semi));
       File file = new File(encoding.substring(semi + 1));
       updateInto(index, time, file);
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignored) {
     }
   }
 
@@ -161,7 +161,7 @@ class RecentProjects implements PreferenceChangeListener {
       try {
         index = Integer.parseInt(rest);
         if (index < 0 || index >= NUM_RECENT) index = -1;
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ignored) {
       }
       if (index >= 0) {
         File oldValue = recentFiles[index];
@@ -203,7 +203,7 @@ class RecentProjects implements PreferenceChangeListener {
     File fileToSave = file;
     try {
       fileToSave = file.getCanonicalFile();
-    } catch (IOException e) {
+    } catch (IOException ignored) {
     }
     long now = System.currentTimeMillis();
     int index = getReplacementIndex(now, fileToSave);

@@ -283,7 +283,7 @@ class XmlReader {
         try {
           Component comp = XmlCircuitReader.getComponent(sub, this, IsHolyCross, IsEvolution);
           if (comp != null) known.put(sub, comp);
-        } catch (XmlReaderException e) {
+        } catch (XmlReaderException ignored) {
         }
       }
       return known;
@@ -1046,7 +1046,7 @@ class XmlReader {
     DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException ex) {
+    } catch (ParserConfigurationException ignored) {
     }
     return builder.parse(is);
   }
@@ -1160,7 +1160,7 @@ class XmlReader {
           int thisLabel = Integer.parseInt(label);
           if (thisLabel > maxLabel) maxLabel = thisLabel;
         }
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ignored) {
       }
     }
 

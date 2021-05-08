@@ -69,7 +69,7 @@ class MacOsAdapter {
                 About.showAboutDialog(null);
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setQuitHandler(
@@ -79,7 +79,7 @@ class MacOsAdapter {
                 response.performQuit();
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setPreferencesHandler(
@@ -88,7 +88,7 @@ class MacOsAdapter {
                 PreferencesFrame.showPreferences();
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setPrintFileHandler(
@@ -99,7 +99,7 @@ class MacOsAdapter {
                 }
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setOpenFileHandler(
@@ -110,7 +110,7 @@ class MacOsAdapter {
                 }
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }

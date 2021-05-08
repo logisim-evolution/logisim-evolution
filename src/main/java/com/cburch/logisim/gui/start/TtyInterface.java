@@ -573,7 +573,7 @@ public class TtyInterface {
               queue.addLast(add);
             }
           }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
       }
     }

@@ -716,7 +716,7 @@ public class Canvas extends JPanel
         while (inPaint) {
           repaintLock.wait();
         }
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ignored) {
       }
     }
   }

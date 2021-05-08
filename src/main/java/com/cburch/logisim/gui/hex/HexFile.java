@@ -295,7 +295,7 @@ public class HexFile {
     } finally {
       try {
         in.close();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -322,7 +322,7 @@ public class HexFile {
     } finally {
       try {
         in.close();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -1736,13 +1736,13 @@ public class HexFile {
             cOut = null;
             o.close();
           }
-        } catch (IOException e2) {
+        } catch (IOException ignored) {
         }
         try {
           OutputStream o = bOut;
           bOut = null;
           o.close();
-        } catch (IOException e2) {
+        } catch (IOException ignored) {
         }
         throw new IOException(S.fmt("hexFileWriteError", e.getMessage()));
       } finally {

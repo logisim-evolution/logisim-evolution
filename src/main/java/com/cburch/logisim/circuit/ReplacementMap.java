@@ -211,7 +211,7 @@ public class ReplacementMap {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (PrintStream p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
         print(p);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     return new String(out.toByteArray(), StandardCharsets.UTF_8);
   }

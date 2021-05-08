@@ -187,7 +187,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       } finally {
         try {
           in.close();
-        } catch (Exception t) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -330,7 +330,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
       try {
         reader.close();
-      } catch (IOException e1) {
+      } catch (IOException ignored) {
       }
       return null;
     }
