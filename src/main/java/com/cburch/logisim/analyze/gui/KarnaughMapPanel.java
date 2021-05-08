@@ -714,7 +714,7 @@ public class KarnaughMapPanel extends JPanel
     int headHeight = KLinedInfo.getHeaderHeight();
     for (int i = 0; i < inputCount; i++) {
       AttributedString header = Styled(model.getInputs().bits.get(i), HeaderFont);
-      Boolean rotated = false;
+      boolean rotated = false;
       int middleOffset = StyledWidth(header, ctx) >> 1;
       int xoffset = headHeight + 11;
       int yoffset = headHeight + 11;

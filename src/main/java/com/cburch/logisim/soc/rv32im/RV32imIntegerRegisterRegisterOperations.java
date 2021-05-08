@@ -94,7 +94,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
                         break;
       case INSTR_XOR  : result = opp1 ^ opp2;
                         break;
-      case INSTR_SRL  : Long val1 = ElfHeader.getLongValue(opp1);
+      case INSTR_SRL  : long val1 = ElfHeader.getLongValue(opp1);
                         val1 >>= (opp2&0x1F);
                         result = ElfHeader.getIntValue(val1);
                         break;

@@ -80,12 +80,12 @@ public class ProcessorReadElf {
       status = ELF_HEADER_ERROR;
       return;
     }
-    Integer arch = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE));
+    int arch = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE));
     if (arch != architecture) {
       status = ARCHITECTURE_ERROR;
       return;
     }
-    Integer type = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_TYPE));
+    int type = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_TYPE));
     if (type != ElfHeader.ET_EXEC) {
       status = NO_EXECUTABLE_ERROR;
       return;

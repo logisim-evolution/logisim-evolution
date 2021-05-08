@@ -271,13 +271,13 @@ public class DigitalOscilloscope extends InstanceFactory {
               && painter.getAttributeValue(VERT_LINE) != NO
               && showclock == 1) { // drawclocknumber
             nck--;
-            Integer cknum =
+            int cknum =
                 ((diagramstate.getclocknumber() - nck) > 0)
                     ? diagramstate.getclocknumber() - nck
                     : 100 + (diagramstate.getclocknumber() - nck - 1);
             g.setColor(painter.getAttributeValue(ATTR_COLOR).darker());
             GraphicsUtil.drawCenteredText(
-                g, cknum.toString(), x + border + 15 * j + 7, y + border + 5);
+                g, Integer.toString(cknum), x + border + 15 * j + 7, y + border + 5);
             if (showclock == 1 && i == 0)
               g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
             else g.setColor(Color.BLACK);

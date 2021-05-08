@@ -249,9 +249,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean HasClock = true;
+    boolean ActiveLow = false;
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";

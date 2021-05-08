@@ -1254,7 +1254,7 @@ public class Netlist implements CircuitListener {
                 }
                 ConnectionPoint SolderPoint = new ConnectionPoint(comp);
                 SolderPoint.SetParrentNet(Rootbus, ConnectedBusIndex);
-                Boolean IsSink = true;
+                boolean IsSink = true;
                 if (!thisnet.hasBitSource(bit)) {
                   if (HasHiddenSource(
                       thisnet,
@@ -1364,7 +1364,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -1620,7 +1620,7 @@ public class Netlist implements CircuitListener {
       return BitIndex;
     }
     Net RootNet = Child.getParent();
-    Byte RootIndex = Child.getBit(BitIndex);
+    byte RootIndex = Child.getBit(BitIndex);
     while (!RootNet.IsRootNet()) {
       RootIndex = RootNet.getBit(RootIndex);
       RootNet = RootNet.getParent();
@@ -1696,7 +1696,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -1793,7 +1793,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -2157,7 +2157,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
         for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
+          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
           if (RootNetBitIndex < 0) {
             Reporter.AddFatalError(
                 "BUG:  Unable to find a root-net bit-index for a normal component\n ==> "
@@ -2222,7 +2222,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
         for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
+          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
           if (RootNetBitIndex < 0) {
             Reporter.AddFatalError(
                 "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> "

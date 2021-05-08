@@ -154,7 +154,7 @@ public class FPGAIOInformationSettingsDialog {
     JPanel InputsPanel = new JPanel();
     JPanel OutputsPanel = new JPanel();
     JPanel IOPanel = new JPanel();
-    Boolean abort = false;
+    boolean abort = false;
     ArrayList<JTextField> rectLocations = new ArrayList<>();
     ArrayList<String> oldInputLocations = new ArrayList<>();
     ArrayList<String> oldOutputLocations = new ArrayList<>();

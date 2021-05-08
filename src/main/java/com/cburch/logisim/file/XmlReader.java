@@ -298,7 +298,7 @@ class XmlReader {
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {
-          Long v;
+          long v;
           try {
             v = Long.parseLong(cmap.getAttribute("vconst"));
           } catch (NumberFormatException e) {

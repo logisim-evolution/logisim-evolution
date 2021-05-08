@@ -315,8 +315,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     int ActiveLevel = 1;
-    Boolean GatedClock = false;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean ActiveLow = false;
     String ClockNetName = GetClockNetName(ComponentInfo, ShiftRegister.CK, Nets);
     if (ClockNetName.isEmpty()) {
       GatedClock = true;
@@ -340,9 +340,9 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean HasClock = true;
+    boolean ActiveLow = false;
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
     String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
@@ -360,7 +360,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     String ClockNetName = GetClockNetName(ComponentInfo, ShiftRegister.CK, Nets);
     GatedClock = ClockNetName.isEmpty();
     ActiveLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
-    Boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD).booleanValue();
+    boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD).booleanValue();
     PortMap.putAll(
         GetNetMap("Reset", true, ComponentInfo, ShiftRegister.CLR, Reporter, HDLType, Nets));
     if (HasClock && !GatedClock) {

@@ -434,7 +434,7 @@ public class ShiftRegister extends InstanceFactory {
     Integer lenObj = painter.getAttributeValue(ATTR_LENGTH);
     int len = lenObj == null ? 8 : lenObj.intValue();
     Boolean parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    Boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
     ShiftRegisterData data = (ShiftRegisterData) painter.getData();
 

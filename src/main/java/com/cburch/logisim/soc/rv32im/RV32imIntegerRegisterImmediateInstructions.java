@@ -114,7 +114,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         break;
       case INSTR_SLLI : result = regVal << immediate;
                         break;
-      case INSTR_SRLI : Long val1 = ElfHeader.getLongValue(regVal);
+      case INSTR_SRLI : long val1 = ElfHeader.getLongValue(regVal);
                         val1 >>= immediate;
                         result = ElfHeader.getIntValue(val1);
                         break;
