@@ -158,6 +158,32 @@ public class Startup implements AWTEventListener {
       startupTemp.doPrintFile(file);
     }
   }
+  
+  private static int parseTtyFormat(String fmt)
+  {
+    switch (fmt) {
+      case "table":
+        return TtyInterface.FORMAT_TABLE;
+      case "speed":
+        return TtyInterface.FORMAT_SPEED;
+      case "tty":
+        return TtyInterface.FORMAT_TTY;
+      case "halt":
+        return TtyInterface.FORMAT_HALT;
+      case "stats":
+        return TtyInterface.FORMAT_STATISTICS;
+      case "binary":
+        return TtyInterface.FORMAT_TABLE_BIN;
+      case "hex":
+        return TtyInterface.FORMAT_TABLE_HEX;
+      case "csv":
+        return TtyInterface.FORMAT_TABLE_CSV;
+      case "tabs":
+        return TtyInterface.FORMAT_TABLE_TABBED;
+      default:
+        return 0;
+    }
+  }
 
   public static Startup parseArgs(String[] args) {
     // see whether we'll be using any graphics
@@ -218,23 +244,11 @@ public class Startup implements AWTEventListener {
           }
           for (String s : fmts) {
             String fmt = s.trim();
-            if (fmt.equals("table")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TABLE;
-            } else if (fmt.equals("speed")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_SPEED;
-            } else if (fmt.equals("tty")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TTY;
-            } else if (fmt.equals("halt")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_HALT;
-            } else if (fmt.equals("stats")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
-            } else if (fmt.equals("binary")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
-            else if (fmt.equals("hex")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
-            else if (fmt.equals("csv")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
-            else if (fmt.equals("tabs")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
-            else {
+            int val = parseTtyFormat(fmt);
+            if (val == 0)
               logger.error("{}", S.get("ttyFormatError"));
-            }
+            else
+              ret.ttyFormat |= val;
           }
         } else {
           logger.error("{}", S.get("ttyFormatError"));

@@ -231,20 +231,25 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals("Done")) {
-      canceled = false;
-      synchronized (lock) {
-        lock.notify();
-      }
-    } else if (e.getActionCommand().equals("Save")) {
-      Save();
-    } else if (e.getActionCommand().equals("Load")) {
-      Load();
-      MappableComponents.markChanged();
-    } else if (e.getActionCommand().equals("Cancel")) {
-      synchronized (lock) {
-        lock.notify();
-      }
+    switch (e.getActionCommand()) {
+      case "Done":
+        canceled = false;
+        synchronized (lock) {
+          lock.notify();
+        }
+        break;
+      case "Save":
+        Save();
+        break;
+      case "Load":
+        Load();
+        MappableComponents.markChanged();
+        break;
+      case "Cancel":
+        synchronized (lock) {
+          lock.notify();
+        }
+        break;
     }
   }
 

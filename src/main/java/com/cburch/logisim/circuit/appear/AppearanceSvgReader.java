@@ -78,26 +78,8 @@ public class AppearanceSvgReader {
       }
       int x = (int) Double.parseDouble(elt.getAttribute("x").trim());
       int y = (int) Double.parseDouble(elt.getAttribute("y").trim());
-      DynamicElement shape;
-      if (name.equals("visible-led")) {
-        shape = new LedShape(x, y, path);
-      } else if (name.equals("visible-rgbled")) {
-        shape = new RGBLedShape(x, y, path);
-      } else if (name.equals("visible-hexdigit")) {
-        shape = new HexDigitShape(x, y, path);
-      } else if (name.equals("visible-sevensegment")) {
-        shape = new SevenSegmentShape(x, y, path);
-      } else if (name.equals("visible-register")) {
-        shape = new RegisterShape(x, y, path);
-      } else if (name.equals("visible-counter")) {
-        shape = new CounterShape(x, y, path);
-      } else if (name.equals("visible-vga")) {
-        shape = new SocVgaShape(x,y,path);
-      } else if (name.equals("visible-soc-cpu")) {
-        shape = new SocCPUShape(x,y,path);
-      } else if (name.equals("visible-tty")) {
-        shape = new TtyShape(x,y,path);
-      } else {
+      DynamicElement shape = getDynamicElement(name, path, x, y);
+      if (shape == null) {
         return null;
       }
       try {
@@ -109,6 +91,32 @@ public class AppearanceSvgReader {
       return shape;
     }
     return SvgReader.createShape(elt);
+  }
+
+  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x,
+      int y) {
+    switch (name) {
+      case "visible-led":
+        return new LedShape(x, y, path);
+      case "visible-rgbled":
+        return new RGBLedShape(x, y, path);
+      case "visible-hexdigit":
+        return new HexDigitShape(x, y, path);
+      case "visible-sevensegment":
+        return new SevenSegmentShape(x, y, path);
+      case "visible-register":
+        return new RegisterShape(x, y, path);
+      case "visible-counter":
+        return new CounterShape(x, y, path);
+      case "visible-vga":
+        return new SocVgaShape(x, y, path);
+      case "visible-soc-cpu":
+        return new SocCPUShape(x, y, path);
+      case "visible-tty":
+        return new TtyShape(x, y, path);
+      default:
+        return null;
+    }
   }
 
   private static Location getLocation(Element elt) {

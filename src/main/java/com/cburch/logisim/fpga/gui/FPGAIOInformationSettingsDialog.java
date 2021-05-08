@@ -170,34 +170,43 @@ public class FPGAIOInformationSettingsDialog {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("inputSize")) {
-              int nr = (int) Inputsize.getSelectedItem();
-              NrOfPins.put(INPUT_ID, nr);
-              PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,InputsPanel,LocInputs,PinLabels,oldInputLocations);
-              selWindow.pack();
-              return;
-            } else if (e.getActionCommand().equals("outputSize")) {
-              int nr = (int) Outputsize.getSelectedItem();
-              NrOfPins.put(OUTPUT_ID, nr);
-              PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,OutputsPanel,LocOutputs,PinLabels,oldOutputLocations);
-              selWindow.pack();
-              return;
-            } else if (e.getActionCommand().equals("ioSize")) {
-              int nr = (int) IOsize.getSelectedItem();
-              NrOfPins.put(IO_ID, nr);
-              PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,IOPanel,LocIOs,PinLabels,oldIOLocations);
-              selWindow.pack();
-              return;
-            } else  if (e.getActionCommand().equals("cancel")) {
-              info.setType(IOComponentTypes.Unknown);
-            } else if (e.getActionCommand().equals("delete")) {
-              info.setToBeDeleted();
+            switch (e.getActionCommand()) {
+              case "inputSize": {
+                int nr = (int) Inputsize.getSelectedItem();
+                NrOfPins.put(INPUT_ID, nr);
+                PinLabels.clear();
+                for (int i = 0; i < nr; i++)
+                  PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
+                buildPinTable(nr, MyType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
+                selWindow.pack();
+                return;
+              }
+              case "outputSize": {
+                int nr = (int) Outputsize.getSelectedItem();
+                NrOfPins.put(OUTPUT_ID, nr);
+                PinLabels.clear();
+                for (int i = 0; i < nr; i++)
+                  PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+                buildPinTable(nr, MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
+                selWindow.pack();
+                return;
+              }
+              case "ioSize": {
+                int nr = (int) IOsize.getSelectedItem();
+                NrOfPins.put(IO_ID, nr);
+                PinLabels.clear();
+                for (int i = 0; i < nr; i++)
+                  PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
+                buildPinTable(nr, MyType, IOPanel, LocIOs, PinLabels, oldIOLocations);
+                selWindow.pack();
+                return;
+              }
+              case "cancel":
+                info.setType(IOComponentTypes.Unknown);
+                break;
+              case "delete":
+                info.setToBeDeleted();
+                break;
             }
             selWindow.setVisible(false);
             selWindow.dispose();
