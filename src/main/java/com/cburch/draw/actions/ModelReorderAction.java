@@ -58,13 +58,7 @@ public class ModelReorderAction extends ModelAction {
       int thisType;
       int from = r.getFromIndex();
       int to = r.getToIndex();
-      if (to < from) {
-        thisType = -1;
-      } else if (to > from) {
-        thisType = 1;
-      } else {
-        thisType = 0;
-      }
+      thisType = Integer.compare(to, from);
       if (typeIndex == 2) {
         typeIndex = thisType;
       } else if (typeIndex != thisType) {

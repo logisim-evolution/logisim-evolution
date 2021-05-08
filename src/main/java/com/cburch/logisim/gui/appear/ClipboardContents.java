@@ -45,7 +45,7 @@ class ClipboardContents {
 
   public ClipboardContents(
       Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {
-    this.onClipboard = Collections.unmodifiableList(new ArrayList<>(onClipboard));
+    this.onClipboard = java.util.List.copyOf(onClipboard);
     this.anchorLocation = anchorLocation;
     this.anchorFacing = anchorFacing;
   }

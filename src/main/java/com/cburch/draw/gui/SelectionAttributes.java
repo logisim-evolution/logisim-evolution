@@ -61,7 +61,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     this.selected = Collections.emptyMap();
     this.selAttrs = new Attribute<?>[0];
     this.selValues = new Object[0];
-    this.attrsView = Collections.unmodifiableList(Arrays.asList(selAttrs));
+    this.attrsView = List.of(selAttrs);
 
     selection.addSelectionListener(listener);
     listener.selectionChanged(null);
@@ -187,7 +187,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
       }
       SelectionAttributes.this.selAttrs = attrs;
       SelectionAttributes.this.selValues = values;
-      SelectionAttributes.this.attrsView = Collections.unmodifiableList(Arrays.asList(attrs));
+      SelectionAttributes.this.attrsView = List.of(attrs);
       fireAttributeListChanged();
     }
 

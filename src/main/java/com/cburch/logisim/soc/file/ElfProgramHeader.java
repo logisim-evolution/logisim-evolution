@@ -59,17 +59,9 @@ public class ElfProgramHeader {
   public final static int PT_HIPROC = 0x7FFFFFFF;
   private static final Map<Integer, String> PT_TYPES;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(PT_NULL, "PT_NULL");
-    aMap.put(PT_LOAD, "PT_LOAD");
-    aMap.put(PT_DYNAMIC, "PT_DYNAMIC");
-    aMap.put(PT_INTERP, "PT_INTERP");
-    aMap.put(PT_NOTE, "PT_NOTE");
-    aMap.put(PT_SHLIB, "PT_SHLIB");
-    aMap.put(PT_PHDR, "PT_PHDR");
-    aMap.put(PT_LOPROC, "PT_LOPROC");
-    aMap.put(PT_HIPROC, "PT_HIPROC");
-    PT_TYPES = Collections.unmodifiableMap(aMap);
+    PT_TYPES = Map.of(PT_NULL, "PT_NULL", PT_LOAD, "PT_LOAD", PT_DYNAMIC, "PT_DYNAMIC", PT_INTERP,
+        "PT_INTERP", PT_NOTE, "PT_NOTE", PT_SHLIB, "PT_SHLIB", PT_PHDR, "PT_PHDR", PT_LOPROC,
+        "PT_LOPROC", PT_HIPROC, "PT_HIPROC");
   }
   
   public final static int PF_X = 1;
@@ -77,11 +69,7 @@ public class ElfProgramHeader {
   public final static int PF_R = 4;
   private static final Map<Integer, String> PF_FLAGS;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(PF_X, "PF_X");
-    aMap.put(PF_W, "PF_W");
-    aMap.put(PF_R, "PF_R");
-    PF_FLAGS = Collections.unmodifiableMap(aMap);
+    PF_FLAGS = Map.of(PF_X, "PF_X", PF_W, "PF_W", PF_R, "PF_R");
   }
   
   

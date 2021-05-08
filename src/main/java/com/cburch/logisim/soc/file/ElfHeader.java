@@ -101,11 +101,7 @@ public class ElfHeader {
   public static final int EM_RISCV = 243;
   private static final Map<Integer, String> ARCHITECTURES;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(EM_OPENRISC, "Open Risc");
-    aMap.put(EM_INTEL_NIOS2, "Nios II");
-    aMap.put(EM_RISCV, "Risc V");
-    ARCHITECTURES = Collections.unmodifiableMap(aMap);
+    ARCHITECTURES = Map.of(EM_OPENRISC, "Open Risc", EM_INTEL_NIOS2, "Nios II", EM_RISCV, "Risc V");
   }
   
   

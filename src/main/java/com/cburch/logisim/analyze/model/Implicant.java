@@ -295,9 +295,7 @@ public class Implicant implements Comparable<Implicant> {
   public int compareTo(Implicant o) {
     if (this.values < o.values) return -1;
     if (this.values > o.values) return 1;
-    if (this.unknowns < o.unknowns) return -1;
-    if (this.unknowns > o.unknowns) return 1;
-    return 0;
+    return Integer.compare(this.unknowns, o.unknowns);
   }
 
   @Override
