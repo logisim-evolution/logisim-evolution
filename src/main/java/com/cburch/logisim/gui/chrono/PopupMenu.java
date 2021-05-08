@@ -55,8 +55,10 @@ public class PopupMenu extends MouseAdapter {
       if (signals.size() > 0) {
         radix = signals.get(0).info.getRadix();
         for (int i = 1; i < signals.size(); i++)
-          if (signals.get(i).info.getRadix() != radix)
+          if (signals.get(i).info.getRadix() != radix) {
             radix = null;
+            break;
+          }
       }
       ButtonGroup g = new ButtonGroup();
       for (RadixOption r : RadixOption.OPTIONS) {

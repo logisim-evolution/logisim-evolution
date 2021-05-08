@@ -309,8 +309,8 @@ public class PlaRomData implements InstanceData {
 
   public void setInputsValue(Value[] inputs) {
     int mininputs = getInputs() < inputs.length ? getInputs() : inputs.length;
-    for (byte i = 0; i < mininputs; i++)
-      this.InputValue[i + getInputs() - mininputs] = inputs[i + inputs.length - mininputs];
+    System.arraycopy(inputs, inputs.length - mininputs, this.InputValue,
+        getInputs() - mininputs, mininputs);
     setAndValue();
     setOutputValue();
   }
@@ -346,12 +346,8 @@ public class PlaRomData implements InstanceData {
       AndValue = new Value[getAnd()];
       OutputValue = new Value[getOutputs()];
       for (byte i = 0; i < minand; i++) {
-        for (byte j = 0; j < mininputs * 2; j++) {
-          InputAnd[i][j] = oldInputAnd[i][j];
-        }
-        for (byte k = 0; k < minoutputs; k++) {
-          AndOutput[i][k] = oldAndOutput[i][k];
-        }
+        System.arraycopy(oldInputAnd[i], 0, InputAnd[i], 0, mininputs * 2);
+        System.arraycopy(oldAndOutput[i], 0, AndOutput[i], 0, minoutputs);
       }
       InitializeInputValue();
       setAndValue();

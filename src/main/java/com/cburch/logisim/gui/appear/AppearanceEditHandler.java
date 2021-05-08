@@ -90,6 +90,7 @@ public class AppearanceEditHandler extends EditHandler
     for (CanvasObject o : sel.getSelected()) {
       if (!(o instanceof AppearanceElement)) {
         selHasRemovable = true;
+        break;
       }
     }
     boolean canRaise;

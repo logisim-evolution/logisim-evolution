@@ -64,7 +64,7 @@ public class TruthTable {
 
     Row(Entry[] entries, int numInputs) {
       inputs = new Entry[numInputs];
-      for (int i = 0; i < numInputs; i++) inputs[i] = entries[i];
+      System.arraycopy(entries, 0, inputs, 0, numInputs);
     }
 
     public int baseIndex() {

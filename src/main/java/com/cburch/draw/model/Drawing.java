@@ -201,6 +201,7 @@ public class Drawing implements CanvasModel {
     for (ReorderRequest r : requests) {
       if (r.getFromIndex() != r.getToIndex()) {
         hasEffect = true;
+        break;
       }
     }
     CanvasModelEvent e = CanvasModelEvent.forReorder(this, requests);

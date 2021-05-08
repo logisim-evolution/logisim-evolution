@@ -267,8 +267,8 @@ public class PLATable {
     }
 
     public void copyFrom(Row other) {
-      for (int i = 0; i < inBits.length; i++) inBits[i] = other.inBits[i];
-      for (int i = 0; i < outBits.length; i++) outBits[i] = other.outBits[i];
+      System.arraycopy(other.inBits, 0, inBits, 0, inBits.length);
+      System.arraycopy(other.outBits, 0, outBits, 0, outBits.length);
       comment = other.comment;
     }
 
