@@ -965,7 +965,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             /* Finally we can put all together */
             StringBuffer Vector = new StringBuffer();
             Vector.append("{");
-            for (int i = NrOfBits; i > 0; i++) {
+            for (int i = NrOfBits; i > 0; i--) {
               Vector.append(SeperateSignals.get(i - 1));
               if (i != 1) {
                 Vector.append(",");
