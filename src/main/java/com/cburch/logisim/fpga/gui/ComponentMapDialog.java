@@ -216,7 +216,7 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
             }
           }
         };
-    t.run();
+    t.start();
     CancelButton.setEnabled(true);
     try {
       t.join();
