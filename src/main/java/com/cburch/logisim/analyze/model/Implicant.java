@@ -376,11 +376,7 @@ public class Implicant implements Comparable<Implicant> {
       int idx = table.getVisibleRowIndex(i);
       int dc = table.getVisibleRowDcMask(i);
       Implicant imp = new Implicant(dc, idx);
-      HashSet<Implicant> region = regions.get(val);
-      if (region == null) {
-        region = new HashSet<>();
-        regions.put(val, region);
-      }
+      HashSet<Implicant> region = regions.computeIfAbsent(val, k -> new HashSet<>());
       region.add(imp);
     }
     // For each region...

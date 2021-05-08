@@ -282,8 +282,8 @@ public class ComponentSelector extends JTable {
         }
         newChildren.add(toAdd);
       }
-      Collections.sort(newChildren, compareNames);
-      Collections.sort(subcircs, compareComponents);
+      newChildren.sort(compareNames);
+      subcircs.sort(compareComponents);
       for (Component c : subcircs) {
         SubcircuitFactory factory = (SubcircuitFactory) c.getFactory();
         Circuit subcirc = factory.getSubcircuit();

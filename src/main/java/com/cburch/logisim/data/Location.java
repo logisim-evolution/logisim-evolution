@@ -184,7 +184,7 @@ public class Location implements Comparable<Location> {
   }
   public static final Comparator<At> CompareHorizontal = new Horizontal();
   public static <T extends At> void sortHorizontal(List<T> list) {
-    Collections.sort(list, CompareHorizontal);
+    list.sort(CompareHorizontal);
   }
 
   // Top before bottom, ties broken left before right, ties broken with hashcode.
@@ -202,6 +202,6 @@ public class Location implements Comparable<Location> {
   }
   public static final Comparator<At> CompareVertical = new Vertical();
   public static <T extends At> void sortVertical(List<T> list) {
-    Collections.sort(list, CompareVertical);
+    list.sort(CompareVertical);
   } 
 }

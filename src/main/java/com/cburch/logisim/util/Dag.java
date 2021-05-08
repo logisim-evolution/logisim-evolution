@@ -144,10 +144,7 @@ public class Dag {
     }
 
     if (n.numPreds > 0) {
-      for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-        Node q = it.next();
-        if (q.succs.remove(n) && q.numPreds == 0 && q.succs.isEmpty()) it.remove();
-      }
+      nodes.values().removeIf(q -> q.succs.remove(n) && q.numPreds == 0 && q.succs.isEmpty());
     }
   }
 }

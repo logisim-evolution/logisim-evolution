@@ -47,11 +47,7 @@ class DrawingOverlaps {
   }
 
   private void addOverlap(CanvasObject a, CanvasObject b) {
-    List<CanvasObject> alist = map.get(a);
-    if (alist == null) {
-      alist = new ArrayList<>();
-      map.put(a, alist);
-    }
+    List<CanvasObject> alist = map.computeIfAbsent(a, k -> new ArrayList<>());
     if (!alist.contains(b)) {
       alist.add(b);
     }

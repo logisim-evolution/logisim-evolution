@@ -131,11 +131,7 @@ public class ArgonXML {
   }
 
   private void addChild(String name, ArgonXML child) {
-    ArrayList<ArgonXML> children = nameChildren.get(name);
-    if (children == null) {
-      children = new ArrayList<>();
-      nameChildren.put(name, children);
-    }
+    ArrayList<ArgonXML> children = nameChildren.computeIfAbsent(name, k -> new ArrayList<>());
     children.add(child);
   }
 

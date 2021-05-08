@@ -378,11 +378,7 @@ class CircuitWires {
       String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
       label = label.trim();
       if (!label.equals("")) {
-        ArrayList<Location> tunnelSet = tunnelSets.get(label);
-        if (tunnelSet == null) {
-          tunnelSet = new ArrayList<>(3);
-          tunnelSets.put(label, tunnelSet);
-        }
+        ArrayList<Location> tunnelSet = tunnelSets.computeIfAbsent(label, k -> new ArrayList<>(3));
         tunnelSet.add(comp.getLocation());
       }
     }

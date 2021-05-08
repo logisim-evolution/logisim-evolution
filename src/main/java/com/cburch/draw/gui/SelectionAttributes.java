@@ -168,12 +168,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
         attrSet.addAll(first.getAttributes());
         while (sit.hasNext()) {
           AttributeSet next = sit.next();
-          for (Iterator<Attribute<?>> ait = attrSet.iterator(); ait.hasNext(); ) {
-            Attribute<?> attr = ait.next();
-            if (!next.containsAttribute(attr)) {
-              ait.remove();
-            }
-          }
+          attrSet.removeIf(attr -> !next.containsAttribute(attr));
         }
       }
 

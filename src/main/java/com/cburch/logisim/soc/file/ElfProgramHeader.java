@@ -133,10 +133,7 @@ public class ElfProgramHeader {
     public String toString() {
       StringBuffer s = new StringBuffer();
       s.append("Program Header Info:\np_type   : ");
-      if (PT_TYPES.containsKey(p_type))
-        s.append(PT_TYPES.get(p_type));
-      else
-        s.append("unknown");
+      s.append(PT_TYPES.getOrDefault(p_type, "unknown"));
       s.append("\np_flags  : ");
       boolean first = true;
       for (int i : PF_FLAGS.keySet()) {
