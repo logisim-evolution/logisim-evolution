@@ -34,7 +34,7 @@ import javax.swing.DefaultListModel;
 
 public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 	
-  public static class MapInfo extends Object {
+  public static class MapInfo {
     private final int pinNr;
     private final MapComponent map;
     

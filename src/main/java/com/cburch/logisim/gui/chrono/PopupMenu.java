@@ -101,8 +101,8 @@ public class PopupMenu extends MouseAdapter {
     }
   }
 
-  private List<Signal> signals;
-  private ChronoPanel chronoPanel;
+  private final List<Signal> signals;
+  private final ChronoPanel chronoPanel;
   
   public PopupMenu(ChronoPanel p, List<Signal> s) {
     chronoPanel = p;

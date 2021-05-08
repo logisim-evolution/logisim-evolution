@@ -51,7 +51,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private static final long serialVersionUID = 1L;
   private LogisimFile file;
   private JTree guiElement = null;
-  private boolean showMouseTools;
+  private final boolean showMouseTools;
 
   ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);

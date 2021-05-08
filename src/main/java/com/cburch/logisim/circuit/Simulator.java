@@ -43,8 +43,10 @@ import javax.swing.SwingUtilities;
 public class Simulator {
 
   public static class Event {
-    private Simulator source;
-    private boolean didTick, didSingleStep, didPropagate;
+    private final Simulator source;
+    private final boolean didTick;
+    private final boolean didSingleStep;
+    private final boolean didPropagate;
 
     public Event(Simulator src, boolean t, boolean s, boolean p) {
       source = src;
@@ -99,7 +101,7 @@ public class Simulator {
   //               stable, then toggleClocks() is also called before step().
   private static class SimThread extends UniquelyNamedThread {
 
-    private Simulator sim;
+    private final Simulator sim;
     private long lastTick = System.nanoTime();
 
     // NOTE: These variables must only be accessed with lock held.
@@ -401,14 +403,14 @@ public class Simulator {
   // Everything below here is invoked and accessed only by the User/GUI thread.
   //
 
-  private SimThread simThread;
+  private final SimThread simThread;
 
   // listeners is protected by a lock because simThread calls the _fire*()
   // methods, but the gui thread can call add/removeSimulateorListener() at any
   // time. Really, the _fire*() methods should be done on the gui thread, I
   // suspect.
-  private ArrayList<Listener> listeners = new ArrayList<>();
-  private Object lock = new Object();
+  private final ArrayList<Listener> listeners = new ArrayList<>();
+  private final Object lock = new Object();
   
   public Simulator() {
     simThread = new SimThread(this);

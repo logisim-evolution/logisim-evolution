@@ -152,9 +152,9 @@ public class LeftPanel extends JTable {
     }
   }
 
-  private ChronoPanel chronoPanel;
+  private final ChronoPanel chronoPanel;
   private Model model;
-  private SignalTableModel tableModel;
+  private final SignalTableModel tableModel;
 
  public LeftPanel(ChronoPanel chronoPanel) {
   this.chronoPanel = chronoPanel;

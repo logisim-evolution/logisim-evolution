@@ -47,9 +47,9 @@ import com.cburch.logisim.util.StringGetter;
 public class ClockSource extends JDialogOk {
 
   private static final long serialVersionUID = 1L;
-  private ComponentSelector selector;
-  private JLabel msgLabel = new JLabel();
-  private StringGetter msg;
+  private final ComponentSelector selector;
+  private final JLabel msgLabel = new JLabel();
+  private final StringGetter msg;
   SignalInfo item;
 
   public ClockSource(StringGetter msg, Circuit circ, boolean requireDriveable) {

@@ -332,7 +332,7 @@ public class ComponentSelector extends JTable {
   // FIXME: And for RAM, the current UI is unworkable unless there are only a
   // very few addresses.
   private class OptionNode extends TreeNode<ComponentNode> {
-    private Object option;
+    private final Object option;
 
     public OptionNode(ComponentNode p, Object o) {
       super(p);
@@ -418,8 +418,8 @@ public class ComponentSelector extends JTable {
   }
 
   private Circuit rootCircuit;
-  private TableTreeModel tableModel = new TableTreeModel();
-  private int mode;
+  private final TableTreeModel tableModel = new TableTreeModel();
+  private final int mode;
 
   public static final int ANY_SIGNAL = 1;
   public static final int OBSERVEABLE_CLOCKS = 2; // only 1-bit signals (pins, wires, clocks, etc.)

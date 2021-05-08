@@ -49,7 +49,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
   private boolean modeDirty = true, headerDirty = true;
   private long lastWrite = 0;
   private long tNextWrite = 0; // done writing up to this time, exclusive
-  private HashMap<Signal, Signal.Iterator> cursors = new HashMap<>();
+  private final HashMap<Signal, Signal.Iterator> cursors = new HashMap<>();
 
   public LogThread(Model model) {
     super("LogThread");

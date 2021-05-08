@@ -103,7 +103,7 @@ public class VhdlSimulatorConsole extends JPanel {
   private final JLabel label = new JLabel();
   private final JScrollPane log = new JScrollPane();
   private final JTextArea logContent = new JTextArea();
-  private VhdlSimState vhdlSimState;
+  private final VhdlSimState vhdlSimState;
 
   private final Project project;
 

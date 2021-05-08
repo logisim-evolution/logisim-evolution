@@ -59,10 +59,10 @@ class TablePanel extends LogPanel {
   private static final int HEADER_SEP = 4;
   private final MyListener myListener = new MyListener();
   private final VerticalScrollBar vsb;
-  private TableView tableview;
+  private final TableView tableview;
   private int cellWidth = 25; // reasonable start values
   private int cellHeight = 15;
-  private int rowCount = 0;
+  private final int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
 

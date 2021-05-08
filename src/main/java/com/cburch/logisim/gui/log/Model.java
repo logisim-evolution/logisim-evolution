@@ -72,13 +72,13 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
   
   CircuitState circuitState;
-  private ArrayList<SignalInfo> info = new ArrayList<>();
-  private ArrayList<Signal> signals = new ArrayList<>();
+  private final ArrayList<SignalInfo> info = new ArrayList<>();
+  private final ArrayList<Signal> signals = new ArrayList<>();
   private long tEnd = -1; // signals go from 0 <= t < tEnd
   private Signal spotlight;
   private SignalInfo clockSource;
   private Value curClockVal;
-  private EventSourceWeakSupport<Listener> listeners = new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<Listener> listeners = new EventSourceWeakSupport<>();
   private boolean fileEnabled = false;
   private File file = null;
   private boolean fileHeader = true;

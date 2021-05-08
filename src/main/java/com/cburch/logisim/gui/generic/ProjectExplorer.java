@@ -462,7 +462,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   }
 
   public static class Event {
-    private TreePath path;
+    private final TreePath path;
     public Event(TreePath p) { path = p; }
     public TreePath getTreePath() { return path; }
     public Object getTarget() {

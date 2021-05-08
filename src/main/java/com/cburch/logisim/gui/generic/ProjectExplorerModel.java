@@ -48,7 +48,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private static final long serialVersionUID = 1L;
   private final JTree GuiElement;
   private Project proj;
-  private boolean showMouseTools;
+  private final boolean showMouseTools;
   
   ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
     super(null);

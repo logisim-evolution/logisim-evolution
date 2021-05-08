@@ -56,7 +56,9 @@ public class SelectionPanel extends LogPanel {
   private static final long serialVersionUID = 1L;
   private final ComponentSelector selector;
   private final SelectionList list;
-  private JLabel selectDesc, exploreLabel, listLabel;
+  private final JLabel selectDesc;
+  private final JLabel exploreLabel;
+  private final JLabel listLabel;
   
   public SelectionPanel(LogFrame window) {
     super(window);

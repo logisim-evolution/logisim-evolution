@@ -66,7 +66,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class LogFrame extends LFrame.SubWindowWithSimulation {
-  private LogMenuListener menuListener;
+  private final LogMenuListener menuListener;
 
   private class MyListener implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
@@ -167,14 +167,14 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private static final long serialVersionUID = 1L;
   private Simulator curSimulator = null;
   private Model curModel;
-  private Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
-  private MyListener myListener = new MyListener();
-  private MyChangeListener myChangeListener = new MyChangeListener();
+  private final Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
+  private final MyListener myListener = new MyListener();
+  private final MyChangeListener myChangeListener = new MyChangeListener();
   
-  private WindowMenuManager windowManager;
-  private LogPanel[] panels;
+  private final WindowMenuManager windowManager;
+  private final LogPanel[] panels;
   // private SelectionPanel selPanel;
-  private JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
 
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;

@@ -68,19 +68,19 @@ public class RightPanel extends JPanel {
   private static final int EXTRA_SPACE = 40;
   private static final int CURSOR_GAP = 20;
   private static final int TIMELINE_SPACING = 80;
-  private ChronoPanel chronoPanel;
+  private final ChronoPanel chronoPanel;
   DefaultListSelectionModel selectionModel;
   private Model model;
-  private ArrayList<Waveform> rows = new ArrayList<>();
+  private final ArrayList<Waveform> rows = new ArrayList<>();
   private int curX = Integer.MAX_VALUE; // pixel coordinate of cursor, or MAX_VALUE to pin at right
   private long curT = Long.MAX_VALUE; // time of cursor, or MAX_VALUE to pin at right
   private int zoom = 20;
   private double tickWidth = 20.0; // display width of one time unit (timeScale simulated nanoseconds)
-  private int slope; // display width of transitions, when duration of signal permits
+  private final int slope; // display width of transitions, when duration of signal permits
   private long tStartDraw = 0; // drawing started at this time, inclusive
   private long tNextDraw = 0; // done drawing up to this time, exclusive 
   private int width, height;
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private Timeline header;
   
   public RightPanel(ChronoPanel p, ListSelectionModel m) {

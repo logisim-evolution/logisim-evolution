@@ -83,10 +83,10 @@ import com.cburch.logisim.instance.StdAttr;
 //
 
 public class SignalInfo implements AttributeListener, CircuitListener, Location.At {
-  private int n;
-  private Component[] path; // n-1 subcircuit Components, then a Loggable Component
-  private Circuit[] circ; // top-level circuit, then circuits for first n-1 path Components
-  private Object option; 
+  private final int n;
+  private final Component[] path; // n-1 subcircuit Components, then a Loggable Component
+  private final Circuit[] circ; // top-level circuit, then circuits for first n-1 path Components
+  private final Object option;
   private RadixOption radix = RadixOption.RADIX_2;
   private String nickname; // short "LogName" of just the last Component of path
   private String fullname; // a path-like name, with slashes, ending with the nickname
