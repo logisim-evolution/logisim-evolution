@@ -150,37 +150,28 @@ public class SelectionList extends JTable {
         radixMenuItems.put(r, m);
         popup.add(m);
         g.add(m);
-        m.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {              
-            for (SignalInfo s : items)
-              logModel.setRadix(s, r);
-            if (item != null)
-              label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
-            SelectionList.this.repaint();
-          }
+        m.addActionListener(e -> {
+          for (SignalInfo s : items)
+            logModel.setRadix(s, r);
+          if (item != null)
+            label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
+          SelectionList.this.repaint();
         });
       }
 
       popup.addSeparator();
       JMenuItem m = new JMenuItem("Delete");
       popup.add(m);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {              
-          cancelCellEditing();
-          removeSelected();
-        }
+      m.addActionListener(e -> {
+        cancelCellEditing();
+        removeSelected();
       });
 
       button.setMargin(new Insets(0, 0, 0, 0));
       button.setHorizontalTextPosition(SwingConstants.LEFT);
       button.setText("Options");
-      button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          popup.show(panel, button.getX(), button.getY() + button.getHeight());
-        }
-      });
+      button.addActionListener(
+          e -> popup.show(panel, button.getX(), button.getY() + button.getHeight()));
       button.setMinimumSize(button.getPreferredSize());
 
       label.setHorizontalAlignment(SwingConstants.LEFT);

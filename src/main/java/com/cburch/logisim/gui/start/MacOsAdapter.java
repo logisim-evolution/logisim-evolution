@@ -64,50 +64,36 @@ class MacOsAdapter {
       Desktop dt = Desktop.getDesktop();
       try {
         dt.setAboutHandler(
-            new AboutHandler() {
-              public void handleAbout(AboutEvent e) {
-                About.showAboutDialog(null);
-              }
-            });
+            e -> About.showAboutDialog(null));
       } catch (Exception ignored) {
       }
       try {
         dt.setQuitHandler(
-            new QuitHandler() {
-              public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
-                ProjectActions.doQuit();
-                response.performQuit();
-              }
+            (e, response) -> {
+              ProjectActions.doQuit();
+              response.performQuit();
             });
       } catch (Exception ignored) {
       }
       try {
         dt.setPreferencesHandler(
-            new PreferencesHandler() {
-              public void handlePreferences(PreferencesEvent e) {
-                PreferencesFrame.showPreferences();
-              }
-            });
+            e -> PreferencesFrame.showPreferences());
       } catch (Exception ignored) {
       }
       try {
         dt.setPrintFileHandler(
-            new PrintFilesHandler() {
-              public void printFiles(PrintFilesEvent e) {
-                for (File f : e.getFiles()) {
-                  Startup.doPrint(f);
-                }
+            e -> {
+              for (File f : e.getFiles()) {
+                Startup.doPrint(f);
               }
             });
       } catch (Exception ignored) {
       }
       try {
         dt.setOpenFileHandler(
-            new OpenFilesHandler() {
-              public void openFiles(OpenFilesEvent e) {
-                for (File f : e.getFiles()) {
-                  Startup.doOpen(f);
-                }
+            e -> {
+              for (File f : e.getFiles()) {
+                Startup.doOpen(f);
               }
             });
       } catch (Exception ignored) {

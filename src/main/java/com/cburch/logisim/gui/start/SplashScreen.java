@@ -128,11 +128,9 @@ public class SplashScreen extends JWindow implements ActionListener {
     final Marker marker = markers == null ? null : markers[markerId];
     if (marker != null) {
       SwingUtilities.invokeLater(
-          new Runnable() {
-            public void run() {
-              progress.setString(marker.message);
-              progress.setValue(marker.count);
-            }
+          () -> {
+            progress.setString(marker.message);
+            progress.setValue(marker.count);
           });
       if (PRINT_TIMES) {
         logger.info("{} {}", System.currentTimeMillis() - startTime, marker.message);

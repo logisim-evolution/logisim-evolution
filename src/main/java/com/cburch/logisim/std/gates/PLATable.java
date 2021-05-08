@@ -506,49 +506,29 @@ public class PLATable {
       public ButtonPanel(JDialog parent) {
         JButton write = new JButton("Export");
         write.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                write();
-              }
-            });
+            e -> write());
         add(write);
 
         JButton read = new JButton("Import");
         read.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                read();
-              }
-            });
+            e -> read());
         add(read);
 
         JButton ok = new JButton("OK");
         ok.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                close(true);
-              }
-            });
+            e -> close(true));
         parent.getRootPane().setDefaultButton(ok);
         add(ok);
 
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                close(false);
-              }
-            });
+            e -> close(false));
         add(cancel);
 
         parent
             .getRootPane()
             .registerKeyboardAction(
-                new ActionListener() {
-                  public void actionPerformed(ActionEvent e) {
-                    close(false);
-                  }
-                },
+                e -> close(false),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
       }
@@ -607,11 +587,7 @@ public class PLATable {
           JButton rm = new JButton("Remove");
           rm.setFont(AppPreferences.getScaledFont(rm.getFont().deriveFont(smallFont)));
           rm.addActionListener(
-              new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  deleteRow(RowPanel.this);
-                }
-              });
+              e -> deleteRow(RowPanel.this));
           rm.setMargin(new Insets(0, 0, 0, 0));
           rm.setPreferredSize(
               new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
@@ -686,11 +662,7 @@ public class PLATable {
           JButton more = new JButton("Add Row");
           more.setFont(AppPreferences.getScaledFont(more.getFont().deriveFont(smallFont)));
           more.addActionListener(
-              new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  addRow();
-                }
-              });
+              e -> addRow());
           more.setMargin(new Insets(1, 20, 1, 20));
           add(more);
         }

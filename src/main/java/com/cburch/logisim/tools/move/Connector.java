@@ -342,14 +342,12 @@ class Connector {
    * we are moving that gate northeast, we prefer to connect the inputs from the bottom up.
    */
   private static void sortConnects(ArrayList<ConnectionData> connects, final int dx, final int dy) {
-    connects.sort(new Comparator<ConnectionData>() {
-      public int compare(ConnectionData ac, ConnectionData bc) {
-        Location a = ac.getLocation();
-        Location b = bc.getLocation();
-        int abx = a.getX() - b.getX();
-        int aby = a.getY() - b.getY();
-        return abx * dx + aby * dy;
-      }
+    connects.sort((ac, bc) -> {
+      Location a = ac.getLocation();
+      Location b = bc.getLocation();
+      int abx = a.getX() - b.getX();
+      int aby = a.getY() - b.getY();
+      return abx * dx + aby * dy;
     });
   }
 

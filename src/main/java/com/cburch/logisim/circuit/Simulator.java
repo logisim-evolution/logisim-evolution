@@ -388,12 +388,8 @@ public class Simulator {
             _manualStepsRequested = 0;
             _nudgeRequested = false;
           }
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                  OptionPane.showMessageDialog(
-                      null, "The simulator has crashed. Save your work and restart Logisim.");
-            }
-          });
+          SwingUtilities.invokeLater(() -> OptionPane.showMessageDialog(
+              null, "The simulator has crashed. Save your work and restart Logisim."));
         }
       }
     }

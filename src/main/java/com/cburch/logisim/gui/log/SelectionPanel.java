@@ -118,26 +118,12 @@ public class SelectionPanel extends LogPanel {
     delArrow.setContentAreaFilled(false);
     addArrow.setEnabled(false);
     delArrow.setEnabled(false);
-    selector.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty());
-      }
-    });
-    list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty());
-      }
-    });
-    addArrow.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        list.add(selector.getSelectedItems());
-      }
-    });
-    delArrow.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        list.removeSelected();
-      }
-    });
+    selector.getSelectionModel().addListSelectionListener(
+        e -> addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty()));
+    list.getSelectionModel().addListSelectionListener(
+        e -> delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty()));
+    addArrow.addActionListener(e -> list.add(selector.getSelectedItems()));
+    delArrow.addActionListener(e -> list.removeSelected());
 
     Box arrowBox = new Box(BoxLayout.Y_AXIS);
     arrowBox.add(addArrow);

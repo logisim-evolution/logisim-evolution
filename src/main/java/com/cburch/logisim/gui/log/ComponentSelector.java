@@ -62,25 +62,17 @@ import com.cburch.logisim.std.wiring.Pin;
 public class ComponentSelector extends JTable {
   private static final long serialVersionUID = 1L;
 
-  static final Comparator<Component> compareComponents = new Comparator<Component>() {
-    @Override
-    public int compare(Component a, Component b) {
-      String aName = a.getFactory().getDisplayName();
-      String bName = b.getFactory().getDisplayName();
-      int ret = aName.compareToIgnoreCase(bName);
-      if (ret != 0)
-        return ret;
-      return a.getLocation().toString().compareTo(
-          b.getLocation().toString());
-    }
+  static final Comparator<Component> compareComponents = (a, b) -> {
+    String aName = a.getFactory().getDisplayName();
+    String bName = b.getFactory().getDisplayName();
+    int ret = aName.compareToIgnoreCase(bName);
+    if (ret != 0)
+      return ret;
+    return a.getLocation().toString().compareTo(
+        b.getLocation().toString());
   };
 
-  static final Comparator<Object> compareNames = new Comparator<Object>() {
-    @Override
-    public int compare(Object a, Object b) {
-      return a.toString().compareToIgnoreCase(b.toString());
-    }
-  };
+  static final Comparator<Object> compareNames = (a, b) -> a.toString().compareToIgnoreCase(b.toString());
 
   static class TableTreeModel extends AbstractTableModel {
     TreeNode<CircuitNode> root;

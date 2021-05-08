@@ -68,12 +68,9 @@ public class PopupMenu extends MouseAdapter {
         g.add(m);
         if (r == radix)
           m.setSelected(true);
-        m.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {              
-            for (Signal s : signals)
-              s.info.setRadix(r);
-          }
+        m.addActionListener(e -> {
+          for (Signal s : signals)
+            s.info.setRadix(r);
         });
       }
       JMenuItem m;
@@ -81,24 +78,16 @@ public class PopupMenu extends MouseAdapter {
       m = new JMenuItem(S.get("editClearItem"));
       add(m);
       m.setEnabled(signals.size() > 0);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {              
-          SignalInfo.List items = new SignalInfo.List();
-          for (Signal s : signals)
-            items.add(s.info);
-          chronoPanel.getModel().remove(items);
-        }
+      m.addActionListener(e -> {
+        SignalInfo.List items = new SignalInfo.List();
+        for (Signal s : signals)
+          items.add(s.info);
+        chronoPanel.getModel().remove(items);
       });
       addSeparator();
       m = new JMenuItem(S.get("addRemoveSignals"));
       add(m);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          SelectionPanel.doDialog(chronoPanel.getLogFrame());
-        }
-      });
+      m.addActionListener(e -> SelectionPanel.doDialog(chronoPanel.getLogFrame()));
 
     }
   }

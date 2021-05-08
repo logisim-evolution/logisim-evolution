@@ -148,61 +148,56 @@ public class TclWrapper {
 
     /* This thread checks the wrapper started well, it's run from now */
     new Thread(
-            new Runnable() {
+        () -> {
+          /* Through this we can get the process output */
+          BufferedReader reader =
+              new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String line;
+          try {
+            StringBuilder errorMessage = new StringBuilder();
 
-              @Override
-              public void run() {
-                /* Through this we can get the process output */
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                try {
-                  StringBuilder errorMessage = new StringBuilder();
+            /* Here we check that the wrapper has correctly started */
+            while ((line = reader.readLine()) != null) {
 
-                  /* Here we check that the wrapper has correctly started */
-                  while ((line = reader.readLine()) != null) {
+              errorMessage.append("\n").append(line);
+              if (line.contains("TCL_WRAPPER_RUNNING")) {
 
-                    errorMessage.append("\n").append(line);
-                    if (line.contains("TCL_WRAPPER_RUNNING")) {
+                new Thread(
+                    () -> {
+                      Scanner sc =
+                          new Scanner(new InputStreamReader(process.getInputStream()));
+                      // Commented out because it shouldn't be
+                      // visible to the user
+                      // Debug only??
+                      String nextLine;
+                      while (sc.hasNextLine()) {
+                        nextLine = sc.nextLine();
+                        if (nextLine.length() > 0)
+                          System.out.println(nextLine);
+                      }
 
-                      new Thread(
-                              new Runnable() {
-                                public void run() {
-                                  Scanner sc =
-                                      new Scanner(new InputStreamReader(process.getInputStream()));
-                                  // Commented out because it shouldn't be
-                                  // visible to the user
-                                  // Debug only??
-                                  String nextLine;
-                                  while (sc.hasNextLine()) {
-                                    nextLine = sc.nextLine();
-                                    if (nextLine.length() > 0) System.out.println(nextLine);
-                                  }
+                      sc.close();
+                      stop();
+                    })
+                    .start();
 
-                                  sc.close();
-                                  stop();
-                                }
-                              })
-                          .start();
+                tclConsole.tclWrapperStartCallback();
 
-                      tclConsole.tclWrapperStartCallback();
+                state = TclWrapperState.RUNNING;
 
-                      state = TclWrapperState.RUNNING;
-
-                      return;
-                    }
-                  }
-
-                  MessageBox userInfoBox =
-                      new MessageBox(
-                          "Error starting TCL wrapper", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
-                  userInfoBox.show();
-
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
+                return;
               }
-            })
+            }
+
+            MessageBox userInfoBox =
+                new MessageBox(
+                    "Error starting TCL wrapper", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
+            userInfoBox.show();
+
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        })
         .start();
   }
 

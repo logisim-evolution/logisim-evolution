@@ -205,13 +205,11 @@ public class LeftPanel extends JTable {
   });
 
   getSelectionModel().addListSelectionListener(
-    new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
+      e -> {
         int a = e.getFirstIndex();
         int b = e.getLastIndex();
         chronoPanel.getRightPanel().updateSelected(a, b);
-      }
-    });
+      });
   setDragEnabled(true);
   setDropMode(DropMode.INSERT_ROWS);
   TransferHandler ccp = new SignalTransferHandler();

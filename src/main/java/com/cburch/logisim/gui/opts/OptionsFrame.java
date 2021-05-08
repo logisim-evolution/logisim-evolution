@@ -65,13 +65,10 @@ public class OptionsFrame extends LFrame.Dialog {
   public OptionsFrame(Project project) {
     super(project);
     project.addLibraryListener(myListener);
-    project.addProjectListener(new ProjectListener() {
-      @Override
-      public void projectChanged(ProjectEvent event) {
-        int action = event.getAction();
-        if (action == ProjectEvent.ACTION_SET_STATE) {
-          computeTitle();
-        }
+    project.addProjectListener(event -> {
+      int action = event.getAction();
+      if (action == ProjectEvent.ACTION_SET_STATE) {
+        computeTitle();
       }
     });
     panels =

@@ -113,28 +113,26 @@ class XmlWriter {
   }
 
   static final Comparator<Node> nodeComparator =
-      new Comparator<Node>() {
-        public int compare(Node a, Node b) {
-          String na = a.getNodeName();
-          String nb = b.getNodeName();
-          int c = stringCompare(na, nb);
-          if (c != 0) return c;
-          String ma = attrsToString(a.getAttributes());
-          String mb = attrsToString(b.getAttributes());
-          c = stringCompare(ma, mb);
-          if (c != 0) return c;
-          String va = a.getNodeValue();
-          String vb = b.getNodeValue();
-          c = stringCompare(va, vb);
-          return c;
-          // This can happen in some cases, e.g. two text components
-          // on top of each other. But it seems rare enough to not
-          // worry about, since our normalization here is just for
-          // ease of comparing circ files during testing.
-          // System.out.printf("sorts equal:\n");
-          // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
-          // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-        }
+      (a, b) -> {
+        String na = a.getNodeName();
+        String nb = b.getNodeName();
+        int c = stringCompare(na, nb);
+        if (c != 0) return c;
+        String ma = attrsToString(a.getAttributes());
+        String mb = attrsToString(b.getAttributes());
+        c = stringCompare(ma, mb);
+        if (c != 0) return c;
+        String va = a.getNodeValue();
+        String vb = b.getNodeValue();
+        c = stringCompare(va, vb);
+        return c;
+        // This can happen in some cases, e.g. two text components
+        // on top of each other. But it seems rare enough to not
+        // worry about, since our normalization here is just for
+        // ease of comparing circ files during testing.
+        // System.out.printf("sorts equal:\n");
+        // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
+        // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
       };
 
   static void sort(Node top) {

@@ -617,11 +617,7 @@ class CircuitWires {
       try {
         final BundleMap[] ret = new BundleMap[1];
         SwingUtilities.invokeAndWait(
-            new Runnable() {
-              public void run() {
-                ret[0] = getBundleMap();
-              }
-            });
+            () -> ret[0] = getBundleMap());
         return ret[0];
       } catch (Exception e) {
         BundleMap ret = new BundleMap();

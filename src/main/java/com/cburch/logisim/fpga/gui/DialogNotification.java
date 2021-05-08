@@ -57,11 +57,7 @@ public class DialogNotification {
     JLabel message = new JLabel(string);
     JButton close = new JButton(S.get("FpgaBoardClose"));
     ActionListener actionListener =
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dialog.dispose();
-          }
-        };
+        e -> dialog.dispose();
     close.addActionListener(actionListener);
 
     c.gridx = 0;

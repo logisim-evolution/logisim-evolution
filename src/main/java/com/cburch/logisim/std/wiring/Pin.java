@@ -123,17 +123,9 @@ public class Pin extends InstanceFactory {
       ok = new JButton(S.get("PinOkay"));
       cancel = new JButton(S.get("PinCancel"));
       ok.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              accept();
-            }
-          });
+          e -> accept());
       cancel.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              EditDecimal.this.setVisible(false);
-            }
-          });
+          e -> EditDecimal.this.setVisible(false));
       addWindowFocusListener(
           new WindowFocusListener() {
             public void windowLostFocus(WindowEvent e) {

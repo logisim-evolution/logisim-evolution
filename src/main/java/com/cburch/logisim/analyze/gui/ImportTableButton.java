@@ -55,11 +55,7 @@ public class ImportTableButton extends JButton {
     this.parent = parent;
     this.model = model;
     addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            doLoad();
-          }
-        });
+        event -> doLoad());
   }
 
   void localeChanged() {

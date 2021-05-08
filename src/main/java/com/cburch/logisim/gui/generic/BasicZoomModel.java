@@ -127,12 +127,7 @@ public class BasicZoomModel implements ZoomModel {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       SwingUtilities.invokeLater(
-          new Runnable() {
-            @Override
-            public void run() {
-              support.firePropertyChange(ZoomModel.CENTER, oldValue, value);
-            }
-          });
+          () -> support.firePropertyChange(ZoomModel.CENTER, oldValue, value));
     }
   }
 }

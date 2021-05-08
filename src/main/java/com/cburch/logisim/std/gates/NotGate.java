@@ -168,14 +168,12 @@ class NotGate extends InstanceFactory {
   @Override
   protected Object getInstanceFeature(final Instance instance, Object key) {
     if (key == ExpressionComputer.class) {
-      return new ExpressionComputer() {
-        public void computeExpression(ExpressionComputer.Map expressionMap) {
-          int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
-          for (int b = 0; b < width; b++) {
-            Expression e = expressionMap.get(instance.getPortLocation(1), b);
-            if (e != null) {
-              expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
-            }
+      return (ExpressionComputer) expressionMap -> {
+        int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
+        for (int b = 0; b < width; b++) {
+          Expression e = expressionMap.get(instance.getPortLocation(1), b);
+          if (e != null) {
+            expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
           }
         }
       };

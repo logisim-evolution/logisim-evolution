@@ -205,17 +205,15 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   public boolean run() {
     Thread t =
-        new Thread() {
-          public void run() {
-            synchronized (lock) {
-              try {
-                lock.wait();
-              } catch (InterruptedException e) {
-                logger.error("Bug: unable to wait for lock");
-              }
+        new Thread(() -> {
+          synchronized (lock) {
+            try {
+              lock.wait();
+            } catch (InterruptedException e) {
+              logger.error("Bug: unable to wait for lock");
             }
           }
-        };
+        });
     t.start();
     CancelButton.setEnabled(true);
     try {

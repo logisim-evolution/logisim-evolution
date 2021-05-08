@@ -201,11 +201,7 @@ private void resplit() {
   rightScroll.getHorizontalScrollBar().setValue(p);
   
   leftPanel.getSelectionModel().addListSelectionListener(
-    new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        editHandler.computeEnabled();
-      }
-    });
+      e -> editHandler.computeEnabled());
 }
 
 public LeftPanel getLeftPanel() {

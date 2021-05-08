@@ -202,11 +202,7 @@ public class Transistor extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return new WireRepair() {
-        public boolean shouldRepairWire(WireRepairData data) {
-          return true;
-        }
-      };
+      return (WireRepair) data -> true;
     }
     return super.getInstanceFeature(instance, key);
   }

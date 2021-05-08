@@ -55,11 +55,7 @@ public class ExportLatexButton extends JButton {
     this.parent = parent;
     this.model = model;
     addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            doSave();
-          }
-        });
+        event -> doSave());
   }
 
   void localeChanged() {

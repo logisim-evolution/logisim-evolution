@@ -145,11 +145,9 @@ class ControlledBuffer extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return new WireRepair() {
-        public boolean shouldRepairWire(WireRepairData data) {
-          Location port2 = instance.getPortLocation(2);
-          return data.getPoint().equals(port2);
-        }
+      return (WireRepair) data -> {
+        Location port2 = instance.getPortLocation(2);
+        return data.getPoint().equals(port2);
       };
     }
     return super.getInstanceFeature(instance, key);

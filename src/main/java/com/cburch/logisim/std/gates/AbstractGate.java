@@ -296,38 +296,32 @@ abstract class AbstractGate extends InstanceFactory {
   @Override
   protected Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return new WireRepair() {
-        public boolean shouldRepairWire(WireRepairData data) {
-          return AbstractGate.this.shouldRepairWire(instance, data);
-        }
-      };
+      return (WireRepair) data -> AbstractGate.this.shouldRepairWire(instance, data);
     }
     if (key == ExpressionComputer.class) {
-      return new ExpressionComputer() {
-        public void computeExpression(ExpressionComputer.Map expressionMap) {
-          GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
-          int inputCount = attrs.inputs;
-          long negated = attrs.negated;
-          int width = attrs.width.getWidth();
+      return (ExpressionComputer) expressionMap -> {
+        GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
+        int inputCount = attrs.inputs;
+        long negated = attrs.negated;
+        int width = attrs.width.getWidth();
 
-          for (int b = 0; b < width; b++) {
-            Expression[] inputs = new Expression[inputCount];
-            int numInputs = 0;
-            for (int i = 1; i <= inputCount; i++) {
-              Expression e = expressionMap.get(instance.getPortLocation(i), b);
-              if (e != null) {
-                int negatedBit = (int)(negated >> (i - 1)) & 1;
-                if (negatedBit == 1) {
-                  e = Expressions.not(e);
-                }
-                inputs[numInputs] = e;
-                ++numInputs;
+        for (int b = 0; b < width; b++) {
+          Expression[] inputs = new Expression[inputCount];
+          int numInputs = 0;
+          for (int i = 1; i <= inputCount; i++) {
+            Expression e = expressionMap.get(instance.getPortLocation(i), b);
+            if (e != null) {
+              int negatedBit = (int)(negated >> (i - 1)) & 1;
+              if (negatedBit == 1) {
+                e = Expressions.not(e);
               }
+              inputs[numInputs] = e;
+              ++numInputs;
             }
-            if (numInputs > 0) {
-              Expression out = AbstractGate.this.computeExpression(inputs, numInputs);
-              expressionMap.put(instance.getPortLocation(0), b, out);
-            }
+          }
+          if (numInputs > 0) {
+            Expression out = AbstractGate.this.computeExpression(inputs, numInputs);
+            expressionMap.put(instance.getPortLocation(0), b, out);
           }
         }
       };

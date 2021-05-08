@@ -206,16 +206,12 @@ public class RightPanel extends JPanel {
       // cursor was on screen, keep it on screen
       r.x = Math.max(oldR.x, curX - CURSOR_GAP);
       r.width = Math.max(r.width, width - r.x);
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() { scrollRectToVisible(r); }
-      });
+      SwingUtilities.invokeLater(() -> scrollRectToVisible(r));
     } else if (edgeVisible) {
       // right edge was on screen, keep it on screen
       r.x = Math.max(0, width - r.width);
       r.width = width - r.x;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() { scrollRectToVisible(r); }
-      });
+      SwingUtilities.invokeLater(() -> scrollRectToVisible(r));
     } else {
       // do nothing
     }
@@ -688,13 +684,10 @@ public class RightPanel extends JPanel {
 
     // try to put time t back to being at coordinate vx in our view,
     // but do it after the revalidation happens
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        int x = Math.max(0, (int)((mouseT - t0) * q));
-        int scrollPos = Math.min(sb.getMaximum(), Math.max(sb.getMinimum(), x - vx));
-        sb.setValue(scrollPos);
-      }
+    SwingUtilities.invokeLater(() -> {
+      int x = Math.max(0, (int)((mouseT - t0) * q));
+      int scrollPos = Math.min(sb.getMaximum(), Math.max(sb.getMinimum(), x - vx));
+      sb.setValue(scrollPos);
     });
 
     // repaint
