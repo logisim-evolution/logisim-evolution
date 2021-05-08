@@ -30,8 +30,6 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 import java.awt.BorderLayout;
@@ -40,9 +38,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;

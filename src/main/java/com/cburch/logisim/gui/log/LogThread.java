@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.FileWriter;
 import java.io.IOException;

@@ -34,7 +34,6 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.proj.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 

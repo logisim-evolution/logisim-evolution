@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.Simulator;
 
 class TickCounter implements Simulator.Listener {
   private static final int QUEUE_LENGTH = 1000;

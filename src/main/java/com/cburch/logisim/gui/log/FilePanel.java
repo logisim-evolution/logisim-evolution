@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.log;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.TestVector;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
