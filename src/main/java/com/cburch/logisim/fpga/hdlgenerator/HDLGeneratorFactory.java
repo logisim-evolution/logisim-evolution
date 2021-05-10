@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -61,54 +60,43 @@ public interface HDLGeneratorFactory {
   boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
-      ArrayList<String> Hierarchy,
-      FPGAReport Reporter,
-      String HDLType);
+      ArrayList<String> Hierarchy);
 
   ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter,
-      String HDLType);
+      String ComponentName);
 
   ArrayList<String> GetComponentInstantiation(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      String HDLType);
+      String ComponentName);
 
   ArrayList<String> GetComponentMap(
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
-      FPGAReport Reporter,
-      String Name,
-      String HDLType);
+      String Name);
 
   String getComponentStringIdentifier();
 
   ArrayList<String> GetEntity(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter,
-      String HDLType);
+      String ComponentName);
 
   ArrayList<String> GetInlinedCode(
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
-      String CircuitName,
-      String HDLType);
+      String CircuitName);
 
-  String GetRelativeDirectory(String HDLType);
+  String GetRelativeDirectory();
 
-  boolean HDLTargetSupported(String HDLType, AttributeSet attrs);
+  boolean HDLTargetSupported(AttributeSet attrs);
 
-  boolean IsOnlyInlined(String HDLType);
+  boolean IsOnlyInlined();
 
-  boolean IsOnlyInlined(String HDLType, IOComponentTypes map);
+  boolean IsOnlyInlined(IOComponentTypes map);
 }

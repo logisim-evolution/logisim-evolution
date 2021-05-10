@@ -44,6 +44,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -62,11 +63,9 @@ class NotGate extends InstanceFactory {
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      if (HDLType.equals(VHDL)) Contents.add("   Result <= NOT(Input_1);");
-      else Contents.add("   assign Result = ~(Input_1);");
+      Contents.add("   "+HDL.assignPreamble()+"Result"+HDL.assignOperator()+HDL.notOperator()+"Input_1;");
       Contents.add("");
       return Contents;
     }
@@ -207,9 +206,9 @@ class NotGate extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new NotGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

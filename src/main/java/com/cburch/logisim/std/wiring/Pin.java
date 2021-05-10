@@ -694,7 +694,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 

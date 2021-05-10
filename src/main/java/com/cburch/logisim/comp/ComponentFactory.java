@@ -86,7 +86,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
    */
   Object getFeature(Object key, AttributeSet attrs);
 
-  HDLGeneratorFactory getHDLGenerator(String HDLIdentifier, AttributeSet attrs);
+  HDLGeneratorFactory getHDLGenerator(AttributeSet attrs);
 
   String getHDLName(AttributeSet attrs);
 
@@ -98,7 +98,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   boolean HasThreeStateDrivers(AttributeSet attrs);
 
-  boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs);
+  boolean HDLSupportedComponent(AttributeSet attrs);
 
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 

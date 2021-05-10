@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -45,14 +44,13 @@ public class Ttl74273 extends AbstractOctalFlops {
     }
 
     @Override
-    public SortedMap<String, String> GetPortMap(
-          Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
       SortedMap<String, String> PortMap = new TreeMap<>();
       if (!(MapInfo instanceof NetlistComponent)) return PortMap;
       NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter, HDLType));
+      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo));
       PortMap.put("nCLKEN", "'0'");
-      PortMap.putAll(GetNetMap("nCLR", false, ComponentInfo, 0, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap("nCLR", false, ComponentInfo, 0, Nets));
       return PortMap;
     }
   }
@@ -70,8 +68,8 @@ public class Ttl74273 extends AbstractOctalFlops {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent( AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74273HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

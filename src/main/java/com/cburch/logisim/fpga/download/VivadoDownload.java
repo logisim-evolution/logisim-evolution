@@ -36,7 +36,6 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -53,7 +52,6 @@ public class VivadoDownload implements VendorDownload {
   private final String SandboxPath;
   private final String xdcPath;
   private final String vivadoProjectPath;
-  private final FPGAReport Reporter;
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
   private final BoardInformation BoardInfo;
@@ -69,7 +67,6 @@ public class VivadoDownload implements VendorDownload {
 
   public VivadoDownload(
       String ProjectPath,
-      FPGAReport Reporter,
       Netlist RootNetList,
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
@@ -77,7 +74,6 @@ public class VivadoDownload implements VendorDownload {
     this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
     this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
     this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDCPath);
-    this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -146,11 +142,11 @@ public class VivadoDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     // create project files
-    File createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL, Reporter);
-    File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE, Reporter);
+    File createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL);
+    File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE);
     File generateBitstreamFile =
-        FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE, Reporter);
-    File loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE, Reporter);
+        FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
+    File loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
     if (createProjectFile == null
         || xdcFile == null
         || generateBitstreamFile == null
@@ -191,7 +187,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add(
         "add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
     contents.add("exit");
-    if (!FileWriter.WriteContents(createProjectFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(createProjectFile, contents)) return false;
     contents.clear();
 
     // fill the xdc file
@@ -220,7 +216,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     contents.addAll(GetPinLocStrings());
-    if (!FileWriter.WriteContents(xdcFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(xdcFile, contents)) return false;
     contents.clear();
 
     // generate bitstream
@@ -233,7 +229,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add("launch_runs impl_1 -to_step write_bitstream -jobs 8");
     contents.add("wait_on_run impl_1");
     contents.add("exit");
-    if (!FileWriter.WriteContents(generateBitstreamFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(generateBitstreamFile, contents)) return false;
     contents.clear();
 
     // load bitstream
@@ -248,7 +244,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add("program_hw_device " + lindex);
     contents.add("close_hw");
     contents.add("exit");
-    return FileWriter.WriteContents(loadBitstreamFile, contents, Reporter);
+    return FileWriter.WriteContents(loadBitstreamFile, contents);
   }
   
   private ArrayList<String> GetPinLocStrings() {

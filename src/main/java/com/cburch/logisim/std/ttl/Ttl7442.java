@@ -166,8 +166,8 @@ public class Ttl7442 extends AbstractTtlGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7442HDLGenerator(IsExec3, IsGray);
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

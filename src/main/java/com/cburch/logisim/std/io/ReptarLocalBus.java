@@ -147,12 +147,12 @@ public class ReptarLocalBus extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     // return false;
     if (MyHDLGenerator == null) {
       MyHDLGenerator = new ReptarLocalBusHDLGeneratorFactory();
     }
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

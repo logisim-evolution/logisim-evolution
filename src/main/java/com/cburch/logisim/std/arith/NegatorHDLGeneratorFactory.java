@@ -31,8 +31,8 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -57,10 +57,9 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) Contents.add("   MinDataX <= DataX;");
       else Contents.add("   MinDataX <= std_logic_vector(unsigned(NOT(DataX)) + 1);");
@@ -87,8 +86,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
@@ -96,13 +94,12 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
     return PortMap;
   }
 
@@ -112,7 +109,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

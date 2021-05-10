@@ -31,8 +31,9 @@ package com.cburch.logisim.std.gates;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -66,12 +67,11 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     PLATable tt = attrs.getValue(PLA.ATTR_TABLE);
     int outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       String leader = "    Result <= ";
       String indent = "              ";
       if (tt.rows().isEmpty()) {
@@ -98,13 +98,12 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("Index", true, ComponentInfo, PLA.IN_PORT, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, PLA.OUT_PORT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Index", true, ComponentInfo, PLA.IN_PORT, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, PLA.OUT_PORT, Nets));
     return PortMap;
   }
 
@@ -114,7 +113,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }

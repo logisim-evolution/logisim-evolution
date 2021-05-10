@@ -30,6 +30,7 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
@@ -50,22 +51,10 @@ public class Ttl7404 extends AbstractTtlGate {
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index, String HDLType) {
+    public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      if (HDLType.equals(VHDL))
-        Contents.add(
-            "   gate_"
-                + index
-                + "_O <= NOT(gate_"
-                + index
-                + "_A);");
-      else
-        Contents.add(
-            "   assign gate_"
-                + index
-                + "_O = ~(gate_"
-                + index
-                + "_A);");
+      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
+          HDL.notOperator()+"(gate_"+index+"_A);");
       Contents.add("");
       return Contents;
     }
@@ -105,8 +94,8 @@ public class Ttl7404 extends AbstractTtlGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new NotGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

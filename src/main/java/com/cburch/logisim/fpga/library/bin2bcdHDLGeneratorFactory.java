@@ -32,8 +32,10 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -79,13 +81,12 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     ParameterMap.put(NrOfBitsStr, BinBits);
@@ -93,14 +94,13 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
-    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Nets));
     for (int i = 1; i <= NrOfPorts; i++)
       PortMap.putAll(
           GetNetMap(
@@ -108,8 +108,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               true,
               ComponentInfo,
               i,
-              Reporter,
-              HDLType,
               Nets));
     return PortMap;
   }
@@ -153,12 +151,11 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       switch (NrOfPorts) {
         case 2:
           Contents.add("   s_level_0(6 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
@@ -254,7 +251,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
       }
     } else {
-      Reporter.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
     return Contents;
   }

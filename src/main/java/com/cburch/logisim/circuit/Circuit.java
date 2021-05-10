@@ -50,7 +50,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
@@ -333,15 +333,15 @@ public class Circuit {
     return ComponentName;
   }
 
-  public void Annotate(Project proj, boolean ClearExistingLabels, FPGAReport reporter, boolean InsideLibrary) {
+  public void Annotate(Project proj, boolean ClearExistingLabels, boolean InsideLibrary) {
     if (this.proj == null) this.proj = proj;
-    this.Annotate(ClearExistingLabels,reporter,InsideLibrary);
+    this.Annotate(ClearExistingLabels,InsideLibrary);
   }
   
-  public void Annotate(boolean ClearExistingLabels, FPGAReport reporter, boolean InsideLibrary) {
+  public void Annotate(boolean ClearExistingLabels, boolean InsideLibrary) {
     /* If I am already completely annotated, return */
     if (Annotated) {
-      reporter.AddInfo("Nothing to do !");
+      Reporter.Report.AddInfo("Nothing to do !");
       return;
     }
     SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
@@ -360,7 +360,7 @@ public class Circuit {
                 new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
-            reporter.AddSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
+            Reporter.Report.AddSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
           } else {
             LabelNames.add(label.toUpperCase());
           }
@@ -370,7 +370,7 @@ public class Circuit {
       if (comp.getFactory().RequiresNonZeroLabel()) {
         if (ClearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
-          reporter.AddInfo(
+          Reporter.Report.AddInfo(
               "Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
           SetAttributeAction act =
               new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
@@ -397,7 +397,7 @@ public class Circuit {
       String ComponentName = GetAnnotationName(comp);
       if (!lablers.containsKey(ComponentName) || !lablers.get(ComponentName).hasNext(this)) {
         /* This should never happen! */
-        reporter.AddFatalError(
+        Reporter.Report.AddFatalError(
             "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
         return;
       } else {
@@ -406,20 +406,20 @@ public class Circuit {
             new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, NewLabel);
         proj.doAction(act);
-        reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
+        Reporter.Report.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
         if (comp.getFactory() instanceof Pin) {
           SizeMightHaveChanged = true;
         }
       }
     }
     if (!comps.isEmpty() & InsideLibrary) {
-      reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Annotated the circuit \""
               + this.getName()
               + "\" which is inside a library these changes will not be saved!");
     }
     if (SizeMightHaveChanged)
-      reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Annotated one ore more pins in circuit \""
               + this.getName()
               + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
@@ -428,7 +428,7 @@ public class Circuit {
     for (String subs : Subcircuits) {
       Circuit circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
       boolean inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(proj,ClearExistingLabels, reporter, inLibrary);
+      circ.Annotate(proj,ClearExistingLabels, inLibrary);
     }
   }
 

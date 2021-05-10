@@ -31,8 +31,9 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 
 public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -41,8 +42,8 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return 0;
   }
 
-  private String GetConvertOperator(long value, int nr_of_bits, String HDLType) {
-    if (HDLType.equals(VHDL)) {
+  private String GetConvertOperator(long value, int nr_of_bits) {
+    if (HDL.isVHDL()) {
       if (nr_of_bits == 1) return "'" + value + "'";
       return "std_logic_vector(to_unsigned("
           + value
@@ -59,12 +60,8 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     if (ComponentInfo.EndIsConnected(0)) {
       long ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
@@ -72,10 +69,10 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
         /* Single Port net */
         Contents.add(
             "   "
-                + Preamble
-                + GetNetName(ComponentInfo, 0, true, HDLType, Nets)
-                + AssignOperator
-                + GetConvertOperator(ConstantValue, 1, HDLType)
+                + HDL.assignPreamble()
+                + GetNetName(ComponentInfo, 0, true, Nets)
+                + HDL.assignOperator()
+                + GetConvertOperator(ConstantValue, 1)
                 + ";");
         Contents.add("");
       } else {
@@ -83,25 +80,25 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
           /* easy case */
           Contents.add(
               "   "
-                  + Preamble
-                  + GetBusNameContinues(ComponentInfo, 0, HDLType, Nets)
-                  + AssignOperator
-                  + GetConvertOperator(ConstantValue, NrOfBits, HDLType)
+                  + HDL.assignPreamble()
+                  + GetBusNameContinues(ComponentInfo, 0, Nets)
+                  + HDL.assignOperator()
+                  + GetConvertOperator(ConstantValue, NrOfBits)
                   + ";");
           Contents.add("");
         } else {
           /* we have to enumerate all bits */
           long mask = 1;
-          String ConstValue = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+          String ConstValue = HDL.zeroBit();
           for (byte bit = 0; bit < NrOfBits; bit++) {
-            if ((mask & ConstantValue) != 0) ConstValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-            else ConstValue = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+            if ((mask & ConstantValue) != 0) ConstValue = HDL.oneBit();
+            else ConstValue = HDL.zeroBit();
             mask <<= 1;
             Contents.add(
                 "   "
-                    + Preamble
-                    + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
-                    + AssignOperator
+                    + HDL.assignPreamble()
+                    + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
+                    + HDL.assignOperator()
                     + ConstValue
                     + ";");
           }
@@ -113,12 +110,12 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 }

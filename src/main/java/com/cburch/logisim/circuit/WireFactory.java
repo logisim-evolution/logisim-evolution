@@ -105,7 +105,7 @@ class WireFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 }

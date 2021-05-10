@@ -31,8 +31,8 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -57,11 +57,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add(
           "   -----------------------------------------------------------------------------");
       Contents.add(
@@ -170,8 +169,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     Object shift = ComponentInfo.GetComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
     if (shift == Shifter.SHIFT_LOGICAL_LEFT) ParameterMap.put(ShiftModeStr, 0);
@@ -183,15 +181,13 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Nets));
+    PortMap.putAll(GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Nets));
     return PortMap;
   }
 
@@ -423,7 +419,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

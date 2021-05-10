@@ -36,7 +36,6 @@ import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -856,7 +855,6 @@ public class Startup implements AWTEventListener {
             proj,
             testCircuitImpName,
             testTickFrequency,
-            new FPGAReport(),
             new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,

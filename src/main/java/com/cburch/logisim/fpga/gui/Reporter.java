@@ -28,44 +28,39 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import com.cburch.logisim.Main;
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import javax.swing.JProgressBar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FPGAReport {
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 
-  private static final Logger logger = LoggerFactory.getLogger(FPGAReport.class);
+public class Reporter {
+
+  public static final Reporter Report = new Reporter();
+  private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
   private FPGAReportTabbedPane myCommander = null;
   private JProgressBar progress = null;
 
-  public FPGAReport() {
-    if (!Main.headless) {
-      /* This should never happen, but just to prevent a crash we initialize
-       * myCommander
-       */
-      logger.error("BUG: This should never happen");
-      myCommander = new FPGAReportTabbedPane(null);
-    }
+  public JProgressBar getProgressBar() { return progress; }
+  
+  public void setGuiLogger(FPGAReportTabbedPane gui) {
+    myCommander = gui;
   }
   
-  public FPGAReport(FPGACommander parent, JProgressBar prog) {
-    myCommander = parent.getReporterGui();
+  public void setProgressBar(JProgressBar prog) {
     progress = prog;
   }
 
-  public JProgressBar getProgressBar() { return progress; }
-
   public void AddErrorIncrement(String Message) {
-	if (Main.headless)
+    if (myCommander == null)
       logger.error(Message);
-	else
+    else
       myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddError(Object Message) {
-    if (Main.headless) {
+    if (myCommander == null) {
       if (Message instanceof String) logger.error((String) Message);
     } else {
       if (Message instanceof String)
@@ -75,42 +70,42 @@ public class FPGAReport {
   }
 
   public void AddFatalError(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.error(Message);
     else
       myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
   }
 
   public void AddSevereError(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.error(Message);
     else
       myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddInfo(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.info(Message);
     else
       myCommander.AddInfo(Message);
   }
 
   public void AddSevereWarning(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.warn(Message);
     else
       myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddWarningIncrement(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.warn(Message);
     else
       myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddWarning(Object Message) {
-    if (Main.headless) {
+    if (myCommander == null) {
       if (Message instanceof String) logger.warn((String) Message);
     } else {
       if (Message instanceof String)
@@ -120,12 +115,12 @@ public class FPGAReport {
   }
 
   public void ClsScr() {
-    if (!Main.headless)
+    if (myCommander != null)
       myCommander.ClearConsole();
   }
 
   public void print(String Message) {
-    if (Main.headless)
+    if (myCommander == null)
       logger.info(Message);
     else
       myCommander.AddConsole(Message);

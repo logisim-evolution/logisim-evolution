@@ -31,9 +31,9 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -83,8 +83,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Q1  <= state1;");
     Contents.add("   nQ1 <= NOT(state1);");
@@ -113,8 +112,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
@@ -123,7 +121,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
       boolean HasClock = true;
       int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[i];
       if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
-        Reporter.AddSevereWarning(
+        Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()
                 + "\" has no clock connection for dff"
@@ -141,7 +139,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
         PortMap.put("tick" + (i + 1), "'1'");
         PortMap.put(
             "CLK" + (i + 1),
-            GetNetName(ComponentInfo, ClockPinIndex, true, HDLType, Nets));
+            GetNetName(ComponentInfo, ClockPinIndex, true, Nets));
       } else {
         if (Nets.RequiresGlobalClockConnection()) {
           PortMap.put("tick" + (i + 1), "'1'");
@@ -158,16 +156,16 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
             ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
       }
     }
-    PortMap.putAll(GetNetMap("nCLR1", false, ComponentInfo, 0, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("nPRE1", false, ComponentInfo, 3, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 4, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("nQ1", true, ComponentInfo, 5, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("nCLR2", false, ComponentInfo, 11, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 10, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("nPRE2", false, ComponentInfo, 8, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 7, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("nQ2", true, ComponentInfo, 6, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("nCLR1", false, ComponentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 1, Nets));
+    PortMap.putAll(GetNetMap("nPRE1", false, ComponentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 4, Nets));
+    PortMap.putAll(GetNetMap("nQ1", true, ComponentInfo, 5, Nets));
+    PortMap.putAll(GetNetMap("nCLR2", false, ComponentInfo, 11, Nets));
+    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 10, Nets));
+    PortMap.putAll(GetNetMap("nPRE2", false, ComponentInfo, 8, Nets));
+    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 7, Nets));
+    PortMap.putAll(GetNetMap("nQ2", true, ComponentInfo, 6, Nets));
     return PortMap;
   }
 
@@ -181,9 +179,9 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND) && (HDLType.equals(HDLGeneratorFactory.VHDL)));
+    return (!attrs.getValue(TTL.VCC_GND) && HDL.isVHDL());
   }
 }

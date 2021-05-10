@@ -31,8 +31,9 @@ package com.cburch.logisim.fpga.library;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -71,8 +72,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Segment_a <= s_output_value(0);");
     Contents.add("   Segment_b <= s_output_value(1);");
@@ -102,34 +102,18 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(
-        GetNetMap("BCDin", true, ComponentInfo, bcd2sevenseg.BCDin, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_a", true, ComponentInfo, bcd2sevenseg.Segment_A, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_b", true, ComponentInfo, bcd2sevenseg.Segment_B, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_c", true, ComponentInfo, bcd2sevenseg.Segment_C, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_d", true, ComponentInfo, bcd2sevenseg.Segment_D, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_e", true, ComponentInfo, bcd2sevenseg.Segment_E, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_f", true, ComponentInfo, bcd2sevenseg.Segment_F, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_g", true, ComponentInfo, bcd2sevenseg.Segment_G, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("BCDin", true, ComponentInfo, bcd2sevenseg.BCDin, Nets));
+    PortMap.putAll(GetNetMap("Segment_a", true, ComponentInfo, bcd2sevenseg.Segment_A, Nets));
+    PortMap.putAll(GetNetMap("Segment_b", true, ComponentInfo, bcd2sevenseg.Segment_B, Nets));
+    PortMap.putAll(GetNetMap("Segment_c", true, ComponentInfo, bcd2sevenseg.Segment_C, Nets));
+    PortMap.putAll(GetNetMap("Segment_d", true, ComponentInfo, bcd2sevenseg.Segment_D, Nets));
+    PortMap.putAll(GetNetMap("Segment_e", true, ComponentInfo, bcd2sevenseg.Segment_E, Nets));
+    PortMap.putAll(GetNetMap("Segment_f", true, ComponentInfo, bcd2sevenseg.Segment_F, Nets));
+    PortMap.putAll(GetNetMap("Segment_g", true, ComponentInfo, bcd2sevenseg.Segment_G, Nets));
     return PortMap;
   }
 
@@ -139,7 +123,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }

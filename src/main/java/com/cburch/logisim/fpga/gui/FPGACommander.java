@@ -100,7 +100,6 @@ public class FPGACommander
   private final JPanel BoardSelectionPanel = new JPanel();
   private final FPGAClockPanel FrequencyPanel;
   private final Project MyProject;
-  private final FPGAReport MyReporter;
   private BoardInformation MyBoardInformation = null;
 
   
@@ -322,7 +321,8 @@ public class FPGACommander
     panel.setVisible(false);
 
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    MyReporter = new FPGAReport(this,Progress);
+    Reporter.Report.setGuiLogger(ReporterGui);
+    Reporter.Report.setProgressBar(Progress);
     localeChanged();
   }
 
@@ -385,7 +385,6 @@ public class FPGACommander
               MyProject,
               circuitsList.getSelectedItem().toString(),
               FrequencyPanel.GetTickfrequency(),
-              MyReporter,
               MyBoardInformation,
               "",
               writeFlash,
@@ -415,8 +414,8 @@ public class FPGACommander
       if (ClearExistingLabels) {
         root.ClearAnnotationLevel();
       }
-      root.Annotate(ClearExistingLabels, MyReporter, false);
-      MyReporter.AddInfo(S.get("FpgaGuiAnnotationDone"));
+      root.Annotate(ClearExistingLabels, false);
+      Reporter.Report.AddInfo(S.get("FpgaGuiAnnotationDone"));
       /* TODO: Dirty hack, see Circuit.java function Annotate for details */
       MyProject.repaintCanvas();
       MyProject.getLogisimFile().setDirty(true);

@@ -31,8 +31,10 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 
 public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -42,18 +44,12 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
+      String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
-    String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     int NrOfPins = ComponentInfo.NrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
       if (!ComponentInfo.EndIsConnected(i)) {
-        Reporter.AddError(
+        Reporter.Report.AddError(
             "Bit Extender component has floating input connection in circuit \""
                 + CircuitName
                 + "\"!");
@@ -64,10 +60,10 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       /* Special case: Single bit output */
       Contents.add(
           "   "
-              + Preamble
-              + GetNetName(ComponentInfo, 0, true, HDLType, Nets)
-              + AssignOperator
-              + GetNetName(ComponentInfo, 1, true, HDLType, Nets));
+              + HDL.assignPreamble()
+              + GetNetName(ComponentInfo, 0, true, Nets)
+              + HDL.assignOperator()
+              + GetNetName(ComponentInfo, 1, true, Nets));
       Contents.add("");
     } else {
       /*
@@ -81,8 +77,8 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                   .getAttributeSet()
                   .getValue(BitExtender.ATTR_TYPE)
                   .getValue();
-      if (type.equals("zero")) Replacement.append(ZeroBit);
-      if (type.equals("one")) Replacement.append(SetBit);
+      if (type.equals("zero")) Replacement.append(HDL.zeroBit());
+      if (type.equals("one")) Replacement.append(HDL.oneBit());
       if (type.equals("sign")) {
         if (ComponentInfo.getEnd(1).NrOfBits() > 1) {
           Replacement.append(
@@ -91,39 +87,38 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                   1,
                   true,
                   ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth() - 1,
-                  HDLType,
                   Nets));
         } else {
-          Replacement.append(GetNetName(ComponentInfo, 1, true, HDLType, Nets));
+          Replacement.append(GetNetName(ComponentInfo, 1, true, Nets));
         }
       }
       if (type.equals("input"))
-        Replacement.append(GetNetName(ComponentInfo, 2, true, HDLType, Nets));
+        Replacement.append(GetNetName(ComponentInfo, 2, true, Nets));
       for (int bit = 0; bit < ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth(); bit++) {
         if (bit < ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth()) {
           if (ComponentInfo.getEnd(1).NrOfBits() > 1) {
             Contents.add(
                 "   "
-                    + Preamble
-                    + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
-                    + AssignOperator
-                    + GetBusEntryName(ComponentInfo, 1, true, bit, HDLType, Nets)
+                    + HDL.assignPreamble()
+                    + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
+                    + HDL.assignOperator()
+                    + GetBusEntryName(ComponentInfo, 1, true, bit, Nets)
                     + ";");
           } else {
             Contents.add(
                 "   "
-                    + Preamble
-                    + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
-                    + AssignOperator
-                    + GetNetName(ComponentInfo, 1, true, HDLType, Nets)
+                    + HDL.assignPreamble()
+                    + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
+                    + HDL.assignOperator()
+                    + GetNetName(ComponentInfo, 1, true, Nets)
                     + ";");
           }
         } else {
           Contents.add(
               "   "
-                  + Preamble
-                  + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
-                  + AssignOperator
+                  + HDL.assignPreamble()
+                  + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
+                  + HDL.assignOperator()
                   + Replacement
                   + ";");
         }
@@ -134,12 +129,12 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 }

@@ -35,7 +35,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
@@ -63,7 +63,6 @@ public class AlteraDownload implements VendorDownload {
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
-  private final FPGAReport Reporter;
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
   private final BoardInformation BoardInfo;
@@ -78,7 +77,6 @@ public class AlteraDownload implements VendorDownload {
 
   public AlteraDownload(
       String ProjectPath,
-      FPGAReport Reporter,
       Netlist RootNetList,
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
@@ -88,7 +86,6 @@ public class AlteraDownload implements VendorDownload {
     this.ProjectPath = ProjectPath;
     this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
     this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
-    this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -203,7 +200,7 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean CreateDownloadScripts() {
-    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, AlteraTclFile, Reporter);
+    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, AlteraTclFile);
     if (ScriptFile == null) {
       ScriptFile = new File(ScriptPath + AlteraTclFile);
       return ScriptFile.exists();
@@ -277,7 +274,7 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("        project_close");
     Contents.add("    }");
     Contents.add("}");
-    return FileWriter.WriteContents(ScriptFile, Contents, Reporter);
+    return FileWriter.WriteContents(ScriptFile, Contents);
   }
   
   private ArrayList<String> GetPinLocStrings() {
@@ -339,11 +336,11 @@ public class AlteraDownload implements VendorDownload {
     Detect.directory(new File(SandboxPath));
     ArrayList<String> response = new ArrayList<>();
     try {
-      Reporter.print("");
-      Reporter.print("===");
-      Reporter.print("===> " + S.get("AlteraDetectDevice"));
-      Reporter.print("===");
-      if (Download.execute(Detect, response, Reporter) != null) return false;
+      Reporter.Report.print("");
+      Reporter.Report.print("===");
+      Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
+      Reporter.Report.print("===");
+      if (Download.execute(Detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
     }
@@ -374,19 +371,19 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean DoFlashing() {
     if (!CreateCofFile()) {
-      Reporter.AddError(S.get("AlteraFlashError"));
+      Reporter.Report.AddError(S.get("AlteraFlashError"));
       return false;
     }
     if (!CreateJicFile()) {
-      Reporter.AddError(S.get("AlteraFlashError"));
+      Reporter.Report.AddError(S.get("AlteraFlashError"));
       return false;
     }
     if (!LoadProgrammerSof()) {
-      Reporter.AddError(S.get("AlteraFlashError"));
+      Reporter.Report.AddError(S.get("AlteraFlashError"));
       return false;
     }
     if (!FlashDevice()) {
-      Reporter.AddError(S.get("AlteraFlashError"));
+      Reporter.Report.AddError(S.get("AlteraFlashError"));
       return false;
     }
     return true;
@@ -394,11 +391,11 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean FlashDevice() {
     String JicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic";
-    Reporter.print("==>");
-    Reporter.print("==> " + S.get("AlteraFlash"));
-    Reporter.print("==>");
+    Reporter.Report.print("==>");
+    Reporter.Report.print("==> " + S.get("AlteraFlash"));
+    Reporter.Report.print("==>");
     if (!new File(SandboxPath + JicFile).exists()) {
-      Reporter.AddError(S.fmt("AlteraFlashError", JicFile));
+      Reporter.Report.AddError(S.fmt("AlteraFlashError", JicFile));
       return false;
     }
     List<String> command = new ArrayList<>();
@@ -412,13 +409,13 @@ public class AlteraDownload implements VendorDownload {
     ProcessBuilder Prog = new ProcessBuilder(command);
     Prog.directory(new File(SandboxPath));
     try {
-      String result = Download.execute(Prog, null, Reporter);
+      String result = Download.execute(Prog, null);
       if (result != null) {
-        Reporter.AddFatalError(S.get("AlteraFlashFailure"));
+        Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.AddFatalError(S.get("AlteraFlashFailure"));
+      Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
       return false;
     }
     return true;
@@ -438,11 +435,11 @@ public class AlteraDownload implements VendorDownload {
             + "sfl_"
             + FpgaDevice.toLowerCase()
             + ".sof";
-    Reporter.print("==>");
-    Reporter.print("==> " + S.get("AlteraProgSof"));
-    Reporter.print("==>");
+    Reporter.Report.print("==>");
+    Reporter.Report.print("==> " + S.get("AlteraProgSof"));
+    Reporter.Report.print("==>");
     if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.AddError(S.fmt("AlteraProgSofError", ProgrammerSofFile));
+      Reporter.Report.AddError(S.fmt("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
     List<String> command = new ArrayList<>();
@@ -456,13 +453,13 @@ public class AlteraDownload implements VendorDownload {
     ProcessBuilder Prog = new ProcessBuilder(command);
     Prog.directory(new File(SandboxPath));
     try {
-      String result = Download.execute(Prog, null, Reporter);
+      String result = Download.execute(Prog, null);
       if (result != null) {
-        Reporter.AddFatalError(S.get("AlteraProgSofFailure"));
+        Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.AddFatalError(S.get("AlteraProgSofFailure"));
+      Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
       return false;
     }
     return true;
@@ -480,12 +477,12 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean CreateJicFile() {
     if (!new File(ScriptPath + AlteraCofFile).exists()) {
-      Reporter.AddError(S.get("AlteraNoCof"));
+      Reporter.Report.AddError(S.get("AlteraNoCof"));
       return false;
     }
-    Reporter.print("==>");
-    Reporter.print("==> " + S.get("AlteraJicFile"));
-    Reporter.print("==>");
+    Reporter.Report.print("==>");
+    Reporter.Report.print("==> " + S.get("AlteraJicFile"));
+    Reporter.Report.print("==>");
     List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
@@ -493,13 +490,13 @@ public class AlteraDownload implements VendorDownload {
     ProcessBuilder Jic = new ProcessBuilder(command);
     Jic.directory(new File(SandboxPath));
     try {
-      String result = Download.execute(Jic, null, Reporter);
+      String result = Download.execute(Jic, null);
       if (result != null) {
-        Reporter.AddFatalError(S.get("AlteraJicFileError"));
+        Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.AddFatalError(S.get("AlteraJicFileError"));
+      Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
       return false;
     }
 
@@ -508,12 +505,12 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean CreateCofFile() {
     if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      Reporter.AddFatalError(S.get("AlteraNoSofFile"));
+      Reporter.Report.AddFatalError(S.get("AlteraNoSofFile"));
       return false;
     }
-    Reporter.print("==>");
-    Reporter.print("==> " + S.get("AlteraCofFile"));
-    Reporter.print("==>");
+    Reporter.Report.print("==>");
+    Reporter.Report.print("==> " + S.get("AlteraCofFile"));
+    Reporter.Report.print("==>");
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -568,7 +565,7 @@ public class AlteraDownload implements VendorDownload {
       StreamResult result = new StreamResult(new File(ScriptPath + AlteraCofFile));
       transformer.transform(source, result);
     } catch (ParserConfigurationException | TransformerException e) {
-      Reporter.AddError(S.get("AlteraErrorCof"));
+      Reporter.Report.AddError(S.get("AlteraErrorCof"));
       return false;
     }
     return true;
