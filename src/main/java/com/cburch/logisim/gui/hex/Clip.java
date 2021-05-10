@@ -93,18 +93,14 @@ class Clip implements ClipboardOwner {
         int addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
         pasted = MemContents.create(addrBits, model.getValueWidth());
         pasted.set(0, data);
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
       String buf;
       try {
         buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
 
@@ -180,7 +176,7 @@ class Clip implements ClipboardOwner {
     }
 
     public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException {
+        throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return data;
       } else if (flavor == DataFlavor.stringFlavor) {
@@ -199,9 +195,7 @@ class Clip implements ClipboardOwner {
           if (i > 0) {
             buf.append(i % 8 == 0 ? '\n' : ' ');
           }
-          String s = Long.toHexString(data[i]);
-          while (s.length() < chars) s = "0" + s;
-          buf.append(s);
+          buf.append(String.format("%0" + chars + "x", data[i]));
         }
         return buf.toString();
       } else {

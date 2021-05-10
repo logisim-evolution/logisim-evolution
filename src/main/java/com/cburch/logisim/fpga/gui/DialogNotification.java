@@ -35,7 +35,6 @@ import com.cburch.logisim.gui.icons.WarningIcon;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -57,11 +56,7 @@ public class DialogNotification {
     JLabel message = new JLabel(string);
     JButton close = new JButton(S.get("FpgaBoardClose"));
     ActionListener actionListener =
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dialog.dispose();
-          }
-        };
+        e -> dialog.dispose();
     close.addActionListener(actionListener);
 
     c.gridx = 0;

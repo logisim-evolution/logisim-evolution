@@ -134,7 +134,7 @@ public class TestVector {
           int w = 0;
           try {
             w = Integer.parseInt(t.substring(s + 1, e));
-          } catch (NumberFormatException ex) {
+          } catch (NumberFormatException ignored) {
           }
 
           if (w < 1 || w > 64)

@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.log;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.TestVector;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
@@ -190,7 +189,7 @@ class FilePanel extends LogPanel {
             try {
               FileWriter delete = new FileWriter(file);
               delete.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
           } else if (option == 1) {
             // do nothing

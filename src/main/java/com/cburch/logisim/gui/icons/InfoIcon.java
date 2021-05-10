@@ -39,7 +39,7 @@ import javax.swing.Icon;
 
 public class InfoIcon implements Icon {
 
-  int wh = AppPreferences.getIconSize();
+  final int wh = AppPreferences.getIconSize();
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {

@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 public class ZipClassLoader extends ClassLoader {
 
   private static class Request {
-    int action;
-    String resource;
+    final int action;
+    final String resource;
     boolean responseSent;
     Object response;
 
@@ -74,7 +74,7 @@ public class ZipClassLoader extends ClassLoader {
         while (!responseSent) {
           try {
             this.wait(1000);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
         }
         return response;
@@ -229,7 +229,7 @@ public class ZipClassLoader extends ClassLoader {
           }
           try {
             bgLock.wait(OPEN_TIME);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
         }
         return requests.removeFirst();

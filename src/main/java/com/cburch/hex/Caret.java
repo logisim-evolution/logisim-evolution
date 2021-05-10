@@ -211,10 +211,8 @@ public class Caret {
             if (model != null) {
               long end = model.getLastOffset();
               if (dest > end || dest == cursor) dest = end;
-              setDot(dest, shift);
-            } else {
-              setDot(dest, shift);
             }
+            setDot(dest, shift);
           }
           break;
         case KeyEvent.VK_PAGE_DOWN:

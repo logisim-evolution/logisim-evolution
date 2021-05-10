@@ -35,7 +35,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 
 public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements ActionListener {
-  protected boolean dflt;
+  protected final boolean dflt;
   protected boolean value;
   private JCheckBox box;
 
@@ -72,7 +72,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
   }
 
   public void set(Boolean newValue) {
-    boolean newVal = newValue.booleanValue();
+    boolean newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
     }

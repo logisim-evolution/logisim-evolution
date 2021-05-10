@@ -61,9 +61,9 @@ import javax.swing.JFileChooser;
 
 public class Project {
   private static class ActionData {
-    CircuitState circuitState;
-    HdlModel hdlModel;
-    Action action;
+    final CircuitState circuitState;
+    final HdlModel hdlModel;
+    final Action action;
 
     public ActionData(CircuitState circuitState, HdlModel hdlModel, Action action) {
       this.circuitState = circuitState;

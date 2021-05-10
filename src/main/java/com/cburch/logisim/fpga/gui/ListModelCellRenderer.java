@@ -59,11 +59,11 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
 
   @Override
   public Component getListCellRendererComponent(
-      JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     if (value instanceof SimpleDRCContainer) {
       msg = (SimpleDRCContainer) value;
     }
@@ -101,7 +101,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
           } else if (line < 10000) {
             Line.append(" ");
           }
-          Line.append(line + "> ");
+          Line.append(line).append("> ");
         }
       } else {
         if (index < 9) {
@@ -113,23 +113,23 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
         } else if (index < 9999) {
           Line.append(" ");
         }
-        Line.append((index + 1) + "> ");
+        Line.append(index + 1).append("> ");
       }
     }
     if (msg != null) {
       switch (msg.Severity()) {
         case SimpleDRCContainer.LEVEL_SEVERE:
-          Line.append(S.get("SEVERE_MSG") + " ");
+          Line.append(S.get("SEVERE_MSG")).append(" ");
           break;
         case SimpleDRCContainer.LEVEL_FATAL:
-          Line.append(S.get("FATAL_MSG") + " ");
+          Line.append(S.get("FATAL_MSG")).append(" ");
           break;
       }
       if (msg.HasCircuit()) {
-        Line.append(msg.GetCircuit().getName() + ": ");
+        Line.append(msg.GetCircuit().getName()).append(": ");
       }
     }
-    Line.append(value.toString());
+    Line.append(value);
     setText(Line.toString());
     setEnabled(list.isEnabled());
     setFont(list.getFont());

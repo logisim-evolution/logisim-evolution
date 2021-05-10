@@ -29,7 +29,6 @@
 package com.cburch.logisim.analyze.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import java.util.TreeMap;
 
 public class Implicant implements Comparable<Implicant> {
   private static class TermIterator implements Iterable<Implicant>, Iterator<Implicant> {
-    Implicant source;
+    final Implicant source;
     int currentMask = 0;
 
     TermIterator(Implicant source) {
@@ -283,8 +282,8 @@ public class Implicant implements Comparable<Implicant> {
     }
   }
 
-  static Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
-  static List<Implicant> MINIMAL_LIST = Arrays.asList(MINIMAL_IMPLICANT);
+  static final Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
+  static final List<Implicant> MINIMAL_LIST = Collections.singletonList(MINIMAL_IMPLICANT);
 
   final int unknowns, values;
 
@@ -296,9 +295,7 @@ public class Implicant implements Comparable<Implicant> {
   public int compareTo(Implicant o) {
     if (this.values < o.values) return -1;
     if (this.values > o.values) return 1;
-    if (this.unknowns < o.unknowns) return -1;
-    if (this.unknowns > o.unknowns) return 1;
-    return 0;
+    return Integer.compare(this.unknowns, o.unknowns);
   }
 
   @Override
@@ -379,11 +376,7 @@ public class Implicant implements Comparable<Implicant> {
       int idx = table.getVisibleRowIndex(i);
       int dc = table.getVisibleRowDcMask(i);
       Implicant imp = new Implicant(dc, idx);
-      HashSet<Implicant> region = regions.get(val);
-      if (region == null) {
-        region = new HashSet<>();
-        regions.put(val, region);
-      }
+      HashSet<Implicant> region = regions.computeIfAbsent(val, k -> new HashSet<>());
       region.add(imp);
     }
     // For each region...

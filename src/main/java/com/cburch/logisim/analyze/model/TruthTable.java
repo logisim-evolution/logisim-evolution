@@ -51,7 +51,7 @@ public class TruthTable {
 
   private static class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
-    Entry[] inputs;
+    final Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
       inputs = new Entry[numInputs];
@@ -64,7 +64,7 @@ public class TruthTable {
 
     Row(Entry[] entries, int numInputs) {
       inputs = new Entry[numInputs];
-      for (int i = 0; i < numInputs; i++) inputs[i] = entries[i];
+      System.arraycopy(entries, 0, inputs, 0, numInputs);
     }
 
     public int baseIndex() {
@@ -90,26 +90,26 @@ public class TruthTable {
 
     @Override
     public String toString() {
-      String s = "row[";
+      StringBuilder s = new StringBuilder("row[");
       for (int i = 0; i < inputs.length; i++) {
-        if (i != 0) s += " ";
-        s += inputs[i].getDescription();
+        if (i != 0) s.append(" ");
+        s.append(inputs[i].getDescription());
       }
-      s += "]";
-      s += " dup=" + duplicity();
-      s += String.format(" base=%x dcmask=%x", baseIndex(), dcMask());
-      return s;
+      s.append("]");
+      s.append(" dup=").append(duplicity());
+      s.append(String.format(" base=%x dcmask=%x", baseIndex(), dcMask()));
+      return s.toString();
     }
 
     public String toBitString(List<Var> vars) {
-      String s = null;
+      StringBuilder s = null;
       int i = 0;
       for (Var v : vars) {
-        if (s == null) s = "";
-        else s += " ";
-        for (int j = 0; j < v.width; j++) s += inputs[i++].toBitString();
+        if (s == null) s = new StringBuilder();
+        else s.append(" ");
+        for (int j = 0; j < v.width; j++) s.append(inputs[i++].toBitString());
       }
-      return s;
+      return s.toString();
     }
 
     public boolean contains(int idx) {
@@ -126,7 +126,7 @@ public class TruthTable {
     }
 
     public Iterator<Integer> iterator() {
-      return new Iterator<Integer>() {
+      return new Iterator<>() {
         final int base = baseIndex();
         final int mask = dcMask();
         final int nbits = inputs.length;
@@ -143,7 +143,9 @@ public class TruthTable {
           int add = iter;
           int keep = 0;
           for (int b = 0; b < nbits; b++) {
-            if ((mask & (1 << b)) == 0) add = ((add & ~keep) << 1) | (add & keep);
+            if ((mask & (1 << b)) == 0) {
+              add = ((add & ~keep) << 1) | (add & keep);
+            }
             keep |= (1 << b);
           }
           iter++;
@@ -281,10 +283,10 @@ public class TruthTable {
   public String getVisibleOutputs(int row) {
     Row r = rows.get(row);
     int idx = r.baseIndex();
-    String s = "";
+    StringBuilder s = new StringBuilder();
     for (Entry[] column : columns)
-      s += (column == null ? DEFAULT_ENTRY : column[idx]).getDescription();
-    return s;
+      s.append((column == null ? DEFAULT_ENTRY : column[idx]).getDescription());
+    return s.toString();
   }
 
   public Entry getVisibleInputEntry(int row, int col) {
@@ -661,8 +663,7 @@ public class TruthTable {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
-      for (int i = 0; i < rows.size(); i++) {
-        Row r = rows.get(i);
+      for (Row r : rows) {
         if (r.inputs[index] == Entry.DONT_CARE)
           continue;
         setDontCare(r, b, true, changed);

@@ -32,6 +32,7 @@ package com.cburch.logisim;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -62,8 +63,7 @@ public class LogisimVersionTest {
 		// Should return a new object
 		assertNotSame(LogisimVersion.parse("1.2.3"),
 				LogisimVersion.parse("1.2.3"));
-		assertTrue(LogisimVersion.parse("1.2.3").equals(
-				LogisimVersion.parse("1.2.3")));
+    assertEquals(LogisimVersion.parse("1.2.3"), LogisimVersion.parse("1.2.3"));
 		assertEquals("1.2.3", LogisimVersion.parse("1.2.3").mainVersion());
 	}
 
@@ -75,8 +75,8 @@ public class LogisimVersionTest {
 	@Test
 	public void testCompareTo() {
 		assertTrue(older.compareTo(newer) < 0);
-		assertTrue(newer.compareTo(newer) == 0);
-		assertTrue(newer.compareTo(newerToo) == 0);
+    assertEquals(0, newer.compareTo(newer));
+    assertEquals(0, newer.compareTo(newerToo));
 		assertTrue(newer.compareTo(older) > 0);
 	}
 
@@ -86,8 +86,8 @@ public class LogisimVersionTest {
 	 */
 	@Test
 	public void testEqualsObject() {
-		assertTrue(older.equals(older));
-		assertFalse(older.equals(newer));
+    assertEquals(older, older);
+    assertNotEquals(older, newer);
 	}
 
 }

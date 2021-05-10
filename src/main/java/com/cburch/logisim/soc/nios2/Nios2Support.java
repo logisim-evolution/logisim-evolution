@@ -68,32 +68,32 @@ public class Nios2Support {
   }
 
   public static int getRegCIndex(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 17)&0x1F;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 17) & 0x1F;
     }
+    return 0;
   }
 
   public static int getOPX(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 6)&0x7FF;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 6) & 0x7FF;
     }
+    return 0;
   }
 	  
   public static int getOPXCode(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 11)&0x3F;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 11) & 0x3F;
     }
+    return 0;
   }
   
   public static int getOPXImm(int instruction, int type) {
-	    switch (type) {
-	      case R_TYPE : return (instruction >> 6)&0x1F;
-	      default     : return 0;
-	    }
-	  }
+    if (type == R_TYPE) {
+      return (instruction >> 6) & 0x1F;
+    }
+    return 0;
+  }
 	  
   public static int getITypeInstructionCode(int regA , int regB, int imm , int opc) {
     int instruction = opc&0x3F;

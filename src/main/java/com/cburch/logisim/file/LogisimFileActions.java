@@ -423,9 +423,7 @@ public class LogisimFileActions {
       LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
       if (lib instanceof LogisimFile) {
         LogisimFile ThisLib = (LogisimFile) lib;
-        Iterator<Circuit> iter = ThisLib.getCircuits().iterator();
-        while (iter.hasNext()) {
-          Circuit circ = iter.next();
+        for (Circuit circ : ThisLib.getCircuits()) {
           for (Component tool : circ.getNonWires()) {
             if (AvailableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
               AddTool current = AvailableTools.get(tool.getFactory().getName().toUpperCase());
@@ -433,9 +431,10 @@ public class LogisimFileActions {
                 tool.setFactory(current.getFactory());
               } else if (tool.getFactory().getName().equals("Text")) {
                 Component NewComp = Text.FACTORY.createComponent(tool.getLocation(),
-                     (AttributeSet) tool.getAttributeSet().clone());
+                    (AttributeSet) tool.getAttributeSet().clone());
                 tool.setFactory(NewComp.getFactory());
-              } else System.out.println("Not found:" + tool.getFactory().getName());
+              } else
+                System.out.println("Not found:" + tool.getFactory().getName());
             }
           }
         }

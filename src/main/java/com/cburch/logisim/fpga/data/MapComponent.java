@@ -490,10 +490,10 @@ public class MapComponent {
   
   public String getHdlString(int pin) {
 	if (pin < 0 || pin >= NrOfPins) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     /* The first element is the BoardName, so we skip */
-    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i));
-    s.append((s.length()==0 ? "" : "_")+pinLabels.get(pin));
+    for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
+    s.append(s.length() == 0 ? "" : "_").append(pinLabels.get(pin));
     return s.toString();
   }
   
@@ -508,24 +508,24 @@ public class MapComponent {
       return "s_"+HDLGeneratorFactory.LocalOutputBubbleBusname+BracketOpen+ MyOutputBubles.get(pin)
           +BracketClose;
     }
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
-    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i));
+    for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
     if (NrOfPins > 1)
-      s.append(BracketOpen+ pin +BracketClose);
+      s.append(BracketOpen).append(pin).append(BracketClose);
     return s.toString();
   }
   
   public String getDisplayString(int pin) {
-	StringBuffer s = new StringBuffer();
+	StringBuilder s = new StringBuilder();
 	/* The first element is the BoardName, so we skip */
-	for (int i = 1 ; i < myName.size() ; i++) s.append("/"+myName.get(i));
+	for (int i = 1 ; i < myName.size() ; i++) s.append("/").append(myName.get(i));
     if (pin >= 0) {
-      if (pin < NrOfPins) s.append("#"+pinLabels.get(pin));
-      else s.append("#unknown"+pin);
-      if (opens.get(pin)) s.append("->"+S.get("MapOpen"));
-      if (constants.get(pin)>=0) s.append("->"+(constants.get(pin)&1));
+      if (pin < NrOfPins) s.append("#").append(pinLabels.get(pin));
+      else s.append("#unknown").append(pin);
+      if (opens.get(pin)) s.append("->").append(S.get("MapOpen"));
+      if (constants.get(pin)>=0) s.append("->").append(constants.get(pin) & 1);
     } else {
       boolean outAllOpens = nrOutputs()>0;
       boolean ioAllOpens = nrIOs()>0;
@@ -553,7 +553,7 @@ public class MapComponent {
       if (outAllOpens || ioAllOpens || inpAllConst || ioAllConst) s.append("->");
       boolean addcomma = false;
       if (inpAllConst) {
-        s.append("0x"+Long.toHexString(inpConst));
+        s.append("0x").append(Long.toHexString(inpConst));
         addcomma = true;
       }
       if (outAllOpens) {
@@ -569,7 +569,7 @@ public class MapComponent {
       if (ioAllConst) {
         if (addcomma) s.append(",");
         else addcomma=true;
-        s.append("0x"+Long.toHexString(ioConst));
+        s.append("0x").append(Long.toHexString(ioConst));
       }
     }
     return s.toString();
@@ -593,16 +593,16 @@ public class MapComponent {
         Map.setAttribute(COMPLETE_MAP, rect.getXpos()+","+rect.getYpos());
       }
     } else {
-      StringBuffer s = null;
+      StringBuilder s = null;
       for (int i = 0 ; i < NrOfPins ; i++) {
-        if (s == null) s = new StringBuffer(); 
+        if (s == null) s = new StringBuilder();
         else s.append(",");
         if (opens.get(i)) s.append(OPEN_KEY);
         else if (constants.get(i)>= 0) s.append(constants.get(i));
         else if (maps.get(i) != null){
           MapClass map = maps.get(i);
-          s.append(map.IOcomp.GetRectangle().getXpos()+"_"+map.IOcomp.GetRectangle().getYpos()+"_"+
-              map.pin);
+          s.append(map.IOcomp.GetRectangle().getXpos()).append("_")
+              .append(map.IOcomp.GetRectangle().getYpos()).append("_").append(map.pin);
         } else s.append(NO_MAP);
       }
       Map.setAttribute(PIN_MAP, s.toString());
@@ -612,10 +612,10 @@ public class MapComponent {
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
     ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
-      StringBuffer s = null;
+      StringBuilder s = null;
       for (CircuitMapInfo pinmap : pinmaps) {
         if (s == null)
-          s = new StringBuffer();
+          s = new StringBuilder();
         else
           s.append(",");
         if (pinmap == null) {
@@ -626,7 +626,8 @@ public class MapComponent {
           else if (pinmap.isOpen())
             s.append(OPEN_KEY);
           else if (pinmap.isSinglePin())
-            s.append(pinmap.getRectangle().getXpos() + "_" + pinmap.getRectangle().getYpos() + "_" + pinmap
+            s.append(pinmap.getRectangle().getXpos()).append("_")
+                .append(pinmap.getRectangle().getYpos()).append("_").append(pinmap
                 .getIOId());
           else
             s.append(NO_MAP);

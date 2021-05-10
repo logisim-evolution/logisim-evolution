@@ -112,7 +112,7 @@ public class Startup implements AWTEventListener {
   private final HashMap<File, File> substitutions = new HashMap<>();
   private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
-  boolean isTty;
+  final boolean isTty;
   private File templFile = null;
   private boolean templEmpty = false;
   private boolean templPlain = false;
@@ -156,6 +156,32 @@ public class Startup implements AWTEventListener {
   static void doPrint(File file) {
     if (startupTemp != null) {
       startupTemp.doPrintFile(file);
+    }
+  }
+  
+  private static int parseTtyFormat(String fmt)
+  {
+    switch (fmt) {
+      case "table":
+        return TtyInterface.FORMAT_TABLE;
+      case "speed":
+        return TtyInterface.FORMAT_SPEED;
+      case "tty":
+        return TtyInterface.FORMAT_TTY;
+      case "halt":
+        return TtyInterface.FORMAT_HALT;
+      case "stats":
+        return TtyInterface.FORMAT_STATISTICS;
+      case "binary":
+        return TtyInterface.FORMAT_TABLE_BIN;
+      case "hex":
+        return TtyInterface.FORMAT_TABLE_HEX;
+      case "csv":
+        return TtyInterface.FORMAT_TABLE_CSV;
+      case "tabs":
+        return TtyInterface.FORMAT_TABLE_TABBED;
+      default:
+        return 0;
     }
   }
 
@@ -218,23 +244,11 @@ public class Startup implements AWTEventListener {
           }
           for (String s : fmts) {
             String fmt = s.trim();
-            if (fmt.equals("table")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TABLE;
-            } else if (fmt.equals("speed")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_SPEED;
-            } else if (fmt.equals("tty")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TTY;
-            } else if (fmt.equals("halt")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_HALT;
-            } else if (fmt.equals("stats")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
-            } else if (fmt.equals("binary")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
-            else if (fmt.equals("hex")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
-            else if (fmt.equals("csv")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
-            else if (fmt.equals("tabs")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
-            else {
+            int val = parseTtyFormat(fmt);
+            if (val == 0)
               logger.error("{}", S.get("ttyFormatError"));
-            }
+            else
+              ret.ttyFormat |= val;
           }
         } else {
           logger.error("{}", S.get("ttyFormatError"));
@@ -312,7 +326,7 @@ public class Startup implements AWTEventListener {
           loc = wxh[1].substring(p + 1);
           wxh[1] = wxh[1].substring(0, p);
           String[] xy = loc.split("\\+");
-          if (xy.length != 2 || xy[0].length() < 1 || xy[0].length() < 1) {
+          if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
             logger.error("{}", S.get("argGeometryError"));
             System.exit(1);
           }
@@ -401,7 +415,7 @@ public class Startup implements AWTEventListener {
         i++;
         if (i >= args.length) printUsage();
 
-        if (args[i].toUpperCase().endsWith("MAP.xml")) {
+        if (args[i].toUpperCase().endsWith("MAP.XML")) {
           ret.testCircuitImpMapFile = args[i];
           i++;
           if (i >= args.length) printUsage();
@@ -417,10 +431,9 @@ public class Startup implements AWTEventListener {
         if (i < args.length) {
           if (!args[i].startsWith("-")) {
             try {
-              int freq = Integer.parseUnsignedInt(args[i]);
-              ret.testTickFrequency = freq;
+              ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
@@ -1070,7 +1083,7 @@ public class Startup implements AWTEventListener {
             container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
             container.revalidate();
             container.repaint();
-          } catch (Exception e) {
+          } catch (Exception ignored) {
           }
         }
         if (container instanceof JOptionPane) {

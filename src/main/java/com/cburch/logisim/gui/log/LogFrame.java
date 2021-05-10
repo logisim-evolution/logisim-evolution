@@ -50,13 +50,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -66,7 +63,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class LogFrame extends LFrame.SubWindowWithSimulation {
-  private LogMenuListener menuListener;
+  private final LogMenuListener menuListener;
 
   private class MyListener implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
@@ -128,7 +125,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   // TODO should automatically repaint icons when component attr change
   // TODO ? moving a component using Select tool removes it from selection
   private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
-    Project proj;
+    final Project proj;
     WindowMenuManager(Project p) {
       super(S.get("logFrameMenuItem"), false);
       proj = p;
@@ -167,18 +164,18 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private static final long serialVersionUID = 1L;
   private Simulator curSimulator = null;
   private Model curModel;
-  private Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
-  private MyListener myListener = new MyListener();
-  private MyChangeListener myChangeListener = new MyChangeListener();
+  private final Map<CircuitState, Model> modelMap = new HashMap<>();
+  private final MyListener myListener = new MyListener();
+  private final MyChangeListener myChangeListener = new MyChangeListener();
   
-  private WindowMenuManager windowManager;
-  private LogPanel[] panels;
+  private final WindowMenuManager windowManager;
+  private final LogPanel[] panels;
   // private SelectionPanel selPanel;
-  private JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
 
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
-    SelectionPanel selPanel;
+    final SelectionPanel selPanel;
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);
@@ -195,11 +192,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   public JButton makeSelectionButton() {
     JButton button = new JButton(S.get("addRemoveSignals"));
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        SelectionPanel.doDialog(LogFrame.this);
-      }
-    });
+    button.addActionListener(event -> SelectionPanel.doDialog(LogFrame.this));
     return button;
   }
 
@@ -217,8 +210,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     };
     tabbedPane = new JTabbedPane();
     // tabbedPane.setFont(new Font("Dialog", Font.BOLD, 9));
-    for (int index = 0; index < panels.length; index++) {
-      LogPanel panel = panels[index];
+    for (LogPanel panel : panels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
     tabbedPane.addChangeListener(myChangeListener);
@@ -307,8 +299,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       curModel.setSelected(true);
     setTitle(computeTitle(curModel, project));
     if (panels != null) {
-      for (int i = 0; i < panels.length; i++) {
-        panels[i].modelChanged(oldModel, curModel);
+      for (LogPanel panel : panels) {
+        panel.modelChanged(oldModel, curModel);
       }
     }
     return true;

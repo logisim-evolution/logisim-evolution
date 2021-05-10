@@ -63,11 +63,7 @@ public class ArgonXML {
       if (!rootElement.getNodeName().equals(rootName))
         throw new RuntimeException("Could not find root node: " + rootName);
       return rootElement;
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    } catch (ParserConfigurationException exception) {
-      throw new RuntimeException(exception);
-    } catch (SAXException exception) {
+    } catch (IOException | SAXException | ParserConfigurationException exception) {
       throw new RuntimeException(exception);
     } finally {
       if (inputStream != null) {
@@ -131,11 +127,7 @@ public class ArgonXML {
   }
 
   private void addChild(String name, ArgonXML child) {
-    ArrayList<ArgonXML> children = nameChildren.get(name);
-    if (children == null) {
-      children = new ArrayList<>();
-      nameChildren.put(name, children);
-    }
+    ArrayList<ArgonXML> children = nameChildren.computeIfAbsent(name, k -> new ArrayList<>());
     children.add(child);
   }
 

@@ -101,7 +101,7 @@ public class PowerOnReset extends InstanceFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() == tim) {
-        if (value == true) {
+        if (value) {
           value = false;
           state.getInstance().fireInvalidated();
           tim.stop();

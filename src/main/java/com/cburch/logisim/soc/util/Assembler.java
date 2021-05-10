@@ -361,49 +361,68 @@ public class Assembler extends AbstractParser implements LocaleListener {
         int type = first.getType();
         int offset = first.getOffset();
         if (type == Token.LITERAL_CHAR) {
-          if (name.equals(",")) 
-            lineTokens.add(new AssemblerToken(AssemblerToken.SEPERATOR,null,offset));
-          else if (name.equals("(")) {
-            if (!assembler.usesRoundedBrackets()) {
-              addError(offset,S.getter("AssemblerWrongOpeningBracket"),lineErrorMarkers);
-            } else
-              lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_OPEN,null,offset));
-          } else if (name.equals(")")) {
-            if (!assembler.usesRoundedBrackets()) {
-              addError(offset,S.getter("AssemblerWrongClosingBracket"),lineErrorMarkers);
-             } else
-               lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_CLOSE,null,offset));
-          } else if (name.equals("[")) {
-            if (assembler.usesRoundedBrackets()) {
-              addError(offset,S.getter("AssemblerWrongOpeningBracket"),lineErrorMarkers);
-            } else
-              lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_OPEN,null,offset));
-          } else if (name.equals("]")) {
-            if (assembler.usesRoundedBrackets()) {
-              addError(offset,S.getter("AssemblerWrongClosingBracket"),lineErrorMarkers);
-            } else
-              lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_CLOSE,null,offset));
-          } else if (name.equals("{"))
-            addError(offset,S.getter("AssemblerWrongOpeningBracket"),lineErrorMarkers);
-          else if (name.equals("}"))
-            addError(offset,S.getter("AssemblerWrongClosingBracket"),lineErrorMarkers);
-          else if (name.equals(":"))
-            lineTokens.add(new AssemblerToken(AssemblerToken.LABEL_IDENTIFIER,null,offset));
-          else if (name.equals("-"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SUBTRACT,null,offset));
-          else if (name.equals("+"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_ADD,null,offset));
-          else if (name.equals("*"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_MUL,null,offset));
-          else if (name.equals("%"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_REM,null,offset));
-          else if (name.equals("/"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_DIV,null,offset));
-          else if (name.equals("<<"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_LEFT,null,offset));
-          else if (name.equals(">>"))
-        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_RIGHT,null,offset));
-          else addError(offset,S.getter("AssemblerUnknowCharacter"),lineErrorMarkers);
+          switch (name) {
+            case ",":
+              lineTokens.add(new AssemblerToken(AssemblerToken.SEPERATOR, null, offset));
+              break;
+            case "(":
+              if (!assembler.usesRoundedBrackets()) {
+                addError(offset, S.getter("AssemblerWrongOpeningBracket"), lineErrorMarkers);
+              } else
+                lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_OPEN, null, offset));
+              break;
+            case ")":
+              if (!assembler.usesRoundedBrackets()) {
+                addError(offset, S.getter("AssemblerWrongClosingBracket"), lineErrorMarkers);
+              } else
+                lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_CLOSE, null, offset));
+              break;
+            case "[":
+              if (assembler.usesRoundedBrackets()) {
+                addError(offset, S.getter("AssemblerWrongOpeningBracket"), lineErrorMarkers);
+              } else
+                lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_OPEN, null, offset));
+              break;
+            case "]":
+              if (assembler.usesRoundedBrackets()) {
+                addError(offset, S.getter("AssemblerWrongClosingBracket"), lineErrorMarkers);
+              } else
+                lineTokens.add(new AssemblerToken(AssemblerToken.BRACKET_CLOSE, null, offset));
+              break;
+            case "{":
+              addError(offset, S.getter("AssemblerWrongOpeningBracket"), lineErrorMarkers);
+              break;
+            case "}":
+              addError(offset, S.getter("AssemblerWrongClosingBracket"), lineErrorMarkers);
+              break;
+            case ":":
+              lineTokens.add(new AssemblerToken(AssemblerToken.LABEL_IDENTIFIER, null, offset));
+              break;
+            case "-":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SUBTRACT, null, offset));
+              break;
+            case "+":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_ADD, null, offset));
+              break;
+            case "*":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_MUL, null, offset));
+              break;
+            case "%":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_REM, null, offset));
+              break;
+            case "/":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_DIV, null, offset));
+              break;
+            case "<<":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_LEFT, null, offset));
+              break;
+            case ">>":
+              lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_RIGHT, null, offset));
+              break;
+            default:
+              addError(offset, S.getter("AssemblerUnknowCharacter"), lineErrorMarkers);
+              break;
+          }
         } else
           switch (type) {
             case Token.LITERAL_NUMBER_DECIMAL_INT : 
@@ -477,9 +496,8 @@ public class Assembler extends AbstractParser implements LocaleListener {
   public ElfSectionHeader getSectionHeader() { return assemblerInfo.getSectionHeader(); }
 
   @Override
-  public void localeChanged() { 
-    HashMap<GutterIconInfo,StringGetter> oldSet = new HashMap<>();
-    oldSet.putAll(errorMarkers);
+  public void localeChanged() {
+    HashMap<GutterIconInfo, StringGetter> oldSet = new HashMap<>(errorMarkers);
     errorMarkers.clear();
     for (GutterIconInfo error : oldSet.keySet()) {
       pane.getGutter().removeTrackingIcon(error);

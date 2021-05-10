@@ -49,8 +49,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       String ComponentName,
       FPGAReport Reporter,
       String HDLType) {
-    ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+    ArrayList<String> contents = new ArrayList<>(
+        FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
 
     VhdlContentComponent content =
         attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);

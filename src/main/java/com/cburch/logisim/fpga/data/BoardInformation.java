@@ -132,10 +132,8 @@ public class BoardInformation {
     ArrayList<BoardRectangle> result = new ArrayList<>();
     for (FPGAIOInformationContainer comp : MyComponents) {
       if (comp.GetType().equals(type)) {
-        if ((!type.equals(IOComponentTypes.DIPSwitch))
-            || (type.equals(IOComponentTypes.DIPSwitch) && (nrOfPins <= comp.getNrOfPins()))) {
-          if ((!type.equals(IOComponentTypes.PortIO))
-              || (type.equals(IOComponentTypes.PortIO) && (nrOfPins <= comp.getNrOfPins()))) {
+        if (!type.equals(IOComponentTypes.DIPSwitch) || nrOfPins <= comp.getNrOfPins()) {
+          if (!type.equals(IOComponentTypes.PortIO) || nrOfPins <= comp.getNrOfPins()) {
             result.add(comp.GetRectangle());
           }
         }

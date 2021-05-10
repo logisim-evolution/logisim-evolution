@@ -237,10 +237,10 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       }
       TraceInfo trace = new TraceInfo(pc,instruction,exe.getAsmInstruction(),false);
       if (!exe.execute(this,cState)) {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
-          s.append("\n"+exe.getErrorMessage());
+          s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(null,s.toString(),
               SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
@@ -303,7 +303,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   private final SocBusInfo attachedBus;
   
   public static final AssemblerInterface ASSEMBLER = new RV32imAssembler(); 
-  public static String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
+  public static final String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
                                               "s0","s1","a0","a1","a2","a3","a4","a5",
                                               "a6","a7","s2","s3","s4","s5","s6","s7","s8","s9",
                                               "s10","s11","t3","t4","t5","t6"};

@@ -65,7 +65,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.io.IOException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.InputMap;
@@ -81,12 +80,10 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("rawtypes")
   private static class FormatModel extends AbstractListModel implements ComboBoxModel {
     static int getFormatIndex(int choice) {
-      switch (choice) {
-        case AnalyzerModel.FORMAT_PRODUCT_OF_SUMS:
-          return 1;
-        default:
-          return 0;
+      if (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
+        return 1;
       }
+      return 0;
     }
 
     private static final long serialVersionUID = 1L;
@@ -105,12 +102,10 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     int getSelectedFormat() {
-      switch (selected) {
-        case 1:
-          return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
-        default:
-          return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+      if (selected == 1) {
+        return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
       }
+      return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
     }
 
     public Object getSelectedItem() {
@@ -445,7 +440,7 @@ class MinimizedTab extends AnalyzerTab {
     if (model.getTruthTable().getRowCount() > 4096) {
       (new Analyzer.PleaseWait<Void>(S.get("expressionCalc"), this) {
             @Override
-            public Void doInBackground() throws Exception {
+            public Void doInBackground() {
               model.getOutputExpressions().getExpression(output);
               return null;
             }
@@ -464,7 +459,7 @@ class MinimizedTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean viewing = minimizedExpr.isFocusOwner()
@@ -553,7 +548,7 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     @Override
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (!DataFlavor.imageFlavor.equals(flavor)) {
         throw new UnsupportedFlavorException(flavor);
       }
@@ -600,7 +595,7 @@ class MinimizedTab extends AnalyzerTab {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int kWidth = karnaughMap.getKMapDim().width;

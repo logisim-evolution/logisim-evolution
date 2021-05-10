@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.opts;
 
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.proj.Project;
 import java.awt.LayoutManager;

@@ -51,19 +51,33 @@ public class InputEventUtil {
     }
     return ret;
   }
+  
+  private static int parseInput(String s)
+  {
+    switch (s) {
+      case CTRL:
+        return InputEvent.CTRL_DOWN_MASK;
+      case SHIFT:
+        return InputEvent.SHIFT_DOWN_MASK;
+      case ALT:
+        return InputEvent.ALT_DOWN_MASK;
+      case BUTTON1:
+        return InputEvent.BUTTON1_DOWN_MASK;
+      case BUTTON2:
+        return InputEvent.BUTTON2_DOWN_MASK;
+      case BUTTON3:
+        return InputEvent.BUTTON3_DOWN_MASK;
+      default:
+        throw new NumberFormatException("InputEventUtil");
+    }
+  }
 
   public static int fromString(String str) {
     int ret = 0;
     StringTokenizer toks = new StringTokenizer(str);
     while (toks.hasMoreTokens()) {
       String s = toks.nextToken();
-      if (s.equals(CTRL)) ret |= InputEvent.CTRL_DOWN_MASK;
-      else if (s.equals(SHIFT)) ret |= InputEvent.SHIFT_DOWN_MASK;
-      else if (s.equals(ALT)) ret |= InputEvent.ALT_DOWN_MASK;
-      else if (s.equals(BUTTON1)) ret |= InputEvent.BUTTON1_DOWN_MASK;
-      else if (s.equals(BUTTON2)) ret |= InputEvent.BUTTON2_DOWN_MASK;
-      else if (s.equals(BUTTON3)) ret |= InputEvent.BUTTON3_DOWN_MASK;
-      else throw new NumberFormatException("InputEventUtil");
+      ret |= parseInput(s);
     }
     return ret;
   }
@@ -137,17 +151,17 @@ public class InputEventUtil {
     }
   }
 
-  public static String CTRL = "Ctrl";
+  public static final String CTRL = "Ctrl";
 
-  public static String SHIFT = "Shift";
+  public static final String SHIFT = "Shift";
 
-  public static String ALT = "Alt";
+  public static final String ALT = "Alt";
 
-  public static String BUTTON1 = "Button1";
+  public static final String BUTTON1 = "Button1";
 
-  public static String BUTTON2 = "Button2";
+  public static final String BUTTON2 = "Button2";
 
-  public static String BUTTON3 = "Button3";
+  public static final String BUTTON3 = "Button3";
 
   private InputEventUtil() {}
 }

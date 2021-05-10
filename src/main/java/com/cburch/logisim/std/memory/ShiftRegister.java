@@ -122,9 +122,9 @@ public class ShiftRegister extends InstanceFactory {
     Bounds bds = instance.getBounds();
     Port[] ps;
     Integer lenObj = instance.getAttributeValue(ATTR_LENGTH);
-    int len = lenObj == null ? 8 : lenObj.intValue();
+    int len = lenObj == null ? 8 : lenObj;
     if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      if (parallelObj == null || parallelObj.booleanValue()) {
+      if (parallelObj == null || parallelObj) {
         ps = new Port[6 + 2 * len];
         ps[LD] = new Port(10, -20, Port.INPUT, 1);
         ps[LD].setToolTip(S.getter("shiftRegLoadTip"));
@@ -141,7 +141,7 @@ public class ShiftRegister extends InstanceFactory {
       ps[CK] = new Port(0, 10, Port.INPUT, 1);
       ps[CLR] = new Port(10, 20, Port.INPUT, 1);
     } else {
-      if (parallelObj == null || parallelObj.booleanValue()) {
+      if (parallelObj == null || parallelObj) {
         ps = new Port[6 + 2 * len - 1];
         ps[LD] = new Port(0, 30, Port.INPUT, 1);
         ps[LD].setToolTip(S.getter("shiftRegLoadTip"));
@@ -371,7 +371,7 @@ public class ShiftRegister extends InstanceFactory {
   private ShiftRegisterData getData(InstanceState state) {
     BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
     Integer lenObj = state.getAttributeValue(ATTR_LENGTH);
-    int length = lenObj == null ? 8 : lenObj.intValue();
+    int length = lenObj == null ? 8 : lenObj;
     ShiftRegisterData data = (ShiftRegisterData) state.getData();
     if (data == null) {
       data = new ShiftRegisterData(width, length);
@@ -386,14 +386,14 @@ public class ShiftRegister extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       Object parallel = attrs.getValue(ATTR_LOAD);
-      if (parallel == null || ((Boolean) parallel).booleanValue()) {
-        int len = attrs.getValue(ATTR_LENGTH).intValue();
+      if (parallel == null || (Boolean) parallel) {
+        int len = attrs.getValue(ATTR_LENGTH);
         return Bounds.create(0, -20, 20 + 10 * len, 40);
       } else {
         return Bounds.create(0, -20, 30, 40);
       }
     } else {
-      int len = attrs.getValue(ATTR_LENGTH).intValue();
+      int len = attrs.getValue(ATTR_LENGTH);
       return Bounds.create(0, 0, SymbolWidth + 20, 80 + 20 * len);
     }
   }
@@ -432,9 +432,9 @@ public class ShiftRegister extends InstanceFactory {
     BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
     int wid = widObj.getWidth();
     Integer lenObj = painter.getAttributeValue(ATTR_LENGTH);
-    int len = lenObj == null ? 8 : lenObj.intValue();
+    int len = lenObj == null ? 8 : lenObj;
     Boolean parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    Boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
     ShiftRegisterData data = (ShiftRegisterData) painter.getData();
 
@@ -459,12 +459,12 @@ public class ShiftRegister extends InstanceFactory {
     painter.drawLabel();
 
     // draw state
-    boolean parallel = painter.getAttributeValue(ATTR_LOAD).booleanValue();
+    boolean parallel = painter.getAttributeValue(ATTR_LOAD);
     if (parallel) {
       BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
       int wid = widObj.getWidth();
       Integer lenObj = painter.getAttributeValue(ATTR_LENGTH);
-      int len = lenObj == null ? 8 : lenObj.intValue();
+      int len = lenObj == null ? 8 : lenObj;
       if (painter.getShowState()) {
         if (wid <= 4) {
           ShiftRegisterData data = getData(painter);
@@ -513,7 +513,7 @@ public class ShiftRegister extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    boolean parallel = state.getAttributeValue(ATTR_LOAD).booleanValue();
+    boolean parallel = state.getAttributeValue(ATTR_LOAD);
     ShiftRegisterData data = getData(state);
     int len = data.getLength();
 

@@ -95,9 +95,7 @@ public class ComponentMapParser {
     Document MapDoc = null;
     try {
       MapDoc = parser.parse(xml);
-    } catch (SAXException e) {
-      return ErrorParsingFile;
-    } catch (IOException e) {
+    } catch (SAXException | IOException e) {
       return ErrorParsingFile;
     }
 

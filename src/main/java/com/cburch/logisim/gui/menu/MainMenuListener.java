@@ -54,10 +54,10 @@ import java.util.List;
 
 public class MainMenuListener extends MenuListener {
 
-  protected Frame frame;
-  protected FileListener fileListener = new FileListener();
-  protected ProjectMenuListener projectListener = new ProjectMenuListener();
-  protected SimulateMenuListener simulateListener = new SimulateMenuListener();
+  protected final Frame frame;
+  protected final FileListener fileListener = new FileListener();
+  protected final ProjectMenuListener projectListener = new ProjectMenuListener();
+  protected final SimulateMenuListener simulateListener = new SimulateMenuListener();
 
   public MainMenuListener(Frame frame, LogisimMenuBar menubar) {
     super(menubar);

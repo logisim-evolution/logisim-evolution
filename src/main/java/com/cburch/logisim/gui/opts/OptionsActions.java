@@ -59,8 +59,8 @@ class OptionsActions {
   }
 
   private static class RemoveMapping extends Action {
-    MouseMappings mm;
-    Integer mods;
+    final MouseMappings mm;
+    final Integer mods;
     Tool oldtool;
 
     RemoveMapping(MouseMappings mm, Integer mods) {
@@ -117,10 +117,10 @@ class OptionsActions {
   }
 
   private static class SetMapping extends Action {
-    MouseMappings mm;
-    Integer mods;
+    final MouseMappings mm;
+    final Integer mods;
     Tool oldtool;
-    Tool tool;
+    final Tool tool;
 
     SetMapping(MouseMappings mm, Integer mods, Tool tool) {
       this.mm = mm;

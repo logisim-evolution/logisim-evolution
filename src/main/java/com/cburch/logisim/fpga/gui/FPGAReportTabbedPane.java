@@ -219,7 +219,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateInfoWindow() {
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     for (String mes : InfoMessages) {
       Line.append(mes);
     }
@@ -227,7 +227,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateInfoTab() {
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     for (String mes : InfoMessages) {
       Line.append(mes);
     }
@@ -273,7 +273,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateConsoleWindow() {
-    StringBuffer Lines = new StringBuffer();
+    StringBuilder Lines = new StringBuilder();
     for (String mes : ConsoleMessages) {
       Lines.append(mes);
     }
@@ -281,7 +281,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateConsoleTab() {
-    StringBuffer Lines = new StringBuffer();
+    StringBuilder Lines = new StringBuilder();
     for (String mes : ConsoleMessages) {
       Lines.append(mes);
     }

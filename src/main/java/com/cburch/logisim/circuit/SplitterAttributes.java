@@ -44,7 +44,7 @@ import java.util.List;
 
 public class SplitterAttributes extends AbstractAttributeSet {
   public static class BitOutAttribute extends Attribute<Integer> {
-    int which;
+    final int which;
     BitOutOption[] options;
 
     private BitOutAttribute(int which, BitOutOption[] options) {
@@ -75,7 +75,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
     @SuppressWarnings({"rawtypes"})
     @Override
     public java.awt.Component getCellEditor(Integer value) {
-      int index = value.intValue();
+      int index = value;
       ComboBox combo = new ComboBox<>(options);
       combo.setSelectedIndex(index);
       combo.setMaximumRowCount(options.length);
@@ -97,13 +97,13 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
     @Override
     public String toDisplayString(Integer value) {
-      int index = value.intValue();
+      int index = value;
       return options[index].toString();
     }
 
     @Override
     public String toStandardString(Integer value) {
-      int index = value.intValue();
+      int index = value;
       if (index == 0) {
         return unchosen_val;
       } else {
@@ -113,9 +113,9 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
 
   private static class BitOutOption {
-    int value;
-    boolean isVertical;
-    boolean isLast;
+    final int value;
+    final boolean isVertical;
+    final boolean isLast;
 
     BitOutOption(int value, boolean isVertical, boolean isLast) {
       this.value = value;
@@ -367,7 +367,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       configureOptions();
       parameters = null;
     } else if (attr == ATTR_FANOUT) {
-      int newValue = ((Integer) value).intValue();
+      int newValue = (Integer) value;
       byte[] bits = bit_end;
       for (int i = 0; i < bits.length; i++) {
         if (bits[i] > newValue) bits[i] = (byte) newValue;
@@ -397,7 +397,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       BitOutAttribute bitOutAttr = (BitOutAttribute) attr;
       int val;
       if (value instanceof Integer) {
-        val = ((Integer) value).intValue();
+        val = (Integer) value;
       } else {
         val = ((BitOutOption) value).value + 1;
       }

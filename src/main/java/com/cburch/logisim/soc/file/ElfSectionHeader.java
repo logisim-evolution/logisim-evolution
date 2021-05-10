@@ -92,7 +92,7 @@ public class ElfSectionHeader {
   }
   
   private String getString(byte[] buffer, int index) {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     int idx = index;
     while (idx < buffer.length && buffer[idx] != 0)
       s.append((char)buffer[idx++]);

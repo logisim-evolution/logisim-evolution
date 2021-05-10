@@ -55,8 +55,9 @@ class NandGate extends AbstractGate {
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
       String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
-      StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation + NotOperation + "(");
+      StringBuilder OneLine = new StringBuilder();
+      OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation)
+          .append(NotOperation).append("(");
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
@@ -70,7 +71,7 @@ class NandGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
@@ -79,7 +80,7 @@ class NandGate extends AbstractGate {
     }
   }
 
-  public static NandGate FACTORY = new NandGate();
+  public static final NandGate FACTORY = new NandGate();
 
   private NandGate() {
     super("NAND Gate", S.getter("nandGateComponent"));

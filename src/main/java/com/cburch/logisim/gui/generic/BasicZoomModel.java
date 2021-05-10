@@ -53,7 +53,7 @@ public class BasicZoomModel implements ZoomModel {
     showGrid = true;
     canvas = pane;
 
-    setZoomFactor(zoomPref.get().doubleValue());
+    setZoomFactor(zoomPref.get());
     setShowGrid(gridPref.getBoolean());
   }
 
@@ -127,12 +127,7 @@ public class BasicZoomModel implements ZoomModel {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       SwingUtilities.invokeLater(
-          new Runnable() {
-            @Override
-            public void run() {
-              support.firePropertyChange(ZoomModel.CENTER, oldValue, value);
-            }
-          });
+          () -> support.firePropertyChange(ZoomModel.CENTER, oldValue, value));
     }
   }
 }

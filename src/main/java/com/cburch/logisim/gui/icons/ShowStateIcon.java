@@ -55,11 +55,11 @@ public class ShowStateIcon extends AnnimatedIcon {
     g2.setColor(Color.BLACK);
     g2.drawRect(0, 0, getIconWidth(), getIconHeight() / 2);
     Font f = g2.getFont().deriveFont((float) getIconWidth() / (float) 2);
-    String str = Integer.toBinaryString(state);
+    StringBuilder str = new StringBuilder(Integer.toBinaryString(state));
     while (str.length() < 3) {
-      str = "0" + str;
+      str.insert(0, "0");
     }
-    TextLayout l = new TextLayout(str, f, g2.getFontRenderContext());
+    TextLayout l = new TextLayout(str.toString(), f, g2.getFontRenderContext());
     l.draw(
         g2,
         (float) ((double) getIconWidth() / 2.0 - l.getBounds().getCenterX()),

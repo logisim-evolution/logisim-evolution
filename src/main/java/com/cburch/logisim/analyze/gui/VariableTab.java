@@ -400,7 +400,7 @@ public class VariableTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
@@ -453,12 +453,11 @@ public class VariableTab extends AnalyzerTab {
       if (row == listCopy.length) {
         list.add(newVar);
         table.changeSelection(row+1, column, false, false);
-        table.grabFocus();
       } else {
         list.replace(oldVar, newVar);
         table.changeSelection(row, column, false, false);
-        table.grabFocus();
       }
+      table.grabFocus();
     }
 
     public Object getValueAt(int row, int col) {
@@ -505,14 +504,15 @@ public class VariableTab extends AnalyzerTab {
     }
 
     private void updateCopy() {
-      listCopy = list.vars.toArray(new Var[list.vars.size()]);
+      listCopy = list.vars.toArray(new Var[0]);
     }
   }
 
   public static class VarRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
-    Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-    Font plain, italic;
+    final Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+    final Font plain;
+    final Font italic;
     public VarRenderer() {
       setBorder(border);
       plain = AppPreferences.getScaledFont(getFont());
@@ -536,7 +536,7 @@ public class VariableTab extends AnalyzerTab {
     public BitWidthRenderer() {
     }
     @Override
-    public Component getListCellRendererComponent(JList<? extends Object> list,
+    public Component getListCellRendererComponent(JList<?> list,
         Object w, int index, boolean isSelected, boolean cellHasFocus) {
       String s = ((Integer)w) == 1 ? ("1 bit") : (w + " bits");
       return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -545,10 +545,10 @@ public class VariableTab extends AnalyzerTab {
 
   public class SingleClickVarEditor extends AbstractCellEditor implements TableCellEditor {
     private static final long serialVersionUID = 1L;
-    JTextField field = new JTextField();
-    JComboBox<Integer> width;
+    final JTextField field = new JTextField();
+    final JComboBox<Integer> width;
     Var editing;
-    VariableList data;
+    final VariableList data;
     
     public SingleClickVarEditor(VariableList data) {
       field.setBorder(BorderFactory.createCompoundBorder(
@@ -680,8 +680,8 @@ public class VariableTab extends AnalyzerTab {
 
   private class VarTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
-    JTable table;
-    VariableList data;
+    final JTable table;
+    final VariableList data;
     Var pendingDelete;
 
     VarTransferHandler(JTable table, VariableList data) {
@@ -705,7 +705,7 @@ public class VariableTab extends AnalyzerTab {
         try {
           JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
           newIdx = Math.min(dl.getRow(), data.vars.size());
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
       }
 

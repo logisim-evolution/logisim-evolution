@@ -189,11 +189,7 @@ class WireRepair extends CircuitTransaction {
     HashMap<Location, ArrayList<Wire>> wirePoints = new HashMap<>();
     for (Wire w : circuit.getWires()) {
       for (Location loc : w) {
-        ArrayList<Wire> locWires = wirePoints.get(loc);
-        if (locWires == null) {
-          locWires = new ArrayList<>(3);
-          wirePoints.put(loc, locWires);
-        }
+        ArrayList<Wire> locWires = wirePoints.computeIfAbsent(loc, k -> new ArrayList<>(3));
         locWires.add(w);
       }
     }

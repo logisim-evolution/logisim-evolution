@@ -34,11 +34,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public class OutputStreamEscaper extends OutputStream {
-  protected Writer out;
+  protected final Writer out;
   protected boolean preserveWhitespace;
   protected int textWidth, col;
   protected char lastChar;
-  protected char[] sep = System.lineSeparator().toCharArray();
+  protected final char[] sep = System.lineSeparator().toCharArray();
 
   public OutputStreamEscaper(Writer out) {
     this.out = out;

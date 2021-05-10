@@ -226,7 +226,7 @@ class BuildCircuitButton extends JButton {
   }
 
   private static class ProjectItem {
-    Project project;
+    final Project project;
 
     ProjectItem(Project project) {
       this.project = project;

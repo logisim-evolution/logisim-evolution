@@ -98,7 +98,7 @@ public class Comparator extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("BitComparator");
     else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     return CompleteName.toString();

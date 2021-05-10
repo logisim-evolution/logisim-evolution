@@ -69,7 +69,7 @@ public abstract class Mem extends InstanceFactory {
 
   static class MemListener implements HexModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     MemListener(Instance instance) {
       this.instance = instance;

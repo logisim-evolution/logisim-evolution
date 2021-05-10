@@ -58,9 +58,9 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -249,7 +249,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
           && server_response.length() > 0
           && !server_response.equals("sync")) {
 
-        String[] parameters = server_response.split("\\:");
+        String[] parameters = server_response.split(":");
 
         String busValue = parameters[1];
 
@@ -296,7 +296,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
         }
       }
 
-      new UnsupportedOperationException(
+      throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
@@ -315,7 +315,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = this.content.getContent();
 
@@ -323,14 +324,9 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
     }
   }
 

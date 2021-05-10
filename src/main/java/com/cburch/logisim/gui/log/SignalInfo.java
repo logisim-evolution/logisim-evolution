@@ -28,18 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-
-import javax.swing.Icon;
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -55,6 +43,16 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+import javax.swing.Icon;
 
 //SignalInfo identifies a component within a top-level circuit or one of the
 //nested sub-circuits within that top-level circuit. The path[] identifies how
@@ -83,10 +81,10 @@ import com.cburch.logisim.instance.StdAttr;
 //
 
 public class SignalInfo implements AttributeListener, CircuitListener, Location.At {
-  private int n;
-  private Component[] path; // n-1 subcircuit Components, then a Loggable Component
-  private Circuit[] circ; // top-level circuit, then circuits for first n-1 path Components
-  private Object option; 
+  private final int n;
+  private final Component[] path; // n-1 subcircuit Components, then a Loggable Component
+  private final Circuit[] circ; // top-level circuit, then circuits for first n-1 path Components
+  private final Object option;
   private RadixOption radix = RadixOption.RADIX_2;
   private String nickname; // short "LogName" of just the last Component of path
   private String fullname; // a path-like name, with slashes, ending with the nickname
@@ -95,9 +93,9 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private boolean obsoleted;
   private Listener listener; // only one supported, for now, usally just the LogModel
 
-  public static interface Listener {
-    public void signalInfoNameChanged(SignalInfo s);
-    public void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
+  public interface Listener {
+    void signalInfoNameChanged(SignalInfo s);
+    void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
   }
 
   public SignalInfo(Circuit root, Component[] p, Object o) {
@@ -260,10 +258,10 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
     StringBuilder buf = new StringBuilder();
     for (int i = 0; i < n-1; i++)
-      buf.append(logName(path[i], null) + "/");
+      buf.append(logName(path[i], null)).append("/");
     buf.append(nickname);
     if (width > 1)
-      buf.append("[" + (width-1) + "..0]");
+      buf.append("[").append(width - 1).append("..0]");
     String f = buf.toString();
     if (!f.equals(fullname)) {
       changed = true;
@@ -369,7 +367,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public boolean equals(Object other) {
     if (other == this)
       return true;
-    if (other == null || !(other instanceof SignalInfo))
+    if (!(other instanceof SignalInfo))
       return false;
     SignalInfo o = (SignalInfo)other;
     return Arrays.equals(path, o.path) && Objects.equals(option, o.option);

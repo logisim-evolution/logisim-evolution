@@ -74,7 +74,7 @@ class ClockState implements Cloneable {
     Value[] values = lastClock.getAll();
     if (values.length <= which) {
       Value[] nvalue = (Value.createKnown(BitWidth.create(which + 1), 0)).getAll();
-      for (int i = 0; i < values.length; i++) nvalue[i] = values[i];
+      System.arraycopy(values, 0, nvalue, 0, values.length);
       values = nvalue;
     }
     Value oldClock = values[which];

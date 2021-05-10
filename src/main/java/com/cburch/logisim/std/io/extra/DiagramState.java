@@ -89,11 +89,10 @@ class DiagramState implements InstanceData {
   }
 
   public void moveback() { // move back all old values
-    for (byte i = 0; i < Inputs; i++) {
-      for (byte j = 0; j < Length - 1; j++) {
-        diagram[i][j] = diagram[i][j + 1];
+    if (Length >= 1)
+      for (byte i = 0; i < Inputs; i++) {
+          System.arraycopy(diagram[i], 1, diagram[i], 0, Length - 1);
       }
-    }
   }
 
   public void setclocknumber(byte i) {

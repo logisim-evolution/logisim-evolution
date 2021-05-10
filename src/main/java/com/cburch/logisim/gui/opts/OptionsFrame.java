@@ -39,7 +39,6 @@ import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
-import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
@@ -65,13 +64,10 @@ public class OptionsFrame extends LFrame.Dialog {
   public OptionsFrame(Project project) {
     super(project);
     project.addLibraryListener(myListener);
-    project.addProjectListener(new ProjectListener() {
-      @Override
-      public void projectChanged(ProjectEvent event) {
-        int action = event.getAction();
-        if (action == ProjectEvent.ACTION_SET_STATE) {
-          computeTitle();
-        }
+    project.addProjectListener(event -> {
+      int action = event.getAction();
+      if (action == ProjectEvent.ACTION_SET_STATE) {
+        computeTitle();
       }
     });
     panels =

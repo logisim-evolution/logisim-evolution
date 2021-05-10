@@ -99,7 +99,7 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
   }
 
   private static class Member<E extends CanvasObject> {
-    E value;
+    final E value;
 
     public Member(E value) {
       this.value = value;

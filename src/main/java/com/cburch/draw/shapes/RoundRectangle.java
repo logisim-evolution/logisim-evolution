@@ -181,7 +181,7 @@ public class RoundRectangle extends Rectangular {
   @Override
   public void updateValue(Attribute<?> attr, Object value) {
     if (attr == DrawAttr.CORNER_RADIUS) {
-      radius = ((Integer) value).intValue();
+      radius = (Integer) value;
     } else {
       super.updateValue(attr, value);
     }

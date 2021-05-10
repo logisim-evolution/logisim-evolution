@@ -234,7 +234,7 @@ public class Line extends AbstractCanvasObject {
     if (attr == DrawAttr.STROKE_COLOR) {
       strokeColor = (Color) value;
     } else if (attr == DrawAttr.STROKE_WIDTH) {
-      strokeWidth = ((Integer) value).intValue();
+      strokeWidth = (Integer) value;
     }
   }
 }

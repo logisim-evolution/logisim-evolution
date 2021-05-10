@@ -116,22 +116,25 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {
       case INSTR_BREAK   : 
       case INSTR_TRAP    : if (immediate != 0) s.append(immediate);
                            break;
-      case INSTR_RDCTL   : s.append(Nios2State.registerABINames[sourceA]+",ctl"+immediate);
+      case INSTR_RDCTL   : s.append(Nios2State.registerABINames[sourceA]).append(",ctl")
+          .append(immediate);
                            break;
-      case INSTR_WRCTL   : s.append("ctl"+immediate+","+Nios2State.registerABINames[sourceA]);
+      case INSTR_WRCTL   : s.append("ctl").append(immediate).append(",")
+          .append(Nios2State.registerABINames[sourceA]);
                            break;
       case INSTR_INITD   :
       case INSTR_INITDA  :
       case INSTR_FLUSHDA :
       case INSTR_FLUSHD  : int imm = ((immediate<<16)>>16);
-    	                   s.append(imm+"("+Nios2State.registerABINames[sourceA]+")");
+    	                   s.append(imm).append("(").append(Nios2State.registerABINames[sourceA])
+                             .append(")");
                            break;
       case INSTR_INITI   :
       case INSTR_FLUSHI  : s.append(Nios2State.registerABINames[sourceA]);

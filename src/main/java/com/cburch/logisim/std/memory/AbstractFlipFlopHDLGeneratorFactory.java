@@ -77,12 +77,12 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignmentOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     String NotOperator = (HDLType.equals(VHDL)) ? "NOT" : "~";
     String SelectOperator = (HDLType.equals(VHDL)) ? "" : "[" + ActivityLevelStr + "]";
-    Contents.addAll(MakeRemarkBlock("Here the output signals are defined", 3, HDLType));
+    ArrayList<String> Contents = new ArrayList<>(
+        MakeRemarkBlock("Here the output signals are defined", 3, HDLType));
     Contents.add(
         "   "
             + Preamble
@@ -183,8 +183,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int ActivityLevel = 1;
-    Boolean GatedClock = false;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean ActiveLow = false;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     String ClockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
     if (ClockNetName.isEmpty()) {
@@ -211,9 +211,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean HasClock = true;
+    boolean ActiveLow = false;
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";

@@ -73,15 +73,15 @@ public class Popups {
 
   @SuppressWarnings("serial")
   private static class CircuitPopup extends JPopupMenu implements ActionListener {
-    Project proj;
+    final Project proj;
     /* Tool tool; */
-    Circuit circuit;
-    JMenuItem analyze = new JMenuItem(S.get("projectAnalyzeCircuitItem"));
-    JMenuItem stats = new JMenuItem(S.get("projectGetCircuitStatisticsItem"));
-    JMenuItem main = new JMenuItem(S.get("projectSetAsMainItem"));
-    JMenuItem remove = new JMenuItem(S.get("projectRemoveCircuitItem"));
-    JMenuItem editLayout = new JMenuItem(S.get("projectEditCircuitLayoutItem"));
-    JMenuItem editAppearance = new JMenuItem(S.get("projectEditCircuitAppearanceItem"));
+    final Circuit circuit;
+    final JMenuItem analyze = new JMenuItem(S.get("projectAnalyzeCircuitItem"));
+    final JMenuItem stats = new JMenuItem(S.get("projectGetCircuitStatisticsItem"));
+    final JMenuItem main = new JMenuItem(S.get("projectSetAsMainItem"));
+    final JMenuItem remove = new JMenuItem(S.get("projectRemoveCircuitItem"));
+    final JMenuItem editLayout = new JMenuItem(S.get("projectEditCircuitLayoutItem"));
+    final JMenuItem editAppearance = new JMenuItem(S.get("projectEditCircuitAppearanceItem"));
 
     CircuitPopup(Project proj, Tool tool, Circuit circuit) {
       super(S.get("circuitMenu"));
@@ -144,10 +144,10 @@ public class Popups {
     /** */
     private static final long serialVersionUID = 1L;
 
-    Project proj;
-    VhdlContent vhdl;
-    JMenuItem edit = new JMenuItem(S.get("projectEditVhdlItem"));
-    JMenuItem remove = new JMenuItem(S.get("projectRemoveVhdlItem"));
+    final Project proj;
+    final VhdlContent vhdl;
+    final JMenuItem edit = new JMenuItem(S.get("projectEditVhdlItem"));
+    final JMenuItem remove = new JMenuItem(S.get("projectRemoveVhdlItem"));
 
     VhdlPopup(Project proj, Tool tool, VhdlContent vhdl) {
       super(S.get("vhdlMenu"));
@@ -174,10 +174,10 @@ public class Popups {
 
   @SuppressWarnings("serial")
   private static class LibraryPopup extends JPopupMenu implements ActionListener {
-    Project proj;
-    Library lib;
-    JMenuItem unload = new JMenuItem(S.get("projectUnloadLibraryItem"));
-    JMenuItem reload = new JMenuItem(S.get("projectReloadLibraryItem"));
+    final Project proj;
+    final Library lib;
+    final JMenuItem unload = new JMenuItem(S.get("projectUnloadLibraryItem"));
+    final JMenuItem reload = new JMenuItem(S.get("projectReloadLibraryItem"));
 
     LibraryPopup(Project proj, Library lib, boolean is_top) {
       super(S.get("libMenu"));
@@ -205,13 +205,13 @@ public class Popups {
 
   @SuppressWarnings("serial")
   private static class ProjectPopup extends JPopupMenu implements ActionListener {
-    Project proj;
-    JMenuItem add = new JMenuItem(S.get("projectAddCircuitItem"));
-    JMenuItem vhdl = new JMenuItem(S.get("projectAddVhdlItem"));
-    JMenu load = new JMenu(S.get("projectLoadLibraryItem"));
-    JMenuItem loadBuiltin = new JMenuItem(S.get("projectLoadBuiltinItem"));
-    JMenuItem loadLogisim = new JMenuItem(S.get("projectLoadLogisimItem"));
-    JMenuItem loadJar = new JMenuItem(S.get("projectLoadJarItem"));
+    final Project proj;
+    final JMenuItem add = new JMenuItem(S.get("projectAddCircuitItem"));
+    final JMenuItem vhdl = new JMenuItem(S.get("projectAddVhdlItem"));
+    final JMenu load = new JMenu(S.get("projectLoadLibraryItem"));
+    final JMenuItem loadBuiltin = new JMenuItem(S.get("projectLoadBuiltinItem"));
+    final JMenuItem loadLogisim = new JMenuItem(S.get("projectLoadLogisimItem"));
+    final JMenuItem loadJar = new JMenuItem(S.get("projectLoadJarItem"));
 
     ProjectPopup(Project proj) {
       super(S.get("projMenu"));

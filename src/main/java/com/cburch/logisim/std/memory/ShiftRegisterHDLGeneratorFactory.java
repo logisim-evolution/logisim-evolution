@@ -58,8 +58,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       String ComponentName,
       FPGAReport Reporter,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+    ArrayList<String> Contents = new ArrayList<>(
+        FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
     if (HDLType.equals(VHDL)) {
       Contents.add("ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS");
       Contents.add("");
@@ -315,8 +315,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     int ActiveLevel = 1;
-    Boolean GatedClock = false;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean ActiveLow = false;
     String ClockNetName = GetClockNetName(ComponentInfo, ShiftRegister.CK, Nets);
     if (ClockNetName.isEmpty()) {
       GatedClock = true;
@@ -340,9 +340,9 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean HasClock = true;
+    boolean ActiveLow = false;
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
     String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
@@ -360,7 +360,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     String ClockNetName = GetClockNetName(ComponentInfo, ShiftRegister.CK, Nets);
     GatedClock = ClockNetName.isEmpty();
     ActiveLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
-    Boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD).booleanValue();
+    boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     PortMap.putAll(
         GetNetMap("Reset", true, ComponentInfo, ShiftRegister.CLR, Reporter, HDLType, Nets));
     if (HasClock && !GatedClock) {
@@ -430,7 +430,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     PortMap.putAll(
         GetNetMap(ShiftName, true, ComponentInfo, ShiftRegister.IN, Reporter, HDLType, Nets));
     if (HasParallelLoad) {
-      StringBuffer Vector = new StringBuffer();
+      StringBuilder Vector = new StringBuilder();
       if (NrOfBits == 1) {
         if (HDLType.equals(VHDL)) {
           for (int i = 0; i < NrOfStages; i++) {
@@ -516,12 +516,12 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
     } else {
       PortMap.put("Q", (HDLType.equals(VHDL)) ? "OPEN" : "");
-      StringBuffer Temp = new StringBuffer();
+      StringBuilder Temp = new StringBuilder();
       if (HDLType.equals(VERILOG)) {
         Temp.append("0");
       } else {
         Temp.append("\"");
-        for (int i = 0; i < NrOfBits * NrOfStages; i++) Temp.append("0");
+        Temp.append("0".repeat(NrOfBits * NrOfStages));
         Temp.append("\"");
       }
       PortMap.put("D", Temp.toString());

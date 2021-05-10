@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Attribute;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class ModelChangeAttributeAction extends ModelAction {
@@ -66,7 +67,7 @@ public class ModelChangeAttributeAction extends ModelAction {
       for (AttributeMapKey key : newValues.keySet()) {
         Attribute<?> at = key.getAttribute();
         if (found) {
-          if (a == null ? at != null : !a.equals(at)) {
+          if (!Objects.equals(a, at)) {
             a = null;
             break;
           }

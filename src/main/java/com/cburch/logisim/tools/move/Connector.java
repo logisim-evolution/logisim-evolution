@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -311,9 +310,7 @@ class Connector {
       ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
     ArrayList<Wire> pathWires = new ArrayList<>();
     for (ConnectionData conn : connects) {
-      for (Wire w : conn.getWirePath()) {
-        pathWires.add(w);
-      }
+      pathWires.addAll(conn.getWirePath());
     }
 
     ArrayList<ConnectionData> impossible = new ArrayList<>();
@@ -344,14 +341,12 @@ class Connector {
    * we are moving that gate northeast, we prefer to connect the inputs from the bottom up.
    */
   private static void sortConnects(ArrayList<ConnectionData> connects, final int dx, final int dy) {
-    connects.sort(new Comparator<ConnectionData>() {
-      public int compare(ConnectionData ac, ConnectionData bc) {
-        Location a = ac.getLocation();
-        Location b = bc.getLocation();
-        int abx = a.getX() - b.getX();
-        int aby = a.getY() - b.getY();
-        return abx * dx + aby * dy;
-      }
+    connects.sort((ac, bc) -> {
+      Location a = ac.getLocation();
+      Location b = bc.getLocation();
+      int abx = a.getX() - b.getX();
+      int aby = a.getY() - b.getY();
+      return abx * dx + aby * dy;
     });
   }
 

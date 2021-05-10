@@ -35,9 +35,9 @@ import javax.swing.JTextArea;
 
 public class MessageBox {
 
-  String description;
-  String title;
-  int type;
+  final String description;
+  final String title;
+  final int type;
   JTextArea textArea;
 
   public MessageBox(String title, String description, int type) {

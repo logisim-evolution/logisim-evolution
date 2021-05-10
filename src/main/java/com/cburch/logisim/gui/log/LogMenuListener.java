@@ -28,12 +28,11 @@
 
 package com.cburch.logisim.gui.log;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.gui.menu.PrintHandler;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LogMenuListener extends MenuListener {
 
@@ -57,7 +56,7 @@ public class LogMenuListener extends MenuListener {
     }
   }
 
-  private FileListener fileListener = new FileListener();
+  private final FileListener fileListener = new FileListener();
   private PrintHandler printer;
 
   public LogMenuListener(LogisimMenuBar menubar) {

@@ -70,17 +70,16 @@ public class ZOrder {
       CanvasModel model,
       Collection<? extends CanvasObject> ignore) {
     int index = getIndex(query, objs);
-    if (index <= 0) {
-      return null;
-    } else {
+    if (index > 0) {
       Set<CanvasObject> set = toSet(model.getObjectsOverlapping(query));
       ListIterator<CanvasObject> it = objs.listIterator(index);
       while (it.hasPrevious()) {
         CanvasObject o = it.previous();
-        if (set.contains(o) && !ignore.contains(o)) return o;
+        if (set.contains(o) && !ignore.contains(o))
+          return o;
       }
-      return null;
     }
+    return null;
   }
 
   public static int getZIndex(CanvasObject query, CanvasModel model) {

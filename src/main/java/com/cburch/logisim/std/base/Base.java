@@ -52,13 +52,12 @@ public class Base extends Library {
     setHidden();
     WiringTool wiring = new WiringTool();
 
-    tools = Arrays.asList(new Tool[] {
+    tools = Arrays.asList(
         new PokeTool(),
         new EditTool(selectTool, wiring),
         wiring,
         new TextTool(),
-        new MenuTool(),
-      });
+        new MenuTool());
     }
   
   @Override

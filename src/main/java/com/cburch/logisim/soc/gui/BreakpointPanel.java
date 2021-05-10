@@ -168,7 +168,7 @@ public class BreakpointPanel extends JPanel
       else
         try {
           debugScrollPane.getGutter().toggleBookmark(line - 1);
-        } catch (BadLocationException e) {
+        } catch (BadLocationException ignored) {
         }
     }
     return lines;

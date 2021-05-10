@@ -93,7 +93,7 @@ public class Constant extends InstanceFactory {
         this.value =
             this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
       } else if (attr == ATTR_VALUE) {
-        long val = ((Long) value).longValue();
+        long val = (Long) value;
         this.value = Value.createKnown(width, val);
       } else {
         throw new IllegalArgumentException("unknown attribute " + attr);
@@ -129,7 +129,7 @@ public class Constant extends InstanceFactory {
   public static final Attribute<Long> ATTR_VALUE =
       Attributes.forHexLong("value", S.getter("constantValueAttr"));
 
-  public static InstanceFactory FACTORY = new Constant();
+  public static final InstanceFactory FACTORY = new Constant();
 
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
@@ -195,7 +195,7 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+    long v = painter.getAttributeValue(ATTR_VALUE);
     String vStr = Long.toHexString(v);
     Bounds bds = getOffsetBounds(painter.getAttributeSet());
 
@@ -230,7 +230,7 @@ public class Constant extends InstanceFactory {
 
     Graphics g = painter.getGraphics();
     if (w == 1) {
-      long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+      long v = painter.getAttributeValue(ATTR_VALUE);
       Value val = v == 1L ? Value.TRUE : Value.FALSE;
       g.setColor(val.getColor());
       GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
@@ -245,7 +245,7 @@ public class Constant extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     Bounds bds = painter.getOffsetBounds();
     BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    long longValue = painter.getAttributeValue(ATTR_VALUE).longValue();
+    long longValue = painter.getAttributeValue(ATTR_VALUE);
     Value v = Value.createKnown(width, longValue);
     Location loc = painter.getLocation();
     int x = loc.getX();
@@ -279,7 +279,7 @@ public class Constant extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    long value = state.getAttributeValue(ATTR_VALUE).longValue();
+    long value = state.getAttributeValue(ATTR_VALUE);
     state.setPort(0, Value.createKnown(width, value), 1);
   }
 

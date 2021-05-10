@@ -37,6 +37,7 @@ import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -61,9 +62,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source2;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
@@ -111,12 +110,13 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+","+RV32im_state.registerABINames[source1]+","+
-            RV32im_state.registerABINames[source2]);
+    s.append(RV32im_state.registerABINames[destination]).append(",")
+        .append(RV32im_state.registerABINames[source1]).append(",")
+        .append(RV32im_state.registerABINames[source2]);
     return s.toString();
   }
 

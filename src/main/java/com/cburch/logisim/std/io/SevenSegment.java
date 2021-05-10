@@ -58,9 +58,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   static void drawBase(InstancePainter painter, boolean DrawPoint) {
     ensureSegments();
     InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-    int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+    int summ = (data == null ? 0 : (Integer) data.getValue());
     Boolean active = painter.getAttributeValue(Io.ATTR_ACTIVE);
-    int desired = active == null || active.booleanValue() ? 1 : 0;
+    int desired = active == null || active ? 1 : 0;
 
     Bounds bds = painter.getBounds();
     int x = bds.getX() + 5;
@@ -108,7 +108,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     }
   }
 
-  public static final ArrayList<String> GetLabels() {
+  public static ArrayList<String> GetLabels() {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 8; i++) LabelNames.add("");
     LabelNames.set(Segment_A, "Segment_A");
@@ -122,7 +122,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return LabelNames;
   }
   
-  public static final String getOutputLabel(int id) {
+  public static String getOutputLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
   }
@@ -139,7 +139,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   static Bounds[] SEGMENTS = null;
 
-  static Color DEFAULT_OFF = new Color(220, 220, 220);
+  static final Color DEFAULT_OFF = new Color(220, 220, 220);
   
   public static final Attribute<Boolean> ATTR_DP = 
     Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
@@ -206,7 +206,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return attrs.getValue(Io.ATTR_ACTIVE);
   }
 
-  public static final void computeTextField(Instance instance) {
+  public static void computeTextField(Instance instance) {
     Direction facing = instance.getAttributeValue(StdAttr.FACING);
     Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
@@ -269,7 +269,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    drawBase(painter, painter.getAttributeValue(ATTR_DP).booleanValue());
+    drawBase(painter, painter.getAttributeValue(ATTR_DP));
   }
 
   @Override

@@ -257,9 +257,10 @@ public class ValueTable extends JPanel {
 
   public static class Cell {
 
-    public Object value;
-    public Color bg, fg;
-    public String tip;
+    public final Object value;
+    public final Color bg;
+    public final Color fg;
+    public final String tip;
 
     public Cell(Object v, Color b, Color f, String t) {
       value = v;

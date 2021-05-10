@@ -32,8 +32,6 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ElfHeader {
@@ -101,11 +99,7 @@ public class ElfHeader {
   public static final int EM_RISCV = 243;
   private static final Map<Integer, String> ARCHITECTURES;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(EM_OPENRISC, "Open Risc");
-    aMap.put(EM_INTEL_NIOS2, "Nios II");
-    aMap.put(EM_RISCV, "Risc V");
-    ARCHITECTURES = Collections.unmodifiableMap(aMap);
+    ARCHITECTURES = Map.of(EM_OPENRISC, "Open Risc", EM_INTEL_NIOS2, "Nios II", EM_RISCV, "Risc V");
   }
   
   
@@ -274,30 +268,30 @@ public class ElfHeader {
   public String getErrorString() {
     if (status == ELF_HEADER_CORRECT)
       return S.get("ElfHeaderNoErrors");
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     boolean insertNl = false;
     if (status == EI_ERROR_READING_FILE) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderReadingFileError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderReadingFileError"));
       insertNl = true;
     }
     if (status == EI_SIZE_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectEISize"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectEISize"));
       insertNl = true;
     }
     if (status == EI_MAGIC_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectMagic"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectMagic"));
       insertNl = true;
     }
     if (status == EI_CLASS_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderEIClassError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderEIClassError"));
       insertNl = true;
     }
     if (status == EI_DATA_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderEIDataError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderEIDataError"));
       insertNl = true;
     }
     if (status == E_SIZE_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectESize"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectESize"));
       insertNl = true;
     }
     return s.toString();

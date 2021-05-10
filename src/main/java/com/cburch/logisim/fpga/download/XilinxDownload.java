@@ -314,7 +314,7 @@ public class XilinxDownload implements VendorDownload {
   
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -322,19 +322,23 @@ public class XilinxDownload implements VendorDownload {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");
-          Temp.append(map.getHdlString(i)+"\" ");
-          Temp.append("LOC = \""+map.getPinLocation(i)+"\" ");
+          Temp.append(map.getHdlString(i)).append("\" ");
+          Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           FPGAIOInformationContainer info = map.getFpgaInfo(i);
           if (info != null) {
             if (info.GetPullBehavior() != PullBehaviors.Unknown && info.GetPullBehavior() != PullBehaviors.Float) {
-              Temp.append("| " + PullBehaviors.getContraintedPullString(info.GetPullBehavior()) + " ");
+              Temp.append("| ")
+                  .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
+                  .append(" ");
             }
             if (info.GetDrive() != DriveStrength.Unknown
                 && info.GetDrive() != DriveStrength.DefaulStength) {
-              Temp.append("| DRIVE = " + DriveStrength.GetContraintedDriveStrength(info.GetDrive()) + " ");
+              Temp.append("| DRIVE = ")
+                  .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
             if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
-              Temp.append("| IOSTANDARD = " + IoStandards.GetConstraintedIoStandard(info.GetIOStandard()) + " ");
+              Temp.append("| IOSTANDARD = ")
+                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard())).append(" ");
             }
           }
           Temp.append(";");
@@ -461,18 +465,17 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
-    result.append(CurrentBoard.fpga.getPart());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getPackage());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getSpeedGrade());
-    return result.toString();
+    String result = CurrentBoard.fpga.getPart()
+        + "-"
+        + CurrentBoard.fpga.getPackage()
+        + "-"
+        + CurrentBoard.fpga.getSpeedGrade();
+    return result;
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
-    result.append("LOC = \"" + CurrentBoard.fpga.getClockPinLocation() + "\"");
+    StringBuilder result = new StringBuilder();
+    result.append("LOC = \"").append(CurrentBoard.fpga.getClockPinLocation()).append("\"");
     if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
       result.append(" | PULLUP");
     }
@@ -481,8 +484,8 @@ public class XilinxDownload implements VendorDownload {
     }
     if (CurrentBoard.fpga.getClockStandard() != IoStandards.DefaulStandard
         && CurrentBoard.fpga.getClockStandard() != IoStandards.Unknown) {
-      result.append(
-          " | IOSTANDARD = " + IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
+      result.append(" | IOSTANDARD = ")
+          .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
     }
     return result.toString();
   }

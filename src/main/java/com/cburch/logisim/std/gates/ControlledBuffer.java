@@ -49,7 +49,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.WireRepair;
-import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -67,8 +66,8 @@ class ControlledBuffer extends InstanceFactory {
           S.getter("controlledControlOption"),
           new AttributeOption[] {RIGHT_HANDED, LEFT_HANDED});
 
-  public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
-  public static ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
+  public static final ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
+  public static final ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
 
   private final boolean isInverter;
 
@@ -145,11 +144,9 @@ class ControlledBuffer extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return new WireRepair() {
-        public boolean shouldRepairWire(WireRepairData data) {
-          Location port2 = instance.getPortLocation(2);
-          return data.getPoint().equals(port2);
-        }
+      return (WireRepair) data -> {
+        Location port2 = instance.getPortLocation(2);
+        return data.getPoint().equals(port2);
       };
     }
     return super.getInstanceFeature(instance, key);

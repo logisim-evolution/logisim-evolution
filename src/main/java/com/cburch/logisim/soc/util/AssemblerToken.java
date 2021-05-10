@@ -59,10 +59,18 @@ public class AssemblerToken {
    * be used for custom purposes.
    */
   
-  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<Integer>() {
+  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<>() {
     private static final long serialVersionUID = 1L;
-    {add(MATH_ADD); add (MATH_SUBTRACT); add(MATH_MUL); add(MATH_DIV); add(MATH_REM); 
-     add(MATH_SHIFT_LEFT); add(MATH_SHIFT_RIGHT);} 
+
+    {
+      add(MATH_ADD);
+      add(MATH_SUBTRACT);
+      add(MATH_MUL);
+      add(MATH_DIV);
+      add(MATH_REM);
+      add(MATH_SHIFT_LEFT);
+      add(MATH_SHIFT_RIGHT);
+    }
   };
   
   private int type;

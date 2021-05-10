@@ -37,14 +37,15 @@ import com.cburch.logisim.gui.log.SignalInfo;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
-
 import javax.swing.SwingUtilities;
 
 public class Simulator {
 
   public static class Event {
-    private Simulator source;
-    private boolean didTick, didSingleStep, didPropagate;
+    private final Simulator source;
+    private final boolean didTick;
+    private final boolean didSingleStep;
+    private final boolean didPropagate;
 
     public Event(Simulator src, boolean t, boolean s, boolean p) {
       source = src;
@@ -59,12 +60,13 @@ public class Simulator {
     public boolean didPropagate() { return didPropagate; }
   }
 
-  public static interface Listener {
-    public void simulatorReset(Event e);
-    default public boolean wantProgressEvents() { return false; }
-    default public void propagationInProgress(Event e) { };
-    public void propagationCompleted(Event e);
-    public void simulatorStateChanged(Event e);
+  public interface Listener {
+    void simulatorReset(Event e);
+    default boolean wantProgressEvents() { return false; }
+    default void propagationInProgress(Event e) { }
+
+    void propagationCompleted(Event e);
+    void simulatorStateChanged(Event e);
   }
   
   // This thread keeps track of the current stepPoints (when running in step
@@ -99,7 +101,7 @@ public class Simulator {
   //               stable, then toggleClocks() is also called before step().
   private static class SimThread extends UniquelyNamedThread {
 
-    private Simulator sim;
+    private final Simulator sim;
     private long lastTick = System.nanoTime();
 
     // NOTE: These variables must only be accessed with lock held.
@@ -107,7 +109,7 @@ public class Simulator {
     private boolean _autoPropagating = true;
     private boolean _autoTicking = false;
     private double _autoTickFreq = 1.0; // Hz
-    private long _autoTickNanos = (long)Math.round(1e9 / (2*_autoTickFreq));
+    private long _autoTickNanos = Math.round(1e9 / (2*_autoTickFreq));
     private int _manualTicksRequested = 0;
     private int _manualStepsRequested = 0;
     private boolean _nudgeRequested = false;
@@ -180,7 +182,7 @@ public class Simulator {
       if (_autoTickFreq == freq)
         return false;
       _autoTickFreq = freq;
-      _autoTickNanos = freq <= 0 ? 0 : (long)Math.round(1e9 / (2*_autoTickFreq));
+      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / (2*_autoTickFreq));
       notifyAll();
       return true;
     }
@@ -283,7 +285,7 @@ public class Simulator {
             else
               wait();
           }
-          catch (InterruptedException e) { } // yes, we swallow the interrupt
+          catch (InterruptedException ignored) { } // yes, we swallow the interrupt
         }
       } while (!ready);
 
@@ -364,7 +366,7 @@ public class Simulator {
     if (ticked || stepped || propagated || doNudge)
       sim._firePropagationCompleted(ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
     if (clockDied)
-      sim.fireSimulatorStateChanged(); ; // todo: fixme: ack, wrong thread!
+      sim.fireSimulatorStateChanged(); // todo: fixme: ack, wrong thread!
 
     return true;
   }
@@ -385,12 +387,8 @@ public class Simulator {
             _manualStepsRequested = 0;
             _nudgeRequested = false;
           }
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                  OptionPane.showMessageDialog(
-                      null, "The simulator has crashed. Save your work and restart Logisim.");
-            }
-          });
+          SwingUtilities.invokeLater(() -> OptionPane.showMessageDialog(
+              null, "The simulator has crashed. Save your work and restart Logisim."));
         }
       }
     }
@@ -401,25 +399,25 @@ public class Simulator {
   // Everything below here is invoked and accessed only by the User/GUI thread.
   //
 
-  private SimThread simThread;
+  private final SimThread simThread;
 
   // listeners is protected by a lock because simThread calls the _fire*()
   // methods, but the gui thread can call add/removeSimulateorListener() at any
   // time. Really, the _fire*() methods should be done on the gui thread, I
   // suspect.
-  private ArrayList<Listener> listeners = new ArrayList<>();
-  private Object lock = new Object();
+  private final ArrayList<Listener> listeners = new ArrayList<>();
+  private final Object lock = new Object();
   
   public Simulator() {
     simThread = new SimThread(this);
 
     try {
       simThread.setPriority(simThread.getPriority() - 1);
-    } catch (IllegalArgumentException | SecurityException e) { }
+    } catch (IllegalArgumentException | SecurityException ignored) { }
 
     simThread.start();
 
-    setTickFrequency(AppPreferences.TICK_FREQUENCY.get().doubleValue());
+    setTickFrequency(AppPreferences.TICK_FREQUENCY.get());
   }
 
   public void addSimulatorListener(Listener l) {
@@ -453,7 +451,7 @@ public class Simulator {
   private ArrayList<Listener> copyListeners() {
     ArrayList<Listener> copy;
     synchronized (lock) {
-      copy = new ArrayList<Listener>(listeners);
+      copy = new ArrayList<>(listeners);
     }
     return copy;
   }

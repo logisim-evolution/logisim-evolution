@@ -72,10 +72,6 @@ public final class Softwares {
       }
 
       return vlib.waitFor() == 0;
-    } catch (IOException e) {
-      throw e;
-    } catch (InterruptedException e) {
-      throw e;
     } finally {
       try {
         if (reader != null) reader.close();

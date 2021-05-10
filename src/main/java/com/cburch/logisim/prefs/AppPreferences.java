@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -126,7 +127,7 @@ public class AppPreferences {
       } else if (prop.equals(TEMPLATE_FILE)) {
         File oldValue = templateFile;
         File value = convertFile(prefs.get(TEMPLATE_FILE, null));
-        if (value == null ? oldValue != null : !value.equals(oldValue)) {
+        if (!Objects.equals(value, oldValue)) {
           templateFile = value;
           if (templateType == TEMPLATE_CUSTOM) {
             customTemplate = null;
@@ -154,7 +155,7 @@ public class AppPreferences {
     Preferences p = getPrefs(true);
     try {
       p.clear();
-    } catch (BackingStoreException e) {
+    } catch (BackingStoreException ignored) {
     }
   }
 
@@ -235,7 +236,7 @@ public class AppPreferences {
           if (shouldClear) {
             try {
               p.clear();
-            } catch (BackingStoreException e) {
+            } catch (BackingStoreException ignored) {
             }
           }
           myListener = new MyListener();
@@ -263,12 +264,11 @@ public class AppPreferences {
   public static Template getTemplate() {
     getPrefs();
     switch (templateType) {
-      case TEMPLATE_PLAIN:
-        return getPlainTemplate();
       case TEMPLATE_EMPTY:
         return getEmptyTemplate();
       case TEMPLATE_CUSTOM:
         return getCustomTemplate();
+      case TEMPLATE_PLAIN:
       default:
         return getPlainTemplate();
     }
@@ -296,7 +296,7 @@ public class AppPreferences {
     try {
       System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
       System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
-    } catch (Exception t) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -317,12 +317,12 @@ public class AppPreferences {
   public static void setTemplateFile(File value, Template template) {
     getPrefs();
     if (value != null && !value.canRead()) value = null;
-    if (value == null ? templateFile != null : !value.equals(templateFile)) {
+    if (!Objects.equals(value, templateFile)) {
       try {
         customTemplateFile = template == null ? null : value;
         customTemplate = template;
         getPrefs().put(TEMPLATE_FILE, value == null ? "" : value.getCanonicalPath());
-      } catch (IOException ex) {
+      } catch (IOException ignored) {
       }
     }
   }
@@ -345,7 +345,7 @@ public class AppPreferences {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();
         component.repaint();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -579,9 +579,9 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX1;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX2;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
     RadixOption[] radixOptions = RadixOption.OPTIONS;
@@ -759,7 +759,7 @@ public class AppPreferences {
                   ? Toolkit.getDefaultToolkit().getScreenSize().height
                   : 0)));
   
-  public static final void resetWindow() {
+  public static void resetWindow() {
 	  WINDOW_MAIN_SPLIT.set(0.251);
 	  WINDOW_LEFT_SPLIT.set(0.51);
 	  WINDOW_RIGHT_SPLIT.set(0.751);

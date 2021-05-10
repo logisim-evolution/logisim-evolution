@@ -171,7 +171,7 @@ public class CircuitState implements InstanceData {
   private final Map<Location, Value> values = new HashMap<>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
   private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
-  HashMap<Location, SetData> causes = new HashMap<>();
+  final HashMap<Location, SetData> causes = new HashMap<>();
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -402,7 +402,7 @@ public class CircuitState implements InstanceData {
           // try again...
           try {
             Thread.sleep(1);
-          } catch (InterruptedException e2) {
+          } catch (InterruptedException ignored) {
           }
           if (i == 0) e.printStackTrace();
         }

@@ -47,8 +47,9 @@ import java.util.List;
 public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   public static class VhdlGenericAttribute extends Attribute<Integer> {
-    int start, end;
-    VhdlContent.Generic g;
+    final int start;
+    final int end;
+    final VhdlContent.Generic g;
 
     private VhdlGenericAttribute(
         String name, StringGetter disp, int start, int end, VhdlContent.Generic g) {
@@ -180,9 +181,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     instanceAttrs.add(StdAttr.FACING);
     instanceAttrs.add(StdAttr.APPEARANCE);
     instanceAttrs.add(VhdlSimConstants.SIM_NAME_ATTR);
-    for (Attribute<Integer> a : genericAttrs) {
-      instanceAttrs.add(a);
-    }
+    instanceAttrs.addAll(genericAttrs);
     if (genericValues == null) genericValues = new HashMap<>();
     ArrayList<Attribute<Integer>> toRemove = new ArrayList<>();
     for (Attribute<Integer> a : genericValues.keySet()) {
@@ -307,7 +306,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   }
 
   static class VhdlEntityListener implements HdlModelListener {
-    VhdlEntityAttributes attrs;
+    final VhdlEntityAttributes attrs;
 
     VhdlEntityListener(VhdlEntityAttributes attrs) {
       this.attrs = attrs;

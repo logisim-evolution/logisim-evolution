@@ -34,8 +34,8 @@ import javax.swing.filechooser.FileFilter;
 
 public class TruthtableFileFilter extends FileFilter {
 
-  StringGetter description;
-  String extention;
+  final StringGetter description;
+  final String extention;
 
   public TruthtableFileFilter(StringGetter descr, String ext) {
     description = descr;

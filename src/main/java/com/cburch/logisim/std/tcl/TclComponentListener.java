@@ -32,7 +32,7 @@ import com.cburch.logisim.instance.Instance;
 import java.io.File;
 
 public class TclComponentListener {
-  Instance instance;
+  final Instance instance;
 
   TclComponentListener(Instance instance) {
     this.instance = instance;

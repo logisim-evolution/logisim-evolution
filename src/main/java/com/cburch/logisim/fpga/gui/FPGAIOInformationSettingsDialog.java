@@ -46,7 +46,6 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,7 +153,7 @@ public class FPGAIOInformationSettingsDialog {
     JPanel InputsPanel = new JPanel();
     JPanel OutputsPanel = new JPanel();
     JPanel IOPanel = new JPanel();
-    Boolean abort = false;
+    boolean abort = false;
     ArrayList<JTextField> rectLocations = new ArrayList<>();
     ArrayList<String> oldInputLocations = new ArrayList<>();
     ArrayList<String> oldOutputLocations = new ArrayList<>();
@@ -167,41 +166,47 @@ public class FPGAIOInformationSettingsDialog {
         oldIOLocations.add(info.getPinLocation(cnt));
     }
     ActionListener actionListener =
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("inputSize")) {
+        e -> {
+          switch (e.getActionCommand()) {
+            case "inputSize": {
               int nr = (int) Inputsize.getSelectedItem();
               NrOfPins.put(INPUT_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,InputsPanel,LocInputs,PinLabels,oldInputLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
               selWindow.pack();
               return;
-            } else if (e.getActionCommand().equals("outputSize")) {
+            }
+            case "outputSize": {
               int nr = (int) Outputsize.getSelectedItem();
               NrOfPins.put(OUTPUT_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,OutputsPanel,LocOutputs,PinLabels,oldOutputLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
               selWindow.pack();
               return;
-            } else if (e.getActionCommand().equals("ioSize")) {
+            }
+            case "ioSize": {
               int nr = (int) IOsize.getSelectedItem();
               NrOfPins.put(IO_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,IOPanel,LocIOs,PinLabels,oldIOLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, IOPanel, LocIOs, PinLabels, oldIOLocations);
               selWindow.pack();
               return;
-            } else  if (e.getActionCommand().equals("cancel")) {
-              info.setType(IOComponentTypes.Unknown);
-            } else if (e.getActionCommand().equals("delete")) {
-              info.setToBeDeleted();
             }
-            selWindow.setVisible(false);
-            selWindow.dispose();
+            case "cancel":
+              info.setType(IOComponentTypes.Unknown);
+              break;
+            case "delete":
+              info.setToBeDeleted();
+              break;
           }
+          selWindow.setVisible(false);
+          selWindow.dispose();
         };
     contents.setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -501,13 +506,11 @@ public class FPGAIOInformationSettingsDialog {
     /* here the action listener is defined */
     abort = false;
     ActionListener actionListener =
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("cancel")) {
-              abort = true;
-            }
-            selWindow.setVisible(false);
+        e -> {
+          if (e.getActionCommand().equals("cancel")) {
+            abort = true;
           }
+          selWindow.setVisible(false);
         };
     GridBagConstraints c = new GridBagConstraints();
     /* Here the clock related settings are defined */    

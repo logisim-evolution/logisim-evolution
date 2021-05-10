@@ -43,8 +43,8 @@ import javax.swing.UIManager;
 
 public class LocaleManager {
   private static class LocaleGetter implements StringGetter {
-    LocaleManager source;
-    String key;
+    final LocaleManager source;
+    final String key;
 
     LocaleGetter(LocaleManager source, String key) {
       this.source = source;
@@ -58,7 +58,7 @@ public class LocaleManager {
 
   /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
-    String arg;
+    final String arg;
 
     LocaleFormatterWithString(LocaleManager source, String key, String arg) {
       super(source, key);
@@ -71,7 +71,7 @@ public class LocaleManager {
   }
 
   private static class LocaleFormatterWithGetter extends LocaleGetter {
-    StringGetter arg;
+    final StringGetter arg;
 
     LocaleFormatterWithGetter(LocaleManager source, String key, StringGetter arg) {
       super(source, key);
@@ -303,7 +303,7 @@ public class LocaleManager {
     String locs = null;
     try {
       if (settings != null) locs = settings.getString("locales");
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     if (locs == null) return new Locale[] {};
 
@@ -326,7 +326,7 @@ public class LocaleManager {
       }
     }
 
-    return retl.toArray(new Locale[retl.size()]);
+    return retl.toArray(new Locale[0]);
   }
 
   public StringGetter getter(String key) {
@@ -345,19 +345,19 @@ public class LocaleManager {
     if (settings == null) {
       try {
         settings = ResourceBundle.getBundle(dir_name + "/" + SETTINGS_NAME);
-      } catch (java.util.MissingResourceException e) {
+      } catch (java.util.MissingResourceException ignored) {
       }
     }
 
     try {
       loadLocale(Locale.getDefault());
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     try {
       loadLocale(Locale.ENGLISH);
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     Locale[] choices = getLocaleOptions();
     if (choices != null && choices.length > 0) loadLocale(choices[0]);

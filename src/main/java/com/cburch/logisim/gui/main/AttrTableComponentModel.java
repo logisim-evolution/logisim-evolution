@@ -41,9 +41,9 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 
 class AttrTableComponentModel extends AttributeSetTableModel {
-  Project proj;
-  Circuit circ;
-  Component comp;
+  final Project proj;
+  final Circuit circ;
+  final Component comp;
 
   AttrTableComponentModel(Project proj, Circuit circ, Component comp) {
     super(comp.getAttributeSet());

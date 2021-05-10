@@ -28,12 +28,10 @@
 
 package com.cburch.logisim.vhdl.syntax;
 
-import java.io.IOException;
 import java.io.Reader;
 import javax.swing.text.Segment;
 import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
 import org.fife.ui.rsyntaxtextarea.Token;
-import org.fife.ui.rsyntaxtextarea.TokenImpl;
 
 public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
@@ -1165,22 +1163,14 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
     // Start off in the proper state.
     int state = Token.NULL;
-    switch (initialTokenType) {
-        /* No multi-line comments */
-        /* No documentation comments */
-      default:
-        state = Token.NULL;
-    }
+    /* No multi-line comments */
+    /* No documentation comments */
+    state = Token.NULL;
 
     s = text;
-    try {
-      yyreset(zzReader);
-      yybegin(state);
-      return yylex();
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      return new TokenImpl();
-    }
+    yyreset(zzReader);
+    yybegin(state);
+    return yylex();
   }
 
   /**
@@ -1339,7 +1329,7 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
    * @return the next token
    * @exception java.io.IOException if any I/O-Error occurs
    */
-  public org.fife.ui.rsyntaxtextarea.Token yylex() throws java.io.IOException {
+  public org.fife.ui.rsyntaxtextarea.Token yylex() {
     int zzInput;
     int zzAction;
 

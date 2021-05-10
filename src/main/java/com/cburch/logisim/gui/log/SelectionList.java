@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.util.Icons;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -41,12 +40,10 @@ import java.awt.RenderingHints;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.EventObject;
 import java.util.HashMap;
-
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ActionMap;
@@ -94,7 +91,8 @@ public class SelectionList extends JTable {
     }
 
     @Override
-    public int getColumnCount() { return 1; };
+    public int getColumnCount() { return 1; }
+
     @Override
     public String getColumnName(int column) { return ""; }
     @Override
@@ -112,7 +110,7 @@ public class SelectionList extends JTable {
 
   }
 
-  private class SignalInfoRenderer extends DefaultTableCellRenderer {
+  private static class SignalInfoRenderer extends DefaultTableCellRenderer {
     @Override
     public java.awt.Component getTableCellRendererComponent(JTable table,
         Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -122,20 +120,20 @@ public class SelectionList extends JTable {
         JLabel label = (JLabel) ret;
         SignalInfo item = (SignalInfo)value;
         label.setIcon(item.icon);
-        label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
+        label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
       }
       return ret;
     }
   }
 
   class SignalInfoEditor extends AbstractCellEditor implements TableCellEditor {
-    JPanel panel = new JPanel();
-    JLabel label = new JLabel();
-    JButton button = new JButton(Icons.getIcon("dropdown.png"));
-    JPopupMenu popup = new JPopupMenu("Options");
+    final JPanel panel = new JPanel();
+    final JLabel label = new JLabel();
+    final JButton button = new JButton(Icons.getIcon("dropdown.png"));
+    final JPopupMenu popup = new JPopupMenu("Options");
     SignalInfo item;
     SignalInfo.List items;
-    HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
+    final HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
 
     public SignalInfoEditor() {
       panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -149,37 +147,28 @@ public class SelectionList extends JTable {
         radixMenuItems.put(r, m);
         popup.add(m);
         g.add(m);
-        m.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {              
-            for (SignalInfo s : items)
-              logModel.setRadix(s, r);
-            if (item != null)
-              label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
-            SelectionList.this.repaint();
-          }
+        m.addActionListener(e -> {
+          for (SignalInfo s : items)
+            logModel.setRadix(s, r);
+          if (item != null)
+            label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
+          SelectionList.this.repaint();
         });
       }
 
       popup.addSeparator();
       JMenuItem m = new JMenuItem("Delete");
       popup.add(m);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {              
-          cancelCellEditing();
-          removeSelected();
-        }
+      m.addActionListener(e -> {
+        cancelCellEditing();
+        removeSelected();
       });
 
       button.setMargin(new Insets(0, 0, 0, 0));
       button.setHorizontalTextPosition(SwingConstants.LEFT);
       button.setText("Options");
-      button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          popup.show(panel, button.getX(), button.getY() + button.getHeight());
-        }
-      });
+      button.addActionListener(
+          e -> popup.show(panel, button.getX(), button.getY() + button.getHeight()));
       button.setMinimumSize(button.getPreferredSize());
 
       label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -340,7 +329,7 @@ public class SelectionList extends JTable {
           try {
             JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
             newIdx = Math.min(dl.getRow(), logModel.getSignalCount());
-          } catch (ClassCastException e) {
+          } catch (ClassCastException ignored) {
           }
         }
         addOrMove(items, newIdx);

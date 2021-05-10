@@ -154,7 +154,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
     this.attrs = new FactoryAttributes(source);
     attrs.addAttributeListener(new MyAttributeListener());
     Boolean value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
-    this.shouldSnap = value == null || value.booleanValue();
+    this.shouldSnap = value == null || value;
     if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
       AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
     }
@@ -340,19 +340,17 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
 
   public ComponentFactory getFactory() {
     ComponentFactory ret = factory;
-    if (ret != null || sourceLoadAttempted) {
-      return ret;
-    } else {
+    if (ret == null && !sourceLoadAttempted) {
       ret = description.getFactory(descriptionBase);
       if (ret != null) {
         AttributeSet base = getBaseAttributes();
         Boolean value = (Boolean) ret.getFeature(ComponentFactory.SHOULD_SNAP, base);
-        shouldSnap = value == null || value.booleanValue();
+        shouldSnap = value == null || value;
       }
       factory = ret;
       sourceLoadAttempted = true;
-      return ret;
     }
+    return ret;
   }
 
   public ComponentFactory getFactory(boolean forceLoad) {

@@ -97,8 +97,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 + ","
                 + NrOfInputs
                 + "));");
-        String WhenLineBegin = "";
-        for (int i = 0; i < 21 + AllignmentSpaces.length(); i++) WhenLineBegin += " ";
+        StringBuilder WhenLineBegin = new StringBuilder();
+        WhenLineBegin.append(" ".repeat(21 + AllignmentSpaces.length()));
         for (int i = 0; i < NrOfInputs; i++) {
           String LocalSpaces;
           if (i < 10) LocalSpaces = AllignmentSpaces;
@@ -172,9 +172,10 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + Preamble + "Result" + IndexString + AssignOperation);
-    if (inverted) OneLine.append(NotOperation + "(");
+    StringBuilder OneLine = new StringBuilder();
+    OneLine.append(Spaces).append(Preamble).append("Result").append(IndexString)
+        .append(AssignOperation);
+    if (inverted) OneLine.append(NotOperation).append("(");
     int spaces = OneLine.length();
     for (int termloop = 0; termloop < nr_of_inputs; termloop++) {
       while (OneLine.length() < spaces) {
@@ -182,17 +183,17 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
       OneLine.append("(");
       for (int i = 0; i < nr_of_inputs; i++) {
-        if (i == termloop) OneLine.append("s_real_input_" + (i + 1) + IndexString);
+        if (i == termloop) OneLine.append("s_real_input_").append(i + 1).append(IndexString);
         else
-          OneLine.append(
-              NotOperation + "(s_real_input_" + (i + 1) + IndexString + ")");
+          OneLine.append(NotOperation).append("(s_real_input_").append(i + 1).append(IndexString)
+              .append(")");
         if (i < (nr_of_inputs - 1)) {
-          OneLine.append(" " + AndOperation + " ");
+          OneLine.append(" ").append(AndOperation).append(" ");
         }
       }
       OneLine.append(")");
       if (termloop < (nr_of_inputs - 1)) {
-        OneLine.append(" " + OrOperation + " ");
+        OneLine.append(" ").append(OrOperation).append(" ");
       } else {
         if (inverted) OneLine.append(")");
         OneLine.append(";");
@@ -287,15 +288,16 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + Preamble + "Result" + IndexString + AssignOperation);
-    if (inverted) OneLine.append(NotOperation + "(");
+    StringBuilder OneLine = new StringBuilder();
+    OneLine.append(Spaces).append(Preamble).append("Result").append(IndexString)
+        .append(AssignOperation);
+    if (inverted) OneLine.append(NotOperation).append("(");
     int spaces = OneLine.length();
     for (int i = 0; i < nr_of_inputs; i++) {
       while (OneLine.length() < spaces) {
         OneLine.append(" ");
       }
-      OneLine.append("s_real_input_" + (i + 1) + IndexString);
+      OneLine.append("s_real_input_").append(i + 1).append(IndexString);
       if (i < (nr_of_inputs - 1)) {
         OneLine.append(XorOperation);
       } else {

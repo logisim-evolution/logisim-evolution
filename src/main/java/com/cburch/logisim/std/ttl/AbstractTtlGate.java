@@ -55,7 +55,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
-  protected byte pinnumber;
+  protected final byte pinnumber;
   private final String name;
   private byte ngatestodraw = 0;
   protected String[] portnames = null;

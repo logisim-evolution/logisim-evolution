@@ -40,7 +40,6 @@ import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,7 +92,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(Attribute<Object> attr, Object value) {
     SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
     Map<AttributeMapKey, Object> oldVals;
     oldVals = new HashMap<>();

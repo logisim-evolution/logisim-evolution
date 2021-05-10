@@ -62,7 +62,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -79,8 +78,8 @@ import org.xml.sax.SAXException;
 class XmlReader {
 
   static class CircuitData {
-    Element circuitElement;
-    Circuit circuit;
+    final Element circuitElement;
+    final Circuit circuit;
     Map<Element, Component> knownComponents;
     List<AbstractCanvasObject> appearance;
 
@@ -91,9 +90,9 @@ class XmlReader {
   }
 
   class ReadContext {
-    LogisimFile file;
+    final LogisimFile file;
     LogisimVersion sourceVersion;
-    HashMap<String, Library> libs = new HashMap<>();
+    final HashMap<String, Library> libs = new HashMap<>();
     private final ArrayList<String> messages;
 
     ReadContext(LogisimFile file) {
@@ -283,7 +282,7 @@ class XmlReader {
         try {
           Component comp = XmlCircuitReader.getComponent(sub, this, IsHolyCross, IsEvolution);
           if (comp != null) known.put(sub, comp);
-        } catch (XmlReaderException e) {
+        } catch (XmlReaderException ignored) {
         }
       }
       return known;
@@ -298,7 +297,7 @@ class XmlReader {
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {
-          Long v;
+          long v;
           try {
             v = Long.parseLong(cmap.getAttribute("vconst"));
           } catch (NumberFormatException e) {
@@ -637,9 +636,7 @@ class XmlReader {
 
     List<String> initialLabels = getXMLLabels(root, nodeType, attrType);
 
-    Iterator<String> iterator = initialLabels.iterator();
-    while (iterator.hasNext()) {
-      String label = iterator.next();
+    for (String label : initialLabels) {
       if (!validLabels.containsKey(label)) {
         // Check if the name is invalid, in which case create
         // a valid version and put it in the map
@@ -713,7 +710,7 @@ class XmlReader {
     }
 
     // If the string has a ! or ~ symbol, then replace it with "NOT"
-    label = label.replaceAll("[\\!~]", "NOT_");
+    label = label.replaceAll("[!~]", "NOT_");
 
     // Force string to start with a letter
     if (!label.matches("^[A-Za-z].*$")) label = "L_" + label;
@@ -1046,7 +1043,7 @@ class XmlReader {
     DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException ex) {
+    } catch (ParserConfigurationException ignored) {
     }
     return builder.parse(is);
   }
@@ -1160,7 +1157,7 @@ class XmlReader {
           int thisLabel = Integer.parseInt(label);
           if (thisLabel > maxLabel) maxLabel = thisLabel;
         }
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ignored) {
       }
     }
 

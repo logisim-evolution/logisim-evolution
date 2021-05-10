@@ -59,7 +59,7 @@ public class WindowManagers {
     List<Project> nowOpen = Projects.getOpenProjects();
 
     HashSet<Project> closed = new HashSet<>(projectMap.keySet());
-    closed.removeAll(nowOpen);
+    nowOpen.forEach(closed::remove);
     for (Project proj : closed) {
       ProjectManager manager = projectMap.get(proj);
       manager.frameClosed(manager.getJFrame(false, null));

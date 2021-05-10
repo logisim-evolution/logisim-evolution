@@ -72,7 +72,7 @@ class ToolbarList extends JList {
   private static class ListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(
-        JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component ret;
       Icon icon;
       if (value instanceof Tool) {

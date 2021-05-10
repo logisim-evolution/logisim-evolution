@@ -36,6 +36,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 class TextAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
@@ -71,7 +72,7 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getHorizontalAlign() {
-    return ((Integer) halign.getValue()).intValue();
+    return (Integer) halign.getValue();
   }
 
   Bounds getOffsetBounds() {
@@ -93,12 +94,12 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getVerticalAlign() {
-    return ((Integer) valign.getValue()).intValue();
+    return (Integer) valign.getValue();
   }
 
   boolean setOffsetBounds(Bounds value) {
     Bounds old = offsetBounds;
-    boolean same = old == null ? value == null : old.equals(value);
+    boolean same = Objects.equals(old, value);
     if (!same) {
       offsetBounds = value;
     }

@@ -37,6 +37,7 @@ import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
     
@@ -81,9 +82,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public boolean isPcRelative;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
@@ -149,26 +148,27 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public String getAsmInstruction() {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
       case INSTR_RET  : break;
-      case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]).append(",");
       case INSTR_J    : s.append("pc");
-                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
+                        if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
                         break;
-      case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]).append(",");
       case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
-                        if (immediate != 0) s.append(","+immediate);
+                        if (immediate != 0) s.append(",").append(immediate);
                         break;
       case INSTR_BEQZ :
-      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]+",pc");
-                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
+      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]).append(",pc");
+                        if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
                         break;
-      default         : s.append(RV32im_state.registerABINames[source2]+","+RV32im_state.registerABINames[source1]+",pc");
-                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
+      default         : s.append(RV32im_state.registerABINames[source2]).append(",")
+          .append(RV32im_state.registerABINames[source1]).append(",pc");
+                        if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
     }
     return s.toString();
   }
@@ -176,23 +176,24 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public String getAsmInstruction( String label ) {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
       case INSTR_RET  : break;
-      case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]).append(",");
       case INSTR_J    : s.append(label);
                         break;
-      case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]).append(",");
       case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
-                        if (immediate != 0) s.append(","+immediate);
+                        if (immediate != 0) s.append(",").append(immediate);
                         break;
       case INSTR_BEQZ :
-      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]+","+label);
+      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]).append(",").append(label);
                         break;
-      default         : s.append(RV32im_state.registerABINames[source2]+","+RV32im_state.registerABINames[source1]+",");
+      default         : s.append(RV32im_state.registerABINames[source2]).append(",")
+          .append(RV32im_state.registerABINames[source1]).append(",");
                         s.append(label);
     }
     return s.toString();

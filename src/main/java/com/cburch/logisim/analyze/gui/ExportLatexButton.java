@@ -35,8 +35,6 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
@@ -55,11 +53,7 @@ public class ExportLatexButton extends JButton {
     this.parent = parent;
     this.model = model;
     addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            doSave();
-          }
-        });
+        event -> doSave());
   }
 
   void localeChanged() {

@@ -137,7 +137,7 @@ public class TestBench {
   }
 
   /* Main method in charge of launching the test bench */
-  public boolean startTestBench() throws LoadFailedException {
+  public boolean startTestBench() {
     Circuit circuit = (proj.getLogisimFile().getCircuit("logisim_test_verif"));
     proj.setCurrentCircuit(circuit);
 

@@ -80,11 +80,11 @@ tasks.register("jpackage") {
       parameters.add("--main-class")
       parameters.add("com.cburch.logisim.Main")
       parameters.add("--main-jar")
-      parameters.add(project.name + '-' + project.version + "-all.jar")
+      parameters.add("${project.name}-${project.version}-all.jar")
       parameters.add("--app-version")
       parameters.add(project.version as String)
       parameters.add("--copyright")
-      parameters.add("Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.")
+      parameters.add("Copyright © 2001–$year Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.")
       parameters.add("--dest")
       parameters.add("build/dist")
       if (OperatingSystem.current().isLinux) {
@@ -132,7 +132,7 @@ tasks.register("jpackage") {
             throw GradleException("Error while executing jpackage")
          }
       } else if (OperatingSystem.current().isMacOsX) {
-         delete("$buildDir/dist/" + appname + ".app")
+         delete("$buildDir/dist/$appname.app")
          parameters.add("--name")
          parameters.add(appname)
          parameters.add("--resource-dir")
@@ -188,7 +188,7 @@ tasks {
         // causes errors on JDK 16 due to usage of internal JDK APIs. See this
         // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
         // for details.
-        options.setIncremental(false)
+        options.isIncremental = false
     }
     compileTestJava {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
@@ -196,7 +196,7 @@ tasks {
         // causes errors on JDK 16 due to usage of internal JDK APIs. See this
         // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
         // for details.
-        options.setIncremental(false)
+        options.isIncremental = false
     }
     jar {
         manifest {

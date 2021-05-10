@@ -49,9 +49,9 @@ public class CpuDrawSupport {
   public static final int NrOfTraces = 21;
   public static final int TRACEHEIGHT = 20;
 
-  public static Bounds busConBounds = Bounds.create(50, 600, 280, 20);
-  public static Bounds simStateBounds = Bounds.create(340, 600, 270, 20);
-  public static Bounds upStateBounds = Bounds.create(50, 10, 590, 590);
+  public static final Bounds busConBounds = Bounds.create(50, 600, 280, 20);
+  public static final Bounds simStateBounds = Bounds.create(340, 600, 270, 20);
+  public static final Bounds upStateBounds = Bounds.create(50, 10, 590, 590);
 
   public static Bounds getBounds(int x, int y, int width, int height, boolean scale) {
     if (scale)

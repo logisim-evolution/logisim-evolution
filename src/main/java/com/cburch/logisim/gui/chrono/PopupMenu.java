@@ -30,8 +30,10 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.gui.log.SelectionPanel;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.gui.log.SignalInfo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -39,11 +41,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-
-import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.gui.log.SelectionPanel;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.gui.log.SignalInfo;
 
 public class PopupMenu extends MouseAdapter {
 
@@ -55,8 +52,10 @@ public class PopupMenu extends MouseAdapter {
       if (signals.size() > 0) {
         radix = signals.get(0).info.getRadix();
         for (int i = 1; i < signals.size(); i++)
-          if (signals.get(i).info.getRadix() != radix)
+          if (signals.get(i).info.getRadix() != radix) {
             radix = null;
+            break;
+          }
       }
       ButtonGroup g = new ButtonGroup();
       for (RadixOption r : RadixOption.OPTIONS) {
@@ -66,12 +65,9 @@ public class PopupMenu extends MouseAdapter {
         g.add(m);
         if (r == radix)
           m.setSelected(true);
-        m.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {              
-            for (Signal s : signals)
-              s.info.setRadix(r);
-          }
+        m.addActionListener(e -> {
+          for (Signal s : signals)
+            s.info.setRadix(r);
         });
       }
       JMenuItem m;
@@ -79,30 +75,22 @@ public class PopupMenu extends MouseAdapter {
       m = new JMenuItem(S.get("editClearItem"));
       add(m);
       m.setEnabled(signals.size() > 0);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {              
-          SignalInfo.List items = new SignalInfo.List();
-          for (Signal s : signals)
-            items.add(s.info);
-          chronoPanel.getModel().remove(items);
-        }
+      m.addActionListener(e -> {
+        SignalInfo.List items = new SignalInfo.List();
+        for (Signal s : signals)
+          items.add(s.info);
+        chronoPanel.getModel().remove(items);
       });
       addSeparator();
       m = new JMenuItem(S.get("addRemoveSignals"));
       add(m);
-      m.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          SelectionPanel.doDialog(chronoPanel.getLogFrame());
-        }
-      });
+      m.addActionListener(e -> SelectionPanel.doDialog(chronoPanel.getLogFrame()));
 
     }
   }
 
-  private List<Signal> signals;
-  private ChronoPanel chronoPanel;
+  private final List<Signal> signals;
+  private final ChronoPanel chronoPanel;
   
   public PopupMenu(ChronoPanel p, List<Signal> s) {
     chronoPanel = p;

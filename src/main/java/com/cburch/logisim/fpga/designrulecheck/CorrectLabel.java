@@ -39,7 +39,7 @@ import java.util.List;
 public class CorrectLabel {
   public static String getCorrectLabel(String Label) {
     if (Label.isEmpty()) return Label;
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     if (Numbers.contains(Label.substring(0, 1))) result.append("L_");
     result.append(Label.replace(" ", "_").replace("-", "_"));
     return result.toString();
@@ -104,9 +104,11 @@ public class CorrectLabel {
   public static String FirstInvalidCharacter(String Label) {
     if (Label.isEmpty()) return "";
     for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return Label.toLowerCase().substring(i, i + 1);
+      var str = Label.substring(i, i + 1);
+      var low = str.toLowerCase();
+      if (!Chars.contains(low)
+          && !Numbers.contains(str)) {
+        return low;
       }
     }
     return "";

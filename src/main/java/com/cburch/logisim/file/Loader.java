@@ -325,7 +325,7 @@ public class Loader implements LibraryLoader {
     }
   }
 
-  public LogisimFile openLogisimFile(InputStream reader) throws LoadFailedException, IOException {
+  public LogisimFile openLogisimFile(InputStream reader) throws IOException {
     LogisimFile ret = null;
     try {
       ret = LogisimFile.load(reader, this);

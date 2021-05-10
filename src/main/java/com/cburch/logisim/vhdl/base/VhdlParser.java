@@ -128,9 +128,9 @@ public class VhdlParser {
 
   public static class GenericDescription {
 
-    protected String name;
-    protected String type;
-    protected int dval;
+    protected final String name;
+    protected final String type;
+    protected final int dval;
 
     public GenericDescription(String name, String type, int dval) {
       this.name = name;
@@ -161,7 +161,7 @@ public class VhdlParser {
   private static Pattern regex(String pattern) {
     pattern = pattern.trim();
     pattern = "^ " + pattern;
-    pattern = pattern.replaceAll("  ", "\\\\s+"); // Two spaces = required whitespace
+    pattern = pattern.replaceAll(" {2}", "\\\\s+"); // Two spaces = required whitespace
     pattern = pattern.replaceAll(" ", "\\\\s*"); // One space = optional whitespace
     return Pattern.compile(pattern, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
   }
@@ -261,12 +261,12 @@ public class VhdlParser {
       throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
   }
 
-  private void parseArchitecture(Scanner input) throws IllegalVhdlContentException {
+  private void parseArchitecture(Scanner input) {
     if (input.next(ARCHITECTURE)) architecture = input.match().group();
     else architecture = "";
   }
 
-  private void parseLibraries(Scanner input) throws IllegalVhdlContentException {
+  private void parseLibraries(Scanner input) {
     StringBuilder result = new StringBuilder();
     while (input.next(LIBRARY) || input.next(USING)) {
       result.append(input.match().group().trim().replaceAll("\\s+", " "));
@@ -365,9 +365,9 @@ public class VhdlParser {
   }
 
   private String removeComments() throws IllegalVhdlContentException {
-    StringBuffer input;
+    StringBuilder input;
     try {
-      input = new StringBuffer(source);
+      input = new StringBuilder(source);
     } catch (NullPointerException ex) {
       throw new IllegalVhdlContentException(S.get("emptySourceException"));
     }

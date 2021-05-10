@@ -60,7 +60,7 @@ class ExpressionView extends JPanel {
   }
 
   public static class NamedExpression {
-    public String name;
+    public final String name;
     public Expression expr; // can be null
     public String exprString;
     public String err;

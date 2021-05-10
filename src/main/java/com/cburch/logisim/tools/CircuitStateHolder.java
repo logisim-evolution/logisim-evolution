@@ -75,7 +75,7 @@ public interface CircuitStateHolder {
      }
      
      public String getName() {
-       StringBuffer s = new StringBuffer();
+       StringBuilder s = new StringBuilder();
        if (mainCircuit != null) s.append(mainCircuit.getName());
        for (Component c: components) {
          if (s.length()!=0) s.append(":");

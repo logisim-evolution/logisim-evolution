@@ -54,9 +54,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Window;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static class VhdlEntityListener implements HdlModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     VhdlEntityListener(Instance instance) {
       this.instance = instance;
@@ -297,7 +297,7 @@ public class VhdlEntityComponent extends InstanceFactory {
           && server_response.length() > 0
           && !server_response.equals("sync")) {
 
-        String[] parameters = server_response.split("\\:");
+        String[] parameters = server_response.split(":");
 
         String busValue = parameters[1];
 
@@ -344,7 +344,7 @@ public class VhdlEntityComponent extends InstanceFactory {
         }
       }
 
-      new UnsupportedOperationException(
+      throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
@@ -363,7 +363,8 @@ public class VhdlEntityComponent extends InstanceFactory {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = attrs.getValue(CONTENT_ATTR).getContent();
 
@@ -371,11 +372,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
       return;

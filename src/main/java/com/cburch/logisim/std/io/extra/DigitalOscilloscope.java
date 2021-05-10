@@ -130,11 +130,11 @@ public class DigitalOscilloscope extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    int width = attrs.getValue(ATTR_NSTATE).intValue() * 30 + 2 * border + 15;
+    int width = attrs.getValue(ATTR_NSTATE) * 30 + 2 * border + 15;
     int height =
         attrs.getValue(SHOW_CLOCK)
-            ? (attrs.getValue(ATTR_INPUTS).intValue() + 1) * 30 + 3 * border + 2
-            : attrs.getValue(ATTR_INPUTS).intValue() * 30 + 3 * border;
+            ? (attrs.getValue(ATTR_INPUTS) + 1) * 30 + 3 * border + 2
+            : attrs.getValue(ATTR_INPUTS) * 30 + 3 * border;
     byte showclock = (byte) (attrs.getValue(SHOW_CLOCK) ? 32 : 0);
     return Bounds.create(0, -border - showclock, width, height);
   }
@@ -271,13 +271,13 @@ public class DigitalOscilloscope extends InstanceFactory {
               && painter.getAttributeValue(VERT_LINE) != NO
               && showclock == 1) { // drawclocknumber
             nck--;
-            Integer cknum =
+            int cknum =
                 ((diagramstate.getclocknumber() - nck) > 0)
                     ? diagramstate.getclocknumber() - nck
                     : 100 + (diagramstate.getclocknumber() - nck - 1);
             g.setColor(painter.getAttributeValue(ATTR_COLOR).darker());
             GraphicsUtil.drawCenteredText(
-                g, cknum.toString(), x + border + 15 * j + 7, y + border + 5);
+                g, Integer.toString(cknum), x + border + 15 * j + 7, y + border + 5);
             if (showclock == 1 && i == 0)
               g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
             else g.setColor(Color.BLACK);
@@ -323,7 +323,7 @@ public class DigitalOscilloscope extends InstanceFactory {
           if (diagramstate.getusedcell() < length - 1)
             diagramstate.setusedcell((byte) (diagramstate.getusedcell() + 1));
           // move back all old values
-          if (diagramstate.getmoveback() == true) {
+          if (diagramstate.getmoveback()) {
             diagramstate.moveback();
             if (clock == Value.TRUE)
               diagramstate.setclocknumber((byte) (diagramstate.getclocknumber() + 1));

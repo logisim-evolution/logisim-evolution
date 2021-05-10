@@ -172,10 +172,7 @@ public class Analyzer extends LFrame.SubWindow {
   public static final int TABLE_TAB = 1;
   public static final int EXPRESSION_TAB = 2;
   public static final int MINIMIZED_TAB = 3;
-  
-  private final MyLocaleListener myLocaleListener = new MyLocaleListener();
-  private final MyChangeListener myChangeListener = new MyChangeListener();
-  private final TableListener tableListener = new TableListener();
+
   private final AnalyzerModel model = new AnalyzerModel();
 
   private JTabbedPane tabbedPane = new JTabbedPane();
@@ -191,6 +188,7 @@ public class Analyzer extends LFrame.SubWindow {
 
   Analyzer() {
     super(null);
+    TableListener tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
@@ -226,9 +224,10 @@ public class Analyzer extends LFrame.SubWindow {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    
+    MyLocaleListener myLocaleListener = new MyLocaleListener();
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
+    MyChangeListener myChangeListener = new MyChangeListener();
     tabbedPane.addChangeListener(myChangeListener);
     setSelectedTab(0);
     myChangeListener.stateChanged(null);
@@ -273,7 +272,7 @@ public class Analyzer extends LFrame.SubWindow {
     private final SwingWorker<T, Void> worker;
     private final java.awt.Component parent;
 
-    public abstract T doInBackground() throws Exception;
+    public abstract T doInBackground();
 
     private boolean alreadyFinished = false;
 
@@ -281,16 +280,19 @@ public class Analyzer extends LFrame.SubWindow {
       super(null, title, ModalityType.APPLICATION_MODAL);
       this.parent = parent;
       worker =
-          new SwingWorker<T, Void>() {
+          new SwingWorker<>() {
             @Override
-            protected T doInBackground() throws Exception {
+            protected T doInBackground() {
               return PleaseWait.this.doInBackground();
             }
 
             @Override
             protected void done() {
-              if (PleaseWait.this.isVisible()) PleaseWait.this.dispose();
-              else PleaseWait.this.alreadyFinished = true;
+              if (PleaseWait.this.isVisible()) {
+                PleaseWait.this.dispose();
+              } else {
+                PleaseWait.this.alreadyFinished = true;
+              }
             }
           };
     }
@@ -310,7 +312,7 @@ public class Analyzer extends LFrame.SubWindow {
       try {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
+        } catch (TimeoutException ignored) {
         }
         if (!alreadyFinished) setVisible(true);
         return worker.get();

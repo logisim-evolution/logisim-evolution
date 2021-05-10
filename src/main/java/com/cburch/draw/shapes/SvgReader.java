@@ -151,22 +151,8 @@ public class SvgReader {
 
   public static AbstractCanvasObject createShape(Element elt) {
     String name = elt.getTagName();
-    AbstractCanvasObject ret;
-    if (name.equals("ellipse")) {
-      ret = createOval(elt);
-    } else if (name.equals("line")) {
-      ret = createLine(elt);
-    } else if (name.equals("path")) {
-      ret = createPath(elt);
-    } else if (name.equals("polyline")) {
-      ret = createPolyline(elt);
-    } else if (name.equals("polygon")) {
-      ret = createPolygon(elt);
-    } else if (name.equals("rect")) {
-      ret = createRectangle(elt);
-    } else if (name.equals("text")) {
-      ret = createText(elt);
-    } else {
+    AbstractCanvasObject ret = createShapeObject(elt, name);
+    if (ret == null) {
       return null;
     }
     List<Attribute<?>> attrs = ret.getAttributes();
@@ -204,6 +190,27 @@ public class SvgReader {
     return ret;
   }
 
+  private static AbstractCanvasObject createShapeObject(Element elt, String name) {
+    switch (name) {
+      case "ellipse":
+        return createOval(elt);
+      case "line":
+        return createLine(elt);
+      case "path":
+        return createPath(elt);
+      case "polyline":
+        return createPolyline(elt);
+      case "polygon":
+        return createPolygon(elt);
+      case "rect":
+        return createRectangle(elt);
+      case "text":
+        return createText(elt);
+      default:
+        return null;
+    }
+  }
+
   private static AbstractCanvasObject createText(Element elt) {
     int x = Integer.parseInt(elt.getAttribute("x"));
     int y = Integer.parseInt(elt.getAttribute("y"));
@@ -214,7 +221,7 @@ public class SvgReader {
     String fontStyle = elt.getAttribute("font-style");
     String fontWeight = elt.getAttribute("font-weight");
     String fontSize = elt.getAttribute("font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size = Integer.parseInt(fontSize);
@@ -232,20 +239,24 @@ public class SvgReader {
     ret.setValue(DrawAttr.HALIGNMENT, halign);
 
     String valignStr = elt.getAttribute("dominant-baseline");
-    AttributeOption valign;
-    if (valignStr.equals("top")) {
-      valign = DrawAttr.VALIGN_TOP;
-    } else if (valignStr.equals("bottom")) {
-      valign = DrawAttr.VALIGN_BOTTOM;
-    } else if (valignStr.equals("alphabetic")) {
-      valign = DrawAttr.VALIGN_BASELINE;
-    } else {
-      valign = DrawAttr.VALIGN_MIDDLE;
-    }
+    AttributeOption valign = getAlignment(valignStr);
     ret.setValue(DrawAttr.VALIGNMENT, valign);
 
     // fill color is handled after we return
     return ret;
+  }
+
+  private static AttributeOption getAlignment(String valignStr) {
+    switch (valignStr) {
+      case "top":
+        return DrawAttr.VALIGN_TOP;
+      case "bottom":
+        return DrawAttr.VALIGN_BOTTOM;
+      case "alphabetic":
+        return DrawAttr.VALIGN_BASELINE;
+      default:
+        return DrawAttr.VALIGN_MIDDLE;
+    }
   }
 
   public static Font getFontAttribute(
@@ -257,7 +268,7 @@ public class SvgReader {
     String fontWeight = elt.getAttribute(prefix + "font-weight");
     if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
     String fontSize = elt.getAttribute(prefix + "font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size =

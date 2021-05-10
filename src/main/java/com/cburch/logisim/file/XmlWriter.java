@@ -102,9 +102,7 @@ class XmlWriter {
       lst.add(attrToString((Attr) a.item(i)));
     }
     Collections.sort(lst);
-    String s = lst.get(0);
-    for (int i = 1; i < n; i++) s = s + " " + lst.get(i);
-    return s;
+    return String.join(" ", lst);
   }
 
   static int stringCompare(String a, String b) {
@@ -114,29 +112,27 @@ class XmlWriter {
     else return a.compareTo(b);
   }
 
-  static Comparator<Node> nodeComparator =
-      new Comparator<Node>() {
-        public int compare(Node a, Node b) {
-          String na = a.getNodeName();
-          String nb = b.getNodeName();
-          int c = stringCompare(na, nb);
-          if (c != 0) return c;
-          String ma = attrsToString(a.getAttributes());
-          String mb = attrsToString(b.getAttributes());
-          c = stringCompare(ma, mb);
-          if (c != 0) return c;
-          String va = a.getNodeValue();
-          String vb = b.getNodeValue();
-          c = stringCompare(va, vb);
-          return c;
-          // This can happen in some cases, e.g. two text components
-          // on top of each other. But it seems rare enough to not
-          // worry about, since our normalization here is just for
-          // ease of comparing circ files during testing.
-          // System.out.printf("sorts equal:\n");
-          // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
-          // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-        }
+  static final Comparator<Node> nodeComparator =
+      (a, b) -> {
+        String na = a.getNodeName();
+        String nb = b.getNodeName();
+        int c = stringCompare(na, nb);
+        if (c != 0) return c;
+        String ma = attrsToString(a.getAttributes());
+        String mb = attrsToString(b.getAttributes());
+        c = stringCompare(ma, mb);
+        if (c != 0) return c;
+        String va = a.getNodeValue();
+        String vb = b.getNodeValue();
+        c = stringCompare(va, vb);
+        return c;
+        // This can happen in some cases, e.g. two text components
+        // on top of each other. But it seems rare enough to not
+        // worry about, since our normalization here is just for
+        // ease of comparing circ files during testing.
+        // System.out.printf("sorts equal:\n");
+        // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
+        // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
       };
 
   static void sort(Node top) {
@@ -187,14 +183,14 @@ class XmlWriter {
     TransformerFactory tfFactory = TransformerFactory.newInstance();
     try {
       tfFactory.setAttribute("indent-number", 2);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException ignored) {
     }
     Transformer tf = tfFactory.newTransformer();
     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     tf.setOutputProperty(OutputKeys.INDENT, "yes");
     try {
       tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException ignored) {
     }
 
     doc.normalize();
@@ -245,7 +241,7 @@ class XmlWriter {
             value = (outFP.relativize(attrValP)).toString();
             a.setAttribute("val", value);
           } else {
-            if (value.indexOf("\n") >= 0) {
+            if (value.contains("\n")) {
               a.appendChild(doc.createTextNode(value));
             } else {
               a.setAttribute("val", attr.toStandardString(val));
@@ -445,7 +441,7 @@ class XmlWriter {
       Integer mods = entry.getKey();
       Tool tool = entry.getValue();
       Element toolElt = fromTool(tool);
-      String mapValue = InputEventUtil.toString(mods.intValue());
+      String mapValue = InputEventUtil.toString(mods);
       toolElt.setAttribute("map", mapValue);
       elt.appendChild(toolElt);
     }

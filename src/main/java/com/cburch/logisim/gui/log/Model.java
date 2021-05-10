@@ -46,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Model implements CircuitListener, SignalInfo.Listener {
 
@@ -60,25 +61,25 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int COARSE = 1;
   public static final int FINE = 2;
   
-  public static class Event {};
-  
+  public static class Event {}
+
   public interface Listener{
-    public void signalsReset(Event event);
-    public void signalsExtended(Event event);
-    public void filePropertyChanged(Event event);
-    public void selectionChanged(Event event);    
-    public void modeChanged(Event event);
-    public void historyLimitChanged(Event event);
+    void signalsReset(Event event);
+    void signalsExtended(Event event);
+    void filePropertyChanged(Event event);
+    void selectionChanged(Event event);
+    void modeChanged(Event event);
+    void historyLimitChanged(Event event);
   }
   
-  CircuitState circuitState;
-  private ArrayList<SignalInfo> info = new ArrayList<>();
-  private ArrayList<Signal> signals = new ArrayList<>();
+  final CircuitState circuitState;
+  private final ArrayList<SignalInfo> info = new ArrayList<>();
+  private final ArrayList<Signal> signals = new ArrayList<>();
   private long tEnd = -1; // signals go from 0 <= t < tEnd
   private Signal spotlight;
   private SignalInfo clockSource;
   private Value curClockVal;
-  private EventSourceWeakSupport<Listener> listeners = new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<Listener> listeners = new EventSourceWeakSupport<>();
   private boolean fileEnabled = false;
   private File file = null;
   private boolean fileHeader = true;
@@ -298,7 +299,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public void remove(int idx) {
     if (spotlight != null && signals.get(idx) == spotlight)
       spotlight = null;
-    info.remove(idx).setListener(null);;
+    info.remove(idx).setListener(null);
     signals.remove(idx);
     renumberSignals();
     fireSelectionChanged(null);
@@ -719,7 +720,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   public void setFile(File value) {
-    if (file == null ? value == null : file.equals(value)) return;
+    if (Objects.equals(file, value)) return;
     file = value;
     fileEnabled = file != null;
     fireFilePropertyChanged(null);

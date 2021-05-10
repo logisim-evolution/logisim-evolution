@@ -48,7 +48,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private static final long serialVersionUID = 1L;
   private final JTree GuiElement;
   private Project proj;
-  private boolean showMouseTools;
+  private final boolean showMouseTools;
   
   ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
     super(null);
@@ -78,16 +78,13 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     final ProjectExplorerModel model = this;
     final Node<?> root = (Node<?>) getRoot();
     SwingUtilities.invokeLater(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (root != null) {
-              model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
-              model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
-            } else {
-              model.fireTreeNodesChanged(model, null, null, null);
-              model.fireTreeStructureChanged(model, null, null, null);
-            }
+        () -> {
+          if (root != null) {
+            model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
+            model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
+          } else {
+            model.fireTreeNodesChanged(model, null, null, null);
+            model.fireTreeStructureChanged(model, null, null, null);
           }
         });
   }
@@ -138,7 +135,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   abstract static class Node<T> extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1L;
-    ProjectExplorerModel model;
+    final ProjectExplorerModel model;
     int oldIndex;
     int newIndex;
 

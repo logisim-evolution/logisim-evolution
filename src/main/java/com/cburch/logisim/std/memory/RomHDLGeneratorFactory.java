@@ -40,7 +40,7 @@ import java.util.TreeMap;
 public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private String GetBin(long value, int nr_of_bits) {
-    StringBuffer Bits = new StringBuffer();
+    StringBuilder Bits = new StringBuilder();
     long mask = (1L << (nr_of_bits - 1));
     int count;
     if (nr_of_bits == 1) Bits.append("'");

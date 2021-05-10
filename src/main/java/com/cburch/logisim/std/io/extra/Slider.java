@@ -214,7 +214,7 @@ public class Slider extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_FONT,
           true,
           LEFT_TO_RIGHT,
-          Long.valueOf(0)
+            0L
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("slider.gif");

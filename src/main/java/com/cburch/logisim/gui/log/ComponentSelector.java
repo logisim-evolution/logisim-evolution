@@ -28,15 +28,22 @@
 
 package com.cburch.logisim.gui.log;
 
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Clock;
+import com.cburch.logisim.std.wiring.Pin;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-
 import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -47,44 +54,26 @@ import javax.swing.TransferHandler;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitEvent;
-import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.Clock;
-import com.cburch.logisim.std.wiring.Pin;
-
 // This is more like a JTree, but wedged into a JTable because it looks more
 // reasonable sitting next to the SelectionList JTable .
 public class ComponentSelector extends JTable {
   private static final long serialVersionUID = 1L;
 
-  static final Comparator<Component> compareComponents = new Comparator<Component>() {
-    @Override
-    public int compare(Component a, Component b) {
-      String aName = a.getFactory().getDisplayName();
-      String bName = b.getFactory().getDisplayName();
-      int ret = aName.compareToIgnoreCase(bName);
-      if (ret != 0)
-        return ret;
-      return a.getLocation().toString().compareTo(
-          b.getLocation().toString());
-    }
+  static final Comparator<Component> compareComponents = (a, b) -> {
+    String aName = a.getFactory().getDisplayName();
+    String bName = b.getFactory().getDisplayName();
+    int ret = aName.compareToIgnoreCase(bName);
+    if (ret != 0)
+      return ret;
+    return a.getLocation().toString().compareTo(
+        b.getLocation().toString());
   };
 
-  static final Comparator<Object> compareNames = new Comparator<Object>() {
-    @Override
-    public int compare(Object a, Object b) {
-      return a.toString().compareToIgnoreCase(b.toString());
-    }
-  };
+  static final Comparator<Object> compareNames = (a, b) -> a.toString().compareToIgnoreCase(b.toString());
 
   static class TableTreeModel extends AbstractTableModel {
     TreeNode<CircuitNode> root;
-    ArrayList<TreeNode<?>> rows = new ArrayList<>();
+    final ArrayList<TreeNode<?>> rows = new ArrayList<>();
 
     TableTreeModel() { }
 
@@ -159,8 +148,8 @@ public class ComponentSelector extends JTable {
   //   OptionNode (e.g. one location in a Ram component)
   
   private static class TreeNode<P extends TreeNode<?>> {
-    P parent;
-    int depth;
+    final P parent;
+    final int depth;
     boolean expanded;
     ArrayList<TreeNode<?>> children = new ArrayList<>();
 
@@ -177,7 +166,7 @@ public class ComponentSelector extends JTable {
 
   private class ComponentNode extends TreeNode<CircuitNode> {
 
-    Component comp;
+    final Component comp;
 
     public ComponentNode(CircuitNode p, Component c) {
       super(p);
@@ -208,8 +197,8 @@ public class ComponentSelector extends JTable {
   private class CircuitNode extends TreeNode<CircuitNode>
     implements CircuitListener {
 
-    Circuit circ;
-    Component comp;
+    final Circuit circ;
+    final Component comp;
 
     public CircuitNode(CircuitNode p, Circuit t, Component c) {
       super(p);
@@ -290,8 +279,8 @@ public class ComponentSelector extends JTable {
         }
         newChildren.add(toAdd);
       }
-      Collections.sort(newChildren, compareNames);
-      Collections.sort(subcircs, compareComponents);
+      newChildren.sort(compareNames);
+      subcircs.sort(compareComponents);
       for (Component c : subcircs) {
         SubcircuitFactory factory = (SubcircuitFactory) c.getFactory();
         Circuit subcirc = factory.getSubcircuit();
@@ -332,7 +321,7 @@ public class ComponentSelector extends JTable {
   // FIXME: And for RAM, the current UI is unworkable unless there are only a
   // very few addresses.
   private class OptionNode extends TreeNode<ComponentNode> {
-    private Object option;
+    private final Object option;
 
     public OptionNode(ComponentNode p, Object o) {
       super(p);
@@ -418,8 +407,8 @@ public class ComponentSelector extends JTable {
   }
 
   private Circuit rootCircuit;
-  private TableTreeModel tableModel = new TableTreeModel();
-  private int mode;
+  private final TableTreeModel tableModel = new TableTreeModel();
+  private final int mode;
 
   public static final int ANY_SIGNAL = 1;
   public static final int OBSERVEABLE_CLOCKS = 2; // only 1-bit signals (pins, wires, clocks, etc.)
@@ -512,7 +501,7 @@ public class ComponentSelector extends JTable {
     tableModel.setRoot(new CircuitNode(null, rootCircuit, null));
   }
 
-  class ComponentTransferHandler extends TransferHandler {
+  static class ComponentTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
     boolean sending;
 

@@ -465,25 +465,20 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     //  View of the component has not been updated at the time
     //  the DocumentEvent is fired
 
-    SwingUtilities.invokeLater(new Runnable()
-    {
-      @Override
-      public void run()
+    SwingUtilities.invokeLater(() -> {
+      try
       {
-        try
-        {
-          int endPos = component.getDocument().getLength();
-          Rectangle rect = component.modelToView2D(endPos).getBounds();
+        int endPos = component.getDocument().getLength();
+        Rectangle rect = component.modelToView2D(endPos).getBounds();
 
-          if (rect != null && rect.y != lastHeight)
-          {
-            setPreferredWidth();
-            repaint();
-            lastHeight = rect.y;
-          }
+        if (rect != null && rect.y != lastHeight)
+        {
+          setPreferredWidth();
+          repaint();
+          lastHeight = rect.y;
         }
-        catch (BadLocationException ex) { /* nothing to do */ }
       }
+      catch (BadLocationException ex) { /* nothing to do */ }
     });
   }
 

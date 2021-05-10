@@ -58,9 +58,9 @@ public class DurationAttribute extends Attribute<Integer> {
   public Integer parse(String value) {
     try {
       Integer ret = Integer.valueOf(value);
-      if (ret.intValue() < min) {
+      if (ret < min) {
         throw new NumberFormatException(StringUtil.format(S.get("durationSmallMessage"), "" + min));
-      } else if (ret.intValue() > max) {
+      } else if (ret > max) {
         throw new NumberFormatException(StringUtil.format(S.get("durationLargeMessage"), "" + max));
       }
       return ret;

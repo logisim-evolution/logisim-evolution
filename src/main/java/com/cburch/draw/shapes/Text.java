@@ -199,10 +199,10 @@ public class Text extends AbstractCanvasObject {
       label.setColor((Color) value);
     } else if (attr == DrawAttr.HALIGNMENT) {
       Integer intVal = (Integer) ((AttributeOption) value).getValue();
-      label.setHorizontalAlignment(intVal.intValue());
+      label.setHorizontalAlignment(intVal);
     } else if (attr == DrawAttr.VALIGNMENT) {
       Integer intVal = (Integer) ((AttributeOption) value).getValue();
-      label.setVerticalAlignment(intVal.intValue());
+      label.setVerticalAlignment(intVal);
     }
   }
 }

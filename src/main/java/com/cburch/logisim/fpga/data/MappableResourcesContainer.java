@@ -197,7 +197,7 @@ boolean result = true;
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
         if (!map.isIO(i)) continue;
         if (map.isBoardMapped(i)) {
-          StringBuffer sb = new StringBuffer();
+          StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -214,7 +214,7 @@ boolean result = true;
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
         if (!map.isInput(i)) continue;
         if (map.isBoardMapped(i)) {
-          StringBuffer sb = new StringBuffer();
+          StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -231,7 +231,7 @@ boolean result = true;
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
         if (!map.isOutput(i)) continue;
         if (map.isBoardMapped(i)) {
-          StringBuffer sb = new StringBuffer();
+          StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());

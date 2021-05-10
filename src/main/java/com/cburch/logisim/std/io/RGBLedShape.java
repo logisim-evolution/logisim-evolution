@@ -56,12 +56,11 @@ public class RGBLedShape extends LedShape {
       g.setColor(Color.lightGray);
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
-      g.drawOval(x, y, w, h);
     } else {
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
-      int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
-      int mask = activ.booleanValue() ? 0 : 7;
+      int summ = (data == null ? 0 : (Integer) data.getValue());
+      int mask = activ ? 0 : 7;
       summ ^= mask;
       int red = ((summ >> RGBLed.RED) & 1) * 0xFF;
       int green = ((summ >> RGBLed.GREEN) & 1) * 0xFF;
@@ -69,8 +68,8 @@ public class RGBLedShape extends LedShape {
       g.setColor(new Color(red, green, blue));
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);
-      g.drawOval(x, y, w, h);
     }
+    g.drawOval(x, y, w, h);
     drawLabel(g);
   }
 

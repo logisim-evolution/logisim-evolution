@@ -416,7 +416,7 @@ public class OutputExpressions {
     if (output == null) throw new IllegalArgumentException("null output name");
     OutputData ret = outputData.get(output);
     if (ret == null && create) {
-      if (model.getOutputs().bits.indexOf(output) < 0) {
+      if (!model.getOutputs().bits.contains(output)) {
         throw new IllegalArgumentException("unrecognized output " + output);
       }
       ret = new OutputData(output);

@@ -74,7 +74,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
        * We make ourselves life easy, we just enumerate through all the
        * bits
        */
-      StringBuffer Replacement = new StringBuffer();
+      StringBuilder Replacement = new StringBuilder();
       String type =
           (String)
               ComponentInfo.GetComponent()
@@ -124,7 +124,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                   + Preamble
                   + GetBusEntryName(ComponentInfo, 0, true, bit, HDLType, Nets)
                   + AssignOperator
-                  + Replacement.toString()
+                  + Replacement
                   + ";");
         }
       }

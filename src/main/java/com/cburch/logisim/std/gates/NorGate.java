@@ -51,8 +51,9 @@ class NorGate extends AbstractGate {
       String OrOperation = (HDLType.equals(VHDL) ? " OR" : " |");
       String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
-      StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation + NotOperation + "(");
+      StringBuilder OneLine = new StringBuilder();
+      OneLine.append("   ").append(Preamble).append("Result").append(AssignOperation)
+          .append(NotOperation).append("(");
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
@@ -66,7 +67,7 @@ class NorGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
@@ -75,7 +76,7 @@ class NorGate extends AbstractGate {
     }
   }
 
-  public static NorGate FACTORY = new NorGate();
+  public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
     super("NOR Gate", S.getter("norGateComponent"));

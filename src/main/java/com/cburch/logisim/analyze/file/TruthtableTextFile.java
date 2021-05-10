@@ -139,24 +139,24 @@ public class TruthtableTextFile {
         int col;
         col = 0;
         for (Var var : inputs.vars) {
-          String s = "";
+          StringBuilder s = new StringBuilder();
           for (int b = var.width - 1; b >= 0; b--) {
             Entry val = table.getVisibleInputEntry(row, col++);
-            s += val.toBitString();
+            s.append(val.toBitString());
           }
-          center(out, s, colwidth[i++]);
+          center(out, s.toString(), colwidth[i++]);
           out.print(" ");
         }
         out.print("|");
         col = 0;
         for (Var var : outputs.vars) {
-          String s = "";
+          StringBuilder s = new StringBuilder();
           for (int b = var.width - 1; b >= 0; b--) {
             Entry val = table.getVisibleOutputEntry(row, col++);
-            s += val.toBitString();
+            s.append(val.toBitString());
           }
           out.print(" ");
-          center(out, s, colwidth[i++]);
+          center(out, s.toString(), colwidth[i++]);
         }
         out.println();
       }
@@ -164,7 +164,7 @@ public class TruthtableTextFile {
   }
 
   static final Pattern NAME_FORMAT =
-      Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)\\]");
+      Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
       throws IOException {

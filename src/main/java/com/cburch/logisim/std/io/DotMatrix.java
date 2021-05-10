@@ -345,7 +345,7 @@ public class DotMatrix extends InstanceFactory {
     int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
     int cols = state.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
     long clock = state.getTickCount();
-    long persist = clock + state.getAttributeValue(ATTR_PERSIST).intValue();
+    long persist = clock + state.getAttributeValue(ATTR_PERSIST);
 
     State data = getState(state);
     if (type == INPUT_ROW) {

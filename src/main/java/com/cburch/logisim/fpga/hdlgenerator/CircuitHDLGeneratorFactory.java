@@ -282,7 +282,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ArrayList<String> GetHDLWiring(String HDLType, Netlist TheNets) {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
     /* we cycle through all nets with a forcedrootnet annotation */
@@ -294,14 +294,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           for (ConnectionPoint Source : ThisNet.GetSourceNets(bit)) {
             OneLine.setLength(0);
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + BracketOpen
-                      + bit
-                      + BracketClose);
+              OneLine.append(BusName).append(TheNets.GetNetId(ThisNet)).append(BracketOpen)
+                  .append(bit).append(BracketClose);
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
@@ -309,7 +305,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (HDLType.equals(VHDL)) {
               String line =
                   "   "
-                      + OneLine.toString()
+                      + OneLine
                       + "<= "
                       + BusName
                       + TheNets.GetNetId(Source.GetParrentNet())
@@ -321,7 +317,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               String line =
                   "   assign "
-                      + OneLine.toString()
+                      + OneLine
                       + "= "
                       + BusName
                       + TheNets.GetNetId(Source.GetParrentNet())
@@ -335,12 +331,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
             OneLine.setLength(0);
-            OneLine.append(
-                BusName
-                    + TheNets.GetNetId(Source.GetParrentNet())
-                    + BracketOpen
-                    + Source.GetParrentNetBitIndex()
-                    + BracketClose);
+            OneLine.append(BusName).append(TheNets.GetNetId(Source.GetParrentNet()))
+                .append(BracketOpen).append(Source.GetParrentNetBitIndex()).append(BracketClose);
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
@@ -350,22 +342,18 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               OneLine.append("= ");
             }
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + BracketOpen
-                      + bit
-                      + BracketClose);
+              OneLine.append(BusName).append(TheNets.GetNetId(ThisNet)).append(BracketOpen)
+                  .append(bit).append(BracketClose);
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
+            String line;
             if (HDLType.equals(VHDL)) {
-              String line = "   " + OneLine.toString() + ";";
-              if (!Contents.contains(line)) Contents.add(line);
+              line = "   " + OneLine + ";";
             } else {
-              String line = "   assign " + OneLine.toString() + ";";
-              if (!Contents.contains(line)) Contents.add(line);
+              line = "   assign " + OneLine + ";";
             }
+            if (!Contents.contains(line)) Contents.add(line);
           }
         }
       }
@@ -436,7 +424,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     boolean FirstLine = true;
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     Map<String, Long> CompIds = new HashMap<>();
     /* we start with the connection of the clock sources */
     for (NetlistComponent ClockSource : TheNetlist.GetClockSources()) {
@@ -474,7 +462,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + Preamble
-                + Temp.toString()
+                + Temp
                 + AssignmentOperator
                 + ClockNet
                 + OpenBracket
@@ -485,7 +473,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + Preamble
-                + Temp.toString()
+                + Temp
                 + AssignmentOperator
                 + TickComponentHDLGeneratorFactory.FPGAClock
                 + ";");
@@ -700,7 +688,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (NrOfIOBubbles > 0) {
         if (topLevel) {
-          StringBuffer vector = new StringBuffer();
+          StringBuilder vector = new StringBuilder();
           for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
             /* first pass find the component which is connected to this io */
             int compPin = -1;
@@ -733,7 +721,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
               else {
                 if (vector.length() != 0) vector.append(",");
-                vector.append((map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+                vector.append(map.isExternalInverted(compPin) ? "n_" : "")
+                    .append(map.getHdlString(compPin));
               }
             }
           }
@@ -825,10 +814,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       FPGAReport Reporter,
       String HDLType,
       Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
-    StringBuffer Source = new StringBuffer();
-    StringBuffer Destination = new StringBuffer();
-    StringBuffer Tab = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
+    StringBuilder Source = new StringBuilder();
+    StringBuilder Destination = new StringBuilder();
+    StringBuilder Tab = new StringBuilder();
     String AssignCommand = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? "<= " : "= ";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
@@ -840,9 +829,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "'");
       return "";
     }
-    for (int i = 0; i < TabSize; i++) {
-      Tab.append(" ");
-    }
+    Tab.append(" ".repeat(TabSize));
     ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
     boolean IsOutput = ConnectionInformation.IsOutputEnd();
     int NrOfBits = ConnectionInformation.NrOfBits();
@@ -867,7 +854,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       while (Destination.length() < SallignmentSize) {
         Destination.append(" ");
       }
-      Contents.append(Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+      Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+          .append(Source).append(";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -892,13 +880,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         while (Destination.length() < SallignmentSize) {
           Destination.append(" ");
         }
-        Contents.append(
-            Tab.toString()
-                + AssignCommand
-                + Destination.toString()
-                + AssignOperator
-                + GetZeroVector(NrOfBits, true, HDLType)
-                + ";");
+        Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+            .append(GetZeroVector(NrOfBits, true, HDLType)).append(";");
       } else {
         /*
          * There are connections, we detect if it is a continues bus
@@ -918,17 +901,17 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           while (Destination.length() < SallignmentSize) {
             Destination.append(" ");
           }
-          Contents.append(
-              Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+          Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+              .append(Source).append(";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (int bit = 0; bit < NrOfBits; bit++) {
             Source.setLength(0);
             Destination.setLength(0);
             if (IsOutput) {
-              Source.append(PortName + BracketOpen + bit + BracketClose);
+              Source.append(PortName).append(BracketOpen).append(bit).append(BracketClose);
             } else {
-              Destination.append(PortName + BracketOpen + bit + BracketClose);
+              Destination.append(PortName).append(BracketOpen).append(bit).append(BracketClose);
             }
             ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) bit);
             if (SolderPoint.GetParrentNet() == null) {
@@ -950,28 +933,20 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (SolderPoint.GetParrentNet().BitWidth() == 1) {
                 /* The connection is to a Net */
                 if (IsOutput) {
-                  Destination.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 } else {
-                  Source.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (IsOutput) {
-                  Destination.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
-                          + BracketOpen
-                          + SolderPoint.GetParrentNetBitIndex()
-                          + BracketClose);
+                  Destination.append(BusName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                      .append(BracketOpen).append(SolderPoint.GetParrentNetBitIndex())
+                      .append(BracketClose);
                 } else {
-                  Source.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
-                          + BracketOpen
-                          + SolderPoint.GetParrentNetBitIndex()
-                          + BracketClose);
+                  Source.append(BusName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                      .append(BracketOpen).append(SolderPoint.GetParrentNetBitIndex())
+                      .append(BracketClose);
                 }
               }
             }
@@ -981,8 +956,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (bit != 0) {
               Contents.append("\n");
             }
-            Contents.append(
-                Tab.toString() + AssignCommand + Destination + AssignOperator + Source + ";");
+            Contents.append(Tab).append(AssignCommand).append(Destination).append(AssignOperator)
+                .append(Source).append(";");
           }
         }
       }
