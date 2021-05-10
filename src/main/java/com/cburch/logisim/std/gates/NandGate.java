@@ -66,7 +66,7 @@ class NandGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
@@ -75,7 +75,7 @@ class NandGate extends AbstractGate {
     }
   }
 
-  public static NandGate FACTORY = new NandGate();
+  public static final NandGate FACTORY = new NandGate();
 
   private NandGate() {
     super("NAND Gate", S.getter("nandGateComponent"));

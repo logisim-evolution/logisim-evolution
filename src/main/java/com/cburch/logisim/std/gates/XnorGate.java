@@ -56,7 +56,7 @@ class XnorGate extends AbstractGate {
     }
   }
 
-  public static XnorGate FACTORY = new XnorGate();
+  public static final XnorGate FACTORY = new XnorGate();
 
   private XnorGate() {
     super("XNOR Gate", S.getter("xnorGateComponent"), true);

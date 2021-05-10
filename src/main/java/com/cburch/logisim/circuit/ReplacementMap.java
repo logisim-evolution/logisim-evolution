@@ -29,7 +29,6 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -90,11 +89,8 @@ public class ReplacementMap {
       }
 
       for (Component a : as) {
-        HashSet<Component> aDst = this.map.get(a);
-        if (aDst == null) { // should happen when b pre-existed only
-          aDst = new HashSet<>(cs.size());
-          this.map.put(a, aDst);
-        }
+        HashSet<Component> aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
+        // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
@@ -176,19 +172,11 @@ public class ReplacementMap {
     if (frozen)
       throw new IllegalStateException("cannot change map after frozen");
 
-    HashSet<Component> oldBs = map.get(a);
-    if (oldBs == null) {
-      oldBs = new HashSet<Component>(bs.size());
-      map.put(a, oldBs);
-    }
+    HashSet<Component> oldBs = map.computeIfAbsent(a, k -> new HashSet<Component>(bs.size()));
     oldBs.addAll(bs);
 
     for (Component b : bs) {
-      HashSet<Component> oldAs = inverse.get(b);
-      if (oldAs == null) {
-        oldAs = new HashSet<Component>(3);
-        inverse.put(b, oldAs);
-      }
+      HashSet<Component> oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
       oldAs.add(a);
     }
   }
@@ -209,10 +197,10 @@ public class ReplacementMap {
 
   public String toString() {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    try (PrintStream p = new PrintStream(out, true, "UTF-8")) {
+    try (PrintStream p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
         print(p);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
-    return new String(out.toByteArray(), StandardCharsets.UTF_8);
+    return out.toString(StandardCharsets.UTF_8);
   }
 }

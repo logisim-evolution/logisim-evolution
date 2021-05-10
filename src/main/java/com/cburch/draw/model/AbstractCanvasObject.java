@@ -40,6 +40,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -218,12 +219,12 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
 
     Integer width = getValue(DrawAttr.STROKE_WIDTH);
-    if (width != null && width.intValue() > 0) {
+    if (width != null && width > 0) {
       Color color = getValue(DrawAttr.STROKE_COLOR);
       if (color != null && color.getAlpha() == 0) {
         return false;
       } else {
-        GraphicsUtil.switchToWidth(g, width.intValue());
+        GraphicsUtil.switchToWidth(g, width);
         if (color != null) g.setColor(color);
         return true;
       }
@@ -238,7 +239,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   public final <V> void setValue(Attribute<V> attr, V value) {
     Object old = getValue(attr);
-    boolean same = old == null ? value == null : old.equals(value);
+    boolean same = Objects.equals(old, value);
     if (!same) {
       updateValue(attr, value);
       AttributeEvent e = new AttributeEvent(this, attr, value, old);

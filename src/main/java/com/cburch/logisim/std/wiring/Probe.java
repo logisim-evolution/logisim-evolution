@@ -54,6 +54,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class Probe extends InstanceFactory {
   public static class ProbeLogger extends InstanceLogger {
@@ -389,7 +390,7 @@ public class Probe extends InstanceFactory {
     StateData oldData = (StateData) state.getData();
     Value oldValue = oldData == null ? Value.NIL : oldData.curValue;
     Value newValue = state.getPortValue(0);
-    boolean same = oldValue == null ? newValue == null : oldValue.equals(newValue);
+    boolean same = Objects.equals(oldValue, newValue);
     if (!same) {
       if (oldData == null) {
         oldData = new StateData();

@@ -53,7 +53,9 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   private final HdlContentView editor;
   private final List<ToolbarItem> items;
 
-  HdlToolbarItem hdlImport, hdlExport, hdlValidate;
+  final HdlToolbarItem hdlImport;
+  final HdlToolbarItem hdlExport;
+  final HdlToolbarItem hdlValidate;
 
   public static final String HDL_IMPORT = "hdlImport";
   public static final String HDL_EXPORT = "hdlEmport";
@@ -132,9 +134,9 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public void appearanceChanged(HdlModel source) {}
 
   private class HdlToolbarItem implements ToolbarItem {
-    Icon icon;
-    String action;
-    StringGetter toolTip;
+    final Icon icon;
+    final String action;
+    final StringGetter toolTip;
 
     public HdlToolbarItem(Icon icon, String action, StringGetter toolTip) {
       this.icon = icon;

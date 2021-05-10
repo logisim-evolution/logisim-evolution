@@ -36,10 +36,9 @@ import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
@@ -90,7 +89,8 @@ public class VhdlSimulatorTclComp {
           componentName =
               ((VhdlEntityComponent) fact).GetSimName(state.getInstance().getAttributeSet());
 
-        comp_files.append("vcom -reportprogress 300 -work work ../src/" + componentName + ".vhdl");
+        comp_files.append("vcom -reportprogress 300 -work work ../src/").append(componentName)
+            .append(".vhdl");
         comp_files.append(System.getProperty("line.separator"));
       }
     }
@@ -116,14 +116,10 @@ public class VhdlSimulatorTclComp {
 
     PrintWriter writer;
     try {
-      writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl", "UTF-8");
+      writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl", StandardCharsets.UTF_8);
       writer.print(template);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create run.tcl file : {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create run.tcl file : {}", e.getMessage());
       e.printStackTrace();
       return;

@@ -163,7 +163,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     int imm = ((immediate << 16) >> 16)+4;
@@ -175,11 +175,11 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append((immediate << 2));
                            break;
-      case INSTR_BR      : s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      case INSTR_BR      : s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
-                           s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
+                           s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
     }
     return s.toString();
@@ -382,7 +382,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction(String label) {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {
@@ -394,8 +394,8 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append(label);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
                            s.append(label);
                            break;
     }

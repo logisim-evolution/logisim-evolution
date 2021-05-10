@@ -248,19 +248,11 @@ public class HexEditor extends JComponent implements Scrollable {
   }
 
   private String toHex(long value, int chars) {
-    String ret = Long.toHexString(value);
-    int retLen = ret.length();
-    if (retLen < chars) {
-      ret = "0" + ret;
-      for (int i = retLen + 1; i < chars; i++) {
-        ret = "0" + ret;
-      }
-      return ret;
-    } else if (retLen == chars) {
-      return ret;
-    } else {
-      return ret.substring(retLen - chars);
+    String ret = String.format("%0" + chars + "x", value);
+    if (ret.length() > chars) {
+      return ret.substring(ret.length() - chars);
     }
+    return ret;
   }
 
   private class Listener implements HexModelListener {

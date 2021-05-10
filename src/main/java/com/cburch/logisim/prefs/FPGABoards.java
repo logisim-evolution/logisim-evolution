@@ -71,7 +71,7 @@ public class FPGABoards implements ActionListener {
 
     public void insert(String entry) {
       ExternalBoards.insertSorted(entry);
-      FireChange(new ListDataEvent(this, 0, ExternalBoards.size(), ListDataEvent.INTERVAL_ADDED));
+      FireChange(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, ExternalBoards.size(), ListDataEvent.INTERVAL_ADDED));
     }
 
     public int indexOf(String entry) {
@@ -80,7 +80,7 @@ public class FPGABoards implements ActionListener {
 
     public void remove(String entry) {
       ExternalBoards.remove(entry);
-      FireChange(new ListDataEvent(this, 0, ExternalBoards.size(), ListDataEvent.INTERVAL_REMOVED));
+      FireChange(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, ExternalBoards.size(), ListDataEvent.INTERVAL_REMOVED));
     }
 
     public int NrOfExternalBoards() {
@@ -98,7 +98,7 @@ public class FPGABoards implements ActionListener {
       }
       if (removed)
         FireChange(
-            new ListDataEvent(this, 0, ExternalBoards.size(), ListDataEvent.INTERVAL_REMOVED));
+            new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, ExternalBoards.size(), ListDataEvent.INTERVAL_REMOVED));
       return ExternalBoards.size();
     }
 

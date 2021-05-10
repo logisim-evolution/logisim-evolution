@@ -73,7 +73,7 @@ public class Projects {
         mostRecentFrame = frame;
         try {
           frameLocations.put(frame, frame.getLocationOnScreen());
-        } catch (Exception t) {
+        } catch (Exception ignored) {
         }
       }
     }

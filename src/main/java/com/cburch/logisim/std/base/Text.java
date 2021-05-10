@@ -51,11 +51,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
-  public static Attribute<String> ATTR_TEXT =
+  public static final Attribute<String> ATTR_TEXT =
       Attributes.forString("text", S.getter("textTextAttr"));
-  public static Attribute<Font> ATTR_FONT =
+  public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
-  public static Attribute<AttributeOption> ATTR_HALIGN =
+  public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
           S.getter("textHorzAlignAttr"),
@@ -71,7 +71,7 @@ public class Text extends InstanceFactory {
                 "center",
                 S.getter("textHorzAlignCenterOpt")),
           });
-  public static Attribute<AttributeOption> ATTR_VALIGN =
+  public static final Attribute<AttributeOption> ATTR_VALIGN =
       Attributes.forOption(
           "valign",
           S.getter("textVertAlignAttr"),

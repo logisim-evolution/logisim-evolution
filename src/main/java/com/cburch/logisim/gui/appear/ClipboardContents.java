@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.appear;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -45,7 +44,7 @@ class ClipboardContents {
 
   public ClipboardContents(
       Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {
-    this.onClipboard = Collections.unmodifiableList(new ArrayList<>(onClipboard));
+    this.onClipboard = java.util.List.copyOf(onClipboard);
     this.anchorLocation = anchorLocation;
     this.anchorFacing = anchorFacing;
   }

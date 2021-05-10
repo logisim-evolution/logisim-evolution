@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 class TunnelAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
@@ -151,7 +152,7 @@ class TunnelAttributes extends AbstractAttributeSet {
 
   boolean setOffsetBounds(Bounds value) {
     Bounds old = offsetBounds;
-    boolean same = old == null ? value == null : old.equals(value);
+    boolean same = Objects.equals(old, value);
     if (!same) {
       offsetBounds = value;
     }

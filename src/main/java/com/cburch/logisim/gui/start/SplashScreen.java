@@ -74,10 +74,10 @@ public class SplashScreen extends JWindow implements ActionListener {
         new Marker(2519, S.get("progressFrameCreate")),
       };
   boolean inClose = false; // for avoiding mutual recursion
-  JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
-  JButton close = new JButton(S.get("startupCloseButton"));
-  JButton cancel = new JButton(S.get("startupQuitButton"));
-  long startTime = System.currentTimeMillis();
+  final JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
+  final JButton close = new JButton(S.get("startupCloseButton"));
+  final JButton cancel = new JButton(S.get("startupQuitButton"));
+  final long startTime = System.currentTimeMillis();
   public SplashScreen() {
     setName("Welcome to Logisim Evolution");
     JPanel imagePanel = About.getImagePanel();
@@ -128,11 +128,9 @@ public class SplashScreen extends JWindow implements ActionListener {
     final Marker marker = markers == null ? null : markers[markerId];
     if (marker != null) {
       SwingUtilities.invokeLater(
-          new Runnable() {
-            public void run() {
-              progress.setString(marker.message);
-              progress.setValue(marker.count);
-            }
+          () -> {
+            progress.setString(marker.message);
+            progress.setValue(marker.count);
           });
       if (PRINT_TIMES) {
         logger.info("{} {}", System.currentTimeMillis() - startTime, marker.message);
@@ -157,8 +155,8 @@ public class SplashScreen extends JWindow implements ActionListener {
   }
 
   private static class Marker {
-    int count;
-    String message;
+    final int count;
+    final String message;
 
     Marker(int count, String message) {
       this.count = count;

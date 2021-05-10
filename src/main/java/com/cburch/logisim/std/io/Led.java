@@ -161,7 +161,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
       Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
       Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
       Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-      Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
+      Object desired = activ ? Value.TRUE : Value.FALSE;
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }

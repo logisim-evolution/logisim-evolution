@@ -70,7 +70,10 @@ public class LayoutEditHandler extends EditHandler
 
     boolean selectAvailable = false;
     for (Library lib : proj.getLogisimFile().getLibraries()) {
-      if (lib instanceof Base) selectAvailable = true;
+      if (lib instanceof Base) {
+        selectAvailable = true;
+        break;
+      }
     }
 
     setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);

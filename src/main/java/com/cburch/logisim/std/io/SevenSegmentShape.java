@@ -76,9 +76,9 @@ public class SevenSegmentShape extends DynamicElement {
     int summ = 0, desired = 1;
     if (state != null) {
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
-      summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+      summ = (data == null ? 0 : (Integer) data.getValue());
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
-      desired = activ == null || activ.booleanValue() ? 1 : 0;
+      desired = activ == null || activ ? 1 : 0;
     }
     g.setColor(Color.DARK_GRAY);
     for (int i = 0; i <= 7; i++) {

@@ -181,7 +181,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             ComponentInfo,
             nr_of_bits + PriorityEncoder.EN_IN,
             Nets));
-    StringBuffer VectorList = new StringBuffer();
+    StringBuilder VectorList = new StringBuilder();
     for (int i = nr_of_bits - 1; i >= 0; i--) {
       if (HDL.isVHDL())
         PortMap.putAll(GetNetMap("input_vector(" + i + ")", true, ComponentInfo, i, Nets));

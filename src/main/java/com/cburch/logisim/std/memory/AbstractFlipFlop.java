@@ -261,7 +261,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     String[] Parts = this.getName().split(" ");
     CompleteName.append(Parts[0].replace("-", "_").toUpperCase());
     CompleteName.append("_");

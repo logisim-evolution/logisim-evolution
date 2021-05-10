@@ -95,8 +95,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 + ","
                 + NrOfInputs
                 + "));");
-        String WhenLineBegin = "";
-        for (int i = 0; i < 21 + AllignmentSpaces.length(); i++) WhenLineBegin += " ";
+        StringBuilder WhenLineBegin = new StringBuilder();
+        WhenLineBegin.append(" ".repeat(21 + AllignmentSpaces.length()));
         for (int i = 0; i < NrOfInputs; i++) {
           String LocalSpaces;
           if (i < 10) LocalSpaces = AllignmentSpaces;
@@ -174,7 +174,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
       OneLine.append("(");
       for (int i = 0; i < nr_of_inputs; i++) {
-        if (i == termloop) OneLine.append("s_real_input_" + (i + 1) + IndexString);
+        if (i == termloop) OneLine.append("s_real_input_").append(i + 1).append(IndexString);
         else
           OneLine.append( HDL.notOperator() + "(s_real_input_" + (i + 1) + IndexString + ")");
         if (i < (nr_of_inputs - 1)) {
@@ -280,7 +280,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       while (OneLine.length() < spaces) {
         OneLine.append(" ");
       }
-      OneLine.append("s_real_input_" + (i + 1) + IndexString);
+      OneLine.append("s_real_input_").append(i + 1).append(IndexString);
       if (i < (nr_of_inputs - 1)) {
         OneLine.append(HDL.xorOperator());
       } else {

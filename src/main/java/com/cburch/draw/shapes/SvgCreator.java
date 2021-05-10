@@ -94,7 +94,7 @@ public class SvgCreator {
     boolean first = true;
     for (Handle h : poly.getHandles(null)) {
       if (!first) points.append(" ");
-      points.append(h.getX() + "," + h.getY());
+      points.append(h.getX()).append(",").append(h.getY());
       first = false;
     }
     elt.setAttribute("points", points.toString());
@@ -119,7 +119,7 @@ public class SvgCreator {
 
   public static Element createRoundRectangle(Document doc, RoundRectangle rrect) {
     Element elt = createRectangular(doc, rrect);
-    int r = rrect.getValue(DrawAttr.CORNER_RADIUS).intValue();
+    int r = rrect.getValue(DrawAttr.CORNER_RADIUS);
     elt.setAttribute("rx", "" + r);
     elt.setAttribute("ry", "" + r);
     return elt;
@@ -205,7 +205,7 @@ public class SvgCreator {
 
   private static void populateStroke(Element elt, AbstractCanvasObject shape) {
     Integer width = shape.getValue(DrawAttr.STROKE_WIDTH);
-    if (width != null && width.intValue() != 1) {
+    if (width != null && width != 1) {
       elt.setAttribute("stroke-width", width.toString());
     }
     Color stroke = shape.getValue(DrawAttr.STROKE_COLOR);

@@ -59,9 +59,7 @@ public class LibraryTools {
   }
 
   public static void BuildToolList(Library lib, HashSet<String> Tools) {
-    Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-    while (tooliter.hasNext()) {
-      Tool tool = tooliter.next();
+    for (Tool tool : lib.getTools()) {
       Tools.add(tool.getName().toUpperCase());
     }
     for (Library sublib : lib.getLibraries()) BuildToolList(sublib, Tools);
@@ -70,11 +68,11 @@ public class LibraryTools {
   public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
     boolean ret = true;
     if (!lib.getName().equals("Base")) {
-      Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-      while (tooliter.hasNext()) {
-        Tool tool1 = tooliter.next();
-        if (Tools.containsKey(tool1.getName().toUpperCase())) ret = false;
-        else Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+      for (Tool tool1 : lib.getTools()) {
+        if (Tools.containsKey(tool1.getName().toUpperCase()))
+          ret = false;
+        else
+          Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
       }
     }
     for (Library sublib : lib.getLibraries()) {
@@ -104,9 +102,7 @@ public class LibraryTools {
   public static ArrayList<String> LibraryCanBeMerged(
       HashSet<String> SourceTools, HashSet<String> NewTools) {
     ArrayList<String> ret = new ArrayList<>();
-    Iterator<String> Iter = NewTools.iterator();
-    while (Iter.hasNext()) {
-      String This = Iter.next();
+    for (String This : NewTools) {
       if (SourceTools.contains(This)) {
         ret.add(This);
       }

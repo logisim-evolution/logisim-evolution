@@ -36,7 +36,7 @@ import java.awt.geom.GeneralPath;
 
 public class DrcIcon extends AnnimatedIcon {
 
-  public boolean empty;
+  public final boolean empty;
   public int state = -1;
 
   public DrcIcon(boolean isDrcError) {

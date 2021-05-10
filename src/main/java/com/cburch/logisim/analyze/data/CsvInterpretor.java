@@ -95,7 +95,7 @@ public class CsvInterpretor {
    */
 
   private ArrayList<List<String>> content;
-  JFrame parent;
+  final JFrame parent;
   private final VariableList inputs;
   private final VariableList outputs;
   private final String FileName;
@@ -112,7 +112,6 @@ public class CsvInterpretor {
     }
     if (!getInputsOutputs() || !CheckEntries()) {
       content = new ArrayList<>();
-      return;
     }
   }
 
@@ -289,7 +288,7 @@ public class CsvInterpretor {
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
-          if (sels.get(BitIndex) == true) {
+          if (sels.get(BitIndex)) {
             OptionPane.showMessageDialog(
                 parent,
                 S.fmt("CsvDuplicatedBit", 1, FileName, BitIndex, name),
@@ -405,7 +404,7 @@ public class CsvInterpretor {
     boolean inQuote = false;
     int nrofcontquotes = 0;
 
-    StringBuffer working = new StringBuffer();
+    StringBuilder working = new StringBuilder();
     List<String> result = new ArrayList<>();
     for (char kar : line.toCharArray()) {
       if (inQuote) {
@@ -414,7 +413,7 @@ public class CsvInterpretor {
         } else {
           if (nrofcontquotes > 1) {
             int quotestoprint = nrofcontquotes >> 1;
-            for (int i = 0; i < quotestoprint; i++) working.append(quote);
+            working.append(String.valueOf(quote).repeat(quotestoprint));
             nrofcontquotes -= quotestoprint << 1;
           }
           if (nrofcontquotes == 1) {
@@ -423,7 +422,7 @@ public class CsvInterpretor {
               if (working.length() == 0) result.add(null);
               else {
                 result.add(working.toString());
-                working = new StringBuffer();
+                working = new StringBuilder();
               }
             } else {
               working.append(kar);
@@ -436,7 +435,7 @@ public class CsvInterpretor {
           if (working.length() == 0) result.add(null);
           else {
             result.add(working.toString());
-            working = new StringBuffer();
+            working = new StringBuilder();
           }
         } else if (kar == quote) {
           inQuote = true;

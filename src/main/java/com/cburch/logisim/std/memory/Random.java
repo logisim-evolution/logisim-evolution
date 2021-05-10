@@ -114,7 +114,7 @@ public class Random extends InstanceFactory {
     }
 
     private long getRandomSeed(Object seed) {
-      long retValue = seed instanceof Integer ? ((Integer) seed).intValue() : 0;
+      long retValue = seed instanceof Integer ? (Integer) seed : 0;
       if (retValue == 0) {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what

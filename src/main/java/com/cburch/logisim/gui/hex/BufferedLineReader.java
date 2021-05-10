@@ -120,7 +120,7 @@ abstract class BufferedLineReader {
     }
     skipNextNewline = false;
 
-    StringBuffer ret = new StringBuffer(100);
+    StringBuilder ret = new StringBuilder(100);
     for (; ; ) {
       // scan buffered data looking for end of line
       int initPos = bufPos;
@@ -141,7 +141,7 @@ abstract class BufferedLineReader {
       ret.append(buf, initPos, bufPos - initPos);
 
       // refill buffer, if necessary and possible
-      if (bufPos >= bufCount && !refill())
+      if (!refill())
         return ret.toString(); // note: file ended without newline
     }
   }
@@ -225,13 +225,13 @@ abstract class BufferedLineReader {
       return cin.read(cbuf, off, len);
     }
 
-    int underlyingReadBytes(byte[] bbuf, int off, int len) throws IOException {
+    int underlyingReadBytes(byte[] bbuf, int off, int len) {
       return bin.read(bbuf, off, len);
     }
   }
 
   private static class Adapter extends InputStream {
-    RandomAccessFile r;
+    final RandomAccessFile r;
 
     Adapter(RandomAccessFile in) {
       r = in;

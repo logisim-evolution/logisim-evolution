@@ -57,8 +57,8 @@ public class ShiftRegisterPoker extends InstancePoker {
       y = e.getY() - y;
       if (y <= -6 || y >= 8) return -1;
       int x = e.getX() - (bds.getX() + 15);
-      if (!loadObj.booleanValue() || widObj.getWidth() > 4) return -1;
-      if (x < 0 || x >= lenObj.intValue() * 10) return -1;
+      if (!loadObj || widObj.getWidth() > 4) return -1;
+      if (x < 0 || x >= lenObj * 10) return -1;
       return x / 10;
     } else {
       int len = (widObj.getWidth() + 3) / 4;
@@ -85,7 +85,7 @@ public class ShiftRegisterPoker extends InstancePoker {
     char c = e.getKeyChar();
     if (c == ' ' || c == '\t') {
       Integer lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-      if (loc < lenObj.intValue() - 1) {
+      if (loc < lenObj - 1) {
         this.loc = loc + 1;
         state.fireInvalidated();
       }

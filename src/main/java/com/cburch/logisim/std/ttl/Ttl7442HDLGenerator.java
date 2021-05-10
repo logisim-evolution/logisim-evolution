@@ -1,7 +1,7 @@
 /*
  * This file is part of logisim-evolution.
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
+ * Logisim-evolution is free software: you can redistribute it "+AND+"/or modify
  * it under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
@@ -12,7 +12,7 @@
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
+ * with logisim-evolution. If "+NOT+", see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -90,38 +89,38 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
     String NOT = HDL.notOperator();
     String AND = HDL.andOperator();
     if (IsExes3) {
-      Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
-      Contents.add("   O1 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
-      Contents.add("   O2 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
-      Contents.add("   O3 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
-      Contents.add("   O4 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
-      Contents.add("   O5 <= NOT (    D  AND NOT(C) AND NOT(B) AND NOT(A));");
-      Contents.add("   O6 <= NOT (    D  AND NOT(C) AND NOT(B) AND     A );");
-      Contents.add("   O7 <= NOT (    D  AND NOT(C) AND     B  AND NOT(A));");
-      Contents.add("   O8 <= NOT (    D  AND NOT(C) AND     B  AND     A );");
-      Contents.add("   O9 <= NOT (    D  AND     C  AND NOT(B) AND NOT(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O0"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O1"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O2"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O3"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O4"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O5"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O6"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O7"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O8"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O9"+HDL.assignOperator()+NOT+"(D"+AND+"C"+AND+NOT+"(B)"+AND+NOT+"(A));");
     } else if (IsGray) {
-      Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND     B  AND NOT(A));");
-      Contents.add("   O1 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
-      Contents.add("   O2 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
-      Contents.add("   O3 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
-      Contents.add("   O4 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
-      Contents.add("   O5 <= NOT (    D  AND     C  AND NOT(B) AND NOT(A));");
-      Contents.add("   O6 <= NOT (    D  AND     C  AND NOT(B) AND     A );");
-      Contents.add("   O7 <= NOT (    D  AND     C  AND     B  AND     A );");
-      Contents.add("   O8 <= NOT (    D  AND     C  AND     B  AND NOT(A));");
-      Contents.add("   O9 <= NOT (    D  AND NOT(C) AND     B  AND NOT(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O0"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O1"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O2"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O3"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O4"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O5"+HDL.assignOperator()+NOT+"(D"+AND+"C"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O6"+HDL.assignOperator()+NOT+"(D"+AND+"C"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O7"+HDL.assignOperator()+NOT+"(D"+AND+"C"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O8"+HDL.assignOperator()+NOT+"(D"+AND+"C"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O9"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+"B"+AND+NOT+"(A));");
     } else {
-      Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND NOT(A));");
-      Contents.add("   O1 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND     A );");
-      Contents.add("   O2 <= NOT (NOT(D) AND NOT(C) AND     B  AND NOT(A));");
-      Contents.add("   O3 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
-      Contents.add("   O4 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
-      Contents.add("   O5 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
-      Contents.add("   O6 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
-      Contents.add("   O7 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
-      Contents.add("   O8 <= NOT (    D  AND NOT(C) AND NOT(B) AND NOT(A));");
-      Contents.add("   O9 <= NOT (    D  AND NOT(C) AND NOT(B) AND     A );");
+      Contents.add("   "+HDL.assignPreamble()+"O0"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O1"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O2"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O3"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+NOT+"(C)"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O4"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O5"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+NOT+"(B)"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O6"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O7"+HDL.assignOperator()+NOT+"("+NOT+"(D)"+AND+"C"+AND+"B"+AND+"A);");
+      Contents.add("   "+HDL.assignPreamble()+"O8"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+NOT+"(A));");
+      Contents.add("   "+HDL.assignPreamble()+"O9"+HDL.assignOperator()+NOT+"(D"+AND+NOT+"(C)"+AND+NOT+"(B)"+AND+"A);");
     }
     return Contents;
   }
@@ -161,6 +160,6 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND) && HDL.isVHDL());
+    return (!attrs.getValue(TTL.VCC_GND));
   }
 }

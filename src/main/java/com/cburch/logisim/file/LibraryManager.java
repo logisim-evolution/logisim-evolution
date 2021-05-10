@@ -262,25 +262,28 @@ class LibraryManager {
     String type = desc.substring(0, sep);
     String name = desc.substring(sep + 1);
 
-    if (type.equals("")) {
-      Library ret = loader.getBuiltin().getLibrary(name);
-      if (ret == null) {
-        loader.showError(StringUtil.format(S.get("fileBuiltinMissingError"), name));
-        return null;
+    switch (type) {
+      case "":
+        Library ret = loader.getBuiltin().getLibrary(name);
+        if (ret == null) {
+          loader.showError(StringUtil.format(S.get("fileBuiltinMissingError"), name));
+          return null;
+        }
+        return ret;
+      case "file": {
+        File toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
+        return loadLogisimLibrary(loader, toRead);
       }
-      return ret;
-    } else if (type.equals("file")) {
-      File toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
-      return loadLogisimLibrary(loader, toRead);
-    } else if (type.equals("jar")) {
-      int sepLoc = name.lastIndexOf(desc_sep);
-      String fileName = name.substring(0, sepLoc);
-      String className = name.substring(sepLoc + 1);
-      File toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
-      return loadJarLibrary(loader, toRead, className);
-    } else {
-      loader.showError(StringUtil.format(S.get("fileTypeError"), type, desc));
-      return null;
+      case "jar": {
+        int sepLoc = name.lastIndexOf(desc_sep);
+        String fileName = name.substring(0, sepLoc);
+        String className = name.substring(sepLoc + 1);
+        File toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
+        return loadJarLibrary(loader, toRead, className);
+      }
+      default:
+        loader.showError(StringUtil.format(S.get("fileTypeError"), type, desc));
+        return null;
     }
   }
 

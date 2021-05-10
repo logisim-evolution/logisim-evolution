@@ -36,6 +36,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecutionInterface {
 
@@ -68,9 +69,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   private boolean valid = false;
       
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
@@ -95,7 +94,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
                         break;
       case INSTR_XOR  : result = opp1 ^ opp2;
                         break;
-      case INSTR_SRL  : Long val1 = ElfHeader.getLongValue(opp1);
+      case INSTR_SRL  : long val1 = ElfHeader.getLongValue(opp1);
                         val1 >>= (opp2&0x1F);
                         result = ElfHeader.getIntValue(val1);
                         break;
@@ -114,13 +113,13 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+","+
-             ((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1]+",")+
-             RV32im_state.registerABINames[source2]);
+    s.append(RV32im_state.registerABINames[destination]).append(",")
+        .append((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1] + ",")
+        .append(RV32im_state.registerABINames[source2]);
     return s.toString();
   }
 

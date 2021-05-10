@@ -241,7 +241,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
             ++pos;
             end = pos;
           }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         e.consume();
         break;

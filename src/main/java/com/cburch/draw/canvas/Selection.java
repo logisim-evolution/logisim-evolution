@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class Selection {
@@ -173,7 +174,7 @@ public class Selection {
 
   public void setHandleSelected(Handle handle) {
     Handle cur = selectedHandle;
-    boolean same = cur == null ? handle == null : cur.equals(handle);
+    boolean same = Objects.equals(cur, handle);
     if (!same) {
       selectedHandle = handle;
       curHandleGesture = null;

@@ -241,7 +241,7 @@ public class Circuit {
     return comp.getEnd(0).getType() != EndData.INPUT_ONLY;
   }
 
-  private final int maxTimeoutTestBenchSec = 60000;
+  private static final int MAX_TIMEOUT_TEST_BENCH_SEC = 60000;
   private final MyComponentListener myComponentListener = new MyComponentListener();
   private final CircuitAppearance appearance;
   private final AttributeSet staticAttrs;
@@ -464,7 +464,7 @@ public class Circuit {
 
     TimeoutSimulation ts = new TimeoutSimulation();
     Timer timer = new Timer();
-    timer.schedule(ts, maxTimeoutTestBenchSec);
+    timer.schedule(ts, MAX_TIMEOUT_TEST_BENCH_SEC);
 
     while (true) {
       int i = 0;

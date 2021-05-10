@@ -53,12 +53,12 @@ import javax.swing.JPopupMenu;
 public class MenuTool extends Tool {
   private static class MenuComponent extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
-    Project proj;
-    Circuit circ;
-    Component comp;
-    JMenuItem del = new JMenuItem(S.get("compDeleteItem"));
-    JMenuItem attrs = new JMenuItem(S.get("compShowAttrItem"));
-    JMenuItem rotate = new JMenuItem(S.get("compRotate"));
+    final Project proj;
+    final Circuit circ;
+    final Component comp;
+    final JMenuItem del = new JMenuItem(S.get("compDeleteItem"));
+    final JMenuItem attrs = new JMenuItem(S.get("compShowAttrItem"));
+    final JMenuItem rotate = new JMenuItem(S.get("compRotate"));
 
     MenuComponent(Project proj, Circuit circ, Component comp) {
       this.proj = proj;
@@ -101,10 +101,10 @@ public class MenuTool extends Tool {
 
   private static class MenuSelection extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
-    Project proj;
-    JMenuItem del = new JMenuItem(S.get("selDeleteItem"));
-    JMenuItem cut = new JMenuItem(S.get("selCutItem"));
-    JMenuItem copy = new JMenuItem(S.get("selCopyItem"));
+    final Project proj;
+    final JMenuItem del = new JMenuItem(S.get("selDeleteItem"));
+    final JMenuItem cut = new JMenuItem(S.get("selCutItem"));
+    final JMenuItem copy = new JMenuItem(S.get("selCopyItem"));
 
     MenuSelection(Project proj) {
       this.proj = proj;

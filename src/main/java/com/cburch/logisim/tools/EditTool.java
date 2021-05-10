@@ -341,13 +341,11 @@ public class EditTool extends Tool {
 
   @Override
   public void keyReleased(Canvas canvas, KeyEvent e) {
-    switch (e.getKeyCode()) {
-      case KeyEvent.VK_ALT:
-        updateLocation(canvas, e);
-        e.consume();
-        break;
-      default:
-        select.keyReleased(canvas, e);
+    if (e.getKeyCode() == KeyEvent.VK_ALT) {
+      updateLocation(canvas, e);
+      e.consume();
+    } else {
+      select.keyReleased(canvas, e);
     }
   }
 
@@ -472,7 +470,7 @@ public class EditTool extends Tool {
           lastX = snapx;
           lastY = snapy;
           Location oldWireLoc = wireLoc;
-          boolean ret = ((Boolean) o).booleanValue();
+          boolean ret = (Boolean) o;
           wireLoc = ret ? snap : NULL_LOCATION;
           repaintIndicators(canvas, oldWireLoc, wireLoc);
           return ret;

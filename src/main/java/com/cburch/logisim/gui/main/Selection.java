@@ -198,7 +198,7 @@ public class Selection extends SelectionBase {
   }
 
   public static class Event {
-    Object source;
+    final Object source;
 
     Event(Object source) {
       this.source = source;

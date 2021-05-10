@@ -93,7 +93,7 @@ public class TclGeneric extends TclComponent {
 
   static class TclGenericListener implements HdlModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     TclGenericListener(Instance instance) {
       this.instance = instance;

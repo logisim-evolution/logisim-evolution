@@ -33,8 +33,6 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ElfProgramHeader {
@@ -59,17 +57,9 @@ public class ElfProgramHeader {
   public final static int PT_HIPROC = 0x7FFFFFFF;
   private static final Map<Integer, String> PT_TYPES;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(PT_NULL, "PT_NULL");
-    aMap.put(PT_LOAD, "PT_LOAD");
-    aMap.put(PT_DYNAMIC, "PT_DYNAMIC");
-    aMap.put(PT_INTERP, "PT_INTERP");
-    aMap.put(PT_NOTE, "PT_NOTE");
-    aMap.put(PT_SHLIB, "PT_SHLIB");
-    aMap.put(PT_PHDR, "PT_PHDR");
-    aMap.put(PT_LOPROC, "PT_LOPROC");
-    aMap.put(PT_HIPROC, "PT_HIPROC");
-    PT_TYPES = Collections.unmodifiableMap(aMap);
+    PT_TYPES = Map.of(PT_NULL, "PT_NULL", PT_LOAD, "PT_LOAD", PT_DYNAMIC, "PT_DYNAMIC", PT_INTERP,
+        "PT_INTERP", PT_NOTE, "PT_NOTE", PT_SHLIB, "PT_SHLIB", PT_PHDR, "PT_PHDR", PT_LOPROC,
+        "PT_LOPROC", PT_HIPROC, "PT_HIPROC");
   }
   
   public final static int PF_X = 1;
@@ -77,11 +67,7 @@ public class ElfProgramHeader {
   public final static int PF_R = 4;
   private static final Map<Integer, String> PF_FLAGS;
   static {
-    Map<Integer,String> aMap = new HashMap<>();
-    aMap.put(PF_X, "PF_X");
-    aMap.put(PF_W, "PF_W");
-    aMap.put(PF_R, "PF_R");
-    PF_FLAGS = Collections.unmodifiableMap(aMap);
+    PF_FLAGS = Map.of(PF_X, "PF_X", PF_W, "PF_W", PF_R, "PF_R");
   }
   
   
@@ -143,12 +129,9 @@ public class ElfProgramHeader {
     }
     
     public String toString() {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       s.append("Program Header Info:\np_type   : ");
-      if (PT_TYPES.containsKey(p_type))
-        s.append(PT_TYPES.get(p_type));
-      else
-        s.append("unknown");
+      s.append(PT_TYPES.getOrDefault(p_type, "unknown"));
       s.append("\np_flags  : ");
       boolean first = true;
       for (int i : PF_FLAGS.keySet()) {
@@ -159,12 +142,12 @@ public class ElfProgramHeader {
           s.append(PF_FLAGS.get(i));
         }
       }
-      s.append("\np_offset : "+String.format("0x%X", p_offset)+"\n");
-      s.append("p_vaddr  : "+String.format("0x%X", p_vaddr)+"\n");
-      s.append("p_paddr  : "+String.format("0x%X", p_paddr)+"\n");
-      s.append("p_filesz : "+String.format("0x%X", p_filesz)+"\n");
-      s.append("p_memsz  : "+String.format("0x%X", p_memsz)+"\n");
-      s.append("p_align  : "+String.format("0x%X", p_align)+"\n\n");
+      s.append("\np_offset : ").append(String.format("0x%X", p_offset)).append("\n");
+      s.append("p_vaddr  : ").append(String.format("0x%X", p_vaddr)).append("\n");
+      s.append("p_paddr  : ").append(String.format("0x%X", p_paddr)).append("\n");
+      s.append("p_filesz : ").append(String.format("0x%X", p_filesz)).append("\n");
+      s.append("p_memsz  : ").append(String.format("0x%X", p_memsz)).append("\n");
+      s.append("p_align  : ").append(String.format("0x%X", p_align)).append("\n\n");
       return s.toString();
     }
     

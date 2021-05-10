@@ -72,8 +72,8 @@ public abstract class JDialogOk extends JDialog {
   private static final long serialVersionUID = 1L;
 
   private final JPanel contents = new JPanel(new BorderLayout());
-  protected JButton ok = new JButton(S.get("dlogOkButton"));
-  protected JButton cancel = new JButton(S.get("dlogCancelButton"));
+  protected final JButton ok = new JButton(S.get("dlogOkButton"));
+  protected final JButton cancel = new JButton(S.get("dlogCancelButton"));
   protected Window parent;
   
   public JDialogOk(String title) {
@@ -110,9 +110,7 @@ public abstract class JDialogOk extends JDialog {
     pane.add(contents, BorderLayout.CENTER);
     pane.add(buttons, BorderLayout.SOUTH);
     
-    getRootPane().registerKeyboardAction(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { setVisible(false); cancelClicked(); dispose(); }
-      }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    getRootPane().registerKeyboardAction(e -> { setVisible(false); cancelClicked(); dispose(); }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     addWindowListener(new WindowAdapter() {
       public void windowOpened(WindowEvent e) {

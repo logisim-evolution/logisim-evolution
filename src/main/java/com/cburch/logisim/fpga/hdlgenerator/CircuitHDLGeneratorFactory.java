@@ -277,7 +277,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + bit
                       + HDL.BracketClose());
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
@@ -314,7 +314,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + bit
                       + HDL.BracketClose());
             } else {
-              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
+              OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             String line = "   "+HDL.assignPreamble()+OneLine.toString()+";";
             if (!Contents.contains(line)) Contents.add(line);
@@ -383,7 +383,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     boolean FirstLine = true;
-    StringBuffer Temp = new StringBuffer();
+    StringBuilder Temp = new StringBuilder();
     Map<String, Long> CompIds = new HashMap<>();
     /* we start with the connection of the clock sources */
     for (NetlistComponent ClockSource : TheNetlist.GetClockSources()) {
@@ -632,7 +632,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (NrOfIOBubbles > 0) {
         if (topLevel) {
-          StringBuffer vector = new StringBuffer();
+          StringBuilder vector = new StringBuilder();
           for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
             /* first pass find the component which is connected to this io */
             int compPin = -1;
@@ -665,7 +665,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
               else {
                 if (vector.length() != 0) vector.append(",");
-                vector.append((map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+                vector.append(map.isExternalInverted(compPin) ? "n_" : "")
+                    .append(map.getHdlString(compPin));
               }
             }
           }
@@ -766,9 +767,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "'");
       return "";
     }
-    for (int i = 0; i < TabSize; i++) {
-      Tab.append(" ");
-    }
+    Tab.append(" ".repeat(TabSize));
     ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
     boolean IsOutput = ConnectionInformation.IsOutputEnd();
     int NrOfBits = ConnectionInformation.NrOfBits();
@@ -876,11 +875,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (SolderPoint.GetParrentNet().BitWidth() == 1) {
                 /* The connection is to a Net */
                 if (IsOutput) {
-                  Destination.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 } else {
-                  Source.append(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */

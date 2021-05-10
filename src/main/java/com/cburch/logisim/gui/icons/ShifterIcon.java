@@ -52,7 +52,7 @@ public class ShifterIcon extends AnnimatedIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if (state < 0) s.append("\u25b6" + "\u25b6" + "\u25b6");
     else {
       int mask = 4;

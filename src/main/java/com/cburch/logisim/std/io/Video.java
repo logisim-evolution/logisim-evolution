@@ -261,11 +261,11 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return (now / 1000 % 2 == 0);
   }
 
-  static DirectColorModel rgb111 = new DirectColorModel(3, 0x4, 0x2, 0x1);
-  static DirectColorModel rgb555 = new DirectColorModel(15, 0x7C00, 0x03E0, 0x001F);
-  static DirectColorModel rgb565 = new DirectColorModel(16, 0xF800, 0x07E0, 0x001F);
-  static DirectColorModel rgb = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
-  static IndexColorModel gray4 =
+  static final DirectColorModel rgb111 = new DirectColorModel(3, 0x4, 0x2, 0x1);
+  static final DirectColorModel rgb555 = new DirectColorModel(15, 0x7C00, 0x03E0, 0x001F);
+  static final DirectColorModel rgb565 = new DirectColorModel(16, 0xF800, 0x07E0, 0x001F);
+  static final DirectColorModel rgb = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
+  static final IndexColorModel gray4 =
       new IndexColorModel(
           4,
           16,
@@ -276,7 +276,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel atari =
+  static final IndexColorModel atari =
       new IndexColorModel(
           7,
           128,
@@ -301,7 +301,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel xterm16 =
+  static final IndexColorModel xterm16 =
       new IndexColorModel(
           4,
           16,
@@ -312,7 +312,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel xterm256 =
+  static final IndexColorModel xterm256 =
       new IndexColorModel(
           8,
           256,
@@ -413,7 +413,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   private static class State implements ComponentState, Cloneable {
     public Value lastClock = null;
-    public BufferedImage img;
+    public final BufferedImage img;
     public int last_x, last_y, color;
 
     State(BufferedImage img) {
@@ -467,7 +467,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
         return S.get("rgbVideoY");
       case P_DATA:
         AttributeSet attrs = getAttributeSet();
-        return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION).toString());
+        return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION));
       case P_RST:
         return S.get("rgbVideoRST");
       default:

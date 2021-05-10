@@ -229,7 +229,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
-    LinkedList<CellEditorListener> listeners = new LinkedList<>();
+    final LinkedList<CellEditorListener> listeners = new LinkedList<>();
     AttrTableModelRow currentRow;
     AttrTableModelRow[] currentRows;
     int[] currentRowIndexes;
@@ -294,9 +294,9 @@ public class AttrTable extends JPanel implements LocaleListener {
     //
     @Override
     public void focusLost(FocusEvent e) {
-      Object dst = e.getOppositeComponent();
-      if (dst instanceof Component) {
-        Component p = (Component) dst;
+      Component dst = e.getOppositeComponent();
+      if (dst != null) {
+        Component p = dst;
         while (p != null && !(p instanceof Window)) {
           if (p == AttrTable.this) {
             // switch to another place in this table,
@@ -439,8 +439,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private class TableModelAdapter implements TableModel, AttrTableModelListener {
 
-    Window parent;
-    LinkedList<TableModelListener> listeners;
+    final Window parent;
+    final LinkedList<TableModelListener> listeners;
     AttrTableModel attrModel;
 
     TableModelAdapter(Window parent, AttrTableModel attrModel) {

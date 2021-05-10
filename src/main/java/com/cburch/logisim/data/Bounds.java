@@ -56,7 +56,7 @@ public class Bounds {
     return create(pt.getX(), pt.getY(), 1, 1);
   }
 
-  public static Bounds EMPTY_BOUNDS = new Bounds(0, 0, 0, 0);
+  public static final Bounds EMPTY_BOUNDS = new Bounds(0, 0, 0, 0);
 
   private static final Cache cache = new Cache();
 

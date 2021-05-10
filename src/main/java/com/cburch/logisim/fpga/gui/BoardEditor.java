@@ -169,39 +169,46 @@ public class BoardEditor implements ActionListener, ComponentListener,
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(CancelStr)) {
-      this.clear();
-    } else if (e.getActionCommand().equals("save")) {
-      panel.setVisible(false);
-      TheBoard.setBoardName(BoardNameInput.getText());
-      String filename = getDirName("", S.get("FpgaBoardSaveDir"));
-      filename += TheBoard.getBoardName() + ".xml";
-      TheBoard.setComponents(picturepanel.getIOComponents());
-      BoardWriterClass xmlwriter = new BoardWriterClass( TheBoard, picturepanel.getImage());
-      xmlwriter.PrintXml(filename);
-      this.clear();
-    } else if (e.getActionCommand().equals("load")) {
-      JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
-      fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-      fc.setFileFilter(XMLFileFilter.XML_FILTER);
-      fc.setAcceptAllFileFilterUsed(false);
-      int retval = fc.showOpenDialog(null);
-      if (retval == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
-        String FileName = file.getPath();
-        BoardReaderClass reader = new BoardReaderClass(FileName);
-        UpdateInfo(reader);
-      }
-    } else if (e.getActionCommand().equals(FPGAStr)) {
-      FPGAIOInformationSettingsDialog.getFpgaInformation(panel,TheBoard);
-      if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
+    switch (e.getActionCommand()) {
+      case CancelStr:
+        this.clear();
+        break;
+      case "save":
+        panel.setVisible(false);
+        TheBoard.setBoardName(BoardNameInput.getText());
+        String filename = getDirName("", S.get("FpgaBoardSaveDir"));
+        filename += TheBoard.getBoardName() + ".xml";
+        TheBoard.setComponents(picturepanel.getIOComponents());
+        BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
+        xmlwriter.PrintXml(filename);
+        this.clear();
+        break;
+      case "load":
+        JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fc.setFileFilter(XMLFileFilter.XML_FILTER);
+        fc.setAcceptAllFileFilterUsed(false);
+        int retval = fc.showOpenDialog(null);
+        if (retval == JFileChooser.APPROVE_OPTION) {
+          File file = fc.getSelectedFile();
+          String FileName = file.getPath();
+          BoardReaderClass reader = new BoardReaderClass(FileName);
+          UpdateInfo(reader);
+        }
+        break;
+      case FPGAStr:
+        FPGAIOInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
+        if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
           saveButton.setEnabled(true);
-    } else if (e.getActionCommand().equals("internal")) {
-      String Board = getInternalBoardName();
-      if (Board != null) {
-        BoardReaderClass reader = new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(Board));
-        UpdateInfo(reader);
-      }
+        break;
+      case "internal":
+        String Board = getInternalBoardName();
+        if (Board != null) {
+          BoardReaderClass reader = new BoardReaderClass(
+              AppPreferences.Boards.GetBoardFilePath(Board));
+          UpdateInfo(reader);
+        }
+        break;
     }
   }
   

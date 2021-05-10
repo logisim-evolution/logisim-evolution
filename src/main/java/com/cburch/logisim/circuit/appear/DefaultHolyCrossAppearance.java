@@ -101,18 +101,18 @@ public class DefaultHolyCrossAppearance {
     FontMetrics fm = canvas.getFontMetrics(f);
     System.out.println("private static int[] asciiWidths = {");
     for (char row = ' '; row <= '~'; row += 8) {
-      String comment = "//";
-      String chars = "    ";
+      StringBuilder comment = new StringBuilder("//");
+      StringBuilder chars = new StringBuilder("    ");
       for (char c = row; c < row + 8; c++) {
         if (c >= '~') {
-          chars += "    ";
+          chars.append("    ");
         } else {
-          comment += String.format(" '%c',", c);
+          comment.append(String.format(" '%c',", c));
           // label = new Text(0, 0, "" + c);
           // label.getLabel().setFont(f);
           // int w = label.getLabel().getWidth();
           int w = fm.stringWidth("" + c);
-          chars += String.format(" %2d,", w);
+          chars.append(String.format(" %2d,", w));
         }
       }
       System.out.println(chars + "  " + comment);

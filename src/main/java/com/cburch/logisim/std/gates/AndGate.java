@@ -67,7 +67,7 @@ class AndGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());
@@ -76,7 +76,7 @@ class AndGate extends AbstractGate {
     }
   }
 
-  public static AndGate FACTORY = new AndGate();
+  public static final AndGate FACTORY = new AndGate();
 
   private AndGate() {
     super("AND Gate", S.getter("andGateComponent"));

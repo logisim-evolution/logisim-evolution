@@ -115,68 +115,62 @@ public class VhdlSimulatorTclBinder {
 
     /* This thread checks the binder started well, it's run from now */
     new Thread(
-            new Runnable() {
+        () -> {
+          /* Through this we can get the process output */
+          BufferedReader reader =
+              new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String line;
+          try {
+            StringBuilder errorMessage =
+                new StringBuilder(
+                    "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
 
-              @Override
-              public void run() {
-                /* Through this we can get the process output */
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                try {
-                  String errorMessage =
-                      "You may disable VHDL simulation in the simulation menu if this occurs again\n\n";
+            /* Here we check that the binder has correctly started */
+            while ((line = reader.readLine()) != null) {
 
-                  /* Here we check that the binder has correctly started */
-                  while ((line = reader.readLine()) != null) {
-
-                    /* Here we make sure it is possible to print something */
-                    if (vsim.getProject().getFrame() != null) {
-                      vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
-                    }
-
-                    errorMessage += "\n" + line;
-                    if (line.contains("TCL_BINDER_RUNNING")) {
-                      running = true;
-
-                      new Thread(
-                              new Runnable() {
-                                @Override
-                                public void run() {
-                                  Scanner sc =
-                                      new Scanner(new InputStreamReader(process.getInputStream()));
-                                  String nextLine;
-                                  while (sc.hasNextLine()) {
-                                    nextLine = sc.nextLine();
-                                    if (nextLine.length() > 0)
-                                      if (vsim.getProject().getFrame() != null) {
-                                        vsim.getProject()
-                                            .getFrame()
-                                            .getVhdlSimulatorConsole()
-                                            .append(nextLine + "\n");
-                                      }
-                                  }
-                                  sc.close();
-                                }
-                              })
-                          .start();
-
-                      vsim.tclStartCallback();
-                      return;
-                    }
-                  }
-
-                  MessageBox userInfoBox =
-                      new MessageBox(
-                          "Error starting VHDL simulator", errorMessage, OptionPane.ERROR_MESSAGE);
-                  userInfoBox.show();
-                  vsim.setState(State.ENABLED);
-
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
+              /* Here we make sure it is possible to print something */
+              if (vsim.getProject().getFrame() != null) {
+                vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
               }
-            })
+
+              errorMessage.append("\n").append(line);
+              if (line.contains("TCL_BINDER_RUNNING")) {
+                running = true;
+
+                new Thread(
+                    () -> {
+                      Scanner sc =
+                          new Scanner(new InputStreamReader(process.getInputStream()));
+                      String nextLine;
+                      while (sc.hasNextLine()) {
+                        nextLine = sc.nextLine();
+                        if (nextLine.length() > 0)
+                          if (vsim.getProject().getFrame() != null) {
+                            vsim.getProject()
+                                .getFrame()
+                                .getVhdlSimulatorConsole()
+                                .append(nextLine + "\n");
+                          }
+                      }
+                      sc.close();
+                    })
+                    .start();
+
+                vsim.tclStartCallback();
+                return;
+              }
+            }
+
+            MessageBox userInfoBox =
+                new MessageBox(
+                    "Error starting VHDL simulator", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
+            userInfoBox.show();
+            vsim.setState(State.ENABLED);
+
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        })
         .start();
   }
 

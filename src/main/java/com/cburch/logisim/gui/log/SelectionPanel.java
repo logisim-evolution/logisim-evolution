@@ -34,14 +34,10 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.gui.icons.FatArrowIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -49,14 +45,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 public class SelectionPanel extends LogPanel {
   private static final long serialVersionUID = 1L;
   private final ComponentSelector selector;
   private final SelectionList list;
-  private JLabel selectDesc, exploreLabel, listLabel;
+  private final JLabel selectDesc;
+  private final JLabel exploreLabel;
+  private final JLabel listLabel;
   
   public SelectionPanel(LogFrame window) {
     super(window);
@@ -116,26 +112,12 @@ public class SelectionPanel extends LogPanel {
     delArrow.setContentAreaFilled(false);
     addArrow.setEnabled(false);
     delArrow.setEnabled(false);
-    selector.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty());
-      }
-    });
-    list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty());
-      }
-    });
-    addArrow.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        list.add(selector.getSelectedItems());
-      }
-    });
-    delArrow.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        list.removeSelected();
-      }
-    });
+    selector.getSelectionModel().addListSelectionListener(
+        e -> addArrow.setEnabled(!selector.getSelectionModel().isSelectionEmpty()));
+    list.getSelectionModel().addListSelectionListener(
+        e -> delArrow.setEnabled(!list.getSelectionModel().isSelectionEmpty()));
+    addArrow.addActionListener(e -> list.add(selector.getSelectedItems()));
+    delArrow.addActionListener(e -> list.removeSelected());
 
     Box arrowBox = new Box(BoxLayout.Y_AXIS);
     arrowBox.add(addArrow);
@@ -185,7 +167,7 @@ public class SelectionPanel extends LogPanel {
 
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
-    SelectionPanel selPanel;
+    final SelectionPanel selPanel;
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);

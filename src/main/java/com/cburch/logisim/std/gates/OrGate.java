@@ -64,7 +64,7 @@ class OrGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());
@@ -73,7 +73,7 @@ class OrGate extends AbstractGate {
     }
   }
 
-  public static OrGate FACTORY = new OrGate();
+  public static final OrGate FACTORY = new OrGate();
 
   private OrGate() {
     super("OR Gate", S.getter("orGateComponent"));

@@ -121,7 +121,7 @@ class RomContentsListener implements HexModelListener {
     }
   }
 
-  Project proj;
+  final Project proj;
   boolean enabled = true;
 
   RomContentsListener(Project proj) {

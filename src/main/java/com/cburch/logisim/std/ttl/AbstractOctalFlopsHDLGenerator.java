@@ -110,8 +110,8 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
+    boolean GatedClock = false;
+    boolean HasClock = true;
     int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[0];
     if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
       Reporter.Report.AddSevereWarning(

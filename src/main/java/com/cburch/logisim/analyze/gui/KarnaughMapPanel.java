@@ -446,16 +446,18 @@ public class KarnaughMapPanel extends JPanel
     if (row < 0) return null;
     int col = getOutputColumn(event);
     Entry entry = table.getOutputEntry(row, col);
-    String s = entry.getErrorMessage();
-    if (s == null) s = "";
-    else s += "<br>";
-    s += output + " = " + entry.getDescription();
+    StringBuilder s = new StringBuilder(
+        entry.getErrorMessage() == null
+            ? ""
+            : entry.getErrorMessage() + "<br>");
+    s.append(output).append(" = ").append(entry.getDescription());
     List<String> inputs = model.getInputs().bits;
     if (inputs.size() == 0) return "<html>" + s + "</html>";
-    s += "<br>When:";
+    s.append("<br>When:");
     int n = inputs.size();
     for (int i = 0; i < MAX_VARS && i < inputs.size(); i++) {
-      s += "<br>&nbsp;&nbsp;&nbsp;&nbsp;" + inputs.get(i) + " = " + ((row >> (n - i - 1)) & 1);
+      s.append("<br>&nbsp;&nbsp;&nbsp;&nbsp;").append(inputs.get(i)).append(" = ")
+          .append((row >> (n - i - 1)) & 1);
     }
     return "<html>" + s + "</html>";
   }
@@ -506,21 +508,22 @@ public class KarnaughMapPanel extends JPanel
       return;
     }
 
+    int x;
+    int y;
     if (KMapLined) {
-      int x = KLinedInfo.getXOffset();
-      int y = KLinedInfo.getYOffset();
+      x = KLinedInfo.getXOffset();
+      y = KLinedInfo.getYOffset();
       drawLinedHeader(g2, x, y);
       x += KLinedInfo.getHeaderHeight() + 11;
       y += KLinedInfo.getHeaderHeight() + 11;
-      PaintKMap(g2, x, y, table);
     } else {
-      int x = KNumberedInfo.getXOffset();
-      int y = KNumberedInfo.getYOffset();
+      x = KNumberedInfo.getXOffset();
+      y = KNumberedInfo.getYOffset();
       drawNumberedHeader(g2, x, y);
       x += KNumberedInfo.getHeaderWidth() + cellWidth;
       y += KNumberedInfo.getHeaderHeight() + cellHeight;
-      PaintKMap(g2, x, y, table);
     }
+    PaintKMap(g2, x, y, table);
     if (!selectionBlock)
       return;
     Expression expr = kMapGroups.GetHighlightedExpression();
@@ -646,7 +649,7 @@ public class KarnaughMapPanel extends JPanel
   private AttributedString Styled(String header, Font font) {
     ArrayList<Integer> starts = new ArrayList<>();
     ArrayList<Integer> stops = new ArrayList<>();
-    StringBuffer str = new StringBuffer();
+    StringBuilder str = new StringBuilder();
     int idx = 0;
     while (header != null && idx < header.length()) {
       if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {
@@ -711,7 +714,7 @@ public class KarnaughMapPanel extends JPanel
     int headHeight = KLinedInfo.getHeaderHeight();
     for (int i = 0; i < inputCount; i++) {
       AttributedString header = Styled(model.getInputs().bits.get(i), HeaderFont);
-      Boolean rotated = false;
+      boolean rotated = false;
       int middleOffset = StyledWidth(header, ctx) >> 1;
       int xoffset = headHeight + 11;
       int yoffset = headHeight + 11;

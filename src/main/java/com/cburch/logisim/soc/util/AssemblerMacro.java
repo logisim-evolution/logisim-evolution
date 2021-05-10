@@ -32,6 +32,7 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -83,8 +84,7 @@ public class AssemblerMacro {
       if (token.getType() == AssemblerToken.MACRO_PARAMETER) {
         int index = token.getNumberValue()-1;
         AssemblerToken[] param = parameters.get(index);
-        for (AssemblerToken assemblerToken : param)
-          makroTokens.add(assemblerToken);
+        makroTokens.addAll(Arrays.asList(param));
       } else {
         AssemblerToken copy = new AssemblerToken(token.getType(),token.getValue(),token.getoffset());
     	makroTokens.add(copy);

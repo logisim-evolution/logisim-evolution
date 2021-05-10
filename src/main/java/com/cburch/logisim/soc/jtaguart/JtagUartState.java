@@ -96,7 +96,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
     }
     
     public Integer readDataRegister() {
-      Integer result = 0;
+      int result = 0;
       if (ReadFifo.isEmpty()) return 0;
       result = ReadFifo.getFirst()&0xFF;
       ReadFifo.removeFirst();
@@ -112,7 +112,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
     }
     
     public Integer readControlRegister() {
-      Integer result = 0;
+      int result = 0;
       if (readIrqEnable) result |= 1;
       if (writeIrqEnable) result |= 2;
       if (readIrqPending()) result |= 1<<8;

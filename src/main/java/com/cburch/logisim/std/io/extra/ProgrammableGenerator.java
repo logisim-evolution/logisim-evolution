@@ -67,7 +67,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class ProgrammableGenerator extends InstanceFactory {
-  public abstract class ClockLogger extends InstanceLogger {
+  public abstract static class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);

@@ -51,13 +51,13 @@ public class RoundRectangleTool extends RectangularTool {
 
   @Override
   public void drawShape(Graphics g, int x, int y, int w, int h) {
-    int r = 2 * attrs.getValue(DrawAttr.CORNER_RADIUS).intValue();
+    int r = 2 * attrs.getValue(DrawAttr.CORNER_RADIUS);
     g.drawRoundRect(x, y, w, h, r, r);
   }
 
   @Override
   public void fillShape(Graphics g, int x, int y, int w, int h) {
-    int r = 2 * attrs.getValue(DrawAttr.CORNER_RADIUS).intValue();
+    int r = 2 * attrs.getValue(DrawAttr.CORNER_RADIUS);
     g.fillRoundRect(x, y, w, h, r, r);
   }
 

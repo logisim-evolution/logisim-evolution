@@ -144,14 +144,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 
   public Bounds getBounds(long addr, Bounds bds) {
     /* This function returns the rectangle shape around an item */
-    if (addr < 0) {
-      return Bounds.create(
-          bds.getX() + xOffset, bds.getY() + yOffset, AddrBlockSize, CharHeight + 2);
-    } else {
+    if (addr >= 0) {
       addr -= curScroll;
-      return Bounds.create(
-          bds.getX() + xOffset, bds.getY() + yOffset, AddrBlockSize, CharHeight + 2);
     }
+    return Bounds.create(
+        bds.getX() + xOffset, bds.getY() + yOffset, AddrBlockSize, CharHeight + 2);
   }
   
   public Bounds getDataBounds(long addr, Bounds bds) {

@@ -118,7 +118,7 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
     } else if (attr == DrawAttr.FILL_COLOR) {
       fillColor = (Color) value;
     } else if (attr == DrawAttr.STROKE_WIDTH) {
-      strokeWidth = ((Integer) value).intValue();
+      strokeWidth = (Integer) value;
     }
   }
 }

@@ -94,7 +94,7 @@ class CanvasPaintThread extends UniquelyNamedThread {
             } else {
               lock.wait();
             }
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
           now = System.currentTimeMillis();
           wait = nextRepaint - now;

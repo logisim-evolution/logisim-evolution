@@ -62,7 +62,7 @@ class NorGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + (i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
@@ -71,7 +71,7 @@ class NorGate extends AbstractGate {
     }
   }
 
-  public static NorGate FACTORY = new NorGate();
+  public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
     super("NOR Gate", S.getter("norGateComponent"));

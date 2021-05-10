@@ -163,7 +163,7 @@ public class ImageXmlFactory {
   }
 
   public String GetCodeTable() {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     for (int i = 0; i < CodeTable.length; i++) {
       if (i != 0) {
         result.append(" ");

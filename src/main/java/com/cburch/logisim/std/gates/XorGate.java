@@ -69,7 +69,7 @@ class XorGate extends AbstractGate {
     return ret;
   }
 
-  public static XorGate FACTORY = new XorGate();
+  public static final XorGate FACTORY = new XorGate();
 
   private XorGate() {
     super("XOR Gate", S.getter("xorGateComponent"), true);
@@ -104,7 +104,7 @@ class XorGate extends AbstractGate {
     Object behavior = attrs.getValue(GateAttributes.ATTR_XOR);
     if (behavior == GateAttributes.XOR_ODD) {
       Object inputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
-      if (inputs == null || ((Integer) inputs).intValue() != 2) {
+      if (inputs == null || (Integer) inputs != 2) {
         isOdd = true;
       }
     }

@@ -55,7 +55,7 @@ class TableTabClip implements ClipboardOwner {
     }
 
     public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException {
+        throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return this;
       } else if (flavor == DataFlavor.stringFlavor) {
@@ -157,9 +157,7 @@ class TableTabClip implements ClipboardOwner {
           }
           entries[i] = row;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -195,9 +193,7 @@ class TableTabClip implements ClipboardOwner {
           entries[cur] = ents;
           cur++;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else {

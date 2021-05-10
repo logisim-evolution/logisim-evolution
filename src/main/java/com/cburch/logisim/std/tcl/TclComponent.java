@@ -257,7 +257,7 @@ public abstract class TclComponent extends InstanceFactory {
         && server_response.length() > 0
         && !server_response.equals("sync")) {
 
-      String[] parameters = server_response.split("\\:");
+      String[] parameters = server_response.split(":");
 
       /* Skip if we receive crap, still better than an out of range */
       if (parameters.length < 2) continue;

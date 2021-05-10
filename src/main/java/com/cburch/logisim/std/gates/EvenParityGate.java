@@ -50,7 +50,7 @@ class EvenParityGate extends AbstractGate {
     }
   }
 
-  public static EvenParityGate FACTORY = new EvenParityGate();
+  public static final EvenParityGate FACTORY = new EvenParityGate();
   private final String LABEL = "2k";
 
   private EvenParityGate() {

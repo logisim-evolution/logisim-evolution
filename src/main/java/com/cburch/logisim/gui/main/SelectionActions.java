@@ -47,6 +47,7 @@ import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.JoinedAction;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -163,6 +164,9 @@ public class SelectionActions {
       if (comp instanceof Wire) continue;
 
       ComponentFactory compFactory = comp.getFactory();
+
+      if (compFactory == Text.FACTORY) continue;
+
       ComponentFactory copyFactory = findComponentFactory(compFactory, libs, false);
       if (factoryReplacements.containsKey(compFactory)) {
         copyFactory = factoryReplacements.get(compFactory);
@@ -225,7 +229,7 @@ public class SelectionActions {
           droppedStr.append("\n  ");
           droppedStr.append(curName);
           if (curCount > 1) {
-            droppedStr.append(" \u00d7 " + curCount);
+            droppedStr.append(" \u00d7 ").append(curCount);
           }
 
           curName = nextName;

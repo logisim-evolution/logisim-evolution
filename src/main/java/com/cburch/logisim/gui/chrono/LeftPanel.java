@@ -30,6 +30,10 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.log.Model;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.gui.log.SignalInfo;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -42,7 +46,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
@@ -55,18 +58,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.Border;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-
-import com.cburch.logisim.gui.log.Model;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.gui.log.SignalInfo;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
 
 // Left panel containing signal names
 public class LeftPanel extends JTable {
@@ -152,9 +148,9 @@ public class LeftPanel extends JTable {
     }
   }
 
-  private ChronoPanel chronoPanel;
+  private final ChronoPanel chronoPanel;
   private Model model;
-  private SignalTableModel tableModel;
+  private final SignalTableModel tableModel;
 
  public LeftPanel(ChronoPanel chronoPanel) {
   this.chronoPanel = chronoPanel;
@@ -205,13 +201,11 @@ public class LeftPanel extends JTable {
   });
 
   getSelectionModel().addListSelectionListener(
-    new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
+      e -> {
         int a = e.getFirstIndex();
         int b = e.getLastIndex();
         chronoPanel.getRightPanel().updateSelected(a, b);
-      }
-    });
+      });
   setDragEnabled(true);
   setDropMode(DropMode.INSERT_ROWS);
   TransferHandler ccp = new SignalTransferHandler();
@@ -238,9 +232,9 @@ public class LeftPanel extends JTable {
       selectAll();
     }
   });
-  actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
-  actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-  actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+  actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
+  actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+  actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
   actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
     public void actionPerformed(ActionEvent e) {
       raiseOrLower(-1);
@@ -426,7 +420,7 @@ public class LeftPanel extends JTable {
           try {
             JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
             newIdx = Math.min(newIdx, dl.getRow());
-          } catch (ClassCastException e) {
+          } catch (ClassCastException ignored) {
           }
         } else {
           int[] sel = getSelectedRows();

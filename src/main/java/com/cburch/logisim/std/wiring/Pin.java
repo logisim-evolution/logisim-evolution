@@ -69,8 +69,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -93,10 +91,10 @@ public class Pin extends InstanceFactory {
 
     private final JFormattedTextField text;
     private final int bitWidth;
-    PinState pinState;
-    InstanceState state;
-    RadixOption radix;
-    boolean tristate;
+    final PinState pinState;
+    final InstanceState state;
+    final RadixOption radix;
+    final boolean tristate;
     private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
     private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
     final JButton ok;
@@ -123,17 +121,9 @@ public class Pin extends InstanceFactory {
       ok = new JButton(S.get("PinOkay"));
       cancel = new JButton(S.get("PinCancel"));
       ok.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              accept();
-            }
-          });
+          e -> accept());
       cancel.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              EditDecimal.this.setVisible(false);
-            }
-          });
+          e -> EditDecimal.this.setVisible(false));
       addWindowFocusListener(
           new WindowFocusListener() {
             public void windowLostFocus(WindowEvent e) {

@@ -61,21 +61,21 @@ import java.awt.Graphics2D;
 
 public class Nios2 extends SocInstanceFactory implements DynamicElementProvider {
 
-  public static int CLOCK = 0;
-  public static int RESET = 1;
-  public static int DATAA = 2;
-  public static int DATAB = 3;
-  public static int START = 4;
-  public static int N = 5;
-  public static int A = 6;
-  public static int READRA = 7;
-  public static int B = 8;
-  public static int READRB = 9;
-  public static int C = 10;
-  public static int WRITERC = 11;
-  public static int RESULT = 12;
-  public static int DONE = 13;
-  public static int IRQSTART = 14;
+  public static final int CLOCK = 0;
+  public static final int RESET = 1;
+  public static final int DATAA = 2;
+  public static final int DATAB = 3;
+  public static final int START = 4;
+  public static final int N = 5;
+  public static final int A = 6;
+  public static final int READRA = 7;
+  public static final int B = 8;
+  public static final int READRB = 9;
+  public static final int C = 10;
+  public static final int WRITERC = 11;
+  public static final int RESULT = 12;
+  public static final int DONE = 13;
+  public static final int IRQSTART = 14;
   
   private static final String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
                                      "c","writerc","result","done"};

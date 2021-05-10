@@ -114,11 +114,11 @@ public class RamAppearance {
            getNrClkPorts(attrs)+getNrLEPorts(attrs)+getNrBEPorts(attrs)+getNrClrPorts(attrs);
   }
   
-  public static int getAddrIndex(int portIndex, AttributeSet attrs) { 
-    switch (portIndex) {
-      case 0  : return 0;
-      default : return -1;
+  public static int getAddrIndex(int portIndex, AttributeSet attrs) {
+    if (portIndex == 0) {
+      return 0;
     }
+    return -1;
   }
   public static int getDataInIndex(int portIndex, AttributeSet attrs) {
     if (!seperatedBus(attrs)) 
@@ -789,8 +789,8 @@ public class RamAppearance {
     int height = 20;
     g.setFont(g.getFont().deriveFont(9.0f));
     int nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    StringBuffer doutLabel = new StringBuffer();
-    StringBuffer dinLabel = new StringBuffer();
+    StringBuilder doutLabel = new StringBuilder();
+    StringBuilder dinLabel = new StringBuilder();
     doutLabel.append("A");
     dinLabel.append("A");
     int cidx = 1;
@@ -799,20 +799,20 @@ public class RamAppearance {
     boolean drawDin = attrs.containsAttribute(RamAttributes.ATTR_DBUS);
     boolean seperate = seperatedBus(attrs) || !drawDin;
     for (int i = 0 ; i < getNrClkPorts(attrs) ; i++) {
-      if (!async) doutLabel.append(","+cidx);
-      dinLabel.append(","+cidx);
+      if (!async) doutLabel.append(",").append(cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrOEPorts(attrs); i++) {
-      doutLabel.append(","+cidx);
+      doutLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrWEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrLEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     boolean appendBE = getNrBEPorts(attrs) > 0;
@@ -846,7 +846,7 @@ public class RamAppearance {
       if (drawDin)
         GraphicsUtil.drawText(
               g,
-              dinLabel.toString()+BEIndex+DLabel,
+              dinLabel +BEIndex+DLabel,
               x + (seperate ? 3 :  Mem.SymbolWidth-3),
               y + (seperate ? 10 : 13),
               seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,

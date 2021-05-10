@@ -36,6 +36,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
@@ -82,9 +83,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private boolean valid = false;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
@@ -115,7 +114,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         break;
       case INSTR_SLLI : result = regVal << immediate;
                         break;
-      case INSTR_SRLI : Long val1 = ElfHeader.getLongValue(regVal);
+      case INSTR_SRLI : long val1 = ElfHeader.getLongValue(regVal);
                         val1 >>= immediate;
                         result = ElfHeader.getIntValue(val1);
                         break;
@@ -135,24 +134,26 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
       case INSTR_NOP  : break;
-      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]+","+immediate);
+      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(immediate);
                         break;
       case INSTR_LUI  :
-      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]+","+((immediate>>12)&0xFFFFF));
+      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append((immediate >> 12) & 0xFFFFF);
                         break;
       case INSTR_MV   :
       case INSTR_NOT  :
-      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]);
+      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]);
                         break;
-      default         : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]+","+immediate);
+      default         : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]).append(",").append(immediate);
     }
     return s.toString();
   }

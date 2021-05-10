@@ -29,6 +29,7 @@
 package com.cburch.draw.model;
 
 import com.cburch.logisim.data.Attribute;
+import java.util.Objects;
 
 public class AttributeMapKey {
   private final Attribute<?> attr;
@@ -43,8 +44,8 @@ public class AttributeMapKey {
   public boolean equals(Object other) {
     if (!(other instanceof AttributeMapKey)) return false;
     AttributeMapKey o = (AttributeMapKey) other;
-    return (attr == null ? o.attr == null : attr.equals(o.attr))
-        && (object == null ? o.object == null : object.equals(o.object));
+    return (Objects.equals(attr, o.attr))
+        && (Objects.equals(object, o.object));
   }
 
   public Attribute<?> getAttribute() {

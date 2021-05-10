@@ -50,7 +50,7 @@ public class VhdlSimulatorConsole extends JPanel {
   private class VhdlSimState extends JPanel implements VhdlSimulatorListener {
 
     private static final long serialVersionUID = 1L;
-    Ellipse2D.Double circle;
+    final Ellipse2D.Double circle;
     Color color;
     private final int margin = 5;
 
@@ -103,7 +103,7 @@ public class VhdlSimulatorConsole extends JPanel {
   private final JLabel label = new JLabel();
   private final JScrollPane log = new JScrollPane();
   private final JTextArea logContent = new JTextArea();
-  private VhdlSimState vhdlSimState;
+  private final VhdlSimState vhdlSimState;
 
   private final Project project;
 

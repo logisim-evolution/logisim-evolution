@@ -81,7 +81,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   public static final Color COLOR = new Color(66, 244, 152);
 
   public static class Path {
-    public InstanceComponent[] elt;
+    public final InstanceComponent[] elt;
 
     public Path(InstanceComponent[] elt) {
       this.elt = elt;
@@ -103,12 +103,12 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     public String toSvgString() {
-      String s = "";
+      StringBuilder s = new StringBuilder();
       for (InstanceComponent instanceComponent : elt) {
         Location loc = instanceComponent.getLocation();
-        s += "/" + escape(instanceComponent.getFactory().getName()) + loc;
+        s.append("/").append(escape(instanceComponent.getFactory().getName())).append(loc);
       }
-      return s;
+      return s.toString();
     }
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
@@ -156,7 +156,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   public static final int DEFAULT_STROKE_WIDTH = 1;
   public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.PLAIN, 7);
-  protected Path path;
+  protected final Path path;
   protected Bounds bounds; // excluding the stroke's width, if any
   protected int strokeWidth;
   protected AttributeOption labelLoc;
@@ -360,7 +360,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   @Override
   public void updateValue(Attribute<?> attr, Object value) {
     if (attr == DrawAttr.STROKE_WIDTH) {
-      strokeWidth = ((Integer) value).intValue();
+      strokeWidth = (Integer) value;
     } else if (attr == ATTR_LABEL) {
       labelLoc = (AttributeOption) value;
     } else if (attr == StdAttr.LABEL_FONT) {

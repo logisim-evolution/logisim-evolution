@@ -36,9 +36,9 @@ import java.awt.geom.GeneralPath;
 
 public class ZoomIcon extends AbstractIcon {
 
-  public static int ZOOMIN = 0;
-  public static int ZOOMOUT = 1;
-  public static int NOZOOM = 2;
+  public static final int ZOOMIN = 0;
+  public static final int ZOOMOUT = 1;
+  public static final int NOZOOM = 2;
 
   private final int zoomType;
 

@@ -37,6 +37,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -227,13 +228,13 @@ public class FPGAIOInformationContainer implements Cloneable {
         MyActivityLevel = PinActivity.getId(ThisAttr.getNodeValue());
       }
       if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.InputSetString)) {
-    	for (String loc : ThisAttr.getNodeValue().split(",")) InputLocs.add(loc);
+        InputLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
       }
       if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.OutputSetString)) {
-      	for (String loc : ThisAttr.getNodeValue().split(",")) OutputLocs.add(loc);
+        OutputLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
       }
       if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.IOSetString)) {
-      	for (String loc : ThisAttr.getNodeValue().split(",")) IOLocs.add(loc);
+        IOLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
       }
     }
     if ((x < 0) || (y < 0) || (width < 1) || (height < 1)) {
@@ -375,7 +376,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.InputSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins ; i++)
           if (MyInputPins.contains(i)) {
@@ -388,7 +389,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyOutputPins != null && !MyOutputPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.OutputSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins; i++)
           if (MyOutputPins.contains(i)) {
@@ -401,7 +402,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (MyIOPins != null && !MyIOPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.IOSetString);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean first = true;
         for (int i = 0 ; i < NrOfPins; i++)
           if (MyIOPins.contains(i)) {

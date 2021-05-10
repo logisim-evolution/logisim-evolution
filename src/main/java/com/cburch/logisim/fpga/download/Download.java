@@ -68,8 +68,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private double TickFrequency;
   private static final int BasicSteps = 5;
   private String MapFileName;
-  ArrayList<String> Entities = new ArrayList<>();
-  ArrayList<String> Architectures = new ArrayList<>();
+  final ArrayList<String> Entities = new ArrayList<>();
+  final ArrayList<String> Architectures = new ArrayList<>();
 
   private Process Executable;
   private final Object lock = new Object();
@@ -197,7 +197,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public void RemoveListener(ActionListener listener) {
-    if (Listeners.contains(listener)) Listeners.remove(listener);
+    Listeners.remove(listener);
   }
 
   private void fireEvent(ActionEvent e) {

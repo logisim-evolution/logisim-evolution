@@ -139,15 +139,13 @@ public class Tunnel extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
     TunnelAttributes attrs = (TunnelAttributes) attrsBase;
     Bounds bds = attrs.getOffsetBounds();
-    if (bds != null) {
-      return bds;
-    } else {
+    if (bds == null) {
       int ht = attrs.getFont().getSize();
       int wd = ht * attrs.getLabel().length() / 2;
       bds = computeBounds(attrs, wd, ht, null, "");
       attrs.setOffsetBounds(bds);
-      return bds;
     }
+    return bds;
   }
 
   @Override

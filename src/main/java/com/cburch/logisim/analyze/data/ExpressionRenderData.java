@@ -200,7 +200,7 @@ public class ExpressionRenderData {
     	} else i--;
     }
     g.dispose();
-    lineText = lines.toArray(new String[lines.size()]);
+    lineText = lines.toArray(new String[0]);
   }
 
   private void computeLineY() {

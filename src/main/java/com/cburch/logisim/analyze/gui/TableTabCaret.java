@@ -78,30 +78,37 @@ class TableTabCaret {
 
     public void actionPerformed(ActionEvent event) {
       String action = event.getActionCommand();
-      if (action.equals("1")) {
-        doKey('1');
-      } else if (action.equals("0")) {
-        doKey('0');
-      } else if (action.equals("x")) {
-        doKey('-');
-      } else if (action.equals("compact")) {
-        final TruthTable tt = table.getTruthTable();
-        if (tt.getRowCount() > 4096) {
-          (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
-                private static final long serialVersionUID = 1L;
-				@Override
-                public Void doInBackground() throws Exception {
-                  tt.compactVisibleRows();
-                  return null;
-                }
-              })
-              .get();
-        } else {
-          tt.compactVisibleRows();
-        }
-      } else if (action.equals("expand")) {
-        TruthTable model = table.getTruthTable();
-        model.expandVisibleRows();
+      switch (action) {
+        case "1":
+          doKey('1');
+          break;
+        case "0":
+          doKey('0');
+          break;
+        case "x":
+          doKey('-');
+          break;
+        case "compact":
+          final TruthTable tt = table.getTruthTable();
+          if (tt.getRowCount() > 4096) {
+            (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
+              private static final long serialVersionUID = 1L;
+
+              @Override
+              public Void doInBackground() {
+                tt.compactVisibleRows();
+                return null;
+              }
+            })
+                .get();
+          } else {
+            tt.compactVisibleRows();
+          }
+          break;
+        case "expand":
+          TruthTable model = table.getTruthTable();
+          model.expandVisibleRows();
+          break;
       }
     }
 

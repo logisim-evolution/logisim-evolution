@@ -36,8 +36,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PropertyChangeWeakSupport {
   private static class ListenerData {
-    String property;
-    WeakReference<PropertyChangeListener> listener;
+    final String property;
+    final WeakReference<PropertyChangeListener> listener;
 
     ListenerData(String property, PropertyChangeListener listener) {
       this.property = property;

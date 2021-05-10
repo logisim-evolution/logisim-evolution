@@ -93,7 +93,7 @@ public class AutoLabel {
 
   public boolean CorrectMatrixBaseLabel(
       Circuit circ, ComponentFactory me, String Common, int maxX, int maxY) {
-    if ((Common == null) | (Common.isEmpty()) | (maxX < 0) | (maxY < 0)) return true;
+    if ((Common == null) || (Common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
     if (!SyntaxChecker.isVariableNameAcceptable(Common, true)) return false;
     for (int x = 0; x < maxX; x++)
       for (int y = 0; y < maxY; y++) {
@@ -106,7 +106,7 @@ public class AutoLabel {
 
   public String GetMatrixLabel(Circuit circ, ComponentFactory me, String Common, int x, int y) {
     String Label;
-    if ((Common == null) | (Common.isEmpty()) | (x < 0) | (y < 0)) return "";
+    if ((Common == null) || (Common.isEmpty()) || (x < 0) || (y < 0)) return "";
     if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
       return "";
     Label = Common.concat("_X" + x + "_Y" + y);

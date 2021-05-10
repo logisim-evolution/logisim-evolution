@@ -30,21 +30,15 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -59,10 +53,10 @@ class TablePanel extends LogPanel {
   private static final int HEADER_SEP = 4;
   private final MyListener myListener = new MyListener();
   private final VerticalScrollBar vsb;
-  private TableView tableview;
+  private final TableView tableview;
   private int cellWidth = 25; // reasonable start values
   private int cellHeight = 15;
-  private int rowCount = 0;
+  private final int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
 
@@ -211,7 +205,7 @@ class TablePanel extends LogPanel {
     }
   }
 
-  private class MyListener implements Model.Listener {
+  private static class MyListener implements Model.Listener {
     private void computeRowCount() { }
 
     void update() { }

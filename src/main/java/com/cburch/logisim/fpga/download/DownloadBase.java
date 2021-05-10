@@ -57,7 +57,7 @@ public abstract class DownloadBase {
   protected Project MyProject;
   protected BoardInformation MyBoardInformation = null;
   protected MappableResourcesContainer MyMappableResources;
-  static String[] HDLPaths = {
+  static final String[] HDLPaths = {
     HDLGeneratorFactory.VERILOG.toLowerCase(),
     HDLGeneratorFactory.VHDL.toLowerCase(),
     "scripts",

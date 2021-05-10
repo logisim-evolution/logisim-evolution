@@ -125,11 +125,11 @@ class PinAttributes extends ProbeAttributes {
       if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
     } else if (attr == Pin.ATTR_TRISTATE) {
-      boolean NewThree = ((Boolean) value).booleanValue();
+      boolean NewThree = (Boolean) value;
       if (threeState == NewThree) return;
       threeState = NewThree;
     } else if (attr == Pin.ATTR_TYPE) {
-      int Newtype = ((Boolean) value).booleanValue() ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
+      int Newtype = (Boolean) value ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
       if (type == Newtype) return;
       type = Newtype;
     } else if (attr == Pin.ATTR_PULL) {

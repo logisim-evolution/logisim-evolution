@@ -206,7 +206,7 @@ public class PlaRomData implements InstanceData {
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
     boolean dirty = false;
-    String data = "";
+    StringBuilder data = new StringBuilder();
     // input-and matrix
     for (int i = 0; i < size1; i++) {
       row = i / getInputs();
@@ -226,9 +226,9 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size1 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size1 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size1 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
@@ -250,15 +250,15 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size2 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size2 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size2 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
     }
-    if (!dirty) data = "";
-    SavedData = data;
+    if (!dirty) data = new StringBuilder();
+    SavedData = data.toString();
   }
 
   public void setAndOutputValue(int row, int column, boolean b) {
@@ -309,8 +309,8 @@ public class PlaRomData implements InstanceData {
 
   public void setInputsValue(Value[] inputs) {
     int mininputs = getInputs() < inputs.length ? getInputs() : inputs.length;
-    for (byte i = 0; i < mininputs; i++)
-      this.InputValue[i + getInputs() - mininputs] = inputs[i + inputs.length - mininputs];
+    System.arraycopy(inputs, inputs.length - mininputs, this.InputValue,
+        getInputs() - mininputs, mininputs);
     setAndValue();
     setOutputValue();
   }
@@ -346,12 +346,8 @@ public class PlaRomData implements InstanceData {
       AndValue = new Value[getAnd()];
       OutputValue = new Value[getOutputs()];
       for (byte i = 0; i < minand; i++) {
-        for (byte j = 0; j < mininputs * 2; j++) {
-          InputAnd[i][j] = oldInputAnd[i][j];
-        }
-        for (byte k = 0; k < minoutputs; k++) {
-          AndOutput[i][k] = oldAndOutput[i][k];
-        }
+        System.arraycopy(oldInputAnd[i], 0, InputAnd[i], 0, mininputs * 2);
+        System.arraycopy(oldAndOutput[i], 0, AndOutput[i], 0, minoutputs);
       }
       InitializeInputValue();
       setAndValue();

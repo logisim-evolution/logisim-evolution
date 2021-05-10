@@ -212,7 +212,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     bottomTabAndZoom.add(attrFooter, BorderLayout.SOUTH);
     leftRegion =
         new HorizontalSplitPane(
-            topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
+            topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get());
 
     hdlEditor = new HdlContentView(project);
     vhdlSimulatorConsole = new VhdlSimulatorConsole(project);
@@ -228,20 +228,20 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     mainRegion =
         new VerticalSplitPane(
-            leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
+            leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
 
     this.setSize(
-        AppPreferences.WINDOW_WIDTH.get().intValue(),
-        AppPreferences.WINDOW_HEIGHT.get().intValue());
+        AppPreferences.WINDOW_WIDTH.get(),
+        AppPreferences.WINDOW_HEIGHT.get());
     Point prefPoint = getInitialLocation();
     if (prefPoint != null) {
       this.setLocation(prefPoint);
     }
-    this.setExtendedState(AppPreferences.WINDOW_STATE.get().intValue());
+    this.setExtendedState(AppPreferences.WINDOW_STATE.get());
 
     menuListener.register(mainPanel);
     KeyboardToolSelection.register(toolbar);

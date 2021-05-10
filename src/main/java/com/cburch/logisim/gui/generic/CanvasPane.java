@@ -128,12 +128,12 @@ public class CanvasPane extends JScrollPane {
     public void propertyChange(PropertyChangeEvent e) {
       String prop = e.getPropertyName();
       if (prop.equals(ZoomModel.ZOOM)) {
-        double oldZoom = ((Double) e.getOldValue()).doubleValue();
+        double oldZoom = (Double) e.getOldValue();
         Rectangle r = getViewport().getViewRect();
         double cx = (r.x + r.width / 2) / oldZoom;
         double cy = (r.y + r.height / 2) / oldZoom;
 
-        double newZoom = ((Double) e.getNewValue()).doubleValue();
+        double newZoom = (Double) e.getNewValue();
         r = getViewport().getViewRect();
         int hv = (int) (cx * newZoom) - r.width / 2;
         int vv = (int) (cy * newZoom) - r.height / 2;

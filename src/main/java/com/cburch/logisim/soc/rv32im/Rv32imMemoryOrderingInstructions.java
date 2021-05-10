@@ -35,6 +35,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInterface {
   
@@ -58,9 +59,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   private int operation;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 

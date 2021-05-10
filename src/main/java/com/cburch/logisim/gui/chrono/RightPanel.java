@@ -30,6 +30,9 @@ package com.cburch.logisim.gui.chrono;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.log.Model;
+import com.cburch.logisim.gui.log.Signal;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,7 +48,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -54,10 +56,6 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.cburch.logisim.gui.log.Model;
-import com.cburch.logisim.gui.log.Signal;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class RightPanel extends JPanel {
 
@@ -68,19 +66,19 @@ public class RightPanel extends JPanel {
   private static final int EXTRA_SPACE = 40;
   private static final int CURSOR_GAP = 20;
   private static final int TIMELINE_SPACING = 80;
-  private ChronoPanel chronoPanel;
-  DefaultListSelectionModel selectionModel;
+  private final ChronoPanel chronoPanel;
+  final DefaultListSelectionModel selectionModel;
   private Model model;
-  private ArrayList<Waveform> rows = new ArrayList<>();
+  private final ArrayList<Waveform> rows = new ArrayList<>();
   private int curX = Integer.MAX_VALUE; // pixel coordinate of cursor, or MAX_VALUE to pin at right
   private long curT = Long.MAX_VALUE; // time of cursor, or MAX_VALUE to pin at right
   private int zoom = 20;
   private double tickWidth = 20.0; // display width of one time unit (timeScale simulated nanoseconds)
-  private int slope; // display width of transitions, when duration of signal permits
+  private final int slope; // display width of transitions, when duration of signal permits
   private long tStartDraw = 0; // drawing started at this time, inclusive
   private long tNextDraw = 0; // done drawing up to this time, exclusive 
   private int width, height;
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private Timeline header;
   
   public RightPanel(ChronoPanel p, ListSelectionModel m) {
@@ -206,16 +204,12 @@ public class RightPanel extends JPanel {
       // cursor was on screen, keep it on screen
       r.x = Math.max(oldR.x, curX - CURSOR_GAP);
       r.width = Math.max(r.width, width - r.x);
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() { scrollRectToVisible(r); }
-      });
+      SwingUtilities.invokeLater(() -> scrollRectToVisible(r));
     } else if (edgeVisible) {
       // right edge was on screen, keep it on screen
       r.x = Math.max(0, width - r.width);
       r.width = width - r.x;
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() { scrollRectToVisible(r); }
-      });
+      SwingUtilities.invokeLater(() -> scrollRectToVisible(r));
     } else {
       // do nothing
     }
@@ -289,9 +283,8 @@ public class RightPanel extends JPanel {
   public void paintComponent(Graphics gr) {
     Graphics2D g = (Graphics2D)gr;
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-    Graphics2D g2 = (Graphics2D)g;
-    g2.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight()); // entire viewport, not just (width, height)
     g.setColor(Color.BLACK);
@@ -630,9 +623,8 @@ public class RightPanel extends JPanel {
       Graphics2D g = buf.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
           RenderingHints.VALUE_STROKE_DEFAULT);
-      Graphics2D g2 = (Graphics2D)g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       boolean bold = model.getSpotlight() == signal;
       Color[] colors = chronoPanel.rowColors(signal.info, selected);
       g.setColor(Color.WHITE);
@@ -690,13 +682,10 @@ public class RightPanel extends JPanel {
 
     // try to put time t back to being at coordinate vx in our view,
     // but do it after the revalidation happens
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        int x = Math.max(0, (int)((mouseT - t0) * q));
-        int scrollPos = Math.min(sb.getMaximum(), Math.max(sb.getMinimum(), x - vx));
-        sb.setValue(scrollPos);
-      }
+    SwingUtilities.invokeLater(() -> {
+      int x = Math.max(0, (int)((mouseT - t0) * q));
+      int scrollPos = Math.min(sb.getMaximum(), Math.max(sb.getMinimum(), x - vx));
+      sb.setValue(scrollPos);
     });
 
     // repaint
@@ -717,11 +706,10 @@ public class RightPanel extends JPanel {
     public void paintComponent(Graphics gr) {
       Graphics2D g = (Graphics2D)gr;
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-      Graphics2D g2 = (Graphics2D)g;
-      g2.setRenderingHint(
+      g.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING,
           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(
+      g.setRenderingHint(
           RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON);
       g.setColor(getBackground());

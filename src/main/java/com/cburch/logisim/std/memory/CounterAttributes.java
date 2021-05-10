@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.util.List;
+import java.util.Objects;
 
 class CounterAttributes extends AbstractAttributeSet {
 
@@ -106,7 +107,7 @@ class CounterAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     Object oldValue = base.getValue(attr);
-    if (oldValue == null ? value == null : oldValue.equals(value)) return;
+    if (Objects.equals(oldValue, value)) return;
 
     Long newMax = null;
     if (attr == StdAttr.WIDTH) {
@@ -115,7 +116,7 @@ class CounterAttributes extends AbstractAttributeSet {
       int oldW = oldWidth.getWidth();
       int newW = newWidth.getWidth();
       Long oldValObj = base.getValue(Counter.ATTR_MAX);
-      long oldVal = oldValObj.longValue();
+      long oldVal = oldValObj;
       base.setValue(StdAttr.WIDTH, newWidth);
       if (newW > oldW) {
         newMax = newWidth.getMask();
@@ -129,9 +130,9 @@ class CounterAttributes extends AbstractAttributeSet {
       }
       fireAttributeValueChanged(StdAttr.WIDTH, newWidth, null);
     } else if (attr == Counter.ATTR_MAX) {
-      long oldVal = base.getValue(Counter.ATTR_MAX).longValue();
+      long oldVal = base.getValue(Counter.ATTR_MAX);
       BitWidth width = base.getValue(StdAttr.WIDTH);
-      long newVal = ((Long) value).longValue() & width.getMask();
+      long newVal = (Long) value & width.getMask();
       if (newVal != oldVal) {
         value = (V) Long.valueOf(newVal);
       }

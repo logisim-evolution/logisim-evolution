@@ -121,7 +121,7 @@ public class DipSwitch extends InstanceFactory {
     }
   }
 
-  public static final ArrayList<String> GetLabels(int size) {
+  public static ArrayList<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < size; i++) {
       LabelNames.add(getInputLabel(i));
@@ -129,7 +129,7 @@ public class DipSwitch extends InstanceFactory {
     return LabelNames;
   }
   
-  public static final String getInputLabel(int id) {
+  public static String getInputLabel(int id) {
     return "sw_" + (id + 1);
   }
 

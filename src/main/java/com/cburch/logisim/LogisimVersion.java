@@ -85,7 +85,7 @@ public class LogisimVersion {
       if (parts.length >= 3) release = Integer.parseInt(parts[2]);
       if (parts.length >= 4) revision = Integer.parseInt(parts[3]);
       if (parts.length >= 5) variant = parts[4];
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignored) {
     }
     return (new LogisimVersion(major, minor, release, revision, variant));
   }

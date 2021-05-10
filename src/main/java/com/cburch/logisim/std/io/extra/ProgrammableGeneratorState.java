@@ -228,7 +228,9 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
 
   public void SaveData() {
     int size = this.durationHigh.length * 2, count = 0;
-    String val, data = "", last = "x";
+    String val;
+    StringBuilder data = new StringBuilder();
+    String last = "x";
     boolean dirty = false;
     // input-and matrix
     for (int i = 0; i < size; i++) {
@@ -243,15 +245,15 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
         count++;
       }
       if (!val.equals(last) || i == size - 1) {
-        if (count >= 3) data += last + "*" + count + " ";
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (!val.equals(last) && i == size - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(" ");
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (!val.equals(last) && i == size - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
     }
-    if (!dirty) data = "";
-    this.SavedData = data;
+    if (!dirty) data = new StringBuilder();
+    this.SavedData = data.toString();
   }
 
   private void SaveValues(JTextField[] inputs) {

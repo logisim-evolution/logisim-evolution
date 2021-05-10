@@ -83,7 +83,7 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
   @Override
   protected boolean isEnabled(LogisimMenuItem item) {
     Boolean value = enabled.get(item);
-    return value != null && value.booleanValue();
+    return value != null && value;
   }
 
   @Override

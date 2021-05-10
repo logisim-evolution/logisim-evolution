@@ -97,7 +97,7 @@ public class Print {
 
     PrinterJob job = PrinterJob.getPrinterJob();
     job.setPrintable(print, format);
-    if (job.printDialog() == false) return;
+    if (!job.printDialog()) return;
     try {
       job.print();
     } catch (PrinterException e) {
@@ -123,16 +123,16 @@ public class Print {
           ret.append(circName);
           break;
         case 'p':
-          ret.append("" + index);
+          ret.append("").append(index);
           break;
         case 'P':
-          ret.append("" + max);
+          ret.append("").append(max);
           break;
         case '%':
           ret.append("%");
           break;
         default:
-          ret.append("%" + header.charAt(mark + 1));
+          ret.append("%").append(header.charAt(mark + 1));
       }
     }
     if (start < header.length()) {
@@ -142,11 +142,11 @@ public class Print {
   }
 
   private static class MyPrintable implements Printable {
-    Project proj;
-    List<Circuit> circuits;
-    String header;
-    boolean rotateToFit;
-    boolean printerView;
+    final Project proj;
+    final List<Circuit> circuits;
+    final String header;
+    final boolean rotateToFit;
+    final boolean printerView;
 
     MyPrintable(
         Project proj,
@@ -244,11 +244,11 @@ public class Print {
 
   private static class ParmsPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    JCheckBox rotateToFit;
-    JCheckBox printerView;
-    JTextField header;
-    GridBagLayout gridbag;
-    GridBagConstraints gbc;
+    final JCheckBox rotateToFit;
+    final JCheckBox printerView;
+    final JTextField header;
+    final GridBagLayout gridbag;
+    final GridBagConstraints gbc;
 
     @SuppressWarnings("rawtypes")
     ParmsPanel(JList list) {

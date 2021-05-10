@@ -129,11 +129,10 @@ public class BoardRectangle {
      */
     /* we now have to check for partial overlap */
     if (!result) {
-      result |=
-          ((xl >= xPosition)
-              && (xl <= (xPosition + Width))
-              && (yt <= yPosition)
-              && (yb >= (yPosition + Height)));
+      result = ((xl >= xPosition)
+          && (xl <= (xPosition + Width))
+          && (yt <= yPosition)
+          && (yb >= (yPosition + Height)));
       result |=
           ((xr >= xPosition)
               && (xr <= (xPosition + Width))
@@ -151,11 +150,10 @@ public class BoardRectangle {
               && (yb <= (yPosition + Height)));
     }
     if (!result) {
-      result |=
-          ((xPosition >= xl)
-              && (xPosition <= xr)
-              && (yPosition <= yt)
-              && ((yPosition + Height) >= yb));
+      result = ((xPosition >= xl)
+          && (xPosition <= xr)
+          && (yPosition <= yt)
+          && ((yPosition + Height) >= yb));
       result |=
           (((xPosition + Width) >= xl)
               && ((xPosition + Width) <= xr)

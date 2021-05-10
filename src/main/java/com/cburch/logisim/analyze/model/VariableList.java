@@ -61,8 +61,10 @@ public class VariableList {
 	  boolean found = false;
       for (int i = 0, n = vars.size(); i < n && !found; i++) {
           Var other = vars.get(i);
-          if (other != oldVar && name.equals(other.name))
-        	  found = true;
+        if (other != oldVar && name.equals(other.name)) {
+          found = true;
+          break;
+        }
       }
       for (int i = 0 ; i < others.size() && !found ; i++) {
         VariableList l = others.get(i);

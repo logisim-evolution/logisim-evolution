@@ -38,13 +38,13 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class SelectionAttributes extends AbstractAttributeSet {
@@ -61,7 +61,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     this.selected = Collections.emptyMap();
     this.selAttrs = new Attribute<?>[0];
     this.selValues = new Object[0];
-    this.attrsView = Collections.unmodifiableList(Arrays.asList(selAttrs));
+    this.attrsView = List.of(selAttrs);
 
     selection.addSelectionListener(listener);
     listener.selectionChanged(null);
@@ -125,7 +125,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     Object[] values = this.selValues;
     for (int i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
-        boolean same = value == null ? values[i] == null : value.equals(values[i]);
+        boolean same = Objects.equals(value, values[i]);
         if (!same) {
           values[i] = value;
           for (AttributeSet objAttrs : selected.keySet()) {
@@ -168,12 +168,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
         attrSet.addAll(first.getAttributes());
         while (sit.hasNext()) {
           AttributeSet next = sit.next();
-          for (Iterator<Attribute<?>> ait = attrSet.iterator(); ait.hasNext(); ) {
-            Attribute<?> attr = ait.next();
-            if (!next.containsAttribute(attr)) {
-              ait.remove();
-            }
-          }
+          attrSet.removeIf(attr -> !next.containsAttribute(attr));
         }
       }
 
@@ -187,7 +182,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
       }
       SelectionAttributes.this.selAttrs = attrs;
       SelectionAttributes.this.selValues = values;
-      SelectionAttributes.this.attrsView = Collections.unmodifiableList(Arrays.asList(attrs));
+      SelectionAttributes.this.attrsView = List.of(attrs);
       fireAttributeListChanged();
     }
 

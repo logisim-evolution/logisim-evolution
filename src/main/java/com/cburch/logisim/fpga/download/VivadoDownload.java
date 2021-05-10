@@ -203,7 +203,7 @@ public class VivadoDownload implements VendorDownload {
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
 
-      Long clockFrequency = BoardInfo.fpga.getClockFrequency();
+      long clockFrequency = BoardInfo.fpga.getClockFrequency();
       double clockPeriod = 1000000000.0 / clockFrequency;
       contents.add(
           "    create_clock -add -name sys_clk_pin -period "

@@ -42,8 +42,8 @@ import java.util.Set;
 class CircuitPoints {
   private static class LocationData {
     BitWidth width = BitWidth.UNKNOWN;
-    ArrayList<Component> components = new ArrayList<>(4);
-    ArrayList<EndData> ends = new ArrayList<>(4);
+    final ArrayList<Component> components = new ArrayList<>(4);
+    final ArrayList<EndData> ends = new ArrayList<>(4);
     // these lists are parallel - ends corresponding to wires are null
   }
 
@@ -199,9 +199,7 @@ class CircuitPoints {
   }
 
   boolean hasConflict(Component comp) {
-    if (comp instanceof Wire) {
-      return false;
-    } else {
+    if (!(comp instanceof Wire)) {
       for (EndData endData : comp.getEnds()) {
         if (endData != null
             && endData.isExclusive()
@@ -209,8 +207,8 @@ class CircuitPoints {
           return true;
         }
       }
-      return false;
     }
+    return false;
   }
 
   void remove(Component comp) {

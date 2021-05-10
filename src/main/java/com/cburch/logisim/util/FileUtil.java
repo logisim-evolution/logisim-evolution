@@ -49,8 +49,6 @@ public class FileUtil {
 
     try (BufferedWriter out = new BufferedWriter(new FileWriter(tmp))) {
       out.write(content, 0, content.length());
-    } catch (IOException ex) {
-      throw ex;
     }
 
     return tmp;

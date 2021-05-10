@@ -56,7 +56,7 @@ public final class Instance implements Location.At {
   static Instance makeFor(InstanceComponent comp) { return new Instance(comp); }
   private Instance(InstanceComponent comp) { this.comp = comp; }
 
-  private InstanceComponent comp;
+  private final InstanceComponent comp;
 
   public void addAttributeListener() {
     comp.addAttributeListener(this);

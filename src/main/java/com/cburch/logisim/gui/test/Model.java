@@ -172,8 +172,8 @@ class Model {
   }
 
   public int sortedIndex(int i) {
-    if (i < failed.size()) return (failed.get(i)).intValue();
-    if (i < failed.size() + passed.size()) return (passed.get(i - failed.size())).intValue();
+    if (i < failed.size()) return failed.get(i);
+    if (i < failed.size() + passed.size()) return passed.get(i - failed.size());
     return i;
   }
 

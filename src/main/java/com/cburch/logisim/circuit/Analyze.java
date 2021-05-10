@@ -47,18 +47,18 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Analyze {
   public static class LocationBit {
-    Location loc;
-    int bit;
+    final Location loc;
+    final int bit;
 
     public LocationBit(Location l, int b) {
       loc = l;
@@ -94,7 +94,7 @@ public class Analyze {
     public Expression put(LocationBit point, Expression expression) {
       Expression ret = super.put(point, expression);
       if (currentCause != null) causes.put(point, currentCause);
-      if (ret == null ? expression != null : !ret.equals(expression)) {
+      if (!Objects.equals(ret, expression)) {
         dirtyPoints.add(point);
       }
       return ret;
@@ -113,8 +113,7 @@ public class Analyze {
    * Checks whether any of the recently placed expressions in the expression map are
    * self-referential; if so, return it.
    */
-  private static Expression checkForCircularExpressions(ExpressionMap expressionMap)
-      throws AnalyzeException {
+  private static Expression checkForCircularExpressions(ExpressionMap expressionMap) {
     for (LocationBit point : expressionMap.dirtyPoints) {
       Expression expr = expressionMap.get(point);
       if (expr.isCircular()) return expr;
@@ -270,12 +269,10 @@ public class Analyze {
 
   // computes outputs of affected components
   private static HashSet<Component> getDirtyComponents(
-      Circuit circuit, Set<LocationBit> pointsToProcess) throws AnalyzeException {
+      Circuit circuit, Set<LocationBit> pointsToProcess) {
     HashSet<Component> dirtyComponents = new HashSet<>();
     for (LocationBit point : pointsToProcess) {
-      for (Component comp : circuit.getNonWires(point.loc)) {
-        dirtyComponents.add(comp);
-      }
+      dirtyComponents.addAll(circuit.getNonWires(point.loc));
     }
     return dirtyComponents;
   }
@@ -319,12 +316,12 @@ public class Analyze {
       String defaultList;
       if (Pin.FACTORY.isInputPin(pin)) {
         defaultList = S.get("defaultInputLabels");
-        if (defaultList.indexOf(",") < 0) {
+        if (!defaultList.contains(",")) {
           defaultList = "a,b,c,d,e,f,g,h";
         }
       } else {
         defaultList = S.get("defaultOutputLabels");
-        if (defaultList.indexOf(",") < 0) {
+        if (!defaultList.contains(",")) {
           defaultList = "x,y,z,u,v,w,s,t";
         }
       }
@@ -434,7 +431,7 @@ public class Analyze {
       } else {// just ignore any other characters
       }
     }
-    if (end != null && ret.length() > 0) ret.append(end.toString());
+    if (end != null && ret.length() > 0) ret.append(end);
     if (ret.length() == 0) return null;
     return ret.toString();
   }

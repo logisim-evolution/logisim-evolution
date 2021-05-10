@@ -52,8 +52,6 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -153,9 +151,9 @@ public class PLATable {
   }
 
   public String toStandardString() {
-    String ret = "";
-    for (Row r : rows) ret += r.toStandardString() + "\n";
-    return ret;
+    StringBuilder ret = new StringBuilder();
+    for (Row r : rows) ret.append(r.toStandardString()).append("\n");
+    return ret.toString();
   }
 
   public static PLATable parse(String str) {
@@ -226,7 +224,7 @@ public class PLATable {
     } finally {
       try {
         in.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     if (tt == null) throw new IOException("PLA file contained no data.");
@@ -246,7 +244,7 @@ public class PLATable {
     } finally {
       try {
         out.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
   }
@@ -267,8 +265,8 @@ public class PLATable {
     }
 
     public void copyFrom(Row other) {
-      for (int i = 0; i < inBits.length; i++) inBits[i] = other.inBits[i];
-      for (int i = 0; i < outBits.length; i++) outBits[i] = other.outBits[i];
+      System.arraycopy(other.inBits, 0, inBits, 0, inBits.length);
+      System.arraycopy(other.outBits, 0, outBits, 0, outBits.length);
       comment = other.comment;
     }
 
@@ -303,10 +301,10 @@ public class PLATable {
     }
 
     public String toStandardString() {
-      String i = "";
-      for (char inBit : inBits) i = inBit + i;
-      String o = "";
-      for (char outBit : outBits) o = outBit + o;
+      StringBuilder i = new StringBuilder();
+      for (char inBit : inBits) i.insert(0, inBit);
+      StringBuilder o = new StringBuilder();
+      for (char outBit : outBits) o.insert(0, outBit);
       String ret = i + " " + o;
       if (!comment.trim().equals("")) ret += " # " + comment.trim();
       return ret;
@@ -346,8 +344,8 @@ public class PLATable {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private final float smallFont = 9.5f;
-    private final float tinyFont = 8.8f;
+    private static final float smallFont = 9.5f;
+    private static final float tinyFont = 8.8f;
     private final HeaderPanel hdrPanel;
     private final TablePanel ttPanel;
     private final JPanel ttScrollPanel;
@@ -506,49 +504,29 @@ public class PLATable {
       public ButtonPanel(JDialog parent) {
         JButton write = new JButton("Export");
         write.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                write();
-              }
-            });
+            e -> write());
         add(write);
 
         JButton read = new JButton("Import");
         read.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                read();
-              }
-            });
+            e -> read());
         add(read);
 
         JButton ok = new JButton("OK");
         ok.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                close(true);
-              }
-            });
+            e -> close(true));
         parent.getRootPane().setDefaultButton(ok);
         add(ok);
 
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(
-            new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                close(false);
-              }
-            });
+            e -> close(false));
         add(cancel);
 
         parent
             .getRootPane()
             .registerKeyboardAction(
-                new ActionListener() {
-                  public void actionPerformed(ActionEvent e) {
-                    close(false);
-                  }
-                },
+                e -> close(false),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
       }
@@ -607,11 +585,7 @@ public class PLATable {
           JButton rm = new JButton("Remove");
           rm.setFont(AppPreferences.getScaledFont(rm.getFont().deriveFont(smallFont)));
           rm.addActionListener(
-              new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  deleteRow(RowPanel.this);
-                }
-              });
+              e -> deleteRow(RowPanel.this));
           rm.setMargin(new Insets(0, 0, 0, 0));
           rm.setPreferredSize(
               new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
@@ -686,11 +660,7 @@ public class PLATable {
           JButton more = new JButton("Add Row");
           more.setFont(AppPreferences.getScaledFont(more.getFont().deriveFont(smallFont)));
           more.addActionListener(
-              new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  addRow();
-                }
-              });
+              e -> addRow());
           more.setMargin(new Insets(1, 20, 1, 20));
           add(more);
         }

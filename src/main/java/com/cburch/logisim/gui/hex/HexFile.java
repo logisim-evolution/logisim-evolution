@@ -295,7 +295,7 @@ public class HexFile {
     } finally {
       try {
         in.close();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -322,7 +322,7 @@ public class HexFile {
     } finally {
       try {
         in.close();
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -519,11 +519,11 @@ public class HexFile {
       if (desc.startsWith("Binary")) {
         String endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
 
-        File other = new File(tmp.toString() + ".xxd");
+        File other = new File(tmp + ".xxd");
         Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
         compare(false, "v3.0 hex bytes addressed " + endian, other, addrSize, wordSize, vals);
 
-        File plain = new File(tmp.toString() + ".xxd-plain");
+        File plain = new File(tmp + ".xxd-plain");
         Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
         compare(false, "v3.0 hex bytes plain " + endian, plain, addrSize, wordSize, vals);
       }
@@ -971,7 +971,7 @@ public class HexFile {
   }
 
   static class FormatOptions {
-    HashMap<String, String> tags = new HashMap<>();
+    final HashMap<String, String> tags = new HashMap<>();
     // "version" -->  "v2.0", "v3.0",
     // "radix" --> "hex", "raw", "binary" (or null), or "ascii"
     // "size" --> "bytes", "words"
@@ -1091,12 +1091,12 @@ public class HexFile {
   private static class HexReader extends FormatOptions {
 
     private final long[] data = new long[4096];
-    BufferedLineReader in;
-    MemContents dst;
+    final BufferedLineReader in;
+    final MemContents dst;
     int decodedWordCount;
-    StringWriter warnings = new StringWriter();
+    final StringWriter warnings = new StringWriter();
     int numWarnings = 0;
-    byte[] bytes = new byte[4096];
+    final byte[] bytes = new byte[4096];
     int bLen;
     long mAddr, mMaxAddr;
     long mAddrFrac; // portion of the next address already set
@@ -1144,7 +1144,7 @@ public class HexFile {
       numWarnings++;
     }
 
-    MemContents warnAndAsk(String errmsg) throws IOException {
+    MemContents warnAndAsk(String errmsg) {
       if (Main.headless) {
         System.out.println(errmsg);
         System.out.println("Warnings:\n" + warnings.toString());
@@ -1424,7 +1424,7 @@ public class HexFile {
         // File appears to contain no data, only maybe some whitespace,
         // comments, and/or a header line.
         return;
-      } else if (curLine.indexOf(":") >= 0) {
+      } else if (curLine.contains(":")) {
         reset();
         decodeHexAddressed();
       } else {
@@ -1641,8 +1641,8 @@ public class HexFile {
   }
 
   public static class ParseResult {
-    public MemContents model;
-    public int numWords;
+    public final MemContents model;
+    public final int numWords;
 
     ParseResult(MemContents m, int n) {
       model = m;
@@ -1651,12 +1651,13 @@ public class HexFile {
   }
 
   private static class HexWriter extends FormatOptions {
-    MemContents src;
-    byte[] bytes = new byte[4096];
-    int bLen, mWidth;
+    final MemContents src;
+    final byte[] bytes = new byte[4096];
+    int bLen;
+    final int mWidth;
     long mAddr, mEnd;
     int mAddrFrac;
-    boolean bigEndian;
+    final boolean bigEndian;
     PrintWriter cOut;
     OutputStream bOut;
 
@@ -1735,13 +1736,13 @@ public class HexFile {
             cOut = null;
             o.close();
           }
-        } catch (IOException e2) {
+        } catch (IOException ignored) {
         }
         try {
           OutputStream o = bOut;
           bOut = null;
           o.close();
-        } catch (IOException e2) {
+        } catch (IOException ignored) {
         }
         throw new IOException(S.fmt("hexFileWriteError", e.getMessage()));
       } finally {
@@ -1750,7 +1751,7 @@ public class HexFile {
       }
     }
 
-    void saveRaw() throws IOException {
+    void saveRaw() {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       while (mEnd > 0 && src.get(mEnd) == 0) mEnd--;
       int tokens = 0;
@@ -1795,7 +1796,7 @@ public class HexFile {
       escaper.close();
     }
 
-    void saveHexPlain() throws IOException {
+    void saveHexPlain() {
       if (tagged("size", "words")) saveHexWords(false);
       else saveHexBytes(false);
     }
@@ -1805,7 +1806,7 @@ public class HexFile {
       return "%0" + w + "x: ";
     }
 
-    void saveHexBytes(boolean addressed) throws IOException {
+    void saveHexBytes(boolean addressed) {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       String afmt = addrfmt(mEnd);
       int col = 0;
@@ -1838,7 +1839,7 @@ public class HexFile {
     // 0000000 0000001 0000002 0000003 0000004 0000005 0000006 0000007
     // 00000000 00000001 00000002 00000003 00000004 00000005 00000006 00000007
 
-    void saveHexWords(boolean addressed) throws IOException {
+    void saveHexWords(boolean addressed) {
       cOut = new PrintWriter(new OutputStreamWriter(bOut));
       String afmt = addrfmt(mEnd);
       int col = 0;
@@ -1859,7 +1860,7 @@ public class HexFile {
       if (col != 0) cOut.printf("\n");
     }
 
-    void saveHexAddressed() throws IOException {
+    void saveHexAddressed() {
       if (tagged("size", "words")) saveHexWords(true);
       else saveHexBytes(true);
     }
@@ -1867,9 +1868,9 @@ public class HexFile {
 
   private static class Preview extends JPanel implements PropertyChangeListener {
     private static final long serialVersionUID = 1L;
-    JFileChooser chooser;
-    JTextArea preview;
-    MemContents m;
+    final JFileChooser chooser;
+    final JTextArea preview;
+    final MemContents m;
 
     Preview(JFileChooser chooser, MemContents m) {
       this.chooser = chooser;

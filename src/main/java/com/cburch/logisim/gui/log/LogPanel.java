@@ -32,7 +32,6 @@ import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.proj.Project;
-
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 

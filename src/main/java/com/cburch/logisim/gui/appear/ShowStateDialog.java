@@ -66,10 +66,11 @@ import javax.swing.tree.TreePath;
 
 public class ShowStateDialog extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
-  JButton ok, cancel;
+  final JButton ok;
+  final JButton cancel;
   DefaultMutableTreeNode root;
-  CheckboxTree tree;
-  AppearanceCanvas canvas;
+  final CheckboxTree tree;
+  final AppearanceCanvas canvas;
 
   public ShowStateDialog(JFrame parent, AppearanceCanvas canvas) {
     super(parent, true);
@@ -171,7 +172,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
       paths.add(path);
     }
-    return paths.toArray(new TreePath[paths.size()]);
+    return paths.toArray(new TreePath[0]);
   }
 
   private void apply() {
@@ -281,7 +282,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class Ref {
-    InstanceComponent ic;
+    final InstanceComponent ic;
 
     Ref(InstanceComponent ic) {
       this.ic = ic;
@@ -297,7 +298,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class CircuitRef extends Ref {
-    Circuit c;
+    final Circuit c;
 
     CircuitRef(Circuit c, InstanceComponent ic) {
       super(ic);

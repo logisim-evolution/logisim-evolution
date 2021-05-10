@@ -140,7 +140,7 @@ public class LFrame extends JFrame implements WindowClosable {
         set.invoke(frame, ICONS);
         success = true;
       }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
 
     if (!success && frame instanceof JFrame && DEFAULT_ICON != null) {

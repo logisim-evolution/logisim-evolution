@@ -28,11 +28,9 @@
 
 package com.cburch.logisim.data;
 
-import java.util.Collections;
+import com.cburch.logisim.util.Cache;
 import java.util.Comparator;
 import java.util.List;
-
-import com.cburch.logisim.util.Cache;
 
 /**
  * Represents an immutable rectangular bounding box. This is analogous to java.awt's <code>Point
@@ -165,7 +163,7 @@ public class Location implements Comparable<Location> {
   }
   
   public interface At {
-    public Location getLocation();
+    Location getLocation();
   }
 
   // Left before right, ties broken top before bottom, ties broken with hashcode
@@ -184,7 +182,7 @@ public class Location implements Comparable<Location> {
   }
   public static final Comparator<At> CompareHorizontal = new Horizontal();
   public static <T extends At> void sortHorizontal(List<T> list) {
-    Collections.sort(list, CompareHorizontal);
+    list.sort(CompareHorizontal);
   }
 
   // Top before bottom, ties broken left before right, ties broken with hashcode.
@@ -202,6 +200,6 @@ public class Location implements Comparable<Location> {
   }
   public static final Comparator<At> CompareVertical = new Vertical();
   public static <T extends At> void sortVertical(List<T> list) {
-    Collections.sort(list, CompareVertical);
+    list.sort(CompareVertical);
   } 
 }

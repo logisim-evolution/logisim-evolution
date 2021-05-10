@@ -379,8 +379,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
       Object defaultTip = factory.getDefaultToolTip();
       if (hasToolTips || defaultTip != null) return this;
     } else if (key == TextEditable.class) {
-      InstanceTextField field = textField;
-      return field;
+      return textField;
     }
     return null;
   }

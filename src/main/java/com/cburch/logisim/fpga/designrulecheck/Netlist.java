@@ -243,8 +243,7 @@ public class Netlist implements CircuitListener {
     LocalNrOfInOutBubles = 0;
     for (NetlistComponent comp : MySubCircuits) {
       SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>();
-      MyHierarchyName.addAll(HierarchyName);
+      ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
       MyHierarchyName.add(
           CorrectLabel.getCorrectLabel(
               comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -293,8 +292,7 @@ public class Netlist implements CircuitListener {
      */
     for (NetlistComponent comp : MyComponents) {
       if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(HierarchyName);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -375,7 +373,6 @@ public class Netlist implements CircuitListener {
         CompName.add(ComponentName);
       }
     }
-    drc.clear();
     drc.add(
         new SimpleDRCContainer(
             MyCircuit,
@@ -625,8 +622,7 @@ public class Netlist implements CircuitListener {
       ArrayList<String> HierarchyName, int StartInputID, int StartOutputID, int StartInOutID) {
     for (NetlistComponent comp : MySubCircuits) {
       SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>();
-      MyHierarchyName.addAll(HierarchyName);
+      ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
       MyHierarchyName.add(
           CorrectLabel.getCorrectLabel(
               comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -640,8 +636,7 @@ public class Netlist implements CircuitListener {
     }
     for (NetlistComponent comp : MyComponents) {
       if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(HierarchyName);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -709,7 +704,6 @@ public class Netlist implements CircuitListener {
     Set<Location> InputsList = new HashSet<>();
     Set<Component> TunnelList = new HashSet<>();
     MyComplexSplitters.clear();
-    drc.clear();
     drc.add(
         new SimpleDRCContainer(
             MyCircuit,
@@ -1051,9 +1045,7 @@ public class Netlist implements CircuitListener {
      * In this round we only process the evident splitters and remove them
      * from the list
      */
-    Iterator<Component> MySplitters = MyComplexSplitters.iterator();
-    while (MySplitters.hasNext()) {
-      Component com = MySplitters.next();
+    for (Component com : MyComplexSplitters) {
       /*
        * Currently by definition end(0) is the combined end of the
        * splitter
@@ -1095,7 +1087,7 @@ public class Netlist implements CircuitListener {
       }
       boolean unconnectedEnds = false;
       boolean connectedUnknownEnds = false;
-      SplitterAttributes sattrs = (SplitterAttributes)com.getAttributeSet();
+      SplitterAttributes sattrs = (SplitterAttributes) com.getAttributeSet();
       for (int i = 1; i < ends.size(); i++) {
         int ConnectedNet = Connections.get(i - 1);
         if (ConnectedNet >= 0) {
@@ -1253,7 +1245,7 @@ public class Netlist implements CircuitListener {
                 }
                 ConnectionPoint SolderPoint = new ConnectionPoint(comp);
                 SolderPoint.SetParrentNet(Rootbus, ConnectedBusIndex);
-                Boolean IsSink = true;
+                boolean IsSink = true;
                 if (!thisnet.hasBitSource(bit)) {
                   if (HasHiddenSource(
                       thisnet,
@@ -1363,7 +1355,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -1444,8 +1436,7 @@ public class Netlist implements CircuitListener {
     /* First we search through my sub-circuits and add those IO components */
     for (NetlistComponent comp : MySubCircuits) {
       SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>();
-      MyHierarchyName.addAll(Hierarchy);
+      ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
       MyHierarchyName.add(
           CorrectLabel.getCorrectLabel(
               comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -1455,8 +1446,7 @@ public class Netlist implements CircuitListener {
     /* Now we search for all local IO components */
     for (NetlistComponent comp : MyComponents) {
       if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(Hierarchy);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -1466,24 +1456,21 @@ public class Netlist implements CircuitListener {
     /* On the toplevel we have to add the pins */
     if (toplevel) {
       for (NetlistComponent comp : MyInputPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(Hierarchy);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
         Components.put(MyHierarchyName, comp);
       }
       for (NetlistComponent comp : MyInOutPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(Hierarchy);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
         Components.put(MyHierarchyName, comp);
       }
       for (NetlistComponent comp : MyOutputPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>();
-        MyHierarchyName.addAll(Hierarchy);
+        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -1624,7 +1611,7 @@ public class Netlist implements CircuitListener {
       return BitIndex;
     }
     Net RootNet = Child.getParent();
-    Byte RootIndex = Child.getBit(BitIndex);
+    byte RootIndex = Child.getBit(BitIndex);
     while (!RootNet.IsRootNet()) {
       RootIndex = RootNet.getBit(RootIndex);
       RootNet = RootNet.getParent();
@@ -1699,7 +1686,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -1794,7 +1781,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            Byte SplitterEnd = BusBitConnection[bitIndex];
+            byte SplitterEnd = BusBitConnection[bitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
             for (int index = 0; index < bitIndex; index++) {
@@ -1887,14 +1874,12 @@ public class Netlist implements CircuitListener {
       ClockSourceContainer ClockSources) {
     /* First pass: we go down the hierarchy till the leaves */
     for (NetlistComponent sub : MySubCircuits) {
-      ArrayList<String> NewHierarchyNames = new ArrayList<>();
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
       SubcircuitFactory SubFact = (SubcircuitFactory) sub.GetComponent().getFactory();
-      NewHierarchyNames.addAll(HierarchyNames);
+      ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
       NewHierarchyNames.add(
           CorrectLabel.getCorrectLabel(
               sub.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      NewHierarchyNetlists.addAll(HierarchyNetlists);
+      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
       NewHierarchyNetlists.add(SubFact.getSubcircuit().getNetList());
       if (!SubFact.getSubcircuit()
           .getNetList()
@@ -1972,8 +1957,7 @@ public class Netlist implements CircuitListener {
           /* We have to check if the net is connected to multiple drivers */
           ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
           HashMap<Component,Integer> sourceConnections = new HashMap<>();
-          HashSet<Wire> segments = new HashSet<>();
-          segments.addAll(net.getWires());
+          HashSet<Wire> segments = new HashSet<>(net.getWires());
           boolean foundShortCrcuit = false;
           SimpleDRCContainer error =
               new SimpleDRCContainer(
@@ -2029,12 +2013,12 @@ public class Netlist implements CircuitListener {
             boolean HasSink = false;
             ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
             HasSink |= !Sinks.isEmpty();
-            MySinks.removeAll(Sinks);
+            Sinks.forEach(MySinks::remove);
             ArrayList<ConnectionPoint> HiddenSinkNets =
                 GetHiddenSinks(
                     ThisNet, (byte) i, MyComplexSplitters, new HashSet<>(), true);
             HasSink |= !HiddenSinkNets.isEmpty();
-            MySinks.removeAll(HiddenSinkNets);
+            HiddenSinkNets.forEach(MySinks::remove);
             if (!HasSink) {
               SimpleDRCContainer warn =
                   new SimpleDRCContainer(
@@ -2158,7 +2142,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
         for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
+          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
           if (RootNetBitIndex < 0) {
             Reporter.Report.AddFatalError(
                 "BUG:  Unable to find a root-net bit-index for a normal component\n ==> "
@@ -2223,7 +2207,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
         for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
+          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
           if (RootNetBitIndex < 0) {
             Reporter.Report.AddFatalError(
                 "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> "
@@ -2318,13 +2302,11 @@ public class Netlist implements CircuitListener {
     ConnectionPoint SubClockNet = InputPort.getEnd(0).GetConnection(BitIndex);
     if (SubClockNet.GetParrentNet() != null) {
       /* we have a connected pin */
-      ArrayList<String> NewHierarchyNames = new ArrayList<>();
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
-      NewHierarchyNames.addAll(HierarchyNames);
+      ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
       String Label = CorrectLabel.getCorrectLabel(
               subCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       NewHierarchyNames.add(Label);
-      NewHierarchyNetlists.addAll(HierarchyNetlists);
+      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
       NewHierarchyNetlists.add(sub.getSubcircuit().getNetList());
       sub.getSubcircuit().getNetList()
           .MarkClockNet(NewHierarchyNames, ClockSourceId, SubClockNet,true);
@@ -2386,11 +2368,9 @@ public class Netlist implements CircuitListener {
         }
         if (SubClockNet.GetParrentNet() == null) {
         } else {
-          ArrayList<String> NewHierarchyNames = new ArrayList<>();
-          ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
-          NewHierarchyNames.addAll(HierarchyNames);
+          ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
           NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
-          NewHierarchyNetlists.addAll(HierarchyNetlists);
+          ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
           NewHierarchyNetlists.remove(NewHierarchyNetlists.size() - 1);
           HierarchyNetlists.get(HierarchyNetlists.size() - 2)
               .MarkClockNet(NewHierarchyNames, ClockSourceId, SubClockNet,true);
@@ -2481,13 +2461,11 @@ public class Netlist implements CircuitListener {
     /* First pass: we go down the tree */
     for (NetlistComponent SubCirc : MySubCircuits) {
       SubcircuitFactory sub = (SubcircuitFactory) SubCirc.GetComponent().getFactory();
-      ArrayList<String> NewHierarchyNames = new ArrayList<>();
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
-      NewHierarchyNames.addAll(GetCurrentHierarchyLevel());
+      ArrayList<String> NewHierarchyNames = new ArrayList<>(GetCurrentHierarchyLevel());
       NewHierarchyNames.add(
           CorrectLabel.getCorrectLabel(
               SubCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      NewHierarchyNetlists.addAll(HierarchyNetlists);
+      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
       NewHierarchyNetlists.add(sub.getSubcircuit().getNetList());
       sub.getSubcircuit().getNetList().SetCurrentHierarchyLevel(NewHierarchyNames);
       sub.getSubcircuit()
@@ -2724,11 +2702,9 @@ public class Netlist implements CircuitListener {
         return;
       }
       if (SubNet.GetParrentNet() != null) {
-        ArrayList<String> NewHierarchyNames = new ArrayList<>();
-        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
-        NewHierarchyNames.addAll(HierarchyNames);
+        ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
         NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
-        NewHierarchyNetlists.addAll(HierarchyNetlists);
+        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
         NewHierarchyNetlists.remove(NewHierarchyNetlists.size() - 1);
         Netlist SubNetList = HierarchyNetlists.get(HierarchyNetlists.size() - 2);
         Net NewNet = SubNet.GetParrentNet();
@@ -2832,13 +2808,11 @@ public class Netlist implements CircuitListener {
       if (SubNet.GetParrentNet() != null) {
         /* we have a connected pin */
         Netlist SubNetList = sub.getSubcircuit().getNetList();
-        ArrayList<String> NewHierarchyNames = new ArrayList<>();
-        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>();
-        NewHierarchyNames.addAll(HierarchyNames);
+        ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
         NewHierarchyNames.add(
             CorrectLabel.getCorrectLabel(
                 SubCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        NewHierarchyNetlists.addAll(HierarchyNetlists);
+        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
         NewHierarchyNetlists.add(SubNetList);
         Net NewNet = SubNet.GetParrentNet();
         Byte NewNetIndex = SubNet.GetParrentNetBitIndex();

@@ -125,7 +125,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase();
     int i = 0;
     /* first pass, find the number */
-    StringBuffer number = new StringBuffer();
+    StringBuilder number = new StringBuilder();
     while (i<TickIndex.length() && 
        (TickIndex.charAt(i)=='.' || Character.isDigit(TickIndex.charAt(i)))) 
       number.append(TickIndex.charAt(i++));
@@ -153,7 +153,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
          return;
        }
      }
-     StringBuffer extention = new StringBuffer();
+     StringBuilder extention = new StringBuilder();
      extention.append(" ");
      double work = freq;
      if (work > 1000000.0) {
@@ -167,7 +167,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
      extention.append("Hz");
      DecimalFormat df = new DecimalFormat("#.#####");
      df.setRoundingMode(RoundingMode.HALF_UP);
-     String tick = df.format(work)+extention.toString();
+     String tick = df.format(work)+ extention;
      frequenciesList.setSelectedItem(tick);
   }
   

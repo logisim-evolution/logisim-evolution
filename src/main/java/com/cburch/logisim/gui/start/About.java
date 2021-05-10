@@ -266,7 +266,7 @@ public class About {
         g.setColor(fadeColor);
         g.fillRect(x, y, IMAGE_WIDTH, IMAGE_HEIGHT);
         drawText(g, x, y);
-      } catch (Throwable t) {
+      } catch (Throwable ignored) {
       }
     }
   }
@@ -292,7 +292,7 @@ public class About {
         panel.repaint();
         try {
           Thread.sleep(20);
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException ignored) {
         }
       }
     }

@@ -111,10 +111,10 @@ public class Clock extends InstanceFactory {
     }
 
     boolean updateTick(int ticks, AttributeSet attrs) {
-      int durationHigh = attrs.getValue(ATTR_HIGH).intValue();
-      int durationLow = attrs.getValue(ATTR_LOW).intValue();
+      int durationHigh = attrs.getValue(ATTR_HIGH);
+      int durationLow = attrs.getValue(ATTR_LOW);
       int cycle = durationHigh + durationLow;
-      int phase = ((attrs.getValue(ATTR_PHASE).intValue() % cycle) + cycle) % cycle;
+      int phase = ((attrs.getValue(ATTR_PHASE) % cycle) + cycle) % cycle;
       boolean isLow = ((ticks + phase) % cycle) < durationLow;
       Value desired = (isLow ? Value.FALSE : Value.TRUE);
       if (sending.equals(desired))

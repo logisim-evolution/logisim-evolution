@@ -111,7 +111,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
             for (Component c : source.getNonWires()) {
               if (c.getFactory() instanceof Pin) {
                 String label = c.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
-                if (label != null && !label.isEmpty() && label.equals(NewName.toUpperCase())) {
+                if (!label.isEmpty() && label.equals(NewName.toUpperCase())) {
                   String msg = S.get("CircuitSameInputOutputLabel");
                   OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);

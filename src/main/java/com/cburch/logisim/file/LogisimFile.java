@@ -113,8 +113,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   private static class WritingThread extends UniquelyNamedThread {
-    OutputStream out;
-    LogisimFile file;
+    final OutputStream out;
+    final LogisimFile file;
 
     WritingThread(OutputStream out, LogisimFile file) {
       super("WritingThread");
@@ -124,11 +124,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
     @Override
     public void run() {
-      try {
-        file.write(out, file.loader);
-      } catch (IOException e) {
-        file.loader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
-      }
+      file.write(out, file.loader);
       try {
         out.close();
       } catch (IOException e) {
@@ -187,7 +183,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       } finally {
         try {
           in.close();
-        } catch (Exception t) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -330,7 +326,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
       try {
         reader.close();
-      } catch (IOException e1) {
+      } catch (IOException ignored) {
       }
       return null;
     }
@@ -637,11 +633,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   //
   // other methods
   //
-  void write(OutputStream out, LibraryLoader loader) throws IOException {
+  void write(OutputStream out, LibraryLoader loader) {
     write(out, loader, null);
   }
 
-  void write(OutputStream out, LibraryLoader loader, File dest) throws IOException {
+  void write(OutputStream out, LibraryLoader loader, File dest) {
     try {
       XmlWriter.write(this, out, loader, dest);
     } catch (TransformerConfigurationException e) {

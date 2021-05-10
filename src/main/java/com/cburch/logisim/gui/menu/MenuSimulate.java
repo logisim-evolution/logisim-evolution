@@ -38,7 +38,6 @@ import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -409,7 +408,7 @@ public class MenuSimulate extends Menu {
       } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
         sim.setAutoTicking(!sim.isAutoTicking());
       } else if (src == assemblyWindow) {
-        if (assWin == null || assWin.isVisible() == false) {
+        if (assWin == null || !assWin.isVisible()) {
           assWin = new AssemblyWindow(proj);
           assWin.setVisible(true);
         } else {

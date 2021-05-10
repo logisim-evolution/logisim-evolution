@@ -38,6 +38,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterface {
 
@@ -69,9 +70,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private String errorMessage;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>();
-    for (String asmOpcode : AsmOpcodes)
-      opcodes.add(asmOpcode);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
@@ -124,11 +123,11 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   
   private boolean transactionHasError(SocBusTransaction trans) {
     if (trans.hasError()) {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       if (trans.isReadTransaction())
-        s.append(S.get("LoadStoreErrorInReadTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInReadTransaction")).append("\n");
       else
-        s.append(S.get("LoadStoreErrorInWriteTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInWriteTransaction")).append("\n");
       s.append(trans.getErrorMessage());
       errorMessage = s.toString();
     }
@@ -138,13 +137,13 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   public String getAsmInstruction() {
     if (!valid)
       return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+",");
+    s.append(RV32im_state.registerABINames[destination]).append(",");
     s.append(immediate);
-    s.append("("+RV32im_state.registerABINames[base]+")");
+    s.append("(").append(RV32im_state.registerABINames[base]).append(")");
     return s.toString();
   }
 

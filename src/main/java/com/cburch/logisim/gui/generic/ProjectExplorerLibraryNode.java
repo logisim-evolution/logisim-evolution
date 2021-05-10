@@ -51,7 +51,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private static final long serialVersionUID = 1L;
   private LogisimFile file;
   private JTree guiElement = null;
-  private boolean showMouseTools;
+  private final boolean showMouseTools;
 
   ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);
@@ -107,7 +107,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     for (T tool : items) {
       if (tool instanceof Library && ((Library) tool).isHidden()) {
         if (!showMouseTools) continue;
-        else if (!(((Library) tool) instanceof Base)) continue;
+        else if (!(tool instanceof Base)) continue;
       }
       if (tool instanceof AddTool) {
         AddTool a = (AddTool) tool;

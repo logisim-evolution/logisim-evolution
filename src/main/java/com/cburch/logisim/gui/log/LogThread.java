@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,7 +48,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
   private boolean modeDirty = true, headerDirty = true;
   private long lastWrite = 0;
   private long tNextWrite = 0; // done writing up to this time, exclusive
-  private HashMap<Signal, Signal.Iterator> cursors = new HashMap<>();
+  private final HashMap<Signal, Signal.Iterator> cursors = new HashMap<>();
 
   public LogThread(Model model) {
     super("LogThread");
@@ -82,7 +81,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
           if (i > 0) buf.append("\t");
           buf.append(model.getItem(i).getDisplayName());
         }
-        writer.println(buf.toString());
+        writer.println(buf);
       }
       headerDirty = false;
     }
@@ -107,7 +106,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
           duration = cur[i].duration;
       }
       // todo: only write duration if not in coarse-step or coarse-clock mode?
-      writer.println(buf.toString() + "\t# " + Model.formatDuration(duration));
+      writer.println(buf + "\t# " + Model.formatDuration(duration));
       for (Signal.Iterator c : cur)
         c.advance(duration);
       tNextWrite += duration;
@@ -176,7 +175,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       }
       try {
         Thread.sleep(FLUSH_FREQUENCY);
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ignored) {
       }
     }
     synchronized (lock) {

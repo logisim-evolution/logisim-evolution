@@ -137,7 +137,7 @@ class GateAttributes extends AbstractAttributeSet {
     } else if (attr == ATTR_SIZE) {
       size = (AttributeOption) value;
     } else if (attr == ATTR_INPUTS) {
-      inputs = ((Integer) value).intValue();
+      inputs = (Integer) value;
       fireAttributeListChanged();
     } else if (attr == ATTR_XOR) {
       xorBehave = (AttributeOption) value;
@@ -145,7 +145,7 @@ class GateAttributes extends AbstractAttributeSet {
       out = (AttributeOption) value;
     } else if (attr instanceof NegateAttribute) {
       int index = ((NegateAttribute) attr).index;
-      if (((Boolean) value).booleanValue()) {
+      if ((Boolean) value) {
         negated |= 1 << index;
       } else {
         negated &= ~(1 << index);

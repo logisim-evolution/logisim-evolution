@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.log;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.comp.ComponentEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -43,7 +44,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.text.ParseException;
 import java.util.Arrays;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -67,8 +67,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
-
-import com.cburch.logisim.comp.ComponentEvent;
 
 class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, Model.Listener {
 
@@ -103,48 +101,48 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   //     and each clock cycle is recorded as if it took {10ms} per cycle ({5ms}
   //     per tick).
   private static final long serialVersionUID = 1L;
-  JButton selectionButton;
+  final JButton selectionButton;
 
-  JRadioButton stepTime = new JRadioButton();
-  JRadioButton realTime = new JRadioButton();
-  JRadioButton clockTime = new JRadioButton();
+  final JRadioButton stepTime = new JRadioButton();
+  final JRadioButton realTime = new JRadioButton();
+  final JRadioButton clockTime = new JRadioButton();
 
   // todo: save defaults with project and/or compute from circuit clocks
-  JCheckBox stepFine = new JCheckBox();
-  JCheckBox realFine = new JCheckBox();
-  JCheckBox clockFine = new JCheckBox();
+  final JCheckBox stepFine = new JCheckBox();
+  final JCheckBox realFine = new JCheckBox();
+  final JCheckBox clockFine = new JCheckBox();
 
-  TimeSelector stepScale = new TimeSelector("timeScale", 5000);
-  TimeSelector stepGate = new TimeSelector("gateDelay", 200);
-  TimeSelector realScale = new TimeSelector("timeScale", 5000, "perSecond");
-  TimeSelector clockScale = new TimeSelector("timeScale", 5000, "perTick");
-  TimeSelector clockGate = new TimeSelector("gateDelay", 200);
-  JLabel clockSrcLabel = new JLabel();
-  JButton clockSrcButton = new JButton();
-  String[] clockDisciplineNames = new String[] {
+  final TimeSelector stepScale = new TimeSelector("timeScale", 5000);
+  final TimeSelector stepGate = new TimeSelector("gateDelay", 200);
+  final TimeSelector realScale = new TimeSelector("timeScale", 5000, "perSecond");
+  final TimeSelector clockScale = new TimeSelector("timeScale", 5000, "perTick");
+  final TimeSelector clockGate = new TimeSelector("gateDelay", 200);
+  final JLabel clockSrcLabel = new JLabel();
+  final JButton clockSrcButton = new JButton();
+  final String[] clockDisciplineNames = new String[] {
       "clockDisciplineDual", "clockDisciplineRising", "clockDisciplineFalling",
       "clockDisciplineHigh", "clockDisciplineLow" };
-  int[] clockDisciplines = new int[] {
+  final int[] clockDisciplines = new int[] {
     Model.CLOCK_DUAL, Model.CLOCK_RISING, Model.CLOCK_FALLING,
     Model.CLOCK_HIGH, Model.CLOCK_LOW };
-  JLabeledComboBox<String> clockDiscipline = new JLabeledComboBox<>("clockDisciplineLabel", clockDisciplineNames);
-  JLabel clockTicks = new JLabel();
+  final JLabeledComboBox<String> clockDiscipline = new JLabeledComboBox<>("clockDisciplineLabel", clockDisciplineNames);
+  final JLabel clockTicks = new JLabel();
   
-  JCheckBox unlimited = new JCheckBox();
-  JSpinner limit = new JSpinner();
-  JLabel limitLabel = new JLabel();
+  final JCheckBox unlimited = new JCheckBox();
+  final JSpinner limit = new JSpinner();
+  final JLabel limitLabel = new JLabel();
 
-  JLabel description = new JLabel();
+  final JLabel description = new JLabel();
 
-  JPanel selectionPanel = new JPanel();
-  Box modePanel = new Box(BoxLayout.Y_AXIS);
-  JPanel optionsPanel = new JPanel(new CardLayout());
-  Box stepOptionsPanel = new Box(BoxLayout.Y_AXIS);
-  Box realOptionsPanel = new Box(BoxLayout.Y_AXIS);
-  Box clockOptionsPanel = new Box(BoxLayout.Y_AXIS);
-  Box historyPanel = new Box(BoxLayout.Y_AXIS);
+  final JPanel selectionPanel = new JPanel();
+  final Box modePanel = new Box(BoxLayout.Y_AXIS);
+  final JPanel optionsPanel = new JPanel(new CardLayout());
+  final Box stepOptionsPanel = new Box(BoxLayout.Y_AXIS);
+  final Box realOptionsPanel = new Box(BoxLayout.Y_AXIS);
+  final Box clockOptionsPanel = new Box(BoxLayout.Y_AXIS);
+  final Box historyPanel = new Box(BoxLayout.Y_AXIS);
 
-  JScrollPane pane;
+  final JScrollPane pane;
 
   // todo: tooltips?
   OptionsPanel(LogFrame frame) {
@@ -379,8 +377,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   static class TimeEditor extends BasicComboBoxEditor {
-    String suffix;
-    TimeVerifier v;
+    final String suffix;
+    final TimeVerifier v;
     public TimeEditor(String s) { suffix = s; v = new TimeVerifier(suffix); }
     protected JTextField createEditorComponent() {
       JTextField f = super.createEditorComponent();
@@ -393,7 +391,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   static class TimeVerifier extends InputVerifier {
-    String suffix;
+    final String suffix;
     public TimeVerifier(String s) { suffix = s; }
     long scale, value;
     boolean matched;
@@ -441,9 +439,9 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   // todo: listen to locale here, but need to make LocaleManager hold weak ref
   static class JLabeledComboBox<E> extends JComboBox<E> {
     private static final long serialVersionUID = 1L;
-    String labelKey;
-    JLabel label = new JLabel();
-    JPanel panel = new JPanel();
+    final String labelKey;
+    final JLabel label = new JLabel();
+    final JPanel panel = new JPanel();
     JLabeledComboBox(String labelKey, E[] items) {
       super(items);
       setRenderer(new Renderer());

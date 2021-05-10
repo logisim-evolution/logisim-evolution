@@ -35,8 +35,8 @@ import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
 
 public class SimulationTreeNode implements TreeNode {
-  protected SimulationTreeModel model;
-  protected SimulationTreeNode parent;
+  protected final SimulationTreeModel model;
+  protected final SimulationTreeNode parent;
   protected ArrayList<TreeNode> children;
 
   public SimulationTreeNode(SimulationTreeModel model, SimulationTreeNode parent) {

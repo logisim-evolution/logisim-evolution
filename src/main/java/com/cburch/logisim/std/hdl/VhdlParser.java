@@ -178,7 +178,7 @@ public class VhdlParser {
     parseContent(parts.length == 2 ? parts[1] : "");
   }
 
-  private void parseContent(String input) throws IllegalVhdlContentException {
+  private void parseContent(String input) {
     Matcher matcher =
         Pattern.compile(ARCH_PATTERN, Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(input);
 
@@ -189,7 +189,7 @@ public class VhdlParser {
     }
   }
 
-  private void parseLibraries(String input) throws IllegalVhdlContentException {
+  private void parseLibraries(String input) {
     StringBuilder result = new StringBuilder();
 
     Matcher library = Pattern.compile(LIBRARY_PATTERN, Pattern.CASE_INSENSITIVE).matcher(input);
@@ -299,9 +299,9 @@ public class VhdlParser {
   }
 
   private String removeComments() throws IllegalVhdlContentException {
-    StringBuffer input;
+    StringBuilder input;
     try {
-      input = new StringBuffer(source);
+      input = new StringBuilder(source);
     } catch (NullPointerException ex) {
       throw new IllegalVhdlContentException(S.get("emptySourceException"));
     }

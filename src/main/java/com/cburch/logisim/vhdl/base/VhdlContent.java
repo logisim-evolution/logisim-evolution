@@ -107,7 +107,7 @@ public class VhdlContent extends HdlContent {
   protected AttributeSet staticAttrs;
   protected StringBuffer content;
   protected boolean valid;
-  protected List<VhdlParser.PortDescription> ports;
+  protected final List<VhdlParser.PortDescription> ports;
   protected Generic[] generics;
   protected List<Attribute<Integer>> genericAttrs;
   protected String name;

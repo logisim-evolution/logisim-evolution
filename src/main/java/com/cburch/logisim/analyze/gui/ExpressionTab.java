@@ -249,8 +249,8 @@ class ExpressionTab extends AnalyzerTab {
 
   public class ExpressionEditor extends AbstractCellEditor implements TableCellEditor {
     private static final long serialVersionUID = 1L;
-    JTextField field = new JTextField();
-    JLabel label = new JLabel();
+    final JTextField field = new JTextField();
+    final JLabel label = new JLabel();
     NamedExpression oldExpr, newExpr;
 
     public ExpressionEditor() {
@@ -268,7 +268,7 @@ class ExpressionTab extends AnalyzerTab {
         Object value, boolean isSelected, int row, int column) {
       newExpr = null;
       oldExpr = (NamedExpression)value;
-      label.setText(" " + Expressions.variable(oldExpr.name).toString() + " = ");
+      label.setText(" " + Expressions.variable(oldExpr.name) + " = ");
       if (oldExpr.expr != null)
         field.setText(oldExpr.expr.toString());
       else
@@ -464,7 +464,7 @@ class ExpressionTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     public void computeEnabled() {
       boolean viewing = table.getSelectedRow() >= 0;
       boolean editing = table.isEditing();
@@ -522,7 +522,7 @@ class ExpressionTab extends AnalyzerTab {
         try {
           JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
           idx = dl.getRow();
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
       } else {
           idx = table.getSelectedRow();
@@ -576,7 +576,7 @@ class ExpressionTab extends AnalyzerTab {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int width = table.getWidth();

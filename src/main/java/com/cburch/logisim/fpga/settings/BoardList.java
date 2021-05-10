@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class BoardList {
@@ -87,8 +86,6 @@ public class BoardList {
     ZipFile zf;
     try {
       zf = new ZipFile(Dir);
-    } catch (ZipException e) {
-      throw new Error(e);
     } catch (IOException e) {
       throw new Error(e);
     }

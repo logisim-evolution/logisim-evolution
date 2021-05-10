@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 public class OutputStreamBinarySanitizer extends OutputStream {
-  protected Writer out;
+  protected final Writer out;
   
   public OutputStreamBinarySanitizer(Writer out) { this.out = out; }
   

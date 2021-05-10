@@ -29,6 +29,7 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.Component;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -43,12 +44,12 @@ class SelectionSave {
 
     Collection<Component> lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
-      save.floating = lifted.toArray(new Component[lifted.size()]);
+      save.floating = lifted.toArray(new Component[0]);
     }
 
     Collection<Component> selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
-      save.anchored = selected.toArray(new Component[selected.size()]);
+      save.anchored = selected.toArray(new Component[0]);
     }
 
     return save;
@@ -76,7 +77,7 @@ class SelectionSave {
 
   private static HashSet<Component> toSet(Component[] comps) {
     HashSet<Component> ret = new HashSet<>(comps.length);
-    for (Component c : comps) ret.add(c);
+    ret.addAll(Arrays.asList(comps));
     return ret;
   }
 

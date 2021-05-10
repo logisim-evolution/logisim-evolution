@@ -65,7 +65,7 @@ public class PullBehaviors {
     return result;
   }
 
-  public static String PullAttributeString = "FPGAPinPullBehavior";
+  public static final String PullAttributeString = "FPGAPinPullBehavior";
   public static final char Float = 0;
   public static final char PullUp = 1;
 
@@ -73,5 +73,5 @@ public class PullBehaviors {
 
   public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
+  public static final String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
 }

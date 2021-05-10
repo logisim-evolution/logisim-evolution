@@ -117,8 +117,8 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     for (int i = 0; i < 2; i++) {
-      Boolean GatedClock = false;
-      Boolean HasClock = true;
+      boolean GatedClock = false;
+      boolean HasClock = true;
       int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[i];
       if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
         Reporter.Report.AddSevereWarning(

@@ -35,9 +35,9 @@ import java.util.LinkedList;
 
 public class TclWrapperListenerThread extends UniquelyNamedThread {
 
-  SocketClient socket;
-  LinkedList<String> messages;
-  Simulator sim;
+  final SocketClient socket;
+  final LinkedList<String> messages;
+  final Simulator sim;
 
   Boolean socket_open = true;
 

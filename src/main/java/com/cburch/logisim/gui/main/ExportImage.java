@@ -194,14 +194,14 @@ public class ExportImage {
   }
 
   private static class ExportThread extends UniquelyNamedThread {
-    Frame frame;
-    Canvas canvas;
-    File dest;
-    ImageFileFilter filter;
-    List<Circuit> circuits;
-    double scale;
-    boolean printerView;
-    ProgressMonitor monitor;
+    final Frame frame;
+    final Canvas canvas;
+    final File dest;
+    final ImageFileFilter filter;
+    final List<Circuit> circuits;
+    final double scale;
+    final boolean printerView;
+    final ProgressMonitor monitor;
 
     ExportThread(
         Frame frame,
@@ -329,17 +329,17 @@ public class ExportImage {
 
   private static class OptionsPanel extends JPanel implements ChangeListener {
     private static final long serialVersionUID = 1L;
-    JSlider slider;
-    JLabel curScale;
-    JCheckBox printerView;
-    JRadioButton formatPng;
-    JRadioButton formatGif;
-    JRadioButton formatJpg;
-    JRadioButton formatTikZ;
-    JRadioButton formatSvg;
-    GridBagLayout gridbag;
-    GridBagConstraints gbc;
-    Dimension curJim;
+    final JSlider slider;
+    final JLabel curScale;
+    final JCheckBox printerView;
+    final JRadioButton formatPng;
+    final JRadioButton formatGif;
+    final JRadioButton formatJpg;
+    final JRadioButton formatTikZ;
+    final JRadioButton formatSvg;
+    final GridBagLayout gridbag;
+    final GridBagConstraints gbc;
+    final Dimension curJim;
 
     @SuppressWarnings("rawtypes")
     OptionsPanel(JList list) {

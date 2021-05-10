@@ -142,14 +142,12 @@ public class FactoryDescription {
 
   public Icon getIcon() {
     Icon ret = icon;
-    if (ret != null || iconLoadAttempted) {
-      return ret;
-    } else {
+    if (ret == null && !iconLoadAttempted) {
       ret = Icons.getIcon(iconName);
       icon = ret;
       iconLoadAttempted = true;
-      return ret;
     }
+    return ret;
   }
 
   public String getName() {
