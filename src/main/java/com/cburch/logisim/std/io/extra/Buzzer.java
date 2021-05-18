@@ -83,10 +83,12 @@ public class Buzzer extends InstanceFactory {
       S.getter("buzzerTriangle"));
   private static final AttributeOption Sawtooth = new AttributeOption(BuzzerWaveform.Sawtooth,
       S.getter("buzzerSawtooth"));
+  private static final AttributeOption Noise = new AttributeOption(BuzzerWaveform.Noise,
+      S.getter("buzzerNoise"));
   private static final Attribute<AttributeOption> WAVEFORM =
       Attributes.forOption(
           "waveform", S.getter("buzzerWaveform"),
-          new AttributeOption[]{Sine, Square, Triangle, Sawtooth});
+          new AttributeOption[]{Sine, Square, Triangle, Sawtooth, Noise});
   private static final AttributeOption C_BOTH = new AttributeOption(3,
       S.getter("buzzerChannelBoth"));
   private static final AttributeOption C_LEFT = new AttributeOption(1,
@@ -265,7 +267,8 @@ public class Buzzer extends InstanceFactory {
     Sine((i, hz, pw) -> Math.sin(i * hz * 2 * Math.PI / Data.SAMPLE_RATE)),
     Square((i, hz, pw) -> (hz * i / Data.SAMPLE_RATE) % 1 < pw ? 1 : -1),
     Triangle((i, hz, pw) -> Math.asin(Sine.strategy.amplitude(i, hz, pw)) * 2 / Math.PI),
-    Sawtooth((i, hz, pw) -> 2 * ((hz * i / Data.SAMPLE_RATE) % 1) - 1);
+    Sawtooth((i, hz, pw) -> 2 * ((hz * i / Data.SAMPLE_RATE) % 1) - 1),
+    Noise((i, hz, pw) -> Math.random() * 2 - 1);
 
     public final BuzzerWaveformStrategy strategy;
 
