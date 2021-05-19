@@ -184,19 +184,9 @@ tasks.register("jpackage") {
 tasks {
     compileJava {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
-        // Until Gradle 7 is released, disable incremental compilation, as it
-        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
-        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
-        // for details.
-        options.isIncremental = false
     }
     compileTestJava {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
-        // Until Gradle 7 is released, disable incremental compilation, as it
-        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
-        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
-        // for details.
-        options.isIncremental = false
     }
     jar {
         manifest {
