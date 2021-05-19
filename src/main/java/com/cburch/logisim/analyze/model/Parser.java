@@ -304,9 +304,11 @@ public class Parser {
       return skipWhile(Character::isWhitespace);
     }
 
-    boolean skipDigits()
+    String readNumber()
     {
-      return skipWhile(this::isDigit);
+      int substart = pos;
+      skipWhile(this::isDigit);
+      return in.substring(substart, pos);
     }
 
     boolean isDigit(char c)
@@ -441,24 +443,16 @@ public class Parser {
           String subscript = null;
           if (in.charAt(pos) == ':' && isDigit(in.charAt(pos + 1))) {
             pos++;
-            int substart = pos;
-            skipDigits();
-            subscript = in.substring(substart, pos);
+            subscript = readNumber();
           } else if (in.charAt(pos) == '[') {
             int bracestart = pos;
             pos++;
-            if (skipSpaces()) {
+            if (skipSpaces()) { // EOL
               tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart), 0));
               continue;
             }
-            int substart = pos;
-            skipDigits();
-            subscript = in.substring(substart, pos);
-            if (skipSpaces()) {
-              tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart), 0));
-              continue;
-            }
-            if (in.charAt(pos) != ']') {
+            subscript = readNumber();
+            if (skipSpaces() || !accept(']')) { // EOL or missing bracket
               tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart), 0));
               continue;
             }
@@ -466,7 +460,7 @@ public class Parser {
           }
           if (subscript != null) {
             subscript = subscript.trim();
-            if (subscript.equals("")) {
+            if (subscript.isEmpty()) {
               tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos), 0));
               continue;
             }
