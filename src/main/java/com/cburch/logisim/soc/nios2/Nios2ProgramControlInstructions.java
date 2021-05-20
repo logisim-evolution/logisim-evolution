@@ -351,10 +351,10 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
                               Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE) != 0) {
                             valid = false;
                           }
+                          break;
         default         : immediate = Nios2Support.getImmediate(instr, Nios2Support.I_TYPE);
                           sourceA = Nios2Support.getRegAIndex(instr, Nios2Support.I_TYPE);
                           sourceB = Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE);
-                          break;
       }
     }
     return valid;
