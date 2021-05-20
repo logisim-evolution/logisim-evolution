@@ -466,6 +466,7 @@ class XmlReader {
               loadMap(boardMap,BoardName,circData.circuit);
             }
             circuitsData.add(circData);
+            break;
           default:
             // do nothing
         }
