@@ -39,6 +39,7 @@ public class DrawLineIcon extends AnnimatedIcon {
   private int state = 3;
 
   @Override
+  @SuppressWarnings("fallthrough")
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.GRAY);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
@@ -48,10 +49,12 @@ public class DrawLineIcon extends AnnimatedIcon {
         g2.setStroke(new BasicStroke(scale(2)));
         g2.setColor(Color.BLUE.darker());
         g2.drawLine(scale(1), scale(14), scale(14), scale(1));
+        // fall through
       case 2:
         g2.setColor(Color.GRAY);
         g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
         g2.drawRect(scale(13), 0, wh, wh);
+        // fall through
       case 1:
         g2.drawRect(0, scale(13), wh, wh);
     }
