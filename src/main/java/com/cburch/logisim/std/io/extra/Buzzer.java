@@ -227,10 +227,15 @@ public class Buzzer extends InstanceFactory {
       }
       d.hz = freq;
     }
+    else
+    {
+      d.hz = 440;
+    }
     d.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
     d.channels = (Integer) state.getAttributeValue(CHANNEL).getValue();
-    d.pw = (int) state.getPortValue(PW).toLongValue();
-    if (d.pw == -1)
+    if (state.getPortValue(PW).isFullyDefined())
+      d.pw = (int) state.getPortValue(PW).toLongValue();
+    else
       d.pw = 128;
     d.smoothLevel = state.getAttributeValue(SMOOTH_LEVEL);
     d.smoothWidth = state.getAttributeValue(SMOOTH_WIDTH);
@@ -238,6 +243,10 @@ public class Buzzer extends InstanceFactory {
       int vol = (int) state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
       d.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, VolumeWidth) - 1);
+    }
+    else
+    {
+      d.vol = 0.5;
     }
     d.updateRequired = true;
     if (active && !d.thread.isAlive()) {
@@ -290,12 +299,12 @@ public class Buzzer extends InstanceFactory {
 
   private static class Data implements InstanceData {
 
-    private int sampleRate = 12345;
+    private int sampleRate;
     private final AtomicBoolean is_on = new AtomicBoolean(false);
-    public int pw = 128;
-    public int channels = 3;
-    private int hz = 523;
-    private double vol = 3072;
+    public int pw;
+    public int channels;
+    private int hz;
+    private double vol;
     private int smoothLevel = 0;
     private int smoothWidth = 0;
     private boolean updateRequired = true;
@@ -384,7 +393,6 @@ public class Buzzer extends InstanceFactory {
 
             if (clip != null) {
               newClip.loop(Clip.LOOP_CONTINUOUSLY);
-              clip.loop(0);
               clip.close();
               ais.close();
             }
@@ -398,7 +406,6 @@ public class Buzzer extends InstanceFactory {
         e.printStackTrace();
       } finally {
         if (clip != null) {
-          clip.loop(0);
           clip.close();
         }
         if (ais != null) {
