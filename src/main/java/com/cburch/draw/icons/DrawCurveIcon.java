@@ -39,6 +39,7 @@ public class DrawCurveIcon extends AnnimatedIcon {
   private int states = 5;
 
   @Override
+  @SuppressWarnings("fallthrough")
   protected void paintIcon(Graphics2D g2) {
     int wh = scale(3);
     g2.setStroke(new BasicStroke(scale(1)));
@@ -47,6 +48,7 @@ public class DrawCurveIcon extends AnnimatedIcon {
       case 5:
       case 4:
         g2.drawRect(scale(9), scale(0), wh, wh);
+        // fall through
       case 3:
         g2.setStroke(new BasicStroke(scale(2)));
         if (states > 4) {
@@ -59,10 +61,12 @@ public class DrawCurveIcon extends AnnimatedIcon {
           g2.setColor(Color.DARK_GRAY);
           g2.drawLine(scale(1), scale(6), scale(14), scale(14));
         }
+        // fall through
       case 2:
         g2.setColor(Color.GRAY);
         g2.setStroke(new BasicStroke(scale(1)));
         g2.drawRect(scale(13), scale(13), wh, wh);
+        // fall through
       case 1:
         g2.drawRect(scale(0), scale(5), wh, wh);
     }
