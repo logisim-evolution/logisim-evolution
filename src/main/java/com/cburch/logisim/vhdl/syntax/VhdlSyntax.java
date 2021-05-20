@@ -33,6 +33,7 @@ import javax.swing.text.Segment;
 import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
 import org.fife.ui.rsyntaxtextarea.Token;
 
+@SuppressWarnings("fallthrough")
 public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
   /** This character denotes the end of file */
