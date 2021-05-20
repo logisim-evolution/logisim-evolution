@@ -342,6 +342,7 @@ public class Buzzer extends InstanceFactory {
               oldfreq = hz;
             }
 
+            // TODO: Computing all those values takes time; it may be interesting to replace this by a LUT
             int cycle = Math.max(1, sampleRate / hz);
             double[] values = new double[4 * cycle];
             for (int i = 0; i < values.length; i++)
