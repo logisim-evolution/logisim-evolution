@@ -86,6 +86,7 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState;
@@ -97,9 +98,11 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_STBIO  :
       case INSTR_STB    : toBeStored &= 0xFF;
                           transType = SocBusTransaction.ByteAccess;
+                          // fall through
       case INSTR_STHIO  :
       case INSTR_STH    : toBeStored &= 0xFFFF;
                           if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
+                          // fall through
       case INSTR_STWIO  :
       case INSTR_STW    : if (transType < 0) transType = SocBusTransaction.WordAccess;
                           SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
@@ -111,10 +114,12 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_LDBIO  :
       case INSTR_LDBU   :
       case INSTR_LDBUIO : transType = SocBusTransaction.ByteAccess;
+                          // fall through
       case INSTR_LDH    :
       case INSTR_LDHIO  :
       case INSTR_LDHU   :
       case INSTR_LDHUIO : if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+                          // fall through
       case INSTR_LDW    :
       case INSTR_LDWIO  : if (transType < 0) transType = SocBusTransaction.WordAccess;
                           trans = new SocBusTransaction(SocBusTransaction.READTransaction,
