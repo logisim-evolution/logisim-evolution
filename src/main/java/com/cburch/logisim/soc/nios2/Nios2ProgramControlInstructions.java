@@ -96,6 +96,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState;
@@ -120,6 +121,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
                           cpuState.setProgramCounter(valueA);
                           break;
       case INSTR_CALL   : cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
+                          // fall through
       case INSTR_JMPI   : jumped = true;
                           cpuState.setProgramCounter(immediate<<2);
                           break;
