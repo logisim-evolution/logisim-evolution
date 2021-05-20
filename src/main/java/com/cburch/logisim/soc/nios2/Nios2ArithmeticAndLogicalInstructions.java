@@ -112,6 +112,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState state = (Nios2State.ProcessorState) processorState;
@@ -129,6 +130,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_ANDHI    : result = valueA & imm;
                             break;
       case INSTR_ANDI     : valueB = immediate;
+                            // fall through
       case INSTR_AND      : result = valueA & valueB;
                             break;
       case INSTR_MOVHI    :
@@ -136,6 +138,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
                             break;
       case INSTR_MOVUI    :
       case INSTR_ORI      : valueB = immediate;
+                            // fall through
       case INSTR_OR       : result = valueA | valueB;
                             break;
       case INSTR_NOR      : result = valueA | valueB;
@@ -144,10 +147,12 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_XORHI    : result = valueA ^ imm;
                             break;
       case INSTR_XORI     : valueB = immediate;
+                            // fall through
       case INSTR_XOR      : result = valueA ^ valueB;
                             break;
       case INSTR_MOVI     :
       case INSTR_ADDI     : valueB = imm >> 16;
+                            // fall through
       case INSTR_MOV      :
       case INSTR_NOP      : 
       case INSTR_ADD      : result = valueA + valueB;
@@ -155,6 +160,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_SUB      : result = valueA - valueB;
                             break;
       case INSTR_MULI     : valueB = imm >> 16;
+                            // fall through
       case INSTR_MULXSS   :
       case INSTR_MUL      : long oppA = valueA;
                             long oppB = valueB;
