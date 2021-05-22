@@ -462,7 +462,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       return panel;
     }
     E getValue() {
-      return (E)getSelectedItem();
+      return getItemAt(getSelectedIndex());
     }
     String renderAsText(E v) {
       return (v instanceof String) ? S.get((String)v) : v.toString();
@@ -479,7 +479,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       @Override
       public java.awt.Component getListCellRendererComponent(JList<?> list,
           Object w, int index, boolean isSelected, boolean cellHasFocus) {
-        String s = renderAsText((E)w);
+        @SuppressWarnings("unchecked")
+        final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
       }
     }
