@@ -66,7 +66,15 @@ extra.apply {
       "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
       "--dest", "$buildDir/dist"
    ))
-   set("sharedparameters", parameters)
+   val linuxParameters = ArrayList<String>(Arrays.asList(
+      "--name", project.name,
+      "--file-associations", "$projectDir/support/jpackage/linux/file.jpackage",
+      "--icon", "$projectDir/support/jpackage/linux/logisim-icon-128.png",
+      "--install-dir", "/opt",
+      "--linux-shortcut"
+   ))
+   set("sharedParameters", parameters)
+   set("linuxParameters", linuxParameters)
    set("jpackagecmd", jpackagecmd)
    val projectName = project.name as String
    val projectVersion = project.version as String
@@ -105,14 +113,8 @@ tasks.register("createDeb") {
    outputs.file(ext.get("debFilename") as String)
    doLast {
       if (OperatingSystem.current().isLinux) {
-         val parameters = ArrayList<String>(ext.get("sharedparameters") as ArrayList<String>)
-         parameters.addAll(Arrays.asList(
-            "--name", project.name,
-            "--file-associations", "$projectDir/support/jpackage/linux/file.jpackage",
-            "--icon", "$projectDir/support/jpackage/linux/logisim-icon-128.png",
-            "--install-dir", "/opt",
-            "--linux-shortcut"
-         ))
+         val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
+         parameters.addAll(ext.get("linuxParameters") as ArrayList<String>)
          val processBuilder1 = ProcessBuilder()
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
@@ -132,20 +134,16 @@ tasks.register("createRpm") {
    outputs.file(ext.get("rpmFilename") as String)
    doLast {
       if (OperatingSystem.current().isLinux) {
-         val parameters = ArrayList<String>(ext.get("sharedparameters") as ArrayList<String>)
+         val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
+         parameters.addAll(ext.get("linuxParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
-            "--name", project.name,
-            "--file-associations", "$projectDir/support/jpackage/linux/file.jpackage",
-            "--icon", "$projectDir/support/jpackage/linux/logisim-icon-128.png",
-            "--install-dir", "/opt",
-            "--linux-shortcut",
             "--type", "rpm"
          ))
          val processBuilder2 = ProcessBuilder()
          processBuilder2.command(parameters)
          val process2 = processBuilder2.start()
          if (process2.waitFor() != 0) {
-            throw GradleException("Error while executing jpackage")
+            throw GradleException("Error while creating rpm package")
          }
       }
    }
@@ -160,7 +158,7 @@ tasks.register("createMsi") {
    outputs.file(ext.get("msiFilename") as String)
    doLast {
       if (OperatingSystem.current().isWindows) {
-         val parameters = ArrayList<String>(ext.get("sharedparameters") as ArrayList<String>)
+         val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
             "--name", project.name,
             "--file-associations", "$projectDir/support/jpackage/windows/file.jpackage",
@@ -175,7 +173,7 @@ tasks.register("createMsi") {
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
          if (process1.waitFor() != 0) {
-            throw GradleException("Error while executing jpackage")
+            throw GradleException("Error while creating msi package")
          }
       }
    }
@@ -193,7 +191,7 @@ tasks.register("createApp") {
          val appDirname = ext.get("appDirname") as String
          delete(appDirname)
          var appname = ext.get("uppercaseProjectName") as String
-         val parameters = ArrayList<String>(ext.get("sharedparameters") as ArrayList<String>)
+         val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
             "--name", appname,
             "--file-associations", "$projectDir/support/jpackage/macos/file.jpackage",
@@ -204,7 +202,7 @@ tasks.register("createApp") {
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
          if (process1.waitFor() != 0) {
-            throw GradleException("Error while executing jpackage app build")
+            throw GradleException("Error while creating app directory")
          }
          val plistfilename = "$buildDir/dist/" + appname + ".app/Contents/Info.plist"
          val parameters2 = ArrayList<String>(Arrays.asList(
@@ -215,7 +213,7 @@ tasks.register("createApp") {
          processBuilder2.command(parameters2)
          val process2 = processBuilder2.start()
          if (process2.waitFor() != 0) {
-            throw GradleException("Error while executing Info.plist patching")
+            throw GradleException("Error while patching Info.plist")
          }
          val parameters3 = ArrayList<String>(Arrays.asList(
             "mv", "$buildDir/dist/Info.plist", plistfilename
@@ -224,7 +222,7 @@ tasks.register("createApp") {
          processBuilder3.command(parameters3)
          val process3 = processBuilder3.start()
          if (process3.waitFor() != 0) {
-            throw GradleException("Error while executing moving Info.plist into app")
+            throw GradleException("Error while moving Info.plist into app")
          }
          val parameters4 = ArrayList<String>(Arrays.asList(
             "codesign", "--remove-signature", appDirname
@@ -260,7 +258,7 @@ tasks.register("createDmg") {
          processBuilder1.command(parameters1)
          val process1 = processBuilder1.start()
          if (process1.waitFor() != 0) {
-            throw GradleException("Error while executing jpackage dmg build")
+            throw GradleException("Error while creating dmg package")
          }
       }
    }
