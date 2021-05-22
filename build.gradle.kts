@@ -4,17 +4,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
-// The following setting of the deprecated property mainClassName is required
-// by shadow version 6.1.0. This should be fixed in the upcoming version 6.2.0.
-// See [shadow issue #609](https://github.com/johnrengelman/shadow/issues/609)
-// for details.
-project.setProperty("mainClassName", "com.cburch.logisim.Main")
-
 plugins {
     id("com.github.ben-manes.versions") version "0.38.0"
     java
     application
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 } 
 
 repositories {
@@ -184,19 +178,9 @@ tasks.register("jpackage") {
 tasks {
     compileJava {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
-        // Until Gradle 7 is released, disable incremental compilation, as it
-        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
-        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
-        // for details.
-        options.isIncremental = false
     }
     compileTestJava {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
-        // Until Gradle 7 is released, disable incremental compilation, as it
-        // causes errors on JDK 16 due to usage of internal JDK APIs. See this
-        // [blog post](https://melix.github.io/blog/2021/03/gradle-java16.html)
-        // for details.
-        options.isIncremental = false
     }
     jar {
         manifest {
