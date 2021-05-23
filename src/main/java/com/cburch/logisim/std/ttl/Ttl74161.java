@@ -218,19 +218,25 @@ public class Ttl74161 extends AbstractTtlGate {
             }
             data.setValue(Value.createKnown(BitWidth.create(4), counter));
 
-            state.setPort(PORT_INDEX_QA, data.getValue().get(0), 0);
-            state.setPort(PORT_INDEX_QB, data.getValue().get(1), 0);
-            state.setPort(PORT_INDEX_QC, data.getValue().get(2), 0);
-            state.setPort(PORT_INDEX_QD, data.getValue().get(3), 0);
-
-            // RC0 = QA AND QB AND QC AND QD AND ENT
-            state.setPort(PORT_INDEX_RC0,
-                    state.getPortValue(PORT_INDEX_EnT)
-                            .and(data.getValue().get(0))
-                            .and(data.getValue().get(1))
-                            .and(data.getValue().get(2))
-                            .and(data.getValue().get(3)), 0);
         }
+
+        Value vA = data.getValue().get(0);
+        Value vB = data.getValue().get(1);
+        Value vC = data.getValue().get(2);
+        Value vD = data.getValue().get(3);
+
+        state.setPort(PORT_INDEX_QA, vA, 1);
+        state.setPort(PORT_INDEX_QB, vB, 1);
+        state.setPort(PORT_INDEX_QC, vC, 1);
+        state.setPort(PORT_INDEX_QD, vD, 1);
+
+        // RC0 = QA AND QB AND QC AND QD AND ENT
+        state.setPort(PORT_INDEX_RC0,
+                state.getPortValue(PORT_INDEX_EnT)
+                        .and(vA)
+                        .and(vB)
+                        .and(vC)
+                        .and(vD), 1);
     }
 
     @Override
