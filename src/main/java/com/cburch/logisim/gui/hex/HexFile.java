@@ -1119,11 +1119,11 @@ public class HexFile {
     ////////////////////////////////////////////////////////
     // old "v2.0 raw" run-length-endoded hex nonsense format
 
-    static int hex2int(int c) { // byte, char
+    static int hex2int(int c) throws NumberFormatException { // byte, char
       if (c >= '0' && c <= '9') return c - '0';
       else if (c >= 'a' && c <= 'f') return 0xa + (c - 'a');
       else if (c >= 'A' && c <= 'F') return 0xA + (c - 'A');
-      else return -1;
+      else throw new NumberFormatException("Invalid hex digit: " + (char)c);
     }
 
     static long hex2ulong(String s) {
@@ -1131,7 +1131,6 @@ public class HexFile {
       int n = s.length();
       for (int i = 0; i < n; i++) {
         int d = hex2int(s.charAt(i));
-        if (d < 0) return d;
         val = (val << 4) + d;
       }
       return val;
@@ -1447,8 +1446,10 @@ public class HexFile {
         int i = 0, n = word.length();
         if (n >= 2 && (word.startsWith("0x") || word.startsWith("0X"))) i += 2;
         for (; i < n; i++) {
-          int d = hex2int(word.charAt(i));
-          if (d < 0) {
+          int d;
+          try {
+            d = hex2int(word.charAt(i));
+          } catch (NumberFormatException e) {
             warn("Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(i)));
             continue;
           }
@@ -1471,8 +1472,10 @@ public class HexFile {
         if (n >= 2 && (word.startsWith("0x") || word.startsWith("0X"))) i += 2;
         int v = 0;
         for (; i < n; i++) {
-          int d = hex2int(word.charAt(i));
-          if (d < 0) {
+          int d;
+          try {
+            d = hex2int(word.charAt(i));
+          } catch (NumberFormatException e) {
             warn("Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(i)));
             continue;
           }
@@ -1500,14 +1503,15 @@ public class HexFile {
         if (foundColon) addr = addr.substring(stripOx ? 2 : 0, addr.length() - 1);
         else if (stripOx) addr = addr.substring(2);
         bLen = 0;
-        long boffs = hex2ulong(addr);
-        if (boffs < 0) {
-          warn("\"%s\" is not a valid hex address.", addr);
-          // Continue on with previous address, I guess?
-        } else {
+        long boffs = 0;
+        try {
+          boffs = hex2ulong(addr);
           if (!deliver()) return;
           mAddr = (boffs * 8) / mWidth;
           mAddrFrac = (boffs * 8) % mWidth;
+        } catch (Exception e) {
+          warn("\"%s\" is not a valid hex address.", addr);
+          // Continue on with previous address, I guess?
         }
         int i = 1, n = curWords.length;
         if (!foundColon && n >= 2 && curWords[1].equals(":")) i++;
@@ -1517,10 +1521,11 @@ public class HexFile {
           int j = 0, m = word.length();
           if (word.startsWith("0x") || word.startsWith("0X")) j = 2;
           for (; j < m; j++) {
-            int d = hex2int(word.charAt(j));
-            if (d < 0) {
-              warn(
-                  "Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(j)));
+            int d;
+            try {
+              d = hex2int(word.charAt(i));
+            } catch (NumberFormatException e) {
+              warn("Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(i)));
               continue;
             }
             if (left) bytes[bLen++] = (byte) (d << 4);
@@ -1548,20 +1553,21 @@ public class HexFile {
         boolean stripOx = addr.startsWith("0x") || addr.startsWith("0X");
         if (foundColon) addr = addr.substring(stripOx ? 2 : 0, addr.length() - 1);
         else if (stripOx) addr = addr.substring(2);
-        long a = hex2ulong(addr);
-        if (a < 0) {
+        try {
+          offs = hex2ulong(addr);
+        } catch (Exception e) {
           warn("\"%s\" is not a valid hex address.", curWords[0]);
           // Continue on with previous address, I guess?
-        } else {
-          offs = a;
         }
         int i = 1, n = curWords.length;
         if (!foundColon && n >= 2 && curWords[1].equals(":")) i++;
         for (; i < n; i++) {
           String word = curWords[i];
           if (word.startsWith("0x") || word.startsWith("0X")) word = word.substring(2);
-          long val = hex2ulong(word);
-          if (val < 0) {
+          long val;
+          try {
+            val = hex2ulong(word);
+          } catch (Exception e) {
             warn("Data word \"%s\" contains non-hex characters.", OutputStreamEscaper.escape(word));
             continue;
           }
@@ -1595,18 +1601,23 @@ public class HexFile {
           if (c == '\n') curLineNo++;
           if (c < 0x20 || c > 0x7E) continue;
           if (esc == 3) { // backslash "x" hexdigit __
-            int d = hex2int(c);
-            if (d < 0) warn("Invalid hex escape sequence.");
-            else bytes[bLen++] = (byte) (16 * ehex + d);
+            int d;
+            try {
+              d = hex2int(c);
+              bytes[bLen++] = (byte) (16 * ehex + d);
+            } catch (NumberFormatException e) {
+              warn("Invalid hex escape sequence.");
+            }
             esc = 0;
           } else if (esc == 2) { // backslash "x" __ __
-            int d = hex2int(c);
-            if (d < 0) {
-              warn("Invalid hex escape sequence.");
-              esc = 0;
-            } else {
+            int d;
+            try {
+              d = hex2int(c);
               ehex = d;
               esc++;
+            } catch (NumberFormatException e) {
+              warn("Invalid hex escape sequence.");
+              esc = 0;
             }
           } else if (esc == 1 && c == 'x') {
             esc++;
