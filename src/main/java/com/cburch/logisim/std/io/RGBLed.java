@@ -73,7 +73,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
       int rgb = 0;
-      if (data != null)
+      if (data == null)
         return Value.createUnknown(bitwidth);
       else
         return Value.createKnown(bitwidth, (Integer) data.getValue());
