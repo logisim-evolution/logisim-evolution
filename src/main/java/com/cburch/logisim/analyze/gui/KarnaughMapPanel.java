@@ -557,6 +557,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private String label(int row, int rows) {
+    assert row >= 0 && row < rows : "Row " + row + " is outside range of " + rows + " rows.";
     switch (rows) {
       case 2:
         return "" + row;
@@ -570,7 +571,10 @@ public class KarnaughMapPanel extends JPanel
             return "11";
           case 3:
             return "10";
+          default:
+            assert false;
         }
+        break;
       case 8:
         switch (row) {
           case 0:
@@ -589,10 +593,14 @@ public class KarnaughMapPanel extends JPanel
             return "101";
           case 7:
             return "100";
+          default:
+            assert false;
         }
+        break;
       default:
-        return "";
+        assert false : "unhandled number of rows " + rows;
     }
+    return "";
   }
 
   private void drawNumberedHeader(Graphics2D g, int x, int y) {

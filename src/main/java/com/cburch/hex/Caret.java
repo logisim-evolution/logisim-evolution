@@ -202,8 +202,8 @@ public class Caret {
             int dist = (int) (cursor % cols);
             if (dist == 0) setDot(0, shift);
             else setDot(cursor - dist, shift);
-            break;
           }
+          break;
         case KeyEvent.VK_END:
           if (cursor >= 0) {
             HexModel model = hex.getModel();
