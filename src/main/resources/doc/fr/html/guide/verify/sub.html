@@ -46,7 +46,7 @@
         Comme vous pouvez le constater, le circuit maître utilise l'additionneur intégré de Logisim, tandis que le circuit de requête utilise un demi-additionneur et un additionneur complet, eux-mêmes composés de portes logiques. Aux fins de notre exemple, le circuit de requête a une erreur stupide: le report <var>carry</var> du demi-additionneur n'est pas connecté à l'additionneur complet.
       </p>
       <p>
-        Nous construisons notre circuit de test dans un fichier différent <tt>test.circ</tt>. Là, nous chargeons <tt><b>master.circ</b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Charger une Lirairie&nbsp;|</b>→ <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b> , et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que le résultat souhaité correspond à solution parfaite.
+        Nous construisons notre circuit de test dans un fichier différent <tt><b>test.circ</b></tt>. Là, nous chargeons <tt><b>master.circ</b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Charger une Lirairie&nbsp;|</b>→ <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b> , et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que le résultat souhaité correspond à solution parfaite.
       </p>
       <blockquote>
 	    <div class=forcode>
@@ -54,7 +54,7 @@
 		</div>
       </blockquote>
       <p>
-        Mais nous voulons exécuter le circuit en utilisant <tt><b>query.circ</b></tt> plutôt que <tt><b>master.circ</b></tt> comme bibliothèque chargée. Une approche naïve serait d'ouvrir Logisim et de charger adder-query.circ à la place de adder-master.circ ou encore vous pouvez simplement supprimer le fichier <tt><b>master.circ</b></tt> et renommer <tt><b>query.circ</b></tt> pour qu'il s'appelle <tt><b>master.circ</b></tt> . Ces deux approches fonctionnent, mais demandent beaucoup de manipulation pour tester les devoirs d'une classe par exemple. Heureusement Logisim inclut une option pratique <b class=porpertie><tt>-sub</tt></b> qui remplace temporairement un fichier par un autre pendant cette session; sans apporter de modifications sur le disque.
+        Mais nous voulons exécuter le circuit en utilisant <tt><b>query.circ</b></tt> plutôt que <tt><b>master.circ</b></tt> comme bibliothèque chargée. Une approche naïve serait d'ouvrir Logisim et de charger adder-query.circ à la place de adder-master.circ ou encore vous pouvez simplement supprimer le fichier <tt><b>master.circ</b></tt> et renommer <tt><b>query.circ</b></tt> pour qu'il s'appelle <tt><b>master.circ</b></tt> . Ces deux approches fonctionnent, mais demandent beaucoup de manipulation pour tester les devoirs d'une classe par exemple. Heureusement Logisim inclut une option pratique <b class=porpertie>-sub</b> qui remplace temporairement un fichier par un autre pendant cette session; sans apporter de modifications sur le disque.
       </p>
       <blockquote>
 	   <div class=forcode>
@@ -62,7 +62,8 @@
 		</div>
       </blockquote>
       <p>
-        Le fichier de sortie qui sera généré de cette façon est présenté ci-dessous. Il est bien sûr différent de ce que nous avons vu dans <a href="index.html">la section précédente</a> , car la librairie commune aux circuits <tt>adder2</tt> a été remplacée dans le circuit de test par celle de <tt>query.circ</tt> erroné.
+        Le fichier de sortie qui sera généré de cette façon est présenté ci-dessous. Il est bien sûr différent de ce que nous avons vu dans <a href="index.html">la section précédente</a> , car la librairie commune aux circuits <tt><b>adder2</b></tt> a été remplacée dans le circuit de test par celle de <tt><b>query.circ</b></tt> erronée.
+		
       </p>
       <blockquote>
         <pre>00      00      0E0
