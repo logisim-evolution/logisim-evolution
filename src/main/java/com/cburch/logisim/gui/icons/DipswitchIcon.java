@@ -33,12 +33,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class DipswitchIcon extends AnnimatedIcon {
+public class DipswitchIcon extends AnimatedIcon {
 
   private int state = 0;
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) & 3;
   }
 

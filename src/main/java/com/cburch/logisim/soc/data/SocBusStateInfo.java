@@ -110,14 +110,14 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
 	private static final int NR_OF_TRACES_TO_KEEP = 10000;
     private final LinkedList<SocBusTransaction> trace;
     private long startTraceIndex;
-    private final SocBusStateInfo parrent;
+    private final SocBusStateInfo parent;
     private final Instance instance;
     private final ArrayList<SocBusStateListener> listeners;
     
-    public SocBusState(SocBusStateInfo parrent, Instance instance) {
+    public SocBusState(SocBusStateInfo parent, Instance instance) {
       trace = new LinkedList<>();
       startTraceIndex = 0;
-      this.parrent = parrent;
+      this.parent = parent;
       this.instance = instance;
       SocBus.MENU_PROVIDER.registerBusState(this, instance);
       listeners = new ArrayList<>();
@@ -181,8 +181,8 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
 
     @Override
     public void destroy() {
-      if (parrent != null && parrent.isVisible())
-        parrent.setVisible(false);
+      if (parent != null && parent.isVisible())
+        parent.setVisible(false);
       SocBus.MENU_PROVIDER.deregisterBusState(this, instance);
     }
   }
