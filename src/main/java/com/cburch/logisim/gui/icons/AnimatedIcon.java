@@ -55,8 +55,8 @@ public abstract class AnimatedIcon implements Icon, AnimationListener {
     return AppPreferences.getScaled(v);
   }
 
-  public void registerParrent(Component parrent) {
-    Frame.ANIMATIONICONTIMER.addParrent(parrent);
+  public void registerParent(Component parent) {
+    Frame.ANIMATIONICONTIMER.addParent(parent);
   }
 
   @Override

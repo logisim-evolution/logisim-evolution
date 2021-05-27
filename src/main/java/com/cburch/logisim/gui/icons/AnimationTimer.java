@@ -39,12 +39,12 @@ import java.util.TimerTask;
 public class AnimationTimer extends TimerTask implements PropertyChangeListener {
 
   private final List<AnimationListener> listeners;
-  private final ArrayList<Component> parrents;
+  private final ArrayList<Component> parents;
   private boolean animate;
 
   public AnimationTimer() {
     listeners = new ArrayList<>();
-    parrents = new ArrayList<>();
+    parents = new ArrayList<>();
     animate = AppPreferences.ANIMATED_ICONS.getBoolean();
     AppPreferences.ANIMATED_ICONS.addPropertyChangeListener(this);
   }
@@ -58,19 +58,19 @@ public class AnimationTimer extends TimerTask implements PropertyChangeListener 
     listeners.remove(l);
   }
 
-  public void addParrent(Component parrent) {
-    if (!parrents.contains(parrent)) parrents.add(parrent);
+  public void addParent(Component parent) {
+    if (!parents.contains(parent)) parents.add(parent);
   }
 
-  public void removeParrent(Component parrent) {
-    parrents.remove(parrent);
+  public void removeParent(Component parent) {
+    parents.remove(parent);
   }
 
   @Override
   public void run() {
     if (!animate) return;
     for (AnimationListener l : listeners) l.animationUpdate();
-    for (Component c : parrents) c.repaint();
+    for (Component c : parents) c.repaint();
   }
 
   @Override
@@ -79,7 +79,7 @@ public class AnimationTimer extends TimerTask implements PropertyChangeListener 
     animate = AppPreferences.ANIMATED_ICONS.getBoolean();
     if (lastanimate && !animate) {
       for (AnimationListener l : listeners) l.resetToStatic();
-      for (Component c : parrents) c.repaint();
+      for (Component c : parents) c.repaint();
     }
   }
 

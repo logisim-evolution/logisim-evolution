@@ -139,8 +139,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     WarningsWindow.setSize(new Dimension(740, 400));
     WarningsWindow.addWindowListener(this);
     WarningsWindow.getListObject().addMouseListener(this);
-    Frame.ANIMATIONICONTIMER.addParrent(panelWarnings);
-    Frame.ANIMATIONICONTIMER.addParrent(WarningsWindow);
+    Frame.ANIMATIONICONTIMER.addParent(panelWarnings);
+    Frame.ANIMATIONICONTIMER.addParent(WarningsWindow);
 
     /* here we setup the Error window */
     ErrorsList = new FPGACommanderListModel(false);
@@ -167,8 +167,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     ErrorsWindow.addWindowListener(this);
     ErrorsWindow.setSize(new Dimension(740, 400));
     ErrorsWindow.getListObject().addMouseListener(this);
-    Frame.ANIMATIONICONTIMER.addParrent(panelErrors);
-    Frame.ANIMATIONICONTIMER.addParrent(ErrorsWindow);
+    Frame.ANIMATIONICONTIMER.addParent(panelErrors);
+    Frame.ANIMATIONICONTIMER.addParent(ErrorsWindow);
 
     /* finally we define the console window */
     ConsoleMessages = new ArrayList<>();

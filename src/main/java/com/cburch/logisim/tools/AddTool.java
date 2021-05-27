@@ -164,13 +164,13 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
   }
   
   @Override
-  public void registerParrent(java.awt.Component parrent) {
+  public void registerParent(java.awt.Component parent) {
     ComponentFactory fac = getFactory();
     if (fac instanceof InstanceFactory) {
       InstanceFactory f = (InstanceFactory) fac;
       if (f.getIcon() instanceof AnimatedIcon) {
         AnimatedIcon i = (AnimatedIcon) f.getIcon();
-        i.registerParrent(parrent);
+        i.registerParent(parent);
       }
     }
   }

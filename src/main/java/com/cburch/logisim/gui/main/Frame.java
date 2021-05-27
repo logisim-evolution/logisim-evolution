@@ -402,7 +402,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         app.setCircuit(project, project.getCircuitState());
         mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
         appearance = app;
-        ANIMATIONICONTIMER.addParrent(toolbar);
+        ANIMATIONICONTIMER.addParent(toolbar);
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();

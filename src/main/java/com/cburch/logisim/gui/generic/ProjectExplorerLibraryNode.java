@@ -111,7 +111,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
       }
       if (tool instanceof AddTool) {
         AddTool a = (AddTool) tool;
-        a.registerParrent(guiElement);
+        a.registerParent(guiElement);
       }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
 
