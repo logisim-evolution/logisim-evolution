@@ -28,13 +28,13 @@
 
 package com.cburch.draw.icons;
 
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.gui.icons.AnimatedIcon;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class DrawCurveIcon extends AnnimatedIcon {
+public class DrawCurveIcon extends AnimatedIcon {
 
   private int states = 5;
 
@@ -73,7 +73,7 @@ public class DrawCurveIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     states++;
     states %= 6;
   }

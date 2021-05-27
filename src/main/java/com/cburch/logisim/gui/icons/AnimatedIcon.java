@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.gui.icons;
 
-import com.cburch.logisim.gui.icons.AnnimationTimer.AnnimationListener;
+import com.cburch.logisim.gui.icons.AnimationTimer.AnimationListener;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
@@ -37,10 +37,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
 
-public abstract class AnnimatedIcon implements Icon, AnnimationListener {
+public abstract class AnimatedIcon implements Icon, AnimationListener {
 
-  public AnnimatedIcon() {
-    Frame.ANNIMATIONICONTIMER.registerListener(this);
+  public AnimatedIcon() {
+    Frame.ANIMATIONICONTIMER.registerListener(this);
   }
 
   public static int scale(int v) {
@@ -56,7 +56,7 @@ public abstract class AnnimatedIcon implements Icon, AnnimationListener {
   }
 
   public void registerParrent(Component parrent) {
-    Frame.ANNIMATIONICONTIMER.addParrent(parrent);
+    Frame.ANIMATIONICONTIMER.addParrent(parrent);
   }
 
   @Override

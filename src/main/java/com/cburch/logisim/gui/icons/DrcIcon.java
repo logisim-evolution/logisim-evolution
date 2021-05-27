@@ -34,7 +34,7 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
 
-public class DrcIcon extends AnnimatedIcon {
+public class DrcIcon extends AnimatedIcon {
 
   public final boolean empty;
   public int state = -1;
@@ -44,7 +44,7 @@ public class DrcIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) & 3;
   }
 
