@@ -188,6 +188,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (!shift) end = pos;
   }
 
+  @SuppressWarnings("fallthrough")
   protected void controlKeyPressed(KeyEvent e, boolean shift) {
     boolean cut = false;
     switch (e.getKeyCode()) {

@@ -35,7 +35,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class ButtonIcon extends AnnimatedIcon {
+public class ButtonIcon extends AnimatedIcon {
 
   private int state = 0;
   private int index = 0;
@@ -49,7 +49,7 @@ public class ButtonIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) & 3;
     if (name != null) {
       index = (index + 1) % name.toString().length();

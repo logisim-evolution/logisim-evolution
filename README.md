@@ -1,9 +1,9 @@
 Logisim-evolution
 =================
 
-Branch [`master`](https://github.com/reds-heig/logisim-evolution/tree/master): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution) ![GitHub Actions](https://github.com/reds-heig/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)
+Branch [`master`](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
 
-Branch [`develop`](https://github.com/reds-heig/logisim-evolution/tree/develop): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=develop)](https://travis-ci.org/reds-heig/logisim-evolution) ![GitHub Actions](https://github.com/reds-heig/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=develop)
+Branch [`develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
 
 Logisim is an educational tool for designing and simulating digital logic circuits. It was originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011. After this date, the author focused on other projects and the development has been [officially stopped](http://www.cburch.com/logisim/retire-note.html).
 
@@ -37,7 +37,7 @@ Logisim supports many languages. Many of them were automatically translated usin
 
 ## Running Logisim-evolution
 
-You can find compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases). Starting with version 3.4.1, the following compiled versions are [available](https://github.com/reds-heig/logisim-evolution/releases):
+You can find compiled versions of the code [here](https://github.com/logisim-evolution/logisim-evolution/releases). Starting with version 3.4.1, the following compiled versions are [available](https://github.com/logisim-evolution/logisim-evolution/releases):
 
 * `logisim-evolution_<version>-1_amd64.deb`: Self-contained package for Debian-based Linux distributions (e.g., also Ubuntu).
 * `logisim-evolution_<version>-1.x86_64.rpm`: Self-contained package for Fedora/Redhat/CentOS/SuSE Linux distributions.
@@ -91,9 +91,9 @@ Building cross-platform installers is not supported by Java's `jpackage` facilit
 
 ## Testing Logisim-evolution
 
-As Logisim-evolution is often updated, the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop), was created. The goal of this branch is to add new features/patches without affecting the stable release on [branch `master`](https://github.com/reds-heig/logisim-evolution/tree/master). Users who are willing to test new features should checkout the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop) and build Logisim-evolution from source as described above. Feedback from users is really appreciated, as it makes Logisim-evolution better.
+As Logisim-evolution is often updated, the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop), was created. The goal of this branch is to add new features/patches without affecting the stable release on [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master). Users who are willing to test new features should checkout the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) and build Logisim-evolution from source as described above. Feedback from users is really appreciated, as it makes Logisim-evolution better.
 
-**Feel free to use the [Issues tab](https://github.com/reds-heig/logisim-evolution/issues) to report bugs and suggest features!**
+**Feel free to use the [Issues tab](https://github.com/logisim-evolution/logisim-evolution/issues) to report bugs and suggest features!**
 
 
 ## Contributing to Logisim-evolution
@@ -111,7 +111,7 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 * Click on *compare across forks*.
 * On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right hand side select your branch, for example: *base: bugfixes*
-* On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop) as the [branch `master`](https://github.com/reds-heig/logisim-evolution/tree/master) only holds the code of the latest stable release!)
+* On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code of the latest stable release!)
 * Make sure that there are no conflicts reported.
 
 
@@ -157,7 +157,7 @@ Logisim-evolution is continuously growing and we have several ideas, which we wo
 
 Unfortunately, we do not have enough resources to provide direct support for Logisim-evolution. However, we will try to deal with the raised issues in a *best-effort* manner.
 
-**If you find a bug or have an idea for an interesting feature, please do not hesitate to [open a ticket](https://github.com/reds-heig/logisim-evolution/issues)!**
+**If you find a bug or have an idea for an interesting feature, please do not hesitate to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues)!**
 
 
 ## License

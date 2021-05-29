@@ -36,41 +36,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
-public class AnnimationTimer extends TimerTask implements PropertyChangeListener {
+public class AnimationTimer extends TimerTask implements PropertyChangeListener {
 
-  private final List<AnnimationListener> listeners;
-  private final ArrayList<Component> parrents;
+  private final List<AnimationListener> listeners;
+  private final ArrayList<Component> parents;
   private boolean animate;
 
-  public AnnimationTimer() {
+  public AnimationTimer() {
     listeners = new ArrayList<>();
-    parrents = new ArrayList<>();
+    parents = new ArrayList<>();
     animate = AppPreferences.ANIMATED_ICONS.getBoolean();
     AppPreferences.ANIMATED_ICONS.addPropertyChangeListener(this);
   }
 
-  public void registerListener(AnnimationListener l) {
+  public void registerListener(AnimationListener l) {
     if (l != null) listeners.add(l);
   }
 
-  public void removeListener(AnnimationListener l) {
+  public void removeListener(AnimationListener l) {
     if (l == null) return;
     listeners.remove(l);
   }
 
-  public void addParrent(Component parrent) {
-    if (!parrents.contains(parrent)) parrents.add(parrent);
+  public void addParent(Component parent) {
+    if (!parents.contains(parent)) parents.add(parent);
   }
 
-  public void removeParrent(Component parrent) {
-    parrents.remove(parrent);
+  public void removeParent(Component parent) {
+    parents.remove(parent);
   }
 
   @Override
   public void run() {
     if (!animate) return;
-    for (AnnimationListener l : listeners) l.annimationUpdate();
-    for (Component c : parrents) c.repaint();
+    for (AnimationListener l : listeners) l.animationUpdate();
+    for (Component c : parents) c.repaint();
   }
 
   @Override
@@ -78,13 +78,13 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
     boolean lastanimate = animate;
     animate = AppPreferences.ANIMATED_ICONS.getBoolean();
     if (lastanimate && !animate) {
-      for (AnnimationListener l : listeners) l.resetToStatic();
-      for (Component c : parrents) c.repaint();
+      for (AnimationListener l : listeners) l.resetToStatic();
+      for (Component c : parents) c.repaint();
     }
   }
 
-  public interface AnnimationListener {
-    void annimationUpdate();
+  public interface AnimationListener {
+    void animationUpdate();
 
     void resetToStatic();
   }

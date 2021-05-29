@@ -91,12 +91,12 @@ public class TruthtableCsvFile {
     }
   }
 
-  public static void doLoad(File file, AnalyzerModel model, JFrame parrentFrame)
+  public static void doLoad(File file, AnalyzerModel model, JFrame parentFrame)
       throws IOException {
     CsvParameter param = new CsvParameter();
-    new CsvReadParameterDialog(param, file, parrentFrame);
+    new CsvReadParameterDialog(param, file, parentFrame);
     if (!param.isValid()) return;
-    CsvInterpretor cin = new CsvInterpretor(file, param, parrentFrame);
+    CsvInterpretor cin = new CsvInterpretor(file, param, parentFrame);
     cin.getTruthTable(model);
   }
 }

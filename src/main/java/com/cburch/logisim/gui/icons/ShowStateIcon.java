@@ -35,7 +35,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class ShowStateIcon extends AnnimatedIcon {
+public class ShowStateIcon extends AnimatedIcon {
 
   private final boolean pressed;
   private int state;
@@ -76,7 +76,7 @@ public class ShowStateIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) & 7;
   }
 

@@ -46,7 +46,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.gui.icons.AnimatedIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
@@ -164,13 +164,13 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
   }
   
   @Override
-  public void registerParrent(java.awt.Component parrent) {
+  public void registerParent(java.awt.Component parent) {
     ComponentFactory fac = getFactory();
     if (fac instanceof InstanceFactory) {
       InstanceFactory f = (InstanceFactory) fac;
-      if (f.getIcon() instanceof AnnimatedIcon) {
-        AnnimatedIcon i = (AnnimatedIcon) f.getIcon();
-        i.registerParrent(parrent);
+      if (f.getIcon() instanceof AnimatedIcon) {
+        AnimatedIcon i = (AnimatedIcon) f.getIcon();
+        i.registerParent(parent);
       }
     }
   }

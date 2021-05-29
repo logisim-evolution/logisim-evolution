@@ -34,12 +34,12 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ShifterIcon extends AnnimatedIcon {
+public class ShifterIcon extends AnimatedIcon {
 
   private int state = -1;
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state >>= 1;
     int val = ThreadLocalRandom.current().nextInt(0, 2) << 2;
     state = (state | val) & 7;

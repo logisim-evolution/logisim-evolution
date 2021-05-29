@@ -30,7 +30,6 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;

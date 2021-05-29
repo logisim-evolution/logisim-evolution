@@ -32,7 +32,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class LedMatrixIcon extends AnnimatedIcon {
+public class LedMatrixIcon extends AnimatedIcon {
 
   private double xDir = 0.7;
   private double yDir = 1;
@@ -40,7 +40,7 @@ public class LedMatrixIcon extends AnnimatedIcon {
   private double y = 1;
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     x += xDir;
     if (x < 0 || x > 3.5) {
       xDir = -xDir;

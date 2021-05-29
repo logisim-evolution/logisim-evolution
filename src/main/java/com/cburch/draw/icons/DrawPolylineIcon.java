@@ -28,14 +28,14 @@
 
 package com.cburch.draw.icons;
 
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.gui.icons.AnimatedIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class DrawPolylineIcon extends AnnimatedIcon {
+public class DrawPolylineIcon extends AnimatedIcon {
 
   private static final int[] points = {1, 14, 1, 1, 7, 8, 13, 4, 10, 13};
   private boolean closed = false;
@@ -67,7 +67,7 @@ public class DrawPolylineIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state++;
     if (state == 2) state++;
     state %= (points.length + 1);
