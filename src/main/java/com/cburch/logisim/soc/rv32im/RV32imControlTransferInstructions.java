@@ -145,6 +145,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return false;
   }
 
+  @SuppressWarnings("fallthrough")
   public String getAsmInstruction() {
     if (!valid)
       return null;
@@ -155,10 +156,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     switch (operation) {
       case INSTR_RET  : break;
       case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]).append(",");
+                        // fall through
       case INSTR_J    : s.append("pc");
                         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
                         break;
       case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]).append(",");
+                        // fall through
       case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
                         if (immediate != 0) s.append(",").append(immediate);
                         break;
@@ -167,12 +170,13 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
                         break;
       default         : s.append(RV32im_state.registerABINames[source2]).append(",")
-          .append(RV32im_state.registerABINames[source1]).append(",pc");
+                         .append(RV32im_state.registerABINames[source1]).append(",pc");
                         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
     }
     return s.toString();
   }
   
+  @SuppressWarnings("fallthrough")
   public String getAsmInstruction( String label ) {
     if (!valid)
       return null;
@@ -183,9 +187,11 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     switch (operation) {
       case INSTR_RET  : break;
       case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]).append(",");
+                        // fall through
       case INSTR_J    : s.append(label);
                         break;
       case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]).append(",");
+                        // fall through
       case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
                         if (immediate != 0) s.append(",").append(immediate);
                         break;

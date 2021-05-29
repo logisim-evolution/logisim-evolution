@@ -32,12 +32,12 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class JoystickIcon extends AnnimatedIcon {
+public class JoystickIcon extends AnimatedIcon {
 
   private int state = 0;
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) % 6;
   }
 

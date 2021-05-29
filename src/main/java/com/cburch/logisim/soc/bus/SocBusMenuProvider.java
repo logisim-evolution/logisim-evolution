@@ -100,8 +100,8 @@ public class SocBusMenuProvider implements ActionListener {
     }
   }
 
-  private void setParrentFrame(Instance inst, Frame frame) {
-    if (myInfo.containsKey(inst)) myInfo.get(inst).setParrentFrame(frame);
+  private void setParentFrame(Instance inst, Frame frame) {
+    if (myInfo.containsKey(inst)) myInfo.get(inst).setParentFrame(frame);
   }
 
   public void registerBusState(SocBusStateInfo.SocBusState state, Instance instance) {
@@ -184,14 +184,14 @@ public class SocBusMenuProvider implements ActionListener {
   private class MenuProvider implements MenuExtender, CircuitStateHolder {
 
     private final Instance instance;
-    private final SocBusMenuProvider parrent;
+    private final SocBusMenuProvider parent;
     SocBusStateInfo.SocBusState data;
     CircuitState circuitState;
     HierarchyInfo hierarchy;
 
-    public MenuProvider(Instance inst, SocBusMenuProvider parrent) {
+    public MenuProvider(Instance inst, SocBusMenuProvider parent) {
       this.instance = inst;
-      this.parrent = parrent;
+      this.parent = parent;
       circuitState = null;
       data = null;
       hierarchy = null;
@@ -199,7 +199,7 @@ public class SocBusMenuProvider implements ActionListener {
 
     @Override
     public void configureMenu(JPopupMenu menu, Project proj) {
-      setParrentFrame(instance, proj.getFrame());
+      setParentFrame(instance, proj.getFrame());
       String instName = instance.getAttributeValue(StdAttr.LABEL);
       if (instName == null || instName.isEmpty()) {
         Location loc = instance.getLocation();
@@ -214,7 +214,7 @@ public class SocBusMenuProvider implements ActionListener {
           circuitState != null ? instName + " : " + S.get("SocBusMemMap") : S.get("SocBusMemMap");
       menu.addSeparator();
       InstanceMenuItem memMap = new InstanceMenuItem(instance, name, SHOW_MEMORY_MAP);
-      memMap.addActionListener(parrent);
+      memMap.addActionListener(parent);
       memMap.setEnabled(true);
       menu.add(memMap);
       InstanceMenuItem insertTrans;
@@ -229,14 +229,14 @@ public class SocBusMenuProvider implements ActionListener {
         insertTrans =
             new InstanceMenuItem(instance, name, INSERT_TRANSACTION, circuitState, data, hierarchy);
       }
-      insertTrans.addActionListener(parrent);
+      insertTrans.addActionListener(parent);
       insertTrans.setEnabled(true);
       menu.add(insertTrans);
       if (circuitState != null) {
         name = instName + " : " + S.get("SocBusTraceWindow");
         InstanceMenuItem traceWin =
             new InstanceMenuItem(instance, name, SHOW_TRACES, data, hierarchy);
-        traceWin.addActionListener(parrent);
+        traceWin.addActionListener(parent);
         traceWin.setEnabled(true);
         menu.add(traceWin);
       }
@@ -260,12 +260,12 @@ public class SocBusMenuProvider implements ActionListener {
         myTraceList;
     private final HashMap<SocBusStateInfo.SocBusState, BusTransactionInsertionGui>
         myInsertionFrames;
-    private Frame parrentFrame;
+    private Frame parentFrame;
     private TraceWindowTableModel traceModel;
     private ListeningFrame myTraceFrame;
 
-    public InstanceInformation(Instance inst, SocBusMenuProvider parrent) {
-      parrentFrame = null;
+    public InstanceInformation(Instance inst, SocBusMenuProvider parent) {
+      parentFrame = null;
       myTraceFrame = null;
       traceModel = null;
       myTraceList = new HashMap<>();
@@ -275,7 +275,7 @@ public class SocBusMenuProvider implements ActionListener {
     public void showMemoryMap(Instance instance) {
       SocBusInfo info = instance.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
       SocBusStateInfo state = info.getSocSimulationManager().getSocBusState(info.getBusId());
-      if (parrentFrame != null) parrentFrame.addWindowListener(state);
+      if (parentFrame != null) parentFrame.addWindowListener(state);
       state.setVisible(true);
     }
 
@@ -293,7 +293,7 @@ public class SocBusMenuProvider implements ActionListener {
                 .getSocSimulationManager()
                 .getSocBusState(id);
         BusTransactionInsertionGui gui = new BusTransactionInsertionGui(busInfo, id, circuitState);
-        parrentFrame.addWindowListener(gui);
+        parentFrame.addWindowListener(gui);
         gui.setTitle(S.get("SocInsertTransWindowTitle") + " " + name);
         myInsertionFrames.put(state, gui);
       }
@@ -365,8 +365,8 @@ public class SocBusMenuProvider implements ActionListener {
       }
     }
 
-    public void setParrentFrame(Frame frame) {
-      parrentFrame = frame;
+    public void setParentFrame(Frame frame) {
+      parentFrame = frame;
     }
 
     public void registerBusState(SocBusStateInfo.SocBusState state) {

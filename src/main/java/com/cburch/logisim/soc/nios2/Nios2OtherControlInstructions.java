@@ -145,6 +145,7 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
 
   public int getBinInstruction() { return instruction; }
 
+  @SuppressWarnings("fallthrough")
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
     if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
@@ -172,7 +173,8 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
                              instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedZeroOrOneArgument"));
                            }
                            break;
-      case INSTR_WRCTL   : first = 1; 
+      case INSTR_WRCTL   : first = 1;
+                           // fall through 
       case INSTR_RDCTL   : if (instr.getNrOfParameters() != 2) {
     	                     valid = false;
     	                     instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedTwoArguments"));

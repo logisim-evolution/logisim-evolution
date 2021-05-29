@@ -53,6 +53,7 @@ public class SimulationIcon extends AbstractIcon {
   }
 
   @Override
+  @SuppressWarnings("fallthrough")
   protected void paintIcon(Graphics2D g2) {
     int wh = getIconWidth() - scale(1);
     g2.setStroke(new BasicStroke(scale(1)));
@@ -77,6 +78,7 @@ public class SimulationIcon extends AbstractIcon {
         g2.fillRect(scale(10), scale(3), scale(1), scale(10));
         g2.setColor(Color.GREEN.darker());
         g2.drawRect(scale(10), scale(3), scale(1), scale(10));
+        // fall through
       case SIM_PLAY:
         int[] xpos = {scale(6), scale(10), scale(6)};
         int[] ypos = {scale(3), scale(8), scale(13)};
@@ -101,6 +103,7 @@ public class SimulationIcon extends AbstractIcon {
         int[] y1 = {(wh) / 4, (wh) / 4, (wh) / 4 - scale(4)};
         g2.fillPolygon(x1, y1, 3);
         g2.drawPolygon(x1, y1, 3);
+        // fall through
       case SIM_HALF_TICK:
         g2.setStroke(new BasicStroke(scale(2)));
         g2.setColor(Color.MAGENTA);

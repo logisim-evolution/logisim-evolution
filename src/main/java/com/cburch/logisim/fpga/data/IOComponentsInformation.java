@@ -51,8 +51,8 @@ public class IOComponentsInformation {
   private FPGAIOInformationContainer highlighted;
   private ArrayList<IOComponentsListener> listeners;
 
-  public IOComponentsInformation(Frame parrentFrame, boolean mapMode) {
-    parent = parrentFrame;
+  public IOComponentsInformation(Frame parentFrame, boolean mapMode) {
+    parent = parentFrame;
     imageHeight = mapMode ? BoardManipulator.IMAGE_HEIGHT+BoardManipulator.CONSTANT_BAR_HEIGHT : BoardManipulator.IMAGE_HEIGHT;
     IOcomps = new ArrayList<>();
     lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];

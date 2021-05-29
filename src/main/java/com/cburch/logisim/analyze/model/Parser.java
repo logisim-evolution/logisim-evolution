@@ -70,7 +70,6 @@ public class Parser {
       this(type, offset, text.length(), text, precedence);
     }
 
-    @SuppressWarnings("unused")
     ParserException error(StringGetter message) {
       return new ParserException(message, offset, length);
     }

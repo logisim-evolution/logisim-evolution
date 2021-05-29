@@ -33,7 +33,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class LEDIcon extends AnnimatedIcon {
+public class LEDIcon extends AnimatedIcon {
 
   private final boolean isRGB;
   private int showstate;
@@ -66,7 +66,7 @@ public class LEDIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     showstate++;
     showstate %= isRGB ? 8 : 2;
   }

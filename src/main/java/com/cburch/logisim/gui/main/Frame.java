@@ -53,7 +53,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
-import com.cburch.logisim.gui.icons.AnnimationTimer;
+import com.cburch.logisim.gui.icons.AnimationTimer;
 import com.cburch.logisim.gui.menu.MainMenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -96,7 +96,7 @@ import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
 
-  public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
+  public static final AnimationTimer ANIMATIONICONTIMER = new AnimationTimer();
   public static final String EDITOR_VIEW = "editorView";
   public static final String EXPLORER_VIEW = "explorerView";
   public static final String EDIT_LAYOUT = "layout";
@@ -257,7 +257,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
     try {
-      timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
+      timer.schedule(ANIMATIONICONTIMER, 1000, 500);
     } catch (IllegalStateException e) {
       /* just continue, the timer was already running */
     }
@@ -402,7 +402,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         app.setCircuit(project, project.getCircuitState());
         mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
         appearance = app;
-        ANNIMATIONICONTIMER.addParrent(toolbar);
+        ANIMATIONICONTIMER.addParent(toolbar);
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();

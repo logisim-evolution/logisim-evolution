@@ -287,9 +287,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                           OneLine.toString()+
                           HDL.assignOperator()+
                           BusName+
-                          TheNets.GetNetId(Source.GetParrentNet())+
+                          TheNets.GetNetId(Source.GetParentNet())+
                           HDL.BracketOpen()+
-                          Source.GetParrentNetBitIndex()+
+                          Source.GetParentNetBitIndex()+
                           HDL.BracketClose()+";";
             if (!Contents.contains(line)) Contents.add(line);
           }
@@ -298,9 +298,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             OneLine.setLength(0);
             OneLine.append(
                 BusName
-                    + TheNets.GetNetId(Source.GetParrentNet())
+                    + TheNets.GetNetId(Source.GetParentNet())
                     + HDL.BracketOpen()
-                    + Source.GetParrentNetBitIndex()
+                    + Source.GetParentNetBitIndex()
                     + HDL.BracketClose());
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
@@ -801,7 +801,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       /* First we check if the bus has a connection */
       boolean Connected = false;
       for (int i = 0; i < NrOfBits; i++) {
-        if (ConnectionInformation.GetConnection((byte) i).GetParrentNet() != null) {
+        if (ConnectionInformation.GetConnection((byte) i).GetParentNet() != null) {
           Connected = true;
         }
       }
@@ -856,7 +856,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Destination.append(PortName + HDL.BracketOpen() + bit + HDL.BracketClose());
             }
             ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) bit);
-            if (SolderPoint.GetParrentNet() == null) {
+            if (SolderPoint.GetParentNet() == null) {
               /* The net is not connected */
               if (IsOutput) {
                 continue;
@@ -872,28 +872,28 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                * The net is connected, we have to find out if the
                * connection is to a bus or to a normal net
                */
-              if (SolderPoint.GetParrentNet().BitWidth() == 1) {
+              if (SolderPoint.GetParentNet().BitWidth() == 1) {
                 /* The connection is to a Net */
                 if (IsOutput) {
-                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
                 } else {
-                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParrentNet()));
+                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (IsOutput) {
                   Destination.append(
                       BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
+                          + TheNets.GetNetId(SolderPoint.GetParentNet())
                           + HDL.BracketOpen()
-                          + SolderPoint.GetParrentNetBitIndex()
+                          + SolderPoint.GetParentNetBitIndex()
                           + HDL.BracketClose());
                 } else {
                   Source.append(
                       BusName
-                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
+                          + TheNets.GetNetId(SolderPoint.GetParentNet())
                           + HDL.BracketOpen()
-                          + SolderPoint.GetParrentNetBitIndex()
+                          + SolderPoint.GetParentNetBitIndex()
                           + HDL.BracketClose());
                 }
               }

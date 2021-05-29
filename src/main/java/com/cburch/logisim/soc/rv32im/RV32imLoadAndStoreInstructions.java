@@ -74,6 +74,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return opcodes;
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
@@ -85,8 +86,10 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     switch (operation) {
       case INSTR_SB : toBeStored &= 0xFF;
                       transType = SocBusTransaction.ByteAccess;
+                      // fall through
       case INSTR_SH : toBeStored &= 0xFFFF;
                       if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
+                      // fall through
       case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
                           ElfHeader.getIntValue(address),toBeStored,transType,
@@ -95,8 +98,10 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
                       return !transactionHasError(trans);
       case INSTR_LB :
       case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
+                      // fall through
       case INSTR_LH :
       case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
+                      // fall through
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
                           ElfHeader.getIntValue(address),0,transType,cpuState.getMasterComponent());

@@ -107,6 +107,7 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     }
   }
   
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState; 
@@ -115,24 +116,30 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     int imm = OpxCodes.get(operation) != SIGN_EXTEND ? immediate&0xFFFF : ((immediate << 16) >> 16);
     int result = 0;
     switch (operation) {
-      case INSTR_CMPEQI  : valueB = imm; 
+      case INSTR_CMPEQI  : valueB = imm;
+                           // fall through
       case INSTR_CMPEQ   : result = (valueA == valueB) ? 1 : 0;
                            break;
       case INSTR_CMPNEI  : valueB = imm;
+                           // fall through
       case INSTR_CMPNE   : result = (valueA != valueB) ? 1 : 0;
                            break;
       case INSTR_CMPGEI  : valueB = imm;
+                           // fall through
       case INSTR_CMPGE   : result = (valueA >= valueB) ? 1 : 0;
                            break;
       case INSTR_CMPGEUI : valueB = imm;
+                           // fall through
       case INSTR_CMPGEU  : long opA = SocSupport.convUnsignedInt(valueA);
                            long opB = SocSupport.convUnsignedInt(valueB);
                            result = (opA >= opB) ? 1 : 0;
                            break;
       case INSTR_CMPLTI  : valueB = imm;
+                           // fall through
       case INSTR_CMPLT   : result = (valueA < valueB) ? 1 : 0;
                            break;
       case INSTR_CMPLTUI : valueB = imm;
+                           // fall through
       case INSTR_CMPLTU  : opA = SocSupport.convUnsignedInt(valueA);
                            opB = SocSupport.convUnsignedInt(valueB);
                            result = (opA < opB) ? 1 : 0;
