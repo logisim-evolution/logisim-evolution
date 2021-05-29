@@ -41,11 +41,13 @@
 		<tocitem target="mem_guide" text="Speicherbauelemente">
 			<tocitem target="mem_poke" text="Speicherinhalte bearbeiten" />
 			<tocitem target="mem_menu" text="Kontextmenüs und Dateien" />
-			<tocitem target="mem_filetabel" text="Memory file panel"/>
+			<tocitem target="mem_filetabel" text="Speicherdatei-Panel"/>
 			<tocitem target="mem_hex" text="Hex-Editor" />
-			<tocitem target="mem_v2raw" text="File v2raw" />
-			<tocitem target="mem_v3word" text="File v3word"/>
-			<tocitem target="mem_v3byte" text="File v3byte"/>
+			<tocitem target="mem_v2raw" text="v2raw-Date" />
+			<tocitem target="mem_v3word" text="v3word-Date"/>
+			<tocitem target="mem_v3byte" text="v3byte-Date"/>
+			<tocitem target="mem_binary" text="Binärdatei"/>
+			<tocitem target="mem_ascii" text="ascii-Datei"/>
 		</tocitem>
 		<tocitem target="analyze" text="Kombinatorik">
 			<tocitem target="analyze_open" text="Starten der Kombinatorik" />
