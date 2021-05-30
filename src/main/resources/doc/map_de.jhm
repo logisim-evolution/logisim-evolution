@@ -44,7 +44,9 @@
     <mapID target="mem_hex"             url="de/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="de/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="de/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="de/html/guide/mem/mem-v3byte.html"/> 
+    <mapID target="mem_v3byte"          url="de/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_binary"          url="de/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="de/html/guide/mem/mem-vascii.html"/>
 	<mapID target="analyze"             url="de/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="de/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="de/html/guide/analyze/ana-table.html" />

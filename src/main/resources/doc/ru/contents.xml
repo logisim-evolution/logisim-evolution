@@ -42,9 +42,11 @@
 			<tocitem target="mem_poke" text="Нажатие на память" />
 			<tocitem target="mem_menu" text="Всплывающие меню и файлы" />
 			<tocitem target="mem_hex" text="Шестнадцатеричный редактор" />
-			<tocitem target="mem_v2raw" text="File v2raw" />
-			<tocitem target="mem_v3word" text="File v3word"/>
-			<tocitem target="mem_v3byte" text="File v3byte"/>
+			<tocitem target="mem_v2raw" text="Файл v2raw" />
+			<tocitem target="mem_v3word" text="Файл v3word"/>
+			<tocitem target="mem_v3byte" text="Файл v3byte"/>
+			<tocitem target="mem_binary" text="Файл двоичный"/>
+			<tocitem target="mem_ascii" text="Файл ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Комбинационный анализ">
 			<tocitem target="analyze_open" text="Открытие окна Комбинационный анализ" />
@@ -55,8 +57,6 @@
 		<tocitem target="log" text="Запись в журнал">
 			<tocitem target="log_selection" text="Вкладка Выбор" />
 			<tocitem target="log_timetable" text="Timetable window" />
-<!--			<tocitem target="log_table" text="Вкладка Таблица" />
-				<tocitem target="log_file" text="Вкладка Файл" /> -->
 		</tocitem>
 		<tocitem target="verify" text="Проверка из командной строки">
 			<tocitem target="verify_sub" text="Подстановка библиотек" />

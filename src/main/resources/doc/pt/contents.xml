@@ -42,9 +42,11 @@
 			<tocitem target="mem_poke" text="Para testar memória" />
 			<tocitem target="mem_menu" text="Menus pop-up e arquivos" />
 			<tocitem target="mem_hex" text="Editor hexadecimal" />
-			<tocitem target="mem_v2raw" text="File v2raw" />
-			<tocitem target="mem_v3word" text="File v3word"/>
-			<tocitem target="mem_v3byte" text="File v3byte"/>
+			<tocitem target="mem_v2raw" text="Arquivo v2raw" />
+			<tocitem target="mem_v3word" text="Arquivo v3word"/>
+			<tocitem target="mem_v3byte" text="Arquivo v3byte"/>
+			<tocitem target="mem_binary" text="Arquivo binário"/>
+			<tocitem target="mem_ascii" text="Arquivo ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Análise combinacional">
 			<tocitem target="analyze_open" text="Para abrir a Análise Combinacional" />
@@ -55,8 +57,6 @@
 		<tocitem target="log" text="Registro">
 			<tocitem target="log_selection" text="A aba Seleção" />
 			<tocitem target="log_timetable" text="Timetable window" />
-<!--			<tocitem target="log_table" text="A aba Tabela" />
-			<tocitem target="log_file" text="A aba Arquivo" />  -->
 		</tocitem>
 		<tocitem target="verify" text="Verificação por linha de comando">
 			<tocitem target="verify_sub" text="Para substituir bibliotecas" />
