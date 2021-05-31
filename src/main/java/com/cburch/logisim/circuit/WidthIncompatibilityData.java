@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,12 +33,12 @@ import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
 
 public class WidthIncompatibilityData {
-  private ArrayList<Location> points;
-  private ArrayList<BitWidth> widths;
+  private final ArrayList<Location> points;
+  private final ArrayList<BitWidth> widths;
 
   public WidthIncompatibilityData() {
-    points = new ArrayList<Location>();
-    widths = new ArrayList<BitWidth>();
+    points = new ArrayList<>();
+    widths = new ArrayList<>();
   }
 
   public void add(Location p, BitWidth w) {
@@ -82,7 +82,7 @@ public class WidthIncompatibilityData {
   }
 
   public BitWidth getCommonBitWidth() {
-    int hist[] = new int[65];
+    int[] hist = new int[65];
     BitWidth maxwidth = null;
     int maxcount = 0;
     for (BitWidth bw : widths) {

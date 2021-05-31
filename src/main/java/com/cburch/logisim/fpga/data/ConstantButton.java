@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,12 +30,10 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.awt.Graphics2D;
-
-import javax.swing.JPanel;
-
 import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.gui.generic.OptionPane;
+import java.awt.Graphics2D;
+import javax.swing.JPanel;
 
 public class ConstantButton extends FPGAIOInformationContainer {
 
@@ -49,7 +47,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
   public static final ConstantButton VALUE_BUTTON = new ConstantButton(CONSTANT_VALUE);
   public static final ConstantButton OPEN_BUTTON = new ConstantButton(LEAVE_OPEN);
    
-  private int myType;
+  private final int myType;
   
   public ConstantButton(int type) {
     super();
@@ -72,7 +70,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
   }
   
   private boolean getConstant(int pin, MapComponent map) {
-    Long v = 0L;
+    long v = 0L;
     boolean correct;
     do {
       correct = true;

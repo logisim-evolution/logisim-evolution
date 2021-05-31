@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,19 +29,6 @@
 package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.swing.JPanel;
-
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
@@ -72,29 +59,39 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.HashMap;
+import java.util.LinkedList;
+import javax.swing.JPanel;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 public class RV32im_state implements SocUpSimulationStateListener,SocProcessorInterface {
 
   public class ProcessorState extends JPanel implements InstanceData,Cloneable,ComponentDataGuiProvider,
                                                         WindowListener,SocUpStateInterface {
     private static final long serialVersionUID = 1L;
-    private int[] registers;
-    private Boolean[] registers_valid;
+    private final int[] registers;
+    private final Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
-    private LinkedList<TraceInfo> instrTrace;
+    private final LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
-    private SocUpSimulationState simState;
-    private Instance myInstance;
+    private final SocUpSimulationState simState;
+    private final Instance myInstance;
     private boolean visible;
     private Integer entryPoint;
     private boolean programLoaded;
-    private BreakpointPanel bPanel;
+    private final BreakpointPanel bPanel;
     
     public ProcessorState(Instance inst) {
       registers = new int[32];
       registers_valid = new Boolean[32];
-      instrTrace = new LinkedList<TraceInfo>();
+      instrTrace = new LinkedList<>();
       lastClock = Value.createUnknown(BitWidth.ONE);
       simState = new SocUpSimulationState();
       myInstance = inst;
@@ -121,7 +118,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
-        bPanel.loadProgram(state, myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE), progInfo, sectInfo, ASSEMBLER);;
+        bPanel.loadProgram(state, myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE), progInfo, sectInfo, ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
       for (int i = 0 ; i < 31 ; i++)
@@ -155,7 +152,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     }
       
     public void setProgramCounter(int value) {
-      /* TODO: check for misalligned exception */
+      /* TODO: check for misaligned exception */
       pc = value;
     }
       
@@ -240,10 +237,10 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       }
       TraceInfo trace = new TraceInfo(pc,instruction,exe.getAsmInstruction(),false);
       if (!exe.execute(this,cState)) {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
-          s.append("\n"+exe.getErrorMessage());
+          s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(null,s.toString(),
               SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
@@ -303,10 +300,10 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   private int exceptionVector;
   private int nrOfIrqs;
   private String label;
-  private SocBusInfo attachedBus;
+  private final SocBusInfo attachedBus;
   
   public static final AssemblerInterface ASSEMBLER = new RV32imAssembler(); 
-  public static String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
+  public static final String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
                                               "s0","s1","a0","a1","a2","a3","a4","a5",
                                               "a6","a7","s2","s3","s4","s5","s6","s7","s8","s9",
                                               "s10","s11","t3","t4","t5","t6"};

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,12 +28,11 @@
 
 package com.cburch.logisim.analyze.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.gui.menu.PrintHandler;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AnalyzerMenuListener extends MenuListener {
 
@@ -58,7 +57,7 @@ public class AnalyzerMenuListener extends MenuListener {
     }
   }
 
-  private FileListener fileListener = new FileListener();
+  private final FileListener fileListener = new FileListener();
   private PrintHandler printer;
 
   public AnalyzerMenuListener(LogisimMenuBar menubar) {

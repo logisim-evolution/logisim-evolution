@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -70,8 +70,7 @@ public class InstanceStateImpl implements InstanceState {
   }
 
   public InstanceData getData() {
-    InstanceData ret = (InstanceData) circuitState.getData(component);
-    return (ret);
+    return ((InstanceData) circuitState.getData(component));
   }
 
   public InstanceFactory getFactory() {
@@ -104,7 +103,7 @@ public class InstanceStateImpl implements InstanceState {
     return circuitState.getProject();
   }
 
-  public long getTickCount() {
+  public int getTickCount() {
     return circuitState.getPropagator().getTickCount();
   }
 

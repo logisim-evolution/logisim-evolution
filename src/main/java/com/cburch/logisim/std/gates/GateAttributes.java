@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,11 +45,11 @@ class GateAttributes extends AbstractAttributeSet {
   static final int DELAY = 1;
 
   static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(30), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(30, S.getter("gateSizeNarrowOpt"));
   static final AttributeOption SIZE_MEDIUM =
-      new AttributeOption(Integer.valueOf(50), S.getter("gateSizeNormalOpt"));
+      new AttributeOption(50, S.getter("gateSizeNormalOpt"));
   static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(70), S.getter("gateSizeWideOpt"));
+      new AttributeOption(70, S.getter("gateSizeWideOpt"));
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(
           "size",
@@ -90,7 +90,7 @@ class GateAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    ; // nothing to do
+    // nothing to do
   }
 
   @Override
@@ -137,7 +137,7 @@ class GateAttributes extends AbstractAttributeSet {
     } else if (attr == ATTR_SIZE) {
       size = (AttributeOption) value;
     } else if (attr == ATTR_INPUTS) {
-      inputs = ((Integer) value).intValue();
+      inputs = (Integer) value;
       fireAttributeListChanged();
     } else if (attr == ATTR_XOR) {
       xorBehave = (AttributeOption) value;
@@ -145,7 +145,7 @@ class GateAttributes extends AbstractAttributeSet {
       out = (AttributeOption) value;
     } else if (attr instanceof NegateAttribute) {
       int index = ((NegateAttribute) attr).index;
-      if (((Boolean) value).booleanValue()) {
+      if ((Boolean) value) {
         negated |= 1 << index;
       } else {
         negated &= ~(1 << index);

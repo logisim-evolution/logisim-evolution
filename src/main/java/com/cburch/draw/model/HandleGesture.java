@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,10 +31,10 @@ package com.cburch.draw.model;
 import java.awt.event.InputEvent;
 
 public class HandleGesture {
-  private Handle handle;
-  private int dx;
-  private int dy;
-  private int modifiersEx;
+  private final Handle handle;
+  private final int dx;
+  private final int dy;
+  private final int modifiersEx;
   private Handle resultingHandle;
 
   public HandleGesture(Handle handle, int dx, int dy, int modifiersEx) {
@@ -64,6 +64,10 @@ public class HandleGesture {
     return resultingHandle;
   }
 
+  public void setResultingHandle(Handle value) {
+    resultingHandle = value;
+  }
+
   public boolean isAltDown() {
     return (modifiersEx & InputEvent.ALT_DOWN_MASK) != 0;
   }
@@ -74,10 +78,6 @@ public class HandleGesture {
 
   public boolean isShiftDown() {
     return (modifiersEx & InputEvent.SHIFT_DOWN_MASK) != 0;
-  }
-
-  public void setResultingHandle(Handle value) {
-    resultingHandle = value;
   }
 
   @Override

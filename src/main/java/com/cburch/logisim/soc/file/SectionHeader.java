@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,8 +29,6 @@
 package com.cburch.logisim.soc.file;
 
 import java.util.ArrayList;
-
-import com.cburch.logisim.soc.file.SymbolTable;
 
 public class SectionHeader {
   public static final int SH_NAME = 0;
@@ -67,19 +65,19 @@ public class SectionHeader {
   public static final int SHT_HIUSER = 0xffffffff;
   
 
-  private Integer sh_name;
-  private Integer sh_type;
+  private final Integer sh_name;
+  private final Integer sh_type;
   private Long sh_flags;
   private Long sh_addr;
-  private Long sh_offset;
+  private final Long sh_offset;
   private Long sh_size;
-  private Integer sh_link;
-  private Integer sh_info;
-  private Long sh_addrAlign;
-  private Long sh_entsize;
-  private boolean is32Bit;
+  private final Integer sh_link;
+  private final Integer sh_info;
+  private final Long sh_addrAlign;
+  private final Long sh_entsize;
+  private final boolean is32Bit;
   private String name;
-  private ArrayList<SymbolTable> symbols;
+  private final ArrayList<SymbolTable> symbols;
   
   public SectionHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
     this.is32Bit = is32Bit;
@@ -105,11 +103,11 @@ public class SectionHeader {
     index += increment;
     sh_entsize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     name = "";
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
   }
   
   public SectionHeader(String name) {
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
     this.name = name;
     is32Bit = true;
     sh_name = -1;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,8 +29,6 @@
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
-
-import java.util.WeakHashMap;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
@@ -52,6 +50,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import java.util.WeakHashMap;
 
 public class Ram extends Mem {
 
@@ -73,6 +72,11 @@ public class Ram extends Mem {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return state.getAttributeValue(Mem.DATA_ATTR);
+    }
+
+    @Override
     public Object[] getLogOptions(InstanceState state) {
       int addrBits = state.getAttributeValue(ADDR_ATTR).getWidth();
       if (addrBits >= logOptions.length) {
@@ -84,7 +88,7 @@ public class Ram extends Mem {
           ret = new Object[1 << addrBits];
           logOptions[addrBits] = ret;
           for (long i = 0; i < ret.length; i++) {
-            ret[(int) i] = Long.valueOf(i);
+            ret[(int) i] = i;
           }
         }
         return ret;
@@ -95,7 +99,7 @@ public class Ram extends Mem {
     public Value getLogValue(InstanceState state, Object option) {
       if (option instanceof Long) {
         MemState s = (MemState) state.getData();
-        long addr = ((Long) option).longValue();
+        long addr = (Long) option;
         return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
       } else {
         return Value.NIL;
@@ -103,8 +107,8 @@ public class Ram extends Mem {
     }
   }
 
-  private static Object[][] logOptions = new Object[9][];
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
+  private static final Object[][] logOptions = new Object[9][];
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);
@@ -197,12 +201,12 @@ public class Ram extends Mem {
   }
 
   public MemContents getContents(InstanceState ramState) {
-    return (MemContents)getState(ramState).getContents();
+    return getState(ramState).getContents();
   }
 
   @Override
   MemState getState(Instance instance, CircuitState state) {
-	return getState(state.getInstanceState(instance));
+	   return getState(state.getInstanceState(instance));
   }
 
   @Override
@@ -219,11 +223,11 @@ public class Ram extends Mem {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) {
       MyHDLGenerator = new RamHDLGeneratorFactory();
     }
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -343,7 +347,9 @@ public class Ram extends Mem {
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     Value weValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
     boolean async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    boolean edge = async ? false :  myState.setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
+    boolean edge =
+        !async && myState
+            .setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
     boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) || 
                       (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
@@ -354,7 +360,7 @@ public class Ram extends Mem {
       } else {
         for (int i = 0 ; i < RamAppearance.getNrBEPorts(attrs) ; i++) {
           long mask = 0xFF << (i*8);
-          long andMask = mask ^ (-1L);
+          long andMask = ~mask;
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
             newMemValue |= (dataInValue & mask);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,6 +40,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,7 +52,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   private EventSourceWeakSupport<AttributeListener> listeners;
 
   public AbstractCanvasObject() {
-    listeners = new EventSourceWeakSupport<AttributeListener>();
+    listeners = new EventSourceWeakSupport<>();
   }
 
   public void addAttributeListener(AttributeListener l) {
@@ -78,7 +79,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   public CanvasObject clone() {
     try {
       AbstractCanvasObject ret = (AbstractCanvasObject) super.clone();
-      ret.listeners = new EventSourceWeakSupport<AttributeListener>();
+      ret.listeners = new EventSourceWeakSupport<>();
       return ret;
     } catch (CloneNotSupportedException e) {
       return null;
@@ -218,12 +219,12 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
 
     Integer width = getValue(DrawAttr.STROKE_WIDTH);
-    if (width != null && width.intValue() > 0) {
+    if (width != null && width > 0) {
       Color color = getValue(DrawAttr.STROKE_COLOR);
       if (color != null && color.getAlpha() == 0) {
         return false;
       } else {
-        GraphicsUtil.switchToWidth(g, width.intValue());
+        GraphicsUtil.switchToWidth(g, width);
         if (color != null) g.setColor(color);
         return true;
       }
@@ -238,7 +239,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   public final <V> void setValue(Attribute<V> attr, V value) {
     Object old = getValue(attr);
-    boolean same = old == null ? value == null : old.equals(value);
+    boolean same = Objects.equals(old, value);
     if (!same) {
       updateValue(attr, value);
       AttributeEvent e = new AttributeEvent(this, attr, value, old);

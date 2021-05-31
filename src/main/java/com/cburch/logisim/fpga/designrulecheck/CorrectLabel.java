@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,38 +30,36 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.util.Arrays;
 import java.util.List;
 
 public class CorrectLabel {
   public static String getCorrectLabel(String Label) {
     if (Label.isEmpty()) return Label;
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     if (Numbers.contains(Label.substring(0, 1))) result.append("L_");
     result.append(Label.replace(" ", "_").replace("-", "_"));
     return result.toString();
   }
 
-  public static boolean IsCorrectLabel(
-      String Label, String HDLIdentifier, String ErrorIdentifierString, FPGAReport Reporter) {
-    String err = NameErrors(Label, HDLIdentifier, ErrorIdentifierString);
+  public static boolean IsCorrectLabel(String Label, String ErrorIdentifierString) {
+    String err = NameErrors(Label, ErrorIdentifierString);
     if (err != null) {
-      Reporter.AddFatalError(err);
+      Reporter.Report.AddFatalError(err);
       return false;
     }
     return true;
   }
 
   public static String VhdlNameErrors(String Label) {
-    return NameErrors(Label, HDLGeneratorFactory.VHDL, "VHDL entity name");
+    return NameErrors(Label, "VHDL entity name");
   }
 
-  public static String NameErrors(
-      String Label, String HDLIdentifier, String ErrorIdentifierString) {
+  public static String NameErrors(String Label, String ErrorIdentifierString) {
     if (Label.isEmpty()) return null;
     for (int i = 0; i < Label.length(); i++) {
       if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
@@ -69,12 +67,12 @@ public class CorrectLabel {
         return ErrorIdentifierString + S.fmt("IllegalChar", Label.substring(i, i + 1));
       }
     }
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
+    if (HDL.isVHDL()) {
       if (VHDLKeywords.contains(Label.toLowerCase())) {
         return ErrorIdentifierString + S.get("ReservedVHDLKeyword");
       }
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         if (VerilogKeywords.contains(Label)) {
           return ErrorIdentifierString + S.get("ReservedVerilogKeyword");
         }
@@ -90,6 +88,19 @@ public class CorrectLabel {
     return null;
   }
 
+  public static String FirstInvalidCharacter(String Label) {
+    if (Label.isEmpty()) return "";
+    for (int i = 0; i < Label.length(); i++) {
+      var str = Label.substring(i, i + 1);
+      var low = str.toLowerCase();
+      if (!Chars.contains(low)
+          && !Numbers.contains(str)) {
+        return low;
+      }
+    }
+    return "";
+  }
+
   public static boolean IsCorrectLabel(String Label) {
     if (Label.isEmpty()) return true;
     for (int i = 0; i < Label.length(); i++) {
@@ -98,39 +109,11 @@ public class CorrectLabel {
         return false;
       }
     }
-    if (VHDLKeywords.contains(Label.toLowerCase())) return false;
-    if (VerilogKeywords.contains(Label)) return false;
-    return true;
-  }
-
-  public static String FirstInvalidCharacter(String Label) {
-    if (Label.isEmpty()) return "";
-    for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return Label.toLowerCase().substring(i, i + 1);
-      }
-    }
-    return "";
-  }
-
-  public static boolean IsCorrectLabel(String Label, String HDLIdentifier) {
-    if (Label.isEmpty()) return true;
-    for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return false;
-      }
-    }
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
-      if (VHDLKeywords.contains(Label.toLowerCase())) {
-        return false;
-      }
+    if (HDL.isVHDL()) {
+      return !VHDLKeywords.contains(Label.toLowerCase());
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
-        if (VerilogKeywords.contains(Label)) {
-          return false;
-        }
+      if (HDL.isVerilog()) {
+        return !VerilogKeywords.contains(Label);
       }
     }
     return true;

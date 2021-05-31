@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -78,30 +78,37 @@ class TableTabCaret {
 
     public void actionPerformed(ActionEvent event) {
       String action = event.getActionCommand();
-      if (action.equals("1")) {
-        doKey('1');
-      } else if (action.equals("0")) {
-        doKey('0');
-      } else if (action.equals("x")) {
-        doKey('-');
-      } else if (action.equals("compact")) {
-        final TruthTable tt = table.getTruthTable();
-        if (tt.getRowCount() > 4096) {
-          (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
-                private static final long serialVersionUID = 1L;
-				@Override
-                public Void doInBackground() throws Exception {
-                  tt.compactVisibleRows();
-                  return null;
-                }
-              })
-              .get();
-        } else {
-          tt.compactVisibleRows();
-        }
-      } else if (action.equals("expand")) {
-        TruthTable model = table.getTruthTable();
-        model.expandVisibleRows();
+      switch (action) {
+        case "1":
+          doKey('1');
+          break;
+        case "0":
+          doKey('0');
+          break;
+        case "x":
+          doKey('-');
+          break;
+        case "compact":
+          final TruthTable tt = table.getTruthTable();
+          if (tt.getRowCount() > 4096) {
+            (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
+              private static final long serialVersionUID = 1L;
+
+              @Override
+              public Void doInBackground() {
+                tt.compactVisibleRows();
+                return null;
+              }
+            })
+                .get();
+          } else {
+            tt.compactVisibleRows();
+          }
+          break;
+        case "expand":
+          TruthTable model = table.getTruthTable();
+          model.expandVisibleRows();
+          break;
       }
     }
 
@@ -110,7 +117,7 @@ class TableTabCaret {
       int inputs = table.getInputColumnCount();
       int outputs = table.getOutputColumnCount();
       int cols = inputs + outputs;
-      boolean shift = (e.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+      boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
       Pt p = (shift ? markB.isValid() ? markB : markA : cursor);
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP:
@@ -149,8 +156,8 @@ class TableTabCaret {
     public void keyReleased(KeyEvent e) {}
 
     public void keyTyped(KeyEvent e) {
-      int mask = e.getModifiers();
-      if ((mask & ~InputEvent.SHIFT_MASK) != 0) return;
+      int mask = e.getModifiersEx();
+      if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
       char c = e.getKeyChar();
       doKey(c);
     }
@@ -159,7 +166,7 @@ class TableTabCaret {
       TruthTable model = table.getTruthTable();
       int n = (indexes == null ? 0 : indexes.size());
       if (n == 0) return null;
-      int rows[] = new int[n];
+      int[] rows = new int[n];
       for (int i = 0; i < n; i++) rows[i] = model.findVisibleRowContaining(indexes.get(i));
       Arrays.sort(rows);
       return rows;
@@ -251,7 +258,7 @@ class TableTabCaret {
         if (updated) {
           // Update the cursor position
           cursor = invalid;
-          int rows[] = allRowsContaining(oldCursorIdx);
+          int[] rows = allRowsContaining(oldCursorIdx);
           if (rows != null) {
             if (newEntry != Entry.ONE) cursor = new Pt(rows[0], oldCursor.col);
             else cursor = new Pt(rows[rows.length - 1], oldCursor.col);
@@ -260,7 +267,7 @@ class TableTabCaret {
           // Update the selection
           markA = cursor;
           markB = invalid;
-          int marks[] = allRowsContaining(oldMarkIdx);
+          int[] marks = allRowsContaining(oldMarkIdx);
           if (marks != null) {
             int n = marks.length;
             if (isContiguous(marks)) {
@@ -338,7 +345,7 @@ class TableTabCaret {
 
     public void mousePressed(MouseEvent e) {
       table.requestFocus();
-      if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) mouseDragged(e);
+      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) mouseDragged(e);
       else {
         setCursor(pointAt(e), pointNear(e));
       }
@@ -410,12 +417,17 @@ class TableTabCaret {
     }
   }
 
-  private static Color SELECT_COLOR = new Color(192, 192, 255);
-  private static Color HIGHLIGHT_COLOR = new Color(255, 255, 192);
-  private Listener listener = new Listener();
-  private TableTab table;
-  private Pt cursor, markA, markB, hover, invalid, home;
-  private int hilightRows[];
+  private static final Color SELECT_COLOR = new Color(192, 192, 255);
+  private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 192);
+  private final Listener listener = new Listener();
+  private final TableTab table;
+  private Pt cursor;
+  private Pt markA;
+  private Pt markB;
+  private Pt hover;
+  private final Pt invalid;
+  private final Pt home;
+  private int[] hilightRows;
   private boolean cleanHilight;
 
   private void clearHilight() {
@@ -630,7 +642,7 @@ class TableTabCaret {
     return new Rectangle(x0 - 2, y0 - 2, (x1 - x0) + 4, (y1 - y0) + 4);
   }
 
-  private boolean isContiguous(int rows[]) {
+  private boolean isContiguous(int[] rows) {
     if (rows.length <= 1) return true;
     for (int i = 1; i < rows.length; i++) {
       if (Math.abs(rows[i] - rows[i]) > 1) return false;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -90,9 +90,9 @@ public class VhdlParser {
 
   public static class PortDescription {
 
-    private String name;
-    private String type;
-    private BitWidth width;
+    private final String name;
+    private final String type;
+    private final BitWidth width;
 
     public PortDescription(String name, String type, int width) {
       this.name = name;
@@ -109,10 +109,16 @@ public class VhdlParser {
     }
 
     public String getVhdlType() {
-      if (type == Port.INPUT) return "in";
-      else if (type == Port.OUTPUT) return "out";
-      else if (type == Port.INOUT) return "inout";
-      else throw new IllegalArgumentException("Not recognized port type: " + type);
+      switch (type) {
+        case Port.INPUT:
+          return "in";
+        case Port.OUTPUT:
+          return "out";
+        case Port.INOUT:
+          return "inout";
+        default:
+          throw new IllegalArgumentException("Not recognized port type: " + type);
+      }
     }
 
     public BitWidth getWidth() {
@@ -122,9 +128,9 @@ public class VhdlParser {
 
   public static class GenericDescription {
 
-    protected String name;
-    protected String type;
-    protected int dval;
+    protected final String name;
+    protected final String type;
+    protected final int dval;
 
     public GenericDescription(String name, String type, int dval) {
       this.name = name;
@@ -155,7 +161,7 @@ public class VhdlParser {
   private static Pattern regex(String pattern) {
     pattern = pattern.trim();
     pattern = "^ " + pattern;
-    pattern = pattern.replaceAll("  ", "\\\\s+"); // Two spaces = required whitespace
+    pattern = pattern.replaceAll(" {2}", "\\\\s+"); // Two spaces = required whitespace
     pattern = pattern.replaceAll(" ", "\\\\s*"); // One space = optional whitespace
     return Pattern.compile(pattern, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
   }
@@ -178,19 +184,19 @@ public class VhdlParser {
   private static final Pattern GENERIC = regex("(\\w+(?: , \\w+)*) : (\\w+)");
   private static final Pattern DVALUE = regex(":= (\\w+)");
 
-  private List<PortDescription> inputs;
-  private List<PortDescription> outputs;
-  private List<GenericDescription> generics;
-  private String source;
+  private final List<PortDescription> inputs;
+  private final List<PortDescription> outputs;
+  private final List<GenericDescription> generics;
+  private final String source;
   private String name;
   private String libraries;
   private String architecture;
 
   public VhdlParser(String source) {
     this.source = source;
-    this.inputs = new ArrayList<PortDescription>();
-    this.outputs = new ArrayList<PortDescription>();
-    this.generics = new ArrayList<GenericDescription>();
+    this.inputs = new ArrayList<>();
+    this.outputs = new ArrayList<>();
+    this.generics = new ArrayList<>();
   }
 
   public String getArchitecture() {
@@ -255,12 +261,12 @@ public class VhdlParser {
       throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
   }
 
-  private void parseArchitecture(Scanner input) throws IllegalVhdlContentException {
+  private void parseArchitecture(Scanner input) {
     if (input.next(ARCHITECTURE)) architecture = input.match().group();
     else architecture = "";
   }
 
-  private void parseLibraries(Scanner input) throws IllegalVhdlContentException {
+  private void parseLibraries(Scanner input) {
     StringBuilder result = new StringBuilder();
     while (input.next(LIBRARY) || input.next(USING)) {
       result.append(input.match().group().trim().replaceAll("\\s+", " "));
@@ -293,7 +299,7 @@ public class VhdlParser {
     }
 
     for (String name : names.split("\\s*,\\s*")) {
-      if (ptype == Port.INPUT) inputs.add(new PortDescription(name, ptype, width));
+      if (ptype.equals(Port.INPUT)) inputs.add(new PortDescription(name, ptype, width));
       else outputs.add(new PortDescription(name, ptype, width));
     }
   }
@@ -359,9 +365,9 @@ public class VhdlParser {
   }
 
   private String removeComments() throws IllegalVhdlContentException {
-    StringBuffer input;
+    StringBuilder input;
     try {
-      input = new StringBuffer(source);
+      input = new StringBuilder(source);
     } catch (NullPointerException ex) {
       throw new IllegalVhdlContentException(S.get("emptySourceException"));
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -66,9 +66,9 @@ public class SmartScroller implements AdjustmentListener {
   public static final int START = 0;
   public static final int END = 1;
 
-  private int viewportPosition;
+  private final int viewportPosition;
 
-  private JScrollBar scrollBar;
+  private final JScrollBar scrollBar;
   private boolean adjustScrollBar = true;
 
   private int previousValue = -1;
@@ -130,11 +130,7 @@ public class SmartScroller implements AdjustmentListener {
   @Override
   public void adjustmentValueChanged(final AdjustmentEvent e) {
     SwingUtilities.invokeLater(
-        new Runnable() {
-          public void run() {
-            checkScrollBar(e);
-          }
-        });
+        () -> checkScrollBar(e));
   }
 
   /*

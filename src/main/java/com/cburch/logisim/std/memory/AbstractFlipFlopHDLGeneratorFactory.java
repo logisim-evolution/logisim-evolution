@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,9 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Reset", 1);
     Inputs.put("Preset", 1);
     Inputs.put("Tick", 1);
@@ -65,59 +66,50 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return Inputs;
   }
 
-  public Map<String, String> GetInputMaps(
-      NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-    Map<String, String> PortMap = new HashMap<String, String>();
-    return PortMap;
+  public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
+    return new HashMap<>();
   }
 
   public Map<String, Integer> GetInputPorts() {
-    Map<String, Integer> Inputs = new HashMap<String, Integer>();
-    return Inputs;
+    return new HashMap<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignmentOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String NotOperator = (HDLType.equals(VHDL)) ? "NOT" : "~";
-    String SelectOperator = (HDLType.equals(VHDL)) ? "" : "[" + ActivityLevelStr + "]";
-    Contents.addAll(MakeRemarkBlock("Here the ouput signals are defined", 3, HDLType));
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
+    String SelectOperator = (HDL.isVHDL()) ? "" : "[" + ActivityLevelStr + "]";
+    Contents.addAll(MakeRemarkBlock("Here the output signals are defined", 3));
     Contents.add(
         "   "
-            + Preamble
+            + HDL.assignPreamble()
             + "Q    "
-            + AssignmentOperator
+            + HDL.assignOperator()
             + "s_current_state_reg"
             + SelectOperator
             + ";");
     Contents.add(
         "   "
-            + Preamble
+            + HDL.assignPreamble()
             + "Q_bar"
-            + AssignmentOperator
-            + NotOperator
+            + HDL.assignOperator()
+            + HDL.notOperator()
             + "(s_current_state_reg"
             + SelectOperator
             + ");");
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3, HDLType));
-    Contents.addAll(GetUpdateLogic(HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3));
+    Contents.addAll(GetUpdateLogic());
     Contents.add("");
-    if (HDLType.equals(VERILOG)) {
-      Contents.addAll(
-          MakeRemarkBlock(
-              "Here the initial register value is defined; for simulation only", 3, HDLType));
+    if (HDL.isVerilog()) {
+      Contents.addAll(MakeRemarkBlock("Here the initial register value is defined; for simulation only", 3));
       Contents.add("   initial");
       Contents.add("   begin");
       Contents.add("      s_current_state_reg = 0;");
       Contents.add("   end");
       Contents.add("");
     }
-    Contents.addAll(MakeRemarkBlock("Here the actual state register is defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the actual state register is defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add("   make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )");
       Contents.add("      VARIABLE temp : std_logic_vector(0 DOWNTO 0);");
       Contents.add("   BEGIN");
@@ -167,7 +159,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Q", 1);
     Outputs.put("Q_bar", 1);
     return Outputs;
@@ -175,18 +167,17 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(-1, ActivityLevelStr);
     return Parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int ActivityLevel = 1;
-    Boolean GatedClock = false;
-    Boolean ActiveLow = false;
+    boolean GatedClock = false;
+    boolean ActiveLow = false;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     String ClockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
     if (ClockNetName.isEmpty()) {
@@ -208,22 +199,17 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    Boolean GatedClock = false;
-    Boolean HasClock = true;
-    Boolean ActiveLow = false;
-    String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
-    String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
-    String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
-    String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+    boolean GatedClock = false;
+    boolean HasClock = true;
+    boolean ActiveLow = false;
     int nr_of_pins = ComponentInfo.NrOfEnds();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(ComponentInfo.NrOfEnds() - 5)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
               + "\" in circuit \""
@@ -244,75 +230,73 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
       }
     }
     PortMap.putAll(
-        GetNetMap("Reset", true, ComponentInfo, nr_of_pins - 2, Reporter, HDLType, Nets));
+        GetNetMap("Reset", true, ComponentInfo, nr_of_pins - 2, Nets));
     PortMap.putAll(
-        GetNetMap("Preset", true, ComponentInfo, nr_of_pins - 1, Reporter, HDLType, Nets));
+        GetNetMap("Preset", true, ComponentInfo, nr_of_pins - 1, Nets));
     if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
         PortMap.put(
             "Tick",
             ClockNetName
-                + OpenBracket
-                + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
-                + CloseBracket);
+                + HDL.BracketOpen()
+                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + HDL.BracketClose());
       } else {
         if (ActiveLow)
           PortMap.put(
               "Tick",
               ClockNetName
-                  + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.NegativeEdgeTickIndex)
-                  + CloseBracket);
+                  + HDL.BracketOpen()
+                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
+                  + HDL.BracketClose());
         else
           PortMap.put(
               "Tick",
               ClockNetName
-                  + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
-                  + CloseBracket);
+                  + HDL.BracketOpen()
+                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + HDL.BracketClose());
       }
       PortMap.put(
           "Clock",
           ClockNetName
-              + OpenBracket
-              + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
-              + CloseBracket);
+              + HDL.BracketOpen()
+              + ClockHDLGeneratorFactory.GlobalClockIndex
+              + HDL.BracketClose());
     } else if (!HasClock) {
-      PortMap.put("Tick", ZeroBit);
-      PortMap.put("Clock", ZeroBit);
+      PortMap.put("Tick", HDL.zeroBit());
+      PortMap.put("Clock", HDL.zeroBit());
     } else {
-      PortMap.put("Tick", SetBit);
+      PortMap.put("Tick", HDL.oneBit());
       if (!GatedClock) {
         if (ActiveLow)
           PortMap.put(
               "Clock",
               ClockNetName
-                  + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.InvertedDerivedClockIndex)
-                  + CloseBracket);
+                  + HDL.BracketOpen()
+                  + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
+                  + HDL.BracketClose());
         else
           PortMap.put(
               "Clock",
               ClockNetName
-                  + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.DerivedClockIndex)
-                  + CloseBracket);
+                  + HDL.BracketOpen()
+                  + ClockHDLGeneratorFactory.DerivedClockIndex
+                  + HDL.BracketClose());
       } else {
-        PortMap.put(
-            "Clock", GetNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, true, HDLType, Nets));
+        PortMap.put("Clock", GetNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, true, Nets));
       }
     }
-    PortMap.putAll(GetInputMaps(ComponentInfo, Nets, Reporter, HDLType));
-    PortMap.putAll(GetNetMap("Q", true, ComponentInfo, nr_of_pins - 4, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Q_bar", true, ComponentInfo, nr_of_pins - 3, Reporter, HDLType, Nets));
+    PortMap.putAll(GetInputMaps(ComponentInfo, Nets));
+    PortMap.putAll(GetNetMap("Q", true, ComponentInfo, nr_of_pins - 4, Nets));
+    PortMap.putAll(GetNetMap("Q_bar", true, ComponentInfo, nr_of_pins - 3, Nets));
     return PortMap;
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
-    Regs.put("s_current_state_reg", (HDLType.equals(VHDL)) ? 1 : 2);
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
+    SortedMap<String, Integer> Regs = new TreeMap<>();
+    Regs.put("s_current_state_reg", (HDL.isVHDL()) ? 1 : 2);
     return Regs;
   }
 
@@ -321,20 +305,19 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return "memory";
   }
 
-  public ArrayList<String> GetUpdateLogic(String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    return Contents;
+  public ArrayList<String> GetUpdateLogic() {
+    return new ArrayList<>();
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_next_state", 1);
     return Wires;
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

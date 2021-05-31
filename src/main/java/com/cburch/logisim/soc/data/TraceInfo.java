@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,19 +28,18 @@
 
 package com.cburch.logisim.soc.data;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class TraceInfo {
-    private int pc;
-    private int instruction;
-    private String asm;
+    private final int pc;
+    private final int instruction;
+    private final String asm;
     private boolean error;
     
     public TraceInfo(int pc , int instruction, String asm, boolean error) {

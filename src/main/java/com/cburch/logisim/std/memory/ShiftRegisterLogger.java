@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,11 +51,16 @@ public class ShiftRegisterLogger extends InstanceLogger {
   }
 
   @Override
+  public BitWidth getBitWidth(InstanceState state, Object option) {
+    return state.getAttributeValue(StdAttr.WIDTH);
+  }
+  
+  @Override
   public Object[] getLogOptions(InstanceState state) {
     Integer stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-    Object[] ret = new Object[stages.intValue()];
+    Object[] ret = new Object[stages];
     for (int i = 0; i < ret.length; i++) {
-      ret[i] = Integer.valueOf(i);
+      ret[i] = i;
     }
     return ret;
   }
@@ -68,7 +73,7 @@ public class ShiftRegisterLogger extends InstanceLogger {
     if (data == null) {
       return Value.createKnown(dataWidth, 0);
     } else {
-      int index = option == null ? 0 : ((Integer) option).intValue();
+      int index = option == null ? 0 : (Integer) option;
       return data.get(index);
     }
   }

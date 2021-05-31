@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,9 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -52,7 +53,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("INP_A", NrOfBitsId);
     Inputs.put("INP_B", NrOfBitsId);
     Inputs.put("Cin", NrOfBitsId);
@@ -60,10 +61,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    if (HDLType.equals(VHDL)) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
+    if (HDL.isVHDL()) {
       Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
       Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
       Contents.add("                    std_logic_vector(signed(INP_A)*signed(INP_B));");
@@ -119,7 +119,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Mult_lo", NrOfBitsId);
     Outputs.put("Mult_hi", NrOfBitsId);
     return Outputs;
@@ -127,7 +127,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(CalcBitsId, CalcBitsStr);
     Parameters.put(UnsignedId, UnsignedStr);
@@ -135,9 +135,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
         ComponentInfo.GetComponent()
@@ -151,20 +150,15 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(
-        GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
+    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
+    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
+    PortMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
+    PortMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
     return PortMap;
   }
 
@@ -175,7 +169,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_mult_result", CalcBitsId);
     Wires.put("s_extended_Cin", CalcBitsId);
     Wires.put("s_new_result", CalcBitsId);
@@ -183,7 +177,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

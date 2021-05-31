@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLabelSupport {
 
@@ -77,9 +76,9 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
    * bleu rA, rB, label  => bgeu rB, rA, label
    */
   
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
 
   private int instruction;
   private boolean valid;
@@ -97,6 +96,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState;
@@ -121,6 +121,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
                           cpuState.setProgramCounter(valueA);
                           break;
       case INSTR_CALL   : cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
+                          // fall through
       case INSTR_JMPI   : jumped = true;
                           cpuState.setProgramCounter(immediate<<2);
                           break;
@@ -164,7 +165,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     int imm = ((immediate << 16) >> 16)+4;
@@ -174,13 +175,13 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMP     : s.append(Nios2State.registerABINames[sourceA]);
                            break;
       case INSTR_JMPI    :
-      case INSTR_CALL    : s.append(Integer.toString(immediate<<2));
+      case INSTR_CALL    : s.append((immediate << 2));
                            break;
-      case INSTR_BR      : s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      case INSTR_BR      : s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
-                           s.append("pc"+(imm >= 0 ? "+":"")+imm);
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
+                           s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
                            break;
     }
     return s.toString();
@@ -350,10 +351,10 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
                               Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE) != 0) {
                             valid = false;
                           }
+                          break;
         default         : immediate = Nios2Support.getImmediate(instr, Nios2Support.I_TYPE);
                           sourceA = Nios2Support.getRegAIndex(instr, Nios2Support.I_TYPE);
                           sourceB = Nios2Support.getRegBIndex(instr, Nios2Support.I_TYPE);
-                          break;
       }
     }
     return valid;
@@ -383,7 +384,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
 
   public String getAsmInstruction(String label) {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {
@@ -395,8 +396,8 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append(label);
                            break;
-      default            : s.append(Nios2State.registerABINames[sourceA]+",");
-                           s.append(Nios2State.registerABINames[sourceB]+",");
+      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
+                           s.append(Nios2State.registerABINames[sourceB]).append(",");
                            s.append(label);
                            break;
     }

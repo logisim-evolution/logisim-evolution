@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,13 +38,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ModelTranslateAction extends ModelAction {
-  private Set<CanvasObject> moved;
-  private int dx;
-  private int dy;
+  private final Set<CanvasObject> moved;
+  private final int dx;
+  private final int dy;
 
   public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
     super(model);
-    this.moved = new HashSet<CanvasObject>(moved);
+    this.moved = new HashSet<>(moved);
     this.dx = dx;
     this.dy = dy;
   }

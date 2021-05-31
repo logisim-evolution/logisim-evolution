@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,24 +30,23 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.cburch.logisim.util.StringGetter;
-
 public class AssemblerAsmInstruction {
-  private AssemblerToken instruction;
-  private ArrayList<AssemblerToken[]> parameters;
-  private int size;
-  private HashMap<AssemblerToken,StringGetter> errors;
+  private final AssemblerToken instruction;
+  private final ArrayList<AssemblerToken[]> parameters;
+  private final int size;
+  private final HashMap<AssemblerToken,StringGetter> errors;
   private Byte[] bytes;
   private long programCounter;
    
   public AssemblerAsmInstruction(AssemblerToken instruction, int size) {
     this.instruction = instruction;
-    parameters = new ArrayList<AssemblerToken[]>();
-    errors = new HashMap<AssemblerToken,StringGetter>();
+    parameters = new ArrayList<>();
+    errors = new HashMap<>();
     this.size = size;
     bytes = null;
     programCounter = -1;
@@ -87,34 +86,34 @@ public class AssemblerAsmInstruction {
   
   public boolean replaceLabels(HashMap<String,Long> labels, HashMap<AssemblerToken,StringGetter> errors) {
 	for (AssemblerToken[] parameter : parameters) {
-	  for (int i = 0 ; i < parameter.length ; i++) {
-	    if (parameter[i].getType() == AssemblerToken.PARAMETER_LABEL) {
-	      String Name = parameter[i].getValue();
-	      if (!labels.containsKey(Name)) {
-	    	errors.put(parameter[i], S.getter("AssemblerCouldNotFindAddressForLabel"));
-	        return false;
-	      }
-          parameter[i].setType(AssemblerToken.HEX_NUMBER);
-          parameter[i].setValue(String.format("0x%08X", labels.get(Name)));
-	    }
-	  }
+    for (AssemblerToken assemblerToken : parameter) {
+      if (assemblerToken.getType() == AssemblerToken.PARAMETER_LABEL) {
+        String Name = assemblerToken.getValue();
+        if (!labels.containsKey(Name)) {
+          errors.put(assemblerToken, S.getter("AssemblerCouldNotFindAddressForLabel"));
+          return false;
+        }
+        assemblerToken.setType(AssemblerToken.HEX_NUMBER);
+        assemblerToken.setValue(String.format("0x%08X", labels.get(Name)));
+      }
+    }
 	}
     return true;
   }
   
   public boolean replaceDefines(HashMap<String,Integer> defines, HashMap<AssemblerToken,StringGetter> errors) {
 	for (AssemblerToken[] parameter : parameters) {
-      for (int i = 0 ; i < parameter.length ; i++) {
-        if (parameter[i].getType() == AssemblerToken.MAYBE_LABEL) {
-          String Name = parameter[i].getValue();
-            if (!defines.containsKey(Name)) {
-              errors.put(parameter[i], S.getter("AssemblerCouldNotFindValueForDefine"));
-              return false;
-            }
-            parameter[i].setType(AssemblerToken.HEX_NUMBER);
-            parameter[i].setValue(String.format("0x%08X", defines.get(Name)));
+    for (AssemblerToken assemblerToken : parameter) {
+      if (assemblerToken.getType() == AssemblerToken.MAYBE_LABEL) {
+        String Name = assemblerToken.getValue();
+        if (!defines.containsKey(Name)) {
+          errors.put(assemblerToken, S.getter("AssemblerCouldNotFindValueForDefine"));
+          return false;
         }
+        assemblerToken.setType(AssemblerToken.HEX_NUMBER);
+        assemblerToken.setValue(String.format("0x%08X", defines.get(Name)));
       }
+    }
  	}
     return true;
   }
@@ -123,16 +122,16 @@ public class AssemblerAsmInstruction {
     for (int idx = 0 ; idx < parameters.size() ; idx++) {
        AssemblerToken[] parameter = parameters.get(idx);
        boolean found = false;
-       for (int i = 0 ; i < parameter.length ; i++) {
-         if (parameter[i].getType() == AssemblerToken.PROGRAM_COUNTER) {
-           found = true;
-           parameter[i].setType(AssemblerToken.HEX_NUMBER);
-           parameter[i].setValue(String.format("0x%08X", pc));
-         }
-       }
+      for (AssemblerToken assemblerToken : parameter) {
+        if (assemblerToken.getType() == AssemblerToken.PROGRAM_COUNTER) {
+          found = true;
+          assemblerToken.setType(AssemblerToken.HEX_NUMBER);
+          assemblerToken.setValue(String.format("0x%08X", pc));
+        }
+      }
        if (found && parameter.length > 1) {
          int i = 0;
-         HashSet<Integer> toBeRemoved = new HashSet<Integer>();
+         HashSet<Integer> toBeRemoved = new HashSet<>();
          while (i < parameter.length) {
            if (AssemblerToken.MATH_OPERATORS.contains(parameter[i].getType())) {
              long beforeValue = -1;
@@ -152,7 +151,7 @@ public class AssemblerAsmInstruction {
                  case AssemblerToken.MATH_ADD        : result = beforeValue+afterValue; break;
                  case AssemblerToken.MATH_SUBTRACT   : result = beforeValue-afterValue; break;
                  case AssemblerToken.MATH_SHIFT_LEFT : result = beforeValue<<afterValue; break;
-                 case AssemblerToken.MATH_SHIFT_RIGHT: result = beforeValue<<afterValue; break;
+                 case AssemblerToken.MATH_SHIFT_RIGHT: result = beforeValue>>afterValue; break;
                  case AssemblerToken.MATH_MUL        : result = beforeValue*afterValue; break;
                  case AssemblerToken.MATH_DIV        : if (afterValue == 0) 
                                                          errors.put(parameter[i+1], S.getter("AssemblerDivZero"));

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -71,21 +71,26 @@ public abstract class JDialogOk extends JDialog {
 
   private static final long serialVersionUID = 1L;
 
-  private JPanel contents = new JPanel(new BorderLayout());
-  protected JButton ok = new JButton(S.get("dlogOkButton"));
-  protected JButton cancel = new JButton(S.get("dlogCancelButton"));
+  private final JPanel contents = new JPanel(new BorderLayout());
+  protected final JButton ok = new JButton(S.get("dlogOkButton"));
+  protected final JButton cancel = new JButton(S.get("dlogCancelButton"));
   protected Window parent;
   
   public JDialogOk(String title) {
+    this(title,true);
+  }
+  public JDialogOk(String title, boolean withCancel) {
     super(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
         title, Dialog.ModalityType.APPLICATION_MODAL);
     parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-    configure();
+    configure(withCancel);
   }
+  
+  
 
-public void cancelClicked() {}
+  public void cancelClicked() {}
 
-  private void configure() {
+  private void configure(boolean withCancel) {
     MyListener listener = new MyListener();
     this.addWindowListener(listener);
     ok.addActionListener(listener);
@@ -95,17 +100,17 @@ public void cancelClicked() {}
     buttons.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     buttons.add(Box.createHorizontalGlue());
     buttons.add(ok);
-    buttons.add(Box.createHorizontalStrut(10));
-    buttons.add(cancel);
+    if (withCancel) {
+      buttons.add(Box.createHorizontalStrut(10));
+      buttons.add(cancel);
+    }
     buttons.add(Box.createHorizontalGlue());
 
     Container pane = super.getContentPane();
     pane.add(contents, BorderLayout.CENTER);
     pane.add(buttons, BorderLayout.SOUTH);
     
-    getRootPane().registerKeyboardAction(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { setVisible(false); cancelClicked(); dispose(); }
-      }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    getRootPane().registerKeyboardAction(e -> { setVisible(false); cancelClicked(); dispose(); }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     addWindowListener(new WindowAdapter() {
       public void windowOpened(WindowEvent e) {

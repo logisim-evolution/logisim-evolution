@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,15 +30,14 @@ package com.cburch.logisim.soc;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.List;
-
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import java.util.List;
 
 public class Soc  extends Library {
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", "rv32im.Rv32im_riscv"),
     new FactoryDescription(

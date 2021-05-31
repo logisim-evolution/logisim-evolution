@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,6 +54,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class Probe extends InstanceFactory {
   public static class ProbeLogger extends InstanceLogger {
@@ -63,6 +64,12 @@ public class Probe extends InstanceFactory {
     public String getLogName(InstanceState state, Object option) {
       String ret = state.getAttributeValue(StdAttr.LABEL);
       return ret != null && !ret.equals("") ? ret : null;
+    }
+
+    @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      ProbeAttributes attrs = (ProbeAttributes) state.getAttributeSet();
+      return attrs.width;
     }
 
     @Override
@@ -260,12 +267,10 @@ public class Probe extends InstanceFactory {
       }
     } else {
       String text = radix.toString(value);
-      int ypos = bds.getY() + bds.getHeight() / 2;
-      int cy = ypos;
       int cx = bds.getX() + bds.getWidth() - LabelValueXOffset - 2;
       for (int k = text.length() - 1; k >= 0; k--) {
         GraphicsUtil.drawText(
-            g, text.substring(k, k + 1), cx, cy - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+            g, text.substring(k, k + 1), cx, bds.getY() + bds.getHeight() / 2 - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
         cx -= Pin.DIGIT_WIDTH;
       }
     }
@@ -312,7 +317,7 @@ public class Probe extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 
@@ -385,7 +390,7 @@ public class Probe extends InstanceFactory {
     StateData oldData = (StateData) state.getData();
     Value oldValue = oldData == null ? Value.NIL : oldData.curValue;
     Value newValue = state.getPortValue(0);
-    boolean same = oldValue == null ? newValue == null : oldValue.equals(newValue);
+    boolean same = Objects.equals(oldValue, newValue);
     if (!same) {
       if (oldData == null) {
         oldData = new StateData();

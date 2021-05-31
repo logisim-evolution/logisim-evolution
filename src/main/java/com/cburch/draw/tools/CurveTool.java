@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,7 +53,7 @@ public class CurveTool extends AbstractTool {
   private static final int ENDPOINT_DRAG = 1;
   private static final int CONTROL_DRAG = 2;
 
-  private DrawingAttributeSet attrs;
+  private final DrawingAttributeSet attrs;
   private int state;
   private Location end0;
   private Location end1;

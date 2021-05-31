@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,6 @@ import static com.cburch.logisim.util.Strings.S;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,19 +43,15 @@ public class SyntaxChecker {
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
-      boolean ret = true;
       String HDL = CorrectLabel.HDLCorrectLabel(val);
       String Message = "";
       if (!variableMatcher.matches()) {
-        ret = false;
         Message = Message.concat(S.get("variableInvalidCharacters"));
       }
       if (forbiddenMatcher.find()) {
-        ret = false;
         Message = Message.concat(S.get("variableDoubleUnderscore"));
       }
       if (HDL != null) {
-        ret = false;
         Message =
             Message.concat(
                 HDL.equals(HDLGeneratorFactory.VHDL)
@@ -64,7 +59,6 @@ public class SyntaxChecker {
                     : S.get("variableVerilogKeyword"));
       }
       if (val.endsWith("_")) {
-        ret = false;
         Message = Message.concat(S.get("variableEndsWithUndescore"));
       }
       if (Message.length() == 0)
@@ -84,8 +78,8 @@ public class SyntaxChecker {
     return Message == null;
   }
 
-  private static Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
-  private static Pattern forbiddenPattern = Pattern.compile("__");
+  private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
+  private static final Pattern forbiddenPattern = Pattern.compile("__");
 
   private static Matcher forbiddenMatcher;
   private static Matcher variableMatcher;

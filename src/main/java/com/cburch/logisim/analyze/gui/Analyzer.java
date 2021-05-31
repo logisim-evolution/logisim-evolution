@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,8 +63,8 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Analyzer extends LFrame {
-  private AnalyzerMenuListener menuListener;
+public class Analyzer extends LFrame.SubWindow {
+  private final AnalyzerMenuListener menuListener;
 
   private class MyChangeListener implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
@@ -172,25 +172,23 @@ public class Analyzer extends LFrame {
   public static final int TABLE_TAB = 1;
   public static final int EXPRESSION_TAB = 2;
   public static final int MINIMIZED_TAB = 3;
-  
-  private MyLocaleListener myLocaleListener = new MyLocaleListener();
-  private MyChangeListener myChangeListener = new MyChangeListener();
-  private TableListener tableListener = new TableListener();
-  private AnalyzerModel model = new AnalyzerModel();
+
+  private final AnalyzerModel model = new AnalyzerModel();
 
   private JTabbedPane tabbedPane = new JTabbedPane();
-  private VariableTab ioPanel;
-  private TableTab truthTablePanel;
-  private ExpressionTab expressionPanel;
-  private MinimizedTab minimizedPanel;
+  private final VariableTab ioPanel;
+  private final TableTab truthTablePanel;
+  private final ExpressionTab expressionPanel;
+  private final MinimizedTab minimizedPanel;
 
-  private BuildCircuitButton buildCircuit;
-  private ImportTableButton importTable;
-  private ExportTableButton exportTable;
-  private ExportLatexButton exportTex;
+  private final BuildCircuitButton buildCircuit;
+  private final ImportTableButton importTable;
+  private final ExportTableButton exportTable;
+  private final ExportLatexButton exportTex;
 
   Analyzer() {
-    super(true,null);
+    super(null);
+    TableListener tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
@@ -226,9 +224,10 @@ public class Analyzer extends LFrame {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    
+    MyLocaleListener myLocaleListener = new MyLocaleListener();
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
+    MyChangeListener myChangeListener = new MyChangeListener();
     tabbedPane.addChangeListener(myChangeListener);
     setSelectedTab(0);
     myChangeListener.stateChanged(null);
@@ -236,7 +235,7 @@ public class Analyzer extends LFrame {
 
   private void addTab(int index, final JComponent comp) {
     if (comp instanceof TableTab || comp instanceof VariableTab || comp instanceof ExpressionTab) {
-        tabbedPane.insertTab("Untitled", null, comp, null, index);
+        tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
         return;
     }
     final JScrollPane pane = new JScrollPane(comp,
@@ -248,7 +247,7 @@ public class Analyzer extends LFrame {
         comp.setSize(new Dimension(width, comp.getHeight()));
       }
     });
-    tabbedPane.insertTab("Untitled", null, pane, null, index);
+    tabbedPane.insertTab(S.get("untitled"), null, pane, null, index);
   }
 
   public AnalyzerModel getModel() {
@@ -270,10 +269,10 @@ public class Analyzer extends LFrame {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private SwingWorker<T, Void> worker;
-    private java.awt.Component parent;
+    private final SwingWorker<T, Void> worker;
+    private final java.awt.Component parent;
 
-    public abstract T doInBackground() throws Exception;
+    public abstract T doInBackground();
 
     private boolean alreadyFinished = false;
 
@@ -281,16 +280,19 @@ public class Analyzer extends LFrame {
       super(null, title, ModalityType.APPLICATION_MODAL);
       this.parent = parent;
       worker =
-          new SwingWorker<T, Void>() {
+          new SwingWorker<>() {
             @Override
-            protected T doInBackground() throws Exception {
+            protected T doInBackground() {
               return PleaseWait.this.doInBackground();
             }
 
             @Override
             protected void done() {
-              if (PleaseWait.this.isVisible()) PleaseWait.this.dispose();
-              else PleaseWait.this.alreadyFinished = true;
+              if (PleaseWait.this.isVisible()) {
+                PleaseWait.this.dispose();
+              } else {
+                PleaseWait.this.alreadyFinished = true;
+              }
             }
           };
     }
@@ -310,7 +312,7 @@ public class Analyzer extends LFrame {
       try {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
+        } catch (TimeoutException ignored) {
         }
         if (!alreadyFinished) setVisible(true);
         return worker.get();

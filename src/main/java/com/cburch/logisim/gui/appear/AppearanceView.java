@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,13 +48,13 @@ import javax.swing.SwingUtilities;
 public class AppearanceView {
   private static final double[] ZOOM_OPTIONS = {100, 150, 200, 300, 400, 600, 800};
 
-  private DrawingAttributeSet attrs;
-  private AppearanceCanvas canvas;
-  private CanvasPane canvasPane;
-  private AppearanceToolbarModel toolbarModel;
+  private final DrawingAttributeSet attrs;
+  private final AppearanceCanvas canvas;
+  private final CanvasPane canvasPane;
+  private final AppearanceToolbarModel toolbarModel;
+  private final ZoomModel zoomModel;
+  private final AppearanceEditHandler editHandler;
   private AttrTableDrawManager attrTableManager;
-  private ZoomModel zoomModel;
-  private AppearanceEditHandler editHandler;
 
   public AppearanceView() {
     attrs = new DrawingAttributeSet();
@@ -63,8 +63,12 @@ public class AppearanceView {
     canvasPane = new CanvasPane(canvas);
     ShowStateTool ssTool = new ShowStateTool(this, canvas, attrs);
     toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attrs);
-    zoomModel = new BasicZoomModel(AppPreferences.APPEARANCE_SHOW_GRID, AppPreferences.APPEARANCE_ZOOM,
-            ZOOM_OPTIONS, canvasPane);
+    zoomModel =
+        new BasicZoomModel(
+            AppPreferences.APPEARANCE_SHOW_GRID,
+            AppPreferences.APPEARANCE_ZOOM,
+            ZOOM_OPTIONS,
+            canvasPane);
     canvas.getGridPainter().setZoomModel(zoomModel);
     attrTableManager = null;
     canvasPane.setZoomModel(zoomModel);

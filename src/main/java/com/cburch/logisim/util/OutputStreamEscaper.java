@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,11 +34,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public class OutputStreamEscaper extends OutputStream {
-  protected Writer out;
+  protected final Writer out;
   protected boolean preserveWhitespace;
   protected int textWidth, col;
   protected char lastChar;
-  protected char[] sep = System.lineSeparator().toCharArray();
+  protected final char[] sep = System.lineSeparator().toCharArray();
 
   public OutputStreamEscaper(Writer out) {
     this.out = out;

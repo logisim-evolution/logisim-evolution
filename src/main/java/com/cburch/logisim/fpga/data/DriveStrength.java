@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class DriveStrength {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);
@@ -64,15 +64,15 @@ public class DriveStrength {
     return result;
   }
 
-  public static String DriveAttributeString = "FPGAPinDriveStrength";
-  public static char DefaulStength = 0;
+  public static final String DriveAttributeString = "FPGAPinDriveStrength";
+  public static final char DefaulStength = 0;
   public static char Drive_2 = 1;
   public static char Drive_4 = 2;
   public static char Drive_8 = 3;
   public static char Drive_16 = 4;
-  public static char Drive_24 = 5;
+  public static final char Drive_24 = 5;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
+  public static final String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
 }

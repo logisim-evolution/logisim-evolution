@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,24 +36,22 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class OddParityGate extends AbstractGate {
-  private class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1, HDLType));
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
+      Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
       Contents.add("");
       return Contents;
     }
   }
 
-  public static OddParityGate FACTORY = new OddParityGate();
-  private String ODD_PARITY_LABEL = "2k+1";
+  public static final OddParityGate FACTORY = new OddParityGate();
+  private final String ODD_PARITY_LABEL = "2k+1";
 
   private OddParityGate() {
     super("Odd Parity", S.getter("oddParityComponent"));
@@ -80,9 +78,9 @@ class OddParityGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

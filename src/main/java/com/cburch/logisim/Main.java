@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,35 +31,32 @@ package com.cburch.logisim;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
-
+import com.cburch.logisim.util.MacCompatibility;
+import com.github.weisj.darklaf.LafManager;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     System.setProperty("apple.awt.application.name", "Logisim-evolution");
     try {
       if (!GraphicsEnvironment.isHeadless()) {
+        for (LookAndFeelInfo themeInfo : LafManager.getRegisteredThemeInfos()) {
+          UIManager.installLookAndFeel(themeInfo);
+        }
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12))); 
       }
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (UnsupportedLookAndFeelException e) {
+    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
       e.printStackTrace();
     }
     Startup startup = Startup.parseArgs(args);
@@ -85,13 +82,14 @@ public class Main {
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final LogisimVersion VERSION =
-      LogisimVersion.get(3, 4, 1, LogisimVersion.FINAL_REVISION);
+      LogisimVersion.get(3, 5, 0, LogisimVersion.FINAL_REVISION);
 
   public static final String VERSION_NAME = VERSION.toString();
-  public static final int COPYRIGHT_YEAR = 2020;
+  public static final int COPYRIGHT_YEAR = 2021;
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
+  public static final boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean hasGui() { return !headless; }
 
   /** URL for the automatic updater */

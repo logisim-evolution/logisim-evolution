@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,11 +31,10 @@ package com.cburch.draw.gui;
 import com.cburch.draw.tools.AbstractTool;
 import com.cburch.draw.tools.DrawingAttributeSet;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableToolModel extends AttributeSetTableModel {
-  private DrawingAttributeSet defaults;
+  private final DrawingAttributeSet defaults;
   private AbstractTool currentTool;
 
   public AttrTableToolModel(DrawingAttributeSet defaults, AbstractTool tool) {
@@ -56,7 +55,7 @@ class AttrTableToolModel extends AttributeSetTableModel {
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(Attribute<Object> attr, Object value) {
     defaults.setValue(attr, value);
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,9 +38,9 @@ import javax.swing.JMenuItem;
 
 class SplitterDistributeItem extends JMenuItem implements ActionListener {
   private static final long serialVersionUID = 1L;
-  private Project proj;
-  private Splitter splitter;
-  private int order;
+  private final Project proj;
+  private final Splitter splitter;
+  private final int order;
 
   public SplitterDistributeItem(Project proj, Splitter splitter, int order) {
     this.proj = proj;
@@ -55,6 +55,7 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     for (int i = 0; same && i < desired.length; i++) {
       if (actual[i] != desired[i]) {
         same = false;
+        break;
       }
     }
     setEnabled(!same);
@@ -68,7 +69,7 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     CircuitMutation xn = new CircuitMutation(proj.getCircuitState().getCircuit());
     for (int i = 0, n = Math.min(actual.length, desired.length); i < n; i++) {
       if (actual[i] != desired[i]) {
-        xn.set(splitter, attrs.getBitOutAttribute(i), Integer.valueOf(desired[i]));
+        xn.set(splitter, attrs.getBitOutAttribute(i), (int) desired[i]);
       }
     }
     proj.doAction(xn.toAction(toGetter()));

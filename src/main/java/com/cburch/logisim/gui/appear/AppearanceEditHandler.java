@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -61,7 +61,7 @@ import java.util.Map;
 
 public class AppearanceEditHandler extends EditHandler
     implements SelectionListener, PropertyChangeListener, CanvasModelListener {
-  private AppearanceCanvas canvas;
+  private final AppearanceCanvas canvas;
 
   AppearanceEditHandler(AppearanceCanvas canvas) {
     this.canvas = canvas;
@@ -90,6 +90,7 @@ public class AppearanceEditHandler extends EditHandler
     for (CanvasObject o : sel.getSelected()) {
       if (!(o instanceof AppearanceElement)) {
         selHasRemovable = true;
+        break;
       }
     }
     boolean canRaise;
@@ -102,7 +103,7 @@ public class AppearanceEditHandler extends EditHandler
       for (Map.Entry<CanvasObject, Integer> entry : zs.entrySet()) {
         if (!(entry.getKey() instanceof AppearanceElement)) {
           count++;
-          int z = entry.getValue().intValue();
+          int z = entry.getValue();
           if (z < zmin) zmin = z;
           if (z > zmax) zmax = z;
         }
@@ -160,8 +161,8 @@ public class AppearanceEditHandler extends EditHandler
   public void delete() {
     Selection sel = canvas.getSelection();
     int n = sel.getSelected().size();
-    List<CanvasObject> select = new ArrayList<CanvasObject>(n);
-    List<CanvasObject> remove = new ArrayList<CanvasObject>(n);
+    List<CanvasObject> select = new ArrayList<>(n);
+    List<CanvasObject> remove = new ArrayList<>(n);
     Location anchorLocation = null;
     Direction anchorFacing = null;
     for (CanvasObject o : sel.getSelected()) {
@@ -196,8 +197,8 @@ public class AppearanceEditHandler extends EditHandler
   public void duplicate() {
     Selection sel = canvas.getSelection();
     int n = sel.getSelected().size();
-    List<CanvasObject> select = new ArrayList<CanvasObject>(n);
-    List<CanvasObject> clones = new ArrayList<CanvasObject>(n);
+    List<CanvasObject> select = new ArrayList<>(n);
+    List<CanvasObject> clones = new ArrayList<>(n);
     for (CanvasObject o : sel.getSelected()) {
       if (o.canRemove()) {
         CanvasObject copy = o.clone();
@@ -245,7 +246,7 @@ public class AppearanceEditHandler extends EditHandler
   public void paste() {
     ClipboardContents clip = Clipboard.get();
     Collection<CanvasObject> contents = clip.getElements();
-    List<CanvasObject> add = new ArrayList<CanvasObject>(contents.size());
+    List<CanvasObject> add = new ArrayList<>(contents.size());
     for (CanvasObject o : contents) {
       add.add(o.clone());
     }
@@ -254,7 +255,7 @@ public class AppearanceEditHandler extends EditHandler
     // find how far we have to translate shapes so that at least one of the
     // pasted shapes doesn't match what's already in the model
     Collection<CanvasObject> raw = canvas.getModel().getObjectsFromBottom();
-    MatchingSet<CanvasObject> cur = new MatchingSet<CanvasObject>(raw);
+    MatchingSet<CanvasObject> cur = new MatchingSet<>(raw);
     int dx = 0;
     while (true) {
       // if any shapes in "add" aren't in canvas, we are done

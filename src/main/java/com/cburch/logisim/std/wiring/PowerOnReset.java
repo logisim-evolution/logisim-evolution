@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,7 +64,7 @@ public class PowerOnReset extends InstanceFactory {
           new DurationAttribute("PorHighDuration", S.getter("porHighAttr"), 1, 10, false),
         },
         new Object[] {
-          Direction.EAST, Integer.valueOf(2),
+          Direction.EAST, 2,
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("por.png");
@@ -73,8 +73,8 @@ public class PowerOnReset extends InstanceFactory {
   private static class PORState implements InstanceData, Cloneable, ActionListener {
 
     private boolean value;
-    private Timer tim;
-    private InstanceState state;
+    private final Timer tim;
+    private final InstanceState state;
 
     public PORState(InstanceState state) {
       value = true;
@@ -101,7 +101,7 @@ public class PowerOnReset extends InstanceFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() == tim) {
-        if (value == true) {
+        if (value) {
           value = false;
           state.getInstance().fireInvalidated();
           tim.stop();

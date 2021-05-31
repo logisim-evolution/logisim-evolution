@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,21 +31,20 @@ package com.cburch.logisim.gui.appear;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 class ClipboardContents {
   static final ClipboardContents EMPTY =
-      new ClipboardContents(Collections.<CanvasObject>emptySet(), null, null);
+      new ClipboardContents(Collections.emptySet(), null, null);
 
-  private Collection<CanvasObject> onClipboard;
-  private Location anchorLocation;
-  private Direction anchorFacing;
+  private final Collection<CanvasObject> onClipboard;
+  private final Location anchorLocation;
+  private final Direction anchorFacing;
 
   public ClipboardContents(
       Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {
-    this.onClipboard = Collections.unmodifiableList(new ArrayList<CanvasObject>(onClipboard));
+    this.onClipboard = java.util.List.copyOf(onClipboard);
     this.anchorLocation = anchorLocation;
     this.anchorFacing = anchorFacing;
   }

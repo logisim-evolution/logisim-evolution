@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.gates;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -56,27 +56,25 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     int Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
     int NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
     for (int i = 0; i < NrOfInputs; i++) {
-      MyInputs.put("Input_" + Integer.toString(i + 1), Bitwidth);
+      MyInputs.put("Input_" + (i + 1), Bitwidth);
     }
     return MyInputs;
   }
 
-  public ArrayList<String> GetLogicFunction(
-      int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-    return new ArrayList<String>();
+  public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+    return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     int Bitwidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     int NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
@@ -85,8 +83,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
     if (NrOfInputs > 1) {
       Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the bubbles are processed", 3, HDLType));
-      if (HDLType.equals(VHDL)) {
+      Contents.addAll(MakeRemarkBlock("Here the bubbles are processed", 3));
+      if (HDL.isVHDL()) {
         String AllignmentSpaces;
         if (NrOfInputs < 10) AllignmentSpaces = " ";
         else if (NrOfInputs < 100) AllignmentSpaces = "  ";
@@ -95,10 +93,10 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
             "   s_signal_invert_mask <= std_logic_vector(to_unsigned("
                 + BubblesString
                 + ","
-                + Integer.toString(NrOfInputs)
+                + NrOfInputs
                 + "));");
-        String WhenLineBegin = "";
-        for (int i = 0; i < 21 + AllignmentSpaces.length(); i++) WhenLineBegin += " ";
+        StringBuilder WhenLineBegin = new StringBuilder();
+        WhenLineBegin.append(" ".repeat(21 + AllignmentSpaces.length()));
         for (int i = 0; i < NrOfInputs; i++) {
           String LocalSpaces;
           if (i < 10) LocalSpaces = AllignmentSpaces;
@@ -109,57 +107,51 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
           else LocalSpaces = " ";
           Contents.add(
               "   s_real_input_"
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + LocalSpaces
                   + " <= NOT( Input_"
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + " )");
           Contents.add(
               WhenLineBegin
                   + "   WHEN s_signal_invert_mask("
-                  + Integer.toString(i)
+                  + i
                   + ") = '1' ELSE");
-          Contents.add(WhenLineBegin + "Input_" + Integer.toString(i + 1) + ";");
+          Contents.add(WhenLineBegin + "Input_" + (i + 1) + ";");
         }
       } else {
         Contents.add("   assign s_signal_invert_mask = " + BubblesString + ";");
         for (int i = 0; i < NrOfInputs; i++) {
           Contents.add(
               "   assign s_real_input_"
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + " = (s_signal_invert_mask["
-                  + Integer.toString(i)
+                  + i
                   + "]) ? ~Input_"
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + ":"
                   + " Input_"
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + ";");
         }
       }
     }
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the functionality is defined", 3, HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the functionality is defined", 3));
     boolean onehot = false;
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    Contents.addAll(GetLogicFunction(NrOfInputs, Bitwidth, onehot, HDLType));
+    Contents.addAll(GetLogicFunction(NrOfInputs, Bitwidth, onehot));
     return Contents;
   }
 
-  public ArrayList<String> GetOneHot(
-      boolean inverted, int nr_of_inputs, boolean is_bus, String HDLType) {
-    ArrayList<String> Lines = new ArrayList<String>();
+  public ArrayList<String> GetOneHot(boolean inverted, int nr_of_inputs, boolean is_bus) {
+    ArrayList<String> Lines = new ArrayList<>();
     String Spaces = "   ";
     String IndexString = "";
-    String NotOperation = (HDLType.equals(VHDL)) ? "NOT" : "~";
-    String AndOperation = (HDLType.equals(VHDL)) ? "AND" : "&";
-    String OrOperation = (HDLType.equals(VHDL)) ? "OR" : "|";
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperation = (HDLType.equals(VHDL)) ? " <= " : " = ";
     if (is_bus) {
-      if (HDLType.equals(VHDL)) {
+      if (HDL.isVHDL()) {
         Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
         Spaces += "   ";
         IndexString = "(n)";
@@ -173,8 +165,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
     }
     StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + Preamble + "Result" + IndexString + AssignOperation);
-    if (inverted) OneLine.append(NotOperation + "(");
+    OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
+    if (inverted) OneLine.append(HDL.notOperator() + "(");
     int spaces = OneLine.length();
     for (int termloop = 0; termloop < nr_of_inputs; termloop++) {
       while (OneLine.length() < spaces) {
@@ -182,17 +174,16 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
       OneLine.append("(");
       for (int i = 0; i < nr_of_inputs; i++) {
-        if (i == termloop) OneLine.append("s_real_input_" + Integer.toString(i + 1) + IndexString);
+        if (i == termloop) OneLine.append("s_real_input_").append(i + 1).append(IndexString);
         else
-          OneLine.append(
-              NotOperation + "(s_real_input_" + Integer.toString(i + 1) + IndexString + ")");
+          OneLine.append( HDL.notOperator() + "(s_real_input_" + (i + 1) + IndexString + ")");
         if (i < (nr_of_inputs - 1)) {
-          OneLine.append(" " + AndOperation + " ");
+          OneLine.append(" " + HDL.andOperator() + " ");
         }
       }
       OneLine.append(")");
       if (termloop < (nr_of_inputs - 1)) {
-        OneLine.append(" " + OrOperation + " ");
+        OneLine.append(" " + HDL.orOperator() + " ");
       } else {
         if (inverted) OneLine.append(")");
         OneLine.append(";");
@@ -201,7 +192,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       OneLine.setLength(0);
     }
     if (is_bus) {
-      if (HDLType.equals(VHDL)) {
+      if (HDL.isVHDL()) {
         Lines.add("   END GENERATE GenBits;");
       } else {
         Lines.add("         end");
@@ -213,7 +204,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     int Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
     MyOutputs.put("Result", Bitwidth);
     return MyOutputs;
@@ -221,7 +212,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> MyParameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> MyParameters = new TreeMap<>();
     int NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
@@ -236,9 +227,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     boolean is_bus = is_bus(ComponentInfo.GetComponent().getAttributeSet());
     AttributeSet Myattrs = ComponentInfo.GetComponent().getAttributeSet();
     int NrOfInputs =
@@ -264,17 +254,12 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     return ParameterMap;
   }
 
-  public ArrayList<String> GetParity(
-      boolean inverted, int nr_of_inputs, boolean is_bus, String HDLType) {
-    ArrayList<String> Lines = new ArrayList<String>();
+  public ArrayList<String> GetParity(boolean inverted, int nr_of_inputs, boolean is_bus) {
+    ArrayList<String> Lines = new ArrayList<>();
     String Spaces = "   ";
     String IndexString = "";
-    String XorOperation = (HDLType.equals(VHDL)) ? " XOR" : "^";
-    String NotOperation = (HDLType.equals(VHDL)) ? "NOT" : "~";
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperation = (HDLType.equals(VHDL)) ? " <= " : " = ";
     if (is_bus) {
-      if (HDLType.equals(VHDL)) {
+      if (HDL.isVHDL()) {
         Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
         Spaces += "   ";
         IndexString = "(n)";
@@ -288,16 +273,16 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
     }
     StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + Preamble + "Result" + IndexString + AssignOperation);
-    if (inverted) OneLine.append(NotOperation + "(");
+    OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
+    if (inverted) OneLine.append(HDL.notOperator() + "(");
     int spaces = OneLine.length();
     for (int i = 0; i < nr_of_inputs; i++) {
       while (OneLine.length() < spaces) {
         OneLine.append(" ");
       }
-      OneLine.append("s_real_input_" + Integer.toString(i + 1) + IndexString);
+      OneLine.append("s_real_input_").append(i + 1).append(IndexString);
       if (i < (nr_of_inputs - 1)) {
-        OneLine.append(XorOperation);
+        OneLine.append(HDL.xorOperator());
       } else {
         if (inverted) OneLine.append(")");
         OneLine.append(";");
@@ -306,7 +291,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       OneLine.setLength(0);
     }
     if (is_bus) {
-      if (HDLType.equals(VHDL)) {
+      if (HDL.isVHDL()) {
         Lines.add("   END GENERATE GenBits;");
       } else {
         Lines.add("         end");
@@ -317,9 +302,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
@@ -339,15 +323,13 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     for (int i = 1; i <= NrOfInputs; i++) {
       PortMap.putAll(
           GetNetMap(
-              "Input_" + Integer.toString(i),
+              "Input_" + i,
               InputFloatingValues[i - 1],
               ComponentInfo,
               i,
-              Reporter,
-              HDLType,
               Nets));
     }
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 0, Nets));
 
     return PortMap;
   }
@@ -363,7 +345,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int Bitwidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     int NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
@@ -371,8 +353,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
             : 1;
     if (NrOfInputs > 1) {
       for (int i = 0; i < NrOfInputs; i++) {
-        if (Bitwidth > 1) Wires.put("s_real_input_" + Integer.toString(i + 1), BitWidthGeneric);
-        else Wires.put("s_real_input_" + Integer.toString(i + 1), 1);
+        if (Bitwidth > 1) Wires.put("s_real_input_" + (i + 1), BitWidthGeneric);
+        else Wires.put("s_real_input_" + (i + 1), 1);
       }
       Wires.put("s_signal_invert_mask", NrOfInputs);
     }
@@ -380,7 +362,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 

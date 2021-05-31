@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,17 +41,17 @@ public class TruthTable {
 
   private static final Entry DEFAULT_ENTRY = Entry.DONT_CARE;
 
-  private MyListener myListener = new MyListener();
-  private List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
+  private final MyListener myListener = new MyListener();
+  private final List<TruthTableListener> listeners = new ArrayList<>();
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private ArrayList<Row> rows = new ArrayList<>(); // visible input rows
-  private ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
+  private final ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
   private static final CompareInputs sortByInputs = new CompareInputs();
 
-  private class Row implements Iterable<Integer> {
+  private static class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
-    Entry inputs[];
+    final Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
       inputs = new Entry[numInputs];
@@ -62,52 +62,54 @@ public class TruthTable {
       }
     }
 
-    Row(Entry entries[], int numInputs) {
+    Row(Entry[] entries, int numInputs) {
       inputs = new Entry[numInputs];
-      for (int i = 0; i < numInputs; i++) inputs[i] = entries[i];
+      System.arraycopy(entries, 0, inputs, 0, numInputs);
     }
 
     public int baseIndex() {
       int idx = 0;
-      for (int i = 0; i < inputs.length; i++) idx = (idx << 1) | (inputs[i] == Entry.ONE ? 1 : 0);
+      for (Entry input : inputs)
+        idx = (idx << 1) | (input == Entry.ONE ? 1 : 0);
       return idx;
     }
 
     public int dcMask() {
       int mask = 0;
-      for (int i = 0; i < inputs.length; i++)
-        mask = (mask << 1) | (inputs[i] == Entry.DONT_CARE ? 1 : 0);
+      for (Entry input : inputs)
+        mask = (mask << 1) | (input == Entry.DONT_CARE ? 1 : 0);
       return mask;
     }
 
     public int duplicity() {
       int count = 1;
-      for (int i = 0; i < inputs.length; i++) count *= (inputs[i] == Entry.DONT_CARE ? 2 : 1);
+      for (Entry input : inputs)
+        count *= (input == Entry.DONT_CARE ? 2 : 1);
       return count;
     }
 
     @Override
     public String toString() {
-      String s = "row[";
+      StringBuilder s = new StringBuilder("row[");
       for (int i = 0; i < inputs.length; i++) {
-        if (i != 0) s += " ";
-        s += inputs[i].getDescription();
+        if (i != 0) s.append(" ");
+        s.append(inputs[i].getDescription());
       }
-      s += "]";
-      s += " dup=" + duplicity();
-      s += String.format(" base=%x dcmask=%x", baseIndex(), dcMask());
-      return s;
+      s.append("]");
+      s.append(" dup=").append(duplicity());
+      s.append(String.format(" base=%x dcmask=%x", baseIndex(), dcMask()));
+      return s.toString();
     }
 
     public String toBitString(List<Var> vars) {
-      String s = null;
+      StringBuilder s = null;
       int i = 0;
       for (Var v : vars) {
-        if (s == null) s = "";
-        else s += " ";
-        for (int j = 0; j < v.width; j++) s += inputs[i++].toBitString();
+        if (s == null) s = new StringBuilder();
+        else s.append(" ");
+        for (int j = 0; j < v.width; j++) s.append(inputs[i++].toBitString());
       }
-      return s;
+      return s.toString();
     }
 
     public boolean contains(int idx) {
@@ -124,11 +126,11 @@ public class TruthTable {
     }
 
     public Iterator<Integer> iterator() {
-      return new Iterator<Integer>() {
-        int base = baseIndex();
-        int mask = dcMask();
-        int nbits = inputs.length;
-        int count = duplicity();
+      return new Iterator<>() {
+        final int base = baseIndex();
+        final int mask = dcMask();
+        final int nbits = inputs.length;
+        final int count = duplicity();
         int iter = 0;
 
         @Override
@@ -141,7 +143,9 @@ public class TruthTable {
           int add = iter;
           int keep = 0;
           for (int b = 0; b < nbits; b++) {
-            if ((mask & (1 << b)) == 0) add = ((add & ~keep) << 1) | (add & keep);
+            if ((mask & (1 << b)) == 0) {
+              add = ((add & ~keep) << 1) | (add & keep);
+            }
             keep |= (1 << b);
           }
           iter++;
@@ -279,10 +283,10 @@ public class TruthTable {
   public String getVisibleOutputs(int row) {
     Row r = rows.get(row);
     int idx = r.baseIndex();
-    String s = "";
+    StringBuilder s = new StringBuilder();
     for (Entry[] column : columns)
-      s += (column == null ? DEFAULT_ENTRY : column[idx]).getDescription();
-    return s;
+      s.append((column == null ? DEFAULT_ENTRY : column[idx]).getDescription());
+    return s.toString();
   }
 
   public Entry getVisibleInputEntry(int row, int col) {
@@ -301,8 +305,7 @@ public class TruthTable {
   }
 
   public Iterable<Integer> getVisibleRowIndexes(int row) {
-    Row r = rows.get(row);
-    return r;
+    return rows.get(row);
   }
 
   public Entry getInputEntry(int idx, int col) {
@@ -330,15 +333,16 @@ public class TruthTable {
 
   private boolean identicalOutputs(int idx1, int idx2) {
     if (idx1 == idx2) return true;
-    for (int col = 0; col < columns.size(); col++) {
-      Entry[] column = columns.get(col);
-      if (column == null) continue;
-      if (column[idx1] != column[idx2]) return false;
+    for (Entry[] column : columns) {
+      if (column == null)
+        continue;
+      if (column[idx1] != column[idx2])
+        return false;
     }
     return true;
   }
 
-  private void mergeOutputs(int idx1, int idx2, boolean changed[]) {
+  private void mergeOutputs(int idx1, int idx2, boolean[] changed) {
     if (idx1 == idx2) return;
     for (int col = 0; col < columns.size(); col++) {
       Entry[] column = columns.get(col);
@@ -350,7 +354,7 @@ public class TruthTable {
     }
   }
 
-  private boolean setDontCare(Row r, int dc, boolean force, boolean changed[]) {
+  private boolean setDontCare(Row r, int dc, boolean force, boolean[] changed) {
     Row rNew = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
     int base = rNew.baseIndex();
     if (!force) {
@@ -387,7 +391,7 @@ public class TruthTable {
     if (r.inputs[col] == value) return false;
     int dc = (1 << (r.inputs.length - 1 - col));
     if (value == Entry.DONT_CARE) {
-      boolean changed[] = new boolean[columns.size()];
+      boolean[] changed = new boolean[columns.size()];
       if (!setDontCare(r, dc, force, changed)) return false;
       fireRowsChanged();
       for (int ocol = 0; ocol < columns.size(); ocol++) {
@@ -438,13 +442,13 @@ public class TruthTable {
     int ni = getInputColumnCount();
     int no = getOutputColumnCount();
     ArrayList<Row> newRows = new ArrayList<>(newEntries.size());
-    for (Entry values[] : newEntries) {
+    for (Entry[] values : newEntries) {
       if (values.length != ni + no) throw new IllegalArgumentException("wrong column count");
       newRows.add(new Row(values, ni));
     }
     // check that newRows has no intersections
     List<Var> ivars = getInputVariables();
-    int taken[] = new int[getRowCount()];
+    int[] taken = new int[getRowCount()];
     for (int i = 0; i < newRows.size(); i++) {
       Row r = newRows.get(i);
       for (Integer idx : r) {
@@ -478,12 +482,12 @@ public class TruthTable {
       }
     }
 
-    Collections.sort(newRows, sortByInputs);
+    newRows.sort(sortByInputs);
     rows.clear();
     rows = newRows;
     initColumns();
 
-    for (Entry values[] : newEntries) {
+    for (Entry[] values : newEntries) {
       Row r = new Row(values, ni);
       for (int col = 0; col < no; col++) {
         Entry value = values[ni + col];
@@ -559,11 +563,10 @@ public class TruthTable {
         int bitIndex = event.getBitIndex();
         for (int b = 0; b < v.width; b++) columns.remove(bitIndex - b);
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getOutputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
-        int pos = bitIndex + 1 - oldVar.width;
+        int lost = v.width - newVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) columns.remove(pos);
         } else if (lost < 0) {
@@ -592,12 +595,11 @@ public class TruthTable {
           for (int b = v.width - 1; b >= 0; b--) moveInput(newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) removeInput(pos, oldCount--);
         } else if (lost < 0) {
@@ -636,7 +638,7 @@ public class TruthTable {
         }
         ret.add(new Row(idx0, inputs, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -653,17 +655,17 @@ public class TruthTable {
         ret.add(new Row(idx0 | 0, oldCount + 1, dc0)); // xxxx0yyy
         ret.add(new Row(idx0 | b, oldCount + 1, dc0)); // xxxx1yyy
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
     private void removeInput(int index, int oldCount) {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
-      boolean changed[] = new boolean[columns.size()];
-      for (int i = 0; i < rows.size(); i++) {
-        Row r = rows.get(i);
-        if (r.inputs[index] == Entry.DONT_CARE) continue;
+      boolean[] changed = new boolean[columns.size()];
+      for (Row r : rows) {
+        if (r.inputs[index] == Entry.DONT_CARE)
+          continue;
         setDontCare(r, b, true, changed);
       }
       int mask = b - 1; // _0000111
@@ -675,7 +677,7 @@ public class TruthTable {
         int dc0 = ((dc >> 1) & ~mask) | (dc & mask); // wwww0zzz
         ret.add(new Row(idx0, oldCount - 1, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -703,12 +705,11 @@ public class TruthTable {
             column = moveInputForOutput(column, newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) column = removeInputForOutput(column, pos, oldCount--);
         } else if (lost < 0) {

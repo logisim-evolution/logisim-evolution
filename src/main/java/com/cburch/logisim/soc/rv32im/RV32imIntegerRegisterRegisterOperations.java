@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,13 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecutionInterface {
 
@@ -69,11 +69,9 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   private boolean valid = false;
       
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -92,11 +90,11 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       case INSTR_SLT  : result = (opp1 < opp2) ? 1 : 0;
                         break;
       case INSTR_SNEZ :
-      case INSTR_SLTU : result = (ElfHeader.getLongValue((Integer)opp1)<ElfHeader.getLongValue((Integer)opp2)) ? 1 : 0;
+      case INSTR_SLTU : result = (ElfHeader.getLongValue(opp1)<ElfHeader.getLongValue(opp2)) ? 1 : 0;
                         break;
       case INSTR_XOR  : result = opp1 ^ opp2;
                         break;
-      case INSTR_SRL  : Long val1 = ElfHeader.getLongValue((Integer)opp1);
+      case INSTR_SRL  : long val1 = ElfHeader.getLongValue(opp1);
                         val1 >>= (opp2&0x1F);
                         result = ElfHeader.getIntValue(val1);
                         break;
@@ -115,13 +113,13 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+","+
-             ((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1]+",")+
-             RV32im_state.registerABINames[source2]);
+    s.append(RV32im_state.registerABINames[destination]).append(",")
+        .append((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1] + ",")
+        .append(RV32im_state.registerABINames[source2]);
     return s.toString();
   }
 

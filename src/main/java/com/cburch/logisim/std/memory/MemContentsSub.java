@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 class MemContentsSub {
   private static class BytePage extends MemContents.Page {
     private byte[] data;
-    private long mask;
+    private final long mask;
 
     public BytePage(int size, long mask) {
       this.mask = mask;
@@ -78,7 +78,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = (byte)data[(int)addr];
+        byte oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (byte) value;
         }
@@ -88,7 +88,7 @@ class MemContentsSub {
 
   private static class IntPage extends MemContents.Page {
     private int[] data;
-    private long mask;
+    private final long mask;
 
     public IntPage(int size, long mask) {
       this.mask = mask;
@@ -131,7 +131,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = (int)data[(int)addr];
+        int oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (int)value;
         }
@@ -141,7 +141,7 @@ class MemContentsSub {
 
   private static class ShortPage extends MemContents.Page {
     private short[] data;
-    private long mask;
+    private final long mask;
 
     public ShortPage(int size, long mask) {
       data = new short[size];
@@ -198,7 +198,7 @@ class MemContentsSub {
 
   private static class LongPage extends MemContents.Page {
     private long[] data;
-    private long mask;
+    private final long mask;
 
     public LongPage(int size, long mask) {
       this.mask = mask;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,13 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2DataTransferInstructions implements AssemblerExecutionInterface {
 
@@ -67,8 +66,8 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
                                             0x15,0x0d,0x05,
                                             0x35,0x2d,0x25 };
 
-  private ArrayList<String> Opcodes;
-  private ArrayList<Integer> OpcCodes; 
+  private final ArrayList<String> Opcodes;
+  private final ArrayList<Integer> OpcCodes;
   
   private int instruction;
   private boolean valid;
@@ -79,14 +78,15 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
   private String errorMessage;
   
   public Nios2DataTransferInstructions() {
-    Opcodes = new ArrayList<String>();
-    OpcCodes = new ArrayList<Integer>();
+    Opcodes = new ArrayList<>();
+    OpcCodes = new ArrayList<>();
     for (int i = 0 ; i < 16 ; i++) {
       Opcodes.add(AsmOpcodes[i].toLowerCase());
       OpcCodes.add(AsmOpcs[i]);
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState;
@@ -98,9 +98,11 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_STBIO  :
       case INSTR_STB    : toBeStored &= 0xFF;
                           transType = SocBusTransaction.ByteAccess;
+                          // fall through
       case INSTR_STHIO  :
       case INSTR_STH    : toBeStored &= 0xFFFF;
                           if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
+                          // fall through
       case INSTR_STWIO  :
       case INSTR_STW    : if (transType < 0) transType = SocBusTransaction.WordAccess;
                           SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
@@ -112,10 +114,12 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_LDBIO  :
       case INSTR_LDBU   :
       case INSTR_LDBUIO : transType = SocBusTransaction.ByteAccess;
+                          // fall through
       case INSTR_LDH    :
       case INSTR_LDHIO  :
       case INSTR_LDHU   :
       case INSTR_LDHUIO : if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+                          // fall through
       case INSTR_LDW    :
       case INSTR_LDWIO  : if (transType < 0) transType = SocBusTransaction.WordAccess;
                           trans = new SocBusTransaction(SocBusTransaction.READTransaction,
@@ -147,11 +151,11 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
 
   private boolean transactionHasError(SocBusTransaction trans) {
     if (trans.hasError()) {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       if (trans.isReadTransaction())
-        s.append(S.get("LoadStoreErrorInReadTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInReadTransaction")).append("\n");
       else
-        s.append(S.get("LoadStoreErrorInWriteTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInWriteTransaction")).append("\n");
       s.append(trans.getErrorMessage());
       errorMessage = s.toString();
     }
@@ -160,11 +164,11 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
 
   public String getAsmInstruction() {
 	if (!valid) return null;
-	StringBuffer s = new StringBuffer();
+	StringBuilder s = new StringBuilder();
 	s.append(Opcodes.get(operation));
 	while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-	s.append(Nios2State.registerABINames[destination]+","+immediate+"(");
-	s.append(Nios2State.registerABINames[base]+")");
+	s.append(Nios2State.registerABINames[destination]).append(",").append(immediate).append("(");
+	s.append(Nios2State.registerABINames[base]).append(")");
     return s.toString();
   }
 

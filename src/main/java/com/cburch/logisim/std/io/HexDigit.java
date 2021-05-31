@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -183,13 +183,13 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     return segs;
   }
   
-  public static int SEG_A_MASK = 0x10000;
-  public static int SEG_B_MASK = 0x10;
-  public static int SEG_C_MASK = 0x1;
-  public static int SEG_D_MASK = 0x100;
-  public static int SEG_E_MASK = 0x100000;
-  public static int SEG_F_MASK = 0x1000000;
-  public static int SEG_G_MASK = 0x1000;
+  public static final int SEG_A_MASK = 0x10000;
+  public static final int SEG_B_MASK = 0x10;
+  public static final int SEG_C_MASK = 0x1;
+  public static final int SEG_D_MASK = 0x100;
+  public static final int SEG_E_MASK = 0x100000;
+  public static final int SEG_F_MASK = 0x1000000;
+  public static final int SEG_G_MASK = 0x1000;
 
   @Override
   public void propagate(InstanceState state) {
@@ -210,7 +210,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
     }
 
-    Object value = Integer.valueOf(summary);
+    Object value = summary;
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));
@@ -225,9 +225,9 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new HexDigitHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {

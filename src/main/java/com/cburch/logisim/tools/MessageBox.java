@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,17 +28,16 @@
 
 package com.cburch.logisim.tools;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.cburch.logisim.gui.generic.OptionPane;
-
 public class MessageBox {
 
-  String description;
-  String title;
-  int type;
+  final String description;
+  final String title;
+  final int type;
   JTextArea textArea;
 
   public MessageBox(String title, String description, int type) {

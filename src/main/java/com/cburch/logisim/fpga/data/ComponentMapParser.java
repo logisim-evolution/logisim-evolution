@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,7 +46,7 @@ public class ComponentMapParser {
   private File fileToPase = null;
   private MappableResourcesContainer MappableComponents = null;
   private BoardInformation BoardInfo = null;
-  private String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
+  private final String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
   private final static int WrongCircuit = -1;
   private final static int WrongBoard = -2;
   private final static int ErrorCreatingDocument = -3;
@@ -95,9 +95,7 @@ public class ComponentMapParser {
     Document MapDoc = null;
     try {
       MapDoc = parser.parse(xml);
-    } catch (SAXException e) {
-      return ErrorParsingFile;
-    } catch (IOException e) {
+    } catch (SAXException | IOException e) {
       return ErrorParsingFile;
     }
 

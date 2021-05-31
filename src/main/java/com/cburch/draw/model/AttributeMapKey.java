@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,10 +29,11 @@
 package com.cburch.draw.model;
 
 import com.cburch.logisim.data.Attribute;
+import java.util.Objects;
 
 public class AttributeMapKey {
-  private Attribute<?> attr;
-  private CanvasObject object;
+  private final Attribute<?> attr;
+  private final CanvasObject object;
 
   public AttributeMapKey(Attribute<?> attr, CanvasObject object) {
     this.attr = attr;
@@ -43,8 +44,8 @@ public class AttributeMapKey {
   public boolean equals(Object other) {
     if (!(other instanceof AttributeMapKey)) return false;
     AttributeMapKey o = (AttributeMapKey) other;
-    return (attr == null ? o.attr == null : attr.equals(o.attr))
-        && (object == null ? o.object == null : object.equals(o.object));
+    return (Objects.equals(attr, o.attr))
+        && (Objects.equals(object, o.object));
   }
 
   public Attribute<?> getAttribute() {

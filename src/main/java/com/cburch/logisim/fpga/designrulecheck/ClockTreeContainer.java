@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,18 +32,18 @@ import java.util.ArrayList;
 
 public class ClockTreeContainer {
 
-  private ArrayList<ConnectionPoint> ClockSources;
-  private ArrayList<ConnectionPoint> ClockNets;
-  private int ClockSourceId;
-  private ArrayList<String> HierarchyId;
+  private final ArrayList<ConnectionPoint> ClockSources;
+  private final ArrayList<ConnectionPoint> ClockNets;
+  private final int ClockSourceId;
+  private final ArrayList<String> HierarchyId;
   private boolean isPinClockSource;
 
   public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId,
 		                    boolean pinClockSource) {
-    ClockSources = new ArrayList<ConnectionPoint>();
-    ClockNets = new ArrayList<ConnectionPoint>();
+    ClockSources = new ArrayList<>();
+    ClockNets = new ArrayList<>();
     ClockSourceId = sourceId;
-    HierarchyId = new ArrayList<String>();
+    HierarchyId = new ArrayList<>();
     HierarchyId.addAll(Hierarchy);
     isPinClockSource = pinClockSource;
   }
@@ -74,7 +74,7 @@ public class ClockTreeContainer {
   }
 
   public ArrayList<Byte> GetClockEntries(Net NetInfo) {
-    ArrayList<Byte> result = new ArrayList<Byte>();
+    ArrayList<Byte> result = new ArrayList<>();
     for (ConnectionPoint SolderPoint : ClockSources) {
       if (SolderPoint.GetParrentNet().equals(NetInfo))
         result.add(SolderPoint.GetParrentNetBitIndex());

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -60,9 +60,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
@@ -173,18 +173,18 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
   private static final String EXPORT_DIR = "hdl_export";
 
-  private FrameListener frameListener = new FrameListener();
-  private ModelListener modelListener = new ModelListener();
-  private EditorListener editorListener = new EditorListener();
+  private final FrameListener frameListener = new FrameListener();
+  private final ModelListener modelListener = new ModelListener();
+  private final EditorListener editorListener = new EditorListener();
 
   private RSyntaxTextArea editor;
   private HdlModel model;
   private Project project;
 
-  private JButton open = new JButton();
-  private JButton save = new JButton();
-  private JButton validate = new JButton();
-  private JButton close = new JButton();
+  private final JButton open = new JButton();
+  private final JButton save = new JButton();
+  private final JButton validate = new JButton();
+  private final JButton close = new JButton();
 
   public HdlContentEditor(Dialog parent, Project proj, HdlModel model) {
     super(parent, S.get("hdlFrameTitle"), true);
@@ -328,7 +328,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
   }
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   public static HdlContentEditor getContentEditor(Window source, HdlContent value, Project proj) {
     synchronized (windowRegistry) {

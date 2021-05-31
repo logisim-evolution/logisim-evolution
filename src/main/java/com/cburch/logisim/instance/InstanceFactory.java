@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,8 +64,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   static final Logger logger = LoggerFactory.getLogger(InstanceFactory.class);
 
-  private String name;
-  private StringGetter displayName;
+  private final String name;
+  private final StringGetter displayName;
   private StringGetter defaultToolTip;
   private String iconName;
   private Icon icon;
@@ -116,8 +116,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   @Override
   public AttributeSet createAttributeSet() {
     Attribute<?>[] as = attrs;
-    AttributeSet ret = as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
-    return ret;
+    return as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
   }
 
   @Override
@@ -245,7 +244,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
       return false;
     }
     try {
-      sub.getConstructor(new Class[0]);
+      sub.getConstructor();
       return true;
     } catch (SecurityException e) {
       logger.error("{} needs its no-args constructor to be public", sub.getName());
@@ -343,11 +342,11 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   public void setPorts(Port[] ports) {
-    portList = new UnmodifiableList<Port>(ports);
+    portList = new UnmodifiableList<>(ports);
   }
 
   public void setShouldSnap(boolean value) {
-    shouldSnap = Boolean.valueOf(value);
+    shouldSnap = value;
   }
   
   public boolean providesSubCircuitMenu() {

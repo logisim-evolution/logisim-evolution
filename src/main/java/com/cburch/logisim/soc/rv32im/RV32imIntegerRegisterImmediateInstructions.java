@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,13 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
@@ -83,11 +83,9 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private boolean valid = false;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -104,7 +102,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
       case INSTR_SLTI : result = (regVal < immediate) ? 1 : 0;
                         break;
       case INSTR_SEQZ :
-      case INSTR_SLTIU: result = (ElfHeader.getLongValue((Integer)regVal)<ElfHeader.getLongValue((Integer)immediate)) ? 1 : 0;
+      case INSTR_SLTIU: result = (ElfHeader.getLongValue(regVal)<ElfHeader.getLongValue(
+          immediate)) ? 1 : 0;
                         break;
       case INSTR_NOT  :
       case INSTR_XORI : result = regVal ^ immediate;
@@ -115,7 +114,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         break;
       case INSTR_SLLI : result = regVal << immediate;
                         break;
-      case INSTR_SRLI : Long val1 = ElfHeader.getLongValue((Integer)regVal);
+      case INSTR_SRLI : long val1 = ElfHeader.getLongValue(regVal);
                         val1 >>= immediate;
                         result = ElfHeader.getIntValue(val1);
                         break;
@@ -135,24 +134,26 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
       case INSTR_NOP  : break;
-      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]+","+immediate);
+      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(immediate);
                         break;
       case INSTR_LUI  :
-      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]+","+((immediate>>12)&0xFFFFF));
+      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append((immediate >> 12) & 0xFFFFF);
                         break;
       case INSTR_MV   :
       case INSTR_NOT  :
-      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]);
+      case INSTR_SEQZ : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]);
                         break;
-      default         : s.append(RV32im_state.registerABINames[destination]+","+
-                                 RV32im_state.registerABINames[source]+","+immediate);
+      default         : s.append(RV32im_state.registerABINames[destination]).append(",")
+          .append(RV32im_state.registerABINames[source]).append(",").append(immediate);
     }
     return s.toString();
   }
@@ -265,14 +266,15 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param1 = instr.getParameter(0);
                         param2 = instr.getParameter(1);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || !param2[0].isNumber()) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedImmediateValue"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken,
+                                S.getter("AssemblerExpectedImmediateValue"));
                           errors = true;
                           break;
                         }
@@ -304,14 +306,14 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param1 = instr.getParameter(0);
                         param2 = instr.getParameter(1);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
@@ -347,20 +349,21 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param2 = instr.getParameter(1);
                         param3 = instr.getParameter(2);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param3.length != 1 || !param3[0].isNumber()) {
-                          for (int i = 0 ; i < param3.length ; i++)
-                            instr.setError(param3[i], S.getter("AssemblerExpectedImmediateValue"));
+                          for (AssemblerToken assemblerToken : param3)
+                            instr.setError(assemblerToken,
+                                S.getter("AssemblerExpectedImmediateValue"));
                           errors = true;
                           break;
                         }

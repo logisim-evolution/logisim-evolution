@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,18 +38,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
-  private Class<? extends Library> descBase;
-  private FactoryDescription desc;
+  private final Class<? extends Library> descBase;
+  private final FactoryDescription desc;
   private ComponentFactory factory;
   private AttributeSet baseAttrs;
-  private ArrayList<AttributeListener> listeners;
+  private final ArrayList<AttributeListener> listeners;
 
   public FactoryAttributes(Class<? extends Library> descBase, FactoryDescription desc) {
     this.descBase = descBase;
     this.desc = desc;
     this.factory = null;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public FactoryAttributes(ComponentFactory factory) {
@@ -57,7 +57,7 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     this.desc = null;
     this.factory = factory;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void addAttributeListener(AttributeListener l) {

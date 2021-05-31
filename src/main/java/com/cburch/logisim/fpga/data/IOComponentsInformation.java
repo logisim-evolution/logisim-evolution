@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,35 +28,33 @@
 
 package com.cburch.logisim.fpga.data;
 
+import com.cburch.logisim.fpga.gui.BoardManipulator;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-
-import com.cburch.logisim.fpga.gui.BoardManipulator;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class IOComponentsInformation {
   
   private Frame parent;
-  private ArrayList<FPGAIOInformationContainer> IOcomps;
+  private final ArrayList<FPGAIOInformationContainer> IOcomps;
   private int DefaultStandard = 0;
   private int DefaultDriveStrength = 0;
   private int DefaultPullSelection = 0;
   private int DefaultActivity = 0;
-  private boolean mapMode;
-  private int imageHeight;
-  private FPGAIOInformationContainer[][] lookup;
+  private final boolean mapMode;
+  private final int imageHeight;
+  private final FPGAIOInformationContainer[][] lookup;
   private FPGAIOInformationContainer highlighted;
   private ArrayList<IOComponentsListener> listeners;
 
   public IOComponentsInformation(Frame parrentFrame, boolean mapMode) {
     parent = parrentFrame;
     imageHeight = mapMode ? BoardManipulator.IMAGE_HEIGHT+BoardManipulator.CONSTANT_BAR_HEIGHT : BoardManipulator.IMAGE_HEIGHT;
-    IOcomps = new ArrayList<FPGAIOInformationContainer>();
+    IOcomps = new ArrayList<>();
     lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];
     this.mapMode = mapMode;
     clear();
@@ -93,7 +91,7 @@ public class IOComponentsInformation {
   public FPGAIOInformationContainer getHighligted() { return highlighted; }
   
   public boolean tryMap(JPanel parent) {
-	if (!mapMode) return false;
+   	if (!mapMode) return false;
     if (highlighted != null) return highlighted.tryMap(parent);
     return false;
   }
@@ -175,13 +173,13 @@ public class IOComponentsInformation {
   
   public void addListener(IOComponentsListener l) {
     if (listeners == null) {
-      listeners = new ArrayList<IOComponentsListener>();
+      listeners = new ArrayList<>();
       listeners.add(l);
     } else if (!listeners.contains(l)) listeners.add(l);
   }
   
   public void removeListener(IOComponentsListener l) {
-    if (listeners != null && listeners.contains(l))
+    if (listeners != null)
       listeners.remove(l);
   }
 

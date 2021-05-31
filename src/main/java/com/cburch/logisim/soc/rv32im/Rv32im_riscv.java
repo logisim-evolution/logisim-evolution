@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,9 +29,6 @@
 package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
-
-import java.awt.Font;
-import java.awt.Graphics2D;
 
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElement.Path;
@@ -59,6 +56,8 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.gui.SocCPUShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
 
@@ -146,7 +145,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(), 
     				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
     RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
-    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISABLE), painter.getData());
+    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISIBLE), painter.getData());
   }
 
   @Override

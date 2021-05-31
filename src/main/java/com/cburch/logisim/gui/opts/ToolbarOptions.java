@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,8 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.file.ToolbarData;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
-import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
-import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
@@ -51,90 +49,19 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 class ToolbarOptions extends OptionsPanel {
-  private class Listener implements ProjectExplorerListener, ActionListener, ListSelectionListener {
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == addTool) {
-        doAddTool(explorer.getSelectedTool().cloneTool());
-      } else if (src == addSeparator) {
-        getOptions().getToolbarData().addSeparator();
-      } else if (src == moveUp) {
-        doMove(-1);
-      } else if (src == moveDown) {
-        doMove(1);
-      } else if (src == remove) {
-        int index = list.getSelectedIndex();
-        if (index >= 0) {
-          getProject().doAction(ToolbarActions.removeTool(getOptions().getToolbarData(), index));
-          list.clearSelection();
-        }
-      }
-    }
-
-    private void computeEnabled() {
-      int index = list.getSelectedIndex();
-      addTool.setEnabled(explorer.getSelectedTool() != null);
-      moveUp.setEnabled(index > 0);
-      moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
-      remove.setEnabled(index >= 0);
-    }
-
-    public void deleteRequested(ProjectExplorerEvent event) {}
-
-    private void doAddTool(Tool tool) {
-      if (tool != null) {
-        getProject().doAction(ToolbarActions.addTool(getOptions().getToolbarData(), tool));
-      }
-    }
-
-    private void doMove(int delta) {
-      int oldIndex = list.getSelectedIndex();
-      int newIndex = oldIndex + delta;
-      ToolbarData data = getOptions().getToolbarData();
-      if (oldIndex >= 0 && newIndex >= 0 && newIndex < data.size()) {
-        getProject().doAction(ToolbarActions.moveTool(data, oldIndex, newIndex));
-        list.setSelectedIndex(newIndex);
-      }
-    }
-
-    public void doubleClicked(ProjectExplorerEvent event) {
-      Object target = event.getTarget();
-      if (target instanceof ProjectExplorerToolNode) {
-        Tool tool = ((ProjectExplorerToolNode) target).getValue();
-        doAddTool(tool);
-      }
-    }
-
-    public JPopupMenu menuRequested(ProjectExplorerEvent event) {
-      return null;
-    }
-
-    public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {}
-
-    public void selectionChanged(ProjectExplorerEvent event) {
-      computeEnabled();
-    }
-
-    public void valueChanged(ListSelectionEvent event) {
-      computeEnabled();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
-  private Listener listener = new Listener();
-
-  private ProjectExplorer explorer;
-  private JButton addTool;
-  private JButton addSeparator;
-  private JButton moveUp;
-  private JButton moveDown;
-  private JButton remove;
-  private ToolbarList list;
+  private final Listener listener = new Listener();
+  private final ProjectExplorer explorer;
+  private final JButton addTool;
+  private final JButton addSeparator;
+  private final JButton moveUp;
+  private final JButton moveDown;
+  private final JButton remove;
+  private final ToolbarList list;
 
   public ToolbarOptions(OptionsFrame window) {
     super(window);
-    explorer = new ProjectExplorer(getProject());
+    explorer = new ProjectExplorer(getProject(),true);
     addTool = new JButton();
     addSeparator = new JButton();
     moveUp = new JButton();
@@ -208,5 +135,74 @@ class ToolbarOptions extends OptionsPanel {
     moveDown.setText(S.get("toolbarMoveDown"));
     remove.setText(S.get("toolbarRemove"));
     list.localeChanged();
+  }
+
+  private class Listener implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
+    public void actionPerformed(ActionEvent event) {
+      Object src = event.getSource();
+      if (src == addTool) {
+        doAddTool(explorer.getSelectedTool().cloneTool());
+      } else if (src == addSeparator) {
+        getOptions().getToolbarData().addSeparator();
+      } else if (src == moveUp) {
+        doMove(-1);
+      } else if (src == moveDown) {
+        doMove(1);
+      } else if (src == remove) {
+        int index = list.getSelectedIndex();
+        if (index >= 0) {
+          getProject().doAction(ToolbarActions.removeTool(getOptions().getToolbarData(), index));
+          list.clearSelection();
+        }
+      }
+    }
+
+    private void computeEnabled() {
+      int index = list.getSelectedIndex();
+      addTool.setEnabled(explorer.getSelectedTool() != null);
+      moveUp.setEnabled(index > 0);
+      moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
+      remove.setEnabled(index >= 0);
+    }
+
+    public void deleteRequested(ProjectExplorer.Event event) {}
+
+    private void doAddTool(Tool tool) {
+      if (tool != null) {
+        getProject().doAction(ToolbarActions.addTool(getOptions().getToolbarData(), tool));
+      }
+    }
+
+    private void doMove(int delta) {
+      int oldIndex = list.getSelectedIndex();
+      int newIndex = oldIndex + delta;
+      ToolbarData data = getOptions().getToolbarData();
+      if (oldIndex >= 0 && newIndex >= 0 && newIndex < data.size()) {
+        getProject().doAction(ToolbarActions.moveTool(data, oldIndex, newIndex));
+        list.setSelectedIndex(newIndex);
+      }
+    }
+
+    public void doubleClicked(ProjectExplorer.Event event) {
+      Object target = event.getTarget();
+      if (target instanceof ProjectExplorerToolNode) {
+        Tool tool = ((ProjectExplorerToolNode) target).getValue();
+        doAddTool(tool);
+      }
+    }
+
+    public JPopupMenu menuRequested(ProjectExplorer.Event event) {
+      return null;
+    }
+
+    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
+
+    public void selectionChanged(ProjectExplorer.Event event) {
+      computeEnabled();
+    }
+
+    public void valueChanged(ListSelectionEvent event) {
+      computeEnabled();
+    }
   }
 }

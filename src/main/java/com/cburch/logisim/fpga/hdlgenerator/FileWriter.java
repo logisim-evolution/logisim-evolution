@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -35,20 +35,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 
 public class FileWriter {
 
-  public static boolean CopyArchitecture(
-      String source, String dest, String componentName, FPGAReport reporter, String HDLType) {
+  public static boolean CopyArchitecture(String source, String dest, String componentName) {
     try {
-      if (HDLType.equals(HDLGeneratorFactory.VERILOG)) {
-        reporter.AddFatalError("Empty VHDL box not supported in verilog.");
+      if (HDL.isVerilog()) {
+        Reporter.Report.AddFatalError("Empty VHDL box not supported in verilog.");
         return false;
       }
       File inFile = new File(source);
       if (!inFile.exists()) {
-        reporter.AddFatalError("Source file \"" + source + "\" does not exist!");
+        Reporter.Report.AddFatalError("Source file \"" + source + "\" does not exist!");
         return false;
       }
       // copy file
@@ -63,16 +62,16 @@ public class FileWriter {
       }
       in.close();
       out.close();
-      reporter.AddInfo("\"" + source + "\" successfully copied to \"" + destPath + "\"");
+      Reporter.Report.AddInfo("\"" + source + "\" successfully copied to \"" + destPath + "\"");
       return true;
     } catch (Exception e) {
-      reporter.AddFatalError("Unable to copy file!");
+      Reporter.Report.AddFatalError("Unable to copy file!");
       return false;
     }
   }
 
   public static ArrayList<String> getExtendedLibrary() {
-    ArrayList<String> Lines = new ArrayList<String>();
+    ArrayList<String> Lines = new ArrayList<>();
     Lines.add("");
     Lines.add("LIBRARY ieee;");
     Lines.add("USE ieee.std_logic_1164.all;");
@@ -84,9 +83,7 @@ public class FileWriter {
   public static File GetFilePointer(
       String TargetDirectory,
       String ComponentName,
-      boolean IsEntity,
-      FPGAReport MyReporter,
-      String HDLType) {
+      boolean IsEntity) {
     try {
       File OutDir = new File(TargetDirectory);
       if (!OutDir.exists()) {
@@ -100,33 +97,33 @@ public class FileWriter {
       }
       FileName += ComponentName;
       if (IsEntity) {
-        if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+        if (HDL.isVHDL()) {
           FileName += EntityExtension;
         }
       } else {
-        if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+        if (HDL.isVHDL()) {
           FileName += ArchitectureExtension;
         }
       }
-      if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
+      if (HDL.isVHDL()) {
         FileName += ".vhd";
       } else {
         FileName += ".v";
       }
       File OutFile = new File(FileName);
-      MyReporter.AddInfo("Creating HDL file : \"" + FileName + "\"");
+      Reporter.Report.AddInfo("Creating HDL file : \"" + FileName + "\"");
       if (OutFile.exists()) {
-        MyReporter.AddWarning("HDL file \"" + FileName + "\" already exists");
+        Reporter.Report.AddWarning("HDL file \"" + FileName + "\" already exists");
         return null;
       }
       return OutFile;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Unable to create file!");
+      Reporter.Report.AddFatalError("Unable to create file!");
       return null;
     }
   }
 
-  public static File GetFilePointer(String TargetDirectory, String Name, FPGAReport MyReporter) {
+  public static File GetFilePointer(String TargetDirectory, String Name) {
     try {
       File OutDir = new File(TargetDirectory);
       if (!OutDir.exists()) {
@@ -140,61 +137,54 @@ public class FileWriter {
       }
       FileName += Name;
       File OutFile = new File(FileName);
-      MyReporter.AddInfo("Creating file : \"" + FileName + "\"");
+      Reporter.Report.AddInfo("Creating file : \"" + FileName + "\"");
       if (OutFile.exists()) {
-        MyReporter.AddWarning("File \"" + FileName + "\" already exists");
+        Reporter.Report.AddWarning("File \"" + FileName + "\" already exists");
         return null;
       }
       return OutFile;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Unable to create file!");
+      Reporter.Report.AddFatalError("Unable to create file!");
       return null;
     }
   }
 
-  public static ArrayList<String> getGenerateRemark(
-      String compName, String HDLIdentifier, String projName) {
-    ArrayList<String> Lines = new ArrayList<String>();
-    if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
+  public static ArrayList<String> getGenerateRemark(String compName, String projName) {
+    ArrayList<String> Lines = new ArrayList<>();
+    if (HDL.isVHDL()) {
       Lines.add("--==============================================================================");
       Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
       Lines.add("--==                                                                          ==");
       Lines.add("--==                                                                          ==");
-      String ThisLine = "--== Project   : ";
+      StringBuilder ThisLine = new StringBuilder("--== Project   : ");
       int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
-      ThisLine += projName;
-      for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine += " ";
-      }
-      ThisLine += "==";
-      Lines.add(ThisLine);
-      ThisLine = "--== Component : ";
+      ThisLine.append(projName);
+      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
+      ThisLine.append("==");
+      Lines.add(ThisLine.toString());
+      ThisLine = new StringBuilder("--== Component : ");
       nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
-      ThisLine += compName;
-      for (int i = 0; i < nr_of_spaces; i++) {
-        ThisLine += " ";
-      }
-      ThisLine += "==";
-      Lines.add(ThisLine);
+      ThisLine.append(compName);
+      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
+      ThisLine.append("==");
+      Lines.add(ThisLine.toString());
       Lines.add("--==                                                                          ==");
       Lines.add("--==============================================================================");
       Lines.add("");
     } else {
-      if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
+      if (HDL.isVerilog()) {
         Lines.add(
             "/******************************************************************************");
         Lines.add(
             " ** Logisim goes FPGA automatic generated Verilog code                       **");
         Lines.add(
             " **                                                                          **");
-        String ThisLine = " ** Component : ";
+        StringBuilder ThisLine = new StringBuilder(" ** Component : ");
         int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
-        ThisLine += compName;
-        for (int i = 0; i < nr_of_spaces; i++) {
-          ThisLine += " ";
-        }
-        ThisLine += "**";
-        Lines.add(ThisLine);
+        ThisLine.append(compName);
+        ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
+        ThisLine.append("**");
+        Lines.add(ThisLine.toString());
         Lines.add(
             " **                                                                          **");
         Lines.add(
@@ -206,7 +196,7 @@ public class FileWriter {
   }
 
   public static ArrayList<String> getStandardLibrary() {
-    ArrayList<String> Lines = new ArrayList<String>();
+    ArrayList<String> Lines = new ArrayList<>();
     Lines.add("");
     Lines.add("LIBRARY ieee;");
     Lines.add("USE ieee.std_logic_1164.all;");
@@ -214,8 +204,7 @@ public class FileWriter {
     return Lines;
   }
 
-  public static boolean WriteContents(
-      File outfile, ArrayList<String> Contents, FPGAReport MyReporter) {
+  public static boolean WriteContents(File outfile, ArrayList<String> Contents) {
     try {
       FileOutputStream output = new FileOutputStream(outfile);
       for (String ThisLine : Contents) {
@@ -228,7 +217,7 @@ public class FileWriter {
       output.close();
       return true;
     } catch (Exception e) {
-      MyReporter.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
+      Reporter.Report.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
       return false;
     }
   }

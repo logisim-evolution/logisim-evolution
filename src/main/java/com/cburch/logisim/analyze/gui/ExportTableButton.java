@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,8 +36,6 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
@@ -48,18 +46,14 @@ public class ExportTableButton extends JButton {
 
   private static final long serialVersionUID = 1L;
 
-  private JFrame parent;
-  private AnalyzerModel model;
+  private final JFrame parent;
+  private final AnalyzerModel model;
 
   ExportTableButton(JFrame parent, AnalyzerModel model) {
     this.parent = parent;
     this.model = model;
     addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            doSave();
-          }
-        });
+        event -> doSave());
   }
 
   void localeChanged() {

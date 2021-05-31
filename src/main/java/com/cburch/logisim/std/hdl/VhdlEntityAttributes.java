@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,7 +55,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
   }
 
-  private static List<Attribute<?>> attributes =
+  private static final List<Attribute<?>> attributes =
       Arrays.asList(
           VhdlEntityComponent.CONTENT_ATTR,
           StdAttr.LABEL,
@@ -64,12 +64,12 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           VhdlSimConstants.SIM_NAME_ATTR);
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   private VhdlContentComponent content;
   private String label = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = false;
+  private Boolean labelVisible = false;
   private String SimName = "";
 
   VhdlEntityAttributes() {
@@ -101,7 +101,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) labelVisable;
+      return (V) labelVisible;
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       return (V) SimName;
@@ -132,8 +132,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newvis = (Boolean) value;
-      if (labelVisable.equals(newvis)) return;
-      labelVisable = newvis;
+      if (labelVisible.equals(newvis)) return;
+      labelVisible = newvis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
@@ -146,9 +146,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return false;
-    }
-    return true;
+    return attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,18 +28,19 @@
 
 package com.cburch.logisim.prefs;
 
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
   private static boolean isSame(String a, String b) {
-    return a == null ? b == null : a.equals(b);
+    return Objects.equals(a, b);
   }
 
-  private String[] opts;
+  private final String[] opts;
   private String value;
 
-  private String dflt;
+  private final String dflt;
 
   PrefMonitorStringOpts(String name, String[] opts, String dflt) {
     super(name);
@@ -63,11 +64,10 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
       String oldValue = value;
       String newValue = prefs.get(name, dflt);
       if (!isSame(oldValue, newValue)) {
-        String[] o = opts;
         String chosen = null;
-        for (int i = 0; i < o.length; i++) {
-          if (isSame(o[i], newValue)) {
-            chosen = o[i];
+        for (String s : opts) {
+          if (isSame(s, newValue)) {
+            chosen = s;
             break;
           }
         }

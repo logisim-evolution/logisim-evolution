@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -88,7 +88,7 @@ public class DipSwitch extends InstanceFactory {
   private static class State implements InstanceData, Cloneable {
 
     private int Value;
-    private int size;
+    private final int size;
 
     public State(int value, int size) {
       Value = value;
@@ -121,16 +121,16 @@ public class DipSwitch extends InstanceFactory {
     }
   }
 
-  public static final ArrayList<String> GetLabels(int size) {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+  public static ArrayList<String> GetLabels(int size) {
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < size; i++) {
       LabelNames.add(getInputLabel(i));
     }
     return LabelNames;
   }
   
-  public static final String getInputLabel(int id) {
-    return "sw_" + Integer.toString(id + 1);
+  public static String getInputLabel(int id) {
+    return "sw_" + (id + 1);
   }
 
   public static final int MAX_SWITCH = 32;
@@ -213,11 +213,11 @@ public class DipSwitch extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) {
       MyHDLGenerator = new ButtonHDLGeneratorFactory();
     }
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -228,8 +228,7 @@ public class DipSwitch extends InstanceFactory {
       instance.recomputeBounds();
       updatePorts(instance);
       instance.computeLabelTextField(Instance.AVOID_LEFT);
-      ComponentMapInformationContainer map = (ComponentMapInformationContainer) 
-         instance.getAttributeValue(StdAttr.MAPINFO);
+      ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
       if (map != null) {
         map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(), 
             GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));

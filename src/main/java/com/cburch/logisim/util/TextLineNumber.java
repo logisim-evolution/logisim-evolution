@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,7 +54,6 @@ import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -84,7 +83,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
 
   //  Text component this TextTextLineNumber component is in sync with
 
-  private JTextComponent component;
+  private final JTextComponent component;
 
   //  Properties that can be changed
 
@@ -297,8 +296,8 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     //  Determine the rows to draw within the clipped bounds.
 
     Rectangle clip = g.getClipBounds();
-    int rowStartOffset = component.viewToModel( new Point(0, clip.y) );
-    int endOffset = component.viewToModel( new Point(0, clip.y + clip.height) );
+    int rowStartOffset = component.viewToModel2D( new Point(0, clip.y) );
+    int endOffset = component.viewToModel2D( new Point(0, clip.y + clip.height) );
 
     while (rowStartOffset <= endOffset)
     {
@@ -335,10 +334,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     int caretPosition = component.getCaretPosition();
     Element root = component.getDocument().getDefaultRootElement();
 
-    if (root.getElementIndex( rowStartOffset ) == root.getElementIndex(caretPosition))
-      return true;
-    else
-      return false;
+    return root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition);
   }
 
   /*
@@ -373,7 +369,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
   {
     //  Get the bounding rectangle of the row
 
-    Rectangle r = component.modelToView( rowStartOffset );
+    Rectangle r = component.modelToView2D( rowStartOffset ).getBounds();
     int lineHeight = fontMetrics.getHeight();
     int y = r.y + r.height;
     int descent = 0;
@@ -388,7 +384,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     else  // We need to check all the attributes for font changes
     {
       if (fonts == null)
-        fonts = new HashMap<String, FontMetrics>();
+        fonts = new HashMap<>();
 
       Element root = component.getDocument().getDefaultRootElement();
       int index = root.getElementIndex( rowStartOffset );
@@ -469,25 +465,20 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     //  View of the component has not been updated at the time
     //  the DocumentEvent is fired
 
-    SwingUtilities.invokeLater(new Runnable()
-    {
-      @Override
-      public void run()
+    SwingUtilities.invokeLater(() -> {
+      try
       {
-        try
-        {
-          int endPos = component.getDocument().getLength();
-          Rectangle rect = component.modelToView(endPos);
+        int endPos = component.getDocument().getLength();
+        Rectangle rect = component.modelToView2D(endPos).getBounds();
 
-          if (rect != null && rect.y != lastHeight)
-          {
-            setPreferredWidth();
-            repaint();
-            lastHeight = rect.y;
-          }
+        if (rect != null && rect.y != lastHeight)
+        {
+          setPreferredWidth();
+          repaint();
+          lastHeight = rect.y;
         }
-        catch (BadLocationException ex) { /* nothing to do */ }
       }
+      catch (BadLocationException ex) { /* nothing to do */ }
     });
   }
 

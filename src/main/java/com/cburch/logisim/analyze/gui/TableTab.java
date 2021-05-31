@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,7 +64,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -105,25 +104,27 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   private static final long serialVersionUID = 1L;
 
-  private Font HEAD_FONT;
-  private Font BODY_FONT;
-  private int HEADER_PADDING;
-  private int HEADER_VSEP;
-  private int COLUMNS_HSEP;
-  private int DEFAULT_CELL_PADDING;
-  private int DEFAULT_CELL_WIDTH;
-  private int DEFAULT_CELL_HEIGHT;
+  private final Font HEAD_FONT;
+  private final Font BODY_FONT;
+  private final int HEADER_PADDING;
+  private final int HEADER_VSEP;
+  private final int COLUMNS_HSEP;
+  private final int DEFAULT_CELL_PADDING;
+  private final int DEFAULT_CELL_WIDTH;
+  private final int DEFAULT_CELL_HEIGHT;
 
-  private MyListener myListener = new MyListener();
-  private TruthTable table;
-  private TableBody body;
-  private TableHeader header;
-  private JScrollPane bodyPane, headerPane;
+  private final MyListener myListener = new MyListener();
+  private final TruthTable table;
+  private final TableBody body;
+  private final TableHeader header;
+  private final JScrollPane bodyPane;
+  private final JScrollPane headerPane;
   private int cellHeight;
   private int tableWidth, headerHeight, bodyHeight;
-  private ColumnGroupDimensions inDim, outDim;
-  private TableTabCaret caret;
-  private TableTabClip clip;
+  private final ColumnGroupDimensions inDim;
+  private final ColumnGroupDimensions outDim;
+  private final TableTabCaret caret;
+  private final TableTabClip clip;
 
   List<Var> inputVars, outputVars;
 
@@ -252,16 +253,16 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
         x += cellPadding;
       }
     }
-  };
+  }
 
-  private SquareButton one = new SquareButton(Entry.ONE);
-  private SquareButton zero = new SquareButton(Entry.ZERO);
-  private SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
-  private TightButton expand = new TightButton(S.get("tableExpand"));
-  private TightButton compact = new TightButton(S.get("tableCompact"));
-  private JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
+  private final SquareButton one = new SquareButton(Entry.ONE);
+  private final SquareButton zero = new SquareButton(Entry.ZERO);
+  private final SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
+  private final TightButton expand = new TightButton(S.get("tableExpand"));
+  private final TightButton compact = new TightButton(S.get("tableCompact"));
+  private final JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
-  private class TightButton extends JButton {
+  private static class TightButton extends JButton {
     /** */
     private static final long serialVersionUID = 1L;
 
@@ -271,11 +272,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     }
   }
 
-  private class SquareButton extends TightButton implements Entry.EntryChangedListener {
+  private static class SquareButton extends TightButton implements Entry.EntryChangedListener {
     /** */
     private static final long serialVersionUID = 1L;
     
-    Entry myEntry;
+    final Entry myEntry;
 
     SquareButton(Entry e) {
       super(e.getDescription());
@@ -417,7 +418,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return body;
   }
 
-  private static Canvas canvas = new Canvas();
+  private static final Canvas canvas = new Canvas();
 
   private void computePreferredSize() {
     inputVars = table.getInputVariables();
@@ -707,7 +708,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean sel = caret.hasSelection();
@@ -762,7 +763,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int width = tableWidth;

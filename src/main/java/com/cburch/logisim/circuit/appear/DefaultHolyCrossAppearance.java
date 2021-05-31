@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -79,7 +79,7 @@ public class DefaultHolyCrossAppearance {
   //   6,  6,  5,  8,  4,  8, 10,      // 'x', 'y', 'z', '{', '|', '}', '~',
   // };
 
-  private static int[] asciiWidths = { // 10 point font
+  private static final int[] asciiWidths = { // 10 point font
     3, 4, 5, 8, 6, 10, 9, 3, // ' ', '!', '"', '#', '$', '%', '&', ''',
     4, 4, 5, 8, 3, 4, 3, 3, // '(', ')', '*', '+', ',', '-', '.', '/',
     6, 6, 6, 6, 6, 6, 6, 6, // '0', '1', '2', '3', '4', '5', '6', '7',
@@ -101,18 +101,18 @@ public class DefaultHolyCrossAppearance {
     FontMetrics fm = canvas.getFontMetrics(f);
     System.out.println("private static int[] asciiWidths = {");
     for (char row = ' '; row <= '~'; row += 8) {
-      String comment = "//";
-      String chars = "    ";
+      StringBuilder comment = new StringBuilder("//");
+      StringBuilder chars = new StringBuilder("    ");
       for (char c = row; c < row + 8; c++) {
         if (c >= '~') {
-          chars += "    ";
+          chars.append("    ");
         } else {
-          comment += String.format(" '%c',", c);
+          comment.append(String.format(" '%c',", c));
           // label = new Text(0, 0, "" + c);
           // label.getLabel().setFont(f);
           // int w = label.getLabel().getWidth();
           int w = fm.stringWidth("" + c);
-          chars += String.format(" %2d,", w);
+          chars.append(String.format(" %2d,", w));
         }
       }
       System.out.println(chars + "  " + comment);
@@ -136,12 +136,11 @@ public class DefaultHolyCrossAppearance {
 
   public static List<CanvasObject> build(Collection<Instance> pins, String name) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     int MaxLeftLabelLength = 0;
     int MaxRightLabelLength = 0;
-    String a = "", b = "";
     for (Instance pin : pins) {
       Direction pinEdge;
       String labelString = pin.getAttributeValue(StdAttr.LABEL);
@@ -150,13 +149,11 @@ public class DefaultHolyCrossAppearance {
         pinEdge = Direction.EAST;
         if (LabelWidth > MaxRightLabelLength) {
           MaxRightLabelLength = LabelWidth;
-          b = labelString;
         }
       } else {
         pinEdge = Direction.WEST;
         if (LabelWidth > MaxLeftLabelLength) {
           MaxLeftLabelLength = LabelWidth;
-          a = labelString;
         }
       }
       List<Instance> e = edge.get(pinEdge);
@@ -198,8 +195,8 @@ public class DefaultHolyCrossAppearance {
     int ry = OFFS + (9 - (ay + 9) % 10);
 
     Rectangle rect = new Rectangle(rx, ry, width, height);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    rect.setValue(DrawAttr.STROKE_WIDTH, 2);
+    List<CanvasObject> ret = new ArrayList<>();
     ret.add(rect);
 
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, PORT_GAP, true);

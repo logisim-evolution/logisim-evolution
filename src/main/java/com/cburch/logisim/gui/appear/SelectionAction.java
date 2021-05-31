@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,15 +43,15 @@ import java.util.Collection;
 import java.util.Map;
 
 class SelectionAction extends Action {
-  private StringGetter displayName;
-  private AppearanceCanvas canvas;
-  private CanvasModel canvasModel;
-  private Map<CanvasObject, Integer> toRemove;
-  private Collection<CanvasObject> toAdd;
-  private Collection<CanvasObject> oldSelection;
-  private Collection<CanvasObject> newSelection;
-  private Location anchorNewLocation;
-  private Direction anchorNewFacing;
+  private final StringGetter displayName;
+  private final AppearanceCanvas canvas;
+  private final CanvasModel canvasModel;
+  private final Map<CanvasObject, Integer> toRemove;
+  private final Collection<CanvasObject> toAdd;
+  private final Collection<CanvasObject> oldSelection;
+  private final Collection<CanvasObject> newSelection;
+  private final Location anchorNewLocation;
+  private final Direction anchorNewFacing;
   private Location anchorOldLocation;
   private Direction anchorOldFacing;
 
@@ -68,7 +68,7 @@ class SelectionAction extends Action {
     this.displayName = displayName;
     this.toRemove = toRemove == null ? null : ZOrder.getZIndex(toRemove, canvasModel);
     this.toAdd = toAdd;
-    this.oldSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+    this.oldSelection = new ArrayList<>(canvas.getSelection().getSelected());
     this.newSelection = newSelection;
     this.anchorNewLocation = anchorLocation;
     this.anchorNewFacing = anchorFacing;

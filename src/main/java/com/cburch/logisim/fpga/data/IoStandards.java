@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class IoStandards {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);
@@ -65,19 +65,19 @@ public class IoStandards {
     return result;
   }
 
-  public static String IOAttributeString = "FPGAPinIOStandard";
-  public static char DefaulStandard = 0;
+  public static final String IOAttributeString = "FPGAPinIOStandard";
+  public static final char DefaulStandard = 0;
   public static char LVCMOS12 = 1;
   public static char LVCMOS15 = 2;
   public static char LVCMOS18 = 3;
   public static char LVCMOS25 = 4;
   public static char LVCMOS33 = 5;
 
-  public static char LVTTL = 6;
+  public static final char LVTTL = 6;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {
+  public static final String[] Behavior_strings = {
     "Default", "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33", "LVTTL"
   };
 }

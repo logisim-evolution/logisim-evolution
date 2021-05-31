@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -56,7 +56,7 @@ public class ElfSectionHeader {
   
   public ElfSectionHeader() {
     status = SUCCESS;
-    headers = new ArrayList<SectionHeader>();
+    headers = new ArrayList<>();
   }
   
   public ElfSectionHeader( FileInputStream file , ElfHeader elfHeader) {
@@ -84,7 +84,7 @@ public class ElfSectionHeader {
       return;
     }
     int index = 0;
-    headers = new ArrayList<SectionHeader>();
+    headers = new ArrayList<>();
     for (int i = 0 ; i < nrOfHeaders; i++) {
       headers.add(new SectionHeader(buffer,elfHeader.is32Bit(),elfHeader.isLittleEndian(),index));
       index += HeaderSize;
@@ -92,7 +92,7 @@ public class ElfSectionHeader {
   }
   
   private String getString(byte[] buffer, int index) {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     int idx = index;
     while (idx < buffer.length && buffer[idx] != 0)
       s.append((char)buffer[idx++]);
@@ -161,14 +161,14 @@ public class ElfSectionHeader {
     }
     if (shstrtab == null)
       return true;
-    int symTableOffset = (int)ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_OFFSET));
-    int symTableSize = (int)ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_SIZE));
-    int strTableOffset = strtab == null ? 1 : (int)ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_OFFSET));
-    int strTableSize = strtab == null ? 1 : (int)ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_SIZE));
+    int symTableOffset = ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_OFFSET));
+    int symTableSize = ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_SIZE));
+    int strTableOffset = strtab == null ? 1 : ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_OFFSET));
+    int strTableSize = strtab == null ? 1 : ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_SIZE));
     byte[] symBuffer = new byte[symTableSize];
     byte[] strBuffer = new byte[strTableSize];
     try {
-      file.skip(symTableOffset < strTableOffset ? symTableOffset : strTableOffset);
+      file.skip(Math.min(symTableOffset, strTableOffset));
     } catch (IOException e) {
       status = SYMBOL_TABLE_NOT_FOUND_ERROR;
       return false;
@@ -184,8 +184,8 @@ public class ElfSectionHeader {
       status = SYMBOL_TABLE_READ_ERROR;
       return false;
     }
-    int fileOffset = (symTableOffset < strTableOffset ? symTableOffset : strTableOffset)+nrRead;
-    int toskip = (symTableOffset > strTableOffset ? symTableOffset : strTableOffset)-fileOffset;
+    int fileOffset = (Math.min(symTableOffset, strTableOffset))+nrRead;
+    int toskip = (Math.max(symTableOffset, strTableOffset))-fileOffset;
     try {
       file.skip(toskip);
     } catch (IOException e) {

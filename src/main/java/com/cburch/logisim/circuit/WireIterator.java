@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,8 +36,8 @@ class WireIterator implements Iterator<Location> {
   private int curY;
   private int destX;
   private int destY;
-  private int deltaX;
-  private int deltaY;
+  private final int deltaX;
+  private final int deltaY;
   private boolean destReturned;
 
   public WireIterator(Location e0, Location e1) {

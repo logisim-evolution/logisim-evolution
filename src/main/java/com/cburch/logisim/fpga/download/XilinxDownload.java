@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,12 +38,11 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -56,21 +55,20 @@ import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
 
-  private VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
-  private String ScriptPath;
-  private String ProjectPath;
-  private String SandboxPath;
-  private String UcfPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+  private final String ScriptPath;
+  private final String ProjectPath;
+  private final String SandboxPath;
+  private final String UcfPath;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
-  private String HDLType;
-  private String BitfileExt;
-  private boolean IsCPLD;
-  private boolean writeToFlash;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
+  private final String HDLType;
+  private final String BitfileExt;
+  private final boolean IsCPLD;
+  private final boolean writeToFlash;
 
   private static final String vhdl_list_file = "XilinxVHDLList.prj";
   private static final String script_file = "XilinxScript.cmd";
@@ -82,7 +80,6 @@ public class XilinxDownload implements VendorDownload {
 
   public XilinxDownload(
       String ProjectPath,
-      FPGAReport Reporter,
       Netlist RootNetList,
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
@@ -93,7 +90,6 @@ public class XilinxDownload implements VendorDownload {
     this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
     this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
     this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCFPath);
-    this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -159,7 +155,7 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public ProcessBuilder DownloadToBoard() {
     if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(xilinxVendor.getBinaryPath(5));
       command.add("-batch");
       command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + download_file);
@@ -167,11 +163,11 @@ public class XilinxDownload implements VendorDownload {
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
     } else {
-      Reporter.ClsScr();
+      Reporter.Report.ClsScr();
       /* Here we do the USBTMC Download */
       boolean usbtmcdevice = new File("/dev/usbtmc0").exists();
       if (!usbtmcdevice) {
-        Reporter.AddFatalError(S.get("XilinxUsbTmc"));
+        Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
       File bitfile =
@@ -182,7 +178,7 @@ public class XilinxDownload implements VendorDownload {
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
+        Reporter.Report.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
         return null;
       }
       File usbtmc = new File("/dev/usbtmc0");
@@ -198,7 +194,7 @@ public class XilinxDownload implements VendorDownload {
         usbtmc_out.close();
         bitfile_in.close();
       } catch (IOException e) {
-        Reporter.AddFatalError(S.get("XilinxUsbTmcError"));
+        Reporter.Report.AddFatalError(S.get("XilinxUsbTmcError"));
       }
     }
     return null;
@@ -207,10 +203,10 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     String JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
-    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file, Reporter);
-    File VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file, Reporter);
-    File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file, Reporter);
-    File DownloadFile = FileWriter.GetFilePointer(ScriptPath, download_file, Reporter);
+    File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file);
+    File VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file);
+    File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file);
+    File DownloadFile = FileWriter.GetFilePointer(ScriptPath, download_file);
     if (ScriptFile == null || VhdlListFile == null || UcfFile == null || DownloadFile == null) {
       ScriptFile = new File(ScriptPath + script_file);
       VhdlListFile = new File(ScriptPath + vhdl_list_file);
@@ -221,14 +217,14 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    ArrayList<String> Contents = new ArrayList<String>();
-    for (int i = 0; i < Entities.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Entities.get(i) + "\"");
+    ArrayList<String> Contents = new ArrayList<>();
+    for (String entity : Entities) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
     }
-    for (int i = 0; i < Architectures.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Architectures.get(i) + "\"");
+    for (String architecture : Architectures) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
     }
-    if (!FileWriter.WriteContents(VhdlListFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(VhdlListFile, Contents)) return false;
     Contents.clear();
     Contents.add(
         "run -top "
@@ -238,12 +234,12 @@ public class XilinxDownload implements VendorDownload {
             + vhdl_list_file
             + " -ifmt mixed -p "
             + GetFPGADeviceString(BoardInfo));
-    if (!FileWriter.WriteContents(ScriptFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(ScriptFile, Contents)) return false;
     Contents.clear();
     Contents.add("setmode -bscan");
     if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
       if (BoardInfo.fpga.getFlashName() == null) {
-        Reporter.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
+        Reporter.Report.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
       }
       String FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
       String McsFile = ScriptPath + File.separator + mcs_file;
@@ -284,7 +280,7 @@ public class XilinxDownload implements VendorDownload {
       }
     }
     Contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, Contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(DownloadFile, Contents)) return false;
     Contents.clear();
     if (RootNetList.NumberOfClockTrees() > 0) {
       Contents.add(
@@ -310,12 +306,12 @@ public class XilinxDownload implements VendorDownload {
       Contents.add("");
     }
     Contents.addAll(GetPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, Contents, Reporter);
+    return FileWriter.WriteContents(UcfFile, Contents);
   }
   
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> Contents = new ArrayList<String>();
-    StringBuffer Temp = new StringBuffer();
+    ArrayList<String> Contents = new ArrayList<>();
+    StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -323,19 +319,23 @@ public class XilinxDownload implements VendorDownload {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");
-          Temp.append(map.getHdlString(i)+"\" ");
-          Temp.append("LOC = \""+map.getPinLocation(i)+"\" ");
+          Temp.append(map.getHdlString(i)).append("\" ");
+          Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           FPGAIOInformationContainer info = map.getFpgaInfo(i);
           if (info != null) {
             if (info.GetPullBehavior() != PullBehaviors.Unknown && info.GetPullBehavior() != PullBehaviors.Float) {
-              Temp.append("| " + PullBehaviors.getContraintedPullString(info.GetPullBehavior()) + " ");
+              Temp.append("| ")
+                  .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
+                  .append(" ");
             }
             if (info.GetDrive() != DriveStrength.Unknown
                 && info.GetDrive() != DriveStrength.DefaulStength) {
-              Temp.append("| DRIVE = " + DriveStrength.GetContraintedDriveStrength(info.GetDrive()) + " ");
+              Temp.append("| DRIVE = ")
+                  .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
             if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
-              Temp.append("| IOSTANDARD = " + IoStandards.GetConstraintedIoStandard(info.GetIOStandard()) + " ");
+              Temp.append("| IOSTANDARD = ")
+                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard())).append(" ");
             }
           }
           Temp.append(";");
@@ -352,7 +352,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Synth() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(0));
     command.add("-ifn");
     command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + script_file);
@@ -364,7 +364,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Constraints() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(1));
     command.add("-intstyle");
     command.add("ise");
@@ -379,7 +379,7 @@ public class XilinxDownload implements VendorDownload {
 
   private ProcessBuilder Stage2Map() {
     if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(2));
     command.add("-intstyle");
     command.add("ise");
@@ -392,7 +392,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage3PAR() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(3));
       command.add("-w");
@@ -435,7 +435,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage4Bit() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4));
       command.add("-w");
@@ -462,18 +462,17 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
-    result.append(CurrentBoard.fpga.getPart());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getPackage());
-    result.append("-");
-    result.append(CurrentBoard.fpga.getSpeedGrade());
-    return result.toString();
+    String result = CurrentBoard.fpga.getPart()
+        + "-"
+        + CurrentBoard.fpga.getPackage()
+        + "-"
+        + CurrentBoard.fpga.getSpeedGrade();
+    return result;
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
-    StringBuffer result = new StringBuffer();
-    result.append("LOC = \"" + CurrentBoard.fpga.getClockPinLocation() + "\"");
+    StringBuilder result = new StringBuilder();
+    result.append("LOC = \"").append(CurrentBoard.fpga.getClockPinLocation()).append("\"");
     if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
       result.append(" | PULLUP");
     }
@@ -482,8 +481,8 @@ public class XilinxDownload implements VendorDownload {
     }
     if (CurrentBoard.fpga.getClockStandard() != IoStandards.DefaulStandard
         && CurrentBoard.fpga.getClockStandard() != IoStandards.Unknown) {
-      result.append(
-          " | IOSTANDARD = " + IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
+      result.append(" | IOSTANDARD = ")
+          .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
     }
     return result.toString();
   }

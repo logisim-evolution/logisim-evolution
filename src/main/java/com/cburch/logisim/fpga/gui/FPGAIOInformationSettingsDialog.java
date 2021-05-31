@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,28 +30,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
 import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.DriveStrength;
@@ -61,6 +40,24 @@ import com.cburch.logisim.fpga.data.IOComponentsInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
+import com.cburch.logisim.fpga.settings.VendorSoftware;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class FPGAIOInformationSettingsDialog {
 
@@ -75,7 +72,7 @@ public class FPGAIOInformationSettingsDialog {
           txt.setText(oldLocations.get(i));
         LocInputs.add(txt);
       }
-    };
+    }
     while (LocInputs.size() < nr) {
       JTextField txt = new JTextField(6);
       LocInputs.add(txt);
@@ -97,7 +94,7 @@ public class FPGAIOInformationSettingsDialog {
       pinPanel.add(LocText, c);
       c.gridx = 1 + offset;
       pinPanel.add(LocInputs.get(i), c);
-      maxY = c.gridy > maxY ? c.gridy : maxY;
+      maxY = Math.max(c.gridy, maxY);
     }
   }
   
@@ -129,7 +126,7 @@ public class FPGAIOInformationSettingsDialog {
 
   public static void GetSimpleInformationDialog(Boolean deleteButton, 
         IOComponentsInformation IOcomps, FPGAIOInformationContainer info) {
-    HashMap<Integer,Integer> NrOfPins = new HashMap<Integer,Integer>();
+    HashMap<Integer,Integer> NrOfPins = new HashMap<>();
     IOComponentTypes MyType = info.GetType();
     BoardRectangle MyRectangle = info.GetRectangle();
     if (info.getNrOfPins() == 0) {
@@ -146,21 +143,21 @@ public class FPGAIOInformationSettingsDialog {
     JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
     JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
     JComboBox<String> ActiveInput = new JComboBox<>(PinActivity.Behavior_strings);
-    JComboBox<Integer> Inputsize = new JComboBox<Integer>();
-    JComboBox<Integer> Outputsize = new JComboBox<Integer>();
-    JComboBox<Integer> IOsize = new JComboBox<Integer>();
-    ArrayList<JTextField> LocInputs = new ArrayList<JTextField>();
-    ArrayList<JTextField> LocOutputs = new ArrayList<JTextField>();
-    ArrayList<JTextField> LocIOs = new ArrayList<JTextField>();
-    ArrayList<String> PinLabels = new ArrayList<String>();
+    JComboBox<Integer> Inputsize = new JComboBox<>();
+    JComboBox<Integer> Outputsize = new JComboBox<>();
+    JComboBox<Integer> IOsize = new JComboBox<>();
+    ArrayList<JTextField> LocInputs = new ArrayList<>();
+    ArrayList<JTextField> LocOutputs = new ArrayList<>();
+    ArrayList<JTextField> LocIOs = new ArrayList<>();
+    ArrayList<String> PinLabels = new ArrayList<>();
     JPanel InputsPanel = new JPanel();
     JPanel OutputsPanel = new JPanel();
     JPanel IOPanel = new JPanel();
-    Boolean abort = false;
-    ArrayList<JTextField> rectLocations = new ArrayList<JTextField>();
-    ArrayList<String> oldInputLocations = new ArrayList<String>(); 
-    ArrayList<String> oldOutputLocations = new ArrayList<String>(); 
-    ArrayList<String> oldIOLocations = new ArrayList<String>();
+    boolean abort = false;
+    ArrayList<JTextField> rectLocations = new ArrayList<>();
+    ArrayList<String> oldInputLocations = new ArrayList<>();
+    ArrayList<String> oldOutputLocations = new ArrayList<>();
+    ArrayList<String> oldIOLocations = new ArrayList<>();
     for (int cnt = 0 ; cnt < info.getNrOfPins() ; cnt++) {
       if (cnt < NrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
       else if (cnt < NrOfPins.get(INPUT_ID)+NrOfPins.get(OUTPUT_ID))
@@ -169,41 +166,47 @@ public class FPGAIOInformationSettingsDialog {
         oldIOLocations.add(info.getPinLocation(cnt));
     }
     ActionListener actionListener =
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("inputSize")) {
+        e -> {
+          switch (e.getActionCommand()) {
+            case "inputSize": {
               int nr = (int) Inputsize.getSelectedItem();
               NrOfPins.put(INPUT_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,InputsPanel,LocInputs,PinLabels,oldInputLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getInputLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
               selWindow.pack();
               return;
-            } else if (e.getActionCommand().equals("outputSize")) {
+            }
+            case "outputSize": {
               int nr = (int) Outputsize.getSelectedItem();
               NrOfPins.put(OUTPUT_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,OutputsPanel,LocOutputs,PinLabels,oldOutputLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
               selWindow.pack();
               return;
-            } else if (e.getActionCommand().equals("ioSize")) {
+            }
+            case "ioSize": {
               int nr = (int) IOsize.getSelectedItem();
               NrOfPins.put(IO_ID, nr);
               PinLabels.clear();
-              for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
-              buildPinTable(nr,MyType,IOPanel,LocIOs,PinLabels,oldIOLocations);
+              for (int i = 0; i < nr; i++)
+                PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
+              buildPinTable(nr, MyType, IOPanel, LocIOs, PinLabels, oldIOLocations);
               selWindow.pack();
               return;
-            } else  if (e.getActionCommand().equals("cancel")) {
-              info.setType(IOComponentTypes.Unknown);
-            } else if (e.getActionCommand().equals("delete")) {
-              info.setToBeDeleted();
             }
-            selWindow.setVisible(false);
-            selWindow.dispose();
+            case "cancel":
+              info.setType(IOComponentTypes.Unknown);
+              break;
+            case "delete":
+              info.setToBeDeleted();
+              break;
           }
+          selWindow.setVisible(false);
+          selWindow.dispose();
         };
     contents.setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -503,13 +506,11 @@ public class FPGAIOInformationSettingsDialog {
     /* here the action listener is defined */
     abort = false;
     ActionListener actionListener =
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("cancel")) {
-              abort = true;
-            }
-            selWindow.setVisible(false);
+        e -> {
+          if (e.getActionCommand().equals("cancel")) {
+            abort = true;
           }
+          selWindow.setVisible(false);
         };
     GridBagConstraints c = new GridBagConstraints();
     /* Here the clock related settings are defined */    

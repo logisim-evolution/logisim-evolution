@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,8 +42,8 @@ import java.util.WeakHashMap;
 
 class LibraryManager {
   private static class JarDescriptor extends LibraryDescriptor {
-    private File file;
-    private String className;
+    private final File file;
+    private final String className;
 
     JarDescriptor(File file, String className) {
       this.file = file;
@@ -87,7 +87,7 @@ class LibraryManager {
   }
 
   private static class LogisimProjectDescriptor extends LibraryDescriptor {
-    private File file;
+    private final File file;
 
     LogisimProjectDescriptor(File file) {
       this.file = file;
@@ -150,14 +150,14 @@ class LibraryManager {
 
   public static final LibraryManager instance = new LibraryManager();
 
-  private static char desc_sep = '#';
-  private HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
+  private static final char desc_sep = '#';
+  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
 
-  private WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
+  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
   private LibraryManager() {
-    fileMap = new HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>>();
-    invMap = new WeakHashMap<LoadedLibrary, LibraryDescriptor>();
+    fileMap = new HashMap<>();
+    invMap = new WeakHashMap<>();
     ProjectsDirty.initialize();
   }
 
@@ -225,7 +225,7 @@ class LibraryManager {
   }
 
   Collection<LogisimFile> getLogisimLibraries() {
-    ArrayList<LogisimFile> ret = new ArrayList<LogisimFile>();
+    ArrayList<LogisimFile> ret = new ArrayList<>();
     for (LoadedLibrary lib : invMap.keySet()) {
       if (lib.getBase() instanceof LogisimFile) {
         ret.add((LogisimFile) lib.getBase());
@@ -246,7 +246,7 @@ class LibraryManager {
       return null;
     }
 
-    fileMap.put(jarDescriptor, new WeakReference<LoadedLibrary>(ret));
+    fileMap.put(jarDescriptor, new WeakReference<>(ret));
     invMap.put(ret, jarDescriptor);
     return ret;
   }
@@ -262,25 +262,28 @@ class LibraryManager {
     String type = desc.substring(0, sep);
     String name = desc.substring(sep + 1);
 
-    if (type.equals("")) {
-      Library ret = loader.getBuiltin().getLibrary(name);
-      if (ret == null) {
-        loader.showError(StringUtil.format(S.get("fileBuiltinMissingError"), name));
-        return null;
+    switch (type) {
+      case "":
+        Library ret = loader.getBuiltin().getLibrary(name);
+        if (ret == null) {
+          loader.showError(StringUtil.format(S.get("fileBuiltinMissingError"), name));
+          return null;
+        }
+        return ret;
+      case "file": {
+        File toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
+        return loadLogisimLibrary(loader, toRead);
       }
-      return ret;
-    } else if (type.equals("file")) {
-      File toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
-      return loadLogisimLibrary(loader, toRead);
-    } else if (type.equals("jar")) {
-      int sepLoc = name.lastIndexOf(desc_sep);
-      String fileName = name.substring(0, sepLoc);
-      String className = name.substring(sepLoc + 1);
-      File toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
-      return loadJarLibrary(loader, toRead, className);
-    } else {
-      loader.showError(StringUtil.format(S.get("fileTypeError"), type, desc));
-      return null;
+      case "jar": {
+        int sepLoc = name.lastIndexOf(desc_sep);
+        String fileName = name.substring(0, sepLoc);
+        String className = name.substring(sepLoc + 1);
+        File toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
+        return loadJarLibrary(loader, toRead, className);
+      }
+      default:
+        loader.showError(StringUtil.format(S.get("fileTypeError"), type, desc));
+        return null;
     }
   }
 
@@ -296,7 +299,7 @@ class LibraryManager {
     }
 
     LogisimProjectDescriptor desc = new LogisimProjectDescriptor(toRead);
-    fileMap.put(desc, new WeakReference<LoadedLibrary>(ret));
+    fileMap.put(desc, new WeakReference<>(ret));
     invMap.put(ret, desc);
     return ret;
   }

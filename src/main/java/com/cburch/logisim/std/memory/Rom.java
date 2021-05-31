@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -88,11 +88,7 @@ public class Rom extends Mem {
         int addr = Integer.parseInt(toks.nextToken());
         int data = Integer.parseInt(toks.nextToken());
         return HexFile.parseFromCircFile(rest, addr, data);
-      } catch (IOException e) {
-        return null;
-      } catch (NumberFormatException e) {
-        return null;
-      } catch (NoSuchElementException e) {
+      } catch (IOException | NoSuchElementException | NumberFormatException e) {
         return null;
       }
     }
@@ -113,8 +109,8 @@ public class Rom extends Mem {
 
   @SuppressWarnings("serial")
   private static class ContentsCell extends JLabel implements MouseListener {
-    Window source;
-    MemContents contents;
+    final Window source;
+    final MemContents contents;
 
     ContentsCell(Window source, MemContents contents) {
       super(S.get("romContentsValue"));
@@ -140,16 +136,16 @@ public class Rom extends Mem {
     public void mouseReleased(MouseEvent e) {}
   }
 
-  public static Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
+  public static final Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
 
   // The following is so that instance's MemListeners aren't freed by the
   // garbage collector until the instance itself is ready to be freed.
-  private WeakHashMap<Instance, MemListener> memListeners;
+  private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
     super("ROM", S.getter("romComponent"), 0);
     setIcon(new ArithmeticIcon("ROM",3));
-    memListeners = new WeakHashMap<Instance, MemListener>();
+    memListeners = new WeakHashMap<>();
   }
 
   @Override
@@ -239,9 +235,9 @@ public class Rom extends Mem {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new RomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

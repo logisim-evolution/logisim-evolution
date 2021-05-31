@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -72,7 +72,7 @@ class OutputSelector {
 
       @Override
       public Component getListCellRendererComponent(
-          JList<? extends Object> list,
+          JList<?> list,
           Object value,
           int index,
           boolean isSelected,
@@ -98,7 +98,7 @@ class OutputSelector {
         AttributedString as;
         if (txt.contains(":")) {
           int idx = txt.indexOf(':');
-          as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1, txt.length()));
+          as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1));
           as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
         } else if (txt.contains("[")) {
           int start = txt.indexOf('[');
@@ -118,7 +118,7 @@ class OutputSelector {
 
     private static final long serialVersionUID = 1L;
     private String selected;
-    private AttributedJLabel MyRenderer = new AttributedJLabel();
+    private final AttributedJLabel MyRenderer = new AttributedJLabel();
 
     public ListCellRenderer<Object> getMyRenderer() {
       return MyRenderer;
@@ -141,7 +141,7 @@ class OutputSelector {
     public void listChanged(VariableListEvent event) {
       int oldSize = select.getItemCount();
       int newSize = source.bits.size();
-      fireContentsChanged(this, 0, oldSize > newSize ? oldSize : newSize);
+      fireContentsChanged(this, 0, Math.max(oldSize, newSize));
       if (!source.bits.contains(selected)) {
         selected = (newSize == 0 ? null : source.bits.get(0));
         select.setSelectedItem(selected);
@@ -153,9 +153,9 @@ class OutputSelector {
     }
   }
 
-  private VariableList source;
-  private JLabel label = new JLabel();
-  private JComboBox<String> select = new JComboBox<String>();
+  private final VariableList source;
+  private final JLabel label = new JLabel();
+  private final JComboBox<String> select = new JComboBox<>();
 
   public OutputSelector(AnalyzerModel model) {
     this.source = model.getOutputs();

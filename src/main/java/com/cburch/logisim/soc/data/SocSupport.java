@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,17 +28,15 @@
 
 package com.cburch.logisim.soc.data;
 
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
-import javax.swing.JMenuItem;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
+import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import javax.swing.JMenuItem;
 
 public class SocSupport {
 
@@ -102,20 +100,20 @@ public class SocSupport {
   }
   
   private static String getMasterHierName(CircuitState state) {
-    ArrayList<CircuitState> states = new ArrayList<CircuitState>();
+    ArrayList<CircuitState> states = new ArrayList<>();
     CircuitState s = state;
     while (s.isSubstate()) {
       states.add(s);
       s = s.getParentState();
     }
-    StringBuffer name = new StringBuffer();
-    name.append(s.getCircuit().getName()+":");
+    StringBuilder name = new StringBuilder();
+    name.append(s.getCircuit().getName()).append(":");
     for (int i = states.size()-1 ; i >= 0 ; i--) {
       for (Component c : s.getCircuit().getNonWires()) {
         if (c.getFactory() instanceof SubcircuitFactory) {
           CircuitState tmp = (CircuitState)s.getData(c);
           if (tmp.equals(states.get(i)))
-            name.append(getComponentName(c)+":");
+            name.append(getComponentName(c)).append(":");
         }
       }
       s = states.get(i);

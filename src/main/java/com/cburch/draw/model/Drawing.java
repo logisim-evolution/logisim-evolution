@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,13 +44,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class Drawing implements CanvasModel {
-  private EventSourceWeakSupport<CanvasModelListener> listeners;
-  private ArrayList<CanvasObject> canvasObjects;
-  private DrawingOverlaps overlaps;
+  private final EventSourceWeakSupport<CanvasModelListener> listeners;
+  private final ArrayList<CanvasObject> canvasObjects;
+  private final DrawingOverlaps overlaps;
 
   public Drawing() {
-    listeners = new EventSourceWeakSupport<CanvasModelListener>();
-    canvasObjects = new ArrayList<CanvasObject>();
+    listeners = new EventSourceWeakSupport<>();
+    canvasObjects = new ArrayList<>();
     overlaps = new DrawingOverlaps();
   }
 
@@ -60,10 +60,10 @@ public class Drawing implements CanvasModel {
 
   public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
     Map<CanvasObject, Integer> indexes;
-    indexes = new LinkedHashMap<CanvasObject, Integer>();
+    indexes = new LinkedHashMap<>();
     int i = index;
     for (CanvasObject shape : shapes) {
-      indexes.put(shape, Integer.valueOf(i));
+      indexes.put(shape, i);
       i++;
     }
     addObjectsHelp(indexes);
@@ -81,7 +81,7 @@ public class Drawing implements CanvasModel {
     if (!shapes.isEmpty() && isChangeAllowed(e)) {
       for (Map.Entry<? extends CanvasObject, Integer> entry : shapes.entrySet()) {
         CanvasObject shape = entry.getKey();
-        int index = entry.getValue().intValue();
+        int index = entry.getValue();
         canvasObjects.add(index, shape);
         overlaps.addShape(shape);
       }
@@ -113,7 +113,7 @@ public class Drawing implements CanvasModel {
   }
 
   public List<CanvasObject> getObjectsFromTop() {
-    List<CanvasObject> ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    List<CanvasObject> ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
@@ -122,7 +122,7 @@ public class Drawing implements CanvasModel {
     List<CanvasObject> ret = null;
     for (CanvasObject shape : getObjectsFromBottom()) {
       if (bds.contains(shape.getBounds())) {
-        if (ret == null) ret = new ArrayList<CanvasObject>();
+        if (ret == null) ret = new ArrayList<>();
         ret.add(shape);
       }
     }
@@ -201,6 +201,7 @@ public class Drawing implements CanvasModel {
     for (ReorderRequest r : requests) {
       if (r.getFromIndex() != r.getToIndex()) {
         hasEffect = true;
+        break;
       }
     }
     CanvasModelEvent e = CanvasModelEvent.forReorder(this, requests);
@@ -219,7 +220,7 @@ public class Drawing implements CanvasModel {
 
   private ArrayList<CanvasObject> restrict(Collection<? extends CanvasObject> shapes) {
     ArrayList<CanvasObject> ret;
-    ret = new ArrayList<CanvasObject>(shapes.size());
+    ret = new ArrayList<>(shapes.size());
     for (CanvasObject shape : shapes) {
       if (canvasObjects.contains(shape)) {
         ret.add(shape);
@@ -230,7 +231,7 @@ public class Drawing implements CanvasModel {
 
   public void setAttributeValues(Map<AttributeMapKey, Object> values) {
     Map<AttributeMapKey, Object> oldValues;
-    oldValues = new HashMap<AttributeMapKey, Object>();
+    oldValues = new HashMap<>();
     for (AttributeMapKey key : values.keySet()) {
       @SuppressWarnings("unchecked")
       Attribute<Object> attr = (Attribute<Object>) key.getAttribute();

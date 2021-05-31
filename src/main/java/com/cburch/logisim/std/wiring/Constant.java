@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,7 +58,7 @@ import java.util.List;
 
 public class Constant extends InstanceFactory {
   private static class ConstantAttributes extends AbstractAttributeSet {
-    private Direction facing = Direction.EAST;;
+    private Direction facing = Direction.EAST;
     private BitWidth width = BitWidth.ONE;
     private Value value = Value.TRUE;
 
@@ -93,7 +93,7 @@ public class Constant extends InstanceFactory {
         this.value =
             this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
       } else if (attr == ATTR_VALUE) {
-        long val = ((Long) value).longValue();
+        long val = (Long) value;
         this.value = Value.createKnown(width, val);
       } else {
         throw new IllegalArgumentException("unknown attribute " + attr);
@@ -103,7 +103,7 @@ public class Constant extends InstanceFactory {
   }
 
   private static class ConstantExpression implements ExpressionComputer {
-    private Instance instance;
+    private final Instance instance;
 
     public ConstantExpression(Instance instance) {
       this.instance = instance;
@@ -119,7 +119,7 @@ public class Constant extends InstanceFactory {
     }
   }
 
-  private class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
     public long GetConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
@@ -129,13 +129,13 @@ public class Constant extends InstanceFactory {
   public static final Attribute<Long> ATTR_VALUE =
       Attributes.forHexLong("value", S.getter("constantValueAttr"));
 
-  public static InstanceFactory FACTORY = new Constant();
+  public static final InstanceFactory FACTORY = new Constant();
 
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
   private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(new Attribute<?>[] {StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE});
+      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
     super("Constant", S.getter("constantComponent"));
@@ -176,9 +176,9 @@ public class Constant extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new ConstantHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -195,7 +195,7 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+    long v = painter.getAttributeValue(ATTR_VALUE);
     String vStr = Long.toHexString(v);
     Bounds bds = getOffsetBounds(painter.getAttributeSet());
 
@@ -230,7 +230,7 @@ public class Constant extends InstanceFactory {
 
     Graphics g = painter.getGraphics();
     if (w == 1) {
-      long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+      long v = painter.getAttributeValue(ATTR_VALUE);
       Value val = v == 1L ? Value.TRUE : Value.FALSE;
       g.setColor(val.getColor());
       GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
@@ -245,7 +245,7 @@ public class Constant extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     Bounds bds = painter.getOffsetBounds();
     BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    long longValue = painter.getAttributeValue(ATTR_VALUE).longValue();
+    long longValue = painter.getAttributeValue(ATTR_VALUE);
     Value v = Value.createKnown(width, longValue);
     Location loc = painter.getLocation();
     int x = loc.getX();
@@ -279,7 +279,7 @@ public class Constant extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    long value = state.getAttributeValue(ATTR_VALUE).longValue();
+    long value = state.getAttributeValue(ATTR_VALUE);
     state.setPort(0, Value.createKnown(width, value), 1);
   }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,6 +28,10 @@
 
 package com.cburch.logisim.fpga.file;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAClass;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.gui.DialogNotification;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -40,30 +44,24 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAClass;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.gui.DialogNotification;
-
 public class BoardReaderClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardReaderClass.class);
 
-  private String myfilename;
+  private final String myfilename;
   private DocumentBuilderFactory factory;
   private DocumentBuilder parser;
   private Document BoardDoc;
 
   public BoardReaderClass(String filename) {
-    myfilename = new String(filename);
+    myfilename = filename;
   }
 
   private BufferedImage CreateImage(int width, int height, String[] CodeTable, String PixelData) {
     ImageXmlFactory reader = new ImageXmlFactory();
     reader.SetCodeTable(CodeTable);
     reader.SetCompressedString(PixelData);
-    BufferedImage result = reader.GetPicture(width, height);
-    return result;
+    return reader.GetPicture(width, height);
   }
 
   public BoardInformation GetBoardInformation() {

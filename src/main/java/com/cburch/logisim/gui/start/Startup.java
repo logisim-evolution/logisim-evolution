@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,7 +36,6 @@ import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -54,7 +53,6 @@ import com.cburch.logisim.util.ArgonXML;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
-import org.drjekyll.fontchooser.FontChooser;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -86,7 +84,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -102,11 +99,52 @@ import javax.swing.JToolTip;
 import javax.swing.ProgressMonitor;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-
+import org.drjekyll.fontchooser.FontChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Startup implements AWTEventListener {
+
+  static final Logger logger = LoggerFactory.getLogger(Startup.class);
+  private static Startup startupTemp = null;
+  private final ArrayList<File> filesToOpen = new ArrayList<>();
+  private final HashMap<File, File> substitutions = new HashMap<>();
+  private final ArrayList<File> filesToPrint = new ArrayList<>();
+  // based on command line
+  final boolean isTty;
+  private File templFile = null;
+  private boolean templEmpty = false;
+  private boolean templPlain = false;
+  private String testVector = null;
+  private String circuitToTest = null;
+  private boolean exitAfterStartup = false;
+  private boolean showSplash;
+  private File loadFile;
+  private int ttyFormat = 0;
+  // from other sources
+  private boolean initialized = false;
+  private SplashScreen monitor = null;
+  /* Testing Circuit Variable */
+  private String testCircuitPathInput = null;
+  /* Test implementation */
+  private String testCircuitImpPath = null;
+  private boolean doFpgaDownload = false;
+  private double testTickFrequency = 1;
+  /* Name of the circuit withing logisim */
+  private String testCircuitImpName = null;
+  /* Name of the board to run on i.e Reptar, MAXV ...*/
+  private String testCircuitImpBoard = null;
+  /* Path folder containing Map file */
+  private String testCircuitImpMapFile = null;
+  /* Indicate if only the HDL should be generated */
+  private Boolean testCircuitHdlOnly = false;
+  /* Testing Xml (circ file) Variable */
+  private String testCircPathInput = null;
+  private String testCircPathOutput = null;
+  private Startup(boolean isTty) {
+    this.isTty = isTty;
+    this.showSplash = !isTty;
+  }
 
   static void doOpen(File file) {
     if (startupTemp != null) {
@@ -119,16 +157,42 @@ public class Startup implements AWTEventListener {
       startupTemp.doPrintFile(file);
     }
   }
+  
+  private static int parseTtyFormat(String fmt)
+  {
+    switch (fmt) {
+      case "table":
+        return TtyInterface.FORMAT_TABLE;
+      case "speed":
+        return TtyInterface.FORMAT_SPEED;
+      case "tty":
+        return TtyInterface.FORMAT_TTY;
+      case "halt":
+        return TtyInterface.FORMAT_HALT;
+      case "stats":
+        return TtyInterface.FORMAT_STATISTICS;
+      case "binary":
+        return TtyInterface.FORMAT_TABLE_BIN;
+      case "hex":
+        return TtyInterface.FORMAT_TABLE_HEX;
+      case "csv":
+        return TtyInterface.FORMAT_TABLE_CSV;
+      case "tabs":
+        return TtyInterface.FORMAT_TABLE_TABBED;
+      default:
+        return 0;
+    }
+  }
 
   public static Startup parseArgs(String[] args) {
     // see whether we'll be using any graphics
     boolean isTty = false;
     boolean isClearPreferences = false;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].equals("-tty")||args[i].equals("-test-fpga-implementation")) {
+    for (String value : args) {
+      if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
         isTty = true;
         Main.headless = true;
-      } else if (args[i].equals("-clearprefs") || args[i].equals("-clearprops")) {
+      } else if (value.equals("-clearprefs") || value.equals("-clearprops")) {
         isClearPreferences = true;
       }
     }
@@ -177,25 +241,13 @@ public class Startup implements AWTEventListener {
           if (fmts.length == 0) {
             logger.error("{}", S.get("ttyFormatError"));
           }
-          for (int j = 0; j < fmts.length; j++) {
-            String fmt = fmts[j].trim();
-            if (fmt.equals("table")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TABLE;
-            } else if (fmt.equals("speed")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_SPEED;
-            } else if (fmt.equals("tty")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_TTY;
-            } else if (fmt.equals("halt")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_HALT;
-            } else if (fmt.equals("stats")) {
-              ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
-            } else if (fmt.equals("binary")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
-            else if (fmt.equals("hex")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
-            else if (fmt.equals("csv")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
-            else if (fmt.equals("tabs")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
-            else {
+          for (String s : fmts) {
+            String fmt = s.trim();
+            int val = parseTtyFormat(fmt);
+            if (val == 0)
               logger.error("{}", S.get("ttyFormatError"));
-            }
+            else
+              ret.ttyFormat |= val;
           }
         } else {
           logger.error("{}", S.get("ttyFormatError"));
@@ -222,8 +274,7 @@ public class Startup implements AWTEventListener {
           if (ret.loadFile != null) {
             logger.error("{}", S.get("loadMultipleError"));
           }
-          File f = new File(args[i]);
-          ret.loadFile = f;
+          ret.loadFile = new File(args[i]);
         } else {
           logger.error("{}", S.get("loadNeedsFileError"));
           return null;
@@ -262,7 +313,7 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String wxh[] = args[i].split("[xX]");
+        String[] wxh = args[i].split("[xX]");
         if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
           logger.error("{}", S.get("argGeometryError"));
           System.exit(1);
@@ -273,8 +324,8 @@ public class Startup implements AWTEventListener {
         if (p >= 0) {
           loc = wxh[1].substring(p + 1);
           wxh[1] = wxh[1].substring(0, p);
-          String xy[] = loc.split("\\+");
-          if (xy.length != 2 || xy[0].length() < 1 || xy[0].length() < 1) {
+          String[] xy = loc.split("\\+");
+          if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
             logger.error("{}", S.get("argGeometryError"));
             System.exit(1);
           }
@@ -362,8 +413,8 @@ public class Startup implements AWTEventListener {
         ret.testCircuitImpPath = args[i];
         i++;
         if (i >= args.length) printUsage();
-        
-        if (args[i].toUpperCase().endsWith("MAP.xml")) {
+
+        if (args[i].toUpperCase().endsWith("MAP.XML")) {
           ret.testCircuitImpMapFile = args[i];
           i++;
           if (i >= args.length) printUsage();
@@ -379,14 +430,13 @@ public class Startup implements AWTEventListener {
         if (i < args.length) {
           if (!args[i].startsWith("-")) {
             try {
-              int freq = Integer.parseUnsignedInt(args[i]);
-              ret.testTickFrequency = (double) freq;
+              ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException ignored) {
+            }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
-                if (args[i].toUpperCase().equals("HDLONLY"))
-                  ret.testCircuitHdlOnly = true;
+                if (args[i].equalsIgnoreCase("HDLONLY")) ret.testCircuitHdlOnly = true;
                 else printUsage();
               } else i--;
             }
@@ -505,64 +555,19 @@ public class Startup implements AWTEventListener {
 
   private static void setLocale(String lang) {
     Locale[] opts = S.getLocaleOptions();
-    for (int i = 0; i < opts.length; i++) {
-      if (lang.equals(opts[i].toString())) {
-        LocaleManager.setLocale(opts[i]);
+    for (Locale locale : opts) {
+      if (lang.equals(locale.toString())) {
+        LocaleManager.setLocale(locale);
         return;
       }
     }
     logger.warn("{}", S.get("invalidLocaleError"));
     logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
 
-    for (int i = 0; i < opts.length; i++) {
-      logger.warn("   {}", opts[i].toString());
+    for (Locale opt : opts) {
+      logger.warn("   {}", opt.toString());
     }
     System.exit(-1);
-  }
-
-  static final Logger logger = LoggerFactory.getLogger(Startup.class);
-
-  private static Startup startupTemp = null;
-  // based on command line
-  boolean isTty;
-  private File templFile = null;
-  private boolean templEmpty = false;
-  private boolean templPlain = false;
-  private ArrayList<File> filesToOpen = new ArrayList<File>();
-  private String testVector = null;
-  private String circuitToTest = null;
-  private boolean exitAfterStartup = false;
-  private boolean showSplash;
-  private File loadFile;
-  private HashMap<File, File> substitutions = new HashMap<File, File>();
-  private int ttyFormat = 0;
-  // from other sources
-  private boolean initialized = false;
-  private SplashScreen monitor = null;
-  /* Testing Circuit Variable */
-  private String testCircuitPathInput = null;
-
-  /* Test implementation */
-  private String testCircuitImpPath = null;
-  private boolean doFpgaDownload = false;
-  private double testTickFrequency = 1;
-  /* Name of the circuit withing logisim */
-  private String testCircuitImpName = null;
-  /* Name of the board to run on i.e Reptar, MAXV ...*/
-  private String testCircuitImpBoard = null;
-  /* Path folder containing Map file */
-  private String testCircuitImpMapFile = null;
-  /* Indicate if only the HDL should be generated */
-  private Boolean testCircuitHdlOnly = false;
-
-  /* Testing Xml (circ file) Variable */
-  private String testCircPathInput = null;
-  private String testCircPathOutput = null;
-  private ArrayList<File> filesToPrint = new ArrayList<File>();
-
-  private Startup(boolean isTty) {
-    this.isTty = isTty;
-    this.showSplash = !isTty;
   }
 
   /**
@@ -838,21 +843,21 @@ public class Startup implements AWTEventListener {
   int getTtyFormat() {
     return ttyFormat;
   }
-  
+
   boolean isFpgaDownload() {
     return doFpgaDownload;
   }
-  
+
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
     Download Downloader =
         new Download(
-        	proj,
-        	testCircuitImpName,
-        	testTickFrequency,
-        	new FPGAReport(),
-        	new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard)).GetBoardInformation(),
-        	testCircuitImpMapFile,
+            proj,
+            testCircuitImpName,
+            testTickFrequency,
+            new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard))
+                .GetBoardInformation(),
+            testCircuitImpMapFile,
             false,
             false,
             testCircuitHdlOnly);
@@ -922,7 +927,7 @@ public class Startup implements AWTEventListener {
         showSplash = false;
       }
     }
-    
+
     Toolkit.getDefaultToolkit()
         .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
     // pre-load the two basic component libraries, just so that the time
@@ -950,22 +955,25 @@ public class Startup implements AWTEventListener {
     }
     WindowManagers.initialize();
     if (MacCompatibility.isSwingUsingScreenMenuBar()) {
-      MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null));
+      MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null, null, null));
     } else {
-      new LogisimMenuBar(null, null);
+      new LogisimMenuBar(null, null, null, null);
       // most of the time occupied here will be in loading menus, which
       // will occur eventually anyway; we might as well do it when the
       // monitor says we are
     }
 
     // Make ENTER and SPACE have the same effect for focused buttons.
-    UIManager.getDefaults().put("Button.focusInputMap",
-        new UIDefaults.LazyInputMap(new Object[] {
-          "ENTER", "pressed",
-          "released ENTER", "released",
-          "SPACE","pressed",
-          "released SPACE","released"
-        }));
+    UIManager.getDefaults()
+        .put(
+            "Button.focusInputMap",
+            new UIDefaults.LazyInputMap(
+                new Object[] {
+                  "ENTER", "pressed",
+                  "released ENTER", "released",
+                  "SPACE", "pressed",
+                  "released SPACE", "released"
+                }));
 
     // if user has double-clicked a file to open, we'll
     // use that as the file to open now.
@@ -1042,7 +1050,7 @@ public class Startup implements AWTEventListener {
     }
     return result;
   }
-  
+
   @Override
   public void eventDispatched(AWTEvent event) {
     if (event instanceof ContainerEvent) {
@@ -1055,7 +1063,6 @@ public class Startup implements AWTEventListener {
             || (container instanceof JToolTip)
             || (container instanceof JLabel)
             || (container instanceof JFrame)
-            || (container instanceof JMenu)
             || (container instanceof JMenuItem)
             || (container instanceof JRadioButton)
             || (container instanceof JRadioButtonMenuItem)
@@ -1074,7 +1081,7 @@ public class Startup implements AWTEventListener {
             container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
             container.revalidate();
             container.repaint();
-          } catch (Exception e) {
+          } catch (Exception ignored) {
           }
         }
         if (container instanceof JOptionPane) {

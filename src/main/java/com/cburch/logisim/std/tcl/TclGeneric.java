@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -93,7 +93,7 @@ public class TclGeneric extends TclComponent {
 
   static class TclGenericListener implements HdlModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     TclGenericListener(Instance instance) {
       this.instance = instance;
@@ -108,12 +108,12 @@ public class TclGeneric extends TclComponent {
 
   static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
 
-  private WeakHashMap<Instance, TclGenericListener> contentListeners;
+  private final WeakHashMap<Instance, TclGenericListener> contentListeners;
 
   public TclGeneric() {
     super("TclGeneric", S.getter("tclGeneric"));
 
-    contentListeners = new WeakHashMap<Instance, TclGenericListener>();
+    contentListeners = new WeakHashMap<>();
   }
 
   @Override

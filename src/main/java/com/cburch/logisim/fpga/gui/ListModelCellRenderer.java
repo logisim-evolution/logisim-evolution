@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,12 +42,12 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   /** */
   private static final long serialVersionUID = 1L;
 
-  private boolean CountLines;
+  private final boolean CountLines;
 
-  private static Color FATAL = Color.RED;
-  private static Color SEVERE = Color.yellow;
-  private static Color NORMAL = Color.LIGHT_GRAY;
-  private static Color ADDENDUM = Color.GRAY;
+  private static final Color FATAL = Color.RED;
+  private static final Color SEVERE = Color.yellow;
+  private static final Color NORMAL = Color.LIGHT_GRAY;
+  private static final Color ADDENDUM = Color.GRAY;
   
   private static final DrcIcon NoDRC = new DrcIcon(false);
   private static final DrcIcon DRCError = new DrcIcon(true);
@@ -59,11 +59,11 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
 
   @Override
   public Component getListCellRendererComponent(
-      JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     if (value instanceof SimpleDRCContainer) {
       msg = (SimpleDRCContainer) value;
     }
@@ -101,7 +101,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
           } else if (line < 10000) {
             Line.append(" ");
           }
-          Line.append(Integer.toString(line) + "> ");
+          Line.append(line).append("> ");
         }
       } else {
         if (index < 9) {
@@ -113,23 +113,23 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
         } else if (index < 9999) {
           Line.append(" ");
         }
-        Line.append(Integer.toString(index + 1) + "> ");
+        Line.append(index + 1).append("> ");
       }
     }
     if (msg != null) {
       switch (msg.Severity()) {
         case SimpleDRCContainer.LEVEL_SEVERE:
-          Line.append(S.get("SEVERE_MSG") + " ");
+          Line.append(S.get("SEVERE_MSG")).append(" ");
           break;
         case SimpleDRCContainer.LEVEL_FATAL:
-          Line.append(S.get("FATAL_MSG") + " ");
+          Line.append(S.get("FATAL_MSG")).append(" ");
           break;
       }
       if (msg.HasCircuit()) {
-        Line.append(msg.GetCircuit().getName() + ": ");
+        Line.append(msg.GetCircuit().getName()).append(": ");
       }
     }
-    Line.append(value.toString());
+    Line.append(value);
     setText(Line.toString());
     setEnabled(list.isEnabled());
     setFont(list.getFont());

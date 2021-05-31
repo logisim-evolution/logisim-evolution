@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,7 +30,6 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.text.ParseException;
 import java.util.Iterator;
 
 public class Var implements Iterable<String> {
@@ -89,8 +88,8 @@ public class Var implements Iterable<String> {
   }
   
   public static class Bit {
-    public String name;
-    public int b; // -1 means no index
+    public final String name;
+    public final int b; // -1 means no index
     public Bit(String name, int b) {
       this.name = name;
       this.b = b;
@@ -142,7 +141,7 @@ public class Var implements Iterable<String> {
   }
 
   public Iterator<String> iterator() {
-    return new Iterator<String>() {
+    return new Iterator<>() {
       int b = width - 1;
 
       @Override

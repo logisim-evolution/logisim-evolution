@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,10 +54,10 @@ public class bin2bcd extends InstanceFactory {
   private static final int InnerDistance = 60;
 
   public static final Attribute<BitWidth> ATTR_BinBits =
-      Attributes.forBitWidth("binvalue", S.getter("Binairy data bits"), 4, 13);
+      Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public bin2bcd() {
-    super("Binairy_to_BCD_converter", S.getter("Bin2BCD"));
+    super("Binary_to_BCD_converter", S.getter("Bin2BCD"));
     setAttributes(new Attribute[] {bin2bcd.ATTR_BinBits}, new Object[] {BitWidth.create(9)});
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
@@ -121,7 +121,7 @@ public class bin2bcd extends InstanceFactory {
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     Port[] ps = new Port[NrOfPorts + 1];
     ps[BINin] = new Port((int) (-0.5 * InnerDistance), 0, Port.INPUT, bin2bcd.ATTR_BinBits);
-    ps[BINin].setToolTip(S.getter("BinairyInputTip"));
+    ps[BINin].setToolTip(S.getter("BinaryInputTip"));
     for (int i = NrOfPorts; i > 0; i--) {
       ps[i] = new Port((NrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
       int value = (int) Math.pow(10.0, i - 1);
@@ -132,18 +132,18 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    CompleteName.append("_" + Integer.toString(NrOfPorts) + "_bcd_ports");
+    CompleteName.append("_").append(NrOfPorts).append("_bcd_ports");
     return CompleteName.toString();
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new bin2bcdHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
 }

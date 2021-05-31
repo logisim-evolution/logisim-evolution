@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,13 +38,13 @@ import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.analyze.model.ParserException;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.io.File;
@@ -55,17 +55,16 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
 
-  private static String SECTION_SEP =
+  private static final String SECTION_SEP =
       "%===============================================================================";
-  private static String SUB_SECTION_SEP =
+  private static final String SUB_SECTION_SEP =
       "%-------------------------------------------------------------------------------";
 
-  public static int MAX_TRUTH_TABLE_ROWS = 64;
+  public static final int MAX_TRUTH_TABLE_ROWS = 64;
 
   public static final FileFilter FILE_FILTER =
       new TruthtableFileFilter(S.getter("tableLatexFilter"), ".tex");
@@ -89,14 +88,14 @@ public class AnalyzerTexWriter {
   }
 
   private static String TruthTableHeader(AnalyzerModel model) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     out.append("\\begin{center}\n");
     out.append("\\begin{tabular}{");
     int NrInCols = NrOfInCols(model);
     int NrOutCols = NrOfOutCols(model);
-    for (int i = 0; i < NrInCols; i++) out.append("c");
+    out.append("c".repeat(NrInCols));
     out.append("|");
-    for (int i = 0; i < NrOutCols; i++) out.append("c");
+    out.append("c".repeat(NrOutCols));
     out.append("}\n");
     /* Make the header text */
     List<Var> inputVars = model.getInputs().vars;
@@ -104,34 +103,20 @@ public class AnalyzerTexWriter {
     for (int i = 0; i < inputVars.size(); i++) {
       Var inp = inputVars.get(i);
       if (inp.width == 1) {
-        out.append("$" + inp.name + "" + "$&");
+        out.append("$").append(inp.name).append("$&");
       } else {
         String format = i == inputVars.size() - 1 ? "c|" : "c";
-        out.append(
-            "\\multicolumn{"
-                + inp.width
-                + "}{"
-                + format
-                + "}{$"
-                + inp.name
-                + "["
-                + (inp.width - 1)
-                + "..0]$}&");
+        out.append("\\multicolumn{").append(inp.width).append("}{").append(format).append("}{$")
+            .append(inp.name).append("[").append(inp.width - 1).append("..0]$}&");
       }
     }
     for (int i = 0; i < outputVars.size(); i++) {
       Var outp = outputVars.get(i);
       if (outp.width == 1) {
-        out.append("$" + outp.name + "$");
+        out.append("$").append(outp.name).append("$");
       } else {
-        out.append(
-            "\\multicolumn{"
-                + outp.width
-                + "}{c}{$"
-                + outp.name
-                + "["
-                + (outp.width - 1)
-                + "..0]$}");
+        out.append("\\multicolumn{").append(outp.width).append("}{c}{$").append(outp.name)
+            .append("[").append(outp.width - 1).append("..0]$}");
       }
       out.append(i < outputVars.size() - 1 ? "&" : "\\\\");
     }
@@ -140,15 +125,15 @@ public class AnalyzerTexWriter {
   }
 
   private static String getCompactTruthTable(TruthTable tt, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int row = 0; row < tt.getVisibleRowCount(); row++) {
       for (int col = 0; col < NrOfInCols(model); col++) {
         Entry val = tt.getVisibleInputEntry(row, col);
-        content.append("$" + val.getDescription() + "$&");
+        content.append("$").append(val.getDescription()).append("$&");
       }
       for (int col = 0; col < NrOfOutCols(model); col++) {
         Entry val = tt.getVisibleOutputEntry(row, col);
-        content.append("$" + val.getDescription() + "$");
+        content.append("$").append(val.getDescription()).append("$");
         content.append(col == NrOfOutCols(model) - 1 ? "\\\\\n" : "&");
       }
     }
@@ -156,15 +141,15 @@ public class AnalyzerTexWriter {
   }
 
   private static String getCompleteTruthTable(TruthTable tt, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int row = 0; row < tt.getRowCount(); row++) {
       for (int col = 0; col < NrOfInCols(model); col++) {
         Entry val = tt.getInputEntry(row, col);
-        content.append("$" + val.getDescription() + "$&");
+        content.append("$").append(val.getDescription()).append("$&");
       }
       for (int col = 0; col < NrOfOutCols(model); col++) {
         Entry val = tt.getOutputEntry(row, col);
-        content.append("$" + val.getDescription() + "$");
+        content.append("$").append(val.getDescription()).append("$");
         content.append(col == NrOfOutCols(model) - 1 ? "\\\\\n" : "&");
       }
     }
@@ -191,23 +176,17 @@ public class AnalyzerTexWriter {
   private static int[] reordered(int NrOfInputs) {
     switch (NrOfInputs) {
       case 1:
-        int[] ret1 = {0};
-        return ret1;
+        return new int[]{0};
       case 2:
-        int[] ret2 = {0, 1};
-        return ret2;
+        return new int[]{0, 1};
       case 3:
-        int[] ret3 = {1, 0, 2};
-        return ret3;
+        return new int[]{1, 0, 2};
       case 4:
-        int[] ret4 = {0, 2, 1, 3};
-        return ret4;
+        return new int[]{0, 2, 1, 3};
       case 5:
-        int[] ret5 = {2, 0, 3, 1, 4};
-        return ret5;
+        return new int[]{2, 0, 3, 1, 4};
       case 6:
-        int[] ret6 = {0, 3, 1, 4, 2, 5};
-        return ret6;
+        return new int[]{0, 3, 1, 4, 2, 5};
     }
     return null;
   }
@@ -226,14 +205,14 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKarnaughInputs(AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     int[] reorder = reordered(model.getInputs().bits.size());
     for (int i = 0; i < model.getInputs().bits.size(); i++) {
       try {
 	    Bit inp = Bit.parse(model.getInputs().bits.get(reorder[i]));
-        content.append("{$"+inp.name);
+        content.append("{$").append(inp.name);
         if (inp.b >= 0)
-          content.append("_"+Integer.toString(inp.b));
+          content.append("_").append(inp.b);
         content.append("$}");
 	  } catch (ParserException e) {
 		// TODO Auto-generated catch block
@@ -254,64 +233,62 @@ public class AnalyzerTexWriter {
   }
 
   private static String getNumberedHeader(String name, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     TruthTable table = model.getTruthTable();
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     content.append("\n");
-    StringBuffer leftVars = new StringBuffer();
-    StringBuffer topVars = new StringBuffer();
+    StringBuilder leftVars = new StringBuilder();
+    StringBuilder topVars = new StringBuilder();
     int nrLeftVars = KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     int count = 0;
     for (Var inp : table.getInputVariables()) {
       if (inp.width == 1) {
         if (count++ < nrLeftVars) {
           if (leftVars.length() != 0) leftVars.append(", ");
-          leftVars.append("$" + inp.name + "$");
+          leftVars.append("$").append(inp.name).append("$");
         } else {
           if (topVars.length() != 0) topVars.append(", ");
-          topVars.append("$" + inp.name + "$");
+          topVars.append("$").append(inp.name).append("$");
         }
       } else {
         for (int idx = inp.width; idx >= 0; idx--) {
           if (count++ < nrLeftVars) {
             if (leftVars.length() != 0) leftVars.append(", ");
-            leftVars.append("$" + inp.name + "_{" + idx + "}$");
+            leftVars.append("$").append(inp.name).append("_{").append(idx).append("}$");
           } else {
             if (topVars.length() != 0) topVars.append(", ");
-            topVars.append("$" + inp.name + "_{" + idx + "}$");
+            topVars.append("$").append(inp.name).append("_{").append(idx).append("}$");
           }
         }
       }
     }
-    content.append(
-        "\\draw[kmbox] (" + df.format(-0.5) + "," + df.format((double) kmapRows + 0.5) + ")\n");
-    content.append("   node[below left]{" + leftVars.toString() + "}\n");
-    content.append("   node[above right]{" + topVars.toString() + "} +(-0.2,0.2)\n");
-    content.append("   node[above left]{" + name + "};");
-    content.append(
-        "\\draw (0," + kmapRows + ") -- (-0.7," + df.format((double) kmapRows + 0.7) + ");\n");
+    content.append("\\draw[kmbox] (").append(df.format(-0.5)).append(",")
+        .append(df.format((double) kmapRows + 0.5)).append(")\n");
+    content.append("   node[below left]{").append(leftVars).append("}\n");
+    content.append("   node[above right]{").append(topVars).append("} +(-0.2,0.2)\n");
+    content.append("   node[above left]{").append(name).append("};");
+    content.append("\\draw (0,").append(kmapRows).append(") -- (-0.7,")
+        .append(df.format((double) kmapRows + 0.7)).append(");\n");
     content.append("\\foreach \\x/\\1 in %\n");
-    content.append(getGrayCode(KarnaughMapPanel.COL_VARS[table.getInputColumnCount()]) + " {\n");
-    content.append("   \\node at (\\x+0.5," + df.format(kmapRows + 0.2) + ") {\\1};\n}\n");
+    content.append(getGrayCode(KarnaughMapPanel.COL_VARS[table.getInputColumnCount()]))
+        .append(" {\n");
+    content.append("   \\node at (\\x+0.5,").append(df.format(kmapRows + 0.2))
+        .append(") {\\1};\n}\n");
     content.append("\\foreach \\y/\\1 in %\n");
-    content.append(getGrayCode(KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()]) + " {\n");
-    content.append("   \\node at (-0.4,-0.5-\\y+" + df.format(kmapRows) + ") {\\1};\n}\n");
+    content.append(getGrayCode(KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()]))
+        .append(" {\n");
+    content.append("   \\node at (-0.4,-0.5-\\y+").append(df.format(kmapRows))
+        .append(") {\\1};\n}\n");
     return content.toString();
   }
 
   private static String getKarnaughEmpty(String name, boolean lined, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
-    content.append(K_INTRO + (lined ? "" : K_NUMBERED) + K_SETUP + "\n");
-    content.append(
-        "\\karnaughmap{"
-            + NrOfInCols(model)
-            + "}{"
-            + name
-            + "}{"
-            + getKarnaughInputs(model)
-            + "}{}{");
+    content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
+    content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)
+        .append("}{").append(getKarnaughInputs(model)).append("}{}{");
     if (!lined) content.append(getNumberedHeader(name, model));
     content.append("}\n");
     content.append("\\end{tikzpicture}\n");
@@ -320,7 +297,7 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKValues(int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     for (int i = 0; i < model.getTruthTable().getRowCount(); i++) {
       int idx = reorderedIndex(model.getInputs().bits.size(), i);
       content.append(model.getTruthTable().getOutputEntry(idx, outcol).getDescription());
@@ -329,19 +306,12 @@ public class AnalyzerTexWriter {
   }
 
   private static String getKarnaugh(String name, boolean lined, int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
-    content.append(K_INTRO + (lined ? "" : K_NUMBERED) + K_SETUP + "\n");
-    content.append(
-        "\\karnaughmap{"
-            + NrOfInCols(model)
-            + "}{"
-            + name
-            + "}{"
-            + getKarnaughInputs(model)
-            + "}\n{"
-            + getKValues(outcol, model)
-            + "}{");
+    content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
+    content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)
+        .append("}{").append(getKarnaughInputs(model)).append("}\n{")
+        .append(getKValues(outcol, model)).append("}{");
     if (!lined) content.append(getNumberedHeader(name, model));
     content.append("}\n");
     content.append("\\end{tikzpicture}\n");
@@ -349,10 +319,10 @@ public class AnalyzerTexWriter {
     return content.toString();
   }
 
-  private static double OFFSET = 0.2;
+  private static final double OFFSET = 0.2;
 
   private static String getCovers(String name, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     TruthTable table = model.getTruthTable();
     if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return content.toString();
     KMapGroups groups = new KMapGroups(model);
@@ -362,14 +332,16 @@ public class AnalyzerTexWriter {
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     for (KMapGroupInfo group : groups.getCovers()) {
       for (CoverInfo thiscover : group.getAreas()) {
-        content.append("   \\node[grp={" + CoverColor.COVERCOLOR.getColorName(group.getColor()) + "}");
+        content.append("   \\node[grp={")
+            .append(CoverColor.COVERCOLOR.getColorName(group.getColor())).append("}");
         double width = thiscover.getWidth() - OFFSET;
         double height = thiscover.getHeight() - OFFSET;
-        content.append("{" + df.format(width) + "}{" + df.format(height) + "}]");
-        content.append("(n" + (idx++) + ") at");
+        content.append("{").append(df.format(width)).append("}{").append(df.format(height))
+            .append("}]");
+        content.append("(n").append(idx++).append(") at");
         double y = (double) kmapRows - ((double) thiscover.getHeight()) / 2.0 - thiscover.getRow();
         double x = ((double) thiscover.getWidth()) / 2.0 + thiscover.getCol();
-        content.append("(" + df.format(x) + "," + df.format(y) + ") {};\n");
+        content.append("(").append(df.format(x)).append(",").append(df.format(y)).append(") {};\n");
       }
     }
     return content.toString();
@@ -377,19 +349,12 @@ public class AnalyzerTexWriter {
 
   private static String getKarnaughGroups(
       String output, String name, boolean lined, int outcol, AnalyzerModel model) {
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     content.append("\\begin{center}\n");
-    content.append(K_INTRO + (lined ? "" : K_NUMBERED) + K_SETUP + "\n");
-    content.append(
-        "\\karnaughmap{"
-            + NrOfInCols(model)
-            + "}{"
-            + name
-            + "}{"
-            + getKarnaughInputs(model)
-            + "}\n{"
-            + getKValues(outcol, model)
-            + "}{");
+    content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
+    content.append("\\karnaughmap{").append(NrOfInCols(model)).append("}{").append(name)
+        .append("}{").append(getKarnaughInputs(model)).append("}\n{")
+        .append(getKValues(outcol, model)).append("}{");
     if (!lined) content.append(getNumberedHeader(name, model));
     else content.append("\n");
     content.append(getCovers(output, model));
@@ -404,8 +369,7 @@ public class AnalyzerTexWriter {
     /* make sure the model is up to date */
     boolean modelIsUpdating = model.getOutputExpressions().UpdatesEnabled();
     model.getOutputExpressions().enableUpdates();
-    PrintStream out = new PrintStream(file);
-    try {
+    try (PrintStream out = new PrintStream(file)) {
       /*
        * We start to create the document header section with all required packages
        */
@@ -502,7 +466,7 @@ public class AnalyzerTexWriter {
         out.println("\\section{" + S.get("latexKarnaugh") + "}");
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
           out.println(S.fmt("latexKarnaughToBig",
-                  (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
+              (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
         } else {
           out.println(S.get("latexKarnaughText"));
           out.println(SUB_SECTION_SEP);
@@ -546,7 +510,8 @@ public class AnalyzerTexWriter {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String func = "$" + outp.name + "_{" + idx + "}$";
                 out.println(
-                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++, model));
+                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++,
+                        model));
               }
             }
           }
@@ -560,13 +525,13 @@ public class AnalyzerTexWriter {
             if (outp.width == 1) {
               Expression exp = Expressions.eq(Expressions.variable(outp.name),
                   model.getOutputExpressions().getMinimalExpression(outp.name));
-              out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+              out.println(exp.toString(Notation.LaTeX) + "~\\\\");
             } else {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String name = outp.bitName(idx);
                 Expression exp = Expressions.eq(Expressions.variable(name),
                     model.getOutputExpressions().getMinimalExpression(name));
-                out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+                out.println(exp.toString(Notation.LaTeX) + "~\\\\");
               }
             }
           }
@@ -576,8 +541,6 @@ public class AnalyzerTexWriter {
        * That was all folks
        */
       out.println("\\end{document}");
-    } finally {
-      out.close();
     }
     if (!modelIsUpdating)
     	model.getOutputExpressions().disableUpdates();

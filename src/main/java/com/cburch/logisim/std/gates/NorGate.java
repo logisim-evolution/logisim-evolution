@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,31 +34,26 @@ import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class NorGate extends AbstractGate {
-  private class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
-      String OrOperation = (HDLType.equals(VHDL) ? " OR" : " |");
-      String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
-      String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
       StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation + NotOperation + "(");
+      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "(");
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
         if (!first) {
-          OneLine.append(OrOperation);
+          OneLine.append(HDL.orOperator());
           Contents.add(OneLine.toString());
           OneLine.setLength(0);
           while (OneLine.length() < TabWidth) {
@@ -67,7 +62,7 @@ class NorGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + Integer.toString(i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());
@@ -76,7 +71,7 @@ class NorGate extends AbstractGate {
     }
   }
 
-  public static NorGate FACTORY = new NorGate();
+  public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
     super("NOR Gate", S.getter("norGateComponent"));
@@ -105,9 +100,9 @@ class NorGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new NorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

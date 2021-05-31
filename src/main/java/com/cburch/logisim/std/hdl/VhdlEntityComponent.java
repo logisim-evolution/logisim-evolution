@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,9 +54,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Window;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static class VhdlEntityListener implements HdlModelListener {
 
-    Instance instance;
+    final Instance instance;
 
     VhdlEntityListener(Instance instance) {
       this.instance = instance;
@@ -119,19 +119,19 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static final int X_PADDING = 5;
 
-  private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
+  private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
     super("VHDL Entity", S.getter("vhdlComponent"));
 
-    this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
+    this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
   public void SetSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
+    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
@@ -169,7 +169,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
     String label = "";
 
-    if (attrs.getValue(StdAttr.LABEL) != "")
+    if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
 
     return getHDLName(attrs) + label;
@@ -185,9 +185,9 @@ public class VhdlEntityComponent extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new VhdlHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -297,11 +297,11 @@ public class VhdlEntityComponent extends InstanceFactory {
           && server_response.length() > 0
           && !server_response.equals("sync")) {
 
-        String[] parameters = server_response.split("\\:");
+        String[] parameters = server_response.split(":");
 
         String busValue = parameters[1];
 
-        Value vector_values[] = new Value[busValue.length()];
+        Value[] vector_values = new Value[busValue.length()];
 
         int k = busValue.length() - 1;
         for (char bit : busValue.toCharArray()) {
@@ -335,7 +335,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
         /* If it is an output */
         if (p.getType() == 2) {
-          Value vector_values[] = new Value[p.getFixedBitWidth().getWidth()];
+          Value[] vector_values = new Value[p.getFixedBitWidth().getWidth()];
           for (int k = 0; k < p.getFixedBitWidth().getWidth(); k++) {
             vector_values[k] = Value.UNKNOWN;
           }
@@ -344,7 +344,7 @@ public class VhdlEntityComponent extends InstanceFactory {
         }
       }
 
-      new UnsupportedOperationException(
+      throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
@@ -363,7 +363,8 @@ public class VhdlEntityComponent extends InstanceFactory {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = attrs.getValue(CONTENT_ATTR).getContent();
 
@@ -371,11 +372,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
       return;

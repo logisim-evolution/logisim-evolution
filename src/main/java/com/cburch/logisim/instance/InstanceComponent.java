@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,18 +63,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-public class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
+public final class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
   private InstanceFactory factory;
-  private Instance instance;
-  private Location loc;
+  private final Instance instance;
+  private final Location loc;
   private Bounds bounds;
   private List<Port> portList;
   private EndData[] endArray;
   private List<EndData> endList;
   private boolean hasToolTips;
   private HashSet<Attribute<BitWidth>> widthAttrs;
-  private AttributeSet attrs;
+  private final AttributeSet attrs;
   private boolean attrListenRequested;
   private InstanceTextField textField;
   private InstanceStateImpl instanceState;
@@ -84,7 +84,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
     this.factory = factory;
-    this.instance = new Instance(this);
+    this.instance = Instance.makeFor(this);
     this.loc = loc;
     this.bounds = factory.getOffsetBounds(attrs).translate(loc.getX(), loc.getY());
     this.portList = factory.getPorts();
@@ -132,7 +132,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   public void addComponentListener(ComponentListener l) {
     EventSourceWeakSupport<ComponentListener> ls = listeners;
     if (ls == null) {
-      ls = new EventSourceWeakSupport<ComponentListener>();
+      ls = new EventSourceWeakSupport<>();
       ls.add(l);
       listeners = ls;
     } else {
@@ -155,7 +155,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       if (!Oldvalue.equals(value)) {
         if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
           e.getSource().setValue(lattr, Oldvalue);
-        } else if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
+        } else if (getFactory().getName().equalsIgnoreCase(value)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lattr, Oldvalue);
         } else if (CorrectLabel.IsKeyword(value, false)) {
@@ -196,8 +196,8 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       if (oldEnd == null || !oldEnd.equals(newEnd)) {
         if (newEnd != null) es[i] = newEnd;
         if (endsChangedOld == null) {
-          endsChangedOld = new ArrayList<EndData>();
-          endsChangedNew = new ArrayList<EndData>();
+          endsChangedOld = new ArrayList<>();
+          endsChangedNew = new ArrayList<>();
         }
         endsChangedOld.add(oldEnd);
         endsChangedNew.add(newEnd);
@@ -207,7 +207,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
         Attribute<BitWidth> attr = p.getWidthAttribute();
         if (attr != null) {
           if (wattrs == null) {
-            wattrs = new HashSet<Attribute<BitWidth>>();
+            wattrs = new HashSet<>();
           }
           wattrs.add(attr);
         }
@@ -225,7 +225,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
     }
     if (es != esOld) {
       endArray = es;
-      endList = new UnmodifiableList<EndData>(es);
+      endList = new UnmodifiableList<>(es);
     }
     widthAttrs = wattrs;
     hasToolTips = toolTipFound;
@@ -289,8 +289,9 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
 
   public boolean endsAt(Location pt) {
     EndData[] ends = endArray;
-    for (int i = 0; i < ends.length; i++) {
-      if (ends[i].getLocation().equals(pt)) return true;
+    for (EndData end : ends) {
+      if (end.getLocation().equals(pt))
+        return true;
     }
     return false;
   }
@@ -378,8 +379,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       Object defaultTip = factory.getDefaultToolTip();
       if (hasToolTips || defaultTip != null) return this;
     } else if (key == TextEditable.class) {
-      InstanceTextField field = textField;
-      if (field != null) return field;
+      return textField;
     }
     return null;
   }
@@ -443,7 +443,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
 
   void setPorts(Port[] ports) {
     Port[] portsCopy = ports.clone();
-    portList = new UnmodifiableList<Port>(portsCopy);
+    portList = new UnmodifiableList<>(portsCopy);
     computeEnds();
   }
 
@@ -460,11 +460,8 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   }
 
   public String toString() {
-    return "InstanceComponent{factory="
-        + factory.getName()
-        + ",loc=("
-        + loc
-        + "),instance="
-        + instance;
+    String label = attrs.getValue(StdAttr.LABEL);
+    return "InstanceComponent{factory="+factory.getName()
+        +",loc=("+loc+"),label="+label+"}@"+super.toString();
   }
 }

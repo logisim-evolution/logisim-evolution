@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,8 +32,10 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -50,25 +52,25 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("BinValue", NrOfBitsId);
     return Inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     for (int i = 1; i <= NrOfPorts; i++) {
-      Outputs.put("BCD" + Integer.toString((int) (Math.pow(10, i - 1))), 4);
+      Outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
     }
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> ParameterList = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> ParameterList = new TreeMap<>();
     ParameterList.put(NrOfBitsId, NrOfBitsStr);
     return ParameterList;
   }
@@ -79,44 +81,40 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     ParameterMap.put(NrOfBitsStr, BinBits);
     return ParameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
-    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Nets));
     for (int i = 1; i <= NrOfPorts; i++)
       PortMap.putAll(
           GetNetMap(
-              "BCD" + Integer.toString((int) (Math.pow(10, i - 1))),
+              "BCD" + (int) (Math.pow(10, i - 1)),
               true,
               ComponentInfo,
               i,
-              Reporter,
-              HDLType,
               Nets));
     return PortMap;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     switch (NrOfPorts) {
@@ -153,12 +151,11 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       switch (NrOfPorts) {
         case 2:
           Contents.add("   s_level_0(6 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
@@ -254,14 +251,14 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
       }
     } else {
-      Reporter.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
     return Contents;
   }
 
   private ArrayList<String> GetAdd3Block(
       String SourceName, int SourceStartId, String DestName, int DestStartId, String ProcessName) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   ");
     Contents.add("   ADD3_" + ProcessName + " : PROCESS(" + SourceName + ")");
     Contents.add("   BEGIN");
@@ -269,97 +266,97 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         "      CASE ("
             + SourceName
             + "("
-            + Integer.toString(SourceStartId)
+            + SourceStartId
             + " DOWNTO "
-            + Integer.toString(SourceStartId - 3)
+            + (SourceStartId - 3)
             + ") ) IS");
     Contents.add(
         "         WHEN \"0000\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"0000\";");
     Contents.add(
         "         WHEN \"0001\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"0001\";");
     Contents.add(
         "         WHEN \"0010\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"0010\";");
     Contents.add(
         "         WHEN \"0011\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"0011\";");
     Contents.add(
         "         WHEN \"0100\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"0100\";");
     Contents.add(
         "         WHEN \"0101\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"1000\";");
     Contents.add(
         "         WHEN \"0110\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"1001\";");
     Contents.add(
         "         WHEN \"0111\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"1010\";");
     Contents.add(
         "         WHEN \"1000\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"1011\";");
     Contents.add(
         "         WHEN \"1001\" => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"1100\";");
     Contents.add(
         "         WHEN OTHERS => "
             + DestName
             + "( "
-            + Integer.toString(DestStartId)
+            + DestStartId
             + " DOWNTO "
-            + Integer.toString(DestStartId - 3)
+            + (DestStartId - 3)
             + " ) <= \"----\";");
     Contents.add("      END CASE;");
     Contents.add("   END PROCESS ADD3_" + ProcessName + ";");

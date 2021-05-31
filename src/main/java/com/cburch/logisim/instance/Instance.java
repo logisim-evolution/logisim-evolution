@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,10 +39,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
 import java.util.List;
 
-public class Instance {
-  public static Component getComponentFor(Instance instance) {
-    return instance.comp;
-  }
+public final class Instance implements Location.At {
 
   public static Instance getInstanceFor(Component comp) {
     if (comp instanceof InstanceComponent) {
@@ -52,11 +49,14 @@ public class Instance {
     }
   }
 
-  private InstanceComponent comp;
-
-  Instance(InstanceComponent comp) {
-    this.comp = comp;
+  public static InstanceComponent getComponentFor(Instance instance) {
+    return instance.comp;
   }
+
+  static Instance makeFor(InstanceComponent comp) { return new Instance(comp); }
+  private Instance(InstanceComponent comp) { this.comp = comp; }
+
+  private final InstanceComponent comp;
 
   public void addAttributeListener() {
     comp.addAttributeListener(this);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.plexers;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -50,7 +50,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     Inputs.put("DemuxIn", NrOfBits);
@@ -60,9 +60,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     String Space = "  ";
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
@@ -70,8 +69,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       if (i == 10) {
         Space = " ";
       }
-      String binValue = IntToBin(i, nr_of_select_bits, HDLType);
-      if (HDLType.equals(VHDL)) {
+      String binValue = IntToBin(i, nr_of_select_bits);
+      if (HDL.isVHDL()) {
         Contents.add("   DemuxOut_" + i + Space + "<= DemuxIn WHEN sel = " + binValue + " AND");
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           Contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
@@ -81,7 +80,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       } else {
         Contents.add(
             "   assign DemuxOut_"
-                + Integer.toString(i)
+                + i
                 + Space
                 + " = (Enable&(sel == "
                 + binValue
@@ -93,27 +92,26 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     for (int i = 0; i < (1 << nr_of_select_bits); i++) {
-      Outputs.put("DemuxOut_" + Integer.toString(i), NrOfBits);
+      Outputs.put("DemuxOut_" + i, NrOfBits);
     }
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
     return Parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) ParameterMap.put(NrOfBitsStr, NrOfBits);
@@ -121,9 +119,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
@@ -131,29 +128,19 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     int select_input_index = (1 << nr_of_select_bits);
     // begin with connecting all outputs of demultiplexer
     for (int i = 0; i < select_input_index; i++)
-      PortMap.putAll(
-          GetNetMap(
-              "DemuxOut_" + Integer.toString(i), true, ComponentInfo, i, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap("DemuxOut_" + i, true, ComponentInfo, i, Nets));
     // now select..
     PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, HDLType, Nets));
+        GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
     // now connect enable input...
-    if (ComponentInfo.GetComponent()
-        .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)
-        .booleanValue()) {
-      PortMap.putAll(
-          GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Reporter, HDLType, Nets));
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Nets));
     } else {
-      String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-      PortMap.put("Enable", SetBit);
-      select_input_index--; // decrement pin index because enable doesn't
-      // exist...
+      PortMap.put("Enable", HDL.oneBit());
+      select_input_index--; // decrement pin index because enable doesn't exist...
     }
     // finally input
-    PortMap.putAll(
-        GetNetMap("DemuxIn", true, ComponentInfo, select_input_index + 2, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DemuxIn", true, ComponentInfo, select_input_index + 2, Nets));
     return PortMap;
   }
 
@@ -163,7 +150,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

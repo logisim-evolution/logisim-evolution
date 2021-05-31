@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,15 +44,14 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class XorGate extends AbstractGate {
-  private class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
       if (is_one_hot) {
-        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1, HDLType));
+        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1));
       } else {
-        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1, HDLType));
+        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
       }
       Contents.add("");
       return Contents;
@@ -70,7 +69,7 @@ class XorGate extends AbstractGate {
     return ret;
   }
 
-  public static XorGate FACTORY = new XorGate();
+  public static final XorGate FACTORY = new XorGate();
 
   private XorGate() {
     super("XOR Gate", S.getter("xorGateComponent"), true);
@@ -105,7 +104,7 @@ class XorGate extends AbstractGate {
     Object behavior = attrs.getValue(GateAttributes.ATTR_XOR);
     if (behavior == GateAttributes.XOR_ODD) {
       Object inputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
-      if (inputs == null || ((Integer) inputs).intValue() != 2) {
+      if (inputs == null || (Integer) inputs != 2) {
         isOdd = true;
       }
     }
@@ -113,9 +112,9 @@ class XorGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

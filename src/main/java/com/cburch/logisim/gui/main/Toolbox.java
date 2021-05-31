@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,19 +39,19 @@ import javax.swing.JScrollPane;
 
 class Toolbox extends JPanel {
   private static final long serialVersionUID = 1L;
-  private ProjectExplorer toolbox;
+  private final ProjectExplorer toolbox;
 
   Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());
 
-    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame,menu);
+    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame, menu);
     Toolbar toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
-    toolbox = new ProjectExplorer(proj);
+    toolbox = new ProjectExplorer(proj,false);
     toolbox.setListener(new ToolboxManip(proj, toolbox));
     add(new JScrollPane(toolbox), BorderLayout.CENTER);
-    
+
     toolbarModel.menuEnableChanged(menu);
   }
 

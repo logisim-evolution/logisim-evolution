@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,70 +40,38 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.JTextArea;
 
 class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private PrefBoolean[] checks;
-  private PrefOptionList toolbarPlacement;
-  private ZoomSlider ZoomValue;
-  private JLabel lookfeelLabel;
-  private JLabel ZoomLabel;
-  private JLabel Importanta;
-  private JTextArea Importantb;
-
-  private class ZoomChange implements ChangeListener, ActionListener {
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-      JSlider source = (JSlider) e.getSource();
-      if (!source.getValueIsAdjusting()) {
-        int value = (int) source.getValue();
-        AppPreferences.SCALE_FACTOR.set((double) value / 100.0);
-        List<Project> nowOpen = Projects.getOpenProjects();
-        for (Project proj : nowOpen) {
-          proj.getFrame().revalidate();
-          proj.getFrame().repaint();
-        }
-      }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      if (e.getSource().equals(LookAndFeel)) {
-        if (LookAndFeel.getSelectedIndex() != Index) {
-          Index = LookAndFeel.getSelectedIndex();
-          AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
-        }
-      } else if (e.getActionCommand().equals("reset")) {
-        AppPreferences.resetWindow();
-        List<Project> nowOpen = Projects.getOpenProjects();
-        for (Project proj : nowOpen) {
-          proj.getFrame().resetLayout();
-          proj.getFrame().revalidate();
-          proj.getFrame().repaint();
-        }
-      }
-    }
-  }
-
-  private JComboBox<String> LookAndFeel;
+  private final PrefBoolean[] checks;
+  private final PrefOptionList toolbarPlacement;
+  private final ZoomSlider ZoomValue;
+  private final JLabel lookfeelLabel;
+  private final JLabel ZoomLabel;
+  private final JLabel Importanta;
+  private final JTextArea Importantb;
+  private final JPanel previewContainer;
+  private final JComboBox<String> LookAndFeel;
+  private final LookAndFeelInfo[] LFInfos;
+  private JPanel previewPanel;
   private int Index = 0;
-  private LookAndFeelInfo[] LFInfos;
 
   public WindowOptions(PreferencesFrame window) {
     super(window);
- 
+
     checks =
         new PrefBoolean[] {
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
@@ -120,22 +88,22 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(Direction.WEST.toString(), Direction.WEST.getDisplayGetter()),
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
-   
+
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
-  
+
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
-    
+
     Importanta = new JLabel(S.get("windowToolbarPleaserestart"));
     Importanta.setFont(Importanta.getFont().deriveFont(Font.ITALIC));
     panel.add(Importanta);
-    
+
     Importantb = new JTextArea(S.get("windowToolbarImportant"));
     Importantb.setFont(Importantb.getFont().deriveFont(Font.ITALIC));
     panel.add(Importantb);
-    
+
     ZoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
     ZoomValue =
         new ZoomSlider(
@@ -143,17 +111,17 @@ class WindowOptions extends OptionsPanel {
 
     panel.add(ZoomLabel);
     panel.add(ZoomValue);
-    
+
     ZoomChange Listener = new ZoomChange();
     ZoomValue.addChangeListener(Listener);
-    
+
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
-    
+
     int index = 0;
-    LookAndFeel = new JComboBox<String>();
+    LookAndFeel = new JComboBox<>();
     LookAndFeel.setSize(50, 20);
-    
+
     LFInfos = UIManager.getInstalledLookAndFeels();
     for (LookAndFeelInfo info : LFInfos) {
       LookAndFeel.insertItemAt(info.getName(), index);
@@ -162,11 +130,17 @@ class WindowOptions extends OptionsPanel {
         Index = index;
       }
       index++;
-    }    
+    }
     lookfeelLabel = new JLabel(S.get("windowToolbarLookandfeel"));
     panel.add(lookfeelLabel);
     panel.add(LookAndFeel);
     LookAndFeel.addActionListener(Listener);
+
+    JLabel previewLabel = new JLabel(S.get("windowToolbarPreview"));
+    panel.add(previewLabel);
+    previewContainer = new JPanel();
+    panel.add(previewContainer);
+    initThemePreviewer();
 
     setLayout(new TableLayout(1));
     JButton but = new JButton();
@@ -174,10 +148,31 @@ class WindowOptions extends OptionsPanel {
     but.setActionCommand("reset");
     but.setText(S.get("windowToolbarReset"));
     add(but);
-    for (int i = 0; i < checks.length; i++) {
-      add(checks[i]);
+    for (PrefBoolean check : checks) {
+      add(check);
     }
     add(panel);
+  }
+
+  private void initThemePreviewer() {
+    if (previewPanel != null) previewContainer.remove(previewPanel);
+    javax.swing.LookAndFeel previousLF = UIManager.getLookAndFeel();
+    try {
+      UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+      previewPanel = new JPanel();
+      previewPanel.add(new JButton("Preview"));
+      previewPanel.add(new JCheckBox("Preview"));
+      previewPanel.add(new JRadioButton("Preview"));
+      previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
+      previewContainer.add(previewPanel);
+      UIManager.setLookAndFeel(previousLF);
+    } catch (IllegalAccessException
+        | UnsupportedLookAndFeelException
+        | InstantiationException
+        | ClassNotFoundException ignored) {
+    }
+    previewContainer.repaint();
+    previewContainer.revalidate();
   }
 
   @Override
@@ -192,13 +187,49 @@ class WindowOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (int i = 0; i < checks.length; i++) {
-      checks[i].localeChanged();
+    for (PrefBoolean check : checks) {
+      check.localeChanged();
     }
     toolbarPlacement.localeChanged();
     ZoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     Importanta.setText(S.get("windowToolbarPleaserestart"));
     Importantb.setText(S.get("windowToolbarImportant"));
+  }
+
+  private class ZoomChange implements ChangeListener, ActionListener {
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+      JSlider source = (JSlider) e.getSource();
+      if (!source.getValueIsAdjusting()) {
+        int value = source.getValue();
+        AppPreferences.SCALE_FACTOR.set((double) value / 100.0);
+        List<Project> nowOpen = Projects.getOpenProjects();
+        for (Project proj : nowOpen) {
+          proj.getFrame().revalidate();
+          proj.getFrame().repaint();
+        }
+      }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (e.getSource().equals(LookAndFeel)) {
+        if (LookAndFeel.getSelectedIndex() != Index) {
+          Index = LookAndFeel.getSelectedIndex();
+          AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
+          initThemePreviewer();
+        }
+      } else if (e.getActionCommand().equals("reset")) {
+        AppPreferences.resetWindow();
+        List<Project> nowOpen = Projects.getOpenProjects();
+        for (Project proj : nowOpen) {
+          proj.getFrame().resetLayout();
+          proj.getFrame().revalidate();
+          proj.getFrame().repaint();
+        }
+      }
+    }
   }
 }

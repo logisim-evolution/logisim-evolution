@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModelAddAction extends ModelAction {
-  private List<CanvasObject> added;
-  private int addIndex;
+  private final List<CanvasObject> added;
+  private final int addIndex;
 
   public ModelAddAction(CanvasModel model, CanvasObject added) {
     this(model, Collections.singleton(added));
@@ -47,13 +47,13 @@ public class ModelAddAction extends ModelAction {
 
   public ModelAddAction(CanvasModel model, Collection<CanvasObject> added) {
     super(model);
-    this.added = new ArrayList<CanvasObject>(added);
+    this.added = new ArrayList<>(added);
     this.addIndex = model.getObjectsFromBottom().size();
   }
 
   public ModelAddAction(CanvasModel model, Collection<CanvasObject> added, int index) {
     super(model);
-    this.added = new ArrayList<CanvasObject>(added);
+    this.added = new ArrayList<>(added);
     this.addIndex = index;
   }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,7 @@ import java.util.ArrayList;
 
 public class ReptarLocalBus extends InstanceFactory {
 
-  public static final String getInputLabel(int id) {
+  public static String getInputLabel(int id) {
     if (id < 5)
       switch (id) {
         case 0 : return "SP6_LB_nCS3_i";
@@ -60,7 +60,7 @@ public class ReptarLocalBus extends InstanceFactory {
     return "Undefined";
   }
   
-  public static final String getOutputLabel(int id) {
+  public static String getOutputLabel(int id) {
     switch(id) {
       case 0  : return "SP6_LB_WAIT3_o";
       case 1  : return "IRQ_o";
@@ -68,7 +68,7 @@ public class ReptarLocalBus extends InstanceFactory {
     }
   }
   
-  public static final String getIOLabel(int id) {
+  public static String getIOLabel(int id) {
     if (id < 16) return "Addr_Data_LB_io_" + id;
     return "Undefined";
   }
@@ -85,14 +85,14 @@ public class ReptarLocalBus extends InstanceFactory {
   public static final int IRQ_i = 9;
 
   /* Default Name. Very important for the genration of the VDHL Code */
-  private String defaultLocalBusName = "LocalBus";
+  private static final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
     super("ReptarLB", S.getter("repLBComponent"));
 
-    ArrayList<String> inpLabels = new ArrayList<String>();
-    ArrayList<String> outpLabels = new ArrayList<String>();
-    ArrayList<String> ioLabels = new ArrayList<String>();
+    ArrayList<String> inpLabels = new ArrayList<>();
+    ArrayList<String> outpLabels = new ArrayList<>();
+    ArrayList<String> ioLabels = new ArrayList<>();
     for (int i = 0 ; i < 16 ; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));
@@ -147,12 +147,12 @@ public class ReptarLocalBus extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     // return false;
     if (MyHDLGenerator == null) {
       MyHDLGenerator = new ReptarLocalBusHDLGeneratorFactory();
     }
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

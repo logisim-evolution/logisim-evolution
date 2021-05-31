@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.util.List;
+import java.util.Objects;
 
 class CounterAttributes extends AbstractAttributeSet {
 
@@ -57,7 +58,7 @@ class CounterAttributes extends AbstractAttributeSet {
             },
             new Object[] {
               BitWidth.create(8),
-              Long.valueOf(0xFF),
+                0xFFL,
               Counter.ON_GOAL_WRAP,
               StdAttr.TRIG_RISING,
               "",
@@ -106,7 +107,7 @@ class CounterAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     Object oldValue = base.getValue(attr);
-    if (oldValue == null ? value == null : oldValue.equals(value)) return;
+    if (Objects.equals(oldValue, value)) return;
 
     Long newMax = null;
     if (attr == StdAttr.WIDTH) {
@@ -115,26 +116,25 @@ class CounterAttributes extends AbstractAttributeSet {
       int oldW = oldWidth.getWidth();
       int newW = newWidth.getWidth();
       Long oldValObj = base.getValue(Counter.ATTR_MAX);
-      long oldVal = oldValObj.longValue();
+      long oldVal = oldValObj;
       base.setValue(StdAttr.WIDTH, newWidth);
       if (newW > oldW) {
-        newMax = Long.valueOf(newWidth.getMask());
+        newMax = newWidth.getMask();
       } else {
         long v = oldVal & newWidth.getMask();
         if (v != oldVal) {
-          Long newValObj = Long.valueOf(v);
+          Long newValObj = v;
           base.setValue(Counter.ATTR_MAX, newValObj);
           fireAttributeValueChanged(Counter.ATTR_MAX, newValObj, null);
         }
       }
       fireAttributeValueChanged(StdAttr.WIDTH, newWidth, null);
     } else if (attr == Counter.ATTR_MAX) {
-      long oldVal = base.getValue(Counter.ATTR_MAX).longValue();
+      long oldVal = base.getValue(Counter.ATTR_MAX);
       BitWidth width = base.getValue(StdAttr.WIDTH);
-      long newVal = ((Long) value).longValue() & width.getMask();
+      long newVal = (Long) value & width.getMask();
       if (newVal != oldVal) {
-        V val = (V) Long.valueOf(newVal);
-        value = val;
+        value = (V) Long.valueOf(newVal);
       }
     }
     base.setValue(attr, value);

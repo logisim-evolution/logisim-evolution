@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,9 +38,9 @@ import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private PrefBoolean[] checks;
-  private PrefOptionList afterAdd;
-  private PrefOptionList DefaultAppear;
+  private final PrefBoolean[] checks;
+  private final PrefOptionList afterAdd;
+  private final PrefOptionList DefaultAppear;
   private PrefOptionList radix1;
   private PrefOptionList radix2;
 
@@ -56,8 +56,11 @@ class LayoutOptions extends OptionsPanel {
           new PrefBoolean(AppPreferences.COMPONENT_TIPS, S.getter("layoutShowTips")),
           new PrefBoolean(AppPreferences.MOVE_KEEP_CONNECT, S.getter("layoutMoveKeepConnect")),
           new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS, S.getter("layoutAddShowGhosts")),
-          new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,S.getter("layoutNamedCircuitBoxesFixedSize")),
-          new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
+          new PrefBoolean(
+              AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
+              S.getter("layoutNamedCircuitBoxesFixedSize")),
+          new PrefBoolean(
+              AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
         };
 
     for (int i = 0; i < 2; i++) {
@@ -107,8 +110,8 @@ class LayoutOptions extends OptionsPanel {
     panel.add(radix2.getJComboBox());
 
     setLayout(new TableLayout(1));
-    for (int i = 0; i < checks.length; i++) {
-      add(checks[i]);
+    for (PrefBoolean check : checks) {
+      add(check);
     }
     add(panel);
   }
@@ -125,8 +128,8 @@ class LayoutOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (int i = 0; i < checks.length; i++) {
-      checks[i].localeChanged();
+    for (PrefBoolean check : checks) {
+      check.localeChanged();
     }
     radix1.localeChanged();
     radix2.localeChanged();

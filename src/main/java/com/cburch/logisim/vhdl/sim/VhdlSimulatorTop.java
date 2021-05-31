@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,15 +58,15 @@ import javax.help.UnsupportedOperationException;
  */
 public class VhdlSimulatorTop implements CircuitListener {
 
-  private VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
-  private VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
+  private final VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
+  private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
   private VhdlSimulatorTclBinder tclBinder;
-  private SocketClient socketClient = new SocketClient();
+  private final SocketClient socketClient = new SocketClient();
 
-  private Project project;
+  private final Project project;
 
-  private static ArrayList<VhdlSimulatorListener> listeners =
-      new ArrayList<VhdlSimulatorListener>();
+  private static final ArrayList<VhdlSimulatorListener> listeners =
+      new ArrayList<>();
 
   private State state = State.DISABLED;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -53,7 +53,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("INP_A", NrOfBitsId);
     Inputs.put("INP_B", NrOfBitsId);
     Inputs.put("Upper", NrOfBitsId);
@@ -61,10 +61,9 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    if (HDLType.equals(VHDL)) {
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
+    if (HDL.isVHDL()) {
       Contents.add(
           "   s_extended_dividend(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ") <= Upper;");
       Contents.add("   s_extended_dividend(" + NrOfBitsStr + "-1 DOWNTO 0) <= INP_A;");
@@ -86,7 +85,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Quotient", NrOfBitsId);
     Outputs.put("Remainder", NrOfBitsId);
     return Outputs;
@@ -94,7 +93,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(CalcBitsId, CalcBitsStr);
     Parameters.put(UnsignedId, UnsignedStr);
@@ -102,9 +101,8 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     boolean isUnsigned =
@@ -121,18 +119,15 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Nets));
+    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Nets));
+    PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Nets));
+    PortMap.putAll(GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Nets));
+    PortMap.putAll(GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Nets));
     return PortMap;
   }
 
@@ -143,7 +138,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_div_result", CalcBitsId);
     Wires.put("s_mod_result", NrOfBitsId);
     Wires.put("s_extended_dividend", CalcBitsId);
@@ -151,7 +146,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }

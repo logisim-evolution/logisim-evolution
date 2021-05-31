@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,9 +64,9 @@ public class VhdlParser {
 
   public static class PortDescription {
 
-    private String name;
-    private String type;
-    private BitWidth width;
+    private final String name;
+    private final String type;
+    private final BitWidth width;
 
     public PortDescription(String name, String type, int width) {
       this.name = name;
@@ -99,17 +99,17 @@ public class VhdlParser {
   private static final String VECTOR_PATTERN =
       ":\\s*(\\w+)\\s+std_logic_vector\\s*[(]\\s*(\\d+)\\s+downto\\s+(\\d+)\\s*[)]";
 
-  private List<PortDescription> inputs;
-  private List<PortDescription> outputs;
-  private String source;
+  private final List<PortDescription> inputs;
+  private final List<PortDescription> outputs;
+  private final String source;
   private String name;
   private String libraries;
   private String architecture;
 
   public VhdlParser(String source) {
     this.source = source;
-    this.inputs = new ArrayList<PortDescription>();
-    this.outputs = new ArrayList<PortDescription>();
+    this.inputs = new ArrayList<>();
+    this.outputs = new ArrayList<>();
   }
 
   public String getArchitecture() {
@@ -178,7 +178,7 @@ public class VhdlParser {
     parseContent(parts.length == 2 ? parts[1] : "");
   }
 
-  private void parseContent(String input) throws IllegalVhdlContentException {
+  private void parseContent(String input) {
     Matcher matcher =
         Pattern.compile(ARCH_PATTERN, Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(input);
 
@@ -189,7 +189,7 @@ public class VhdlParser {
     }
   }
 
-  private void parseLibraries(String input) throws IllegalVhdlContentException {
+  private void parseLibraries(String input) {
     StringBuilder result = new StringBuilder();
 
     Matcher library = Pattern.compile(LIBRARY_PATTERN, Pattern.CASE_INSENSITIVE).matcher(input);
@@ -227,7 +227,7 @@ public class VhdlParser {
     Scanner local = new Scanner(line.substring(0, index));
     local.useDelimiter(",");
 
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     while (local.hasNext()) names.add(local.next().trim());
 
     local.close();
@@ -299,9 +299,9 @@ public class VhdlParser {
   }
 
   private String removeComments() throws IllegalVhdlContentException {
-    StringBuffer input;
+    StringBuilder input;
     try {
-      input = new StringBuffer(source);
+      input = new StringBuilder(source);
     } catch (NullPointerException ex) {
       throw new IllegalVhdlContentException(S.get("emptySourceException"));
     }

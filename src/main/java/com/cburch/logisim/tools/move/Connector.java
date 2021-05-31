@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,18 +47,18 @@ class Connector {
     int dx = req.getDeltaX();
     int dy = req.getDeltaY();
     ArrayList<ConnectionData> baseConnects;
-    baseConnects = new ArrayList<ConnectionData>(gesture.getConnections());
+    baseConnects = new ArrayList<>(gesture.getConnections());
     ArrayList<ConnectionData> impossible =
         pruneImpossible(baseConnects, gesture.getFixedAvoidanceMap(), dx, dy);
 
     AvoidanceMap selAvoid = AvoidanceMap.create(gesture.getSelected(), dx, dy);
     HashMap<ConnectionData, Set<Location>> pathLocs;
-    pathLocs = new HashMap<ConnectionData, Set<Location>>();
+    pathLocs = new HashMap<>();
     HashMap<ConnectionData, List<SearchNode>> initNodes;
-    initNodes = new HashMap<ConnectionData, List<SearchNode>>();
+    initNodes = new HashMap<>();
     for (ConnectionData conn : baseConnects) {
-      HashSet<Location> connLocs = new HashSet<Location>();
-      ArrayList<SearchNode> connNodes = new ArrayList<SearchNode>();
+      HashSet<Location> connLocs = new HashSet<>();
+      ArrayList<SearchNode> connNodes = new ArrayList<>();
       processConnection(conn, dx, dy, connLocs, connNodes, selAvoid);
       pathLocs.put(conn, connLocs);
       initNodes.put(conn, connNodes);
@@ -89,7 +88,7 @@ class Connector {
         return null;
       }
       ArrayList<ConnectionData> connects;
-      connects = new ArrayList<ConnectionData>(baseConnects);
+      connects = new ArrayList<>(baseConnects);
       if (tryNum < 2) {
         sortConnects(connects, dx, dy);
         if (tryNum == 1) {
@@ -129,7 +128,7 @@ class Connector {
   private static ArrayList<Location> convertToPath(SearchNode last) {
     SearchNode next = last;
     SearchNode prev = last.getPrevious();
-    ArrayList<Location> ret = new ArrayList<Location>();
+    ArrayList<Location> ret = new ArrayList<>();
     ret.add(next.getLocation());
     while (prev != null) {
       if (prev.getDirection() != next.getDirection()) {
@@ -147,8 +146,8 @@ class Connector {
 
   private static SearchNode findShortestPath(
       List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
-    PriorityQueue<SearchNode> q = new PriorityQueue<SearchNode>(nodes);
-    HashSet<SearchNode> visited = new HashSet<SearchNode>();
+    PriorityQueue<SearchNode> q = new PriorityQueue<>(nodes);
+    HashSet<SearchNode> visited = new HashSet<>();
     int iters = 0;
     while (!q.isEmpty() && iters < MAX_SEARCH_ITERATIONS) {
       iters++;
@@ -309,14 +308,12 @@ class Connector {
 
   private static ArrayList<ConnectionData> pruneImpossible(
       ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
-    ArrayList<Wire> pathWires = new ArrayList<Wire>();
+    ArrayList<Wire> pathWires = new ArrayList<>();
     for (ConnectionData conn : connects) {
-      for (Wire w : conn.getWirePath()) {
-        pathWires.add(w);
-      }
+      pathWires.addAll(conn.getWirePath());
     }
 
-    ArrayList<ConnectionData> impossible = new ArrayList<ConnectionData>();
+    ArrayList<ConnectionData> impossible = new ArrayList<>();
     for (Iterator<ConnectionData> it = connects.iterator(); it.hasNext(); ) {
       ConnectionData conn = it.next();
       Location dest = conn.getLocation().translate(dx, dy);
@@ -344,17 +341,13 @@ class Connector {
    * we are moving that gate northeast, we prefer to connect the inputs from the bottom up.
    */
   private static void sortConnects(ArrayList<ConnectionData> connects, final int dx, final int dy) {
-    Collections.sort(
-        connects,
-        new Comparator<ConnectionData>() {
-          public int compare(ConnectionData ac, ConnectionData bc) {
-            Location a = ac.getLocation();
-            Location b = bc.getLocation();
-            int abx = a.getX() - b.getX();
-            int aby = a.getY() - b.getY();
-            return abx * dx + aby * dy;
-          }
-        });
+    connects.sort((ac, bc) -> {
+      Location a = ac.getLocation();
+      Location b = bc.getLocation();
+      int abx = a.getX() - b.getX();
+      int aby = a.getY() - b.getY();
+      return abx * dx + aby * dy;
+    });
   }
 
   private static MoveResult tryList(
@@ -370,7 +363,7 @@ class Connector {
     avoid.markAll(gesture.getSelected(), dx, dy);
 
     ReplacementMap replacements = new ReplacementMap();
-    ArrayList<ConnectionData> unconnected = new ArrayList<ConnectionData>();
+    ArrayList<ConnectionData> unconnected = new ArrayList<>();
     int totalDistance = 0;
     for (ConnectionData conn : connects) {
       if (ConnectorThread.isOverrideRequested()) {

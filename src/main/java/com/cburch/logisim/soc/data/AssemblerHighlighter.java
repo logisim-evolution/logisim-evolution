@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,9 +29,7 @@
 package com.cburch.logisim.soc.data;
 
 import java.util.HashSet;
-
 import javax.swing.text.Segment;
-
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -51,22 +49,40 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
           ".8byte",".dword",".quad",".balign",".zero",".org"};
   
   @SuppressWarnings("serial")
-  public static final HashSet<String> BYTES = new HashSet<String>() {{add(".byte");}};
+  public static final HashSet<String> BYTES = new HashSet<>() {{
+    add(".byte");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> SHORTS = new HashSet<String>() {{add(".half"); add(".2byte"); add(".short");}};
+  public static final HashSet<String> SHORTS = new HashSet<>() {{
+    add(".half");
+    add(".2byte");
+    add(".short");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> INTS = new HashSet<String>() {{add(".word"); add(".4byte"); add(".long");}};
+  public static final HashSet<String> INTS = new HashSet<>() {{
+    add(".word");
+    add(".4byte");
+    add(".long");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> LONGS = new HashSet<String>() {{add(".dword"); add(".8byte"); add(".quad");}};
+  public static final HashSet<String> LONGS = new HashSet<>() {{
+    add(".dword");
+    add(".8byte");
+    add(".quad");
+  }};
   @SuppressWarnings("serial")
-  public static final HashSet<String> STRINGS = new HashSet<String>() {{add(".ascii"); add(".asciz"); add(".string");}};
+  public static final HashSet<String> STRINGS = new HashSet<>() {{
+    add(".ascii");
+    add(".asciz");
+    add(".string");
+  }};
   
   
   @Override
   public TokenMap getWordsToHighlight() {
     TokenMap map = new TokenMap();
-    for (int i = 0 ; i < directives.length ; i++)
-      map.put(directives[i], Token.FUNCTION);
+    for (String directive : directives)
+      map.put(directive, Token.FUNCTION);
     return map;
   }
         
@@ -154,7 +170,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
     }
     if (RSyntaxUtilities.isHexCharacter(kar) && currentTokenType == Token.LITERAL_NUMBER_HEXADECIMAL)
       return currentTokenType;
-    if (currentTokenType != Token.NULL && currentTokenType != Token.IDENTIFIER)
+    if (currentTokenType != Token.NULL)
       addToken(text,start,index-1,currentTokenType,newStart);
     return Token.IDENTIFIER;
   }

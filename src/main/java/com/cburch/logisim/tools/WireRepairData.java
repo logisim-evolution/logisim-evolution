@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,8 +32,8 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
 
 public class WireRepairData {
-  private Wire wire;
-  private Location point;
+  private final Wire wire;
+  private final Location point;
 
   public WireRepairData(Wire wire, Location point) {
     this.wire = wire;

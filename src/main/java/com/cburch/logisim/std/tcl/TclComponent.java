@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,9 +58,9 @@ public abstract class TclComponent extends InstanceFactory {
 
   public static class PortDescription {
 
-    private String name;
-    private String type;
-    private BitWidth width;
+    private final String name;
+    private final String type;
+    private final BitWidth width;
 
     public PortDescription(String name, String type, int width) {
       this.name = name;
@@ -96,12 +96,12 @@ public abstract class TclComponent extends InstanceFactory {
   private Port[] inputs;
   private Port[] outputs;
 
-  private WeakHashMap<Instance, TclComponentListener> contentListeners;
+  private final WeakHashMap<Instance, TclComponentListener> contentListeners;
 
   public TclComponent(String name, StringGetter displayName) {
     super(name, displayName);
 
-    this.contentListeners = new WeakHashMap<Instance, TclComponentListener>();
+    this.contentListeners = new WeakHashMap<>();
 
     inputs = new Port[0];
     outputs = new Port[0];
@@ -135,15 +135,6 @@ public abstract class TclComponent extends InstanceFactory {
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
   }
 
-  /**
-   * We cannot make a VHDL architecture equivalent to the TCL script
-   *
-   * @return false
-   */
-  @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
-    return false;
-  }
 
   /**
    * This was taken from VHDL component
@@ -266,7 +257,7 @@ public abstract class TclComponent extends InstanceFactory {
         && server_response.length() > 0
         && !server_response.equals("sync")) {
 
-      String[] parameters = server_response.split("\\:");
+      String[] parameters = server_response.split(":");
 
       /* Skip if we receive crap, still better than an out of range */
       if (parameters.length < 2) continue;
@@ -287,7 +278,7 @@ public abstract class TclComponent extends InstanceFactory {
        * If the received value is not wide enough, complete with X on
        * the MSB
        */
-      Value vector_values[] = new Value[width];
+      Value[] vector_values = new Value[width];
       for (int i = width - 1; i >= busValue.length(); i--) {
         vector_values[i] = Value.UNKNOWN;
       }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,21 +34,21 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class VariableList {
-  private ArrayList<VariableListListener> listeners = new ArrayList<VariableListListener>();
-  private int maxSize;
-  private ArrayList<Var> data;
-  private ArrayList<String> names;
+  private final ArrayList<VariableListListener> listeners = new ArrayList<>();
+  private final int maxSize;
+  private final ArrayList<Var> data;
+  private final ArrayList<String> names;
   public final List<Var> vars;
   public final List<String> bits;
-  private ArrayList<VariableList> others;
+  private final ArrayList<VariableList> others;
 
   public VariableList(int maxSize) {
     this.maxSize = maxSize;
-    data = maxSize > 16 ? new ArrayList<Var>() : new ArrayList<Var>(maxSize);
-    names = maxSize > 16 ? new ArrayList<String>() : new ArrayList<String>(maxSize);
+    data = maxSize > 16 ? new ArrayList<>() : new ArrayList<>(maxSize);
+    names = maxSize > 16 ? new ArrayList<>() : new ArrayList<>(maxSize);
     vars = Collections.unmodifiableList(data);
     bits = Collections.unmodifiableList(names);
-    others = new ArrayList<VariableList>();
+    others = new ArrayList<>();
   }
   
   public void addCompanion(VariableList var) {
@@ -61,8 +61,10 @@ public class VariableList {
 	  boolean found = false;
       for (int i = 0, n = vars.size(); i < n && !found; i++) {
           Var other = vars.get(i);
-          if (other != oldVar && name.equals(other.name))
-        	  found = true;
+        if (other != oldVar && name.equals(other.name)) {
+          found = true;
+          break;
+        }
       }
       for (int i = 0 ; i < others.size() && !found ; i++) {
         VariableList l = others.get(i);

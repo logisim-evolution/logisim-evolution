@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -195,7 +195,7 @@ public class DotMatrix extends InstanceFactory {
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
   
   private static ArrayList<String> GetLabels(int rows , int cols) {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (int r = 0 ; r < rows ; r++)
       for (int c = 0 ; c < cols ; c++)
         result.add("Row"+r+"Col"+c);
@@ -226,7 +226,7 @@ public class DotMatrix extends InstanceFactory {
           BitWidth.create(7),
           Color.GREEN,
           Color.DARK_GRAY,
-          Integer.valueOf(0),
+            0,
           SHAPE_SQUARE,
           "",
           Direction.NORTH,
@@ -345,7 +345,7 @@ public class DotMatrix extends InstanceFactory {
     int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
     int cols = state.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
     long clock = state.getTickCount();
-    long persist = clock + state.getAttributeValue(ATTR_PERSIST).intValue();
+    long persist = clock + state.getAttributeValue(ATTR_PERSIST);
 
     State data = getState(state);
     if (type == INPUT_ROW) {
@@ -396,9 +396,9 @@ public class DotMatrix extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new DotMatrixHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
 }

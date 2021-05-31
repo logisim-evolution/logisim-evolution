@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,7 +55,7 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
   public InstancePokerAdapter(InstanceComponent comp, Class<? extends InstancePoker> pokerClass) {
     try {
       this.comp = comp;
-      poker = pokerClass.newInstance();
+      poker = pokerClass.getDeclaredConstructor().newInstance();
     } catch (Exception t) {
       handleError(t, pokerClass);
       poker = null;

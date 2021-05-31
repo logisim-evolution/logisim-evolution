@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -65,7 +65,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -98,14 +97,12 @@ class XmlWriter {
     int n = a.getLength();
     if (n == 0) return "";
     else if (n == 1) return attrToString((Attr) a.item(0));
-    ArrayList<String> lst = new ArrayList<String>();
+    ArrayList<String> lst = new ArrayList<>();
     for (int i = 0; i < n; i++) {
       lst.add(attrToString((Attr) a.item(i)));
     }
     Collections.sort(lst);
-    String s = lst.get(0);
-    for (int i = 1; i < n; i++) s = s + " " + lst.get(i);
-    return s;
+    return String.join(" ", lst);
   }
 
   static int stringCompare(String a, String b) {
@@ -115,30 +112,27 @@ class XmlWriter {
     else return a.compareTo(b);
   }
 
-  static Comparator<Node> nodeComparator =
-      new Comparator<Node>() {
-        public int compare(Node a, Node b) {
-          String na = a.getNodeName();
-          String nb = b.getNodeName();
-          int c = stringCompare(na, nb);
-          if (c != 0) return c;
-          String ma = attrsToString(a.getAttributes());
-          String mb = attrsToString(b.getAttributes());
-          c = stringCompare(ma, mb);
-          if (c != 0) return c;
-          String va = a.getNodeValue();
-          String vb = b.getNodeValue();
-          c = stringCompare(va, vb);
-          if (c != 0) return c;
-          // This can happen in some cases, e.g. two text components
-          // on top of each other. But it seems rare enough to not
-          // worry about, since our normalization here is just for
-          // ease of comparing circ files during testing.
-          // System.out.printf("sorts equal:\n");
-          // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
-          // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-          return 0;
-        }
+  static final Comparator<Node> nodeComparator =
+      (a, b) -> {
+        String na = a.getNodeName();
+        String nb = b.getNodeName();
+        int c = stringCompare(na, nb);
+        if (c != 0) return c;
+        String ma = attrsToString(a.getAttributes());
+        String mb = attrsToString(b.getAttributes());
+        c = stringCompare(ma, mb);
+        if (c != 0) return c;
+        String va = a.getNodeValue();
+        String vb = b.getNodeValue();
+        c = stringCompare(va, vb);
+        return c;
+        // This can happen in some cases, e.g. two text components
+        // on top of each other. But it seems rare enough to not
+        // worry about, since our normalization here is just for
+        // ease of comparing circ files during testing.
+        // System.out.printf("sorts equal:\n");
+        // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
+        // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
       };
 
   static void sort(Node top) {
@@ -171,7 +165,7 @@ class XmlWriter {
   }
 
   static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
-      throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
+      throws ParserConfigurationException, TransformerException {
 
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -188,15 +182,15 @@ class XmlWriter {
 
     TransformerFactory tfFactory = TransformerFactory.newInstance();
     try {
-      tfFactory.setAttribute("indent-number", Integer.valueOf(2));
-    } catch (IllegalArgumentException e) {
+      tfFactory.setAttribute("indent-number", 2);
+    } catch (IllegalArgumentException ignored) {
     }
     Transformer tf = tfFactory.newTransformer();
     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     tf.setOutputProperty(OutputKeys.INDENT, "yes");
     try {
       tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException ignored) {
     }
 
     doc.normalize();
@@ -206,15 +200,15 @@ class XmlWriter {
     tf.transform(src, dest);
   }
 
-  private LogisimFile file;
-  private Document doc;
+  private final LogisimFile file;
+  private final Document doc;
   /**
    * Path of the file which is being written on disk -- used to relativize components stored in it
    */
-  private String outFilepath;
+  private final String outFilepath;
 
-  private LibraryLoader loader;
-  private HashMap<Library, String> libs = new HashMap<Library, String>();
+  private final LibraryLoader loader;
+  private final HashMap<Library, String> libs = new HashMap<>();
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
     this(file, doc, loader, null);
@@ -247,7 +241,7 @@ class XmlWriter {
             value = (outFP.relativize(attrValP)).toString();
             a.setAttribute("val", value);
           } else {
-            if (value.indexOf("\n") >= 0) {
+            if (value.contains("\n")) {
               a.appendChild(doc.createTextNode(value));
             } else {
               a.setAttribute("val", attr.toStandardString(val));
@@ -447,7 +441,7 @@ class XmlWriter {
       Integer mods = entry.getKey();
       Tool tool = entry.getValue();
       Element toolElt = fromTool(tool);
-      String mapValue = InputEventUtil.toString(mods.intValue());
+      String mapValue = InputEventUtil.toString(mods);
       toolElt.setAttribute("map", mapValue);
       elt.appendChild(toolElt);
     }

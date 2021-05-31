@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.generic;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -48,7 +49,6 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -78,6 +78,76 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class ProjectExplorer extends JTree implements LocaleListener {
 
+  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
+  private static final long serialVersionUID = 1L;
+  private static final String DIRTY_MARKER = "*";
+  private final Project proj;
+  private final MyListener myListener = new MyListener();
+  private final MyCellRenderer renderer = new MyCellRenderer();
+  private final DeleteAction deleteAction = new DeleteAction();
+  private Listener listener = null;
+  private Tool haloedTool = null;
+  
+  public ProjectExplorer(Project proj, boolean showMouseTools) {
+    super();
+    this.proj = proj;
+
+    setModel(new ProjectExplorerModel(proj, this, showMouseTools));
+    setRootVisible(true);
+    addMouseListener(myListener);
+    ToolTipManager.sharedInstance().registerComponent(this);
+
+    MySelectionModel selector = new MySelectionModel();
+    selector.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+    setSelectionModel(selector);
+    setCellRenderer(renderer);
+    addTreeSelectionListener(myListener);
+
+    InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
+    ActionMap amap = getActionMap();
+    amap.put(deleteAction, deleteAction);
+
+    proj.addProjectListener(myListener);
+    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
+    LocaleManager.addLocaleListener(this);
+    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
+    renderer.setClosedIcon(new TreeIcon(true));
+    renderer.setOpenIcon(new TreeIcon(false));
+  }
+
+  public Tool getSelectedTool() {
+    TreePath path = getSelectionPath();
+    if (path == null) return null;
+    Object last = path.getLastPathComponent();
+
+    if (last instanceof ProjectExplorerToolNode) {
+      return ((ProjectExplorerToolNode) last).getValue();
+    } else {
+      return null;
+    }
+  }
+
+  public void updateStructure() {
+    ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+    model.updateStructure();
+  }
+
+  public void localeChanged() {
+    // repaint() would work, except that names that get longer will be
+    // abbreviated with an ellipsis, even when they fit into the window.
+    final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+    model.fireStructureChanged();
+  }
+
+  public void setHaloedTool(Tool t) {
+    haloedTool = t;
+  }
+
+  public void setListener(Listener value) {
+    listener = value;
+  }
+
   private class DeleteAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
@@ -85,7 +155,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void actionPerformed(ActionEvent event) {
       TreePath path = getSelectionPath();
       if (listener != null && path != null && path.getPathCount() == 2) {
-        listener.deleteRequested(new ProjectExplorerEvent(path));
+        listener.deleteRequested(new Event(path));
       }
 
       ProjectExplorer.this.requestFocus();
@@ -160,7 +230,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       if (e.isPopupTrigger()) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
         if (path != null && listener != null) {
-          JPopupMenu menu = listener.menuRequested(new ProjectExplorerEvent(path));
+          JPopupMenu menu = listener.menuRequested(new Event(path));
           if (menu != null) {
             menu.show(ProjectExplorer.this, e.getX(), e.getY());
           }
@@ -172,7 +242,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       if (e.getClickCount() == 2) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
         if (path != null && listener != null) {
-          listener.doubleClicked(new ProjectExplorerEvent(path));
+          listener.doubleClicked(new Event(path));
         }
       }
     }
@@ -226,12 +296,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void valueChanged(TreeSelectionEvent e) {
       TreePath path = e.getNewLeadSelectionPath();
       if (listener != null) {
-        listener.selectionChanged(new ProjectExplorerEvent(path));
+        listener.selectionChanged(new Event(path));
       }
     }
   }
 
-  private class MySelectionModel extends DefaultTreeSelectionModel {
+  private static class MySelectionModel extends DefaultTreeSelectionModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -249,8 +319,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     private TreePath[] getValidPaths(TreePath[] paths) {
       int count = 0;
-      for (int i = 0; i < paths.length; i++) {
-        if (isPathValid(paths[i])) ++count;
+      for (TreePath treePath : paths) {
+        if (isPathValid(treePath)) ++count;
       }
 
       if (count == 0) {
@@ -261,8 +331,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         TreePath[] ret = new TreePath[count];
         int j = 0;
 
-        for (int i = 0; i < paths.length; i++) {
-          if (isPathValid(paths[i])) ret[j++] = paths[i];
+        for (TreePath path : paths) {
+          if (isPathValid(path)) ret[j++] = path;
         }
 
         return ret;
@@ -296,7 +366,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   private class ToolIcon implements Icon {
 
-    Tool tool;
+    final Tool tool;
     Circuit circ = null;
     VhdlContent vhdl = null;
 
@@ -372,7 +442,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
-        g.setColor(new Color(139,69,19));
+        g.setColor(new Color(139, 69, 19));
         g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
@@ -382,77 +452,22 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
   }
-  
-  private static final long serialVersionUID = 1L;
 
-  private static final String DIRTY_MARKER = "*";
-
-  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
-
-  private Project proj;
-  private MyListener myListener = new MyListener();
-  private MyCellRenderer renderer = new MyCellRenderer();
-  private DeleteAction deleteAction = new DeleteAction();
-  private ProjectExplorerListener listener = null;
-  private Tool haloedTool = null;
-
-  public ProjectExplorer(Project proj) {
-    super();
-    this.proj = proj;
-
-    setModel(new ProjectExplorerModel(proj,this));
-    setRootVisible(true);
-    addMouseListener(myListener);
-    ToolTipManager.sharedInstance().registerComponent(this);
-
-    MySelectionModel selector = new MySelectionModel();
-    selector.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    setSelectionModel(selector);
-    setCellRenderer(renderer);
-    addTreeSelectionListener(myListener);
-
-    InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
-    ActionMap amap = getActionMap();
-    amap.put(deleteAction, deleteAction);
-
-    proj.addProjectListener(myListener);
-    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
-    LocaleManager.addLocaleListener(this);
-    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
-    renderer.setClosedIcon(new TreeIcon(true));
-    renderer.setOpenIcon(new TreeIcon(false));
+  public interface Listener {
+    void deleteRequested(Event event);
+    void doubleClicked(Event event);
+    JPopupMenu menuRequested(Event event);
+    void moveRequested(Event event, AddTool dragged, AddTool target);
+    void selectionChanged(Event event);
   }
 
-  public Tool getSelectedTool() {
-    TreePath path = getSelectionPath();
-    if (path == null) return null;
-    Object last = path.getLastPathComponent();
-
-    if (last instanceof ProjectExplorerToolNode) {
-      return ((ProjectExplorerToolNode) last).getValue();
-    } else {
-      return null;
+  public static class Event {
+    private final TreePath path;
+    public Event(TreePath p) { path = p; }
+    public TreePath getTreePath() { return path; }
+    public Object getTarget() {
+      return path == null ? null : path.getLastPathComponent();
     }
   }
 
-  public void updateStructure() {
-    ProjectExplorerModel model = (ProjectExplorerModel) getModel();
-    model.updateStructure();
-  }
-
-  public void localeChanged() {
-    // repaint() would work, except that names that get longer will be
-    // abbreviated with an ellipsis, even when they fit into the window.
-    final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
-    model.fireStructureChanged();
-  }
-
-  public void setHaloedTool(Tool t) {
-    haloedTool = t;
-  }
-
-  public void setListener(ProjectExplorerListener value) {
-    listener = value;
-  }
 }

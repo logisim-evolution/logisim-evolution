@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,8 +58,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class HdlContentView extends JPanel implements DocumentListener, HdlModelListener {
 
   private class HdlEditAction extends Action {
-    HdlModel model;
-    String original;
+    final HdlModel model;
+    final String original;
 
     HdlEditAction(HdlModel model, String original) {
       this.model = model;
@@ -172,9 +172,9 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
 
   private RSyntaxTextArea editor;
   private HdlModel model;
-  private Project project;
+  private final Project project;
 
-  private HdlToolbarModel toolbar;
+  private final HdlToolbarModel toolbar;
 
   public HdlContentView(Project proj) {
     super(new BorderLayout());
@@ -190,11 +190,10 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
     if (lang.equals("vhdl")) {
       ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new VhdlSyntax());
-      editor.setCodeFoldingEnabled(true);
     } else {
       editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_DELPHI);
-      editor.setCodeFoldingEnabled(true);
     }
+    editor.setCodeFoldingEnabled(true);
     editor.setAntiAliasingEnabled(true);
     editor.getDocument().addDocumentListener(this);
 

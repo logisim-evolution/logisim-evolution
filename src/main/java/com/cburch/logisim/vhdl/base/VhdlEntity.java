@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,9 +58,9 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -80,8 +80,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   static final int X_PADDING = 5;
 
-  private VhdlContent content;
-  private ArrayList<Instance> MyInstances;
+  private final VhdlContent content;
+  private final ArrayList<Instance> MyInstances;
 
   public VhdlEntity(VhdlContent content) {
     super("", null);
@@ -91,13 +91,13 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     icon.setInvalid(!content.isValid());
     setFacingAttribute(StdAttr.FACING);
     appearance = VhdlAppearance.create(getPins(), getName(), StdAttr.APPEAR_EVOLUTION);
-    MyInstances = new ArrayList<Instance>();
+    MyInstances = new ArrayList<>();
   }
 
   public void SetSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
+    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
@@ -148,7 +148,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
     String label = "";
 
-    if (attrs.getValue(StdAttr.LABEL) != "")
+    if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
 
     return getHDLName(attrs) + label;
@@ -162,9 +162,9 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new VhdlHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -249,11 +249,11 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
           && server_response.length() > 0
           && !server_response.equals("sync")) {
 
-        String[] parameters = server_response.split("\\:");
+        String[] parameters = server_response.split(":");
 
         String busValue = parameters[1];
 
-        Value vector_values[] = new Value[busValue.length()];
+        Value[] vector_values = new Value[busValue.length()];
 
         int k = busValue.length() - 1;
         for (char bit : busValue.toCharArray()) {
@@ -287,7 +287,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
         /* If it is an output */
         if (p.getType() == 2) {
-          Value vector_values[] = new Value[p.getFixedBitWidth().getWidth()];
+          Value[] vector_values = new Value[p.getFixedBitWidth().getWidth()];
           for (int k = 0; k < p.getFixedBitWidth().getWidth(); k++) {
             vector_values[k] = Value.UNKNOWN;
           }
@@ -296,7 +296,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
         }
       }
 
-      new UnsupportedOperationException(
+      throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
   }
@@ -315,7 +315,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl", "UTF-8");
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+              StandardCharsets.UTF_8);
 
       String content = this.content.getContent();
 
@@ -323,27 +324,22 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
       writer.print(content);
       writer.close();
-    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
       logger.error("Could not create vhdl file: {}", e.getMessage());
       e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
-      e.printStackTrace();
-      return;
     }
   }
 
   private VhdlAppearance appearance;
 
   private ArrayList<Instance> getPins() {
-    ArrayList<Instance> pins = new ArrayList<Instance>();
+    ArrayList<Instance> pins = new ArrayList<>();
     int y = 0;
     for (VhdlParser.PortDescription p : content.getPorts()) {
       AttributeSet a = Pin.FACTORY.createAttributeSet();
       a.setValue(StdAttr.LABEL, p.getName());
-      a.setValue(Pin.ATTR_TYPE, p.getType() != Port.INPUT);
-      a.setValue(StdAttr.FACING, p.getType() != Port.INPUT ? Direction.WEST : Direction.EAST);
+      a.setValue(Pin.ATTR_TYPE, !p.getType().equals(Port.INPUT));
+      a.setValue(StdAttr.FACING, !p.getType().equals(Port.INPUT) ? Direction.WEST : Direction.EAST);
       a.setValue(StdAttr.WIDTH, p.getWidth());
       InstanceComponent ic =
           (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, y), a);
@@ -393,7 +389,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   @Override
   public void appearanceChanged(HdlModel source) {}
 
-  private WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
+  private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
 
   public Collection<Circuit> getCircuitsUsingThis() {
     return circuitsUsingThis.values();

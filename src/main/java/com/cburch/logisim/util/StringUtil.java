@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -80,10 +80,9 @@ public class StringUtil {
 
   public static String toHexString(int bits, long value) {
     if (bits < 64) value &= (1L << bits) - 1;
-    String ret = Long.toHexString(value);
     int len = (bits + 3) / 4;
-    while (ret.length() < len) ret = "0" + ret;
-    if (ret.length() > len) ret = ret.substring(ret.length() - len);
+    String ret = String.format("%0" + len + "x", value);
+    if (ret.length() > len) return ret.substring(ret.length() - len);
     return ret;
   }
 
@@ -99,7 +98,7 @@ public class StringUtil {
     int lines = 0;
     for (int i = 0; i < text.length(); i++) {
       if (text.charAt(i) == '\n') {
-        n = (c > n ? c : n);
+        n = (Math.max(c, n));
         c = 0;
         lines++;
       } else if (text.charAt(i) == '\t') {
@@ -109,7 +108,7 @@ public class StringUtil {
       }
     }
     if (text.charAt(text.length() - 1) != '\n') {
-      n = (c > n ? c : n);
+      n = (Math.max(c, n));
       lines++;
     }
     int size = font.getSize();

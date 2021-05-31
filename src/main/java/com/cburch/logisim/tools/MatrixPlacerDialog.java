@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.tools;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -36,8 +37,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.cburch.logisim.gui.generic.OptionPane;
 
 public class MatrixPlacerDialog extends JPanel implements ActionListener {
 
@@ -57,13 +56,13 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     }
   }
 
-  private MatrixPlacerInfo MatrixInfo;
-  private JComboBox<Integer> Xcopies = new JComboBox<>();
-  private JComboBox<Integer> Ycopies = new JComboBox<>();
-  private JComboBox<Integer> Xdistance = new JComboBox<>();
-  private JComboBox<Integer> Ydistance = new JComboBox<>();
-  private JTextField Label = new JTextField();
-  private String compName;
+  private final MatrixPlacerInfo MatrixInfo;
+  private final JComboBox<Integer> Xcopies = new JComboBox<>();
+  private final JComboBox<Integer> Ycopies = new JComboBox<>();
+  private final JComboBox<Integer> Xdistance = new JComboBox<>();
+  private final JComboBox<Integer> Ydistance = new JComboBox<>();
+  private final JTextField Label = new JTextField();
+  private final String compName;
 
   public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean AutoLablerActive) {
     super();

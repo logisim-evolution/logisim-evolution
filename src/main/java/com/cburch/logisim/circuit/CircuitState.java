@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,6 +40,7 @@ import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
@@ -48,7 +49,6 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -74,7 +74,13 @@ public class CircuitState implements InstanceData {
       /* Component was removed */
       else if (action == CircuitEvent.ACTION_REMOVE) {
         Component comp = (Component) event.getData();
+        if (comp == temporaryClock)
+          temporaryClock = null;
+        if (comp.getFactory() instanceof Clock) {
+          knownClocks = false; // just in case, will be recomputed by simulator
+        }
         if (comp.getFactory() instanceof SubcircuitFactory) {
+          knownClocks = false; // just in case, will be recomputed by simulator
           // disconnect from tree
           CircuitState substate = (CircuitState) getData(comp);
           if (substate != null && substate.parentComp == comp) {
@@ -97,6 +103,8 @@ public class CircuitState implements InstanceData {
 
       /* Whole circuit was cleared */
       else if (action == CircuitEvent.ACTION_CLEAR) {
+        temporaryClock = null;
+        knownClocks = false;
         substates.clear();
         wireData = null;
         for (Component c : componentData.keySet()) {
@@ -113,37 +121,24 @@ public class CircuitState implements InstanceData {
         causes.clear();
       }
 
-      /* Component changed */
-      else if (action == CircuitEvent.ACTION_CHANGE) {
-        Object data = event.getData();
-        if (data instanceof Collection) {
-          @SuppressWarnings("unchecked")
-          Collection<Component> comps = (Collection<Component>) data;
-          markComponentsDirty(comps);
-          if (base != null) {
-            for (Component comp : comps) {
-              base.checkComponentEnds(CircuitState.this, comp);
-            }
-          }
-        } else {
-          Component comp = (Component) event.getData();
-          markComponentAsDirty(comp);
-          if (base != null) base.checkComponentEnds(CircuitState.this, comp);
-        }
-      } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      else if (action == CircuitEvent.ACTION_INVALIDATE) {
         Component comp = (Component) event.getData();
         markComponentAsDirty(comp);
+        // If simulator is in single step mode, we want to hilight the
+        // invalidated components (which are likely Pins, Buttons, or other
+        // inputs), so pass this component to the simulator for display.
+        proj.getSimulator().addPendingInput(CircuitState.this, comp);
         // TODO detemine if this should really be missing if (base !=
         // null) base.checkComponentEnds(CircuitState.this, comp);
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         ReplacementMap map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
-        for (Component comp : map.getReplacedComponents()) {
+        for (Component comp : map.getRemovals()) {
           Object compState = componentData.remove(comp);
           if (compState != null) continue; 
           Class<?> compFactory = comp.getFactory().getClass();
           boolean found = false;
-          for (Component repl : map.get(comp)) {
+          for (Component repl : map.getReplacementsFor(comp)) {
             if (repl.getFactory().getClass() == compFactory) {
               found = true;
               setData(repl, compState);
@@ -161,25 +156,25 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private MyCircuitListener myCircuitListener = new MyCircuitListener();
+  private final MyCircuitListener myCircuitListener = new MyCircuitListener();
   private Propagator base = null; // base of tree of CircuitStates
-  private Project proj; // project where circuit liespr
-  private Circuit circuit; // circuit being simulated
+  private final Project proj; // project where circuit liespr
+  private final Circuit circuit; // circuit being simulated
 
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
   // state
-  private HashSet<CircuitState> substates = new HashSet<CircuitState>();
+  private HashSet<CircuitState> substates = new HashSet<>();
 
   private CircuitWires.State wireData = null;
-  private HashMap<Component, Object> componentData = new HashMap<Component, Object>();
-  private Map<Location, Value> values = new HashMap<Location, Value>();
-  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<Component>();
-  private CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
-  HashMap<Location, SetData> causes = new HashMap<Location, SetData>();
+  private final HashMap<Component, Object> componentData = new HashMap<>();
+  private final Map<Location, Value> values = new HashMap<>();
+  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
+  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
+  final HashMap<Location, SetData> causes = new HashMap<>();
 
   private static int lastId = 0;
-  private int id = lastId++;
+  private final int id = lastId++;
 
   public CircuitState(Project proj, Circuit circuit) {
     this.proj = proj;
@@ -208,8 +203,8 @@ public class CircuitState implements InstanceData {
     this.base = base;
     this.parentComp = src.parentComp;
     this.parentState = src.parentState;
-    HashMap<CircuitState, CircuitState> substateData = new HashMap<CircuitState, CircuitState>();
-    this.substates = new HashSet<CircuitState>();
+    HashMap<CircuitState, CircuitState> substateData = new HashMap<>();
+    this.substates = new HashSet<>();
     for (CircuitState oldSub : src.substates) {
       CircuitState newSub = new CircuitState(src.proj, oldSub.circuit);
       newSub.copyFrom(oldSub, base);
@@ -343,7 +338,7 @@ public class CircuitState implements InstanceData {
     try {
       dirtyComponents.add(comp);
     } catch (RuntimeException e) {
-      CopyOnWriteArraySet<Component> set = new CopyOnWriteArraySet<Component>();
+      CopyOnWriteArraySet<Component> set = new CopyOnWriteArraySet<>();
       set.add(comp);
       dirtyComponents = set;
     }
@@ -371,7 +366,7 @@ public class CircuitState implements InstanceData {
           if (firstException == null) firstException = e;
           if (tries == 0) {
             toProcess = new Object[0];
-            dirtyComponents = new CopyOnWriteArraySet<Component>();
+            dirtyComponents = new CopyOnWriteArraySet<>();
             throw firstException;
           }
         }
@@ -396,7 +391,7 @@ public class CircuitState implements InstanceData {
   }
 
   void processDirtyPoints() {
-    HashSet<Location> dirty = new HashSet<Location>(dirtyPoints);
+    HashSet<Location> dirty = new HashSet<>(dirtyPoints);
     dirtyPoints.clear();
     if (circuit.wires.isMapVoided()) {
       for (int i = 3; i >= 0; i--) {
@@ -407,7 +402,7 @@ public class CircuitState implements InstanceData {
           // try again...
           try {
             Thread.sleep(1);
-          } catch (InterruptedException e2) {
+          } catch (InterruptedException ignored) {
           }
           if (i == 0) e.printStackTrace();
         }
@@ -425,19 +420,22 @@ public class CircuitState implements InstanceData {
   }
 
   void reset() {
+    temporaryClock = null;
     wireData = null;
-    for (Iterator<Component> it = componentData.keySet().iterator(); it.hasNext(); ) {
-      Component comp = it.next();
+    for (Component comp : componentData.keySet()) {
       if (comp.getFactory() instanceof Ram) {
         Ram ram = (Ram) comp.getFactory();
         boolean remove = ram.reset(this, Instance.getInstanceFor(comp));
-        if (remove) componentData.put(comp, null);
+        if (remove)
+          componentData.put(comp, null);
+      } else if (comp.getFactory() instanceof Buzzer) {
+        Buzzer.StopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
+          ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
     /*  it.remove(); ktt1: clear out the state instead of removing the key to prevent concurrent
         modification error */
-        componentData.put(comp, null); 
+        componentData.put(comp, null);
       }
     }
     values.clear();
@@ -515,17 +513,61 @@ public class CircuitState implements InstanceData {
     wireData = data;
   }
 
-  boolean tick(int ticks) {
+  boolean toggleClocks(int ticks) {
     boolean ret = false;
-    for (Component clock : circuit.getClocks()) {
+    if (temporaryClock != null)
+      ret |= temporaryClockValidateOrTick(ticks);
+
+    for (Component clock : circuit.getClocks())
       ret |= Clock.tick(this, ticks, clock);
-    }
 
     CircuitState[] subs = new CircuitState[substates.size()];
-    for (CircuitState substate : substates.toArray(subs)) {
-      ret |= substate.tick(ticks);
-    }
+    for (CircuitState substate : substates.toArray(subs)) 
+      ret |= substate.toggleClocks(ticks);
     return ret;
+  }
+
+  private boolean temporaryClockValidateOrTick(int ticks) {
+    // temporaryClock.getFactory() will be Pin, normally a 1 bit input
+    Pin pin;
+    try {
+      pin = (Pin)temporaryClock.getFactory();
+    } catch (ClassCastException e) {
+      temporaryClock = null;
+      return false;
+    }
+    Instance i = Instance.getInstanceFor(temporaryClock);
+    if (i == null || !pin.isInputPin(i) || pin.getWidth(i).getWidth() != 1) {
+      temporaryClock = null;
+      return false;
+    }
+    if (ticks >= 0) {
+      InstanceState state = getInstanceState(i);
+      // Value v = pin.getValue(state);
+      pin.setValue(state, ticks%2==0 ? Value.FALSE : Value.TRUE);
+      state.fireInvalidated();
+    }
+    return true;
+  }
+
+  private boolean knownClocks;
+  private Component temporaryClock;
+
+  public boolean hasKnownClocks() {
+    return knownClocks || temporaryClock != null;
+  }
+
+  public void markKnownClocks() {
+    knownClocks = true;
+  }
+
+  public boolean setTemporaryClock(Component clk) {
+    temporaryClock = clk;
+    return clk == null ? true : temporaryClockValidateOrTick(-1);
+  }
+
+  public Component getTemporaryClock() {
+    return temporaryClock;
   }
 
   @Override

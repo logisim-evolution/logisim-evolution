@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,8 +37,8 @@ public class WireSet {
   private static final Set<Wire> NULL_WIRES = Collections.emptySet();
   public static final WireSet EMPTY = new WireSet(NULL_WIRES);
 
-  private Set<Wire> wires;
-  private Set<Location> points;
+  private final Set<Wire> wires;
+  private final Set<Location> points;
 
   WireSet(Set<Wire> wires) {
     if (wires.isEmpty()) {
@@ -46,7 +46,7 @@ public class WireSet {
       points = Collections.emptySet();
     } else {
       this.wires = wires;
-      points = new HashSet<Location>();
+      points = new HashSet<>();
       for (Wire w : wires) {
         points.add(w.e0);
         points.add(w.e1);

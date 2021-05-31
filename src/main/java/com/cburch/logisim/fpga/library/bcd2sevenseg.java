@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -76,7 +76,7 @@ public class bcd2sevenseg extends InstanceFactory {
     ps[Segment_E].setToolTip(S.getter("Segment_E"));
     ps[Segment_F].setToolTip(S.getter("Segment_F"));
     ps[Segment_G].setToolTip(S.getter("Segment_G"));
-    ps[BCDin].setToolTip(S.getter("BCD Value"));
+    ps[BCDin].setToolTip(S.getter("BCDValue"));
     setPorts(ps);
   }
 
@@ -212,8 +212,8 @@ public class bcd2sevenseg extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new bcd2sevensegHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,14 +63,12 @@ public class TclGenericAttributes extends TclComponentAttributes {
     }
   }
 
-  private static List<Attribute<?>> attributes =
+  private static final List<Attribute<?>> attributes =
       Arrays.asList(
-          new Attribute<?>[] {
-            CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT
-          });
+          CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   private VhdlContentComponent vhdlEntitiy;
 

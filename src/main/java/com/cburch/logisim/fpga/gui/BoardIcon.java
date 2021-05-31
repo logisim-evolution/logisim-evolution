@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,8 +38,8 @@ import javax.swing.Icon;
 
 public class BoardIcon implements Icon {
   private Image image;
-  private int icon_width = 240;
-  private int icon_height = 130;
+  private static final int ICON_WIDTH = 240;
+  private static final int ICON_HEIGHT = 130;
 
   public BoardIcon(BufferedImage BoardImage) {
     if (BoardImage == null) image = null;
@@ -50,11 +50,11 @@ public class BoardIcon implements Icon {
   }
 
   public int getIconHeight() {
-    return AppPreferences.getScaled(icon_height);
+    return AppPreferences.getScaled(ICON_HEIGHT);
   }
 
   public int getIconWidth() {
-    return AppPreferences.getScaled(icon_width);
+    return AppPreferences.getScaled(ICON_WIDTH);
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {

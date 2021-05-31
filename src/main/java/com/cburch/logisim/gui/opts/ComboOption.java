@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,6 +33,19 @@ import com.cburch.logisim.util.StringGetter;
 import javax.swing.JComboBox;
 
 class ComboOption {
+  private final Object value;
+  private final StringGetter getter;
+
+  ComboOption(AttributeOption value) {
+    this.value = value;
+    this.getter = null;
+  }
+
+  ComboOption(String value, StringGetter getter) {
+    this.value = value;
+    this.getter = getter;
+  }
+
   @SuppressWarnings("rawtypes")
   static void setSelected(JComboBox combo, Object value) {
     for (int i = combo.getItemCount() - 1; i >= 0; i--) {
@@ -43,20 +56,6 @@ class ComboOption {
       }
     }
     combo.setSelectedItem(combo.getItemAt(0));
-  }
-
-  private Object value;
-
-  private StringGetter getter;
-
-  ComboOption(AttributeOption value) {
-    this.value = value;
-    this.getter = null;
-  }
-
-  ComboOption(String value, StringGetter getter) {
-    this.value = value;
-    this.getter = getter;
   }
 
   public Object getValue() {

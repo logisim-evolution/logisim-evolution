@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,6 +34,7 @@ import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -42,26 +43,22 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 class AndGate extends AbstractGate {
-  private class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public boolean GetFloatingValue(boolean is_inverted) {
       return is_inverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
-      String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
-      String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
       StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + Preamble + "Result" + AssignOperation);
+      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator());
       int TabWidth = OneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
         if (!first) {
-          OneLine.append(AndOperation);
+          OneLine.append(HDL.andOperator());
           Contents.add(OneLine.toString());
           OneLine.setLength(0);
           while (OneLine.length() < TabWidth) {
@@ -70,7 +67,7 @@ class AndGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + Integer.toString(i + 1));
+        OneLine.append("s_real_input_").append(i + 1);
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());
@@ -79,7 +76,7 @@ class AndGate extends AbstractGate {
     }
   }
 
-  public static AndGate FACTORY = new AndGate();
+  public static final AndGate FACTORY = new AndGate();
 
   private AndGate() {
     super("AND Gate", S.getter("andGateComponent"));
@@ -106,9 +103,9 @@ class AndGate extends AbstractGate {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new AndGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

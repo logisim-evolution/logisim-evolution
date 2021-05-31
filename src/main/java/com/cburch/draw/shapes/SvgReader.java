@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,6 +42,10 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
 public class SvgReader {
+  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
+
+  private SvgReader() {}
+
   private static AbstractCanvasObject createLine(Element elt) {
     int x0 = Integer.parseInt(elt.getAttribute("x1"));
     int y0 = Integer.parseInt(elt.getAttribute("y1"));
@@ -64,7 +68,7 @@ public class SvgReader {
 
   private static AbstractCanvasObject createPath(Element elt) {
     Matcher patt = PATH_REGEX.matcher(elt.getAttribute("d"));
-    List<String> tokens = new ArrayList<String>();
+    List<String> tokens = new ArrayList<>();
     int type = -1; // -1 error, 0 start, 1 curve, 2 polyline
     while (patt.find()) {
       String token = patt.group();
@@ -97,7 +101,7 @@ public class SvgReader {
     if (type == 1) {
       if (tokens.size() == 8
           && tokens.get(0).equals("M")
-          && tokens.get(3).toUpperCase().equals("Q")) {
+          && tokens.get(3).equalsIgnoreCase("Q")) {
         int x0 = Integer.parseInt(tokens.get(1));
         int y0 = Integer.parseInt(tokens.get(2));
         int x1 = Integer.parseInt(tokens.get(4));
@@ -138,7 +142,7 @@ public class SvgReader {
     if (elt.hasAttribute("rx")) {
       AbstractCanvasObject ret = new RoundRectangle(x, y, w, h);
       int rx = Integer.parseInt(elt.getAttribute("rx"));
-      ret.setValue(DrawAttr.CORNER_RADIUS, Integer.valueOf(rx));
+      ret.setValue(DrawAttr.CORNER_RADIUS, rx);
       return ret;
     } else {
       return new Rectangle(x, y, w, h);
@@ -147,22 +151,8 @@ public class SvgReader {
 
   public static AbstractCanvasObject createShape(Element elt) {
     String name = elt.getTagName();
-    AbstractCanvasObject ret;
-    if (name.equals("ellipse")) {
-      ret = createOval(elt);
-    } else if (name.equals("line")) {
-      ret = createLine(elt);
-    } else if (name.equals("path")) {
-      ret = createPath(elt);
-    } else if (name.equals("polyline")) {
-      ret = createPolyline(elt);
-    } else if (name.equals("polygon")) {
-      ret = createPolygon(elt);
-    } else if (name.equals("rect")) {
-      ret = createRectangle(elt);
-    } else if (name.equals("text")) {
-      ret = createText(elt);
-    } else {
+    AbstractCanvasObject ret = createShapeObject(elt, name);
+    if (ret == null) {
       return null;
     }
     List<Attribute<?>> attrs = ret.getAttributes();
@@ -200,6 +190,27 @@ public class SvgReader {
     return ret;
   }
 
+  private static AbstractCanvasObject createShapeObject(Element elt, String name) {
+    switch (name) {
+      case "ellipse":
+        return createOval(elt);
+      case "line":
+        return createLine(elt);
+      case "path":
+        return createPath(elt);
+      case "polyline":
+        return createPolyline(elt);
+      case "polygon":
+        return createPolygon(elt);
+      case "rect":
+        return createRectangle(elt);
+      case "text":
+        return createText(elt);
+      default:
+        return null;
+    }
+  }
+
   private static AbstractCanvasObject createText(Element elt) {
     int x = Integer.parseInt(elt.getAttribute("x"));
     int y = Integer.parseInt(elt.getAttribute("y"));
@@ -210,7 +221,7 @@ public class SvgReader {
     String fontStyle = elt.getAttribute("font-style");
     String fontWeight = elt.getAttribute("font-weight");
     String fontSize = elt.getAttribute("font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size = Integer.parseInt(fontSize);
@@ -228,20 +239,24 @@ public class SvgReader {
     ret.setValue(DrawAttr.HALIGNMENT, halign);
 
     String valignStr = elt.getAttribute("dominant-baseline");
-    AttributeOption valign;
-    if (valignStr.equals("top")) {
-      valign = DrawAttr.VALIGN_TOP;
-    } else if (valignStr.equals("bottom")) {
-      valign = DrawAttr.VALIGN_BOTTOM;
-    } else if (valignStr.equals("alphabetic")) {
-      valign = DrawAttr.VALIGN_BASELINE;
-    } else {
-      valign = DrawAttr.VALIGN_MIDDLE;
-    }
+    AttributeOption valign = getAlignment(valignStr);
     ret.setValue(DrawAttr.VALIGNMENT, valign);
 
     // fill color is handled after we return
     return ret;
+  }
+
+  private static AttributeOption getAlignment(String valignStr) {
+    switch (valignStr) {
+      case "top":
+        return DrawAttr.VALIGN_TOP;
+      case "bottom":
+        return DrawAttr.VALIGN_BOTTOM;
+      case "alphabetic":
+        return DrawAttr.VALIGN_BASELINE;
+      default:
+        return DrawAttr.VALIGN_MIDDLE;
+    }
   }
 
   public static Font getFontAttribute(
@@ -253,7 +268,7 @@ public class SvgReader {
     String fontWeight = elt.getAttribute(prefix + "font-weight");
     if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
     String fontSize = elt.getAttribute(prefix + "font-size");
-    int styleFlags = 0;
+    int styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
     int size =
@@ -315,8 +330,4 @@ public class SvgReader {
     }
     return UnmodifiableList.create(ret);
   }
-
-  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
-
-  private SvgReader() {}
 }

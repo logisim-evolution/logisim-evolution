@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,7 +54,7 @@ import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
-    private Circuit source;
+    private final Circuit source;
 
     private MyListener(Circuit s) {
       source = s;
@@ -84,7 +84,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   }
 
   private static class StaticListener implements AttributeListener {
-    private Circuit source;
+    private final Circuit source;
 
     private StaticListener(Circuit s) {
       source = s;
@@ -111,7 +111,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
             for (Component c : source.getNonWires()) {
               if (c.getFactory() instanceof Pin) {
                 String label = c.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
-                if (label != null && !label.isEmpty() && label.equals(NewName.toUpperCase())) {
+                if (!label.isEmpty() && label.equals(NewName.toUpperCase())) {
                   String msg = S.get("CircuitSameInputOutputLabel");
                   OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);
@@ -190,27 +190,25 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            StdAttr.LABEL,
-            LABEL_LOCATION_ATTR,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            NAME_ATTR,
-            CIRCUIT_LABEL_ATTR,
-            CIRCUIT_LABEL_FACING_ATTR,
-            CIRCUIT_LABEL_FONT_ATTR,
-            APPEARANCE_ATTR,
-            CIRCUIT_VHDL_PATH
-          });
+          StdAttr.FACING,
+          StdAttr.LABEL,
+          LABEL_LOCATION_ATTR,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          NAME_ATTR,
+          CIRCUIT_LABEL_ATTR,
+          CIRCUIT_LABEL_FACING_ATTR,
+          CIRCUIT_LABEL_FONT_ATTR,
+          APPEARANCE_ATTR,
+          CIRCUIT_VHDL_PATH);
 
-  private Circuit source;
+  private final Circuit source;
   private Instance subcircInstance;
   private Direction facing;
   private String label;
   private Direction labelLocation;
   private Font labelFont;
-  private Boolean LabelVisable;
+  private Boolean LabelVisible;
   private MyListener listener;
   private Instance[] pinInstances;
   private boolean NameReadOnly;
@@ -222,7 +220,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     label = "";
     labelLocation = Direction.NORTH;
     labelFont = StdAttr.DEFAULT_LABEL_FONT;
-    LabelVisable = true;
+    LabelVisible = true;
     pinInstances = new Instance[0];
     NameReadOnly = false;
   }
@@ -253,16 +251,16 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.FACING) return (E) facing;
     if (attr == StdAttr.LABEL) return (E) label;
     if (attr == StdAttr.LABEL_FONT) return (E) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisable;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisible;
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    Attribute<?>[] statics = STATIC_ATTRS;
-    for (int i = 0; i < statics.length; i++) {
-      if (statics[i] == attr) return false;
+    for (Attribute<?> aStatic : STATIC_ATTRS) {
+      if (aStatic == attr)
+        return false;
     }
     return true;
   }
@@ -315,8 +313,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(StdAttr.LABEL_FONT, val, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean val = (Boolean) value;
-      if (LabelVisable == value) return;
-      LabelVisable = val;
+      if (LabelVisible == value) return;
+      LabelVisible = val;
       fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val, null);
     } else if (attr == LABEL_LOCATION_ATTR) {
       Direction val = (Direction) value;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,18 +62,18 @@ import java.util.Arrays;
 
 public class PortIO extends InstanceFactory {
 
-  public static final ArrayList<String> GetLabels(int size) {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+  public static ArrayList<String> GetLabels(int size) {
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < size; i++) {
-      LabelNames.add("pin_" + Integer.toString(i + 1));
+      LabelNames.add("pin_" + (i + 1));
     }
     return LabelNames;
   }
 
   private static class PortState implements InstanceData, Cloneable {
 
-    Value pin[]; // pindata = usrdata + indata
-    Value usr[]; // usrdata
+    Value[] pin; // pindata = usrdata + indata
+    Value[] usr; // usrdata
     int size;
 
     public PortState(int size) {
@@ -82,7 +82,7 @@ public class PortIO extends InstanceFactory {
       pin = new Value[nBus];
       usr = new Value[nBus];
       for (int i = 0; i < nBus; i++) {
-        int n = (size > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : size);
+        int n = (Math.min(size, BitWidth.MAXWIDTH));
         pin[i] = Value.createUnknown(BitWidth.create(n));
         usr[i] = Value.createUnknown(BitWidth.create(n));
         size -= n;
@@ -96,7 +96,7 @@ public class PortIO extends InstanceFactory {
         usr = Arrays.copyOf(usr, nBus);
       }
       for (int i = 0; i < nBus; i++) {
-        int n = (sz > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : sz);
+        int n = (Math.min(sz, BitWidth.MAXWIDTH));
         if (pin[i] == null)
           pin[i] = Value.createUnknown(BitWidth.create(n));
         else
@@ -269,7 +269,7 @@ public class PortIO extends InstanceFactory {
     int n = size;
     int i = 0;
     while (n > 0) {
-      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      int e = (Math.min(n, BitWidth.MAXWIDTH));
       String range = "[" + i + "..." + (i + e - 1) +"]";
       if (dir == INOUTME) {
         ps[p] = new Port(x-dy, y+dx, Port.INPUT, e);
@@ -289,7 +289,7 @@ public class PortIO extends InstanceFactory {
     n = size;
     i = 0;
     while (n > 0) {
-      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      int e = (Math.min(n, BitWidth.MAXWIDTH));
       String range = "[" + i + "..." + (i + e - 1) +"]";
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.OUTPUT, e);
@@ -360,8 +360,8 @@ public class PortIO extends InstanceFactory {
 
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.DARK_GRAY);
-    int bx[] = {1, 1, 5, w-6, w-2, w-2, 1};
-    int by[] = {20, h-8, h-4, h-4, h-8, 20, 20};
+    int[] bx = {1, 1, 5, w-6, w-2, w-2, 1};
+    int[] by = {20, h-8, h-4, h-4, h-8, 20, 20};
     g.fillPolygon(bx, by, 6);
     g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 1);
@@ -493,8 +493,8 @@ public class PortIO extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new PortHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

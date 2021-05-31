@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,6 +59,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -94,7 +95,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Circuit mytool : this.getCircuits()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase()) && !mytool.equals(changed))
+      if (Name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
         return true;
     }
     return false;
@@ -106,14 +107,14 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Tool mytool : lib.getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
 
   private static class WritingThread extends UniquelyNamedThread {
-    OutputStream out;
-    LogisimFile file;
+    final OutputStream out;
+    final LogisimFile file;
 
     WritingThread(OutputStream out, LogisimFile file) {
       super("WritingThread");
@@ -123,11 +124,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
     @Override
     public void run() {
-      try {
-        file.write(out, file.loader);
-      } catch (IOException e) {
-        file.loader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
-      }
+      file.write(out, file.loader);
       try {
         out.close();
       } catch (IOException e) {
@@ -159,7 +156,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         lineBreak = i;
       }
     }
-    return new String(first, 0, lineBreak, "UTF-8");
+    return new String(first, 0, lineBreak, StandardCharsets.UTF_8);
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
@@ -186,7 +183,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       } finally {
         try {
           in.close();
-        } catch (Exception t) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -230,15 +227,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return ret;
   }
 
-  private EventSourceWeakSupport<LibraryListener> listeners =
-      new EventSourceWeakSupport<LibraryListener>();
+  private final EventSourceWeakSupport<LibraryListener> listeners =
+      new EventSourceWeakSupport<>();
   private Loader loader;
-  private LinkedList<String> messages = new LinkedList<String>();
-  private Options options = new Options();
+  private final LinkedList<String> messages = new LinkedList<>();
+  private final Options options = new Options();
 
-  private LinkedList<AddTool> tools = new LinkedList<AddTool>();
+  private final LinkedList<AddTool> tools = new LinkedList<>();
 
-  private LinkedList<Library> libraries = new LinkedList<Library>();
+  private final LinkedList<Library> libraries = new LinkedList<>();
 
   private Circuit main = null;
 
@@ -329,7 +326,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
       try {
         reader.close();
-      } catch (IOException e1) {
+      } catch (IOException ignored) {
       }
       return null;
     }
@@ -441,7 +438,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<Circuit> getCircuits() {
-    List<Circuit> ret = new ArrayList<Circuit>(tools.size());
+    List<Circuit> ret = new ArrayList<>(tools.size());
     for (AddTool tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
         SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
@@ -465,7 +462,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<VhdlContent> getVhdlContents() {
-    List<VhdlContent> ret = new ArrayList<VhdlContent>(tools.size());
+    List<VhdlContent> ret = new ArrayList<>(tools.size());
     for (AddTool tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
         VhdlEntity factory = (VhdlEntity) tool.getFactory();
@@ -533,7 +530,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public String getUnloadLibraryMessage(Library lib) {
-    HashSet<ComponentFactory> factories = new HashSet<ComponentFactory>();
+    HashSet<ComponentFactory> factories = new HashSet<>();
     for (Tool tool : lib.getTools()) {
       if (tool instanceof AddTool) {
         factories.add(((AddTool) tool).getFactory());
@@ -636,11 +633,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   //
   // other methods
   //
-  void write(OutputStream out, LibraryLoader loader) throws IOException {
+  void write(OutputStream out, LibraryLoader loader) {
     write(out, loader, null);
   }
 
-  void write(OutputStream out, LibraryLoader loader, File dest) throws IOException {
+  void write(OutputStream out, LibraryLoader loader, File dest) {
     try {
       XmlWriter.write(this, out, loader, dest);
     } catch (TransformerConfigurationException e) {

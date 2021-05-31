@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
 
@@ -43,24 +43,18 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
-      FPGAReport Reporter,
-      String CircuitName,
-      String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
-    String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
+      String CircuitName) {
+    ArrayList<String> Contents = new ArrayList<>();
     for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
       if (ComponentInfo.EndIsConnected(i)) {
         String map = "   "
-                + Preamble
-                + GetNetName(ComponentInfo, i, true, HDLType, Nets)
-                + AssignOperator
+                + HDL.assignPreamble()
+                + GetNetName(ComponentInfo, i, true, Nets)
+                + HDL.assignOperator()
                 + HDLGeneratorFactory.LocalInputBubbleBusname
-                + OpenBracket
-                + Integer.toString(ComponentInfo.GetLocalBubbleInputStartId() + i)
-                + CloseBracket
+                + HDL.BracketOpen()
+                + (ComponentInfo.GetLocalBubbleInputStartId() + i)
+                + HDL.BracketClose()
                 + ";";
         Contents.add(map);
       }
@@ -69,12 +63,12 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 
   @Override
-  public boolean IsOnlyInlined(String HDLType) {
+  public boolean IsOnlyInlined() {
     return true;
   }
 }

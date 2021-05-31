@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,17 +30,16 @@ package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class MoveResult {
-  private ReplacementMap replacements;
-  private Collection<ConnectionData> unsatisfiedConnections;
-  private Collection<Location> unconnectedLocations;
-  private int totalDistance;
+  private final ReplacementMap replacements;
+  private final Collection<ConnectionData> unsatisfiedConnections;
+  private final Collection<Location> unconnectedLocations;
+  private final int totalDistance;
 
   public MoveResult(
       MoveRequest request,
@@ -51,7 +50,7 @@ public class MoveResult {
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;
 
-    ArrayList<Location> unconnected = new ArrayList<Location>();
+    ArrayList<Location> unconnected = new ArrayList<>();
     for (ConnectionData conn : unsatisfiedConnections) {
       unconnected.add(conn.getLocation());
     }
@@ -87,32 +86,12 @@ public class MoveResult {
     return ret;
   }
 
-  public Collection<Wire> getWiresToRemove() {
-    @SuppressWarnings("unchecked")
-    Collection<Wire> ret = (Collection<Wire>) replacements.getAdditions();
-    return ret;
-  }
-
   public void print(PrintStream out) {
-    boolean printed = false;
-    for (Component w : replacements.getAdditions()) {
-      printed = true;
-      out.println("add " + w);
-    }
-    for (Component w : replacements.getRemovals()) {
-      printed = true;
-      out.println("del " + w);
-    }
-    for (Component w : replacements.getReplacedComponents()) {
-      printed = true;
-      out.print("repl " + w + " by");
-      for (Component w2 : replacements.getComponentsReplacing(w)) {
-        out.print(" " + w2);
-      }
-      out.println();
-    }
-    if (!printed) {
-      out.println("no replacements");
-    }
+    out.print("MoveResult: ");
+    replacements.print(out);
+  }
+  
+  public String toString() {
+    return "MoveResult: " + replacements.toString();
   }
 }

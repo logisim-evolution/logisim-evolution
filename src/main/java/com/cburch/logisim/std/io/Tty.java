@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,12 +54,12 @@ import java.awt.Graphics;
 
 public class Tty extends InstanceFactory  implements DynamicElementProvider {
   private static int getColumnCount(Object val) {
-    if (val instanceof Integer) return ((Integer) val).intValue();
+    if (val instanceof Integer) return (Integer) val;
     else return 16;
   }
 
   private static int getRowCount(Object val) {
-    if (val instanceof Integer) return ((Integer) val).intValue();
+    if (val instanceof Integer) return (Integer) val;
     else return 4;
   }
 
@@ -89,8 +89,8 @@ public class Tty extends InstanceFactory  implements DynamicElementProvider {
           ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND
         },
         new Object[] {
-          Integer.valueOf(8),
-          Integer.valueOf(32),
+            8,
+            32,
           StdAttr.TRIG_RISING,
           Color.BLACK,
           DEFAULT_BACKGROUND

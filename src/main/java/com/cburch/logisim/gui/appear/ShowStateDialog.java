@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,7 +54,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.JButton;
@@ -67,10 +66,11 @@ import javax.swing.tree.TreePath;
 
 public class ShowStateDialog extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
-  JButton ok, cancel;
+  final JButton ok;
+  final JButton cancel;
   DefaultMutableTreeNode root;
-  CheckboxTree tree;
-  AppearanceCanvas canvas;
+  final CheckboxTree tree;
+  final AppearanceCanvas canvas;
 
   public ShowStateDialog(JFrame parent, AppearanceCanvas canvas) {
     super(parent, true);
@@ -111,97 +111,6 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       if (pref.height > 550) pref.height = 550;
       else if (pref.height < 200) pref.height = 200;
       this.setSize(pref);
-    }
-  }
-
-  private TreePath[] getPaths() {
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-    ArrayList<TreePath> paths = new ArrayList<>();
-    for (CanvasObject shape : canvas.getModel().getObjectsFromBottom()) {
-      if (!(shape instanceof DynamicElement)) continue;
-      TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
-      paths.add(path);
-    }
-    return paths.toArray(new TreePath[paths.size()]);
-  }
-
-  private void apply() {
-    CanvasModel model = canvas.getModel();
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-
-    Bounds bbox = Bounds.EMPTY_BOUNDS;
-    for (CanvasObject shape : model.getObjectsFromBottom()) {
-      bbox = bbox.add(shape.getBounds());
-    }
-    Location loc = Location.create(((bbox.getX() + 9) / 10 * 10), ((bbox.getY() + 9) / 10 * 10));
-
-    // TreePath[] roots = tree.getCheckingRoots();
-    TreePath[] checked = tree.getCheckingPaths();
-    ArrayList<TreePath> toAdd = new ArrayList<>(Arrays.asList(checked));
-
-    // Remove existing dynamic objects that are no longer checked.
-    ArrayList<CanvasObject> toRemove = new ArrayList<>();
-    for (CanvasObject shape : model.getObjectsFromBottom()) {
-      if (!(shape instanceof DynamicElement)) continue;
-      TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
-      if (path != null && tree.isPathChecked(path)) {
-        toAdd.remove(path); // already present, don't need to add it again
-      } else {
-        toRemove.add(shape); // no longer checked, or invalid
-      }
-    }
-
-    boolean dirty = true;
-    if (toRemove.size() > 0) {
-      canvas.doAction(new ModelRemoveAction(model, toRemove));
-      dirty = true;
-    }
-
-    // sort the remaining shapes
-    Collections.sort(toAdd, new CompareByLocations());
-
-    ArrayList<CanvasObject> avoid = new ArrayList<>(model.getObjectsFromBottom());
-    for (int i = avoid.size() - 1; i >= 0; i--) {
-      if (avoid.get(i) instanceof AppearanceAnchor) avoid.remove(i);
-    }
-    ArrayList<CanvasObject> newShapes = new ArrayList<>();
-
-    for (TreePath path : toAdd) {
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-      Ref r = (Ref) node.getUserObject();
-      if (r instanceof CircuitRef) continue;
-      ComponentFactory factory = r.ic.getFactory();
-      if (factory instanceof DynamicElementProvider) {
-        int x = loc.getX();
-        int y = loc.getY();
-        DynamicElement.Path p = toComponentPath(path);
-        DynamicElement shape = ((DynamicElementProvider) factory).createDynamicElement(x, y, p);
-        pickPlacement(avoid, shape, bbox);
-        loc = shape.getLocation();
-        avoid.add(shape);
-        newShapes.add(shape);
-      }
-    }
-    if (newShapes.size() > 0) {
-      canvas.doAction(new ModelAddAction(model, newShapes));
-      dirty = true;
-    }
-    if (dirty) canvas.repaint();
-  }
-
-  private static class CompareByLocations implements Comparator<TreePath> {
-    public int compare(TreePath a, TreePath b) {
-      Object[] aa = a.getPath();
-      Object[] bb = b.getPath();
-      for (int i = 1; i < aa.length && i < bb.length; i++) {
-        Ref ra = (Ref) ((DefaultMutableTreeNode) aa[i]).getUserObject();
-        Ref rb = (Ref) ((DefaultMutableTreeNode) bb[i]).getUserObject();
-        Location la = ra.ic.getLocation();
-        Location lb = rb.ic.getLocation();
-        int diff = la.compareTo(lb);
-        if (diff != 0) return diff;
-      }
-      return 0;
     }
   }
 
@@ -255,42 +164,87 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     return null;
   }
 
+  private TreePath[] getPaths() {
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+    ArrayList<TreePath> paths = new ArrayList<>();
+    for (CanvasObject shape : canvas.getModel().getObjectsFromBottom()) {
+      if (!(shape instanceof DynamicElement)) continue;
+      TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
+      paths.add(path);
+    }
+    return paths.toArray(new TreePath[0]);
+  }
+
+  private void apply() {
+    CanvasModel model = canvas.getModel();
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+
+    Bounds bbox = Bounds.EMPTY_BOUNDS;
+    for (CanvasObject shape : model.getObjectsFromBottom()) {
+      bbox = bbox.add(shape.getBounds());
+    }
+    Location loc = Location.create(((bbox.getX() + 9) / 10 * 10), ((bbox.getY() + 9) / 10 * 10));
+
+    // TreePath[] roots = tree.getCheckingRoots();
+    TreePath[] checked = tree.getCheckingPaths();
+    ArrayList<TreePath> toAdd = new ArrayList<>(Arrays.asList(checked));
+
+    // Remove existing dynamic objects that are no longer checked.
+    ArrayList<CanvasObject> toRemove = new ArrayList<>();
+    for (CanvasObject shape : model.getObjectsFromBottom()) {
+      if (!(shape instanceof DynamicElement)) continue;
+      TreePath path = toTreePath(root, ((DynamicElement) shape).getPath());
+      if (path != null && tree.isPathChecked(path)) {
+        toAdd.remove(path); // already present, don't need to add it again
+      } else {
+        toRemove.add(shape); // no longer checked, or invalid
+      }
+    }
+
+    boolean dirty = true;
+    if (toRemove.size() > 0) {
+      canvas.doAction(new ModelRemoveAction(model, toRemove));
+      dirty = true;
+    }
+
+    // sort the remaining shapes
+    toAdd.sort(new CompareByLocations());
+
+    ArrayList<CanvasObject> avoid = new ArrayList<>(model.getObjectsFromBottom());
+    for (int i = avoid.size() - 1; i >= 0; i--) {
+      if (avoid.get(i) instanceof AppearanceAnchor) avoid.remove(i);
+    }
+    ArrayList<CanvasObject> newShapes = new ArrayList<>();
+
+    for (TreePath path : toAdd) {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+      Ref r = (Ref) node.getUserObject();
+      if (r instanceof CircuitRef) continue;
+      ComponentFactory factory = r.ic.getFactory();
+      if (factory instanceof DynamicElementProvider) {
+        int x = loc.getX();
+        int y = loc.getY();
+        DynamicElement.Path p = toComponentPath(path);
+        DynamicElement shape = ((DynamicElementProvider) factory).createDynamicElement(x, y, p);
+        pickPlacement(avoid, shape, bbox);
+        loc = shape.getLocation();
+        avoid.add(shape);
+        newShapes.add(shape);
+      }
+    }
+    if (newShapes.size() > 0) {
+      canvas.doAction(new ModelAddAction(model, newShapes));
+      dirty = true;
+    }
+    if (dirty) canvas.repaint();
+  }
+
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == ok) {
       apply();
     }
     this.dispose();
-  }
-
-  private static class Ref {
-    InstanceComponent ic;
-
-    Ref(InstanceComponent ic) {
-      this.ic = ic;
-    }
-
-    public String toString() {
-      String s = ic.getInstance().getAttributeValue(StdAttr.LABEL);
-      Location loc = ic.getInstance().getLocation();
-      if (s != null && s.length() > 0)
-        return String.format("\"%s\" %s @ (%d, %d)", s, ic.getFactory(), loc.getX(), loc.getY());
-      else return String.format("%s @ (%d, %d)", ic.getFactory(), loc.getX(), loc.getY());
-    }
-  }
-
-  private static class CircuitRef extends Ref {
-    Circuit c;
-
-    CircuitRef(Circuit c, InstanceComponent ic) {
-      super(ic);
-      this.c = c;
-    }
-
-    public String toString() {
-      if (ic == null) return S.fmt("showStateDialogNodeTitle", c.getName());
-      else return super.toString();
-    }
   }
 
   private DefaultMutableTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
@@ -309,5 +263,51 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     }
     if (root.getChildCount() == 0) return null;
     else return root;
+  }
+
+  private static class CompareByLocations implements Comparator<TreePath> {
+    public int compare(TreePath a, TreePath b) {
+      Object[] aa = a.getPath();
+      Object[] bb = b.getPath();
+      for (int i = 1; i < aa.length && i < bb.length; i++) {
+        Ref ra = (Ref) ((DefaultMutableTreeNode) aa[i]).getUserObject();
+        Ref rb = (Ref) ((DefaultMutableTreeNode) bb[i]).getUserObject();
+        Location la = ra.ic.getLocation();
+        Location lb = rb.ic.getLocation();
+        int diff = la.compareTo(lb);
+        if (diff != 0) return diff;
+      }
+      return 0;
+    }
+  }
+
+  private static class Ref {
+    final InstanceComponent ic;
+
+    Ref(InstanceComponent ic) {
+      this.ic = ic;
+    }
+
+    public String toString() {
+      String s = ic.getInstance().getAttributeValue(StdAttr.LABEL);
+      Location loc = ic.getInstance().getLocation();
+      if (s != null && s.length() > 0)
+        return String.format("\"%s\" %s @ (%d, %d)", s, ic.getFactory(), loc.getX(), loc.getY());
+      else return String.format("%s @ (%d, %d)", ic.getFactory(), loc.getX(), loc.getY());
+    }
+  }
+
+  private static class CircuitRef extends Ref {
+    final Circuit c;
+
+    CircuitRef(Circuit c, InstanceComponent ic) {
+      super(ic);
+      this.c = c;
+    }
+
+    public String toString() {
+      if (ic == null) return S.fmt("showStateDialogNodeTitle", c.getName());
+      else return super.toString();
+    }
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,25 +42,54 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
 
 class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
-  private Frame frame;
-  private LogisimToolbarItem itemAdd;
-  private LogisimToolbarItem itemAddVhdl;
-  private LogisimToolbarItem itemUp;
-  private LogisimToolbarItem itemDown;
-  private LogisimToolbarItem itemAppearance;
-  private LogisimToolbarItem itemDelete;
-  private List<ToolbarItem> items;
+  private final Frame frame;
+  private final LogisimToolbarItem itemAdd;
+  private final LogisimToolbarItem itemAddVhdl;
+  private final LogisimToolbarItem itemUp;
+  private final LogisimToolbarItem itemDown;
+  private final LogisimToolbarItem itemAppearance;
+  private final LogisimToolbarItem itemDelete;
+  private final List<ToolbarItem> items;
 
   public ToolboxToolbarModel(Frame frame, MenuListener menu) {
     this.frame = frame;
-    itemAdd = new LogisimToolbarItem(menu, new ProjectAddIcon(false), LogisimMenuBar.ADD_CIRCUIT, S.getter("projectAddCircuitTip"));
-    itemAddVhdl = new LogisimToolbarItem(menu, new ProjectAddIcon(), LogisimMenuBar.ADD_VHDL, S.getter("projectAddVhdlItem"));
-    itemUp = new LogisimToolbarItem(menu, new FatArrowIcon(Direction.NORTH), LogisimMenuBar.MOVE_CIRCUIT_UP, S.getter("projectMoveCircuitUpTip"));
-    itemDown = new LogisimToolbarItem(menu, new FatArrowIcon(Direction.SOUTH), LogisimMenuBar.MOVE_CIRCUIT_DOWN, S.getter("projectMoveCircuitDownTip"));
-    itemAppearance = new LogisimToolbarItem(menu, new AppearEditIcon(),LogisimMenuBar.TOGGLE_APPEARANCE,S.getter("projectEditAppearanceTip"));
-    itemDelete = new LogisimToolbarItem(menu, new ProjectAddIcon(true), LogisimMenuBar.REMOVE_CIRCUIT, S.getter("projectRemoveCircuitTip"));
+    itemAdd =
+        new LogisimToolbarItem(
+            menu,
+            new ProjectAddIcon(false),
+            LogisimMenuBar.ADD_CIRCUIT,
+            S.getter("projectAddCircuitTip"));
+    itemAddVhdl =
+        new LogisimToolbarItem(
+            menu, new ProjectAddIcon(), LogisimMenuBar.ADD_VHDL, S.getter("projectAddVhdlItem"));
+    itemUp =
+        new LogisimToolbarItem(
+            menu,
+            new FatArrowIcon(Direction.NORTH),
+            LogisimMenuBar.MOVE_CIRCUIT_UP,
+            S.getter("projectMoveCircuitUpTip"));
+    itemDown =
+        new LogisimToolbarItem(
+            menu,
+            new FatArrowIcon(Direction.SOUTH),
+            LogisimMenuBar.MOVE_CIRCUIT_DOWN,
+            S.getter("projectMoveCircuitDownTip"));
+    itemAppearance =
+        new LogisimToolbarItem(
+            menu,
+            new AppearEditIcon(),
+            LogisimMenuBar.TOGGLE_APPEARANCE,
+            S.getter("projectEditAppearanceTip"));
+    itemDelete =
+        new LogisimToolbarItem(
+            menu,
+            new ProjectAddIcon(true),
+            LogisimMenuBar.REMOVE_CIRCUIT,
+            S.getter("projectRemoveCircuitTip"));
 
-    items = UnmodifiableList.create( new ToolbarItem[] {
+    items =
+        UnmodifiableList.create(
+            new ToolbarItem[] {
               itemAdd, itemAddVhdl, itemUp, itemDown, itemAppearance, itemDelete,
             });
 
@@ -74,8 +103,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
 
   @Override
   public boolean isSelected(ToolbarItem item) {
-	  return (item == itemAppearance)
-		        && frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
+    return (item == itemAppearance) && frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
   }
 
   @Override

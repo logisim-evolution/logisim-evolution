@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -67,7 +67,7 @@ public class Divider extends InstanceFactory {
       BigInteger num = uu.shiftLeft(w).or(aa);
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
-      BigInteger res[] = num.divideAndRemainder(den);
+      BigInteger[] res = num.divideAndRemainder(den);
   	  long mask = w == 64 ? 0 : (-1L) << w;
   	  mask ^= 0xFFFFFFFFFFFFFFFFL;
       long result = res[0].and(BigInteger.valueOf(mask)).longValue();

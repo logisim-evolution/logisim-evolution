@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -60,12 +60,12 @@ import javax.swing.JTextField;
 class BuildCircuitButton extends JButton {
   private class DialogPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private JLabel projectLabel = new JLabel();
-    private JComboBox<Object> project;
-    private JLabel nameLabel = new JLabel();
-    private JTextField name = new JTextField(10);
-    private JCheckBox twoInputs = new JCheckBox();
-    private JCheckBox nands = new JCheckBox();
+    private final JLabel projectLabel = new JLabel();
+    private final JComboBox<Object> project;
+    private final JLabel nameLabel = new JLabel();
+    private final JTextField name = new JTextField(10);
+    private final JCheckBox twoInputs = new JCheckBox();
+    private final JCheckBox nands = new JCheckBox();
 
     DialogPanel() {
       List<Project> projects = Projects.getOpenProjects();
@@ -184,7 +184,7 @@ class BuildCircuitButton extends JButton {
         if (!SyntaxChecker.isVariableNameAcceptable(name, true)) continue;
         
         /* Check for name collisions with input and output names */
-        HashSet<String> labels = new HashSet<String>();
+        HashSet<String> labels = new HashSet<>();
         for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
         for (String label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
@@ -199,7 +199,7 @@ class BuildCircuitButton extends JButton {
         if (dest != null) {
           /* prevent upper-case lower-case mismatch */
           for (Circuit circ : dest.getLogisimFile().getCircuits()) {
-            if (circ.getName().toLowerCase().equals(name.toLowerCase())) name = circ.getName();
+            if (circ.getName().equalsIgnoreCase(name)) name = circ.getName();
           }
         }
 
@@ -226,7 +226,7 @@ class BuildCircuitButton extends JButton {
   }
 
   private static class ProjectItem {
-    Project project;
+    final Project project;
 
     ProjectItem(Project project) {
       this.project = project;
@@ -241,9 +241,9 @@ class BuildCircuitButton extends JButton {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
-  private JFrame parent;
-  private AnalyzerModel model;
+  private final MyListener myListener = new MyListener();
+  private final JFrame parent;
+  private final AnalyzerModel model;
 
   BuildCircuitButton(JFrame parent, AnalyzerModel model) {
     super();

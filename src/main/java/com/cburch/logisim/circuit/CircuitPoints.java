@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,14 +42,14 @@ import java.util.Set;
 class CircuitPoints {
   private static class LocationData {
     BitWidth width = BitWidth.UNKNOWN;
-    ArrayList<Component> components = new ArrayList<Component>(4);
-    ArrayList<EndData> ends = new ArrayList<EndData>(4);
+    final ArrayList<Component> components = new ArrayList<>(4);
+    final ArrayList<EndData> ends = new ArrayList<>(4);
     // these lists are parallel - ends corresponding to wires are null
   }
 
-  private HashMap<Location, LocationData> map = new HashMap<Location, LocationData>();
-  private HashMap<Location, WidthIncompatibilityData> incompatibilityData =
-      new HashMap<Location, WidthIncompatibilityData>();
+  private final HashMap<Location, LocationData> map = new HashMap<>();
+  private final HashMap<Location, WidthIncompatibilityData> incompatibilityData =
+      new HashMap<>();
 
   public CircuitPoints() {}
 
@@ -199,9 +199,7 @@ class CircuitPoints {
   }
 
   boolean hasConflict(Component comp) {
-    if (comp instanceof Wire) {
-      return false;
-    } else {
+    if (!(comp instanceof Wire)) {
       for (EndData endData : comp.getEnds()) {
         if (endData != null
             && endData.isExclusive()
@@ -209,8 +207,8 @@ class CircuitPoints {
           return true;
         }
       }
-      return false;
     }
+    return false;
   }
 
   void remove(Component comp) {

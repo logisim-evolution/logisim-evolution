@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Poly extends FillableCanvasObject {
-  private boolean closed;
+  private final boolean closed;
   // "handles" should be immutable - create a new array and change using
   // setHandles rather than changing contents
   private Handle[] handles;
@@ -70,9 +70,7 @@ public class Poly extends FillableCanvasObject {
   public Handle canDeleteHandle(Location loc) {
     int minHandles = closed ? 3 : 2;
     Handle[] hs = handles;
-    if (hs.length <= minHandles) {
-      return null;
-    } else {
+    if (hs.length > minHandles) {
       int qx = loc.getX();
       int qy = loc.getY();
       int w = Math.max(Line.ON_LINE_THRESH, getStrokeWidth() / 2);
@@ -83,8 +81,8 @@ public class Poly extends FillableCanvasObject {
           return h;
         }
       }
-      return null;
     }
+    return null;
   }
 
   @Override
@@ -356,8 +354,8 @@ public class Poly extends FillableCanvasObject {
     int ret = super.matchesHashCode();
     ret = ret * 3 + (closed ? 1 : 0);
     Handle[] hs = handles;
-    for (int i = 0, n = hs.length; i < n; i++) {
-      ret = ret * 31 + hs[i].hashCode();
+    for (Handle h : hs) {
+      ret = ret * 31 + h.hashCode();
     }
     return ret;
   }

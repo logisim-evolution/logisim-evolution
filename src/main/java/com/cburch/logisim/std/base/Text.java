@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,43 +51,43 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
-  public static Attribute<String> ATTR_TEXT =
+  public static final Attribute<String> ATTR_TEXT =
       Attributes.forString("text", S.getter("textTextAttr"));
-  public static Attribute<Font> ATTR_FONT =
+  public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
-  public static Attribute<AttributeOption> ATTR_HALIGN =
+  public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
           S.getter("textHorzAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.H_LEFT), "left", S.getter("textHorzAlignLeftOpt")),
+                TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_RIGHT),
+                TextField.H_RIGHT,
                 "right",
                 S.getter("textHorzAlignRightOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_CENTER),
+                TextField.H_CENTER,
                 "center",
                 S.getter("textHorzAlignCenterOpt")),
           });
-  public static Attribute<AttributeOption> ATTR_VALIGN =
+  public static final Attribute<AttributeOption> ATTR_VALIGN =
       Attributes.forOption(
           "valign",
           S.getter("textVertAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.V_TOP), "top", S.getter("textVertAlignTopOpt")),
+                TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.V_BASELINE),
+                TextField.V_BASELINE,
                 "base",
                 S.getter("textVertAlignBaseOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.V_BOTTOM),
+                TextField.V_BOTTOM,
                 "bottom",
                 S.getter("textVertAlignBottomOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_CENTER),
+                TextField.H_CENTER,
                 "center",
                 S.getter("textVertAlignCenterOpt")),
           });
@@ -147,7 +147,7 @@ public class Text extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 

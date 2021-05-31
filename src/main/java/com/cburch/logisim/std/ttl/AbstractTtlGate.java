@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,12 +55,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
-  protected byte pinnumber;
-  private String name;
+  protected final byte pinnumber;
+  private final String name;
   private byte ngatestodraw = 0;
   protected String[] portnames = null;
-  private HashSet<Byte> outputports = new HashSet<Byte>();
-  private HashSet<Byte> unusedpins = new HashSet<Byte>();
+  private final HashSet<Byte> outputports = new HashSet<>();
+  private final HashSet<Byte> unusedpins = new HashSet<>();
 
   /**
    * @param name = name to display in the center of the TTl
@@ -77,13 +77,15 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinnumber = pins;
-    for (int i = 0; i < outputports.length; i++) this.outputports.add(outputports[i]);
+    for (byte outputport : outputports)
+      this.outputports.add(outputport);
   }
 
   protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
     this(name, pins, outputports);
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   /**
@@ -120,7 +122,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this(name, pins, outputports);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   protected AbstractTtlGate(
@@ -485,9 +488,9 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       } else if (isoutput) { // output port
         ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
         if (this.portnames == null || this.portnames.length <= portindex)
-          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + String.valueOf(i + 1)));
+          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + (i + 1)));
         else
-          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
+          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portnames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
@@ -501,9 +504,9 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output
           ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
           if (this.portnames == null || this.portnames.length <= portindex)
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + String.valueOf(i + 1)));
+            ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
           else
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
+            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portnames[portindex]));
         }
       }
       portindex++;

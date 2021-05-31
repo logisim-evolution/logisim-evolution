@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,16 +30,16 @@ package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ITA_IO extends Library {
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", "Switch"),
     new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
     new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", "Slider"),
@@ -52,9 +52,14 @@ public class ITA_IO extends Library {
   };
 
   private List<Tool> tools = null;
-  private Tool[] ADD_TOOLS = {
-    new AddTool(ProgrammableGenerator.FACTORY),
+  private final Tool[] ADD_TOOLS = {
+//    new AddTool(ProgrammableGenerator.FACTORY), /* TODO: Broken component, fix */
   };
+
+  @Override
+  public String getDisplayName() {
+    return S.get("input.output.extra");
+  }
 
   @Override
   public String getName() {
@@ -70,8 +75,8 @@ public class ITA_IO extends Library {
   @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
-      List<Tool> ret = new ArrayList<Tool>(ADD_TOOLS.length + DESCRIPTIONS.length);
-      for (Tool a : ADD_TOOLS) ret.add(a);
+      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
+      ret.addAll(Arrays.asList(ADD_TOOLS));
       ret.addAll(FactoryDescription.getTools(ITA_IO.class, DESCRIPTIONS));
       tools = ret;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -76,9 +76,9 @@ public class SevenSegmentShape extends DynamicElement {
     int summ = 0, desired = 1;
     if (state != null) {
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
-      summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+      summ = (data == null ? 0 : (Integer) data.getValue());
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
-      desired = activ == null || activ.booleanValue() ? 1 : 0;
+      desired = activ == null || activ ? 1 : 0;
     }
     g.setColor(Color.DARK_GRAY);
     for (int i = 0; i <= 7; i++) {
@@ -95,7 +95,7 @@ public class SevenSegmentShape extends DynamicElement {
     drawLabel(g);
   }
 
-  static final int SEGMENTS[][] =
+  static final int[][] SEGMENTS =
       new int[][] {
         new int[] {3, 1, 6, 2},
         new int[] {9, 3, 2, 6},

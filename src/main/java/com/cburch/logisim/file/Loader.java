@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -145,13 +145,13 @@ public class Loader implements LibraryLoader {
 
   // fixed
   private Component parent;
-  private Builtin builtin = new Builtin();
+  private final Builtin builtin = new Builtin();
   // to be cleared with each new file
   private File mainFile = null;
 
-  private Stack<File> filesOpening = new Stack<File>();
+  private final Stack<File> filesOpening = new Stack<>();
 
-  private Map<File, File> substitutions = new HashMap<File, File>();
+  private Map<File, File> substitutions = new HashMap<>();
 
   public Loader(Component parent) {
     this.parent = parent;
@@ -247,7 +247,7 @@ public class Loader implements LibraryLoader {
     // instantiate library
     Library ret;
     try {
-      ret = (Library) retClass.newInstance();
+      ret = (Library) retClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       throw new LoadFailedException(
           StringUtil.format(S.get("jarLibraryNotCreatedError"), className));
@@ -325,7 +325,7 @@ public class Loader implements LibraryLoader {
     }
   }
 
-  public LogisimFile openLogisimFile(InputStream reader) throws LoadFailedException, IOException {
+  public LogisimFile openLogisimFile(InputStream reader) throws IOException {
     LogisimFile ret = null;
     try {
       ret = LogisimFile.load(reader, this);
@@ -480,8 +480,7 @@ public class Loader implements LibraryLoader {
     File selected = chooser.getSelectedFile();
     if (selected == null) return null;
     try {
-      String vhdl = HdlFile.load(selected);
-      return vhdl;
+      return HdlFile.load(selected);
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);

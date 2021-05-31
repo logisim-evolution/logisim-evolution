@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -98,7 +98,7 @@ public class Demultiplexer extends InstanceFactory {
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
       int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
-      return Boolean.valueOf(newer >= 0);
+      return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }
@@ -106,11 +106,10 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
-    CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+    CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
     return CompleteName.toString();
   }
 
@@ -135,9 +134,9 @@ public class Demultiplexer extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new DemultiplexerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -183,7 +182,7 @@ public class Demultiplexer extends InstanceFactory {
     Bounds bds = painter.getBounds();
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
     int outputs = 1 << select.getWidth();
 
     // draw select and enable inputs
@@ -268,13 +267,13 @@ public class Demultiplexer extends InstanceFactory {
     BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
     Boolean threeState = state.getAttributeValue(Plexers.ATTR_TRISTATE);
-    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
     int outputs = 1 << select.getWidth();
     Value en = enable ? state.getPortValue(outputs + 1) : Value.TRUE;
 
     // determine output values
     Value others; // the default output
-    if (threeState.booleanValue()) {
+    if (threeState) {
       others = Value.createUnknown(data);
     } else {
       others = Value.createKnown(data, 0);
@@ -310,7 +309,7 @@ public class Demultiplexer extends InstanceFactory {
     Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
     BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
     int outputs = 1 << select.getWidth();
     Port[] ps = new Port[outputs + (enable ? 3 : 2)];
     Location sel;

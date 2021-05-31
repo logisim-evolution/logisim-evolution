@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,7 +34,6 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,9 +59,7 @@ public class LibraryTools {
   }
 
   public static void BuildToolList(Library lib, HashSet<String> Tools) {
-    Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-    while (tooliter.hasNext()) {
-      Tool tool = tooliter.next();
+    for (Tool tool : lib.getTools()) {
       Tools.add(tool.getName().toUpperCase());
     }
     for (Library sublib : lib.getLibraries()) BuildToolList(sublib, Tools);
@@ -71,11 +68,11 @@ public class LibraryTools {
   public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
     boolean ret = true;
     if (!lib.getName().equals("Base")) {
-      Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-      while (tooliter.hasNext()) {
-        Tool tool1 = tooliter.next();
-        if (Tools.containsKey(tool1.getName().toUpperCase())) ret = false;
-        else Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+      for (Tool tool1 : lib.getTools()) {
+        if (Tools.containsKey(tool1.getName().toUpperCase()))
+          ret = false;
+        else
+          Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
       }
     }
     for (Library sublib : lib.getLibraries()) {
@@ -104,10 +101,8 @@ public class LibraryTools {
 
   public static ArrayList<String> LibraryCanBeMerged(
       HashSet<String> SourceTools, HashSet<String> NewTools) {
-    ArrayList<String> ret = new ArrayList<String>();
-    Iterator<String> Iter = NewTools.iterator();
-    while (Iter.hasNext()) {
-      String This = Iter.next();
+    ArrayList<String> ret = new ArrayList<>();
+    for (String This : NewTools) {
       if (SourceTools.contains(This)) {
         ret.add(This);
       }
@@ -119,9 +114,9 @@ public class LibraryTools {
       Library lib, String Location, ArrayList<String> UpercaseNames) {
     Iterator<? extends Tool> tooliter = lib.getTools().iterator();
     String MyLocation;
-    HashMap<String, String> ret = new HashMap<String, String>();
-    if (Location.isEmpty()) MyLocation = new String(lib.getName());
-    else MyLocation = new String(Location + "->" + lib.getName());
+    HashMap<String, String> ret = new HashMap<>();
+    if (Location.isEmpty()) MyLocation = lib.getName();
+    else MyLocation = Location + "->" + lib.getName();
     while (tooliter.hasNext()) {
       Tool tool = tooliter.next();
       if (UpercaseNames.contains(tool.getName().toUpperCase())) {
@@ -171,9 +166,9 @@ public class LibraryTools {
   public static void RemovePresentLibraries(
       Library lib, HashMap<String, Library> KnownLibs, boolean AddToSet) {
     /* we work top -> down */
-    HashSet<String> ToBeRemoved = new HashSet<String>();
+    HashSet<String> ToBeRemoved = new HashSet<>();
     for (Library sublib : lib.getLibraries()) {
-      if (KnownLibs.keySet().contains(sublib.getName().toUpperCase())) {
+      if (KnownLibs.containsKey(sublib.getName().toUpperCase())) {
         ToBeRemoved.add(sublib.getName());
       } else if (AddToSet) {
         KnownLibs.put(sublib.getName().toUpperCase(), sublib);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,7 +53,7 @@ public class Io extends Library {
 
   static final Color DEFAULT_BACKGROUND = new Color(255, 255, 255, 0);
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Button", S.getter("buttonComponent"), "button.gif", "Button"),
     new FactoryDescription("DipSwitch", S.getter("dipswitchComponent"), "dipswitch.gif", "DipSwitch"),
     new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", "Joystick"),

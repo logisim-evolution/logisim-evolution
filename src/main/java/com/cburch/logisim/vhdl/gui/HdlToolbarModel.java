@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,10 +50,12 @@ import java.util.List;
 import javax.swing.Icon;
 
 public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
-  private HdlContentView editor;
-  private List<ToolbarItem> items;
+  private final HdlContentView editor;
+  private final List<ToolbarItem> items;
 
-  HdlToolbarItem hdlImport, hdlExport, hdlValidate;
+  final HdlToolbarItem hdlImport;
+  final HdlToolbarItem hdlExport;
+  final HdlToolbarItem hdlValidate;
 
   public static final String HDL_IMPORT = "hdlImport";
   public static final String HDL_EXPORT = "hdlEmport";
@@ -62,7 +64,7 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public HdlToolbarModel(Project proj, HdlContentView editor) {
     this.editor = editor;
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<ToolbarItem>();
+    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
     hdlImport = new HdlToolbarItem(new HdlIcon(HDL_IMPORT), HDL_IMPORT, S.getter("hdlOpenButton"));
     hdlExport = new HdlToolbarItem(new HdlIcon(HDL_EXPORT), HDL_EXPORT, S.getter("hdlSaveButton"));
     hdlValidate = new HdlToolbarItem(new HdlIcon(HDL_VALIDATE), HDL_VALIDATE, S.getter("validateButton"));
@@ -90,13 +92,21 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   boolean validateEnabled = false;
 
   void doAction(String action) {
-    if (action == HDL_IMPORT) editor.doImport();
-    else if (action == HDL_EXPORT) editor.doExport();
-    else if (action == HDL_VALIDATE) editor.doValidate();
+    switch (action) {
+      case HDL_IMPORT:
+        editor.doImport();
+        break;
+      case HDL_EXPORT:
+        editor.doExport();
+        break;
+      case HDL_VALIDATE:
+        editor.doValidate();
+        break;
+    }
   }
 
   boolean isEnabled(String action) {
-    if (action == HDL_VALIDATE) return validateEnabled;
+    if (action.equals(HDL_VALIDATE)) return validateEnabled;
     else return true;
   }
 
@@ -124,9 +134,9 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public void appearanceChanged(HdlModel source) {}
 
   private class HdlToolbarItem implements ToolbarItem {
-    Icon icon;
-    String action;
-    StringGetter toolTip;
+    final Icon icon;
+    final String action;
+    final StringGetter toolTip;
 
     public HdlToolbarItem(Icon icon, String action, StringGetter toolTip) {
       this.icon = icon;

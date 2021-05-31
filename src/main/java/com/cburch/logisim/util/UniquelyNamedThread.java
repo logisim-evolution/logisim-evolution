@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,18 +28,18 @@
 
 package com.cburch.logisim.util;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class UniquelyNamedThread extends Thread {
 
-  private static Object lock = new Object();
-  private static HashMap<String, Integer> lastID = new HashMap<String, Integer>();
+  private static final Object lock = new Object();
+  private static final HashMap<String, Integer> lastID = new HashMap<>();
 
   private static String nextName(String prefix) {
     int id = 0;
     synchronized (lock) {
       Integer i = lastID.get(prefix);
-      if (i != null) id = i.intValue() + 1;
+      if (i != null) id = i + 1;
       lastID.put(prefix, id);
     }
     return prefix + "-" + id;

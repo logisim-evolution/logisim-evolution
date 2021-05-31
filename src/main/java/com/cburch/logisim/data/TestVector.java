@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,7 @@ public class TestVector {
 
       String name = f.getName();
       int i = name.lastIndexOf('.');
-      return (i > 0 && name.substring(i).toLowerCase().equals(".txt"));
+      return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
     public String getDescription() {
@@ -58,7 +58,7 @@ public class TestVector {
 
   private class TestVectorReader {
 
-    private BufferedReader in;
+    private final BufferedReader in;
     private StringTokenizer curLine;
 
     public TestVectorReader(BufferedReader in) throws IOException {
@@ -84,7 +84,7 @@ public class TestVector {
       if (curLine == null) throw new IOException("TestVector format error: empty file");
 
       parseHeader();
-      data = new ArrayList<Value[]>();
+      data = new ArrayList<>();
       curLine = findNonemptyLine();
 
       while (curLine != null) {
@@ -94,7 +94,7 @@ public class TestVector {
     }
 
     private void parseData() throws IOException {
-      Value vals[] = new Value[columnName.length];
+      Value[] vals = new Value[columnName.length];
       for (int i = 0; i < columnName.length; i++) {
         String t = curLine.nextToken();
 
@@ -131,9 +131,13 @@ public class TestVector {
             throw new IOException("Test Vector header format error: bad spec: " + t);
 
           columnName[i] = t.substring(0, s);
-          int w = new Integer(t.substring(s + 1, e)).intValue();
+          int w = 0;
+          try {
+            w = Integer.parseInt(t.substring(s + 1, e));
+          } catch (NumberFormatException ignored) {
+          }
 
-          if (w < 1 || w > 32)
+          if (w < 1 || w > 64)
             throw new IOException("Test Vector header format error: bad width: " + t);
           columnWidth[i] = BitWidth.create(w);
         }
@@ -149,13 +153,10 @@ public class TestVector {
   public ArrayList<Value[]> data;
 
   public TestVector(File src) throws IOException {
-    BufferedReader in = new BufferedReader(new FileReader(src));
 
-    try {
+    try (BufferedReader in = new BufferedReader(new FileReader(src))) {
       TestVectorReader r = new TestVectorReader(in);
       r.parse();
-    } finally {
-      in.close();
     }
   }
 

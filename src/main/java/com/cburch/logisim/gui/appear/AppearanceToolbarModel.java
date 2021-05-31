@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,10 +48,11 @@ import java.util.Collections;
 import java.util.List;
 
 class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyChangeListener {
-  private Canvas canvas;
-  private List<ToolbarItem> items;
+  private final Canvas canvas;
+  private final List<ToolbarItem> items;
 
-  public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
+  public AppearanceToolbarModel(
+      AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;
 
     AbstractTool[] tools = {
@@ -66,7 +67,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
       new PolyTool(true, attrs),
     };
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<ToolbarItem>();
+    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
     for (AbstractTool tool : tools) {
       rawItems.add(new ToolbarToolItem(tool));
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,17 +46,9 @@ public class FileUtil {
   public static File createTmpFile(String content, String prefix, String suffix)
       throws IOException {
     File tmp = File.createTempFile(prefix, suffix);
-    BufferedWriter out = null;
 
-    try {
-      out = new BufferedWriter(new FileWriter(tmp));
+    try (BufferedWriter out = new BufferedWriter(new FileWriter(tmp))) {
       out.write(content, 0, content.length());
-    } catch (IOException ex) {
-      throw ex;
-    } finally {
-      if (out != null) {
-        out.close();
-      }
     }
 
     return tmp;

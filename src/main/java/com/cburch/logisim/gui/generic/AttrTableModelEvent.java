@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,8 +29,8 @@
 package com.cburch.logisim.gui.generic;
 
 public class AttrTableModelEvent {
-  private AttrTableModel model;
-  private int index;
+  private final AttrTableModel model;
+  private final int index;
 
   public AttrTableModelEvent(AttrTableModel model) {
     this(model, -1);

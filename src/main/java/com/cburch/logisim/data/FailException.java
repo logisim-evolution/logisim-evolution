@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,9 +36,10 @@ import java.util.ArrayList;
 public class FailException extends TestException {
 
   private static final long serialVersionUID = 1L;
-  private int column;
-  private Value expected, computed;
-  private ArrayList<FailException> more = new ArrayList<FailException>();
+  private final int column;
+  private final Value expected;
+  private final Value computed;
+  private final ArrayList<FailException> more = new ArrayList<>();
 
   public FailException(int column, String columnName, Value expected, Value computed) {
     super(
@@ -80,7 +81,7 @@ public class FailException extends TestException {
   }
 
   public ArrayList<FailException> getAll() {
-    ArrayList<FailException> ret = new ArrayList<FailException>();
+    ArrayList<FailException> ret = new ArrayList<>();
     ret.add(this);
     ret.addAll(more);
     return ret;

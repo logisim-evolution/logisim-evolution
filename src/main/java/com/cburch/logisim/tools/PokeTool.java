@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,7 +45,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -74,10 +73,10 @@ public class PokeTool extends Tool {
 
   private static class WireCaret extends AbstractCaret {
     //
-    Canvas canvas;
-    Wire wire;
-    int x;
-    int y;
+    final Canvas canvas;
+    final Wire wire;
+    final int x;
+    final int y;
 
     WireCaret(Canvas c, Wire w, int x, int y, AttributeSet opts) {
       canvas = c;
@@ -138,10 +137,10 @@ public class PokeTool extends Tool {
 
   private static final Color caretColor = new Color(255, 255, 150);
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
-  private Listener listener;
+  private final Listener listener;
   private Circuit pokedCircuit;
   private Component pokedComponent;
   private Caret pokeCaret;

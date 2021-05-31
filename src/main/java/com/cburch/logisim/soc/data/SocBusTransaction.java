@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,15 +30,14 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 
 public class SocBusTransaction {
 
@@ -46,9 +45,9 @@ public class SocBusTransaction {
   public static final int BLOCK_MARKER = 14;
   public static final int BLOCK_HEX = 78;
 
-  public static int READTransaction = 1;
-  public static int WRITETransaction = 2;
-  public static int ATOMICTransaction = 4;
+  public static final int READTransaction = 1;
+  public static final int WRITETransaction = 2;
+  public static final int ATOMICTransaction = 4;
   
   public static final int NoError = 0;
   public static final int NoResponsError = 1;
@@ -56,7 +55,7 @@ public class SocBusTransaction {
   public static final int MultipleSlavesError = 3;
   public static final int NoneAtomicReadWriteError = 4;
   public static final int NoSocBusConnectedError = 5;
-  public static final int MisallignedAddressError = 6;
+  public static final int MisalignedAddressError = 6;
   public static final int AccessTypeNotSupportedError = 7;
   public static final int ReadOnlyAccessError = 8;
   public static final int WriteOnlyAccessError = 9;
@@ -67,8 +66,12 @@ public class SocBusTransaction {
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
    
-  private int address,writeData,readData,type,access;
-  private Object master;
+  private final int address;
+  private final int writeData;
+  private int readData;
+  private final int type;
+  private final int access;
+  private final Object master;
   private Component slave;
   private int Error;
   private boolean hidden;
@@ -105,7 +108,7 @@ public class SocBusTransaction {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswers");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRW");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnected");
-      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddress");
+      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddress");
       case AccessTypeNotSupportedError : 
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupport");
@@ -127,7 +130,7 @@ public class SocBusTransaction {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswersShort");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRWShort");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnectedShort");
-      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddressShort");
+      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddressShort");
       case AccessTypeNotSupportedError : 
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupportShort");
@@ -320,7 +323,7 @@ public class SocBusTransaction {
 	return i;
   }
   
-  private class BoxInfo {
+  private static class BoxInfo {
     private int skip;
     private int mark;
     private int hex;
@@ -336,7 +339,7 @@ public class SocBusTransaction {
   
   public int paint(Graphics2D g2, Long index, int width) {
 	BoxInfo realWidth = getRealBlockWidth(g2,true);
-	int usedWidth = realWidth.blockWidth <= width ? width : realWidth.blockWidth; 
+	int usedWidth = Math.max(realWidth.blockWidth, width);
     Bounds bds = getScaled(usedWidth/2,(SocBusStateInfo.TraceHeight-2)/4,usedWidth,SocBusStateInfo.TraceHeight>>1,true);
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight()-1);

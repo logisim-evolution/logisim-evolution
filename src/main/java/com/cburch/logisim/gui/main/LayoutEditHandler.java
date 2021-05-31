@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,7 +45,7 @@ import java.beans.PropertyChangeListener;
 
 public class LayoutEditHandler extends EditHandler
     implements ProjectListener, LibraryListener, PropertyChangeListener {
-  private Frame frame;
+  private final Frame frame;
 
   LayoutEditHandler(Frame frame) {
     this.frame = frame;
@@ -58,19 +58,22 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void addControlPoint() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void computeEnabled() {
     Project proj = frame.getProject();
     Selection sel = proj == null ? null : proj.getSelection();
-    boolean selEmpty = (sel == null ? true : sel.isEmpty());
+    boolean selEmpty = (sel == null || sel.isEmpty());
     boolean canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
 
     boolean selectAvailable = false;
     for (Library lib : proj.getLogisimFile().getLibraries()) {
-      if (lib instanceof Base) selectAvailable = true;
+      if (lib instanceof Base) {
+        selectAvailable = true;
+        break;
+      }
     }
 
     setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);
@@ -126,12 +129,12 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void lower() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void lowerBottom() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
@@ -164,17 +167,17 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void raise() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void raiseTop() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void removeControlPoint() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override

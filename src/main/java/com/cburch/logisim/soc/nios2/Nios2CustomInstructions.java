@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,8 +30,6 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -40,6 +38,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2CustomInstructions implements AssemblerExecutionInterface {
 
@@ -102,20 +101,20 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
 
   public String getAsmInstruction() {
 	if (!valid) return null;
-	StringBuffer s = new StringBuffer();
+	StringBuilder s = new StringBuilder();
 	s.append("custom");
 	while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-	s.append(n+",");
-	s.append((writerc ? "c" : "r")+regC+",");
-	s.append((readra ? "c" : "r")+regA+",");
-	s.append((readrb ? "c" : "r")+regB);
+	s.append(n).append(",");
+	s.append(writerc ? "c" : "r").append(regC).append(",");
+	s.append(readra ? "c" : "r").append(regA).append(",");
+	s.append(readrb ? "c" : "r").append(regB);
     return s.toString();
   }
 
   public int getBinInstruction() { return instruction; }
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
-	if (!instr.getOpcode().toLowerCase().equals("custom")) {
+	if (!instr.getOpcode().equalsIgnoreCase("custom")) {
 	  valid = false;
 	  return false;
 	}
@@ -209,13 +208,13 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
   public String getErrorMessage() { return null; }
 
   public ArrayList<String> getInstructions() { 
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     opcodes.add("custom");
     return opcodes; 
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (instruction.toLowerCase().equals("custom"))
+    if (instruction.equalsIgnoreCase("custom"))
       return 4;
     return -1;
   }

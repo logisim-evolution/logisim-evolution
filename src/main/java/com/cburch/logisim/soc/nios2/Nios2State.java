@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,19 +29,6 @@
 package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.swing.JPanel;
-
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
@@ -72,6 +59,16 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.HashMap;
+import java.util.LinkedList;
+import javax.swing.JPanel;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 public class Nios2State implements SocUpSimulationStateListener,SocProcessorInterface {
 
@@ -80,8 +77,8 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 	private static final int STATUS_RSIE = 1<<23;
 	private static final int STATUS_PIE = 1;
     private static final long serialVersionUID = 1L;
-    private int[] registers;
-    private Boolean[] registers_valid;
+    private final int[] registers;
+    private final Boolean[] registers_valid;
     private int pc;
     private int status;
     private int estatus;
@@ -89,19 +86,19 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     private int ienable;
     private int ipending;
     private int lastRegisterWritten = -1;
-    private LinkedList<TraceInfo> instrTrace;
+    private final LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
-    private SocUpSimulationState simState;
-    private Instance myInstance;
+    private final SocUpSimulationState simState;
+    private final Instance myInstance;
     private boolean visible;
     private Integer entryPoint;
     private boolean programLoaded;
-    private BreakpointPanel bPanel;
+    private final BreakpointPanel bPanel;
 
     public ProcessorState(Instance inst) {
       registers = new int[32];
       registers_valid = new Boolean[32];
-      instrTrace = new LinkedList<TraceInfo>();
+      instrTrace = new LinkedList<>();
       lastClock = Value.createUnknown(BitWidth.ONE);
       simState = new SocUpSimulationState();
       myInstance = inst;
@@ -126,7 +123,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
-        bPanel.loadProgram(state, getProcessorInterface(), progInfo, sectInfo, ASSEMBLER);;
+        bPanel.loadProgram(state, getProcessorInterface(), progInfo, sectInfo, ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
       for (int i = 0 ; i < 31 ; i++)
@@ -157,7 +154,8 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       ienable = value;
       repaint();
     }
-    public int getIpending() { return ipending; };
+    public int getIpending() { return ipending; }
+
     public void setIpending(int value) {
       if (ipending == value) return;
       ipending = value;
@@ -199,7 +197,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     public void SimButtonPressed() { simState.buttonPressed(); }
 
     public void setProgramCounter(int value) {
-      /* TODO: check for misalligned exception */
+      /* TODO: check for misaligned exception */
       pc = value;
     }
 
@@ -235,7 +233,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 
     public void interrupt() {
       estatus = status;
-      status &= (STATUS_PIE ^ -1);
+      status &= (~STATUS_PIE);
       pc = exceptionVector;
       repaint();
     }
@@ -248,7 +246,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     
     public void breakReq() {
       bstatus = status;
-      status &= (STATUS_PIE ^ -1);
+      status &= (~STATUS_PIE);
       long nextPc = SocSupport.convUnsignedInt(pc)+4L;
       writeRegister(30, SocSupport.convUnsignedLong(nextPc));
       pc = breakVector;
@@ -319,10 +317,10 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       }
       TraceInfo trace = new TraceInfo(pc,instruction,exe.getAsmInstruction(),false);
       if (!exe.execute(this,cState)) {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
-          s.append("\n"+exe.getErrorMessage());
+          s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(null,s.toString(),
         SocSupport.getMasterName(cState,Nios2State.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
@@ -389,10 +387,10 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   private int breakVector;
   private int nrOfIrqs;
   private String label;
-  private SocBusInfo attachedBus;
+  private final SocBusInfo attachedBus;
 
   public static final AssemblerInterface ASSEMBLER = new Nios2Assembler(); 
-  public static String[] registerABINames = {"zero","at","r2","r3","r4","r5","r6","r7",
+  public static final String[] registerABINames = {"zero","at","r2","r3","r4","r5","r6","r7",
                                              "r8","r9","r10","r11","r12","r13","r14","r15",
                                              "r16","r17","r18","r19","r20","r21","r22","r23","et","bt",
                                              "gp","sp","fp","ea","sstat","ra"};

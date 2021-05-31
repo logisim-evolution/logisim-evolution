@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -65,25 +65,25 @@ public class CircuitPins {
     }
   }
 
-  private PortManager appearanceManager;
-  private MyComponentListener myComponentListener;
-  private Set<Instance> pins;
+  private final PortManager appearanceManager;
+  private final MyComponentListener myComponentListener;
+  private final Set<Instance> pins;
 
   CircuitPins(PortManager appearanceManager) {
     this.appearanceManager = appearanceManager;
     myComponentListener = new MyComponentListener();
-    pins = new HashSet<Instance>();
+    pins = new HashSet<>();
   }
 
   public Collection<Instance> getPins() {
-    return new ArrayList<Instance>(pins);
+    return new ArrayList<>(pins);
   }
 
   public void transactionCompleted(ReplacementMap repl) {
     // determine the changes
-    Set<Instance> adds = new HashSet<Instance>();
-    Set<Instance> removes = new HashSet<Instance>();
-    Map<Instance, Instance> replaces = new HashMap<Instance, Instance>();
+    Set<Instance> adds = new HashSet<>();
+    Set<Instance> removes = new HashSet<>();
+    Map<Instance, Instance> replaces = new HashMap<>();
     for (Component comp : repl.getAdditions()) {
       if (comp.getFactory() instanceof Pin) {
         Instance in = Instance.getInstanceFor(comp);
@@ -102,7 +102,7 @@ public class CircuitPins {
         if (removed) {
           comp.removeComponentListener(myComponentListener);
           in.getAttributeSet().removeAttributeListener(myComponentListener);
-          Collection<Component> rs = repl.getComponentsReplacing(comp);
+          Collection<Component> rs = repl.getReplacementsFor(comp);
           if (rs.isEmpty()) {
             removes.add(in);
           } else {

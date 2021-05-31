@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -57,8 +57,8 @@ import java.util.Set;
 class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
-  private Canvas canvas;
-  private GridPainter grid;
+  private final Canvas canvas;
+  private final GridPainter grid;
   private Component haloedComponent = null;
   private Circuit haloedCircuit = null;
   private WireSet highlightedWires = WireSet.EMPTY;
@@ -235,6 +235,8 @@ class CanvasPainter implements PropertyChangeListener {
     circState.drawOscillatingPoints(ptContext);
     gScaled.setColor(Color.BLUE);
     proj.getSimulator().drawStepPoints(ptContext);
+    gScaled.setColor(Color.MAGENTA); // fixme
+    proj.getSimulator().drawPendingInputs(ptContext);
     gScaled.dispose();
   }
 

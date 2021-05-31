@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -72,7 +72,7 @@ import javax.swing.JPopupMenu;
 
 public class SubcircuitFactory extends InstanceFactory {
   private class CircuitFeature implements StringGetter, MenuExtender, ActionListener {
-    private Instance instance;
+    private final Instance instance;
     private Project proj;
 
     public CircuitFeature(Instance instance) {
@@ -342,9 +342,9 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new CircuitHDLGeneratorFactory(this.source);
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -364,7 +364,7 @@ public class SubcircuitFactory extends InstanceFactory {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
+      Map<Circuit, Integer> accessMap = new HashMap<>();
       for (Circuit supercirc : source.getCircuitsUsingThis()) {
         accessMap.put(supercirc, READ_WRITE);
       }

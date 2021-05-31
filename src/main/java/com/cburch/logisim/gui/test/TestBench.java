@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,10 +46,10 @@ import java.util.HashMap;
 
 public class TestBench {
 
-  private Project proj;
   /* Watch out the order matters*/
-  private String[] outputSignals = {"test_bench_done_o", "test_bench_ok_o"};
-  private Instance[] pinsOutput;
+  private final String[] outputSignals = {"test_bench_done_o", "test_bench_ok_o"};
+  private final Instance[] pinsOutput;
+  private Project proj;
 
   public TestBench(String Path, SplashScreen mon, HashMap<File, File> subs) {
     this.pinsOutput = new Instance[outputSignals.length];
@@ -127,7 +127,7 @@ public class TestBench {
 
     VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
     vsim.enable();
-    sim.setIsRunning(true);
+    sim.setAutoPropagation(true);
     /* TODO Timeout */
     while (vsim.isEnabled()) {
       Thread.yield();
@@ -137,7 +137,7 @@ public class TestBench {
   }
 
   /* Main method in charge of launching the test bench */
-  public boolean startTestBench() throws LoadFailedException {
+  public boolean startTestBench() {
     Circuit circuit = (proj.getLogisimFile().getCircuit("logisim_test_verif"));
     proj.setCurrentCircuit(circuit);
 

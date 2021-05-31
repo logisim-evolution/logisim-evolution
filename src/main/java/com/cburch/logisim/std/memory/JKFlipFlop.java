@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,47 +34,41 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JKFlipFlop extends AbstractFlipFlop {
-  private class JKFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+  private static class JKFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
       return "J-K Flip-Flop";
     }
 
     @Override
-    public Map<String, String> GetInputMaps(
-        NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-      Map<String, String> PortMap = new HashMap<String, String>();
-      PortMap.putAll(GetNetMap("J", true, ComponentInfo, 0, Reporter, HDLType, Nets));
-      PortMap.putAll(GetNetMap("K", true, ComponentInfo, 1, Reporter, HDLType, Nets));
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
+      Map<String, String> PortMap = new HashMap<>();
+      PortMap.putAll(GetNetMap("J", true, ComponentInfo, 0, Nets));
+      PortMap.putAll(GetNetMap("K", true, ComponentInfo, 1, Nets));
       return PortMap;
     }
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<String, Integer>();
+      Map<String, Integer> Inputs = new HashMap<>();
       Inputs.put("J", 1);
       Inputs.put("K", 1);
       return Inputs;
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic(String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      if (HDLType.endsWith(VHDL)) {
-        Contents.add("   s_next_state <= (NOT(s_current_state_reg) AND J) OR");
-        Contents.add("                   (s_current_state_reg AND NOT(K));");
-      } else {
-        Contents.add("   assign s_next_state = (~(s_current_state_reg)&J)|");
-        Contents.add("                         (s_current_state_reg&~(K));");
-      }
+    public ArrayList<String> GetUpdateLogic() {
+      ArrayList<String> Contents = new ArrayList<>();
+      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+
+          "("+HDL.notOperator()+"(s_current_state_reg)"+HDL.andOperator()+"J)"+HDL.orOperator());
+      Contents.add("         (s_current_state_reg"+HDL.andOperator()+HDL.notOperator()+"(K));");
       return Contents;
     }
   }
@@ -107,8 +101,8 @@ public class JKFlipFlop extends AbstractFlipFlop {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new JKFFHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

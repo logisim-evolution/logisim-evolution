@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,17 +32,6 @@ import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Desktop;
-import java.awt.desktop.AboutEvent;
-import java.awt.desktop.AboutHandler;
-import java.awt.desktop.OpenFilesEvent;
-import java.awt.desktop.OpenFilesHandler;
-import java.awt.desktop.PreferencesEvent;
-import java.awt.desktop.PreferencesHandler;
-import java.awt.desktop.PrintFilesEvent;
-import java.awt.desktop.PrintFilesHandler;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
 import java.io.File;
 
 class MacOsAdapter {
@@ -64,53 +53,39 @@ class MacOsAdapter {
       Desktop dt = Desktop.getDesktop();
       try {
         dt.setAboutHandler(
-            new AboutHandler() {
-              public void handleAbout(AboutEvent e) {
-                About.showAboutDialog(null);
-              }
-            });
-      } catch (Exception e) {
+            e -> About.showAboutDialog(null));
+      } catch (Exception ignored) {
       }
       try {
         dt.setQuitHandler(
-            new QuitHandler() {
-              public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
-                ProjectActions.doQuit();
-                response.performQuit();
-              }
+            (e, response) -> {
+              ProjectActions.doQuit();
+              response.performQuit();
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setPreferencesHandler(
-            new PreferencesHandler() {
-              public void handlePreferences(PreferencesEvent e) {
-                PreferencesFrame.showPreferences();
-              }
-            });
-      } catch (Exception e) {
+            e -> PreferencesFrame.showPreferences());
+      } catch (Exception ignored) {
       }
       try {
         dt.setPrintFileHandler(
-            new PrintFilesHandler() {
-              public void printFiles(PrintFilesEvent e) {
-                for (File f : e.getFiles()) {
-                  Startup.doPrint(f);
-                }
+            e -> {
+              for (File f : e.getFiles()) {
+                Startup.doPrint(f);
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
       try {
         dt.setOpenFileHandler(
-            new OpenFilesHandler() {
-              public void openFiles(OpenFilesEvent e) {
-                for (File f : e.getFiles()) {
-                  Startup.doOpen(f);
-                }
+            e -> {
+              for (File f : e.getFiles()) {
+                Startup.doOpen(f);
               }
             });
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }

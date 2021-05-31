@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,8 +37,12 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   public AbstractAttributeSet() {}
 
   public void addAttributeListener(AttributeListener l) {
-    if (listeners == null) listeners = new ArrayList<AttributeListener>();
+    if (listeners == null) listeners = new ArrayList<>();
     listeners.add(l);
+  }
+
+  public boolean amIListening(AttributeListener l) {
+    return listeners.contains(l);
   }
 
   @Override
@@ -49,7 +53,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     } catch (CloneNotSupportedException ex) {
       throw new UnsupportedOperationException();
     }
-    ret.listeners = new ArrayList<AttributeListener>();
+    ret.listeners = new ArrayList<>();
     this.copyInto(ret);
     return ret;
   }
@@ -63,7 +67,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   protected void fireAttributeListChanged() {
     if (listeners != null) {
       AttributeEvent event = new AttributeEvent(this);
-      List<AttributeListener> ls = new ArrayList<AttributeListener>(listeners);
+      List<AttributeListener> ls = new ArrayList<>(listeners);
       for (AttributeListener l : ls) {
         l.attributeListChanged(event);
       }
@@ -73,7 +77,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value, V oldvalue) {
     if (listeners != null) {
       AttributeEvent event = new AttributeEvent(this, attr, value, oldvalue);
-      List<AttributeListener> ls = new ArrayList<AttributeListener>(listeners);
+      List<AttributeListener> ls = new ArrayList<>(listeners);
       for (AttributeListener l : ls) {
         l.attributeValueChanged(event);
       }

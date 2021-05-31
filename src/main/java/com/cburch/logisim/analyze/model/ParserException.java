@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,9 +32,9 @@ import com.cburch.logisim.util.StringGetter;
 
 public class ParserException extends Exception {
   private static final long serialVersionUID = 1L;
-  private StringGetter message;
-  private int start;
-  private int length;
+  private final StringGetter message;
+  private final int start;
+  private final int length;
   
   public ParserException(StringGetter message, int start) {
     this(message, start, 1);

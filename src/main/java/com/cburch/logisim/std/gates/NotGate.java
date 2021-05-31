@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,6 +44,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -60,13 +61,11 @@ import java.util.ArrayList;
 
 class NotGate extends InstanceFactory {
 
-  private class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      if (HDLType.equals(VHDL)) Contents.add("   Result <= NOT(Input_1);");
-      else Contents.add("   assign Result = ~(Input_1);");
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
+      Contents.add("   "+HDL.assignPreamble()+"Result"+HDL.assignOperator()+HDL.notOperator()+"Input_1;");
       Contents.add("");
       return Contents;
     }
@@ -97,9 +96,9 @@ class NotGate extends InstanceFactory {
   }
 
   public static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(20), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
   public static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(30), S.getter("gateSizeWideOpt"));
+      new AttributeOption(30, S.getter("gateSizeWideOpt"));
 
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(
@@ -108,7 +107,7 @@ class NotGate extends InstanceFactory {
 
   //	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
-  public static InstanceFactory FACTORY = new NotGate();
+  public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
     super("NOT Gate", S.getter("notGateComponent"));
@@ -158,7 +157,7 @@ class NotGate extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) CompleteName.append("_BUS");
@@ -168,14 +167,12 @@ class NotGate extends InstanceFactory {
   @Override
   protected Object getInstanceFeature(final Instance instance, Object key) {
     if (key == ExpressionComputer.class) {
-      return new ExpressionComputer() {
-        public void computeExpression(ExpressionComputer.Map expressionMap) {
-          int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
-          for (int b = 0; b < width; b++) {
-            Expression e = expressionMap.get(instance.getPortLocation(1), b);
-            if (e != null) {
-              expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
-            }
+      return (ExpressionComputer) expressionMap -> {
+        int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
+        for (int b = 0; b < width; b++) {
+          Expression e = expressionMap.get(instance.getPortLocation(1), b);
+          if (e != null) {
+            expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
           }
         }
       };
@@ -209,9 +206,9 @@ class NotGate extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new NotGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

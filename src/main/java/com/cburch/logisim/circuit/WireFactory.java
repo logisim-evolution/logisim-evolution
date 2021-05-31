@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,7 +54,7 @@ class WireFactory extends AbstractComponentFactory {
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr).intValue();
+    int len = attrs.getValue(Wire.len_attr);
 
     if (dir == Wire.VALUE_HORZ) {
       return Wire.create(loc, loc.translate(len, 0));
@@ -71,7 +71,7 @@ class WireFactory extends AbstractComponentFactory {
       ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     Graphics g = context.getGraphics();
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr).intValue();
+    int len = attrs.getValue(Wire.len_attr);
 
     g.setColor(color);
     GraphicsUtil.switchToWidth(g, 3);
@@ -95,7 +95,7 @@ class WireFactory extends AbstractComponentFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr).intValue();
+    int len = attrs.getValue(Wire.len_attr);
 
     if (dir == Wire.VALUE_HORZ) {
       return Bounds.create(0, -2, len, 5);
@@ -105,7 +105,7 @@ class WireFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 }

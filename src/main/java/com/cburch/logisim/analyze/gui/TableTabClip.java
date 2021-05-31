@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.awt.Rectangle;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -47,8 +46,8 @@ import java.util.StringTokenizer;
 class TableTabClip implements ClipboardOwner {
   private static class Data implements Transferable, Serializable {
     private static final long serialVersionUID = 1L;
-    private String[] headers;
-    private String[][] contents;
+    private final String[] headers;
+    private final String[][] contents;
 
     Data(String[] headers, String[][] contents) {
       this.headers = headers;
@@ -56,7 +55,7 @@ class TableTabClip implements ClipboardOwner {
     }
 
     public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException {
+        throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return this;
       } else if (flavor == DataFlavor.stringFlavor) {
@@ -65,10 +64,10 @@ class TableTabClip implements ClipboardOwner {
           buf.append(headers[i]);
           buf.append(i == headers.length - 1 ? '\n' : '\t');
         }
-        for (int i = 0; i < contents.length; i++) {
-          for (int j = 0; j < contents[i].length; j++) {
-            buf.append(contents[i][j]);
-            buf.append(j == contents[i].length - 1 ? '\n' : '\t');
+        for (String[] content : contents) {
+          for (int j = 0; j < content.length; j++) {
+            buf.append(content[j]);
+            buf.append(j == content.length - 1 ? '\n' : '\t');
           }
         }
         return buf.toString();
@@ -88,7 +87,7 @@ class TableTabClip implements ClipboardOwner {
 
   private static final DataFlavor binaryFlavor = new DataFlavor(Data.class, "Binary data");
 
-  private TableTab table;
+  private final TableTab table;
 
   TableTabClip(TableTab table) {
     this.table = table;
@@ -158,9 +157,7 @@ class TableTabClip implements ClipboardOwner {
           }
           entries[i] = row;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -196,9 +193,7 @@ class TableTabClip implements ClipboardOwner {
           entries[cur] = ents;
           cur++;
         }
-      } catch (UnsupportedFlavorException e) {
-        return;
-      } catch (IOException e) {
+      } catch (UnsupportedFlavorException | IOException e) {
         return;
       }
     } else {

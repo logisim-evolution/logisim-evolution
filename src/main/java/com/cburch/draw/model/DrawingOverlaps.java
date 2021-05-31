@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,20 +38,16 @@ import java.util.Map;
 import java.util.Set;
 
 class DrawingOverlaps {
-  private Map<CanvasObject, List<CanvasObject>> map;
-  private Set<CanvasObject> untested;
+  private final Map<CanvasObject, List<CanvasObject>> map;
+  private final Set<CanvasObject> untested;
 
   public DrawingOverlaps() {
-    map = new HashMap<CanvasObject, List<CanvasObject>>();
-    untested = new HashSet<CanvasObject>();
+    map = new HashMap<>();
+    untested = new HashSet<>();
   }
 
   private void addOverlap(CanvasObject a, CanvasObject b) {
-    List<CanvasObject> alist = map.get(a);
-    if (alist == null) {
-      alist = new ArrayList<CanvasObject>();
-      map.put(a, alist);
-    }
+    List<CanvasObject> alist = map.computeIfAbsent(a, k -> new ArrayList<>());
     if (!alist.contains(b)) {
       alist.add(b);
     }
@@ -63,7 +59,7 @@ class DrawingOverlaps {
 
   private void ensureUpdated() {
     for (CanvasObject o : untested) {
-      List<CanvasObject> over = new ArrayList<CanvasObject>();
+      List<CanvasObject> over = new ArrayList<>();
       for (CanvasObject o2 : map.keySet()) {
         if (o != o2 && o.overlaps(o2)) {
           over.add(o2);

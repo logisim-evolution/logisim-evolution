@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,9 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("GlobalClock", 1);
     Inputs.put("ClockEnable", 1);
     Inputs.put("LoadData", NrOfBitsId);
@@ -69,16 +70,14 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock(
             "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
                 + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down",
-            3,
-            HDLType));
-    if (HDLType.equals(VHDL)) {
+            3));
+    if (HDL.isVHDL()) {
       Contents.add("");
       Contents.add("   CompareOut   <= s_carry;");
       Contents.add("   CountValue   <= s_counter_value;");
@@ -230,7 +229,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("CountValue", NrOfBitsId);
     Outputs.put("CompareOut", 1);
     return Outputs;
@@ -238,7 +237,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(MaxValId, MaxValStr);
     Parameters.put(ActiveEdgeId, ActiveEdgeStr);
@@ -247,9 +246,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     int mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
@@ -270,29 +268,24 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
-    String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-    String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
-    String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (!ComponentInfo.EndIsConnected(Counter.CK)) {
-      Reporter.AddSevereWarning(
+      Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
-      PortMap.put("GlobalClock", ZeroBit);
-      PortMap.put("ClockEnable", ZeroBit);
+      PortMap.put("GlobalClock", HDL.zeroBit());
+      PortMap.put("ClockEnable", HDL.zeroBit());
     } else {
       String ClockNetName = GetClockNetName(ComponentInfo, Counter.CK, Nets);
       if (ClockNetName.isEmpty()) {
         PortMap.putAll(
-            GetNetMap("GlobalClock", true, ComponentInfo, Counter.CK, Reporter, HDLType, Nets));
-        PortMap.put("ClockEnable", SetBit);
+            GetNetMap("GlobalClock", true, ComponentInfo, Counter.CK, Nets));
+        PortMap.put("ClockEnable", HDL.oneBit());
       } else {
         int ClockBusIndex = ClockHDLGeneratorFactory.DerivedClockIndex;
         if (Nets.RequiresGlobalClockConnection()) {
@@ -308,42 +301,41 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         PortMap.put(
             "GlobalClock",
             ClockNetName
-                + BracketOpen
-                + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
-                + BracketClose);
+                + HDL.BracketOpen()
+                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + HDL.BracketClose());
         PortMap.put(
             "ClockEnable",
-            ClockNetName + BracketOpen + Integer.toString(ClockBusIndex) + BracketClose);
+            ClockNetName + HDL.BracketOpen() + ClockBusIndex + HDL.BracketClose());
       }
     }
     String Input = "LoadData";
-    if (HDLType.equals(VHDL)
+    if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       Input += "(0)";
-    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Counter.IN, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Counter.CLR, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("load", true, ComponentInfo, Counter.LD, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, Counter.EN, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap(Input, true, ComponentInfo, Counter.IN, Nets));
+    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Counter.CLR, Nets));
+    PortMap.putAll(GetNetMap("load", true, ComponentInfo, Counter.LD, Nets));
+    PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, Counter.EN, Nets));
     PortMap.putAll(
-        GetNetMap("Up_n_Down", false, ComponentInfo, Counter.UD, Reporter, HDLType, Nets));
+        GetNetMap("Up_n_Down", false, ComponentInfo, Counter.UD, Nets));
     String Output = "CountValue";
-    if (HDLType.equals(VHDL)
+    if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       Output += "(0)";
-    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Counter.OUT, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("CompareOut", true, ComponentInfo, Counter.CARRY, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap(Output, true, ComponentInfo, Counter.OUT, Nets));
+    PortMap.putAll(GetNetMap("CompareOut", true, ComponentInfo, Counter.CARRY, Nets));
     return PortMap;
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_next_counter_value", NrOfBitsId); // for verilog generation
     // in explicite process
     Regs.put("s_carry", 1); // for verilog generation in explicite process
     Regs.put("s_counter_value", NrOfBitsId);
-    if (HDLType.equals(VERILOG)) Regs.put("s_counter_value_neg_edge", NrOfBitsId);
+    if (HDL.isVerilog()) Regs.put("s_counter_value_neg_edge", NrOfBitsId);
     return Regs;
   }
 
@@ -358,13 +350,13 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_real_enable", 1);
     return Wires;
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

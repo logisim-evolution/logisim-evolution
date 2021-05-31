@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,6 +34,7 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -56,7 +57,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-
 import javax.swing.Icon;
 
 abstract class AbstractFlipFlop extends InstanceFactory {
@@ -65,6 +65,11 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     public String getLogName(InstanceState state, Object option) {
       String ret = state.getAttributeValue(StdAttr.LABEL);
       return ret != null && !ret.equals("") ? ret : null;
+    }
+
+    @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
     }
 
     @Override
@@ -142,9 +147,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   private static final int STD_PORTS = 5;
-  private int numInputs;
+  private final int numInputs;
 
-  private Attribute<AttributeOption> triggerAttribute;
+  private final Attribute<AttributeOption> triggerAttribute;
 
   protected AbstractFlipFlop(
       String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
@@ -256,7 +261,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     String[] Parts = this.getName().split(" ");
     CompleteName.append(Parts[0].replace("-", "_").toUpperCase());
     CompleteName.append("_");

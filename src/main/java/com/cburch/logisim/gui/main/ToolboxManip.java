@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,9 +41,7 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.AttrTableModel;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
-import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
 import com.cburch.logisim.gui.generic.ProjectExplorerLibraryNode;
-import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.menu.Popups;
 import com.cburch.logisim.gui.menu.ProjectCircuitActions;
@@ -61,7 +59,140 @@ import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import javax.swing.JPopupMenu;
 
-class ToolboxManip implements ProjectExplorerListener {
+class ToolboxManip implements ProjectExplorer.Listener {
+  private final Project proj;
+  private final ProjectExplorer explorer;
+  private final MyListener myListener = new MyListener();
+  private Tool lastSelected = null;
+
+  ToolboxManip(Project proj, ProjectExplorer explorer) {
+    this.proj = proj;
+    this.explorer = explorer;
+    proj.addProjectListener(myListener);
+    myListener.setFile(null, proj.getLogisimFile());
+  }
+
+  private static void setDefaultTool(Tool lastSelected, Project proj) {
+    if (lastSelected != null) {
+      proj.setTool(lastSelected);
+    } else {
+      for (Library sub : proj.getLogisimFile().getLibraries()) {
+        if (sub instanceof Base) {
+          Tool tool = sub.getTool("Edit Tool");
+          if (tool != null) {
+            proj.setTool(tool);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  public void deleteRequested(ProjectExplorer.Event event) {
+    Object request = event.getTarget();
+    if (request instanceof ProjectExplorerLibraryNode) {
+      Library lib = ((ProjectExplorerLibraryNode) request).getValue();
+      ProjectLibraryActions.doUnloadLibrary(proj, lib);
+    } else if (request instanceof ProjectExplorerToolNode) {
+      Tool tool = ((ProjectExplorerToolNode) request).getValue();
+      if (tool instanceof AddTool) {
+        ComponentFactory factory = ((AddTool) tool).getFactory();
+        if (factory instanceof SubcircuitFactory) {
+          SubcircuitFactory circFact = (SubcircuitFactory) factory;
+          ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
+        }
+      }
+    }
+  }
+
+  public void doubleClicked(ProjectExplorer.Event event) {
+    Object clicked = event.getTarget();
+    if (clicked instanceof ProjectExplorerToolNode) {
+      ((ProjectExplorerToolNode) clicked).fireNodeChanged();
+      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+      if (baseTool instanceof AddTool) {
+        AddTool tool = (AddTool) baseTool;
+        ComponentFactory source = tool.getFactory();
+        if (source instanceof SubcircuitFactory) {
+          SubcircuitFactory circFact = (SubcircuitFactory) source;
+          proj.setCurrentCircuit(circFact.getSubcircuit());
+          proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
+          setDefaultTool(lastSelected, proj);
+        } else if (source instanceof VhdlEntity) {
+          VhdlEntity vhdl = (VhdlEntity) source;
+          proj.setCurrentHdlModel(vhdl.getContent());
+        }
+      }
+    }
+  }
+
+  public JPopupMenu menuRequested(ProjectExplorer.Event event) {
+    Object clicked = event.getTarget();
+    if (clicked instanceof ProjectExplorerToolNode) {
+      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+      if (baseTool instanceof AddTool) {
+        AddTool tool = (AddTool) baseTool;
+        ComponentFactory source = tool.getFactory();
+        if (source instanceof SubcircuitFactory) {
+          Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
+          return Popups.forCircuit(proj, tool, circ);
+        } else if (source instanceof VhdlEntity) {
+          VhdlContent vhdl = ((VhdlEntity) source).getContent();
+          return Popups.forVhdl(proj, tool, vhdl);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } else if (clicked instanceof ProjectExplorerLibraryNode) {
+      Library lib = ((ProjectExplorerLibraryNode) clicked).getValue();
+      if (lib == proj.getLogisimFile()) {
+        return Popups.forProject(proj);
+      } else {
+        boolean is_top = event.getTreePath().getPathCount() <= 2;
+        return Popups.forLibrary(proj, lib, is_top);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
+    LogisimFile file = proj.getLogisimFile();
+    int draggedIndex = file.getTools().indexOf(dragged);
+    int targetIndex = file.getTools().indexOf(target);
+    if (targetIndex > draggedIndex) targetIndex++;
+    proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
+  }
+
+  public void selectionChanged(ProjectExplorer.Event event) {
+    if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
+      lastSelected = proj.getTool();
+    }
+    Object selected = event.getTarget();
+    if (selected instanceof ProjectExplorerToolNode) {
+      ((ProjectExplorerToolNode) selected).fireNodeChanged();
+      Tool tool = ((ProjectExplorerToolNode) selected).getValue();
+      if (tool instanceof AddTool) {
+        AddTool addTool = (AddTool) tool;
+        ComponentFactory source = addTool.getFactory();
+        if (source instanceof SubcircuitFactory) {
+          SubcircuitFactory circFact = (SubcircuitFactory) source;
+          Circuit circ = circFact.getSubcircuit();
+          if (proj.getCurrentCircuit() == circ) {
+            AttrTableModel m = new AttrTableCircuitModel(proj, circ);
+            proj.getFrame().setAttrTableModel(m);
+            setDefaultTool(lastSelected, proj);
+            return;
+          }
+        }
+      }
+      proj.setTool(tool);
+      proj.getFrame().viewAttributes(tool);
+    }
+  }
+
   private class MyListener implements ProjectListener, LibraryListener, AttributeListener {
     private LogisimFile curFile = null;
 
@@ -135,139 +266,6 @@ class ToolboxManip implements ProjectExplorerListener {
           addLibrary(lib);
         }
       }
-    }
-  }
-
-  private Project proj;
-  private ProjectExplorer explorer;
-  private MyListener myListener = new MyListener();
-  private Tool lastSelected = null;
-
-  ToolboxManip(Project proj, ProjectExplorer explorer) {
-    this.proj = proj;
-    this.explorer = explorer;
-    proj.addProjectListener(myListener);
-    myListener.setFile(null, proj.getLogisimFile());
-  }
-
-  public void deleteRequested(ProjectExplorerEvent event) {
-    Object request = event.getTarget();
-    if (request instanceof ProjectExplorerLibraryNode) {
-      Library lib = ((ProjectExplorerLibraryNode) request).getValue();
-      ProjectLibraryActions.doUnloadLibrary(proj, lib);
-    } else if (request instanceof ProjectExplorerToolNode) {
-      Tool tool = ((ProjectExplorerToolNode) request).getValue();
-      if (tool instanceof AddTool) {
-        ComponentFactory factory = ((AddTool) tool).getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) factory;
-          ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
-        }
-      }
-    }
-  }
-
-  public void doubleClicked(ProjectExplorerEvent event) {
-    Object clicked = event.getTarget();
-    if (clicked instanceof ProjectExplorerToolNode) {
-      ((ProjectExplorerToolNode) clicked).fireNodeChanged();
-      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
-      if (baseTool instanceof AddTool) {
-        AddTool tool = (AddTool) baseTool;
-        ComponentFactory source = tool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) source;
-          proj.setCurrentCircuit(circFact.getSubcircuit());
-          proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-          setDefaultTool(lastSelected, proj);
-        } else if (source instanceof VhdlEntity) {
-          VhdlEntity vhdl = (VhdlEntity) source;
-          proj.setCurrentHdlModel(vhdl.getContent());
-        }
-      }
-    }
-  }
-
-  public JPopupMenu menuRequested(ProjectExplorerEvent event) {
-    Object clicked = event.getTarget();
-    if (clicked instanceof ProjectExplorerToolNode) {
-      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
-      if (baseTool instanceof AddTool) {
-        AddTool tool = (AddTool) baseTool;
-        ComponentFactory source = tool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
-          return Popups.forCircuit(proj, tool, circ);
-        } else if (source instanceof VhdlEntity) {
-          VhdlContent vhdl = ((VhdlEntity) source).getContent();
-          return Popups.forVhdl(proj, tool, vhdl);
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    } else if (clicked instanceof ProjectExplorerLibraryNode) {
-      Library lib = ((ProjectExplorerLibraryNode) clicked).getValue();
-      if (lib == proj.getLogisimFile()) {
-        return Popups.forProject(proj);
-      } else {
-        boolean is_top = event.getTreePath().getPathCount() <= 2;
-        return Popups.forLibrary(proj, lib, is_top);
-      }
-    } else {
-      return null;
-    }
-  }
-
-  public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {
-    LogisimFile file = proj.getLogisimFile();
-    int draggedIndex = file.getTools().indexOf(dragged);
-    int targetIndex = file.getTools().indexOf(target);
-    if (targetIndex > draggedIndex) targetIndex++;
-    proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
-  }
-
-  private static void setDefaultTool(Tool lastSelected, Project proj) {
-    if (lastSelected != null) {
-      proj.setTool(lastSelected);
-    } else {
-      for (Library sub : proj.getLogisimFile().getLibraries()) {
-        if (sub instanceof Base) {
-          Tool tool = ((Base) sub).getTool("Edit Tool");
-          if (tool != null) {
-            proj.setTool(tool);
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  public void selectionChanged(ProjectExplorerEvent event) {
-    if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
-      lastSelected = proj.getTool();
-    }
-    Object selected = event.getTarget();
-    if (selected instanceof ProjectExplorerToolNode) {
-      ((ProjectExplorerToolNode) selected).fireNodeChanged();
-      Tool tool = ((ProjectExplorerToolNode) selected).getValue();
-      if (tool instanceof AddTool) {
-        AddTool addTool = (AddTool) tool;
-        ComponentFactory source = addTool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) source;
-          Circuit circ = circFact.getSubcircuit();
-          if (proj.getCurrentCircuit() == circ) {
-            AttrTableModel m = new AttrTableCircuitModel(proj, circ);
-            proj.getFrame().setAttrTableModel(m);
-            setDefaultTool(lastSelected, proj);
-            return;
-          }
-        }
-      }
-      proj.setTool(tool);
-      proj.getFrame().viewAttributes(tool);
     }
   }
 }

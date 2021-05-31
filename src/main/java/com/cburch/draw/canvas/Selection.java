@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class Selection {
@@ -48,20 +49,20 @@ public class Selection {
   private static final String TRANSLATING = "translating";
   private static final String HIDDEN = "hidden";
 
-  private List<SelectionListener> listeners;
-  private Set<CanvasObject> selected;
-  private Set<CanvasObject> selectedView;
-  private Map<CanvasObject, String> suppressed;
-  private Set<CanvasObject> suppressedView;
+  private final List<SelectionListener> listeners;
+  private final Set<CanvasObject> selected;
+  private final Set<CanvasObject> selectedView;
+  private final Map<CanvasObject, String> suppressed;
+  private final Set<CanvasObject> suppressedView;
   private Handle selectedHandle;
   private HandleGesture curHandleGesture;
   private int moveDx;
   private int moveDy;
 
   protected Selection() {
-    listeners = new ArrayList<SelectionListener>();
-    selected = new HashSet<CanvasObject>();
-    suppressed = new HashMap<CanvasObject, String>();
+    listeners = new ArrayList<>();
+    selected = new HashSet<>();
+    suppressed = new HashMap<>();
     selectedView = Collections.unmodifiableSet(selected);
     suppressedView = Collections.unmodifiableSet(suppressed.keySet());
   }
@@ -78,7 +79,7 @@ public class Selection {
   public void clearSelected() {
     if (!selected.isEmpty()) {
       List<CanvasObject> oldSelected;
-      oldSelected = new ArrayList<CanvasObject>(selected);
+      oldSelected = new ArrayList<>(selected);
       selected.clear();
       suppressed.clear();
       setHandleSelected(null);
@@ -88,9 +89,9 @@ public class Selection {
 
   public void drawSuppressed(Graphics g, CanvasObject shape) {
     String state = suppressed.get(shape);
-    if (state == MOVING_HANDLE) {
+    if (state.equals(MOVING_HANDLE)) {
       shape.paint(g, curHandleGesture);
-    } else if (state == TRANSLATING) {
+    } else if (state.equals(TRANSLATING)) {
       g.translate(moveDx, moveDy);
       shape.paint(g, null);
     }
@@ -173,7 +174,7 @@ public class Selection {
 
   public void setHandleSelected(Handle handle) {
     Handle cur = selectedHandle;
-    boolean same = cur == null ? handle == null : cur.equals(handle);
+    boolean same = Objects.equals(cur, handle);
     if (!same) {
       selectedHandle = handle;
       curHandleGesture = null;
@@ -217,7 +218,7 @@ public class Selection {
   public void setSelected(Collection<CanvasObject> shapes, boolean value) {
     if (value) {
       List<CanvasObject> added;
-      added = new ArrayList<CanvasObject>(shapes.size());
+      added = new ArrayList<>(shapes.size());
       for (CanvasObject shape : shapes) {
         if (selected.add(shape)) {
           added.add(shape);
@@ -228,7 +229,7 @@ public class Selection {
       }
     } else {
       List<CanvasObject> removed;
-      removed = new ArrayList<CanvasObject>(shapes.size());
+      removed = new ArrayList<>(shapes.size());
       for (CanvasObject shape : shapes) {
         if (selected.remove(shape)) {
           suppressed.remove(shape);
@@ -245,9 +246,9 @@ public class Selection {
 
   public void toggleSelected(Collection<CanvasObject> shapes) {
     List<CanvasObject> added;
-    added = new ArrayList<CanvasObject>(shapes.size());
+    added = new ArrayList<>(shapes.size());
     List<CanvasObject> removed;
-    removed = new ArrayList<CanvasObject>(shapes.size());
+    removed = new ArrayList<>(shapes.size());
     for (CanvasObject shape : shapes) {
       if (selected.contains(shape)) {
         selected.remove(shape);

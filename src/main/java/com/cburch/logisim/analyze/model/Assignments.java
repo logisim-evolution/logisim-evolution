@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,16 +32,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Assignments {
-  private Map<String, Boolean> map = new HashMap<String, Boolean>();
+  private final Map<String, Boolean> map = new HashMap<>();
 
   public Assignments() {}
 
   public boolean get(String variable) {
     Boolean value = map.get(variable);
-    return value != null ? value.booleanValue() : false;
+    return value != null && value;
   }
 
   public void put(String variable, boolean value) {
-    map.put(variable, Boolean.valueOf(value));
+    map.put(variable, value);
   }
 }

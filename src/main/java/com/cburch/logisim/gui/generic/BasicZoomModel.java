@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -35,12 +35,12 @@ import java.beans.PropertyChangeSupport;
 import javax.swing.SwingUtilities;
 
 public class BasicZoomModel implements ZoomModel {
-  private double[] zoomOptions;
+  private final double[] zoomOptions;
 
-  private PropertyChangeSupport support;
+  private final PropertyChangeSupport support;
+  private final CanvasPane canvas;
   private double zoomFactor;
   private boolean showGrid;
-  private CanvasPane canvas;
 
   public BasicZoomModel(
       PrefMonitor<Boolean> gridPref,
@@ -53,7 +53,7 @@ public class BasicZoomModel implements ZoomModel {
     showGrid = true;
     canvas = pane;
 
-    setZoomFactor(zoomPref.get().doubleValue());
+    setZoomFactor(zoomPref.get());
     setShowGrid(gridPref.getBoolean());
   }
 
@@ -65,8 +65,23 @@ public class BasicZoomModel implements ZoomModel {
     return showGrid;
   }
 
+  public void setShowGrid(boolean value) {
+    if (value != showGrid) {
+      showGrid = value;
+      support.firePropertyChange(ZoomModel.SHOW_GRID, !value, value);
+    }
+  }
+
   public double getZoomFactor() {
     return zoomFactor;
+  }
+
+  public void setZoomFactor(double value) {
+    double oldValue = zoomFactor;
+    if (value != oldValue) {
+      zoomFactor = value;
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
+    }
   }
 
   public double[] getZoomOptions() {
@@ -75,21 +90,6 @@ public class BasicZoomModel implements ZoomModel {
 
   public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
     support.removePropertyChangeListener(prop, l);
-  }
-
-  public void setShowGrid(boolean value) {
-    if (value != showGrid) {
-      showGrid = value;
-      support.firePropertyChange(ZoomModel.SHOW_GRID, !value, value);
-    }
-  }
-
-  public void setZoomFactor(double value) {
-    double oldValue = zoomFactor;
-    if (value != oldValue) {
-      zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
-    }
   }
 
   public void setZoomFactor(double value, MouseEvent e) {
@@ -108,7 +108,7 @@ public class BasicZoomModel implements ZoomModel {
       double ey = canvas.getVerticalScrollBar().getVisibleAmount();
       int ry = e.getY() - vy;
       zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       double nmx = mx * value / oldValue;
       double px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
       int nvx = (int) (nmx * px);
@@ -125,15 +125,9 @@ public class BasicZoomModel implements ZoomModel {
     double oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       SwingUtilities.invokeLater(
-          new Runnable() {
-            @Override
-            public void run() {
-              support.firePropertyChange(
-                  ZoomModel.CENTER, Double.valueOf(oldValue), Double.valueOf(value));
-            }
-          });
+          () -> support.firePropertyChange(ZoomModel.CENTER, oldValue, value));
     }
-  };
+  }
 }

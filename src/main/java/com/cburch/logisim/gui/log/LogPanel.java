@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,13 +28,16 @@
 
 package com.cburch.logisim.gui.log;
 
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.proj.Project;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
-abstract class LogPanel extends JPanel {
+public abstract class LogPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private LogFrame logFrame;
+  private final LogFrame logFrame;
 
   public LogPanel(LogFrame frame) {
     super();
@@ -48,20 +51,38 @@ abstract class LogPanel extends JPanel {
 
   public abstract String getHelpText();
 
-  LogFrame getLogFrame() {
-    return logFrame;
+  void updateTab() {
+    EditHandler h = getEditHandler();
+    if (h != null)
+      h.computeEnabled();
   }
 
-  Model getModel() {
+  public EditHandler getEditHandler() {
+    return null;
+  }
+
+  public PrintHandler getPrintHandler() {
+    return null;
+  }
+
+// SimulationHandler getSimulationHandler() {
+//   return null;
+// }
+
+  public LogFrame getLogFrame() {
+    return logFrame;
+  }
+  
+  protected LogisimMenuBar getLogisimMenuBar() {
+    return logFrame.getLogisimMenuBar();
+  }
+
+  protected Model getModel() {
     return logFrame.getModel();
   }
 
-  Project getProject() {
+  protected Project getProject() {
     return logFrame.getProject();
-  }
-
-  Selection getSelection() {
-    return logFrame.getModel().getSelection();
   }
 
   public abstract String getTitle();

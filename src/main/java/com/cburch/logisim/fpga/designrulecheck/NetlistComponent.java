@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,10 +38,10 @@ import java.util.Map;
 
 public class NetlistComponent {
 
-  private int nr_of_ends;
-  private Component CompReference;
-  private ArrayList<ConnectionEnd> Ends;
-  ComponentMapInformationContainer MyMapInformation;
+  private final int nr_of_ends;
+  private final Component CompReference;
+  private final ArrayList<ConnectionEnd> Ends;
+  final ComponentMapInformationContainer MyMapInformation;
   private Map<ArrayList<String>, BubbleInformationContainer> GlobalIds;
   private BubbleInformationContainer LocalId;
   private boolean IsGatedInstance;
@@ -50,7 +50,7 @@ public class NetlistComponent {
     IsGatedInstance = false;
     nr_of_ends = Ref.getEnds().size();
     CompReference = Ref;
-    Ends = new ArrayList<ConnectionEnd>();
+    Ends = new ArrayList<>();
     for (int i = 0; i < Ref.getEnds().size(); i++) {
       Ends.add( new ConnectionEnd( Ref.getEnd(i).isOutput(), 
                 (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
@@ -87,7 +87,7 @@ public class NetlistComponent {
       return;
     }
     if (GlobalIds == null) {
-      GlobalIds = new HashMap<ArrayList<String>, BubbleInformationContainer>();
+      GlobalIds = new HashMap<>();
     }
     BubbleInformationContainer thisInfo = new BubbleInformationContainer();
     if (NrOfInputBubbles > 0) {
@@ -142,7 +142,7 @@ public class NetlistComponent {
   }
 
   public ArrayList<ConnectionPoint> GetConnections(Net RootNet, byte BitIndex, boolean IsOutput) {
-    ArrayList<ConnectionPoint> Connections = new ArrayList<ConnectionPoint>();
+    ArrayList<ConnectionPoint> Connections = new ArrayList<>();
     for (ConnectionEnd search : Ends) {
       for (byte bit = 0; bit < search.NrOfBits(); bit++) {
         ConnectionPoint connection = search.GetConnection(bit);
@@ -165,11 +165,7 @@ public class NetlistComponent {
 
   public BubbleInformationContainer GetGlobalBubbleId(ArrayList<String> HierarchyName) {
 	if (GlobalIds == null) return null;
-    if (GlobalIds.containsKey(HierarchyName)) {
-      return GlobalIds.get(HierarchyName);
-    } else {
-      return null;
-    }
+    return GlobalIds.getOrDefault(HierarchyName, null);
   }
 
   public ComponentMapInformationContainer GetMapInformationContainer() {

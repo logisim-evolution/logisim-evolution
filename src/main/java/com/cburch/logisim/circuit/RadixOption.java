@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -356,9 +356,9 @@ public abstract class RadixOption extends AttributeOption {
   public static final Attribute<RadixOption> ATTRIBUTE =
       Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
-  private String saveName;
+  private final String saveName;
 
-  private StringGetter displayGetter;
+  private final StringGetter displayGetter;
 
   private RadixOption(String saveName, StringGetter displayGetter) {
     super(saveName, displayGetter);

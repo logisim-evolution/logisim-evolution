@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,9 +36,9 @@ import com.cburch.logisim.util.StringUtil;
 import javax.swing.JTextField;
 
 public class DurationAttribute extends Attribute<Integer> {
-  private int min;
-  private int max;
-  private boolean TickUnits;
+  private final int min;
+  private final int max;
+  private final boolean TickUnits;
 
   public DurationAttribute(String name, StringGetter disp, int min, int max, boolean IsTicks) {
     super(name, disp);
@@ -58,9 +58,9 @@ public class DurationAttribute extends Attribute<Integer> {
   public Integer parse(String value) {
     try {
       Integer ret = Integer.valueOf(value);
-      if (ret.intValue() < min) {
+      if (ret < min) {
         throw new NumberFormatException(StringUtil.format(S.get("durationSmallMessage"), "" + min));
-      } else if (ret.intValue() > max) {
+      } else if (ret > max) {
         throw new NumberFormatException(StringUtil.format(S.get("durationLargeMessage"), "" + max));
       }
       return ret;
@@ -72,13 +72,13 @@ public class DurationAttribute extends Attribute<Integer> {
   @Override
   public String toDisplayString(Integer value) {
     if (TickUnits) {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("clockDurationOneValue");
       } else {
         return StringUtil.format(S.get("clockDurationValue"), value.toString());
       }
     } else {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("PORDurationOneValue");
       } else {
         return StringUtil.format(S.get("PORDurationValue"), value.toString());

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,8 +44,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 class MemMenu implements ActionListener, MenuExtender {
-  private Mem factory;
-  private Instance instance;
+  private final Mem factory;
+  private final Instance instance;
   private Project proj;
   private Frame frame;
   private CircuitState circState;
@@ -121,12 +121,12 @@ class MemMenu implements ActionListener, MenuExtender {
   }
 
   private void doLoad() {
-    MemContents m = (MemContents)factory.getState(instance, circState).getContents();
+    MemContents m = factory.getState(instance, circState).getContents();
     HexFile.open(m, frame, proj, instance);
   }
 
   private void doSave() {
-    MemContents m = (MemContents)factory.getState(instance, circState).getContents();
+    MemContents m = factory.getState(instance, circState).getContents();
     HexFile.save(m, frame, proj, instance);
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,11 +34,11 @@ import java.util.ArrayList;
 
 public class ClockSourceContainer {
 
-  ArrayList<Component> sources;
+  final ArrayList<Component> sources;
   boolean RequiresFPGAGlobalClock;
 
   public ClockSourceContainer() {
-    sources = new ArrayList<Component>();
+    sources = new ArrayList<>();
     RequiresFPGAGlobalClock = false;
   }
 
@@ -48,15 +48,14 @@ public class ClockSourceContainer {
   }
 
   private boolean equals(Component comp1, Component comp2) {
+    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue() !=
+        comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
     if (comp1.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()
         != comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()) {
       return false;
     }
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()
-        != comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()) {
-      return false;
-    }
-    return true;
+    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue() == comp2.getAttributeSet()
+        .getValue(Clock.ATTR_LOW).intValue();
   }
 
   public int getClockId(Component comp) {

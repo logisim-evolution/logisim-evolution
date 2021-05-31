@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,6 +41,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -57,12 +58,11 @@ import java.util.ArrayList;
 
 class Buffer extends InstanceFactory {
 
-  private class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(
-        int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      if (HDLType.equals(VHDL)) Contents.add("   Result <= Input_1;");
+    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+      ArrayList<String> Contents = new ArrayList<>();
+      if (HDL.isVHDL()) Contents.add("   Result <= Input_1;");
       else Contents.add("   assign Result = Input_1;");
       Contents.add("");
       return Contents;
@@ -96,7 +96,7 @@ class Buffer extends InstanceFactory {
     return AbstractGate.pullOutput(repaired, outType);
   }
 
-  public static InstanceFactory FACTORY = new Buffer();
+  public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
     super("Buffer", S.getter("bufferComponent"));
@@ -141,7 +141,7 @@ class Buffer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     CompleteName.append("_COMPONENT");
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
@@ -152,14 +152,12 @@ class Buffer extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == ExpressionComputer.class) {
-      return new ExpressionComputer() {
-        public void computeExpression(ExpressionComputer.Map expressionMap) {
-          int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
-          for (int b = 0; b < width; b++) {
-            Expression e = expressionMap.get(instance.getPortLocation(1), b);
-            if (e != null) {
-              expressionMap.put(instance.getPortLocation(0), b, e);
-            }
+      return (ExpressionComputer) expressionMap -> {
+        int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
+        for (int b = 0; b < width; b++) {
+          Expression e = expressionMap.get(instance.getPortLocation(1), b);
+          if (e != null) {
+            expressionMap.put(instance.getPortLocation(0), b, e);
           }
         }
       };
@@ -184,9 +182,9 @@ class Buffer extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new BufferGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

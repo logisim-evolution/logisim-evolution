@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,8 +64,7 @@ public class JFileChoosers {
 
   public static JFileChooser create() {
     RuntimeException first = null;
-    for (int i = 0; i < PROP_NAMES.length; i++) {
-      String prop = PROP_NAMES[i];
+    for (String prop : PROP_NAMES) {
       try {
         String dirname;
         if (prop == null) {
@@ -85,9 +84,11 @@ public class JFileChoosers {
           }
         }
       } catch (RuntimeException t) {
-        if (first == null) first = t;
+        if (first == null)
+          first = t;
         Throwable u = t.getCause();
-        if (!(u instanceof IOException)) throw t;
+        if (!(u instanceof IOException))
+          throw t;
       }
     }
     throw first;
@@ -103,7 +104,7 @@ public class JFileChoosers {
         if (t.getCause() instanceof IOException) {
           try {
             return create();
-          } catch (RuntimeException u) {
+          } catch (RuntimeException ignored) {
           }
         }
         throw t;

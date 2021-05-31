@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -56,7 +56,7 @@ public class PullBehaviors {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);
@@ -65,7 +65,7 @@ public class PullBehaviors {
     return result;
   }
 
-  public static String PullAttributeString = "FPGAPinPullBehavior";
+  public static final String PullAttributeString = "FPGAPinPullBehavior";
   public static final char Float = 0;
   public static final char PullUp = 1;
 
@@ -73,5 +73,5 @@ public class PullBehaviors {
 
   public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
+  public static final String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,7 +41,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -55,7 +54,7 @@ import java.util.Collections;
 import java.util.Set;
 
 public class WiringTool extends Tool {
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private static final int HORIZONTAL = 1;
   private static final int VERTICAL = 2;
@@ -212,12 +211,11 @@ public class WiringTool extends Tool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent event) {
-    switch (event.getKeyCode()) {
-      case KeyEvent.VK_BACK_SPACE:
-        if (lastAction != null && canvas.getProject().getLastAction() == lastAction) {
-          canvas.getProject().undoAction();
-          lastAction = null;
-        }
+    if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+      if (lastAction != null && canvas.getProject().getLastAction() == lastAction) {
+        canvas.getProject().undoAction();
+        lastAction = null;
+      }
     }
   }
 
@@ -329,7 +327,7 @@ public class WiringTool extends Tool {
       exists = false;
       super.mouseReleased(canvas, g, e);
 
-      ArrayList<Wire> ws = new ArrayList<Wire>(2);
+      ArrayList<Wire> ws = new ArrayList<>(2);
       if (cur.getY() == start.getY() || cur.getX() == start.getX()) {
         Wire w = Wire.create(cur, start);
         w = checkForRepairs(canvas, w, w.getEnd0());

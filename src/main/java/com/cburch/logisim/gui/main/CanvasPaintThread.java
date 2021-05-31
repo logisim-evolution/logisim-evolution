@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,8 +34,8 @@ import java.awt.Rectangle;
 class CanvasPaintThread extends UniquelyNamedThread {
   private static final int REPAINT_TIMESPAN = 50; // 50 ms between repaints
 
-  private Canvas canvas;
-  private Object lock;
+  private final Canvas canvas;
+  private final Object lock;
   private boolean repaintRequested;
   private long nextRepaint;
   private boolean alive;
@@ -94,7 +94,7 @@ class CanvasPaintThread extends UniquelyNamedThread {
             } else {
               lock.wait();
             }
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
           now = System.currentTimeMillis();
           wait = nextRepaint - now;

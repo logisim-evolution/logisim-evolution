@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -100,11 +100,11 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   static final Integer[] SIZE_OPTIONS = {2, 4, 8, 16, 32, 64, 128, 256};
 
-  public static final Attribute BLINK_OPTION =
+  public static final Attribute<String> BLINK_OPTION =
       Attributes.forOption("cursor", S.getter("rgbVideoCursor"), BLINK_OPTIONS);
-  public static final Attribute RESET_OPTION =
+  public static final Attribute<String> RESET_OPTION =
       Attributes.forOption("reset", S.getter("rgbVideoReset"), RESET_OPTIONS);
-  public static final Attribute COLOR_OPTION =
+  public static final Attribute<String> COLOR_OPTION =
       Attributes.forOption("color", S.getter("rgbVideoColor"), COLOR_OPTIONS);
   public static final Attribute<Integer> WIDTH_OPTION =
       Attributes.forOption("width", S.getter("rgbVideoWidth"), SIZE_OPTIONS);
@@ -113,7 +113,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   public static final Attribute<Integer> SCALE_OPTION =
       Attributes.forIntegerRange("scale", S.getter("rgbVideoScale"), 1, 8);
 
-  private static final Attribute[] ATTRIBUTES = {
+  private static final Attribute<?>[] ATTRIBUTES = {
     BLINK_OPTION, RESET_OPTION, COLOR_OPTION, WIDTH_OPTION, HEIGHT_OPTION, SCALE_OPTION
   };
 
@@ -149,8 +149,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       int s = attrs.getValue(SCALE_OPTION);
       int w = attrs.getValue(WIDTH_OPTION);
       int h = attrs.getValue(HEIGHT_OPTION);
-      int bw = (s * w + 14 < 100 ? 100 : s * w + 14);
-      int bh = (s * h + 14 < 20 ? 20 : s * h + 14);
+      int bw = (Math.max(s * w + 14, 100));
+      int bh = (Math.max(s * h + 14, 20));
       return Bounds.create(-30, -bh, bw, bh);
     }
 
@@ -228,7 +228,6 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
   public void draw(ComponentDrawContext context) {
     Location loc = getLocation();
-    int size = getBounds().getWidth();
     State s = getState(context.getCircuitState());
     drawVideo(context, loc.getX(), loc.getY(), s);
   }
@@ -262,11 +261,11 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return (now / 1000 % 2 == 0);
   }
 
-  static DirectColorModel rgb111 = new DirectColorModel(3, 0x4, 0x2, 0x1);
-  static DirectColorModel rgb555 = new DirectColorModel(15, 0x7C00, 0x03E0, 0x001F);
-  static DirectColorModel rgb565 = new DirectColorModel(16, 0xF800, 0x07E0, 0x001F);
-  static DirectColorModel rgb = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
-  static IndexColorModel gray4 =
+  static final DirectColorModel rgb111 = new DirectColorModel(3, 0x4, 0x2, 0x1);
+  static final DirectColorModel rgb555 = new DirectColorModel(15, 0x7C00, 0x03E0, 0x001F);
+  static final DirectColorModel rgb565 = new DirectColorModel(16, 0xF800, 0x07E0, 0x001F);
+  static final DirectColorModel rgb = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
+  static final IndexColorModel gray4 =
       new IndexColorModel(
           4,
           16,
@@ -277,7 +276,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel atari =
+  static final IndexColorModel atari =
       new IndexColorModel(
           7,
           128,
@@ -302,7 +301,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel xterm16 =
+  static final IndexColorModel xterm16 =
       new IndexColorModel(
           4,
           16,
@@ -313,7 +312,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           0,
           0,
           null);
-  static IndexColorModel xterm256 =
+  static final IndexColorModel xterm256 =
       new IndexColorModel(
           8,
           256,
@@ -372,14 +371,13 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
 
     AttributeSet attrs = getAttributeSet();
     Object blink_option = attrs.getValue(BLINK_OPTION);
-    Object reset_option = attrs.getValue(RESET_OPTION);
     ColorModel cm = getColorModel(attrs.getValue(COLOR_OPTION));
 
     int s = attrs.getValue(SCALE_OPTION);
     int w = attrs.getValue(WIDTH_OPTION);
     int h = attrs.getValue(HEIGHT_OPTION);
-    int bw = (s * w + 14 < 100 ? 100 : s * w + 14);
-    int bh = (s * h + 14 < 20 ? 20 : s * h + 14);
+    int bw = (Math.max(s * w + 14, 100));
+    int bh = (Math.max(s * h + 14, 20));
 
     x += -30;
     y += -bh;
@@ -413,9 +411,9 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return state;
   }
 
-  private class State implements ComponentState, Cloneable {
+  private static class State implements ComponentState, Cloneable {
     public Value lastClock = null;
-    public BufferedImage img;
+    public final BufferedImage img;
     public int last_x, last_y, color;
 
     State(BufferedImage img) {
@@ -469,7 +467,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
         return S.get("rgbVideoY");
       case P_DATA:
         AttributeSet attrs = getAttributeSet();
-        return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION).toString());
+        return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION));
       case P_RST:
         return S.get("rgbVideoRST");
       default:

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,9 +40,9 @@ import java.util.List;
 
 public class KMapGroups {
 
-  public class CoverInfo {
-    private int startRow;
-    private int startCol;
+  public static class CoverInfo {
+    private final int startRow;
+    private final int startCol;
     private int width;
     private int height;
 
@@ -78,17 +78,15 @@ public class KMapGroups {
         // 1) either also the same row-range
         if (row >= startRow && row < (startRow + height)) return true;
         // 2) maybe one down
-        if (row >= startRow && row <= (startRow + height)) return true;
+        return row >= startRow && row <= (startRow + height);
         // nope, distance too big
-        return false;
       }
       if (row >= startRow && row < (startRow + height)) {
         // same row, two possibilities:
         // 1) either also the same col-range; we do not need to check as it collides
         //    with the previous check of the same row range (see 1) above)
         // 2) maybe one to the right
-        if (col >= startCol && col <= (startCol + width)) return true;
-        return false;
+        return col >= startCol && col <= (startCol + width);
       }
       return false;
     }
@@ -111,16 +109,16 @@ public class KMapGroups {
   }
 
   public class KMapGroupInfo {
-    private ArrayList<CoverInfo> Areas;
-    private Color color;
-    private ArrayList<Implicant> singleCoveredImplicants;
-    private Expression expression;
+    private final ArrayList<CoverInfo> Areas;
+    private final Color color;
+    private final ArrayList<Implicant> singleCoveredImplicants;
+    private final Expression expression;
 
     public KMapGroupInfo(Implicant imp, Color col) {
       this.color = col;
-      Areas = new ArrayList<CoverInfo>();
-      singleCoveredImplicants = new ArrayList<Implicant>();
-      List<Implicant> one = new ArrayList<Implicant>();
+      Areas = new ArrayList<>();
+      singleCoveredImplicants = new ArrayList<>();
+      List<Implicant> one = new ArrayList<>();
       one.add(imp);
       expression = Implicant.toExpression(format, model, one);
       build(imp);
@@ -135,7 +133,7 @@ public class KMapGroups {
     }
 
     public void removeSingleCover(Implicant imp) {
-      if (singleCoveredImplicants.contains(imp)) singleCoveredImplicants.remove(imp);
+      singleCoveredImplicants.remove(imp);
     }
 
     public boolean containsSingleCover(Implicant imp) {
@@ -247,7 +245,7 @@ public class KMapGroups {
     }
   }
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private String output;
   private int format;
   private ArrayList<KMapGroupInfo> covers;
@@ -302,7 +300,7 @@ public class KMapGroups {
 
   public void update() {
     List<Implicant> implicants = model.getOutputExpressions().getMinimalImplicants(output);
-    covers = new ArrayList<KMapGroupInfo>();
+    covers = new ArrayList<>();
     CoverColor.COVERCOLOR.reset();
     if (implicants != null) {
       for (Implicant imp : implicants) {

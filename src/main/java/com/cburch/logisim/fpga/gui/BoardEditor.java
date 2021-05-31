@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,23 +30,6 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.IOComponentsInformation;
@@ -56,20 +39,35 @@ import com.cburch.logisim.fpga.file.XMLFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class BoardEditor implements ActionListener, ComponentListener, 
         LocaleListener, BoardManipulatorListener {
 
-  private JFrame panel;
+  private final JFrame panel;
   private BoardInformation TheBoard = new BoardInformation();
-  private JTextField BoardNameInput;
-  private JButton saveButton = new JButton();
-  private JButton loadButton = new JButton();
-  private JButton importButton = new JButton();
-  private JButton cancelButton = new JButton();
-  private JButton fpgaButton = new JButton();
-  private JLabel LocText = new JLabel();
-  private BoardManipulator picturepanel;
+  private final JTextField BoardNameInput;
+  private final JButton saveButton = new JButton();
+  private final JButton loadButton = new JButton();
+  private final JButton importButton = new JButton();
+  private final JButton cancelButton = new JButton();
+  private final JButton fpgaButton = new JButton();
+  private final JLabel LocText = new JLabel();
+  private final BoardManipulator picturepanel;
   private static final String CancelStr = "cancel";
   private static final String FPGAStr = "fpgainfo";
 
@@ -171,39 +169,46 @@ public class BoardEditor implements ActionListener, ComponentListener,
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(CancelStr)) {
-      this.clear();
-    } else if (e.getActionCommand().equals("save")) {
-      panel.setVisible(false);
-      TheBoard.setBoardName(BoardNameInput.getText());
-      String filename = getDirName("", S.get("FpgaBoardSaveDir"));
-      filename += TheBoard.getBoardName() + ".xml";
-      TheBoard.setComponents(picturepanel.getIOComponents());
-      BoardWriterClass xmlwriter = new BoardWriterClass( TheBoard, picturepanel.getImage());
-      xmlwriter.PrintXml(filename);
-      this.clear();
-    } else if (e.getActionCommand().equals("load")) {
-      JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
-      fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-      fc.setFileFilter(XMLFileFilter.XML_FILTER);
-      fc.setAcceptAllFileFilterUsed(false);
-      int retval = fc.showOpenDialog(null);
-      if (retval == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
-        String FileName = file.getPath();
-        BoardReaderClass reader = new BoardReaderClass(FileName);
-        UpdateInfo(reader);
-      }
-    } else if (e.getActionCommand().equals(FPGAStr)) {
-      FPGAIOInformationSettingsDialog.getFpgaInformation(panel,TheBoard);
-      if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
+    switch (e.getActionCommand()) {
+      case CancelStr:
+        this.clear();
+        break;
+      case "save":
+        panel.setVisible(false);
+        TheBoard.setBoardName(BoardNameInput.getText());
+        String filename = getDirName("", S.get("FpgaBoardSaveDir"));
+        filename += TheBoard.getBoardName() + ".xml";
+        TheBoard.setComponents(picturepanel.getIOComponents());
+        BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
+        xmlwriter.PrintXml(filename);
+        this.clear();
+        break;
+      case "load":
+        JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fc.setFileFilter(XMLFileFilter.XML_FILTER);
+        fc.setAcceptAllFileFilterUsed(false);
+        int retval = fc.showOpenDialog(null);
+        if (retval == JFileChooser.APPROVE_OPTION) {
+          File file = fc.getSelectedFile();
+          String FileName = file.getPath();
+          BoardReaderClass reader = new BoardReaderClass(FileName);
+          UpdateInfo(reader);
+        }
+        break;
+      case FPGAStr:
+        FPGAIOInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
+        if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
           saveButton.setEnabled(true);
-    } else if (e.getActionCommand().equals("internal")) {
-      String Board = getInternalBoardName();
-      if (Board != null) {
-        BoardReaderClass reader = new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(Board));
-        UpdateInfo(reader);
-      }
+        break;
+      case "internal":
+        String Board = getInternalBoardName();
+        if (Board != null) {
+          BoardReaderClass reader = new BoardReaderClass(
+              AppPreferences.Boards.GetBoardFilePath(Board));
+          UpdateInfo(reader);
+        }
+        break;
     }
   }
   
@@ -297,17 +302,11 @@ public class BoardEditor implements ActionListener, ComponentListener,
     loadButton.setEnabled(false);
     importButton.setEnabled(false);
     fpgaButton.setEnabled(true);
-    if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
-      saveButton.setEnabled(true);
-    else
-      saveButton.setEnabled(false);
+    saveButton.setEnabled(picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent());
   }
 
   @Override
   public void componentsChanged(IOComponentsInformation IOcomps) {
-    if (IOcomps.hasComponents() && TheBoard.fpga.FpgaInfoPresent())
-      saveButton.setEnabled(true);
-    else
-      saveButton.setEnabled(false);
+    saveButton.setEnabled(IOcomps.hasComponents() && TheBoard.fpga.FpgaInfoPresent());
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,7 +59,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,13 +199,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     painter.drawClockSymbol(xpos + 20, ypos + 80);
     painter.drawClockSymbol(xpos + 20, ypos + 90);
     /* Draw Label */
-    long max = painter.getAttributeValue(ATTR_MAX).longValue();
+    long max = painter.getAttributeValue(ATTR_MAX);
     boolean IsCTRm = (max == painter.getAttributeValue(StdAttr.WIDTH).getMask());
     Object onGoal = painter.getAttributeValue(ATTR_ON_GOAL);
     IsCTRm |= onGoal == ON_GOAL_CONT;
     String Label =
         (IsCTRm)
-            ? "CTR" + Integer.toString(painter.getAttributeValue(StdAttr.WIDTH).getWidth())
+            ? "CTR" + painter.getAttributeValue(StdAttr.WIDTH).getWidth()
             : "CTR DIV0x" + Long.toHexString(max);
     GraphicsUtil.drawCenteredText(g, Label, xpos + (SymbolWidth(width) / 2) + 20, ypos + 5);
     GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
@@ -267,7 +266,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.fillOval(xpos + 32 + SymbolWidth(width), ypos + 47, 6, 6);
     String MaxVal =
         "3CT=0x"
-            + Long.toHexString(painter.getAttributeValue(ATTR_MAX).longValue()).toUpperCase();
+            + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
     GraphicsUtil.drawText(
         g,
         MaxVal,
@@ -406,7 +405,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       String value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.LIGHT_GRAY);
-        value = ((1 << BitNr) & val.toLongValue()) != 0 ? "1" : "0";
+        value = ((1L << BitNr) & val.toLongValue()) != 0 ? "1" : "0";
       } else if (val.isUnknown()) {
         g.setColor(Color.BLUE);
         value = "?";
@@ -443,9 +442,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new CounterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -545,7 +544,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    BigInteger max = new BigInteger(Long.toUnsignedString(state.getAttributeValue(ATTR_MAX).longValue()));
+    BigInteger max = new BigInteger(Long.toUnsignedString(state.getAttributeValue(ATTR_MAX)));
     Value clock = state.getPortValue(CK);
     boolean triggered = data.updateClock(clock, triggerType);
 

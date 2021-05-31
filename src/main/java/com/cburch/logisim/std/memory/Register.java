@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -141,12 +141,11 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     if (!neg_active) {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawLine(x, y + 70, x + 9, y + 70);
-      GraphicsUtil.switchToWidth(g, 1);
     } else {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawOval(x, y + 65, 10, 10);
-      GraphicsUtil.switchToWidth(g, 1);
     }
+    GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void DrawRegisterClassic(InstancePainter painter) {
@@ -288,7 +287,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
         || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {
@@ -300,11 +299,11 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) {
       MyHDLGenerator = new RegisterHDLGeneratorFactory();
     }
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -353,8 +352,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     if (state.getPortValue(CLR) == Value.TRUE) {
       data.value = Value.createKnown(dataWidth, 0);
     } else if (triggered && state.getPortValue(EN) != Value.FALSE) {
-      Value in = state.getPortValue(IN);
-      data.value = in;
+      data.value = state.getPortValue(IN);
     }
 
     state.setPort(OUT, data.value, DELAY);

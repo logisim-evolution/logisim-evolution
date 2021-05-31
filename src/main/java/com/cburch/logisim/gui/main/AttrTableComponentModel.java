@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,15 +33,17 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 
 class AttrTableComponentModel extends AttributeSetTableModel {
-  Project proj;
-  Circuit circ;
-  Component comp;
+  final Project proj;
+  final Circuit circ;
+  final Component comp;
 
   AttrTableComponentModel(Project proj, Circuit circ, Component comp) {
     super(comp.getAttributeSet());
@@ -61,7 +63,14 @@ class AttrTableComponentModel extends AttributeSetTableModel {
 
   @Override
   public String getTitle() {
-    return comp.getFactory().getDisplayName();
+    String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+    Location loc = comp.getLocation();
+    String s = comp.getFactory().getDisplayName();
+    if (label != null && label.length() > 0)
+      s += " \"" + label + "\"";
+    else if (loc != null)
+      s += " " + loc;
+    return s;
   }
 
   @Override

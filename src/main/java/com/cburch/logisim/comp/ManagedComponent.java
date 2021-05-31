@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,18 +39,18 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class ManagedComponent extends AbstractComponent {
-  private EventSourceWeakSupport<ComponentListener> listeners =
-      new EventSourceWeakSupport<ComponentListener>();
-  private Location loc;
+  private final EventSourceWeakSupport<ComponentListener> listeners =
+      new EventSourceWeakSupport<>();
+  private final Location loc;
   private AttributeSet attrs;
-  private ArrayList<EndData> ends;
-  private List<EndData> endsView;
+  private final ArrayList<EndData> ends;
+  private final List<EndData> endsView;
   private Bounds bounds = null;
 
   public ManagedComponent(Location loc, AttributeSet attrs, int num_ends) {
     this.loc = loc;
     this.attrs = attrs;
-    this.ends = new ArrayList<EndData>(num_ends);
+    this.ends = new ArrayList<>(num_ends);
     this.endsView = Collections.unmodifiableList(ends);
   }
 
@@ -198,8 +198,8 @@ public abstract class ManagedComponent extends AbstractComponent {
   public void setEnds(EndData[] newEnds) {
     List<EndData> oldEnds = ends;
     int minLen = Math.min(oldEnds.size(), newEnds.length);
-    ArrayList<EndData> changesOld = new ArrayList<EndData>();
-    ArrayList<EndData> changesNew = new ArrayList<EndData>();
+    ArrayList<EndData> changesOld = new ArrayList<>();
+    ArrayList<EndData> changesNew = new ArrayList<>();
     for (int i = 0; i < minLen; i++) {
       EndData old = oldEnds.get(i);
       if (newEnds[i] != null && !newEnds[i].equals(old)) {

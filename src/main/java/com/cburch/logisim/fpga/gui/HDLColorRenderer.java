@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,35 +28,31 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel implements TableCellRenderer {
-  public static final String VHDLSupportString = "VHDL_SUPPORTED";
-  public static final String VERILOGSupportString = "VERILOG_SUPPORTED";
   public static final String NoSupportString = "HDL_NOT_SUPPORTED";
+  public static final String SupportString = "HDL_SUPPORTED";
   public static final String UnKnownString = "HDL_UNKNOWN";
   public static final String RequiredFieldString = ">_HDL_REQUIRED_FIELD_<";
-  private static final ArrayList<String> CorrectStrings = new ArrayList<String>();
+  private static final ArrayList<String> CorrectStrings = new ArrayList<>();
 
   Border border = null;
 
   public HDLColorRenderer() {
     setOpaque(true);
     CorrectStrings.clear();
-    CorrectStrings.add(VERILOGSupportString);
     CorrectStrings.add(NoSupportString);
     CorrectStrings.add(UnKnownString);
-    CorrectStrings.add(VHDLSupportString);
   }
 
   public Component getTableCellRendererComponent(
@@ -67,16 +63,15 @@ public class HDLColorRenderer extends JLabel implements TableCellRenderer {
       boolean passive = value.equals(NoSupportString);
       Color newColor = (passive) ? Color.red : Color.green;
       if (value.equals(UnKnownString)) newColor = table.getGridColor();
-      setBackground(newColor);
+      if (column == 1) setBackground(newColor);
       setForeground(Color.black);
-      setText(
-          CorrectStrings.contains(value)
-              ? column == 0 ? HDLGeneratorFactory.VHDL : HDLGeneratorFactory.VERILOG
-              : value);
+      if (column == 0) setText(value);
+      else {
+        if (value.equals(NoSupportString)) setText(S.get("FPGANotSupported"));
+        else if (value.equals(SupportString)) setText(S.get("FPGASupported"));
+        else setText(S.get("FPGAUnknown"));
+      }
       setHorizontalAlignment(JLabel.CENTER);
-      if (border == null)
-        border = BorderFactory.createMatteBorder(2, 5, 2, 5, table.getGridColor());
-      setBorder(border);
     } else {
       String myInfo = (String) Info;
       if (myInfo != null && myInfo.equals(RequiredFieldString)) {

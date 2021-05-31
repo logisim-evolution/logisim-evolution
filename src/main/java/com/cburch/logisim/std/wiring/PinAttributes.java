@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,18 +58,16 @@ class PinAttributes extends ProbeAttributes {
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            Pin.ATTR_TYPE,
-            StdAttr.WIDTH,
-            Pin.ATTR_TRISTATE,
-            Pin.ATTR_PULL,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            RadixOption.ATTRIBUTE,
-            PROBEAPPEARANCE,
-            ATTR_DUMMY
-          });
+          StdAttr.FACING,
+          Pin.ATTR_TYPE,
+          StdAttr.WIDTH,
+          Pin.ATTR_TRISTATE,
+          Pin.ATTR_PULL,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          RadixOption.ATTRIBUTE,
+          PROBEAPPEARANCE,
+          ATTR_DUMMY);
 
   BitWidth width = BitWidth.ONE;
   boolean threeState = false; // true;
@@ -128,17 +125,16 @@ class PinAttributes extends ProbeAttributes {
       if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
     } else if (attr == Pin.ATTR_TRISTATE) {
-      boolean NewThree = ((Boolean) value).booleanValue();
+      boolean NewThree = (Boolean) value;
       if (threeState == NewThree) return;
       threeState = NewThree;
     } else if (attr == Pin.ATTR_TYPE) {
-      int Newtype = ((Boolean) value).booleanValue() ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
+      int Newtype = (Boolean) value ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
       if (type == Newtype) return;
       type = Newtype;
     } else if (attr == Pin.ATTR_PULL) {
-      Object newPull = value;
-      if (pull.equals(newPull)) return;
-      pull = newPull;
+    if (pull.equals(value)) return;
+      pull = value;
     } else if (attr == PROBEAPPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;
       if (Appearance.equals(NewAppearance)) return;

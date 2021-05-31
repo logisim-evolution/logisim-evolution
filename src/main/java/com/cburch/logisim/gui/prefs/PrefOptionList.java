@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,11 +39,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class PrefOptionList implements ActionListener, PropertyChangeListener {
-  private PrefMonitor<String> pref;
-  private StringGetter labelStr;
+  private final PrefMonitor<String> pref;
+  private final StringGetter labelStr;
 
-  private JLabel label;
-  private JComboBox<PrefOption> combo;
+  private final JLabel label;
+  private final JComboBox<PrefOption> combo;
 
   public PrefOptionList(PrefMonitor<String> pref, StringGetter labelStr, PrefOption[] options) {
     this.pref = pref;
@@ -92,7 +92,7 @@ public class PrefOptionList implements ActionListener, PropertyChangeListener {
 
   private void selectOption(Object value) {
     for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-      PrefOption opt = (PrefOption) combo.getItemAt(i);
+      PrefOption opt = combo.getItemAt(i);
       if (opt.getValue().equals(value)) {
         combo.setSelectedItem(opt);
         return;

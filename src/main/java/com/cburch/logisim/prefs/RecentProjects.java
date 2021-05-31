@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,14 +33,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 class RecentProjects implements PreferenceChangeListener {
   private static class FileTime {
-    private long time;
-    private File file;
+    private final long time;
+    private final File file;
 
     public FileTime(File file, long time) {
       this.time = time;
@@ -59,15 +60,15 @@ class RecentProjects implements PreferenceChangeListener {
   }
 
   private static boolean isSame(Object a, Object b) {
-    return a == null ? b == null : a.equals(b);
+    return Objects.equals(a, b);
   }
 
   private static final String BASE_PROPERTY = "recent";
 
   private static final int NUM_RECENT = 10;
-  private File[] recentFiles;
+  private final File[] recentFiles;
 
-  private long[] recentTimes;
+  private final long[] recentTimes;
 
   RecentProjects() {
     recentFiles = new File[NUM_RECENT];
@@ -91,7 +92,7 @@ class RecentProjects implements PreferenceChangeListener {
       long time = Long.parseLong(encoding.substring(0, semi));
       File file = new File(encoding.substring(semi + 1));
       updateInto(index, time, file);
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignored) {
     }
   }
 
@@ -109,7 +110,7 @@ class RecentProjects implements PreferenceChangeListener {
     }
     Arrays.sort(toSort);
 
-    List<File> ret = new ArrayList<File>();
+    List<File> ret = new ArrayList<>();
     for (long age : toSort) {
       if (age >= 0) {
         int index = -1;
@@ -161,7 +162,7 @@ class RecentProjects implements PreferenceChangeListener {
       try {
         index = Integer.parseInt(rest);
         if (index < 0 || index >= NUM_RECENT) index = -1;
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ignored) {
       }
       if (index >= 0) {
         File oldValue = recentFiles[index];
@@ -203,7 +204,7 @@ class RecentProjects implements PreferenceChangeListener {
     File fileToSave = file;
     try {
       fileToSave = file.getCanonicalFile();
-    } catch (IOException e) {
+    } catch (IOException ignored) {
     }
     long now = System.currentTimeMillis();
     int index = getReplacementIndex(now, fileToSave);

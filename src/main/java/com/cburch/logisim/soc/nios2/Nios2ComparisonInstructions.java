@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ComparisonInstructions implements AssemblerExecutionInterface {
 
@@ -88,9 +87,9 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
    * cmpleui rB, rA, IMMED => cmpltui rB, rA, (IMMED+1)
    */
 
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
   
   private int instruction;
   private boolean valid;
@@ -108,6 +107,7 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     }
   }
   
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState; 
@@ -116,24 +116,30 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     int imm = OpxCodes.get(operation) != SIGN_EXTEND ? immediate&0xFFFF : ((immediate << 16) >> 16);
     int result = 0;
     switch (operation) {
-      case INSTR_CMPEQI  : valueB = imm; 
+      case INSTR_CMPEQI  : valueB = imm;
+                           // fall through
       case INSTR_CMPEQ   : result = (valueA == valueB) ? 1 : 0;
                            break;
       case INSTR_CMPNEI  : valueB = imm;
+                           // fall through
       case INSTR_CMPNE   : result = (valueA != valueB) ? 1 : 0;
                            break;
       case INSTR_CMPGEI  : valueB = imm;
+                           // fall through
       case INSTR_CMPGE   : result = (valueA >= valueB) ? 1 : 0;
                            break;
       case INSTR_CMPGEUI : valueB = imm;
+                           // fall through
       case INSTR_CMPGEU  : long opA = SocSupport.convUnsignedInt(valueA);
                            long opB = SocSupport.convUnsignedInt(valueB);
                            result = (opA >= opB) ? 1 : 0;
                            break;
       case INSTR_CMPLTI  : valueB = imm;
+                           // fall through
       case INSTR_CMPLT   : result = (valueA < valueB) ? 1 : 0;
                            break;
       case INSTR_CMPLTUI : valueB = imm;
+                           // fall through
       case INSTR_CMPLTU  : opA = SocSupport.convUnsignedInt(valueA);
                            opB = SocSupport.convUnsignedInt(valueB);
                            result = (opA < opB) ? 1 : 0;
@@ -146,14 +152,14 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
-    s.append(Nios2State.registerABINames[destination]+",");
-    s.append(Nios2State.registerABINames[sourceA]+",");
+    s.append(Nios2State.registerABINames[destination]).append(",");
+    s.append(Nios2State.registerABINames[sourceA]).append(",");
     if (operation >= INSTR_CMPEQI) {
       int imm = OpxCodes.get(operation) != SIGN_EXTEND ? immediate &0xFFFF : ((immediate<<16)>>16);
-      s.append(Integer.toString(imm));
+      s.append(imm);
     } else {
       s.append(Nios2State.registerABINames[sourceB]);
     }

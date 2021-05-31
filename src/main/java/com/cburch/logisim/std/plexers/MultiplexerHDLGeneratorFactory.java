@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.plexers;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -50,25 +50,24 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     for (int i = 0; i < (1 << nr_of_select_bits); i++)
-      Inputs.put("MuxIn_" + Integer.toString(i), NrOfBits);
+      Inputs.put("MuxIn_" + i, NrOfBits);
     Inputs.put("Enable", 1);
     Inputs.put("Sel", nr_of_select_bits);
     return Inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   make_mux : PROCESS( Enable,");
       for (int i = 0; i < (1 << nr_of_select_bits); i++)
-        Contents.add("                       MuxIn_" + Integer.toString(i) + ",");
+        Contents.add("                       MuxIn_" + i + ",");
       Contents.add("                       Sel )");
       Contents.add("   BEGIN");
       Contents.add("      IF (Enable = '0') THEN");
@@ -80,13 +79,13 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       for (int i = 0; i < (1 << nr_of_select_bits) - 1; i++)
         Contents.add(
             "            WHEN "
-                + IntToBin(i, nr_of_select_bits, HDLType)
+                + IntToBin(i, nr_of_select_bits)
                 + " => MuxOut <= MuxIn_"
-                + Integer.toString(i)
+                + i
                 + ";");
       Contents.add(
           "            WHEN OTHERS  => MuxOut <= MuxIn_"
-              + Integer.toString((1 << nr_of_select_bits) - 1)
+              + ((1 << nr_of_select_bits) - 1)
               + ";");
       Contents.add("         END CASE;");
       Contents.add("      END IF;");
@@ -99,13 +98,13 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Contents.add("      if (~Enable) s_selected_vector <= 0;");
       Contents.add("      else case (Sel)");
       for (int i = 0; i < (1 << nr_of_select_bits) - 1; i++) {
-        Contents.add("         " + IntToBin(i, nr_of_select_bits, HDLType) + ":");
-        Contents.add("            s_selected_vector <= MuxIn_" + Integer.toString(i) + ";");
+        Contents.add("         " + IntToBin(i, nr_of_select_bits) + ":");
+        Contents.add("            s_selected_vector <= MuxIn_" + i + ";");
       }
       Contents.add("         default:");
       Contents.add(
           "            s_selected_vector <= MuxIn_"
-              + Integer.toString((1 << nr_of_select_bits) - 1)
+              + ((1 << nr_of_select_bits) - 1)
               + ";");
       Contents.add("      endcase");
       Contents.add("   end");
@@ -115,7 +114,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Outputs.put("MuxOut", NrOfBits);
     return Outputs;
@@ -123,16 +122,15 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
     return Parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) ParameterMap.put(NrOfBitsStr, NrOfBits);
@@ -140,9 +138,8 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
@@ -152,35 +149,31 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     for (int i = 0; i < select_input_index; i++)
       PortMap.putAll(
           GetNetMap(
-              "MuxIn_" + Integer.toString(i), true, ComponentInfo, i, Reporter, HDLType, Nets));
+              "MuxIn_" + i, true, ComponentInfo, i, Nets));
     // now select..
     PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, HDLType, Nets));
+        GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
     // now connect enable input...
     if (ComponentInfo.GetComponent()
         .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)
-        .booleanValue()) {
+        .getValue(Plexers.ATTR_ENABLE)) {
       PortMap.putAll(
           GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Reporter, HDLType, Nets));
+              "Enable", false, ComponentInfo, select_input_index + 1, Nets));
     } else {
-      String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
-      PortMap.put("Enable", SetBit);
-      select_input_index--; // decrement pin index because enable doesn't
-      // exist...
+      PortMap.put("Enable", HDL.oneBit());
+      select_input_index--; // decrement pin index because enable doesn't exist...
     }
     // finally output
-    PortMap.putAll(
-        GetNetMap("MuxOut", true, ComponentInfo, select_input_index + 2, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("MuxOut", true, ComponentInfo, select_input_index + 2, Nets));
     return PortMap;
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    if (HDLType.equals(VERILOG)) Regs.put("s_selected_vector", NrOfBits);
+    if (HDL.isVerilog()) Regs.put("s_selected_vector", NrOfBits);
     return Regs;
   }
 
@@ -190,7 +183,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

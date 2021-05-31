@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,11 +48,11 @@ import javax.swing.JMenuItem;
 class MenuHelp extends JMenu implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private LogisimMenuBar menubar;
-  private JMenuItem tutorial = new JMenuItem();
-  private JMenuItem guide = new JMenuItem();
-  private JMenuItem library = new JMenuItem();
-  private JMenuItem about = new JMenuItem();
+  private final LogisimMenuBar menubar;
+  private final JMenuItem tutorial = new JMenuItem();
+  private final JMenuItem guide = new JMenuItem();
+  private final JMenuItem library = new JMenuItem();
+  private final JMenuItem about = new JMenuItem();
   private HelpSet helpSet;
   private String helpSetUrl = "";
   private JHelp helpComponent;
@@ -84,7 +84,7 @@ class MenuHelp extends JMenu implements ActionListener {
     } else if (src == library) {
       showHelp("libs");
     } else if (src == about) {
-      About.showAboutDialog(menubar.getParentWindow());
+      About.showAboutDialog(menubar.getParentFrame());
     }
   }
 
@@ -105,14 +105,14 @@ class MenuHelp extends JMenu implements ActionListener {
         URL hsURL = HelpSet.findHelpSet(loader, helpUrl);
         if (hsURL == null) {
           disableHelp();
-          OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpNotFoundError"));
+          OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpNotFoundError"));
           return;
         }
         helpSetUrl = helpUrl;
         helpSet = new HelpSet(null, hsURL);
         helpComponent = new JHelp(helpSet);
         if (helpFrame == null) {
-          helpFrame = new LFrame(false,null);
+          helpFrame = new LFrame.Dialog(null);
           helpFrame.setTitle(S.get("helpWindowTitle"));
           helpFrame.getContentPane().add(helpComponent);
           helpFrame.setPreferredSize(
@@ -128,7 +128,7 @@ class MenuHelp extends JMenu implements ActionListener {
       } catch (Exception e) {
         disableHelp();
         e.printStackTrace();
-        OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpUnavailableError"));
+        OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpUnavailableError"));
         return;
       }
     }
@@ -158,7 +158,7 @@ class MenuHelp extends JMenu implements ActionListener {
     } catch (Exception e) {
       disableHelp();
       e.printStackTrace();
-      OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpDisplayError"));
+      OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpDisplayError"));
     }
   }
 }

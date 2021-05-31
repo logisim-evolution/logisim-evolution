@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,7 +41,6 @@ import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -66,8 +65,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.io.IOException;
-
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.InputMap;
@@ -83,17 +80,15 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("rawtypes")
   private static class FormatModel extends AbstractListModel implements ComboBoxModel {
     static int getFormatIndex(int choice) {
-      switch (choice) {
-        case AnalyzerModel.FORMAT_PRODUCT_OF_SUMS:
-          return 1;
-        default:
-          return 0;
+      if (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
+        return 1;
       }
+      return 0;
     }
 
     private static final long serialVersionUID = 1L;
 
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     private FormatModel() {
@@ -107,12 +102,10 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     int getSelectedFormat() {
-      switch (selected) {
-        case 1:
-          return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
-        default:
-          return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+      if (selected == 1) {
+        return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
       }
+      return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
     }
 
     public Object getSelectedItem() {
@@ -142,7 +135,7 @@ class MinimizedTab extends AnalyzerTab {
   private static class StyleModel extends AbstractListModel implements ComboBoxModel {
     private static final long serialVersionUID = 1L;
 
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     private StyleModel() {
@@ -188,7 +181,7 @@ class MinimizedTab extends AnalyzerTab {
   public static class NotationModel extends AbstractListModel implements ComboBoxModel {
     private static final long serialVersionUID = 1L;
     
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     public NotationModel() {
@@ -270,27 +263,27 @@ class MinimizedTab extends AnalyzerTab {
 
   private static final long serialVersionUID = 1L;
 
-  private OutputSelector selector;
-  private KarnaughMapPanel karnaughMap;
-  private JLabel formatLabel = new JLabel();
-  private JLabel styleLabel = new JLabel();
-  private JLabel notationLabel = new JLabel();
+  private final OutputSelector selector;
+  private final KarnaughMapPanel karnaughMap;
+  private final JLabel formatLabel = new JLabel();
+  private final JLabel styleLabel = new JLabel();
+  private final JLabel notationLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox formatChoice = new JComboBox<>(new FormatModel());
+  private final JComboBox formatChoice = new JComboBox<>(new FormatModel());
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox formatStyle = new JComboBox<>(new StyleModel());
+  private final JComboBox formatStyle = new JComboBox<>(new StyleModel());
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private JComboBox notationChoice = new JComboBox<>(new NotationModel());
+  private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
-  private ExpressionView minimizedExpr = new ExpressionView();
-  private JButton setAsExpr = new JButton();
+  private final ExpressionView minimizedExpr = new ExpressionView();
+  private final JButton setAsExpr = new JButton();
 
-  private MyListener myListener = new MyListener();
-  private AnalyzerModel model;
-  private OutputExpressions outputExprs;
+  private final MyListener myListener = new MyListener();
+  private final AnalyzerModel model;
+  private final OutputExpressions outputExprs;
 
   public MinimizedTab(AnalyzerModel model, LogisimMenuBar menubar) {
     this.model = model;
@@ -334,10 +327,9 @@ class MinimizedTab extends AnalyzerTab {
 
     String selected = selector.getSelectedOutput();
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
-    TransferHandler ccpTab, ccpKmap, ccpExpr;
-    setTransferHandler(ccpTab = new MinimizedTransferHandler());
-    karnaughMap.setTransferHandler(ccpKmap = new KmapTransferHandler());
-    minimizedExpr.setTransferHandler(ccpExpr = new ExpressionTransferHandler());
+    setTransferHandler(new MinimizedTransferHandler());
+    karnaughMap.setTransferHandler(new KmapTransferHandler());
+    minimizedExpr.setTransferHandler(new ExpressionTransferHandler());
 
     InputMap inputMap1 = getInputMap();
     InputMap inputMap2 = karnaughMap.getInputMap();
@@ -349,9 +341,9 @@ class MinimizedTab extends AnalyzerTab {
       inputMap3.put(accel, item);
     }
 
-    getActionMap().put(LogisimMenuBar.COPY, ccpTab.getCopyAction());
-    karnaughMap.getActionMap().put(LogisimMenuBar.COPY, ccpKmap.getCopyAction());
-    minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, ccpExpr.getCopyAction());
+    getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    karnaughMap.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
 
     MouseMotionAdapter m = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
@@ -448,7 +440,7 @@ class MinimizedTab extends AnalyzerTab {
     if (model.getTruthTable().getRowCount() > 4096) {
       (new Analyzer.PleaseWait<Void>(S.get("expressionCalc"), this) {
             @Override
-            public Void doInBackground() throws Exception {
+            public Void doInBackground() {
               model.getOutputExpressions().getExpression(output);
               return null;
             }
@@ -467,7 +459,7 @@ class MinimizedTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       boolean viewing = minimizedExpr.isFocusOwner()
@@ -496,6 +488,8 @@ class MinimizedTab extends AnalyzerTab {
   };
 
   private class MinimizedTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    
     @Override
     protected Transferable createTransferable(JComponent c) {
       if (minimizedExpr.isFocusOwner()) {
@@ -517,6 +511,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class KmapTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new KmapSelection(karnaughMap);
@@ -524,6 +520,8 @@ class MinimizedTab extends AnalyzerTab {
   }
   
   private class ExpressionTransferHandler extends MinimizedTransferHandler {
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       return new ExpressionSelection(minimizedExpr.getRenderData());
@@ -550,7 +548,7 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     @Override
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (!DataFlavor.imageFlavor.equals(flavor)) {
         throw new UnsupportedFlavorException(flavor);
       }
@@ -597,7 +595,7 @@ class MinimizedTab extends AnalyzerTab {
     return printHandler;
   }
 
-  PrintHandler printHandler = new PrintHandler() {
+  final PrintHandler printHandler = new PrintHandler() {
     @Override
     public Dimension getExportImageSize() {
       int kWidth = karnaughMap.getKMapDim().width;

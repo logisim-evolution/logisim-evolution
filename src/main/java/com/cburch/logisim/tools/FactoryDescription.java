@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -57,12 +57,12 @@ public class FactoryDescription {
 
   static final Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
 
-  private String name;
-  private StringGetter displayName;
+  private final String name;
+  private final StringGetter displayName;
   private String iconName;
   private boolean iconLoadAttempted;
   private Icon icon;
-  private String factoryClassName;
+  private final String factoryClassName;
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;
@@ -119,7 +119,7 @@ public class FactoryDescription {
         msg = "loading class";
         Class<?> factoryClass = loader.loadClass(name);
         msg = "creating instance";
-        Object factoryValue = factoryClass.newInstance();
+        Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
         msg = "converting to factory";
         if (factoryValue instanceof ComponentFactory) {
           ret = (ComponentFactory) factoryValue;
@@ -142,14 +142,12 @@ public class FactoryDescription {
 
   public Icon getIcon() {
     Icon ret = icon;
-    if (ret != null || iconLoadAttempted) {
-      return ret;
-    } else {
+    if (ret == null && !iconLoadAttempted) {
       ret = Icons.getIcon(iconName);
       icon = ret;
       iconLoadAttempted = true;
-      return ret;
     }
+    return ret;
   }
 
   public String getName() {

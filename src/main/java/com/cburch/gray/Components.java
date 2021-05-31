@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,7 +40,7 @@ public class Components extends Library {
    * a slightly more general concept than components; practically speaking, though, you'll most
    * often want to create AddTools for new components that can be added into the circuit.
    */
-  private List<AddTool> tools;
+  private final List<AddTool> tools;
 
   /**
    * Constructs an instance of this library. This constructor is how Logisim accesses first when it
@@ -50,11 +50,9 @@ public class Components extends Library {
   public Components() {
     tools =
         Arrays.asList(
-            new AddTool[] {
-              new AddTool(new GrayIncrementer()),
-              new AddTool(new SimpleGrayCounter()),
-              new AddTool(new GrayCounter()),
-            });
+            new AddTool(new GrayIncrementer()),
+            new AddTool(new SimpleGrayCounter()),
+            new AddTool(new GrayCounter()));
   }
 
   /** Returns the name of the library that the user will see. */

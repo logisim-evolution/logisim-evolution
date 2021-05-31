@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,7 +59,7 @@ import java.util.jar.Manifest;
 
 public class LogisimFileActions {
   private static class AddCircuit extends Action {
-    private Circuit circuit;
+    private final Circuit circuit;
 
     AddCircuit(Circuit circuit) {
       this.circuit = circuit;
@@ -82,7 +82,7 @@ public class LogisimFileActions {
   }
 
   private static class AddVhdl extends Action {
-    private VhdlContent vhdl;
+    private final VhdlContent vhdl;
 
     AddVhdl(VhdlContent vhdl) {
       this.vhdl = vhdl;
@@ -105,14 +105,14 @@ public class LogisimFileActions {
   }
 
   private static class MergeFile extends Action {
-    private ArrayList<Circuit> MergedCircuits = new ArrayList<Circuit>();
-    private ArrayList<File> JarLibs = new ArrayList<File>();
-    private ArrayList<File> LogiLibs = new ArrayList<File>();
+    private final ArrayList<Circuit> MergedCircuits = new ArrayList<>();
+    private final ArrayList<File> JarLibs = new ArrayList<>();
+    private final ArrayList<File> LogiLibs = new ArrayList<>();
 
     MergeFile(LogisimFile mergelib, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<String, Library>();
-      HashSet<String> ToolList = new HashSet<String>();
-      HashMap<String, String> Error = new HashMap<String, String>();
+      HashMap<String, Library> LibNames = new HashMap<>();
+      HashSet<String> ToolList = new HashSet<>();
+      HashMap<String, String> Error = new HashMap<>();
       boolean cancontinue = true;
       for (Library lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, LibNames);
@@ -120,10 +120,10 @@ public class LogisimFileActions {
       LibraryTools.BuildToolList(source, ToolList);
       LibraryTools.RemovePresentLibraries(mergelib, LibNames, false);
       if (LibraryTools.LibraryIsConform(
-          mergelib, new HashSet<String>(), new HashSet<String>(), Error)) {
+          mergelib, new HashSet<>(), new HashSet<>(), Error)) {
         /* Okay the library is now ready for merge */
         for (Library lib : mergelib.getLibraries()) {
-          HashSet<String> NewToolList = new HashSet<String>();
+          HashSet<String> NewToolList = new HashSet<>();
           LibraryTools.BuildToolList(lib, NewToolList);
           ArrayList<String> ret = LibraryTools.LibraryCanBeMerged(ToolList, NewToolList);
           if (!ret.isEmpty()) {
@@ -159,7 +159,7 @@ public class LogisimFileActions {
         for (Circuit circ : mergelib.getCircuits()) {
           String CircName = circ.getName().toUpperCase();
           if (ToolList.contains(CircName)) {
-            ArrayList<String> ret = new ArrayList<String>();
+            ArrayList<String> ret = new ArrayList<>();
             ret.add(CircName);
             HashMap<String, String> ToolNames = LibraryTools.GetToolLocation(source, "", ret);
             for (String key : ToolNames.keySet()) {
@@ -210,8 +210,8 @@ public class LogisimFileActions {
     }
 
     private boolean CircuitsAreEqual(Circuit orig, Circuit newone) {
-      HashMap<Location, Component> origcomps = new HashMap<Location, Component>();
-      HashMap<Location, Component> newcomps = new HashMap<Location, Component>();
+      HashMap<Location, Component> origcomps = new HashMap<>();
+      HashMap<Location, Component> newcomps = new HashMap<>();
       for (Component comp : orig.getWires()) {
         origcomps.put(comp.getLocation(), comp);
       }
@@ -258,22 +258,13 @@ public class LogisimFileActions {
     public void doIt(Project proj) {
       Loader loader = proj.getLogisimFile().getLoader();
       /* first we are going to merge the jar libraries */
-      for (int i = 0; i < JarLibs.size(); i++) {
+      for (File jarLib : JarLibs) {
         String className = null;
-        JarFile jarFile = null;
-        try {
-          jarFile = new JarFile(JarLibs.get(i));
+        try (JarFile jarFile = new JarFile(jarLib)) {
           Manifest manifest = jarFile.getManifest();
           className = manifest.getMainAttributes().getValue("Library-Class");
         } catch (IOException e) {
           // if opening the JAR file failed, do nothing
-        } finally {
-          if (jarFile != null) {
-            try {
-              jarFile.close();
-            } catch (IOException e) {
-            }
-          }
         }
         // if the class name was not found, go back to the good old dialog
         if (className == null) {
@@ -284,17 +275,18 @@ public class LogisimFileActions {
                   S.get("jarClassNameTitle"),
                   OptionPane.QUESTION_MESSAGE);
           // if user canceled selection, abort
-          if (className == null) continue;
+          if (className == null)
+            continue;
         }
-        Library lib = loader.loadJarLibrary(JarLibs.get(i), className);
+        Library lib = loader.loadJarLibrary(jarLib, className);
         if (lib != null) {
           proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
         }
       }
       JarLibs.clear();
       /* next we are going to load the logisimfile  libraries */
-      for (int i = 0; i < LogiLibs.size(); i++) {
-        Library put = loader.loadLogisimLibrary(LogiLibs.get(i));
+      for (File logiLib : LogiLibs) {
+        Library put = loader.loadLogisimLibrary(logiLib);
         if (put != null) {
           proj.doAction(LogisimFileActions.loadLibrary(put, proj.getLogisimFile()));
         }
@@ -305,7 +297,7 @@ public class LogisimFileActions {
         Circuit NewCirc = null;
         boolean replace = false;
         for (Circuit circs : proj.getLogisimFile().getCircuits())
-          if (circs.getName().toUpperCase().equals(circ.getName().toUpperCase())) {
+          if (circs.getName().equalsIgnoreCase(circ.getName())) {
             NewCirc = circs;
             replace = true;
           }
@@ -327,7 +319,7 @@ public class LogisimFileActions {
           proj.doAction(LogisimFileActions.addCircuit(NewCirc));
         } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
       }
-      HashMap<String, AddTool> AvailableTools = new HashMap<String, AddTool>();
+      HashMap<String, AddTool> AvailableTools = new HashMap<>();
       LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
       /* in the second step we are going to add the rest of the contents */
       for (Circuit circ : MergedCircuits) {
@@ -373,37 +365,40 @@ public class LogisimFileActions {
   }
 
   private static class LoadLibraries extends Action {
-    private ArrayList<Library> MergedLibs = new ArrayList<Library>();
+    private final ArrayList<Library> MergedLibs = new ArrayList<>();
 
     LoadLibraries(Library[] libs, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<String, Library>();
-      HashSet<String> ToolList = new HashSet<String>();
-      HashMap<String, String> Error = new HashMap<String, String>();
+      HashMap<String, Library> LibNames = new HashMap<>();
+      HashSet<String> ToolList = new HashSet<>();
+      HashMap<String, String> Error = new HashMap<>();
       for (Library lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, LibNames);
       }
       LibraryTools.BuildToolList(source, ToolList);
-      for (int i = 0; i < libs.length; i++) {
-        if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
+      for (Library lib : libs) {
+        if (LibNames.containsKey(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
               null,
-              "\"" + libs[i].getName() + "\": " + S.get("LibraryAlreadyLoaded"),
-              S.get("LibLoadErrors") + " " + libs[i].getName() + " !",
+              "\"" + lib.getName() + "\": " + S.get("LibraryAlreadyLoaded"),
+              S.get("LibLoadErrors") + " " + lib.getName() + " !",
               OptionPane.WARNING_MESSAGE);
         } else {
-          LibraryTools.RemovePresentLibraries(libs[i], LibNames, false);
+          LibraryTools.RemovePresentLibraries(lib, LibNames, false);
           if (LibraryTools.LibraryIsConform(
-              libs[i], new HashSet<String>(), new HashSet<String>(), Error)) {
-            HashSet<String> AddedToolList = new HashSet<String>();
-            LibraryTools.BuildToolList(libs[i], AddedToolList);
+              lib, new HashSet<>(), new HashSet<>(), Error)) {
+            HashSet<String> AddedToolList = new HashSet<>();
+            LibraryTools.BuildToolList(lib, AddedToolList);
             for (String tool : AddedToolList)
-              if (ToolList.contains(tool)) Error.put(tool, S.get("LibraryMultipleToolError"));
+              if (ToolList.contains(tool))
+                Error.put(tool, S.get("LibraryMultipleToolError"));
             if (Error.keySet().isEmpty()) {
-              LibraryTools.BuildLibraryList(libs[i], LibNames);
+              LibraryTools.BuildLibraryList(lib, LibNames);
               ToolList.addAll(AddedToolList);
-              MergedLibs.add(libs[i]);
-            } else LibraryTools.ShowErrors(libs[i].getName(), Error);
-          } else LibraryTools.ShowErrors(libs[i].getName(), Error);
+              MergedLibs.add(lib);
+            } else
+              LibraryTools.ShowErrors(lib.getName(), Error);
+          } else
+            LibraryTools.ShowErrors(lib.getName(), Error);
         }
       }
     }
@@ -424,23 +419,22 @@ public class LogisimFileActions {
     }
 
     private void repair(Project proj, Library lib) {
-      HashMap<String, AddTool> AvailableTools = new HashMap<String, AddTool>();
+      HashMap<String, AddTool> AvailableTools = new HashMap<>();
       LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
       if (lib instanceof LogisimFile) {
         LogisimFile ThisLib = (LogisimFile) lib;
-        Iterator<Circuit> iter = ThisLib.getCircuits().iterator();
-        while (iter.hasNext()) {
-          Circuit circ = iter.next();
+        for (Circuit circ : ThisLib.getCircuits()) {
           for (Component tool : circ.getNonWires()) {
-            if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {
+            if (AvailableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
               AddTool current = AvailableTools.get(tool.getFactory().getName().toUpperCase());
               if (current != null) {
                 tool.setFactory(current.getFactory());
               } else if (tool.getFactory().getName().equals("Text")) {
                 Component NewComp = Text.FACTORY.createComponent(tool.getLocation(),
-                     (AttributeSet) tool.getAttributeSet().clone());
+                    (AttributeSet) tool.getAttributeSet().clone());
                 tool.setFactory(NewComp.getFactory());
-              } else System.out.println("Not found:" + tool.getFactory().getName());
+              } else
+                System.out.println("Not found:" + tool.getFactory().getName());
             }
           }
         }
@@ -471,9 +465,9 @@ public class LogisimFileActions {
   }
 
   private static class MoveCircuit extends Action {
-    private AddTool tool;
+    private final AddTool tool;
     private int fromIndex;
-    private int toIndex;
+    private final int toIndex;
 
     MoveCircuit(AddTool tool, int toIndex) {
       this.tool = tool;
@@ -510,7 +504,7 @@ public class LogisimFileActions {
   }
 
   private static class RemoveCircuit extends Action {
-    private Circuit circuit;
+    private final Circuit circuit;
     private int index;
 
     RemoveCircuit(Circuit circuit) {
@@ -535,7 +529,7 @@ public class LogisimFileActions {
   }
 
   private static class RemoveVhdl extends Action {
-    private VhdlContent vhdl;
+    private final VhdlContent vhdl;
     private int index;
 
     RemoveVhdl(VhdlContent vhdl) {
@@ -560,9 +554,9 @@ public class LogisimFileActions {
   }
 
   private static class RevertAttributeValue {
-    private AttributeSet attrs;
-    private Attribute<Object> attr;
-    private Object value;
+    private final AttributeSet attrs;
+    private final Attribute<Object> attr;
+    private final Object value;
 
     RevertAttributeValue(AttributeSet attrs, Attribute<Object> attr, Object value) {
       this.attrs = attrs;
@@ -578,11 +572,11 @@ public class LogisimFileActions {
   private static class RevertDefaults extends Action {
     private Options oldOpts;
     private ArrayList<Library> libraries = null;
-    private ArrayList<RevertAttributeValue> attrValues;
+    private final ArrayList<RevertAttributeValue> attrValues;
 
     RevertDefaults() {
       libraries = null;
-      attrValues = new ArrayList<RevertAttributeValue>();
+      attrValues = new ArrayList<>();
     }
 
     private void copyToolAttributes(Library srcLib, Library dstLib) {
@@ -617,7 +611,7 @@ public class LogisimFileActions {
           String desc = src.getLoader().getDescriptor(srcLib);
           dstLib = dst.getLoader().loadLibrary(desc);
           proj.getLogisimFile().addLibrary(dstLib);
-          if (libraries == null) libraries = new ArrayList<Library>();
+          if (libraries == null) libraries = new ArrayList<>();
           libraries.add(dstLib);
         }
         copyToolAttributes(srcLib, dstLib);
@@ -652,7 +646,7 @@ public class LogisimFileActions {
 
   private static class SetMainCircuit extends Action {
     private Circuit oldval;
-    private Circuit newval;
+    private final Circuit newval;
 
     SetMainCircuit(Circuit circuit) {
       newval = circuit;
@@ -676,7 +670,7 @@ public class LogisimFileActions {
   }
 
   private static class UnloadLibraries extends Action {
-    private Library[] libs;
+    private final Library[] libs;
 
     UnloadLibraries(Library[] libs) {
       this.libs = libs;
@@ -700,8 +694,8 @@ public class LogisimFileActions {
 
     @Override
     public void undo(Project proj) {
-      for (int i = 0; i < libs.length; i++) {
-        proj.getLogisimFile().addLibrary(libs[i]);
+      for (Library lib : libs) {
+        proj.getLogisimFile().addLibrary(lib);
       }
     }
   }

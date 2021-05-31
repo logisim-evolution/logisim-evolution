@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -139,19 +139,17 @@ public class Tunnel extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
     TunnelAttributes attrs = (TunnelAttributes) attrsBase;
     Bounds bds = attrs.getOffsetBounds();
-    if (bds != null) {
-      return bds;
-    } else {
+    if (bds == null) {
       int ht = attrs.getFont().getSize();
       int wd = ht * attrs.getLabel().length() / 2;
       bds = computeBounds(attrs, wd, ht, null, "");
       attrs.setOffsetBounds(bds);
-      return bds;
     }
+    return bds;
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 
@@ -247,6 +245,6 @@ public class Tunnel extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    ; // nothing to do - handled by circuit
+    // nothing to do - handled by circuit
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -95,12 +95,13 @@ public class CsvInterpretor {
    */
 
   private ArrayList<List<String>> content;
-  JFrame parent;
-  private VariableList inputs, outputs;
-  private String FileName;
+  final JFrame parent;
+  private final VariableList inputs;
+  private final VariableList outputs;
+  private final String FileName;
 
   public CsvInterpretor(File file, CsvParameter param, JFrame parent) {
-    content = new ArrayList<List<String>>();
+    content = new ArrayList<>();
     inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
     outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
     FileName = file.getName();
@@ -110,17 +111,16 @@ public class CsvInterpretor {
       return;
     }
     if (!getInputsOutputs() || !CheckEntries()) {
-      content = new ArrayList<List<String>>();
-      return;
+      content = new ArrayList<>();
     }
   }
 
   public void getTruthTable(AnalyzerModel model) throws IOException {
     if (content.size() <= 1) return;
-    ArrayList<Entry[]> rows = new ArrayList<Entry[]>();
+    ArrayList<Entry[]> rows = new ArrayList<>();
     int NrOfEntries = inputs.bits.size() + outputs.bits.size();
     for (int row = 1; row < content.size(); row++) {
-      ArrayList<Entry> Entryrow = new ArrayList<Entry>();
+      ArrayList<Entry> Entryrow = new ArrayList<>();
       int col = 0;
       List<String> line = content.get(row);
       while (col < line.size()) {
@@ -193,7 +193,7 @@ public class CsvInterpretor {
 
   private boolean IsDuplicate(String name) {
     for (Var v : inputs.vars) {
-      if (v.name.toLowerCase().equals(name.toLowerCase())) {
+      if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
             S.fmt("CsvDuplicatedVar", 1, FileName, name),
@@ -203,7 +203,7 @@ public class CsvInterpretor {
       }
     }
     for (Var v : outputs.vars) {
-      if (v.name.toLowerCase().equals(name.toLowerCase())) {
+      if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
             S.fmt("CsvDuplicatedVar", 1, FileName, name),
@@ -241,7 +241,7 @@ public class CsvInterpretor {
         return false;
       }
     }
-    HashMap<String, ArrayList<Boolean>> bitspresent = new HashMap<String, ArrayList<Boolean>>();
+    HashMap<String, ArrayList<Boolean>> bitspresent = new HashMap<>();
     boolean ProcessingInputs = true;
     boolean InOuSepDetected = false;
     /* now read the cells */
@@ -288,7 +288,7 @@ public class CsvInterpretor {
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
-          if (sels.get(BitIndex) == true) {
+          if (sels.get(BitIndex)) {
             OptionPane.showMessageDialog(
                 parent,
                 S.fmt("CsvDuplicatedBit", 1, FileName, BitIndex, name),
@@ -300,7 +300,7 @@ public class CsvInterpretor {
         } else {
           if (IsDuplicate(name)) return false;
           Var var = new Var(name, BitIndex + 1);
-          ArrayList<Boolean> sels = new ArrayList<Boolean>();
+          ArrayList<Boolean> sels = new ArrayList<>();
           for (int a = 0; a < BitIndex; a++) sels.add(false);
           sels.add(true);
           bitspresent.put(name.toLowerCase(), sels);
@@ -404,8 +404,8 @@ public class CsvInterpretor {
     boolean inQuote = false;
     int nrofcontquotes = 0;
 
-    StringBuffer working = new StringBuffer();
-    List<String> result = new ArrayList<String>();
+    StringBuilder working = new StringBuilder();
+    List<String> result = new ArrayList<>();
     for (char kar : line.toCharArray()) {
       if (inQuote) {
         if (kar == quote) {
@@ -413,7 +413,7 @@ public class CsvInterpretor {
         } else {
           if (nrofcontquotes > 1) {
             int quotestoprint = nrofcontquotes >> 1;
-            for (int i = 0; i < quotestoprint; i++) working.append(quote);
+            working.append(String.valueOf(quote).repeat(quotestoprint));
             nrofcontquotes -= quotestoprint << 1;
           }
           if (nrofcontquotes == 1) {
@@ -422,7 +422,7 @@ public class CsvInterpretor {
               if (working.length() == 0) result.add(null);
               else {
                 result.add(working.toString());
-                working = new StringBuffer();
+                working = new StringBuilder();
               }
             } else {
               working.append(kar);
@@ -435,7 +435,7 @@ public class CsvInterpretor {
           if (working.length() == 0) result.add(null);
           else {
             result.add(working.toString());
-            working = new StringBuffer();
+            working = new StringBuilder();
           }
         } else if (kar == quote) {
           inQuote = true;

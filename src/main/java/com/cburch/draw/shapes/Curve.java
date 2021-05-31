@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,14 +45,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Curve extends FillableCanvasObject {
-  private static double[] toArray(Location loc) {
-    return new double[] {loc.getX(), loc.getY()};
-  }
-
   private Location p0;
   private Location p1;
   private Location p2;
-
   private Bounds bounds;
 
   public Curve(Location end0, Location end1, Location ctrl) {
@@ -60,6 +55,10 @@ public class Curve extends FillableCanvasObject {
     this.p1 = ctrl;
     this.p2 = end1;
     bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
+  }
+
+  private static double[] toArray(Location loc) {
+    return new double[] {loc.getX(), loc.getY()};
   }
 
   @Override
@@ -94,9 +93,7 @@ public class Curve extends FillableCanvasObject {
     }
     if (type != DrawAttr.PAINT_STROKE) {
       QuadCurve2D curve = getCurve(null);
-      if (curve.contains(loc.getX(), loc.getY())) {
-        return true;
-      }
+      return curve.contains(loc.getX(), loc.getY());
     }
     return false;
   }
@@ -223,15 +220,15 @@ public class Curve extends FillableCanvasObject {
   public Handle moveHandle(HandleGesture gesture) {
     Handle[] hs = getHandleArray(gesture);
     Handle ret = null;
-    if (!hs[0].equals(p0)) {
+    if (!hs[0].getLocation().equals(p0)) {
       p0 = hs[0].getLocation();
       ret = hs[0];
     }
-    if (!hs[1].equals(p1)) {
+    if (!hs[1].getLocation().equals(p1)) {
       p1 = hs[1].getLocation();
       ret = hs[1];
     }
-    if (!hs[2].equals(p2)) {
+    if (!hs[2].getLocation().equals(p2)) {
       p2 = hs[2].getLocation();
       ret = hs[2];
     }

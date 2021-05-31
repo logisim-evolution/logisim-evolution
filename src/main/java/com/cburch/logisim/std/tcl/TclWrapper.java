@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -68,7 +68,7 @@ public class TclWrapper {
   private static boolean fileExists = false;
 
   private Process process;
-  private TclComponentData tclConsole;
+  private final TclComponentData tclConsole;
   private File tclContentFile;
 
   private TclWrapperState state = TclWrapperState.STOPPED;
@@ -118,7 +118,7 @@ public class TclWrapper {
 
     /* Create the TCL process */
     ProcessBuilder builder;
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
 
     command.add("tclsh");
     command.add(TCL_PATH + "tcl_wrapper.tcl");
@@ -148,61 +148,56 @@ public class TclWrapper {
 
     /* This thread checks the wrapper started well, it's run from now */
     new Thread(
-            new Runnable() {
+        () -> {
+          /* Through this we can get the process output */
+          BufferedReader reader =
+              new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String line;
+          try {
+            StringBuilder errorMessage = new StringBuilder();
 
-              @Override
-              public void run() {
-                /* Through this we can get the process output */
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                try {
-                  String errorMessage = "";
+            /* Here we check that the wrapper has correctly started */
+            while ((line = reader.readLine()) != null) {
 
-                  /* Here we check that the wrapper has correctly started */
-                  while ((line = reader.readLine()) != null) {
+              errorMessage.append("\n").append(line);
+              if (line.contains("TCL_WRAPPER_RUNNING")) {
 
-                    errorMessage += "\n" + line;
-                    if (line.contains("TCL_WRAPPER_RUNNING")) {
+                new Thread(
+                    () -> {
+                      Scanner sc =
+                          new Scanner(new InputStreamReader(process.getInputStream()));
+                      // Commented out because it shouldn't be
+                      // visible to the user
+                      // Debug only??
+                      String nextLine;
+                      while (sc.hasNextLine()) {
+                        nextLine = sc.nextLine();
+                        if (nextLine.length() > 0)
+                          System.out.println(nextLine);
+                      }
 
-                      new Thread(
-                              new Runnable() {
-                                public void run() {
-                                  Scanner sc =
-                                      new Scanner(new InputStreamReader(process.getInputStream()));
-                                  // Commented out because it shouldn't be
-                                  // visible to the user
-                                  // Debug only??
-                                  String nextLine;
-                                  while (sc.hasNextLine()) {
-                                    nextLine = sc.nextLine();
-                                    if (nextLine.length() > 0) System.out.println(nextLine);
-                                  }
+                      sc.close();
+                      stop();
+                    })
+                    .start();
 
-                                  sc.close();
-                                  stop();
-                                }
-                              })
-                          .start();
+                tclConsole.tclWrapperStartCallback();
 
-                      tclConsole.tclWrapperStartCallback();
+                state = TclWrapperState.RUNNING;
 
-                      state = TclWrapperState.RUNNING;
-
-                      return;
-                    }
-                  }
-
-                  MessageBox userInfoBox =
-                      new MessageBox(
-                          "Error starting TCL wrapper", errorMessage, OptionPane.ERROR_MESSAGE);
-                  userInfoBox.show();
-
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
+                return;
               }
-            })
+            }
+
+            MessageBox userInfoBox =
+                new MessageBox(
+                    "Error starting TCL wrapper", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
+            userInfoBox.show();
+
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        })
         .start();
   }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -127,10 +127,10 @@ public class TextTool extends Tool {
     }
   }
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
 
-  private MyListener listener = new MyListener();
-  private AttributeSet attrs;
+  private final MyListener listener = new MyListener();
+  private final AttributeSet attrs;
   private Caret caret = null;
   private boolean caretCreatingText = false;
   private Canvas caretCanvas = null;

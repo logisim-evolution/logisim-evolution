@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.gui.HDLColorRenderer;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.awt.Component;
 import java.awt.Window;
 import java.util.ArrayList;
@@ -45,126 +44,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public abstract class AttributeSetTableModel implements AttrTableModel, AttributeListener {
-  private class AttrRow implements AttrTableModelRow {
-    private Attribute<Object> attr;
-
-    AttrRow(Attribute<?> attr) {
-      @SuppressWarnings("unchecked")
-      Attribute<Object> objAttr = (Attribute<Object>) attr;
-      this.attr = objAttr;
-    }
-
-    public Component getEditor(Window parent) {
-      Object value = attrs.getValue(attr);
-      return attr.getCellEditor(parent, value);
-    }
-
-    public String getLabel() {
-      return attr.getDisplayName();
-    }
-
-    public String getValue() {
-      Object value = attrs.getValue(attr);
-      if (value == null) {
-        try {
-          return attr.toDisplayString(value);
-        } catch (NullPointerException e) {
-          return "";
-        }
-      } else {
-        try {
-          String Str = attr.toDisplayString(value);
-          if (Str.isEmpty()
-              && attr.getName().equals("label")
-              && CompInst != null
-              && CompInst.RequiresNonZeroLabel()) return HDLColorRenderer.RequiredFieldString;
-          return Str;
-        } catch (Exception e) {
-          return "???";
-        }
-      }
-    }
-
-    public boolean isValueEditable() {
-      return !attrs.isReadOnly(attr);
-    }
-
-    public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (other == null || !(other instanceof AttrRow)) return false;
-      AttrRow o = (AttrRow) other;
-      if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
-      if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
-      SplitterAttributes.BitOutAttribute a = (SplitterAttributes.BitOutAttribute) (Object) attr;
-      SplitterAttributes.BitOutAttribute b = (SplitterAttributes.BitOutAttribute) (Object) o.attr;
-      return a.sameOptions(b);
-    }
-
-    public void setValue(Window parent, Object value) throws AttrTableSetException {
-      Attribute<Object> attr = this.attr;
-      if (attr == null || value == null) return;
-
-      try {
-        if (value instanceof String) {
-          value = attr.parse((String) value);
-        }
-        setValueRequested(attr, value);
-      } catch (ClassCastException e) {
-        String msg = S.get("attributeChangeInvalidError") + ": " + e;
-        throw new AttrTableSetException(msg);
-      } catch (NumberFormatException e) {
-        String msg = S.get("attributeChangeInvalidError");
-        String emsg = e.getMessage();
-        if (emsg != null && emsg.length() > 0) msg += ": " + emsg;
-        msg += ".";
-        throw new AttrTableSetException(msg);
-      }
-    }
-  }
-
-  private class HDLrow extends AttrRow {
-
-    HDLrow(Attribute<?> attr) {
-      super(attr);
-    }
-
-    @Override
-    public String getLabel() {
-      if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VHDL, attrs))
-        return HDLColorRenderer.VHDLSupportString;
-      return HDLColorRenderer.NoSupportString;
-    }
-
-    @Override
-    public String getValue() {
-      if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VERILOG, attrs))
-        return HDLColorRenderer.VHDLSupportString;
-      return HDLColorRenderer.NoSupportString;
-    }
-
-    @Override
-    public boolean isValueEditable() {
-      return false;
-    }
-
-    @Override
-    public void setValue(Window parent, Object value) {
-      // Do Nothing
-    }
-  }
-
-  private ArrayList<AttrTableModelListener> listeners;
+  private final ArrayList<AttrTableModelListener> listeners;
+  private final HashMap<Attribute<?>, AttrRow> rowMap;
   private AttributeSet attrs;
-  private HashMap<Attribute<?>, AttrRow> rowMap;
   private ArrayList<AttrRow> rows;
   private ComponentFactory CompInst = null;
-
   public AttributeSetTableModel(AttributeSet attrs) {
     this.attrs = attrs;
-    this.listeners = new ArrayList<AttrTableModelListener>();
-    this.rowMap = new HashMap<Attribute<?>, AttrRow>();
-    this.rows = new ArrayList<AttrRow>();
+    this.listeners = new ArrayList<>();
+    this.rowMap = new HashMap<>();
+    this.rows = new ArrayList<>();
     if (attrs != null) {
       /* put the vhdl/verilog row */
       HDLrow rowd = new HDLrow(null);
@@ -221,8 +110,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     if (match && index == rows.size()) return;
 
     // compute the new list of rows, possible adding into hash map
-    ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
-    HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(rowMap.keySet());
+    ArrayList<AttrRow> newRows = new ArrayList<>();
+    HashSet<Attribute<?>> missing = new HashSet<>(rowMap.keySet());
     /* put the vhdl/verilog row */
     HDLrow rowd = new HDLrow(null);
     newRows.add(rowd);
@@ -281,6 +170,19 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     return attrs;
   }
 
+  public void setAttributeSet(AttributeSet value) {
+    if (attrs != value) {
+      if (!listeners.isEmpty()) {
+        attrs.removeAttributeListener(this);
+      }
+      attrs = value;
+      if (!listeners.isEmpty()) {
+        attrs.addAttributeListener(this);
+      }
+      attributeListChanged(null);
+    }
+  }
+
   public AttrTableModelRow getRow(int rowIndex) {
     return rows.get(rowIndex);
   }
@@ -298,19 +200,112 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  public void setAttributeSet(AttributeSet value) {
-    if (attrs != value) {
-      if (!listeners.isEmpty()) {
-        attrs.removeAttributeListener(this);
+  protected abstract void setValueRequested(Attribute<Object> attr, Object value)
+      throws AttrTableSetException;
+
+  private class AttrRow implements AttrTableModelRow {
+    private final Attribute<Object> attr;
+
+    AttrRow(Attribute<?> attr) {
+      @SuppressWarnings("unchecked")
+      Attribute<Object> objAttr = (Attribute<Object>) attr;
+      this.attr = objAttr;
+    }
+
+    public Component getEditor(Window parent) {
+      Object value = attrs.getValue(attr);
+      return attr.getCellEditor(parent, value);
+    }
+
+    public String getLabel() {
+      return attr.getDisplayName();
+    }
+
+    public String getValue() {
+      Object value = attrs.getValue(attr);
+      if (value == null) {
+        try {
+          return attr.toDisplayString(value);
+        } catch (NullPointerException e) {
+          return "";
+        }
+      } else {
+        try {
+          String Str = attr.toDisplayString(value);
+          if (Str.isEmpty()
+              && attr.getName().equals("label")
+              && CompInst != null
+              && CompInst.RequiresNonZeroLabel()) return HDLColorRenderer.RequiredFieldString;
+          return Str;
+        } catch (Exception e) {
+          return "???";
+        }
       }
-      attrs = value;
-      if (!listeners.isEmpty()) {
-        attrs.addAttributeListener(this);
+    }
+
+    public boolean isValueEditable() {
+      return !attrs.isReadOnly(attr);
+    }
+
+    public boolean multiEditCompatible(AttrTableModelRow other) {
+      if (!(other instanceof AttrRow)) return false;
+      AttrRow o = (AttrRow) other;
+      if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
+      if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
+      SplitterAttributes.BitOutAttribute a = (SplitterAttributes.BitOutAttribute) (Object) attr;
+      SplitterAttributes.BitOutAttribute b = (SplitterAttributes.BitOutAttribute) (Object) o.attr;
+      return a.sameOptions(b);
+    }
+
+    public void setValue(Window parent, Object value) throws AttrTableSetException {
+      Attribute<Object> attr = this.attr;
+      if (attr == null || value == null) return;
+
+      try {
+        if (value instanceof String) {
+          value = attr.parse((String) value);
+        }
+        setValueRequested(attr, value);
+      } catch (ClassCastException e) {
+        String msg = S.get("attributeChangeInvalidError") + ": " + e;
+        throw new AttrTableSetException(msg);
+      } catch (NumberFormatException e) {
+        String msg = S.get("attributeChangeInvalidError");
+        String emsg = e.getMessage();
+        if (emsg != null && emsg.length() > 0) msg += ": " + emsg;
+        msg += ".";
+        throw new AttrTableSetException(msg);
       }
-      attributeListChanged(null);
     }
   }
 
-  protected abstract void setValueRequested(Attribute<Object> attr, Object value)
-      throws AttrTableSetException;
+  private class HDLrow extends AttrRow {
+
+    HDLrow(Attribute<?> attr) {
+      super(attr);
+    }
+
+    @Override
+    public String getLabel() {
+      return S.get("FPGA_Supported");
+    }
+
+    @Override
+    public String getValue() {
+      if (CompInst == null) return HDLColorRenderer.UnKnownString;
+      if (CompInst.HDLSupportedComponent(attrs))
+        return HDLColorRenderer.SupportString;
+      return HDLColorRenderer.NoSupportString;
+    }
+
+    @Override
+    public boolean isValueEditable() {
+      return false;
+    }
+
+    @Override
+    public void setValue(Window parent, Object value) {
+      // Do Nothing
+    }
+  }
 }

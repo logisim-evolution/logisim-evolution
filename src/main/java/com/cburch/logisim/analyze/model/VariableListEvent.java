@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -35,10 +35,11 @@ public class VariableListEvent {
   public static final int MOVE = 3;
   public static final int REPLACE = 4;
 
-  private VariableList source;
-  private int type;
-  private Var variable;
-  private Integer index, bitIndex;
+  private final VariableList source;
+  private final int type;
+  private final Var variable;
+  private final Integer index;
+  private final Integer bitIndex;
 
   public VariableListEvent(
       VariableList source, int type, Var variable, Integer index, Integer bitIndex) {

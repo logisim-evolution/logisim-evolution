@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -129,11 +129,10 @@ public class BoardRectangle {
      */
     /* we now have to check for partial overlap */
     if (!result) {
-      result |=
-          ((xl >= xPosition)
-              && (xl <= (xPosition + Width))
-              && (yt <= yPosition)
-              && (yb >= (yPosition + Height)));
+      result = ((xl >= xPosition)
+          && (xl <= (xPosition + Width))
+          && (yt <= yPosition)
+          && (yb >= (yPosition + Height)));
       result |=
           ((xr >= xPosition)
               && (xr <= (xPosition + Width))
@@ -151,11 +150,10 @@ public class BoardRectangle {
               && (yb <= (yPosition + Height)));
     }
     if (!result) {
-      result |=
-          ((xPosition >= xl)
-              && (xPosition <= xr)
-              && (yPosition <= yt)
-              && ((yPosition + Height) >= yb));
+      result = ((xPosition >= xl)
+          && (xPosition <= xr)
+          && (yPosition <= yt)
+          && ((yPosition + Height) >= yb));
       result |=
           (((xPosition + Width) >= xl)
               && ((xPosition + Width) <= xr)

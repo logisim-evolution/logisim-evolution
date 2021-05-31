@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,54 +34,34 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.proj.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 class MenuProject extends Menu {
-  private class MyListener implements ActionListener {
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      Project proj = menubar.getProject();
-      if (src == loadBuiltin) {
-        ProjectLibraryActions.doLoadBuiltinLibrary(proj);
-      } else if (src == loadLogisim) {
-        ProjectLibraryActions.doLoadLogisimLibrary(proj);
-      } else if (src == loadJar) {
-        ProjectLibraryActions.doLoadJarLibrary(proj);
-      } else if (src == unload) {
-        ProjectLibraryActions.doUnloadLibraries(proj);
-      } else if (src == options) {
-        JFrame frame = proj.getOptionsFrame(true);
-        frame.setVisible(true);
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
-  private LogisimMenuBar menubar;
-  private MyListener myListener = new MyListener();
-
-  private MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
-  private MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
-  private MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
-  private JMenu loadLibrary = new JMenu();
-  private JMenuItem loadBuiltin = new JMenuItem();
-  private JMenuItem loadLogisim = new JMenuItem();
-  private JMenuItem loadJar = new JMenuItem();
-  private JMenuItem unload = new JMenuItem();
-  private MenuItemImpl moveUp = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_UP);
-  private MenuItemImpl moveDown = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_DOWN);
-  private MenuItemImpl remove = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CIRCUIT);
-  private MenuItemImpl setAsMain = new MenuItemImpl(this, LogisimMenuBar.SET_MAIN_CIRCUIT);
-  private MenuItemImpl revertAppearance = new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
-  private MenuItemImpl layout = new MenuItemImpl(this, LogisimMenuBar.EDIT_LAYOUT);
-  private MenuItemImpl appearance = new MenuItemImpl(this, LogisimMenuBar.EDIT_APPEARANCE);
-  private MenuItemImpl toggleLayoutAppearance = new MenuItemImpl(this,LogisimMenuBar.TOGGLE_APPEARANCE);
-  private MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
-  private MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
-  private JMenuItem options = new JMenuItem();
+  private final LogisimMenuBar menubar;
+  private final MyListener myListener = new MyListener();
+  private final MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
+  private final MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
+  private final MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
+  private final JMenu loadLibrary = new JMenu();
+  private final JMenuItem loadBuiltin = new JMenuItem();
+  private final JMenuItem loadLogisim = new JMenuItem();
+  private final JMenuItem loadJar = new JMenuItem();
+  private final JMenuItem unload = new JMenuItem();
+  private final MenuItemImpl moveUp = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_UP);
+  private final MenuItemImpl moveDown = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_DOWN);
+  private final MenuItemImpl remove = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CIRCUIT);
+  private final MenuItemImpl setAsMain = new MenuItemImpl(this, LogisimMenuBar.SET_MAIN_CIRCUIT);
+  private final MenuItemImpl revertAppearance =
+      new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
+  private final MenuItemImpl layout = new MenuItemImpl(this, LogisimMenuBar.EDIT_LAYOUT);
+  private final MenuItemImpl appearance = new MenuItemImpl(this, LogisimMenuBar.EDIT_APPEARANCE);
+  private final MenuItemImpl toggleLayoutAppearance =
+      new MenuItemImpl(this, LogisimMenuBar.TOGGLE_APPEARANCE);
+  private final MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
+  private final MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
+  private final JMenuItem options = new JMenuItem();
 
   MenuProject(LogisimMenuBar menubar) {
     this.menubar = menubar;
@@ -101,9 +81,7 @@ class MenuProject extends Menu {
     menubar.registerItem(LogisimMenuBar.EDIT_LAYOUT, layout);
     menubar.registerItem(LogisimMenuBar.EDIT_APPEARANCE, appearance);
     menubar.registerItem(LogisimMenuBar.TOGGLE_APPEARANCE, toggleLayoutAppearance);
-    if (Main.ANALYZE) {
-      menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
-    }
+    if (Main.ANALYZE)  menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
     menubar.registerItem(LogisimMenuBar.CIRCUIT_STATS, stats);
     options.addActionListener(myListener);
 
@@ -126,14 +104,12 @@ class MenuProject extends Menu {
     add(layout);
     add(appearance);
     addSeparator();
-    if (Main.ANALYZE) {
-      add(analyze);
-    }
+    if (Main.ANALYZE) add(analyze);
     add(stats);
     addSeparator();
     add(options);
 
-    boolean known = menubar.getProject() != null;
+    boolean known = menubar.getSaveProject() != null;
     loadLibrary.setEnabled(known);
     loadBuiltin.setEnabled(known);
     loadLogisim.setEnabled(known);
@@ -146,7 +122,7 @@ class MenuProject extends Menu {
   @Override
   void computeEnabled() {
     setEnabled(
-        menubar.getProject() != null
+        menubar.getSaveProject() != null
             || addCircuit.hasListeners()
             || addVhdl.hasListeners()
             || importVhdl.hasListeners()
@@ -179,8 +155,28 @@ class MenuProject extends Menu {
     revertAppearance.setText(S.get("projectRevertAppearanceItem"));
     layout.setText(S.get("projectEditCircuitLayoutItem"));
     appearance.setText(S.get("projectEditCircuitAppearanceItem"));
+    toggleLayoutAppearance.setText(S.get("projectToggleCircuitAppearanceItem"));
     analyze.setText(S.get("projectAnalyzeCircuitItem"));
     stats.setText(S.get("projectGetCircuitStatisticsItem"));
     options.setText(S.get("projectOptionsItem"));
+  }
+
+  private class MyListener implements ActionListener {
+    public void actionPerformed(ActionEvent event) {
+      Object src = event.getSource();
+      Project proj = menubar.getSaveProject();
+      if (proj == null) return;
+      if (src == loadBuiltin) {
+        ProjectLibraryActions.doLoadBuiltinLibrary(proj);
+      } else if (src == loadLogisim) {
+        ProjectLibraryActions.doLoadLogisimLibrary(proj);
+      } else if (src == loadJar) {
+        ProjectLibraryActions.doLoadJarLibrary(proj);
+      } else if (src == unload) {
+        ProjectLibraryActions.doUnloadLibraries(proj);
+      } else if (src == options) {
+        proj.getOptionsFrame().setVisible(true);
+      }
+    }
   }
 }

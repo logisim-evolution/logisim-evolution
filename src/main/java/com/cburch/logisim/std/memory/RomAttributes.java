@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -72,25 +72,23 @@ class RomAttributes extends AbstractAttributeSet {
     listenerRegistry.put(value, l);
   }
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            Mem.ADDR_ATTR,
-            Mem.DATA_ATTR,
-            Mem.LINE_ATTR,
-            Mem.ALLOW_MISALIGNED,
-            Rom.CONTENTS_ATTR,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            StdAttr.APPEARANCE
-          });
+          Mem.ADDR_ATTR,
+          Mem.DATA_ATTR,
+          Mem.LINE_ATTR,
+          Mem.ALLOW_MISALIGNED,
+          Rom.CONTENTS_ATTR,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.APPEARANCE);
 
-  private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
-      new WeakHashMap<MemContents, RomContentsListener>();
+  private static final WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
+      new WeakHashMap<>();
 
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry =
-      new WeakHashMap<MemContents, HexFrame>();
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry =
+      new WeakHashMap<>();
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;
@@ -98,7 +96,7 @@ class RomAttributes extends AbstractAttributeSet {
   private Boolean allowMisaligned = false;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisable = false;
+  private Boolean LabelVisible = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
@@ -114,7 +112,7 @@ class RomAttributes extends AbstractAttributeSet {
     d.allowMisaligned = allowMisaligned;
     d.contents = contents.clone();
     d.LabelFont = LabelFont;
-    d.LabelVisable = LabelVisable;
+    d.LabelVisible = LabelVisible;
     d.Appearance = Appearance;
   }
 
@@ -148,7 +146,7 @@ class RomAttributes extends AbstractAttributeSet {
       return (V) LabelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) LabelVisable;
+      return (V) LabelVisible;
     }
     if (attr == StdAttr.APPEARANCE) {
       return (V) Appearance;
@@ -203,8 +201,8 @@ class RomAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newVis = (Boolean) value;
-      if (LabelVisable.equals(newVis)) return;
-      LabelVisable = newVis;
+      if (LabelVisible.equals(newVis)) return;
+      LabelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.APPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;

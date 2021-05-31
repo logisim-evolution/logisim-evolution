@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,6 @@ import com.cburch.logisim.fpga.file.XMLFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -63,25 +62,25 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
-  private JDialog panel;
-  private JFrame parent;
-  private JButton DoneButton = new JButton();
-  private JButton SaveButton = new JButton();
-  private JButton CancelButton = new JButton();
-  private JButton LoadButton = new JButton();
-  private JLabel UnmappedText = new JLabel();
-  private JLabel MappedText = new JLabel();
-  private JLabel CommandText = new JLabel();
-  private JScrollPane UnMappedPane;
-  private JScrollPane MappedPane;
+  private final JDialog panel;
+  private final JFrame parent;
+  private final JButton DoneButton = new JButton();
+  private final JButton SaveButton = new JButton();
+  private final JButton CancelButton = new JButton();
+  private final JButton LoadButton = new JButton();
+  private final JLabel UnmappedText = new JLabel();
+  private final JLabel MappedText = new JLabel();
+  private final JLabel CommandText = new JLabel();
+  private final JScrollPane UnMappedPane;
+  private final JScrollPane MappedPane;
 
-  private BoardManipulator BoardPic;
-  private BoardInformation BoardInfo;
+  private final BoardManipulator BoardPic;
+  private final BoardInformation BoardInfo;
   private String OldDirectory = "";
 
-  private MappableResourcesContainer MappableComponents;
+  private final MappableResourcesContainer MappableComponents;
 
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private boolean canceled = true;
 
   public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board,
@@ -206,18 +205,16 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   public boolean run() {
     Thread t =
-        new Thread() {
-          public void run() {
-            synchronized (lock) {
-              try {
-                lock.wait();
-              } catch (InterruptedException e) {
-                logger.error("Bug: unable to wait for lock");
-              }
+        new Thread(() -> {
+          synchronized (lock) {
+            try {
+              lock.wait();
+            } catch (InterruptedException e) {
+              logger.error("Bug: unable to wait for lock");
             }
           }
-        };
-    t.run();
+        });
+    t.start();
     CancelButton.setEnabled(true);
     try {
       t.join();
@@ -232,20 +229,25 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals("Done")) {
-      canceled = false;
-      synchronized (lock) {
-        lock.notify();
-      }
-    } else if (e.getActionCommand().equals("Save")) {
-      Save();
-    } else if (e.getActionCommand().equals("Load")) {
-      Load();
-      MappableComponents.markChanged();
-    } else if (e.getActionCommand().equals("Cancel")) {
-      synchronized (lock) {
-        lock.notify();
-      }
+    switch (e.getActionCommand()) {
+      case "Done":
+        canceled = false;
+        synchronized (lock) {
+          lock.notify();
+        }
+        break;
+      case "Save":
+        Save();
+        break;
+      case "Load":
+        Load();
+        MappableComponents.markChanged();
+        break;
+      case "Cancel":
+        synchronized (lock) {
+          lock.notify();
+        }
+        break;
     }
   }
 

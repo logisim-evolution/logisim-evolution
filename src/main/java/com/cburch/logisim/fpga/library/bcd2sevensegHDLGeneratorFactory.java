@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,9 @@ package com.cburch.logisim.fpga.library;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -46,14 +47,14 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("BCDin", 4);
     return Inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Segment_a", 1);
     Outputs.put("Segment_b", 1);
     Outputs.put("Segment_c", 1);
@@ -65,15 +66,14 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_output_value", 7);
     return Wires;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Segment_a <= s_output_value(0);");
     Contents.add("   Segment_b <= s_output_value(1);");
     Contents.add("   Segment_c <= s_output_value(2);");
@@ -102,34 +102,18 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(
-        GetNetMap("BCDin", true, ComponentInfo, bcd2sevenseg.BCDin, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_a", true, ComponentInfo, bcd2sevenseg.Segment_A, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_b", true, ComponentInfo, bcd2sevenseg.Segment_B, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_c", true, ComponentInfo, bcd2sevenseg.Segment_C, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_d", true, ComponentInfo, bcd2sevenseg.Segment_D, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_e", true, ComponentInfo, bcd2sevenseg.Segment_E, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_f", true, ComponentInfo, bcd2sevenseg.Segment_F, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap(
-            "Segment_g", true, ComponentInfo, bcd2sevenseg.Segment_G, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("BCDin", true, ComponentInfo, bcd2sevenseg.BCDin, Nets));
+    PortMap.putAll(GetNetMap("Segment_a", true, ComponentInfo, bcd2sevenseg.Segment_A, Nets));
+    PortMap.putAll(GetNetMap("Segment_b", true, ComponentInfo, bcd2sevenseg.Segment_B, Nets));
+    PortMap.putAll(GetNetMap("Segment_c", true, ComponentInfo, bcd2sevenseg.Segment_C, Nets));
+    PortMap.putAll(GetNetMap("Segment_d", true, ComponentInfo, bcd2sevenseg.Segment_D, Nets));
+    PortMap.putAll(GetNetMap("Segment_e", true, ComponentInfo, bcd2sevenseg.Segment_E, Nets));
+    PortMap.putAll(GetNetMap("Segment_f", true, ComponentInfo, bcd2sevenseg.Segment_F, Nets));
+    PortMap.putAll(GetNetMap("Segment_g", true, ComponentInfo, bcd2sevenseg.Segment_G, Nets));
     return PortMap;
   }
 
@@ -139,7 +123,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }

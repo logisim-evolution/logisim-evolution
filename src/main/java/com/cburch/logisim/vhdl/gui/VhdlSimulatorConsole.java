@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,9 +50,9 @@ public class VhdlSimulatorConsole extends JPanel {
   private class VhdlSimState extends JPanel implements VhdlSimulatorListener {
 
     private static final long serialVersionUID = 1L;
-    Ellipse2D.Double circle;
+    final Ellipse2D.Double circle;
     Color color;
-    private int margin = 5;
+    private final int margin = 5;
 
     public VhdlSimState() {
       int radius = 15;
@@ -100,28 +100,16 @@ public class VhdlSimulatorConsole extends JPanel {
   }
 
   private static final long serialVersionUID = 1L;
-  private JLabel label = new JLabel();
-  private JScrollPane log = new JScrollPane();
-  private JTextArea logContent = new JTextArea();
-  private VhdlSimState vhdlSimState;
+  private final JLabel label = new JLabel();
+  private final JScrollPane log = new JScrollPane();
+  private final JTextArea logContent = new JTextArea();
+  private final VhdlSimState vhdlSimState;
 
-  private Project project;
+  private final Project project;
 
   public VhdlSimulatorConsole(Project proj) {
     project = proj;
 
-    show();
-  }
-
-  public void append(String s) {
-    logContent.append(s);
-  }
-
-  public void clear() {
-    logContent.setText("");
-  }
-
-  public void show() {
     this.setLayout(new BorderLayout());
 
     /* Add title */
@@ -141,5 +129,13 @@ public class VhdlSimulatorConsole extends JPanel {
     project.getVhdlSimulator().addVhdlSimStateListener(vhdlSimState);
 
     this.add(vhdlSimState, BorderLayout.PAGE_END);
+  }
+
+  public void append(String s) {
+    logContent.append(s);
+  }
+
+  public void clear() {
+    logContent.setText("");
   }
 }

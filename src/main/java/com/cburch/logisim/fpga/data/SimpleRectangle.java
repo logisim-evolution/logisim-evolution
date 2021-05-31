@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,21 +28,20 @@
 
 package com.cburch.logisim.fpga.data;
 
+import com.cburch.logisim.fpga.gui.BoardManipulator;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-import com.cburch.logisim.fpga.gui.BoardManipulator;
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class SimpleRectangle {
 
   private int x,y,width,height;
-  private FPGAIOInformationContainer toBeModified;
-  private boolean movemode;
+  private final FPGAIOInformationContainer toBeModified;
+  private final boolean movemode;
   private boolean show;
-  private boolean fill;
+  private final boolean fill;
   
   public SimpleRectangle(MouseEvent e) {
     toBeModified = null;

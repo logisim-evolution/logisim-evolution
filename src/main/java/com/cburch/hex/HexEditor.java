@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,28 +42,12 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 public class HexEditor extends JComponent implements Scrollable {
-  private class Listener implements HexModelListener {
-    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
-      repaint(
-          0,
-          measures.toY(start),
-          getWidth(),
-          measures.toY(start + numBytes) + measures.getCellHeight());
-    }
-
-    public void metainfoChanged(HexModel source) {
-      measures.recompute();
-      repaint();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
+  private final Listener listener;
+  private final Measures measures;
+  private final Caret caret;
+  private final Highlighter highlighter;
   private HexModel model;
-  private Listener listener;
-  private Measures measures;
-  private Caret caret;
-  private Highlighter highlighter;
 
   public HexEditor(HexModel model) {
     this.model = model;
@@ -109,6 +93,16 @@ public class HexEditor extends JComponent implements Scrollable {
 
   public HexModel getModel() {
     return model;
+  }
+
+  public void setModel(HexModel value) {
+    if (model == value) return;
+    if (model != null) model.removeHexModelListener(listener);
+    model = value;
+    highlighter.clear();
+    caret.setDot(-1, false);
+    if (model != null) model.addHexModelListener(listener);
+    measures.recompute();
   }
 
   //
@@ -253,29 +247,26 @@ public class HexEditor extends JComponent implements Scrollable {
     measures.recompute();
   }
 
-  public void setModel(HexModel value) {
-    if (model == value) return;
-    if (model != null) model.removeHexModelListener(listener);
-    model = value;
-    highlighter.clear();
-    caret.setDot(-1, false);
-    if (model != null) model.addHexModelListener(listener);
-    measures.recompute();
+  private String toHex(long value, int chars) {
+    String ret = String.format("%0" + chars + "x", value);
+    if (ret.length() > chars) {
+      return ret.substring(ret.length() - chars);
+    }
+    return ret;
   }
 
-  private String toHex(long value, int chars) {
-    String ret = Long.toHexString(value);
-    int retLen = ret.length();
-    if (retLen < chars) {
-      ret = "0" + ret;
-      for (int i = retLen + 1; i < chars; i++) {
-        ret = "0" + ret;
-      }
-      return ret;
-    } else if (retLen == chars) {
-      return ret;
-    } else {
-      return ret.substring(retLen - chars);
+  private class Listener implements HexModelListener {
+    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
+      repaint(
+          0,
+          measures.toY(start),
+          getWidth(),
+          measures.toY(start + numBytes) + measures.getCellHeight());
+    }
+
+    public void metainfoChanged(HexModel source) {
+      measures.recompute();
+      repaint();
     }
   }
 }

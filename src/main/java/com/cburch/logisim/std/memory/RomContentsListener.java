@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,11 +37,11 @@ import com.cburch.logisim.proj.Project;
 
 class RomContentsListener implements HexModelListener {
   private static class Change extends Action {
-    private RomContentsListener source;
-    private MemContents contents;
-    private long start;
-    private long[] oldValues;
-    private long[] newValues;
+    private final RomContentsListener source;
+    private final MemContents contents;
+    private final long start;
+    private final long[] oldValues;
+    private final long[] newValues;
     private boolean completed = true;
 
     Change(
@@ -121,7 +121,7 @@ class RomContentsListener implements HexModelListener {
     }
   }
 
-  Project proj;
+  final Project proj;
   boolean enabled = true;
 
   RomContentsListener(Project proj) {

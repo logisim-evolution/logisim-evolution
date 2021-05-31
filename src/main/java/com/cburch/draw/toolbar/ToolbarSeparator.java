@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,15 +28,14 @@
 
 package com.cburch.draw.toolbar;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class ToolbarSeparator implements ToolbarItem {
-  private int size;
+  private final int size;
 
   public ToolbarSeparator(int size) {
     this.size = size;

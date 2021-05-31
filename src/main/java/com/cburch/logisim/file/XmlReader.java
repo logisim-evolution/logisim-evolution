@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,7 +62,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -79,8 +78,8 @@ import org.xml.sax.SAXException;
 class XmlReader {
 
   static class CircuitData {
-    Element circuitElement;
-    Circuit circuit;
+    final Element circuitElement;
+    final Circuit circuit;
     Map<Element, Component> knownComponents;
     List<AbstractCanvasObject> appearance;
 
@@ -91,14 +90,14 @@ class XmlReader {
   }
 
   class ReadContext {
-    LogisimFile file;
+    final LogisimFile file;
     LogisimVersion sourceVersion;
-    HashMap<String, Library> libs = new HashMap<String, Library>();
-    private ArrayList<String> messages;
+    final HashMap<String, Library> libs = new HashMap<>();
+    private final ArrayList<String> messages;
 
     ReadContext(LogisimFile file) {
       this.file = file;
-      this.messages = new ArrayList<String>();
+      this.messages = new ArrayList<>();
     }
 
     void addError(String message, String context) {
@@ -133,10 +132,10 @@ class XmlReader {
         throws XmlReaderException {
       ArrayList<String> messages = null;
 
-      HashMap<String, String> attrsDefined = new HashMap<String, String>();
+      HashMap<String, String> attrsDefined = new HashMap<>();
       for (Element attrElt : XmlIterator.forChildElements(parentElt, "a")) {
         if (!attrElt.hasAttribute("name")) {
-          if (messages == null) messages = new ArrayList<String>();
+          if (messages == null) messages = new ArrayList<>();
           messages.add(S.get("attrNameMissingError"));
         } else {
           String attrName = attrElt.getAttribute("name");
@@ -195,7 +194,7 @@ class XmlReader {
             Object val = attr.parse(attrVal);
             attrs.setValue(attr, val);
           } catch (NumberFormatException e) {
-            if (messages == null) messages = new ArrayList<String>();
+            if (messages == null) messages = new ArrayList<>();
             messages.add(StringUtil.format(S.get("attrValueInvalidError"), attrVal, attrName));
           }
         }
@@ -278,19 +277,19 @@ class XmlReader {
 
     private Map<Element, Component> loadKnownComponents(
         Element elt, boolean IsHolyCross, boolean IsEvolution) {
-      Map<Element, Component> known = new HashMap<Element, Component>();
+      Map<Element, Component> known = new HashMap<>();
       for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
         try {
           Component comp = XmlCircuitReader.getComponent(sub, this, IsHolyCross, IsEvolution);
           if (comp != null) known.put(sub, comp);
-        } catch (XmlReaderException e) {
+        } catch (XmlReaderException ignored) {
         }
       }
       return known;
     }
     
     void loadMap(Element board, String boardName, Circuit circ) {
-      HashMap<String,CircuitMapInfo> map = new HashMap<String,CircuitMapInfo>();
+      HashMap<String,CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
         int x,y,w,h;
         String key = cmap.getAttribute("key");
@@ -298,7 +297,7 @@ class XmlReader {
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {
-          Long v;
+          long v;
           try {
             v = Long.parseLong(cmap.getAttribute("vconst"));
           } catch (NumberFormatException e) {
@@ -328,7 +327,7 @@ class XmlReader {
     }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
-      Map<Location, Instance> pins = new HashMap<Location, Instance>();
+      Map<Location, Instance> pins = new HashMap<>();
       for (Component comp : circData.knownComponents.values()) {
         if (comp.getFactory() == Pin.FACTORY) {
           Instance instance = Instance.getInstanceFor(comp);
@@ -336,7 +335,7 @@ class XmlReader {
         }
       }
 
-      List<AbstractCanvasObject> shapes = new ArrayList<AbstractCanvasObject>();
+      List<AbstractCanvasObject> shapes = new ArrayList<>();
       for (Element sub : XmlIterator.forChildElements(appearElt)) {
         // Dynamic shapes are skipped here. They are resolved later in
         // XmlCircuitReader once the full Circuit tree has been built.
@@ -434,7 +433,7 @@ class XmlReader {
       }
 
       // second, create the circuits - empty for now - and the vhdl entities
-      List<CircuitData> circuitsData = new ArrayList<CircuitData>();
+      List<CircuitData> circuitsData = new ArrayList<>();
       for (Element circElt : XmlIterator.forChildElements(elt)) {
         String name;
         switch (circElt.getTagName()) {
@@ -467,6 +466,7 @@ class XmlReader {
               loadMap(boardMap,BoardName,circData.circuit);
             }
             circuitsData.add(circData);
+            break;
           default:
             // do nothing
         }
@@ -633,13 +633,11 @@ class XmlReader {
     assert (nodeType.length() > 0);
     assert (attrType.length() > 0);
 
-    Map<String, String> validLabels = new HashMap<String, String>();
+    Map<String, String> validLabels = new HashMap<>();
 
     List<String> initialLabels = getXMLLabels(root, nodeType, attrType);
 
-    Iterator<String> iterator = initialLabels.iterator();
-    while (iterator.hasNext()) {
-      String label = iterator.next();
+    for (String label : initialLabels) {
       if (!validLabels.containsKey(label)) {
         // Check if the name is invalid, in which case create
         // a valid version and put it in the map
@@ -713,7 +711,7 @@ class XmlReader {
     }
 
     // If the string has a ! or ~ symbol, then replace it with "NOT"
-    label = label.replaceAll("[\\!~]", "NOT_");
+    label = label.replaceAll("[!~]", "NOT_");
 
     // Force string to start with a letter
     if (!label.matches("^[A-Za-z].*$")) label = "L_" + label;
@@ -751,7 +749,7 @@ class XmlReader {
     assert (nodeType.length() > 0);
     assert (attrType.length() > 0);
 
-    List<String> attrValuesList = new ArrayList<String>();
+    List<String> attrValuesList = new ArrayList<>();
 
     switch (nodeType) {
       case "circuit":
@@ -854,10 +852,8 @@ class XmlReader {
    * @return true if the label is NOT a valid name, false otherwise
    */
   public static boolean labelVHDLInvalid(String label) {
-    if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
-      return (true);
-
-    return (false);
+    return !label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label
+        .matches(".*__.*");
   }
 
   /**
@@ -975,13 +971,13 @@ class XmlReader {
 
   public static final Logger logger = LoggerFactory.getLogger(XmlReader.class);
 
-  private LibraryLoader loader;
+  private final LibraryLoader loader;
 
   /**
    * Path of the source file -- it is used to make the paths of the components stored in the file
    * absolute, to prevent the system looking for them in some strange directories.
    */
-  private String srcFilePath;
+  private final String srcFilePath;
 
   XmlReader(Loader loader, File file) {
     this.loader = loader;
@@ -1048,7 +1044,7 @@ class XmlReader {
     DocumentBuilder builder = null;
     try {
       builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException ex) {
+    } catch (ParserConfigurationException ignored) {
     }
     return builder.parse(is);
   }
@@ -1083,7 +1079,7 @@ class XmlReader {
     String srcLabel = src.getAttribute("name");
     if (srcLabel == null) return;
 
-    ArrayList<Element> toRemove = new ArrayList<Element>();
+    ArrayList<Element> toRemove = new ArrayList<>();
     for (Element elt : XmlIterator.forChildElements(src, "tool")) {
       String name = elt.getAttribute("name");
       if (name != null && labelMap.containsKey(srcLabel + ":" + name)) {
@@ -1113,7 +1109,7 @@ class XmlReader {
     if (legacyElt != null) {
       root.removeChild(legacyElt);
 
-      ArrayList<Element> toRemove = new ArrayList<Element>();
+      ArrayList<Element> toRemove = new ArrayList<>();
       findLibraryUses(toRemove, legacyLabel, XmlIterator.forDescendantElements(root, "comp"));
       boolean componentsRemoved = !toRemove.isEmpty();
       findLibraryUses(toRemove, legacyLabel, XmlIterator.forDescendantElements(root, "tool"));
@@ -1162,7 +1158,7 @@ class XmlReader {
           int thisLabel = Integer.parseInt(label);
           if (thisLabel > maxLabel) maxLabel = thisLabel;
         }
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ignored) {
       }
     }
 
@@ -1191,7 +1187,7 @@ class XmlReader {
       newBaseElt = null;
     }
 
-    HashMap<String, String> labelMap = new HashMap<String, String>();
+    HashMap<String, String> labelMap = new HashMap<>();
     addToLabelMap(
         labelMap,
         oldBaseLabel,

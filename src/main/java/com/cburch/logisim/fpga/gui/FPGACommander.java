@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,8 +33,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -50,7 +49,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -76,33 +74,32 @@ public class FPGACommander
     implements ActionListener,
         LibraryListener,
         ProjectListener,
-        SimulatorListener,
+        Simulator.Listener,
         CircuitListener,
         WindowListener,
         LocaleListener,
         PreferenceChangeListener {
 
   public static final int FONT_SIZE = 12;
-  private JFrame panel;
-  private JLabel textMainCircuit = new JLabel();
-  private JLabel boardPic = new JLabel();
+  private final JFrame panel;
+  private final JLabel textMainCircuit = new JLabel();
+  private final JLabel boardPic = new JLabel();
   private BoardIcon boardIcon = null;
-  private JButton annotateButton = new JButton();
-  private JButton validateButton = new JButton();
-  private JComboBox<String> circuitsList = new JComboBox<>();
-  private JComboBox<StringGetter> annotationList = new JComboBox<>();
-  private JComboBox<StringGetter> actionCommands = new JComboBox<>();
-  private JButton ToolPath = new JButton();
-  private JButton Settings = new JButton();
-  private JButton StopButton = new JButton();
-  private JProgressBar Progress = new JProgressBar();
-  private FPGAReportTabbedPane ReporterGui;
+  private final JButton annotateButton = new JButton();
+  private final JButton validateButton = new JButton();
+  private final JComboBox<String> circuitsList = new JComboBox<>();
+  private final JComboBox<StringGetter> annotationList = new JComboBox<>();
+  private final JComboBox<StringGetter> actionCommands = new JComboBox<>();
+  private final JButton ToolPath = new JButton();
+  private final JButton Settings = new JButton();
+  private final JButton StopButton = new JButton();
+  private final JProgressBar Progress = new JProgressBar();
+  private final FPGAReportTabbedPane ReporterGui;
   private Download Downloader;
   public static final String StopRequested = "stop";
-  private JPanel BoardSelectionPanel = new JPanel();
-  private FPGAClockPanel FrequencyPanel;
-  private Project MyProject;
-  private FPGAReport MyReporter;
+  private final JPanel BoardSelectionPanel = new JPanel();
+  private final FPGAClockPanel FrequencyPanel;
+  private final Project MyProject;
   private BoardInformation MyBoardInformation = null;
 
   
@@ -117,7 +114,7 @@ public class FPGACommander
       boardIcon = new BoardIcon(MyBoardInformation.GetImage());
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
-      FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());;
+      FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
       HandleHDLOnly();
     }
   }
@@ -141,16 +138,16 @@ public class FPGACommander
   }
 
   @Override
-  public void propagationCompleted(SimulatorEvent e) {}
+  public void propagationCompleted(Simulator.Event e) {}
 
   @Override
-  public void simulatorStateChanged(SimulatorEvent e) {
-  FrequencyPanel.setSelectedFrequency();
+  public void simulatorStateChanged(Simulator.Event e) {
+    FrequencyPanel.setSelectedFrequency();
   }
 
   @Override
-  public void tickCompleted(SimulatorEvent e) {}
-
+  public void simulatorReset(Simulator.Event e) { }
+  
   @Override
   public void circuitChanged(CircuitEvent event) {
     int act = event.getAction();
@@ -324,7 +321,8 @@ public class FPGACommander
     panel.setVisible(false);
 
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    MyReporter = new FPGAReport(this,Progress);
+    Reporter.Report.setGuiLogger(ReporterGui);
+    Reporter.Report.setProgressBar(Progress);
     localeChanged();
   }
 
@@ -387,7 +385,6 @@ public class FPGACommander
               MyProject,
               circuitsList.getSelectedItem().toString(),
               FrequencyPanel.GetTickfrequency(),
-              MyReporter,
               MyBoardInformation,
               "",
               writeFlash,
@@ -417,8 +414,8 @@ public class FPGACommander
       if (ClearExistingLabels) {
         root.ClearAnnotationLevel();
       }
-      root.Annotate(ClearExistingLabels, MyReporter, false);
-      MyReporter.AddInfo(S.get("FpgaGuiAnnotationDone"));
+      root.Annotate(ClearExistingLabels, false);
+      Reporter.Report.AddInfo(S.get("FpgaGuiAnnotationDone"));
       /* TODO: Dirty hack, see Circuit.java function Annotate for details */
       MyProject.repaintCanvas();
       MyProject.getLogisimFile().setDirty(true);

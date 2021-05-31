@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,8 +30,17 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.util.EventObject;
-
+import com.cburch.logisim.analyze.model.ParserException;
+import com.cburch.logisim.analyze.model.Var;
+import com.cburch.logisim.analyze.model.VariableList;
+import com.cburch.logisim.analyze.model.VariableListEvent;
+import com.cburch.logisim.analyze.model.VariableListListener;
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.LogisimMenuItem;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -50,7 +59,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.util.EventObject;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ActionMap;
@@ -75,28 +84,22 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.jdesktop.swingx.prompt.BuddySupport;
 
-import com.cburch.logisim.analyze.model.ParserException;
-import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.analyze.model.VariableListEvent;
-import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.gui.menu.EditHandler;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.LogisimMenuItem;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.util.SyntaxChecker;
-
 public class VariableTab extends AnalyzerTab {
-  private VariableList inputs, outputs;
-  private JTable inputsTable, outputsTable;
-  private JLabel error = new JLabel(" ");
-  private JLabel inputsLabel, outputsLabel;
+  private static final long serialVersionUID = 1L;
+  private final VariableList inputs;
+  private final VariableList outputs;
+  private final JTable inputsTable;
+  private final JTable outputsTable;
+  private final JLabel error = new JLabel(" ");
+  private final JLabel inputsLabel;
+  private final JLabel outputsLabel;
 
   private JTable ioTable(VariableList data, LogisimMenuBar menubar) {
     final TableCellEditor ed1 = new SingleClickVarEditor(data);
     final TableCellEditor ed2 = new DoubleClickVarEditor(data);
     JTable table = new JTable(1, 1) {
+      private static final long serialVersionUID = 1L;
+
       public TableCellEditor getCellEditor(int row, int column) {
         return (row == getRowCount() - 1 ? ed1 : ed2);
       }
@@ -121,10 +124,12 @@ public class VariableTab extends AnalyzerTab {
 
     ActionMap actionMap = table.getActionMap();
 
-    actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
-    actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-    actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+    actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
+    actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
     actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx < 0 || idx >= data.vars.size())
@@ -137,6 +142,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx <= 0 || idx > data.vars.size()-1)
@@ -146,6 +153,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.LOWER, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx < 0 || idx >= data.vars.size()-1)
@@ -155,6 +164,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.RAISE_TOP, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         if (idx <= 0 || idx > data.vars.size()-1)
@@ -164,6 +175,8 @@ public class VariableTab extends AnalyzerTab {
       }
     });
     actionMap.put(LogisimMenuBar.LOWER_BOTTOM, new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
         int end = data.vars.size() - 1;
@@ -324,7 +337,7 @@ public class VariableTab extends AnalyzerTab {
       else return MSBIndex;
     }
     if (pos >= length - 2) return NO_VALID_INDEX_SEP;
-    if (!index.substring(pos, pos + 2).equals("..")) return NO_VALID_INDEX_SEP;
+    if (!index.startsWith("..", pos)) return NO_VALID_INDEX_SEP;
     pos += 2;
     int curpos = pos;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
@@ -387,7 +400,7 @@ public class VariableTab extends AnalyzerTab {
     return editHandler;
   }
 
-  EditHandler editHandler = new EditHandler() {
+  final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
       int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
@@ -415,11 +428,11 @@ public class VariableTab extends AnalyzerTab {
 
   private static class VariableTableModel
     extends AbstractTableModel implements VariableListListener {
-
-    private JTable table;
-    private VariableList list;
+    private static final long serialVersionUID = 1L;
+    private final JTable table;
+    private final VariableList list;
     private Var[] listCopy;
-    private Var empty = new Var("", 1);
+    private final Var empty = new Var("", 1);
 
     public VariableTableModel(VariableList list, JTable table) {
       this.list = list;
@@ -440,12 +453,11 @@ public class VariableTab extends AnalyzerTab {
       if (row == listCopy.length) {
         list.add(newVar);
         table.changeSelection(row+1, column, false, false);
-        table.grabFocus();
       } else {
         list.replace(oldVar, newVar);
         table.changeSelection(row, column, false, false);
-        table.grabFocus();
       }
+      table.grabFocus();
     }
 
     public Object getValueAt(int row, int col) {
@@ -457,7 +469,8 @@ public class VariableTab extends AnalyzerTab {
         return null;
     }
 
-    public int getColumnCount() { return 1; };
+    public int getColumnCount() { return 1; }
+
     public String getColumnName(int column) { return ""; }
     public Class<?> getColumnClass(int columnIndex) { return Var.class; }
     public int getRowCount() { return listCopy.length + 1; }
@@ -491,13 +504,15 @@ public class VariableTab extends AnalyzerTab {
     }
 
     private void updateCopy() {
-      listCopy = list.vars.toArray(new Var[list.vars.size()]);
+      listCopy = list.vars.toArray(new Var[0]);
     }
   }
 
   public static class VarRenderer extends DefaultTableCellRenderer {
-    Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-    Font plain, italic;
+    private static final long serialVersionUID = 1L;
+    final Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+    final Font plain;
+    final Font italic;
     public VarRenderer() {
       setBorder(border);
       plain = AppPreferences.getScaledFont(getFont());
@@ -516,7 +531,8 @@ public class VariableTab extends AnalyzerTab {
     }
   }
 
-  class BitWidthRenderer extends DefaultListCellRenderer {
+  static class BitWidthRenderer extends DefaultListCellRenderer {
+    private static final long serialVersionUID = 1L;
     public BitWidthRenderer() {
     }
     @Override
@@ -528,10 +544,11 @@ public class VariableTab extends AnalyzerTab {
   }
 
   public class SingleClickVarEditor extends AbstractCellEditor implements TableCellEditor {
-    JTextField field = new JTextField();
-    JComboBox<Integer> width;
+    private static final long serialVersionUID = 1L;
+    final JTextField field = new JTextField();
+    final JComboBox<Integer> width;
     Var editing;
-    VariableList data;
+    final VariableList data;
     
     public SingleClickVarEditor(VariableList data) {
       field.setBorder(BorderFactory.createCompoundBorder(
@@ -539,7 +556,7 @@ public class VariableTab extends AnalyzerTab {
             BorderFactory.createEmptyBorder(1, 3, 1, 3)));
       this.data = data;
       int maxwidth = data.getMaximumSize();
-      Integer widths[] = new Integer[maxwidth > 32 ? 32 : maxwidth];
+      Integer[] widths = new Integer[Math.min(maxwidth, 32)];
       for (int i = 0; i < widths.length; i++)
         widths[i] = i+1;
       width = new JComboBox<>(widths);
@@ -553,8 +570,7 @@ public class VariableTab extends AnalyzerTab {
     public Object getCellEditorValue() {
       String name = field.getText().trim();
       int w = (Integer)width.getSelectedItem();
-      Var v = new Var(name, w);
-      return v;
+      return new Var(name, w);
     }
 
     @Override
@@ -586,7 +602,7 @@ public class VariableTab extends AnalyzerTab {
       if (text.contains("[")) {
         int idx = text.indexOf('[');
         name = text.substring(0, idx);
-        index = text.substring(idx, text.length());
+        index = text.substring(idx);
         w = checkindex(index);
         if (w <= 0) {
           String ErrorText = null;
@@ -618,8 +634,7 @@ public class VariableTab extends AnalyzerTab {
           return true; // do nothing, empty Var will be ignored in setValueAt()
         if (err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE)
           return false; // prevent loss of focus
-        if (err == OK)
-          return true; // new Var will be added in setValueAt()
+        return err == OK; // new Var will be added in setValueAt()
       } else {
         // validate replacement name and width
         int err = validateInput(data, oldVar, name, w);
@@ -627,14 +642,13 @@ public class VariableTab extends AnalyzerTab {
           return false; // prevent loss of focus
         if (err == UNCHANGED)
           return true; // do nothing, unchanged Var will be ignored in setValueAt()
-        if (err == OK || err == RESIZED)
-          return true; // modified Var will be created in setValueAt()
-      }
-      return false; // should never happen
+        return err == OK || err == RESIZED; // modified Var will be created in setValueAt()
+      }// should never happen
     }
   }
 
   public class DoubleClickVarEditor extends SingleClickVarEditor {
+    private static final long serialVersionUID = 1L;
     public DoubleClickVarEditor(VariableList data) {
       super(data);
     }
@@ -665,8 +679,9 @@ public class VariableTab extends AnalyzerTab {
   }
 
   private class VarTransferHandler extends TransferHandler {
-    JTable table;
-    VariableList data;
+    private static final long serialVersionUID = 1L;
+    final JTable table;
+    final VariableList data;
     Var pendingDelete;
 
     VarTransferHandler(JTable table, VariableList data) {
@@ -690,7 +705,7 @@ public class VariableTab extends AnalyzerTab {
         try {
           JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
           newIdx = Math.min(dl.getRow(), data.vars.size());
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
       }
 

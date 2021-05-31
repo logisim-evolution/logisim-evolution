@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,14 +28,17 @@
 
 package com.cburch.logisim.instance;
 
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 
 public abstract class InstanceLogger {
   public abstract String getLogName(InstanceState state, Object option);
 
-  public Object[] getLogOptions(InstanceState state) {
-    return null;
-  }
+  public abstract BitWidth getBitWidth(InstanceState state, Object option);
 
+  public Object[] getLogOptions(InstanceState state) { return null; }
+  
   public abstract Value getLogValue(InstanceState state, Object option);
+  
+  public boolean isInput(InstanceState state, Object option) { return false; }
 }

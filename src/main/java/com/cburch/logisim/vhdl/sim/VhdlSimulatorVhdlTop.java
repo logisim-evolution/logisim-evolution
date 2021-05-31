@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,7 +32,6 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
@@ -40,10 +39,9 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 import com.cburch.logisim.vhdl.base.VhdlParser;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +60,7 @@ public class VhdlSimulatorVhdlTop {
   static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
 
   private boolean valid = false;
-  private VhdlSimulatorTop vhdlSimulator;
+  private final VhdlSimulatorTop vhdlSimulator;
   private boolean firstPort;
   private boolean firstComp;
   private boolean firstMap;
@@ -93,7 +91,7 @@ public class VhdlSimulatorVhdlTop {
     map.append(System.getProperty("line.separator"));
 
     firstPort = firstComp = firstMap = true;
-    String type[] = {Port.INOUT, Port.INPUT, Port.OUTPUT};
+    String[] type = {Port.INOUT, Port.INPUT, Port.OUTPUT};
 
     /* For each vhdl entity */
     for (Component comp : comps) {
@@ -101,7 +99,7 @@ public class VhdlSimulatorVhdlTop {
 
       ComponentFactory fac = comp.getFactory();
       String vhdlEntityName;
-      List<VhdlParser.PortDescription> MyPorts = new ArrayList<VhdlParser.PortDescription>();
+      List<VhdlParser.PortDescription> MyPorts = new ArrayList<>();
       if (fac instanceof VhdlEntity) {
         vhdlEntityName = ((VhdlEntity) fac).GetSimName(state.getInstance().getAttributeSet());
         MyPorts.addAll(((VhdlEntityAttributes) state.getAttributeSet()).getContent().getPorts());
@@ -109,7 +107,7 @@ public class VhdlSimulatorVhdlTop {
         vhdlEntityName =
             ((VhdlEntityComponent) fac).GetSimName(state.getInstance().getAttributeSet());
         for (Port port :
-            ((VhdlContentComponent) state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR))
+            state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR)
                 .getPorts()) {
           VhdlParser.PortDescription nport =
               new VhdlParser.PortDescription(
@@ -129,17 +127,18 @@ public class VhdlSimulatorVhdlTop {
           firstPort = false;
         }
         String portName = vhdlEntityName + "_" + port.getName();
-        ports.append("		" + portName + " : " + port.getVhdlType() + " std_logic");
+        ports.append("		").append(portName).append(" : ").append(port.getVhdlType())
+            .append(" std_logic");
         int width = port.getWidth().getWidth();
         if (width > 1) {
-          ports.append("_vector(" + (width - 1) + " downto 0)");
+          ports.append("_vector(").append(width - 1).append(" downto 0)");
         }
       }
 
       /*
        * Create components
        */
-      components.append("	component " + vhdlEntityName);
+      components.append("	component ").append(vhdlEntityName);
       components.append(System.getProperty("line.separator"));
 
       components.append("		port (");
@@ -152,11 +151,12 @@ public class VhdlSimulatorVhdlTop {
           components.append(System.getProperty("line.separator"));
         } else firstComp = false;
 
-        components.append("			" + port.getName() + " : " + port.getVhdlType() + " std_logic");
+        components.append("			").append(port.getName()).append(" : ").append(port.getVhdlType())
+            .append(" std_logic");
 
         int width = port.getWidth().getWidth();
         if (width > 1) {
-          components.append("_vector(" + (width - 1) + " downto 0)");
+          components.append("_vector(").append(width - 1).append(" downto 0)");
         }
       }
 
@@ -173,7 +173,8 @@ public class VhdlSimulatorVhdlTop {
       /*
        * Create port map
        */
-      map.append("	" + vhdlEntityName + "_map : " + vhdlEntityName + " port map (");
+      map.append("	").append(vhdlEntityName).append("_map : ").append(vhdlEntityName)
+          .append(" port map (");
       map.append(System.getProperty("line.separator"));
 
       firstMap = true;
@@ -184,7 +185,8 @@ public class VhdlSimulatorVhdlTop {
           map.append(System.getProperty("line.separator"));
         } else firstMap = false;
 
-        map.append("		" + port.getName() + " => " + vhdlEntityName + "_" + port.getName());
+        map.append("		").append(port.getName()).append(" => ").append(vhdlEntityName).append("_")
+            .append(port.getName());
       }
       map.append(System.getProperty("line.separator"));
       map.append("	);");
@@ -228,14 +230,11 @@ public class VhdlSimulatorVhdlTop {
     try {
       writer =
           new PrintWriter(
-              VhdlSimConstants.SIM_SRC_PATH + VhdlSimConstants.SIM_TOP_FILENAME, "UTF-8");
+              VhdlSimConstants.SIM_SRC_PATH + VhdlSimConstants.SIM_TOP_FILENAME,
+              StandardCharsets.UTF_8);
       writer.print(template);
       writer.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not create top_sim file : {}", e.getMessage());
-      e.printStackTrace();
-      return;
-    } catch (UnsupportedEncodingException e) {
+    } catch (IOException e) {
       logger.error("Could not create top_sim file : {}", e.getMessage());
       e.printStackTrace();
       return;

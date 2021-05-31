@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,10 +30,6 @@ package com.cburch.logisim.soc.memory;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
@@ -41,6 +37,9 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import java.awt.Font;
+import java.util.Arrays;
+import java.util.List;
 
 public class SocMemoryAttributes extends AbstractAttributeSet {
 
@@ -59,27 +58,25 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   public static final Attribute<BitWidth> MEM_SIZE = Attributes.forBitWidth("MemSize", S.getter("SocMemSize"), 10, 26);
   
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = true;
+  private Boolean labelVisible = true;
   private SocMemoryState memState = new SocMemoryState();
   private BitWidth memSize = BitWidth.create(10);
   
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-    	  new Attribute<?>[] {
-    	    START_ADDRESS,
-    	    MEM_SIZE,
-    	    StdAttr.LABEL,
-    	    StdAttr.LABEL_FONT,
-    	    StdAttr.LABEL_VISIBILITY,
-    	    SocSimulationManager.SOC_BUS_SELECT,
-    	    SOCMEM_STATE,
-      });
+          START_ADDRESS,
+          MEM_SIZE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          SocSimulationManager.SOC_BUS_SELECT,
+          SOCMEM_STATE);
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
     SocMemoryAttributes d = (SocMemoryAttributes) dest;
     d.labelFont = labelFont;
-    d.labelVisable = labelVisable;
+    d.labelVisible = labelVisible;
     d.memState = new SocMemoryState();
     d.memSize = memSize;
     d.memState.setSize(memSize);
@@ -100,7 +97,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
 	if (attr == MEM_SIZE) return (V) memSize;
 	if (attr == StdAttr.LABEL) return (V) memState.getLabel();
 	if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
-	if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisable;
+	if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
 	if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V) memState.getSocBusInfo();
 	if (attr == SOCMEM_STATE) return (V) memState;
     return null;
@@ -148,8 +145,8 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean v = (Boolean) value;
-      if (!labelVisable.equals(v)) {
-        labelVisable = v;
+      if (!labelVisible.equals(v)) {
+        labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecutionInterface {
 
@@ -93,9 +92,9 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
    * movia rb,label => orhi rb,0,%hi(label); addi rb,r0,%lo(label)    
    */
   
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
 
   private int instruction;
   private boolean valid;
@@ -113,6 +112,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
     }
   }
 
+  @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState state = (Nios2State.ProcessorState) processorState;
@@ -130,6 +130,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_ANDHI    : result = valueA & imm;
                             break;
       case INSTR_ANDI     : valueB = immediate;
+                            // fall through
       case INSTR_AND      : result = valueA & valueB;
                             break;
       case INSTR_MOVHI    :
@@ -137,6 +138,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
                             break;
       case INSTR_MOVUI    :
       case INSTR_ORI      : valueB = immediate;
+                            // fall through
       case INSTR_OR       : result = valueA | valueB;
                             break;
       case INSTR_NOR      : result = valueA | valueB;
@@ -145,10 +147,12 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_XORHI    : result = valueA ^ imm;
                             break;
       case INSTR_XORI     : valueB = immediate;
+                            // fall through
       case INSTR_XOR      : result = valueA ^ valueB;
                             break;
       case INSTR_MOVI     :
       case INSTR_ADDI     : valueB = imm >> 16;
+                            // fall through
       case INSTR_MOV      :
       case INSTR_NOP      : 
       case INSTR_ADD      : result = valueA + valueB;
@@ -156,6 +160,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       case INSTR_SUB      : result = valueA - valueB;
                             break;
       case INSTR_MULI     : valueB = imm >> 16;
+                            // fall through
       case INSTR_MULXSS   :
       case INSTR_MUL      : long oppA = valueA;
                             long oppB = valueB;
@@ -187,32 +192,35 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     if (OpcCodes.get(operation) == PSEUDO_INSTR) {
       if (operation != INSTR_NOP) {
         if (operation == INSTR_MOV) {
-          s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]);
+          s.append(Nios2State.registerABINames[destination]).append(",")
+              .append(Nios2State.registerABINames[sourceA]);
         } else {
           int imm = immediate;
           if (OpxCodes.get(operation) == SIGN_EXTEND) {
             imm <<=16;
             imm >>= 16;
           }
-          s.append(Nios2State.registerABINames[destination]+","+imm);
+          s.append(Nios2State.registerABINames[destination]).append(",").append(imm);
         }
       }
     } else if (OpcCodes.get(operation) == 0x3A) {
-      s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]);
-      s.append(","+Nios2State.registerABINames[sourceB]);
+      s.append(Nios2State.registerABINames[destination]).append(",")
+          .append(Nios2State.registerABINames[sourceA]);
+      s.append(",").append(Nios2State.registerABINames[sourceB]);
     } else {
       int imm = immediate;
       if (OpxCodes.get(operation) == SIGN_EXTEND) {
         imm = immediate << 16;
         imm >>= 16;
       }
-      s.append(Nios2State.registerABINames[destination]+","+Nios2State.registerABINames[sourceA]+","+imm);
+      s.append(Nios2State.registerABINames[destination]).append(",")
+          .append(Nios2State.registerABINames[sourceA]).append(",").append(imm);
     }
     return s.toString();
   }

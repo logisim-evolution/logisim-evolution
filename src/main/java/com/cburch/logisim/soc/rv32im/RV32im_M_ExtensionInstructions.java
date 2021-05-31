@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,14 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -62,11 +62,9 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source2;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
@@ -84,12 +82,12 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
                           result = (operation == INSTR_MUL) ? res.and(mask).intValue() : res.shiftRight(32).and(mask).intValue();
                           break;
       case INSTR_MULHSU : opp1 = BigInteger.valueOf(val1);
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = opp1.multiply(opp2);
                           result = res.shiftRight(32).and(mask).intValue();
                           break;
-      case INSTR_MULHU  : opp1 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val1)); 
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+      case INSTR_MULHU  : opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = opp1.multiply(opp2);
                           result = res.shiftRight(32).and(mask).intValue();
                           break;
@@ -100,8 +98,8 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
                           result = res.and(mask).intValue();
                           break;
       case INSTR_DIVU   :
-      case INSTR_REMU   : opp1 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val1));
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+      case INSTR_REMU   : opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = (operation == INSTR_REMU) ? opp1.remainder(opp2) : opp1.divide(opp2);
                           result = res.and(mask).intValue();
                           break;
@@ -112,12 +110,13 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]+","+RV32im_state.registerABINames[source1]+","+
-            RV32im_state.registerABINames[source2]);
+    s.append(RV32im_state.registerABINames[destination]).append(",")
+        .append(RV32im_state.registerABINames[source1]).append(",")
+        .append(RV32im_state.registerABINames[source2]);
     return s.toString();
   }
 

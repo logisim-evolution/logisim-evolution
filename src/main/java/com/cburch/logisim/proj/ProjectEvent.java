@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,10 +48,10 @@ public class ProjectEvent {
   public static final int REDO_START = 11;
   public static final int REDO_COMPLETE = 12;
 
-  private int action;
-  private Project proj;
+  private final int action;
+  private final Project proj;
   private Object old_data;
-  private Object data;
+  private final Object data;
 
   ProjectEvent(int action, Project proj) {
     this.action = action;

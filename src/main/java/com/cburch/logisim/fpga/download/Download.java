@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -35,7 +35,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.ComponentMapParser;
 import com.cburch.logisim.fpga.gui.ComponentMapDialog;
-import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -51,7 +51,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
@@ -67,23 +66,22 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private VendorDownload Downloader;
   private String TopLevelSheet;
   private double TickFrequency;
-  private static int BasicSteps = 5;
+  private static final int BasicSteps = 5;
   private String MapFileName;
-  ArrayList<String> Entities = new ArrayList<String>();
-  ArrayList<String> Architectures = new ArrayList<String>();
+  final ArrayList<String> Entities = new ArrayList<>();
+  final ArrayList<String> Architectures = new ArrayList<>();
 
   private Process Executable;
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private JFrame parent;
 
   
-  private ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
+  private final ArrayList<ActionListener> Listeners = new ArrayList<>();
 
   public Download(
 	      Project MyProject,
 	      String TopLevelSheet,
 	      double TickFrequency,
-	      FPGAReport MyReporter,
 	      BoardInformation MyBoardInformation,
 	      String MapFileName,
 	      boolean writeToFlash,
@@ -93,7 +91,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
 	      JFrame myParent) {
     MyProgress = Progress;
     parent = myParent;
-    SetUpDownload(MyProject, TopLevelSheet, TickFrequency, MyReporter,
+    SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
 
@@ -101,13 +99,12 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       Project MyProject,
       String TopLevelSheet,
       double TickFrequency,
-      FPGAReport MyReporter,
       BoardInformation MyBoardInformation,
       String MapFileName,
       boolean writeToFlash,
       boolean DownloadOnly,
       boolean gegerateHdlOnly) {
-    SetUpDownload(MyProject, TopLevelSheet, TickFrequency, MyReporter,
+    SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
         MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
   
@@ -115,30 +112,33 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       Project MyProject,
       String TopLevelSheet,
       double TickFrequency,
-      FPGAReport MyReporter,
       BoardInformation MyBoardInformation,
       String MapFileName,
       boolean writeToFlash,
       boolean DownloadOnly,
       boolean gegerateHdlOnly) {
     this.MyProject = MyProject;
-    this.MyReporter = MyReporter;
     this.MyBoardInformation = MyBoardInformation;
     this.DownloadOnly = DownloadOnly;
-    this.Vendor = MyBoardInformation.fpga.getVendor();
+    this.HdlOnly = gegerateHdlOnly;
+    if (MyBoardInformation == null) {
+      this.HdlOnly = true;
+      this.Vendor = ' ';
+    } else {
+      this.Vendor = MyBoardInformation.fpga.getVendor();
+    }
     this.UseGui = !Main.headless;
     this.TopLevelSheet = TopLevelSheet;
     this.TickFrequency = TickFrequency;
     this.MapFileName = MapFileName;
-    this.HdlOnly = gegerateHdlOnly;
     Circuit RootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    if (RootSheet == null) return;
     int steps = BasicSteps;
     switch (Vendor) {
       case VendorSoftware.VendorAltera:
         Downloader =
             new AlteraDownload(
                 GetProjDir(TopLevelSheet),
-                MyReporter,
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -150,7 +150,6 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         Downloader =
             new XilinxDownload(
                 GetProjDir(TopLevelSheet),
-                MyReporter,
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -162,14 +161,13 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         Downloader =
             new VivadoDownload(
                 GetProjDir(TopLevelSheet),
-                MyReporter,
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
                 Architectures);
         break;
       default:
-        MyReporter.AddFatalError("BUG: Tried to Download to an unknown target");
+        Reporter.Report.AddFatalError("BUG: Tried to Download to an unknown target");
         return;
     }
     if (MyProgress == null) UseGui = false;
@@ -199,12 +197,12 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public void RemoveListener(ActionListener listener) {
-    if (Listeners.contains(listener)) Listeners.remove(Listeners.indexOf(listener));
+    Listeners.remove(listener);
   }
 
   private void fireEvent(ActionEvent e) {
-    for (int i = 0; i < Listeners.size(); i++) {
-      Listeners.get(i).actionPerformed(e);
+    for (ActionListener listener : Listeners) {
+      listener.actionPerformed(e);
     }
   }
 
@@ -213,40 +211,47 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     if (PrepareDownLoad() && VendorSoftwarePresent() && !HdlOnly) {
       try {
         String error = download();
-        if (error != null) MyReporter.AddFatalError(error);
+        if (error != null) Reporter.Report.AddFatalError(error);
       } catch (IOException e) {
-        MyReporter.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
+        Reporter.Report.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
         e.printStackTrace();
       } catch (InterruptedException e) {
-        MyReporter.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+        Reporter.Report.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       }
     }
     fireEvent(new ActionEvent(this, 1, "DownloadDone"));
   }
 
   public boolean runtty() {
+    Circuit root = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    if (root != null) {
+      root.Annotate(MyProject,false, false);
+    } else {
+      Reporter.Report.AddFatalError("Toplevel sheet \""+TopLevelSheet+"\" not found in project!");
+      return false;
+    }
     if (!PrepareDownLoad()) return false;
     if (HdlOnly) return true;
     if (!VendorSoftwarePresent()) return false;
     try {
       String error = download();
       if (error != null) {
-        MyReporter.AddFatalError(error);
+        Reporter.Report.AddFatalError(error);
         return false;
       }
     } catch (IOException e) {
-      MyReporter.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
+      Reporter.Report.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
       e.printStackTrace();
       return false;
     } catch (InterruptedException e) {
-      MyReporter.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+      Reporter.Report.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       return false;
     }
     return true;
   }
 
   private String download() throws IOException, InterruptedException {
-    MyReporter.ClsScr();
+    Reporter.Report.ClsScr();
     if (!DownloadOnly || !Downloader.readyForDownload()) {
       for (int stages = 0; stages < Downloader.GetNumberOfStages(); stages++) {
         if (StopRequested) return S.get("FPGAInterrupted");
@@ -282,7 +287,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public static String execute(
-      ProcessBuilder process, ArrayList<String> Report, FPGAReport MyReporter)
+      ProcessBuilder process, ArrayList<String> Report)
       throws IOException, InterruptedException {
     Process Executable = process.start();
     InputStream is = Executable.getInputStream();
@@ -290,7 +295,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     BufferedReader br = new BufferedReader(isr);
     String line;
     while ((line = br.readLine()) != null) {
-      if (MyReporter != null) MyReporter.print(line);
+      Reporter.Report.print(line);
       if (Report != null) Report.add(line);
     }
     Executable.waitFor();
@@ -303,10 +308,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private String execute(String StageName, ProcessBuilder process)
       throws IOException, InterruptedException {
     if (UseGui) MyProgress.setString(StageName);
-    MyReporter.print(" ");
-    MyReporter.print("==>");
-    MyReporter.print("==> " + StageName);
-    MyReporter.print("==>");
+    Reporter.Report.print(" ");
+    Reporter.Report.print("==>");
+    Reporter.Report.print("==> " + StageName);
+    Reporter.Report.print("==>");
     synchronized (lock) {
       Executable = process.start();
     }
@@ -315,7 +320,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     BufferedReader br = new BufferedReader(isr);
     String line;
     while ((line = br.readLine()) != null) {
-      MyReporter.print(line);
+      Reporter.Report.print(line);
     }
     Executable.waitFor();
     isr.close();
@@ -335,7 +340,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     }
     String Name = MyProject.getLogisimFile().getName();
     if (Name.contains(" ")) {
-      MyReporter.AddFatalError(S.fmt("FPGANameContainsSpaces", Name));
+      Reporter.Report.AddFatalError(S.fmt("FPGANameContainsSpaces", Name));
       return false;
     }
     /* Stage 1 Is design map able on Board */
@@ -359,7 +364,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         MapPannel = new ComponentMapDialog( parent , "", MyBoardInformation, MyMappableResources);
       }
       if (!MapPannel.run()) {
-        MyReporter.AddError(S.get("FPGADownloadAborted"));
+        Reporter.Report.AddError(S.get("FPGADownloadAborted"));
         return false;
       }
     } else {
@@ -371,7 +376,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       }
     }
     if (!MapDesignCheckIOs()) {
-      MyReporter.AddError(S.fmt("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
+      Reporter.Report.AddError(S.fmt("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
       return false;
     }
     /* Stage 3 HDL generation */
@@ -430,10 +435,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     long clkfreq = CurrentBoard.fpga.getClockFrequency();
     if (clkfreq % 1000000 == 0) {
       clkfreq /= 1000000;
-      return Long.toString(clkfreq) + " MHz ";
+      return clkfreq + " MHz ";
     } else if (clkfreq % 1000 == 0) {
       clkfreq /= 1000;
-      return Long.toString(clkfreq) + " kHz ";
+      return clkfreq + " kHz ";
     }
     return Long.toString(clkfreq);
   }
@@ -443,17 +448,15 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     if (Main.hasGui()) {
       String[] choices = new String[devices.size()];
       for (int i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
-      String choice =
-          (String)
-              OptionPane.showInputDialog(
-                  null,
-                  S.fmt("FPGAMultipleBoards", devices.size()),
-                  S.get("FPGABoardSelection"),
-                  OptionPane.QUESTION_MESSAGE,
-                  null,
-                  choices,
-                  choices[0]);
-      return choice;
+      return (String)
+          OptionPane.showInputDialog(
+              null,
+              S.fmt("FPGAMultipleBoards", devices.size()),
+              S.get("FPGABoardSelection"),
+              OptionPane.QUESTION_MESSAGE,
+              null,
+              choices,
+              choices[0]);
     } else {
       /* TODO: add none gui selection */
       return null;

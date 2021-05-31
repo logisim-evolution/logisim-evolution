@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,13 +40,12 @@ import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import java.util.HashMap;
 import java.util.Map;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
-  private Canvas canvas;
+  private final Canvas canvas;
 
   public AttrTableSelectionModel(Canvas canvas) {
     super(new SelectionAttributes(canvas.getSelection()));
@@ -93,12 +92,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   }
 
   @Override
-  public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+  public void setValueRequested(Attribute<Object> attr, Object value) {
     SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
     Map<AttributeMapKey, Object> oldVals;
-    oldVals = new HashMap<AttributeMapKey, Object>();
+    oldVals = new HashMap<>();
     Map<AttributeMapKey, Object> newVals;
-    newVals = new HashMap<AttributeMapKey, Object>();
+    newVals = new HashMap<>();
     for (Map.Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
       AttributeMapKey key = new AttributeMapKey(attr, ent.getValue());
       oldVals.put(key, ent.getKey().getValue(attr));

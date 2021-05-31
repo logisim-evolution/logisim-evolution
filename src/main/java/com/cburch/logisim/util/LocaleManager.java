@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,8 +43,8 @@ import javax.swing.UIManager;
 
 public class LocaleManager {
   private static class LocaleGetter implements StringGetter {
-    LocaleManager source;
-    String key;
+    final LocaleManager source;
+    final String key;
 
     LocaleGetter(LocaleManager source, String key) {
       this.source = source;
@@ -58,7 +58,7 @@ public class LocaleManager {
 
   /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
-    String arg;
+    final String arg;
 
     LocaleFormatterWithString(LocaleManager source, String key, String arg) {
       super(source, key);
@@ -71,7 +71,7 @@ public class LocaleManager {
   }
 
   private static class LocaleFormatterWithGetter extends LocaleGetter {
-    StringGetter arg;
+    final StringGetter arg;
 
     LocaleFormatterWithGetter(LocaleManager source, String key, StringGetter arg) {
       super(source, key);
@@ -113,8 +113,8 @@ public class LocaleManager {
         s = tok.substring(2).trim();
       }
       if (s != null) {
-        if (ret == null) ret = new HashMap<Character, String>();
-        ret.put(new Character(c), s);
+        if (ret == null) ret = new HashMap<>();
+        ret.put(c, s);
       }
     }
     return ret;
@@ -154,7 +154,7 @@ public class LocaleManager {
     for (int j = i; j < cs.length; j++) {
       char cj = cs[j];
       if (cj < 32 || cj >= 127) {
-        String out = repl.get(Character.valueOf(cj));
+        String out = repl.get(cj);
         if (out != null) {
           ret.append(out);
         } else {
@@ -245,13 +245,13 @@ public class LocaleManager {
   // static members
   private static final String SETTINGS_NAME = "settings";
 
-  private static ArrayList<LocaleManager> managers = new ArrayList<LocaleManager>();
+  private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
-  private static String DATE_FORMAT = S.get("dateFormat");
+  private static final String DATE_FORMAT = S.get("dateFormat");
 
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 
-  private static ArrayList<LocaleListener> listeners = new ArrayList<LocaleListener>();
+  private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
 
   private static boolean replaceAccents = false;
 
@@ -259,12 +259,10 @@ public class LocaleManager {
 
   private static Locale curLocale = null;
   // instance members
-  private String dir_name;
-  private String file_start;
+  private final String dir_name;
+  private final String file_start;
   private ResourceBundle settings = null;
   private ResourceBundle locale = null;
-
-  private ResourceBundle dflt_locale = null;
 
   public LocaleManager(String dir_name, String file_start) {
     this.dir_name = dir_name;
@@ -288,17 +286,7 @@ public class LocaleManager {
     try {
       ret = locale.getString(key);
     } catch (MissingResourceException e) {
-      ResourceBundle backup = dflt_locale;
-      if (backup == null) {
-        Locale backup_loc = Locale.US;
-        backup = ResourceBundle.getBundle(dir_name + "/en/" + file_start, backup_loc);
-        dflt_locale = backup;
-      }
-      try {
-        ret = backup.getString(key);
-      } catch (MissingResourceException e2) {
-        ret = key;
-      }
+      ret = key;
     }
     HashMap<Character, String> repl = LocaleManager.repl;
     if (repl != null) ret = replaceAccents(ret, repl);
@@ -315,11 +303,11 @@ public class LocaleManager {
     String locs = null;
     try {
       if (settings != null) locs = settings.getString("locales");
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     if (locs == null) return new Locale[] {};
 
-    ArrayList<Locale> retl = new ArrayList<Locale>();
+    ArrayList<Locale> retl = new ArrayList<>();
     StringTokenizer toks = new StringTokenizer(locs);
     while (toks.hasMoreTokens()) {
       String f = toks.nextToken();
@@ -338,7 +326,7 @@ public class LocaleManager {
       }
     }
 
-    return retl.toArray(new Locale[retl.size()]);
+    return retl.toArray(new Locale[0]);
   }
 
   public StringGetter getter(String key) {
@@ -357,19 +345,19 @@ public class LocaleManager {
     if (settings == null) {
       try {
         settings = ResourceBundle.getBundle(dir_name + "/" + SETTINGS_NAME);
-      } catch (java.util.MissingResourceException e) {
+      } catch (java.util.MissingResourceException ignored) {
       }
     }
 
     try {
       loadLocale(Locale.getDefault());
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     try {
       loadLocale(Locale.ENGLISH);
       if (locale != null) return;
-    } catch (java.util.MissingResourceException e) {
+    } catch (java.util.MissingResourceException ignored) {
     }
     Locale[] choices = getLocaleOptions();
     if (choices != null && choices.length > 0) loadLocale(choices[0]);
@@ -378,7 +366,7 @@ public class LocaleManager {
   }
 
   private void loadLocale(Locale loc) {
-    String bundleName = dir_name + "/" + loc.getLanguage() + "/" + file_start;
+    String bundleName = dir_name + "/strings/" + file_start + "/" + file_start;
     locale = ResourceBundle.getBundle(bundleName, loc);
   }
 }

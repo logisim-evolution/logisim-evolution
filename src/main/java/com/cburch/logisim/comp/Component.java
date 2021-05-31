@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -35,36 +35,36 @@ import com.cburch.logisim.data.Location;
 import java.awt.Graphics;
 import java.util.List;
 
-public interface Component {
+public interface Component extends Location.At {
   // listener methods
-  public void addComponentListener(ComponentListener l);
+  void addComponentListener(ComponentListener l);
 
-  public boolean contains(Location pt);
+  boolean contains(Location pt);
 
-  public boolean contains(Location pt, Graphics g);
+  boolean contains(Location pt, Graphics g);
 
-  public void draw(ComponentDrawContext context);
+  void draw(ComponentDrawContext context);
 
-  public boolean endsAt(Location pt);
+  boolean endsAt(Location pt);
 
   // user interface methods
-  public void expose(ComponentDrawContext context);
+  void expose(ComponentDrawContext context);
 
-  public AttributeSet getAttributeSet();
+  AttributeSet getAttributeSet();
 
-  public Bounds getBounds();
+  Bounds getBounds();
 
-  public Bounds getBounds(Graphics g);
+  Bounds getBounds(Graphics g);
 
-  public EndData getEnd(int index);
+  EndData getEnd(int index);
 
   // propagation methods
-  public List<EndData> getEnds(); // list of EndDatas
+  List<EndData> getEnds(); // list of EndDatas
   // basic information methods
 
-  public ComponentFactory getFactory();
+  ComponentFactory getFactory();
   
-  public void setFactory(ComponentFactory fact);
+  void setFactory(ComponentFactory fact);
 
   /**
    * Retrieves information about a special-purpose feature for this component. This technique allows
@@ -83,12 +83,9 @@ public interface Component {
    * @return an object representing information about how the component supports the feature, or
    *     <code>null</code> if it does not support the feature.
    */
-  public Object getFeature(Object key);
+  Object getFeature(Object key);
 
-  // location/extent methods
-  public Location getLocation();
+  void propagate(CircuitState state);
 
-  public void propagate(CircuitState state);
-
-  public void removeComponentListener(ComponentListener l);
+  void removeComponentListener(ComponentListener l);
 }

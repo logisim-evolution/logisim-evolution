@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,7 @@ public class CircuitLocker {
 
   static Map<Circuit, Lock> acquireLocks(CircuitTransaction xn, CircuitMutatorImpl mutator) {
     Map<Circuit, Integer> requests = xn.getAccessedCircuits();
-    Map<Circuit, Lock> circuitLocks = new HashMap<Circuit, Lock>();
+    Map<Circuit, Lock> circuitLocks = new HashMap<>();
     // Acquire locks in serial-number order to avoid deadlock
     Circuit[] lockOrder = requests.keySet().toArray(new Circuit[0]);
     Arrays.sort(lockOrder, new CircuitComparator());
@@ -62,7 +62,7 @@ public class CircuitLocker {
           circuitLocks.put(circ, lock);
         } else if (access == CircuitTransaction.READ_WRITE) {
           Thread curThread = Thread.currentThread();
-          if (locker.mutatingThread == curThread) {; // nothing to do - thread already has lock
+          if (locker.mutatingThread == curThread) {// nothing to do - thread already has lock
           } else {
             Lock lock = locker.circuitLock.writeLock();
             lock.lock();
@@ -96,10 +96,10 @@ public class CircuitLocker {
     }
   }
 
-  private static AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
-  private int serialNumber;
+  private static final AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
+  private final int serialNumber;
 
-  private ReadWriteLock circuitLock;
+  private final ReadWriteLock circuitLock;
 
   private transient Thread mutatingThread;
 
@@ -145,10 +145,10 @@ public class CircuitLocker {
 
   public static class LockException extends IllegalStateException {
     private static final long serialVersionUID = 1L;
-    private Circuit circuit;
-    private int serialNumber;
-    private transient Thread mutatingThread;
-    private CircuitMutatorImpl mutatingMutator;
+    private final Circuit circuit;
+    private final int serialNumber;
+    private final transient Thread mutatingThread;
+    private final CircuitMutatorImpl mutatingMutator;
 
     public LockException(
         String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {

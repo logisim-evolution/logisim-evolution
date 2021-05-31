@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,13 +63,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class ProjectActions {
-  private static String FILE_NAME_FORMAT_ERROR = "FileNameError";
-  private static String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+  private static final String FILE_NAME_FORMAT_ERROR = "FileNameError";
+  private static final String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
 
   private static class CreateFrame implements Runnable {
-    private Loader loader;
-    private Project proj;
-    private boolean isStartupScreen;
+    private final Loader loader;
+    private final Project proj;
+    private final boolean isStartupScreen;
 
     public CreateFrame(Loader loader, Project proj, boolean isStartup) {
       this.loader = loader;
@@ -105,8 +105,8 @@ public class ProjectActions {
   private static boolean checkValidFilename(
       String filename, Project proj, HashMap<String, String> Errors) {
     boolean IsOk = true;
-    HashMap<String, Library> TempSet = new HashMap<String, Library>();
-    HashSet<String> ForbiddenNames = new HashSet<String>();
+    HashMap<String, Library> TempSet = new HashMap<>();
+    HashSet<String> ForbiddenNames = new HashSet<>();
     LibraryTools.BuildLibraryList(proj.getLogisimFile(), TempSet);
     LibraryTools.BuildToolList(proj.getLogisimFile(), ForbiddenNames);
     ForbiddenNames.addAll(TempSet.keySet());
@@ -144,7 +144,7 @@ public class ProjectActions {
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     return file;
@@ -171,15 +171,10 @@ public class ProjectActions {
     } catch (IOException ex) {
       displayException(baseProject.getFrame(), ex);
       file = createEmptyFile(loader, baseProject);
-    } catch (LoadFailedException ex) {
-      if (!ex.isShown()) {
-        displayException(baseProject.getFrame(), ex);
-      }
-      file = createEmptyFile(loader, baseProject);
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     return file;
@@ -215,12 +210,10 @@ public class ProjectActions {
       file = loader.openLogisimFile(templReader);
     } catch (IOException ex) {
       displayException(monitor, ex);
-    } catch (LoadFailedException ex) {
-      displayException(monitor, ex);
     } finally {
       try {
         templReader.close();
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     if (file == null) file = createEmptyFile(loader, null);
@@ -277,7 +270,7 @@ public class ProjectActions {
     }
   }
 
-  public static boolean doOpen(Component parent, Project baseProject) {
+  public static Project doOpen(Component parent, Project baseProject) {
     JFileChooser chooser;
     if (baseProject != null) {
       Loader oldLoader = baseProject.getLogisimFile().getLoader();
@@ -292,13 +285,10 @@ public class ProjectActions {
     chooser.setDialogTitle(S.get("FileOpenItem"));
 
     int returnVal = chooser.showOpenDialog(parent);
-    if (returnVal != JFileChooser.APPROVE_OPTION) return false;
+    if (returnVal != JFileChooser.APPROVE_OPTION) return null;
     File selected = chooser.getSelectedFile();
-    if (selected != null) {
-      doOpen(parent, baseProject, selected);
-    }
-
-    return true;
+    if (selected == null) return null;
+    return doOpen(parent, baseProject, selected);
   }
 
   public static Project doOpen(Component parent, Project baseProject, File f) {
@@ -325,7 +315,7 @@ public class ProjectActions {
                 null,
                 options,
                 options[2]);
-        if (result == 0) {; // keep proj as is, so that load happens into the window
+        if (result == 0) {// keep proj as is, so that load happens into the window
         } else if (result == 1) {
           proj = null; // we'll create a new project
         } else {
@@ -346,7 +336,7 @@ public class ProjectActions {
       LogisimFile lib = loader.openLogisimFile(f);
       AppPreferences.updateRecentFile(f);
       if (lib == null) return null;
-      LibraryTools.RemovePresentLibraries(lib, new HashMap<String, Library>(), true);
+      LibraryTools.RemovePresentLibraries(lib, new HashMap<>(), true);
       if (proj == null) {
         proj = new Project(lib);
         updatecircs(lib, proj);
@@ -399,7 +389,7 @@ public class ProjectActions {
     Frame top = Projects.getTopFrame();
     top.savePreferences();
 
-    for (Project proj : new ArrayList<Project>(Projects.getOpenProjects())) {
+    for (Project proj : new ArrayList<>(Projects.getOpenProjects())) {
       if (!proj.confirmClose(S.get("confirmQuitTitle"))) return;
     }
     System.exit(0);
@@ -443,7 +433,7 @@ public class ProjectActions {
 
     int returnVal;
     boolean validFilename = false;
-    HashMap<String, String> Error = new HashMap<String, String>();
+    HashMap<String, String> Error = new HashMap<>();
     do {
       Error.clear();
       returnVal = chooser.showSaveDialog(proj.getFrame());

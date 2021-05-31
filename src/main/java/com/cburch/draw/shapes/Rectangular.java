@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -74,11 +74,9 @@ abstract class Rectangular extends FillableCanvasObject {
           && contains(x - tol, y - tol, w + tol2, h + tol2, loc)
           && !contains(x + tol, y + tol, w - tol2, h - tol2, loc);
     } else if (type == DrawAttr.PAINT_STROKE_FILL) {
-      int stroke = getStrokeWidth();
-      int tol2 = stroke;
-      int tol = tol2 / 2;
-      return isInRect(qx, qy, x - tol, y - tol, w + tol2, h + tol2)
-          && contains(x - tol, y - tol, w + tol2, h + tol2, loc);
+      int tol = getStrokeWidth() / 2;
+      return isInRect(qx, qy, x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth())
+          && contains(x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth(), loc);
     } else {
       return false;
     }
@@ -162,7 +160,8 @@ abstract class Rectangular extends FillableCanvasObject {
           if (x1 == hx) newX0 -= dx;
           if (y0 == hy) newY1 -= dy;
           if (y1 == hy) newY0 -= dy;
-        } else {; // already handled
+        } else {
+          // already handled
         }
       }
       return new Handle[] {

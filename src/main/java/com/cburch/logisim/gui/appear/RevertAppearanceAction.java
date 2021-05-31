@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,40 +42,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RevertAppearanceAction extends Action {
-  private Circuit circuit;
+  private final Circuit circuit;
   private ArrayList<CanvasObject> old;
   private boolean wasDefault;
-
-  private class ActionTransaction extends CircuitTransaction {
-    private boolean forward;
-
-    ActionTransaction(boolean forward) {
-      this.forward = forward;
-    }
-
-    @Override
-    protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
-        accessMap.put(supercirc, READ_WRITE);
-      }
-      return accessMap;
-    }
-
-    @Override
-    protected void run(CircuitMutator mutator) {
-      if (forward) {
-        CircuitAppearance appear = circuit.getAppearance();
-        wasDefault = appear.isDefaultAppearance();
-        old = new ArrayList<CanvasObject>(appear.getObjectsFromBottom());
-        appear.setDefaultAppearance(true);
-      } else {
-        CircuitAppearance appear = circuit.getAppearance();
-        appear.setObjectsForce(old);
-        appear.setDefaultAppearance(wasDefault);
-      }
-    }
-  }
 
   public RevertAppearanceAction(Circuit circuit) {
     this.circuit = circuit;
@@ -96,5 +65,36 @@ public class RevertAppearanceAction extends Action {
   public void undo(Project proj) {
     ActionTransaction xn = new ActionTransaction(false);
     xn.execute();
+  }
+
+  private class ActionTransaction extends CircuitTransaction {
+    private final boolean forward;
+
+    ActionTransaction(boolean forward) {
+      this.forward = forward;
+    }
+
+    @Override
+    protected Map<Circuit, Integer> getAccessedCircuits() {
+      Map<Circuit, Integer> accessMap = new HashMap<>();
+      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+        accessMap.put(supercirc, READ_WRITE);
+      }
+      return accessMap;
+    }
+
+    @Override
+    protected void run(CircuitMutator mutator) {
+      if (forward) {
+        CircuitAppearance appear = circuit.getAppearance();
+        wasDefault = appear.isDefaultAppearance();
+        old = new ArrayList<>(appear.getObjectsFromBottom());
+        appear.setDefaultAppearance(true);
+      } else {
+        CircuitAppearance appear = circuit.getAppearance();
+        appear.setObjectsForce(old);
+        appear.setDefaultAppearance(wasDefault);
+      }
+    }
   }
 }

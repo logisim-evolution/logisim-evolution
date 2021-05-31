@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -73,26 +73,24 @@ class PLA extends InstanceFactory {
   static final int OUT_PORT = 1;
 
   static final Attribute<BitWidth> ATTR_IN_WIDTH =
-      Attributes.forBitWidth("in_width", S.getter("Bit Width In"));
+      Attributes.forBitWidth("in_width", S.getter("plaBitWidthIn"));
   static final Attribute<BitWidth> ATTR_OUT_WIDTH =
-      Attributes.forBitWidth("out_width", S.getter("Bit Width Out"));
-  static Attribute<PLATable> ATTR_TABLE = new TruthTableAttribute();
+      Attributes.forBitWidth("out_width", S.getter("plaBitWidthOut"));
+  static final Attribute<PLATable> ATTR_TABLE = new TruthTableAttribute();
 
-  public static InstanceFactory FACTORY = new PLA();
+  public static final InstanceFactory FACTORY = new PLA();
 
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            ATTR_IN_WIDTH,
-            ATTR_OUT_WIDTH,
-            ATTR_TABLE,
-            StdAttr.LABEL,
-            StdAttr.LABEL_LOC,
-            StdAttr.LABEL_FONT
-          });
+          StdAttr.FACING,
+          ATTR_IN_WIDTH,
+          ATTR_OUT_WIDTH,
+          ATTR_TABLE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT);
 
   private static class TruthTableAttribute extends Attribute<PLATable> {
     public TruthTableAttribute() {
@@ -122,7 +120,7 @@ class PLA extends InstanceFactory {
     }
   }
 
-  private class PLAAttributes extends AbstractAttributeSet {
+  private static class PLAAttributes extends AbstractAttributeSet {
     private String label = "";
     private Direction facing = Direction.EAST;
     private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
@@ -255,8 +253,7 @@ class PLA extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction dir = attrs.getValue(StdAttr.FACING);
-    Bounds ret = Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
-    return ret;
+    return Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
   }
 
   @Override
@@ -315,9 +312,9 @@ class PLA extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new PLAHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -328,8 +325,8 @@ class PLA extends InstanceFactory {
     return super.getInstanceFeature(instance, key);
   }
 
-  class PLAMenu implements ActionListener, MenuExtender {
-    private Instance instance;
+  static class PLAMenu implements ActionListener, MenuExtender {
+    private final Instance instance;
     private Frame frame;
     private JMenuItem edit;
 

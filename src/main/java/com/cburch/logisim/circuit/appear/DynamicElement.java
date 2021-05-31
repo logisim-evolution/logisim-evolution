@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -81,7 +81,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   public static final Color COLOR = new Color(66, 244, 152);
 
   public static class Path {
-    public InstanceComponent[] elt;
+    public final InstanceComponent[] elt;
 
     public Path(InstanceComponent[] elt) {
       this.elt = elt;
@@ -103,17 +103,17 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     public String toSvgString() {
-      String s = "";
-      for (int i = 0; i < elt.length; i++) {
-        Location loc = elt[i].getLocation();
-        s += "/" + escape(elt[i].getFactory().getName()) + loc;
+      StringBuilder s = new StringBuilder();
+      for (InstanceComponent instanceComponent : elt) {
+        Location loc = instanceComponent.getLocation();
+        s.append("/").append(escape(instanceComponent.getFactory().getName())).append(loc);
       }
-      return s;
+      return s.toString();
     }
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
       if (!s.startsWith("/")) throw new IllegalArgumentException("Bad path: " + s);
-      String parts[] = s.substring(1).split("(?<!\\\\)/");
+      String[] parts = s.substring(1).split("(?<!\\\\)/");
       InstanceComponent[] elt = new InstanceComponent[parts.length];
       for (int i = 0; i < parts.length; i++) {
         String ss = parts[i];
@@ -156,7 +156,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   public static final int DEFAULT_STROKE_WIDTH = 1;
   public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.PLAIN, 7);
-  protected Path path;
+  protected final Path path;
   protected Bounds bounds; // excluding the stroke's width, if any
   protected int strokeWidth;
   protected AttributeOption labelLoc;
@@ -360,7 +360,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   @Override
   public void updateValue(Attribute<?> attr, Object value) {
     if (attr == DrawAttr.STROKE_WIDTH) {
-      strokeWidth = ((Integer) value).intValue();
+      strokeWidth = (Integer) value;
     } else if (attr == ATTR_LABEL) {
       labelLoc = (AttributeOption) value;
     } else if (attr == StdAttr.LABEL_FONT) {

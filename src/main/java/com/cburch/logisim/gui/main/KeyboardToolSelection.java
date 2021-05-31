@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,10 +39,19 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 public class KeyboardToolSelection extends AbstractAction {
+  private static final long serialVersionUID = 1L;
+  private final Toolbar toolbar;
+  private final int index;
+
+  public KeyboardToolSelection(Toolbar toolbar, int index) {
+    this.toolbar = toolbar;
+    this.index = index;
+  }
+
   public static void register(Toolbar toolbar) {
     ActionMap amap = toolbar.getActionMap();
     InputMap imap = toolbar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    int mask = toolbar.getToolkit().getMenuShortcutKeyMask();
+    int mask = toolbar.getToolkit().getMenuShortcutKeyMaskEx();
     for (int i = 0; i < 10; i++) {
       KeyStroke keyStroke = KeyStroke.getKeyStroke((char) ('0' + i), mask);
       int j = (i == 0 ? 10 : i - 1);
@@ -51,16 +60,6 @@ public class KeyboardToolSelection extends AbstractAction {
       amap.put(key, action);
       imap.put(keyStroke, key);
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private Toolbar toolbar;
-  private int index;
-
-  public KeyboardToolSelection(Toolbar toolbar, int index) {
-    this.toolbar = toolbar;
-    this.index = index;
   }
 
   public void actionPerformed(ActionEvent event) {

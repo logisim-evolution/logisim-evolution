@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,10 +28,12 @@
 
 package com.cburch.logisim.vhdl.syntax;
 
-import java.io.*;
+import java.io.Reader;
 import javax.swing.text.Segment;
-import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
+import org.fife.ui.rsyntaxtextarea.Token;
 
+@SuppressWarnings("fallthrough")
 public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
   /** This character denotes the end of file */
@@ -1009,7 +1011,7 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
   private static final int ZZ_PUSHBACK_2BIG = 2;
 
   /* error messages for the codes above */
-  private static final String ZZ_ERROR_MSG[] = {
+  private static final String[] ZZ_ERROR_MSG = {
     "Unkown internal scanner error",
     "Error: could not match input",
     "Error: pushback value was too large"
@@ -1057,7 +1059,7 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
   /**
    * this buffer contains the current text to be matched and is the source of the yytext() string
    */
-  private char zzBuffer[];
+  private char[] zzBuffer;
 
   /** the textposition at the last accepting state */
   private int zzMarkedPos;
@@ -1162,22 +1164,14 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
     // Start off in the proper state.
     int state = Token.NULL;
-    switch (initialTokenType) {
-        /* No multi-line comments */
-        /* No documentation comments */
-      default:
-        state = Token.NULL;
-    }
+    /* No multi-line comments */
+    /* No documentation comments */
+    state = Token.NULL;
 
     s = text;
-    try {
-      yyreset(zzReader);
-      yybegin(state);
-      return yylex();
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      return new TokenImpl();
-    }
+    yyreset(zzReader);
+    yybegin(state);
+    return yylex();
   }
 
   /**
@@ -1336,7 +1330,7 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
    * @return the next token
    * @exception java.io.IOException if any I/O-Error occurs
    */
-  public org.fife.ui.rsyntaxtextarea.Token yylex() throws java.io.IOException {
+  public org.fife.ui.rsyntaxtextarea.Token yylex() {
     int zzInput;
     int zzAction;
 
@@ -1345,11 +1339,6 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
     char[] zzBufferL = zzBuffer;
-    char[] zzCMapL = ZZ_CMAP;
-
-    int[] zzTransL = ZZ_TRANS;
-    int[] zzRowMapL = ZZ_ROWMAP;
-    int[] zzAttrL = ZZ_ATTRIBUTE;
 
     while (true) {
       zzMarkedPosL = zzMarkedPos;
@@ -1385,11 +1374,11 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
               zzInput = zzBufferL[zzCurrentPosL++];
             }
           }
-          int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
+          int zzNext = ZZ_TRANS[ZZ_ROWMAP[zzState] + ZZ_CMAP[zzInput]];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;
 
-          int zzAttributes = zzAttrL[zzState];
+          int zzAttributes = ZZ_ATTRIBUTE[zzState];
           if ((zzAttributes & 1) == 1) {
             zzAction = zzState;
             zzMarkedPosL = zzCurrentPosL;

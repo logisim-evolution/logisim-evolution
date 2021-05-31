@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,7 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
-import com.cburch.logisim.gui.opts.OptionsFrame;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -48,31 +47,31 @@ import javax.swing.KeyStroke;
 
 class MenuFile extends Menu implements ActionListener {
   private static final long serialVersionUID = 1L;
-  private LogisimMenuBar menubar;
-  private JMenuItem newi = new JMenuItem();
-  private JMenuItem merge = new JMenuItem();
-  private JMenuItem open = new JMenuItem();
-  private OpenRecent openRecent;
-  private JMenuItem close = new JMenuItem();
-  private JMenuItem save = new JMenuItem();
-  private JMenuItem saveAs = new JMenuItem();
-  private MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
-  private MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
-  private JMenuItem prefs = new JMenuItem();
-  private JMenuItem quit = new JMenuItem();
+  private final LogisimMenuBar menubar;
+  private final JMenuItem newi = new JMenuItem();
+  private final JMenuItem merge = new JMenuItem();
+  private final JMenuItem open = new JMenuItem();
+  private final OpenRecent openRecent;
+  private final JMenuItem close = new JMenuItem();
+  private final JMenuItem save = new JMenuItem();
+  private final JMenuItem saveAs = new JMenuItem();
+  private final MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
+  private final MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
+  private final JMenuItem prefs = new JMenuItem();
+  private final JMenuItem quit = new JMenuItem();
 
   public MenuFile(LogisimMenuBar menubar) {
     this.menubar = menubar;
     openRecent = new OpenRecent(menubar);
 
-    int menuMask = getToolkit().getMenuShortcutKeyMask();
+    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
 
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_MASK));
+    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
-    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_MASK));
+    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
     print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
@@ -96,7 +95,7 @@ class MenuFile extends Menu implements ActionListener {
       add(quit);
     }
 
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
     newi.addActionListener(this);
     open.addActionListener(this);
     if (proj == null) {
@@ -118,13 +117,19 @@ class MenuFile extends Menu implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
+    Project baseProj = menubar.getBaseProject();
     if (src == newi) {
-      ProjectActions.doNew(proj);
+      ProjectActions.doNew(baseProj);
     } else if (src == merge) {
-      ProjectActions.doMerge(proj == null ? null : proj.getFrame().getCanvas(), proj);
+      ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      ProjectActions.doOpen(proj == null ? null : proj.getFrame().getCanvas(), proj);
+      Project newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      if (newProj != null && proj != null
+          && !proj.isFileDirty()
+          && proj.getLogisimFile().getLoader().getMainFile() == null) {
+        proj.getFrame().dispose();
+      }
     } else if (src == close && proj != null) {
       int result = 0;
       Frame frame = proj.getFrame();
@@ -162,12 +167,10 @@ class MenuFile extends Menu implements ActionListener {
 
         // Close the current project
         frame.dispose();
-        OptionsFrame f = proj.getOptionsFrame(false);
-        if (f != null) f.dispose();
       }
-    } else if (src == save) {
+    } else if (src == save && proj != null) {
       ProjectActions.doSave(proj);
-    } else if (src == saveAs) {
+    } else if (src == saveAs && proj != null) {
       ProjectActions.doSaveAs(proj);
     } else if (src == prefs) {
       PreferencesFrame.showPreferences();

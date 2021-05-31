@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,7 +46,7 @@ import java.util.Set;
 public class FileStatistics {
   public static class Count {
     private Library library;
-    private ComponentFactory factory;
+    private final ComponentFactory factory;
     private int simpleCount;
     private int uniqueCount;
     private int recursiveCount;
@@ -81,9 +81,9 @@ public class FileStatistics {
   }
 
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
-    Set<Circuit> include = new HashSet<Circuit>(file.getCircuits());
+    Set<Circuit> include = new HashSet<>(file.getCircuits());
     Map<Circuit, Map<ComponentFactory, Count>> countMap;
-    countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
+    countMap = new HashMap<>();
     doRecursiveCount(circuit, include, countMap);
     doUniqueCounts(countMap.get(circuit), countMap);
     List<Count> countList = sortCounts(countMap.get(circuit), file);
@@ -125,7 +125,7 @@ public class FileStatistics {
 
   private static Map<ComponentFactory, Count> doSimpleCount(Circuit circuit) {
     Map<ComponentFactory, Count> counts;
-    counts = new HashMap<ComponentFactory, Count>();
+    counts = new HashMap<>();
     for (Component comp : circuit.getNonWires()) {
       ComponentFactory factory = comp.getFactory();
       Count count = counts.get(factory);
@@ -172,7 +172,7 @@ public class FileStatistics {
   }
 
   private static List<Count> sortCounts(Map<ComponentFactory, Count> counts, LogisimFile file) {
-    List<Count> ret = new ArrayList<Count>();
+    List<Count> ret = new ArrayList<>();
     for (AddTool tool : file.getTools()) {
       ComponentFactory factory = tool.getFactory();
       Count count = counts.get(factory);
@@ -196,9 +196,9 @@ public class FileStatistics {
     return ret;
   }
 
-  private List<Count> counts;
-  private Count totalWithout;
-  private Count totalWith;
+  private final List<Count> counts;
+  private final Count totalWithout;
+  private final Count totalWith;
 
   private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
     this.counts = Collections.unmodifiableList(counts);

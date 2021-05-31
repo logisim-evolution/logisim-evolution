@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,9 +52,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
   public static final Color SELECTION_BACKGROUND = new Color(0x99, 0xcc, 0xff);
 
-  private LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
-  private TextField field;
-  private Graphics g;
+  private final LinkedList<CaretListener> listeners = new LinkedList<>();
+  private final TextField field;
+  private final Graphics g;
   private String oldText;
   private String curText;
   private int pos, end;
@@ -84,7 +84,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     curText = oldText;
     pos = curText.length();
     end = pos;
-    for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
+    for (CaretListener l : new ArrayList<>(listeners)) {
       l.editingCanceled(e);
     }
     field.removeTextFieldListener(this);
@@ -115,9 +115,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (pos != end) {
       g.setColor(SELECTION_BACKGROUND);
       Rectangle p =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? pos : end, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.min(pos, end), halign, valign);
       Rectangle e =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? end : pos, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.max(pos, end), halign, valign);
       g.fillRect(p.x, p.y - 1, e.x - p.x + 1, e.height + 2);
     }
 
@@ -143,15 +143,14 @@ class TextFieldCaret implements Caret, TextFieldListener {
     int valign = field.getVAlign();
     Font font = field.getFont();
     Bounds bds = Bounds.create(GraphicsUtil.getTextBounds(g, font, curText, x, y, halign, valign));
-    Bounds box = bds.add(field.getBounds(g)).expand(3);
-    return box;
+    return bds.add(field.getBounds(g)).expand(3);
   }
 
   public void keyPressed(KeyEvent e) {
-    int ign = InputEvent.ALT_MASK | InputEvent.META_MASK;
-    if ((e.getModifiers() & ign) != 0) return;
-    boolean shift = ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
-    boolean ctrl = ((e.getModifiers() & InputEvent.CTRL_MASK) != 0);
+    int ign = InputEvent.ALT_DOWN_MASK | InputEvent.META_DOWN_MASK;
+    if ((e.getModifiersEx() & ign) != 0) return;
+    boolean shift = ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
+    boolean ctrl = ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0);
     arrowKeyMaybePressed(e, shift, ctrl);
     if (e.isConsumed()) return;
     if (ctrl) controlKeyPressed(e, shift);
@@ -189,6 +188,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (!shift) end = pos;
   }
 
+  @SuppressWarnings("fallthrough")
   protected void controlKeyPressed(KeyEvent e, boolean shift) {
     boolean cut = false;
     switch (e.getKeyCode()) {
@@ -204,8 +204,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
       case KeyEvent.VK_COPY:
       case KeyEvent.VK_C:
         if (end != pos) {
-          int pp = (pos < end ? pos : end);
-          int ee = (pos < end ? end : pos);
+          int pp = (Math.min(pos, end));
+          int ee = (Math.max(pos, end));
           String s = curText.substring(pp, ee);
           StringSelection sel = new StringSelection(s);
           Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
@@ -242,11 +242,11 @@ class TextFieldCaret implements Caret, TextFieldListener {
             ++pos;
             end = pos;
           }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         e.consume();
         break;
-      default:; // ignore
+      default:// ignore
     }
   }
 
@@ -325,15 +325,15 @@ class TextFieldCaret implements Caret, TextFieldListener {
           curText = curText.substring(0, pos) + curText.substring(pos + 1);
         }
         break;
-      default:; // ignore
+      default:// ignore
     }
   }
 
   public void keyReleased(KeyEvent e) {}
 
   public void keyTyped(KeyEvent e) {
-    int ign = InputEvent.ALT_MASK | InputEvent.CTRL_MASK | InputEvent.META_MASK;
-    if ((e.getModifiers() & ign) != 0) return;
+    int ign = InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
+    if ((e.getModifiersEx() & ign) != 0) return;
 
     char c = e.getKeyChar();
     if (allowedCharacter(c)) {
@@ -385,7 +385,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public void stopEditing() {
     CaretEvent e = new CaretEvent(this, oldText, curText);
     field.setText(curText);
-    for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
+    for (CaretListener l : new ArrayList<>(listeners)) {
       l.editingStopped(e);
     }
     field.removeTextFieldListener(this);

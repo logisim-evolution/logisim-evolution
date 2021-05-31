@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,7 +29,9 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,20 +45,20 @@ public class ReplacementMap {
   static final Logger logger = LoggerFactory.getLogger(ReplacementMap.class);
 
   private boolean frozen;
-  private HashMap<Component, HashSet<Component>> map;
-  private HashMap<Component, HashSet<Component>> inverse;
+  private final HashMap<Component, HashSet<Component>> map;
+  private final HashMap<Component, HashSet<Component>> inverse;
 
   public ReplacementMap() {
     this(
-        new HashMap<Component, HashSet<Component>>(), new HashMap<Component, HashSet<Component>>());
+        new HashMap<>(), new HashMap<>());
   }
 
   public ReplacementMap(Component oldComp, Component newComp) {
     this(
-        new HashMap<Component, HashSet<Component>>(), new HashMap<Component, HashSet<Component>>());
-    HashSet<Component> oldSet = new HashSet<Component>(3);
+        new HashMap<>(), new HashMap<>());
+    HashSet<Component> oldSet = new HashSet<>(3);
     oldSet.add(oldComp);
-    HashSet<Component> newSet = new HashSet<Component>(3);
+    HashSet<Component> newSet = new HashSet<>(3);
     newSet.add(newComp);
     map.put(oldComp, newSet);
     inverse.put(newComp, oldSet);
@@ -72,7 +74,7 @@ public class ReplacementMap {
     if (frozen) {
       throw new IllegalStateException("cannot change map after frozen");
     }
-    inverse.put(comp, new HashSet<Component>(3));
+    inverse.put(comp, new HashSet<>(3));
   }
 
   void append(ReplacementMap next) {
@@ -82,16 +84,13 @@ public class ReplacementMap {
       HashSet<Component> as = this.inverse.remove(b); // what was replaced
       // to get b
       if (as == null) { // b pre-existed replacements so
-        as = new HashSet<Component>(3); // we say it replaces itself.
+        as = new HashSet<>(3); // we say it replaces itself.
         as.add(b);
       }
 
       for (Component a : as) {
-        HashSet<Component> aDst = this.map.get(a);
-        if (aDst == null) { // should happen when b pre-existed only
-          aDst = new HashSet<Component>(cs.size());
-          this.map.put(a, aDst);
-        }
+        HashSet<Component> aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
+        // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
@@ -100,7 +99,7 @@ public class ReplacementMap {
         HashSet<Component> cSrc = this.inverse.get(c); // should always
         // be null
         if (cSrc == null) {
-          cSrc = new HashSet<Component>(as.size());
+          cSrc = new HashSet<>(as.size());
           this.inverse.put(c, cSrc);
         }
         cSrc.addAll(as);
@@ -114,7 +113,7 @@ public class ReplacementMap {
         if (!bs.isEmpty()) {
           logger.error("Internal error: component replaced but not represented");
         }
-        inverse.put(c, new HashSet<Component>(3));
+        inverse.put(c, new HashSet<>(3));
       }
     }
   }
@@ -123,16 +122,16 @@ public class ReplacementMap {
     frozen = true;
   }
 
-  public Collection<Component> get(Component prev) {
-    return map.get(prev);
-  }
-
   public Collection<? extends Component> getAdditions() {
     return inverse.keySet();
   }
 
-  public Collection<Component> getComponentsReplacing(Component comp) {
-    return map.get(comp);
+  public Collection<Component> getReplacementsFor(Component a) {
+    return map.get(a);
+  }
+
+  public Collection<Component> getReplacedBy(Component b) {
+    return inverse.get(b);
   }
 
   ReplacementMap getInverseMap() {
@@ -143,67 +142,65 @@ public class ReplacementMap {
     return map.keySet();
   }
 
-  public Collection<Component> getReplacedComponents() {
-    return map.keySet();
-  }
-
   public boolean isEmpty() {
     return map.isEmpty() && inverse.isEmpty();
   }
 
   public void print(PrintStream out) {
     boolean found = false;
-    for (Component c : getRemovals()) {
+    for (Component a : getRemovals()) {
       if (!found) out.println("  removals:");
       found = true;
-      out.println("    " + c.toString());
+      out.println("    " + a.toString());
+      for (Component b : map.get(a))
+        out.println("     `--> " + b.toString());
     }
     if (!found) out.println("  removals: none");
 
     found = false;
-    for (Component c : getAdditions()) {
+    for (Component b : getAdditions()) {
       if (!found) out.println("  additions:");
       found = true;
-      out.println("    " + c.toString());
+      out.println("    " + b.toString());
+      for (Component a : inverse.get(b))
+        out.println("     ^-- " + a.toString());
     }
     if (!found) out.println("  additions: none");
   }
 
-  public void put(Component prev, Collection<? extends Component> next) {
-    if (frozen) {
+  public void put(Component a, Collection<? extends Component> bs) {
+    if (frozen)
       throw new IllegalStateException("cannot change map after frozen");
-    }
 
-    HashSet<Component> repl = map.get(prev);
-    if (repl == null) {
-      repl = new HashSet<Component>(next.size());
-      map.put(prev, repl);
-    }
-    repl.addAll(next);
+    HashSet<Component> oldBs = map.computeIfAbsent(a, k -> new HashSet<Component>(bs.size()));
+    oldBs.addAll(bs);
 
-    for (Component n : next) {
-      repl = inverse.get(n);
-      if (repl == null) {
-        repl = new HashSet<Component>(3);
-        inverse.put(n, repl);
-      }
-      repl.add(prev);
+    for (Component b : bs) {
+      HashSet<Component> oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
+      oldAs.add(a);
     }
   }
 
-  public void remove(Component comp) {
-    if (frozen) {
-      throw new IllegalStateException("cannot change map after frozen");
-    }
-    map.put(comp, new HashSet<Component>(3));
+  public void remove(Component a) {
+    if (frozen) throw new IllegalStateException("cannot change map after frozen");
+    map.put(a, new HashSet<>(3));
   }
 
-  public void replace(Component prev, Component next) {
-    put(prev, Collections.singleton(next));
+  public void replace(Component a, Component b) {
+    put(a, Collections.singleton(b));
   }
 
   public void reset() {
     map.clear();
     inverse.clear();
+  }
+
+  public String toString() {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try (PrintStream p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
+        print(p);
+    } catch (Exception ignored) {
+    }
+    return out.toString(StandardCharsets.UTF_8);
   }
 }

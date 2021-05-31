@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -104,8 +104,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     return null;
   }
 
-  public HDLGeneratorFactory getHDLGenerator(String HDLIdentifier, AttributeSet attrs) {
-    if (HDLSupportedComponent(HDLIdentifier, attrs)) return MyHDLGenerator;
+  public HDLGeneratorFactory getHDLGenerator(AttributeSet attrs) {
+    if (HDLSupportedComponent(attrs)) return MyHDLGenerator;
     else return null;
   }
 
@@ -133,7 +133,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     return false;
   }
 
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return false;
   }
 

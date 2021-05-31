@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,15 +43,11 @@ import java.util.TreeSet;
 class WireRepair extends CircuitTransaction {
 
   private static class MergeSets {
-    private final HashMap<Wire, ArrayList<Wire>> map;
-
-    MergeSets() {
-      map = new HashMap<Wire, ArrayList<Wire>>();
-    }
+    private final HashMap<Wire, ArrayList<Wire>> map = new HashMap<>();
 
     Collection<ArrayList<Wire>> getMergeSets() {
       IdentityHashMap<ArrayList<Wire>, Boolean> lists;
-      lists = new IdentityHashMap<ArrayList<Wire>, Boolean>();
+      lists = new IdentityHashMap<>();
       for (ArrayList<Wire> list : map.values()) {
         lists.put(list, Boolean.TRUE);
       }
@@ -62,7 +58,7 @@ class WireRepair extends CircuitTransaction {
       ArrayList<Wire> set0 = map.get(a);
       ArrayList<Wire> set1 = map.get(b);
       if (set0 == null && set1 == null) {
-        set0 = new ArrayList<Wire>(2);
+        set0 = new ArrayList<>(2);
         set0.add(a);
         set0.add(b);
         map.put(a, set0);
@@ -88,7 +84,7 @@ class WireRepair extends CircuitTransaction {
     }
   }
 
-  private Circuit circuit;
+  private final Circuit circuit;
 
   public WireRepair(Circuit circuit) {
     this.circuit = circuit;
@@ -115,7 +111,7 @@ class WireRepair extends CircuitTransaction {
     ReplacementMap repl = new ReplacementMap();
     for (ArrayList<Wire> mergeSet : sets.getMergeSets()) {
       if (mergeSet.size() > 1) {
-        ArrayList<Location> locs = new ArrayList<Location>(2 * mergeSet.size());
+        ArrayList<Location> locs = new ArrayList<>(2 * mergeSet.size());
         for (Wire w : mergeSet) {
           locs.add(w.getEnd0());
           locs.add(w.getEnd1());
@@ -127,7 +123,7 @@ class WireRepair extends CircuitTransaction {
         Collection<Wire> wset = Collections.singleton(wnew);
 
         for (Wire w : mergeSet) {
-          if (!w.equals(wset)) {
+          if (!w.equals(wnew)) {
             repl.put(w, wset);
           }
         }
@@ -138,14 +134,14 @@ class WireRepair extends CircuitTransaction {
 
   private void doMergeSet(
       ArrayList<Wire> mergeSet, ReplacementMap replacements, Set<Location> splitLocs) {
-    TreeSet<Location> ends = new TreeSet<Location>();
+    TreeSet<Location> ends = new TreeSet<>();
     for (Wire w : mergeSet) {
       ends.add(w.getEnd0());
       ends.add(w.getEnd1());
     }
     Wire whole = Wire.create(ends.first(), ends.last());
 
-    TreeSet<Location> mids = new TreeSet<Location>();
+    TreeSet<Location> mids = new TreeSet<>();
     mids.add(whole.getEnd0());
     mids.add(whole.getEnd1());
     for (Location loc : whole) {
@@ -159,7 +155,7 @@ class WireRepair extends CircuitTransaction {
       }
     }
 
-    ArrayList<Wire> mergeResult = new ArrayList<Wire>();
+    ArrayList<Wire> mergeResult = new ArrayList<>();
     if (mids.size() == 2) {
       mergeResult.add(whole);
     } else {
@@ -172,7 +168,7 @@ class WireRepair extends CircuitTransaction {
     }
 
     for (Wire w : mergeSet) {
-      ArrayList<Component> wRepl = new ArrayList<Component>(2);
+      ArrayList<Component> wRepl = new ArrayList<>(2);
       for (Wire w2 : mergeResult) {
         if (w2.overlaps(w, false)) {
           wRepl.add(w2);
@@ -193,11 +189,7 @@ class WireRepair extends CircuitTransaction {
     HashMap<Location, ArrayList<Wire>> wirePoints = new HashMap<>();
     for (Wire w : circuit.getWires()) {
       for (Location loc : w) {
-        ArrayList<Wire> locWires = wirePoints.get(loc);
-        if (locWires == null) {
-          locWires = new ArrayList<Wire>(3);
-          wirePoints.put(loc, locWires);
-        }
+        ArrayList<Wire> locWires = wirePoints.computeIfAbsent(loc, k -> new ArrayList<>(3));
         locWires.add(w);
       }
     }
@@ -235,7 +227,7 @@ class WireRepair extends CircuitTransaction {
       ArrayList<Location> splits = null;
       for (Location loc : splitLocs) {
         if (w.contains(loc) && !loc.equals(w0) && !loc.equals(w1)) {
-          if (splits == null) splits = new ArrayList<Location>();
+          if (splits == null) splits = new ArrayList<>();
           splits.add(loc);
         }
       }
@@ -243,7 +235,7 @@ class WireRepair extends CircuitTransaction {
         splits.add(w1);
         Collections.sort(splits);
         Location e0 = w0;
-        ArrayList<Wire> subs = new ArrayList<Wire>(splits.size());
+        ArrayList<Wire> subs = new ArrayList<>(splits.size());
         for (Location e1 : splits) {
           subs.add(Wire.create(e0, e1));
           e0 = e1;

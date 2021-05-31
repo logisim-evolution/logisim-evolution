@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,11 +63,7 @@ public class ArgonXML {
       if (!rootElement.getNodeName().equals(rootName))
         throw new RuntimeException("Could not find root node: " + rootName);
       return rootElement;
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    } catch (ParserConfigurationException exception) {
-      throw new RuntimeException(exception);
-    } catch (SAXException exception) {
+    } catch (IOException | SAXException | ParserConfigurationException exception) {
       throw new RuntimeException(exception);
     } finally {
       if (inputStream != null) {
@@ -80,13 +76,13 @@ public class ArgonXML {
     }
   }
 
-  private String name;
+  private final String name;
   private String content;
 
-  private Map<String, String> nameAttributes = new HashMap<String, String>();
+  private final Map<String, String> nameAttributes = new HashMap<>();
 
-  private Map<String, ArrayList<ArgonXML>> nameChildren =
-      new HashMap<String, ArrayList<ArgonXML>>();
+  private final Map<String, ArrayList<ArgonXML>> nameChildren =
+      new HashMap<>();
 
   private ArgonXML(Element element) {
     this.name = element.getNodeName();
@@ -131,11 +127,7 @@ public class ArgonXML {
   }
 
   private void addChild(String name, ArgonXML child) {
-    ArrayList<ArgonXML> children = nameChildren.get(name);
-    if (children == null) {
-      children = new ArrayList<ArgonXML>();
-      nameChildren.put(name, children);
-    }
+    ArrayList<ArgonXML> children = nameChildren.computeIfAbsent(name, k -> new ArrayList<>());
     children.add(child);
   }
 
@@ -151,7 +143,7 @@ public class ArgonXML {
 
   public ArrayList<ArgonXML> children(String name) {
     ArrayList<ArgonXML> children = nameChildren.get(name);
-    return children == null ? new ArrayList<ArgonXML>() : children;
+    return children == null ? new ArrayList<>() : children;
   }
 
   public String content() {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,17 +36,17 @@ import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
-import org.drjekyll.fontchooser.FontChooser;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import org.drjekyll.fontchooser.FontChooser;
 
 public class Attributes {
   private static class BooleanAttribute extends OptionAttribute<Boolean> {
-    private static Boolean[] vals = {Boolean.TRUE, Boolean.FALSE};
+    private static final Boolean[] vals = {Boolean.TRUE, Boolean.FALSE};
 
     private BooleanAttribute(String name, StringGetter disp) {
       super(name, disp, vals);
@@ -55,12 +55,12 @@ public class Attributes {
     @Override
     public Boolean parse(String value) {
       Boolean b = Boolean.valueOf(value);
-      return vals[b.booleanValue() ? 0 : 1];
+      return vals[b ? 0 : 1];
     }
 
     @Override
     public String toDisplayString(Boolean value) {
-      if (value.booleanValue()) return S.get("booleanTrueOption");
+      if (value) return S.get("booleanTrueOption");
       else return S.get("booleanFalseOption");
     }
   }
@@ -137,7 +137,7 @@ public class Attributes {
   }
 
   private static class ConstantGetter implements StringGetter {
-    private String str;
+    private final String str;
 
     public ConstantGetter(String str) {
       this.str = str;
@@ -154,7 +154,7 @@ public class Attributes {
   }
 
   private static class DirectionAttribute extends OptionAttribute<Direction> {
-    private static Direction[] vals = {
+    private static final Direction[] vals = {
       Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST,
     };
 
@@ -240,35 +240,35 @@ public class Attributes {
         value = value.substring(1);
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseInt("-" + value, 16));
+          return Integer.parseInt("-" + value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseInt("-" + value, 2));
+          return Integer.parseInt("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Integer.valueOf(Integer.parseInt("-" + value, 8));
+          return Integer.parseInt("-" + value, 8);
         } else {
-          return Integer.valueOf(Integer.parseInt("-" + value, 10));
+          return Integer.parseInt("-" + value, 10);
         }
       } else {
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 16));
+          return Integer.parseUnsignedInt(value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 2));
+          return Integer.parseUnsignedInt(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 8));
+          return Integer.parseUnsignedInt(value, 8);
         } else {
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 10));
+          return Integer.parseUnsignedInt(value, 10);
         }
       }
     }
 
     @Override
     public String toDisplayString(Integer value) {
-      int val = value.intValue();
+      int val = value;
       return "0x" + Integer.toHexString(val);
     }
 
@@ -290,35 +290,35 @@ public class Attributes {
         value = value.substring(1);
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseLong("-" + value, 16));
+          return Long.parseLong("-" + value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseLong("-" + value, 2));
+          return Long.parseLong("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Long.valueOf(Long.parseLong("-" + value, 8));
+          return Long.parseLong("-" + value, 8);
         } else {
-          return Long.valueOf(Long.parseLong("-" + value, 10));
+          return Long.parseLong("-" + value, 10);
         }
       } else {
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseUnsignedLong(value, 16));
+          return Long.parseUnsignedLong(value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseUnsignedLong(value, 2));
+          return Long.parseUnsignedLong(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Long.valueOf(Long.parseUnsignedLong(value, 8));
+          return Long.parseUnsignedLong(value, 8);
         } else {
-          return Long.valueOf(Long.parseUnsignedLong(value, 10));
+          return Long.parseUnsignedLong(value, 10);
         }
       }
     }
 
     @Override
     public String toDisplayString(Long value) {
-      long val = value.longValue();
+      long val = value;
       return "0x" + Long.toHexString(val);
     }
 
@@ -341,8 +341,8 @@ public class Attributes {
 
   private static class IntegerRangeAttribute extends Attribute<Integer> {
     Integer[] options = null;
-    int start;
-    int end;
+    final int start;
+    final int end;
 
     private IntegerRangeAttribute(String name, StringGetter disp, int start, int end) {
       super(name, disp);
@@ -359,7 +359,7 @@ public class Attributes {
         if (options == null) {
           options = new Integer[end - start + 1];
           for (int i = start; i <= end; i++) {
-            options[i - start] = Integer.valueOf(i);
+            options[i - start] = i;
           }
         }
         ComboBox combo = new ComboBox<>(options);
@@ -374,7 +374,7 @@ public class Attributes {
       int v = (int) Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
-      return Integer.valueOf(v);
+      return v;
     }
   }
 
@@ -390,7 +390,7 @@ public class Attributes {
   }
 
   private static class OptionAttribute<V> extends Attribute<V> {
-    private V[] vals;
+    private final V[] vals;
 
     private OptionAttribute(String name, StringGetter disp, V[] vals) {
       super(name, disp);
@@ -401,7 +401,7 @@ public class Attributes {
     @Override
     public java.awt.Component getCellEditor(Object value) {
       ComboBox combo = new ComboBox<>(vals);
-      combo.setRenderer(new OptionComboRenderer<V>(this));
+      combo.setRenderer(new OptionComboRenderer<>(this));
       if (value == null) combo.setSelectedIndex(-1);
       else combo.setSelectedItem(value);
       return combo;
@@ -409,9 +409,9 @@ public class Attributes {
 
     @Override
     public V parse(String value) {
-      for (int i = 0; i < vals.length; i++) {
-        if (value.equals(vals[i].toString())) {
-          return vals[i];
+      for (V val : vals) {
+        if (value.equals(val.toString())) {
+          return val;
         }
       }
       throw new NumberFormatException("value not among choices");
@@ -429,16 +429,15 @@ public class Attributes {
 
   private static class OptionComboRenderer<V> extends BasicComboBoxRenderer {
     private static final long serialVersionUID = 1L;
-    Attribute<V> attr;
+    final Attribute<V> attr;
 
     OptionComboRenderer(Attribute<V> attr) {
       this.attr = attr;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Component getListCellRendererComponent(
-        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component ret =
           super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       if (ret instanceof JLabel) {
@@ -582,7 +581,7 @@ public class Attributes {
   }
 
   public static <V> Attribute<V> forOption(String name, StringGetter disp, V[] vals) {
-    return new OptionAttribute<V>(name, disp, vals);
+    return new OptionAttribute<>(name, disp, vals);
   }
 
   //

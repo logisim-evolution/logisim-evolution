@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,7 +39,6 @@ import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.Options;
-import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Frame;
@@ -58,14 +57,13 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.JFileChooser;
 
 public class Project {
   private static class ActionData {
-    CircuitState circuitState;
-    HdlModel hdlModel;
-    Action action;
+    final CircuitState circuitState;
+    final HdlModel hdlModel;
+    final Action action;
 
     public ActionData(CircuitState circuitState, HdlModel hdlModel, Action action) {
       this.circuitState = circuitState;
@@ -103,31 +101,30 @@ public class Project {
 
   private static final int MAX_UNDO_SIZE = 64;
 
-  private Simulator simulator = new Simulator();
+  private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop VhdlSimulator = null;
 
   private LogisimFile file;
   private HdlModel hdlModel;
   private CircuitState circuitState; // active sim state
-  private HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
-  private LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
+  private final HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
+  private final LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
   private Frame frame = null;
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
   private TestFrame testFrame = null;
-  private ChronoFrame chronoFrame = null;
   private Tool tool = null;
-  private LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
+  private final LinkedList<ActionData> undoLog = new LinkedList<>();
   private int undoMods = 0;
-  private LinkedList<ActionData> redoLog = new LinkedList<ActionData>();
-  private EventSourceWeakSupport<ProjectListener> projectListeners =
-      new EventSourceWeakSupport<ProjectListener>();
-  private EventSourceWeakSupport<LibraryListener> fileListeners =
-      new EventSourceWeakSupport<LibraryListener>();
-  private EventSourceWeakSupport<CircuitListener> circuitListeners =
-      new EventSourceWeakSupport<CircuitListener>();
+  private final LinkedList<ActionData> redoLog = new LinkedList<>();
+  private final EventSourceWeakSupport<ProjectListener> projectListeners =
+      new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<LibraryListener> fileListeners =
+      new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<CircuitListener> circuitListeners =
+      new EventSourceWeakSupport<>();
   private Dependencies depends;
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private boolean startupScreen = false;
   private boolean forcedDirty = false;
 
@@ -262,19 +259,9 @@ public class Project {
    */
   public boolean getCanRedo() {
     // If there's a redo option found...
-    if (redoLog.size() > 0)
-      // We can redo
-      return true;
-    else
-      // Otherwise we can't.
-      return false;
-  }
-
-  public ChronoFrame getChronoFrame(boolean create) {
-    if (logFrame == null) logFrame = new LogFrame(this);
-    if (chronoFrame != null) chronoFrame.dispose();
-    if (create) chronoFrame = new ChronoFrame(this, logFrame);
-    return chronoFrame;
+    // We can redo
+    // Otherwise we can't.
+    return redoLog.size() > 0;
   }
 
   public List<CircuitState> getRootCircuitStates() {
@@ -359,9 +346,7 @@ public class Project {
   }
 
   public LogFrame getLogFrame() {
-    if (logFrame == null) {
-      logFrame = new LogFrame(this);
-    }
+    if (logFrame == null) logFrame = new LogFrame(this);
     return logFrame;
   }
 
@@ -373,11 +358,8 @@ public class Project {
     return file.getOptions();
   }
 
-  public OptionsFrame getOptionsFrame(boolean create) {
-    if (optionsFrame == null || optionsFrame.getLogisimFile() != file) {
-      if (create) optionsFrame = new OptionsFrame(this);
-      else optionsFrame = null;
-    }
+  public OptionsFrame getOptionsFrame() {
+    if (optionsFrame == null) optionsFrame = new OptionsFrame(this);
     return optionsFrame;
   }
 
@@ -392,10 +374,8 @@ public class Project {
     return simulator;
   }
 
-  public TestFrame getTestFrame(boolean create) {
-    if (testFrame == null) {
-      if (create) testFrame = new TestFrame(this);
-    }
+  public TestFrame getTestFrame() {
+    if (testFrame == null) testFrame = new TestFrame(this);
     return testFrame;
   }
 
@@ -559,6 +539,10 @@ public class Project {
         old.removeLibraryListener(l);
       }
     }
+    if (optionsFrame != null) {
+      optionsFrame.dispose();
+      optionsFrame = null;
+    }
     file = value;
     recentRootState.clear();
     allRootStates.clear();
@@ -573,8 +557,7 @@ public class Project {
         file.addLibraryListener(l);
       }
     }
-    file.setDirty(true); // toggle it so that everybody hears the file is
-    // fresh
+    file.setDirty(true); // toggle it so that everybody hears the file is fresh
     file.setDirty(false);
   }
 

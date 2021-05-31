@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,7 +45,7 @@ public class PinActivity {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);
@@ -53,11 +53,11 @@ public class PinActivity {
     return result;
   }
 
-  public static String ActivityAttributeString = "ActivityLevel";
-  public static char ActiveLow = 0;
-  public static char ActiveHigh = 1;
+  public static final String ActivityAttributeString = "ActivityLevel";
+  public static final char ActiveLow = 0;
+  public static final char ActiveHigh = 1;
 
-  public static char Unknown = 255;
+  public static final char Unknown = 255;
 
-  public static String[] Behavior_strings = {"Active low", "Active high"};
+  public static final String[] Behavior_strings = {"Active low", "Active high"};
 }

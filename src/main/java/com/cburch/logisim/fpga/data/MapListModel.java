@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,13 @@ package com.cburch.logisim.fpga.data;
 
 import java.util.ArrayList;
 import java.util.Map;
-
 import javax.swing.DefaultListModel;
 
 public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 	
-  public class MapInfo extends Object {
-    private int pinNr;
-    private MapComponent map;
+  public static class MapInfo {
+    private final int pinNr;
+    private final MapComponent map;
     
     public MapInfo(int pin , MapComponent map) {
       pinNr = pin;
@@ -55,7 +54,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 
   private static final long serialVersionUID = 1L;
   private boolean mappedList = false;
-  private Map<ArrayList<String>, MapComponent> myMappableResources;
+  private final Map<ArrayList<String>, MapComponent> myMappableResources;
   private ArrayList<MapInfo> myItems;
   
   public MapListModel(boolean mappedList , Map<ArrayList<String>, MapComponent> myMappableResources) {
@@ -66,7 +65,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
   
   public void rebuild() {
 	int oldsize = 0;
-	if (myItems == null) myItems = new ArrayList<MapInfo>();
+	if (myItems == null) myItems = new ArrayList<>();
 	else {
 	  oldsize = myItems.size();
 	  myItems.clear();
@@ -76,22 +75,22 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       if (mappedList) {
         if (map.isCompleteMap(false)) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx,new MapInfo(-1,map));
+          myItems.add(idx, new MapInfo(-1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
-            if (map.isMapped(i)) myItems.add(idx,new MapInfo(i,map));
+            if (map.isMapped(i)) myItems.add(idx, new MapInfo(i, map));
           }
         }
       } else {
         if (map.isNotMapped()) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx,new MapInfo(-1,map));
+          myItems.add(idx, new MapInfo(-1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
             if (!map.isMapped(i)) {
-              myItems.add(idx,new MapInfo(i,map));
+              myItems.add(idx, new MapInfo(i, map));
             }
           }
         }

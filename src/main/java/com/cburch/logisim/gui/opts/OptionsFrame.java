@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,6 +38,7 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
@@ -53,17 +54,117 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class OptionsFrame extends LFrame {
+public class OptionsFrame extends LFrame.Dialog {
+  private static final long serialVersionUID = 1L;
+  private final MyListener myListener = new MyListener();
+  private final WindowMenuManager windowManager = new WindowMenuManager();
+  private final OptionsPanel[] panels;
+  private final JTabbedPane tabbedPane;
+
+  public OptionsFrame(Project project) {
+    super(project);
+    project.addLibraryListener(myListener);
+    project.addProjectListener(event -> {
+      int action = event.getAction();
+      if (action == ProjectEvent.ACTION_SET_STATE) {
+        computeTitle();
+      }
+    });
+    panels =
+          new OptionsPanel[] {
+          new SimulateOptions(this),
+          new ToolbarOptions(this),
+          new MouseOptions(this),
+          new RevertPanel(this)
+        };
+    tabbedPane = new JTabbedPane();
+    for (OptionsPanel panel : panels) {
+      tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
+    }
+
+    Container contents = getContentPane();
+    tabbedPane.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
+    contents.add(tabbedPane, BorderLayout.CENTER);
+
+    LocaleManager.addLocaleListener(myListener);
+    myListener.localeChanged();
+    pack();
+    setLocationRelativeTo(project.getFrame());
+  }
+
+  private void computeTitle() {
+    LogisimFile file = project.getLogisimFile();
+    String name = file == null ? "???" : file.getName();
+    String title = S.fmt("optionsFrameTitle", name);
+    setTitle(title);
+  }
+
+  public Options getOptions() {
+    return project.getLogisimFile().getOptions();
+  }
+
+  OptionsPanel[] getPrefPanels() {
+    return panels;
+  }
+
+  @Override
+  public void setVisible(boolean value) {
+    if (value) {
+      windowManager.frameOpened(this);
+    }
+    super.setVisible(value);
+  }
+
+  static class RevertPanel extends OptionsPanel {
+    private static final long serialVersionUID = 1L;
+    private final MyListener myListener = new MyListener();
+    private final JButton revert = new JButton();
+
+    public RevertPanel(OptionsFrame window) {
+      super(window);
+      setLayout(new TableLayout(1));
+      JPanel buttonPanel = new JPanel();
+      buttonPanel.add(revert);
+      revert.addActionListener(myListener);
+      add(buttonPanel);
+    }
+
+    @Override
+    public String getHelpText() {
+      return S.get("revertHelp");
+    }
+
+    @Override
+    public String getTitle() {
+      return S.get("revertTitle");
+    }
+
+    @Override
+    public void localeChanged() {
+      revert.setText(S.get("revertButton"));
+    }
+
+    private class MyListener implements ActionListener {
+      public void actionPerformed(ActionEvent event) {
+        Object src = event.getSource();
+        if (src == revert) {
+          getProject().doAction(LogisimFileActions.revertDefaults());
+        }
+      }
+    }
+  }
+
   private class MyListener implements LibraryListener, LocaleListener {
     public void libraryChanged(LibraryEvent event) {
       if (event.getAction() == LibraryEvent.SET_NAME) {
-        setTitle(computeTitle(file));
+        computeTitle();
         windowManager.localeChanged();
       }
     }
 
     public void localeChanged() {
-      setTitle(computeTitle(file));
+      computeTitle();
       for (int i = 0; i < panels.length; i++) {
         tabbedPane.setTitleAt(i, panels[i].getTitle());
         tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
@@ -86,108 +187,6 @@ public class OptionsFrame extends LFrame {
     public void localeChanged() {
       String title = project.getLogisimFile().getDisplayName();
       setText(StringUtil.format(S.get("optionsFrameMenuItem"), title));
-    }
-  }
-
-  private static String computeTitle(LogisimFile file) {
-    String name = file == null ? "???" : file.getName();
-    return StringUtil.format(S.get("optionsFrameTitle"), name);
-  }
-
-  private static final long serialVersionUID = 1L;
-  private Project project;
-  private LogisimFile file;
-  private MyListener myListener = new MyListener();
-
-  private WindowMenuManager windowManager = new WindowMenuManager();
-  private OptionsPanel[] panels;
-  private JTabbedPane tabbedPane;
-
-  public OptionsFrame(Project project) {
-    super(false,project);
-    this.project = project;
-    this.file = project.getLogisimFile();
-    file.addLibraryListener(myListener);
-    panels = new OptionsPanel[] { new SimulateOptions(this), 
-        new ToolbarOptions(this), new MouseOptions(this),
-        new RevertPanel(this)};
-    tabbedPane = new JTabbedPane();
-    for (int index = 0; index < panels.length; index++) {
-      OptionsPanel panel = panels[index];
-      tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
-    }
-
-    Container contents = getContentPane();
-    tabbedPane.setPreferredSize(new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
-    contents.add(tabbedPane, BorderLayout.CENTER);
-
-    LocaleManager.addLocaleListener(myListener);
-    myListener.localeChanged();
-    pack();
-    setLocationRelativeTo(project.getFrame());
-  }
-
-  public LogisimFile getLogisimFile() {
-    return file;
-  }
-
-  public Options getOptions() {
-    return file.getOptions();
-  }
-
-  OptionsPanel[] getPrefPanels() {
-    return panels;
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  @Override
-  public void setVisible(boolean value) {
-    if (value) {
-      windowManager.frameOpened(this);
-    }
-    super.setVisible(value);
-  }
-  
-  static class RevertPanel extends OptionsPanel {
-    private static final long serialVersionUID = 1L;
-
-    private class MyListener implements ActionListener {
-      public void actionPerformed(ActionEvent event) {
-        Object src = event.getSource();
-        if (src == revert) {
-          getProject().doAction(LogisimFileActions.revertDefaults());
-        }
-      }
-    }
-
-    private MyListener myListener = new MyListener();
-    private JButton revert = new JButton();
-
-    public RevertPanel(OptionsFrame window) {
-      super(window);
-      setLayout(new TableLayout(1));
-      JPanel buttonPanel = new JPanel();
-      buttonPanel.add(revert);
-      revert.addActionListener(myListener);
-      add(buttonPanel);
-	}
-
-    @Override
-    public String getHelpText() {
-       return S.get("revertHelp");
-	}
-
-    @Override
-    public String getTitle() {
-      return S.get("revertTitle");
-    }
-
-    @Override
-    public void localeChanged() {
-      revert.setText(S.get("revertButton"));
     }
   }
 }

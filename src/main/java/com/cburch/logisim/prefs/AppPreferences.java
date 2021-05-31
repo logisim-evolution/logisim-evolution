@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -52,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -70,8 +70,7 @@ public class AppPreferences {
       for (int set = 0; set < 2; set++) {
         if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
         else check = Locale.getAvailableLocales();
-        for (int i = 0; i < check.length; i++) {
-          Locale loc = check[i];
+        for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
           }
@@ -128,7 +127,7 @@ public class AppPreferences {
       } else if (prop.equals(TEMPLATE_FILE)) {
         File oldValue = templateFile;
         File value = convertFile(prefs.get(TEMPLATE_FILE, null));
-        if (value == null ? oldValue != null : !value.equals(oldValue)) {
+        if (!Objects.equals(value, oldValue)) {
           templateFile = value;
           if (templateType == TEMPLATE_CUSTOM) {
             customTemplate = null;
@@ -156,7 +155,7 @@ public class AppPreferences {
     Preferences p = getPrefs(true);
     try {
       p.clear();
-    } catch (BackingStoreException e) {
+    } catch (BackingStoreException ignored) {
     }
   }
 
@@ -188,22 +187,13 @@ public class AppPreferences {
         customTemplate = null;
         customTemplateFile = null;
       } else {
-        FileInputStream reader = null;
-        try {
-          reader = new FileInputStream(toRead);
+        try (FileInputStream reader = new FileInputStream(toRead)) {
           customTemplate = Template.create(reader);
           customTemplateFile = templateFile;
         } catch (Exception t) {
           setTemplateFile(null);
           customTemplate = null;
           customTemplateFile = null;
-        } finally {
-          if (reader != null) {
-            try {
-              reader.close();
-            } catch (IOException e) {
-            }
-          }
         }
       }
     }
@@ -223,10 +213,8 @@ public class AppPreferences {
         plainTemplate = getEmptyTemplate();
       } else {
         try {
-          try {
+          try (in) {
             plainTemplate = Template.create(in);
-          } finally {
-            in.close();
           }
         } catch (Exception e) {
           plainTemplate = getEmptyTemplate();
@@ -248,7 +236,7 @@ public class AppPreferences {
           if (shouldClear) {
             try {
               p.clear();
-            } catch (BackingStoreException e) {
+            } catch (BackingStoreException ignored) {
             }
           }
           myListener = new MyListener();
@@ -276,12 +264,11 @@ public class AppPreferences {
   public static Template getTemplate() {
     getPrefs();
     switch (templateType) {
-      case TEMPLATE_PLAIN:
-        return getPlainTemplate();
       case TEMPLATE_EMPTY:
         return getEmptyTemplate();
       case TEMPLATE_CUSTOM:
         return getCustomTemplate();
+      case TEMPLATE_PLAIN:
       default:
         return getPlainTemplate();
     }
@@ -307,17 +294,9 @@ public class AppPreferences {
   public static void handleGraphicsAcceleration() {
     String accel = GRAPHICS_ACCELERATION.get();
     try {
-      if (accel == ACCEL_NONE) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_OPENGL) {
-        System.setProperty("sun.java2d.opengl", "True");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_D3D) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "True");
-      }
-    } catch (Exception t) {
+      System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
+      System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
+    } catch (Exception ignored) {
     }
   }
 
@@ -338,12 +317,12 @@ public class AppPreferences {
   public static void setTemplateFile(File value, Template template) {
     getPrefs();
     if (value != null && !value.canRead()) value = null;
-    if (value == null ? templateFile != null : !value.equals(templateFile)) {
+    if (!Objects.equals(value, templateFile)) {
       try {
         customTemplateFile = template == null ? null : value;
         customTemplate = template;
         getPrefs().put(TEMPLATE_FILE, value == null ? "" : value.getCanonicalPath());
-      } catch (IOException ex) {
+      } catch (IOException ignored) {
       }
     }
   }
@@ -359,13 +338,14 @@ public class AppPreferences {
   }
 
   public static void setScaledFonts(Component[] comp) {
-    for (int x = 0; x < comp.length; x++) {
-      if (comp[x] instanceof Container) setScaledFonts(((Container) comp[x]).getComponents());
+    for (Component component : comp) {
+      if (component instanceof Container)
+        setScaledFonts(((Container) component).getComponents());
       try {
-        comp[x].setFont(getScaledFont(comp[x].getFont()));
-        comp[x].revalidate();
-        comp[x].repaint();
-      } catch (Exception e) {
+        component.setFont(getScaledFont(component.getFont()));
+        component.revalidate();
+        component.repaint();
+      } catch (Exception ignored) {
       }
     }
   }
@@ -416,7 +396,7 @@ public class AppPreferences {
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / (double) 10.0;
+    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
     return value * scale;
   }
 
@@ -452,7 +432,7 @@ public class AppPreferences {
   private static Preferences prefs = null;
 
   private static MyListener myListener = null;
-  private static PropertyChangeWeakSupport propertySupport =
+  private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(AppPreferences.class);
 
   // Template preferences
@@ -589,25 +569,19 @@ public class AppPreferences {
       create(
           new PrefMonitorDouble(
               "Scale",
-              (((!GraphicsEnvironment.isHeadless())
-                              ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                              : 0)
-                          / 1000)
-                      < 1.0
-                  ? 1.0
-                  : ((!GraphicsEnvironment.isHeadless())
-                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                          : 0)
-                      / 1000));
+              Math.max((((!GraphicsEnvironment.isHeadless())
+                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                  : 0)
+                  / 1000), 1.0)));
 
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX1;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
 
-  public static PrefMonitor<String> POKE_WIRE_RADIX2;
+  public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
     RadixOption[] radixOptions = RadixOption.OPTIONS;
@@ -785,7 +759,7 @@ public class AppPreferences {
                   ? Toolkit.getDefaultToolkit().getScreenSize().height
                   : 0)));
   
-  public static final void resetWindow() {
+  public static void resetWindow() {
 	  WINDOW_MAIN_SPLIT.set(0.251);
 	  WINDOW_LEFT_SPLIT.set(0.51);
 	  WINDOW_RIGHT_SPLIT.set(0.751);

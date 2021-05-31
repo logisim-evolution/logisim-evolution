@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,6 +30,7 @@ package com.cburch.logisim.std.base;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -43,24 +44,35 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
-  private List<Tool> tools;
+  private final List<Tool> tools;
+  private final AddTool textAdder = new AddTool(Text.FACTORY);
+  private final SelectTool selectTool = new SelectTool();
 
   public Base() {
     setHidden();
-    SelectTool select = new SelectTool();
     WiringTool wiring = new WiringTool();
 
-    tools =
-        Arrays.asList(
-            new Tool[] {
-              new PokeTool(),
-              new EditTool(select, wiring),
-              select,
-              wiring,
-              new TextTool(),
-              new MenuTool(),
-              new AddTool(Text.FACTORY),
-            });
+    tools = Arrays.asList(
+        new PokeTool(),
+        new EditTool(selectTool, wiring),
+        wiring,
+        new TextTool(),
+        new MenuTool());
+    }
+  
+  @Override
+  public boolean contains(ComponentFactory querry) {
+    return super.contains(querry) || (querry instanceof Text);
+  }
+
+  @Override
+  public Tool getTool(String name) {
+    Tool t = super.getTool(name);
+    if (t == null) {
+      if (name.equals("Text"))
+        return textAdder; // needed by XmlCircuitReader
+    }
+    return t;
   }
 
   @Override

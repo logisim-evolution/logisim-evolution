@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,8 +32,6 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ElfHeader {
@@ -101,11 +99,7 @@ public class ElfHeader {
   public static final int EM_RISCV = 243;
   private static final Map<Integer, String> ARCHITECTURES;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
-    aMap.put(EM_OPENRISC, "Open Risc");
-    aMap.put(EM_INTEL_NIOS2, "Nios II");
-    aMap.put(EM_RISCV, "Risc V");
-    ARCHITECTURES = Collections.unmodifiableMap(aMap);
+    ARCHITECTURES = Map.of(EM_OPENRISC, "Open Risc", EM_INTEL_NIOS2, "Nios II", EM_RISCV, "Risc V");
   }
   
   
@@ -113,21 +107,21 @@ public class ElfHeader {
   public final static long LONGINTMASK = Long.parseUnsignedLong("00000000FFFFFFFF", 16);
   public final static int INTMASK = Integer.parseUnsignedInt("00FFFFFF", 16);
 
-  private class EInfo {
-    private Integer e_type;
-    private Integer e_machine;
-    private Integer e_version;
-    private Long e_entry;
-    private Long e_phoff;
-    private Long e_shoff;
-    private Integer e_flags;
-    private Integer e_ehsize;
-    private Integer e_phentsize;
-    private Integer e_phnum;
-    private Integer e_shentsize;
-    private Integer e_shnum;
-    private Integer e_shstrndx;
-    private boolean is32Bit;
+  private static class EInfo {
+    private final Integer e_type;
+    private final Integer e_machine;
+    private final Integer e_version;
+    private final Long e_entry;
+    private final Long e_phoff;
+    private final Long e_shoff;
+    private final Integer e_flags;
+    private final Integer e_ehsize;
+    private final Integer e_phentsize;
+    private final Integer e_phnum;
+    private final Integer e_shentsize;
+    private final Integer e_shnum;
+    private final Integer e_shstrndx;
+    private final boolean is32Bit;
     
     
     public EInfo (byte[] buffer , boolean is32Bit, boolean isLittleEndian) {
@@ -184,7 +178,7 @@ public class ElfHeader {
   
   private int status = ELF_HEADER_CORRECT;
   private EInfo eInfo;
-  private byte[] e_ident = new byte[E_IDENT_SIZE];
+  private final byte[] e_ident = new byte[E_IDENT_SIZE];
   
   public ElfHeader(FileInputStream file) {
     int nrRead = -1;
@@ -223,7 +217,7 @@ public class ElfHeader {
       status |= E_SIZE_ERROR;
       return;
     }
-    eInfo = new EInfo(buffer,is32Bit(),isLittleEndian());
+    eInfo = new EInfo(buffer, is32Bit(), isLittleEndian());
   }
   
   public Object getValue(int field) {
@@ -274,30 +268,30 @@ public class ElfHeader {
   public String getErrorString() {
     if (status == ELF_HEADER_CORRECT)
       return S.get("ElfHeaderNoErrors");
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     boolean insertNl = false;
     if (status == EI_ERROR_READING_FILE) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderReadingFileError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderReadingFileError"));
       insertNl = true;
     }
     if (status == EI_SIZE_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectEISize"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectEISize"));
       insertNl = true;
     }
     if (status == EI_MAGIC_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectMagic"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectMagic"));
       insertNl = true;
     }
     if (status == EI_CLASS_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderEIClassError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderEIClassError"));
       insertNl = true;
     }
     if (status == EI_DATA_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderEIDataError"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderEIDataError"));
       insertNl = true;
     }
     if (status == E_SIZE_ERROR) {
-      s.append((insertNl?"\n":"")+S.get("ElfHeaderIncorrectESize"));
+      s.append(insertNl ? "\n" : "").append(S.get("ElfHeaderIncorrectESize"));
       insertNl = true;
     }
     return s.toString();
@@ -358,7 +352,7 @@ public class ElfHeader {
   
   public static long getLongValue(Object v) {
     if (v instanceof Integer)
-      return Long.parseUnsignedLong(String.format("%08X", (Integer)v),16);
+      return Long.parseUnsignedLong(String.format("%08X", v),16);
     if (v instanceof Long)
       return (long)v;
     return 0;

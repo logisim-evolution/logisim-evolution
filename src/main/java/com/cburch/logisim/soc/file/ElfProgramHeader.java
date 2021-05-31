@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,8 +33,6 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ElfProgramHeader {
@@ -59,17 +57,9 @@ public class ElfProgramHeader {
   public final static int PT_HIPROC = 0x7FFFFFFF;
   private static final Map<Integer, String> PT_TYPES;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
-    aMap.put(PT_NULL, "PT_NULL");
-    aMap.put(PT_LOAD, "PT_LOAD");
-    aMap.put(PT_DYNAMIC, "PT_DYNAMIC");
-    aMap.put(PT_INTERP, "PT_INTERP");
-    aMap.put(PT_NOTE, "PT_NOTE");
-    aMap.put(PT_SHLIB, "PT_SHLIB");
-    aMap.put(PT_PHDR, "PT_PHDR");
-    aMap.put(PT_LOPROC, "PT_LOPROC");
-    aMap.put(PT_HIPROC, "PT_HIPROC");
-    PT_TYPES = Collections.unmodifiableMap(aMap);
+    PT_TYPES = Map.of(PT_NULL, "PT_NULL", PT_LOAD, "PT_LOAD", PT_DYNAMIC, "PT_DYNAMIC", PT_INTERP,
+        "PT_INTERP", PT_NOTE, "PT_NOTE", PT_SHLIB, "PT_SHLIB", PT_PHDR, "PT_PHDR", PT_LOPROC,
+        "PT_LOPROC", PT_HIPROC, "PT_HIPROC");
   }
   
   public final static int PF_X = 1;
@@ -77,11 +67,7 @@ public class ElfProgramHeader {
   public final static int PF_R = 4;
   private static final Map<Integer, String> PF_FLAGS;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
-    aMap.put(PF_X, "PF_X");
-    aMap.put(PF_W, "PF_W");
-    aMap.put(PF_R, "PF_R");
-    PF_FLAGS = Collections.unmodifiableMap(aMap);
+    PF_FLAGS = Map.of(PF_X, "PF_X", PF_W, "PF_W", PF_R, "PF_R");
   }
   
   
@@ -90,16 +76,16 @@ public class ElfProgramHeader {
   private final static int PROGRAM_HEADER_READ_ERROR = 2;
   private static final int PROGRAM_HEADER_SIZE_ERROR = 3;
 
-  public class ProgramHeader {
-    private Integer p_type;
+  public static class ProgramHeader {
+    private final Integer p_type;
     private Integer p_flags;
-    private Long p_offset;
-    private Long p_vaddr;
-    private Long p_paddr;
-    private Long p_filesz;
-    private Long p_memsz;
-    private Long p_align;
-    private boolean is32Bit;
+    private final Long p_offset;
+    private final Long p_vaddr;
+    private final Long p_paddr;
+    private final Long p_filesz;
+    private final Long p_memsz;
+    private final Long p_align;
+    private final boolean is32Bit;
     
     public ProgramHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
       int index = offset;
@@ -143,12 +129,9 @@ public class ElfProgramHeader {
     }
     
     public String toString() {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       s.append("Program Header Info:\np_type   : ");
-      if (PT_TYPES.containsKey(p_type))
-        s.append(PT_TYPES.get(p_type));
-      else
-        s.append("unknown");
+      s.append(PT_TYPES.getOrDefault(p_type, "unknown"));
       s.append("\np_flags  : ");
       boolean first = true;
       for (int i : PF_FLAGS.keySet()) {
@@ -159,12 +142,12 @@ public class ElfProgramHeader {
           s.append(PF_FLAGS.get(i));
         }
       }
-      s.append("\np_offset : "+String.format("0x%X", p_offset)+"\n");
-      s.append("p_vaddr  : "+String.format("0x%X", p_vaddr)+"\n");
-      s.append("p_paddr  : "+String.format("0x%X", p_paddr)+"\n");
-      s.append("p_filesz : "+String.format("0x%X", p_filesz)+"\n");
-      s.append("p_memsz  : "+String.format("0x%X", p_memsz)+"\n");
-      s.append("p_align  : "+String.format("0x%X", p_align)+"\n\n");
+      s.append("\np_offset : ").append(String.format("0x%X", p_offset)).append("\n");
+      s.append("p_vaddr  : ").append(String.format("0x%X", p_vaddr)).append("\n");
+      s.append("p_paddr  : ").append(String.format("0x%X", p_paddr)).append("\n");
+      s.append("p_filesz : ").append(String.format("0x%X", p_filesz)).append("\n");
+      s.append("p_memsz  : ").append(String.format("0x%X", p_memsz)).append("\n");
+      s.append("p_align  : ").append(String.format("0x%X", p_align)).append("\n\n");
       return s.toString();
     }
     
@@ -199,9 +182,9 @@ public class ElfProgramHeader {
       return;
     }
     int index = 0;
-    headers = new ArrayList<ProgramHeader>();
+    headers = new ArrayList<>();
     for (int i = 0 ; i < nrOfProgramHeaders ; i++) {
-      headers.add(new ProgramHeader(buffer,elfHeader.is32Bit(),elfHeader.isLittleEndian(),index));
+      headers.add(new ProgramHeader(buffer, elfHeader.is32Bit(), elfHeader.isLittleEndian(), index));
       index += progHeaderEntrySize;
     }
   }

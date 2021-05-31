@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -130,13 +130,13 @@ public class Keyboard extends InstanceFactory {
 
   public static void addToBuffer(InstanceState state, char[] newChars) {
     KeyboardData keyboardData = getKeyboardState(state);
-    for (int i = 0; i < newChars.length; i++) {
-      keyboardData.insert(newChars[i]);
+    for (char newChar : newChars) {
+      keyboardData.insert(newChar);
     }
   }
 
   private static int getBufferLength(Object bufferAttr) {
-    if (bufferAttr instanceof Integer) return ((Integer) bufferAttr).intValue();
+    if (bufferAttr instanceof Integer) return (Integer) bufferAttr;
     else return 32;
   }
 
@@ -178,7 +178,7 @@ public class Keyboard extends InstanceFactory {
     super("Keyboard", S.getter("keyboardComponent"));
     setAttributes(
         new Attribute[] {ATTR_BUFFER, StdAttr.EDGE_TRIGGER},
-        new Object[] {Integer.valueOf(32), StdAttr.TRIG_RISING});
+        new Object[] {32, StdAttr.TRIG_RISING});
     setOffsetBounds(Bounds.create(0, -15, WIDTH, HEIGHT));
     setIcon(new ButtonIcon(S.getter("keyboardComponent")));
     setInstancePoker(Poker.class);
@@ -262,7 +262,7 @@ public class Keyboard extends InstanceFactory {
     int[] px = new int[3];
     int[] py = new int[3];
     for (Integer special : specials) {
-      int code = special.intValue();
+      int code = special;
       int pos = code & 0xFF;
       int w0;
       int w1;
@@ -326,14 +326,14 @@ public class Keyboard extends InstanceFactory {
       String str;
       int dispStart;
       int dispEnd;
-      ArrayList<Integer> specials = new ArrayList<Integer>();
+      ArrayList<Integer> specials = new ArrayList<>();
       FontMetrics fm = null;
       KeyboardData state = getKeyboardState(painter);
       synchronized (state) {
         str = state.toString();
         for (int i = state.getNextSpecial(0); i >= 0; i = state.getNextSpecial(i + 1)) {
           char c = state.getChar(i);
-          specials.add(Integer.valueOf(c << 16 | i));
+          specials.add(c << 16 | i);
         }
         if (!state.isDisplayValid()) {
           fm = g.getFontMetrics(DEFAULT_FONT);

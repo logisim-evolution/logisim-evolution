@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,6 +32,8 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
 public class ComboBox<T> extends JComboBox<T> {
+  private static final long serialVersionUID = 1L;
+
   public ComboBox(T[] choices) {
     super(choices);
     setMaximumRowCount(Math.min(choices.length, 33));
@@ -42,14 +44,14 @@ public class ComboBox<T> extends JComboBox<T> {
     String prefix = "";
     long last;
 
-    static int currentIndex(ComboBoxModel model) {
+    static int currentIndex(ComboBoxModel<?> model) {
       Object item = model.getSelectedItem();
       for (int i = 0; item != null && i < model.getSize(); i++)
         if (item.equals(model.getElementAt(i))) return i;
       return -1;
     }
 
-    public int selectionForKey(char ch, ComboBoxModel model) {
+    public int selectionForKey(char ch, ComboBoxModel<?> model) {
       int idx = currentIndex(model);
       long now = System.currentTimeMillis();
       if (now > last + 500) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,67 +42,28 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 class MenuEdit extends Menu {
-  private class MyListener implements ProjectListener, ActionListener {
-
-    public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      Project proj = menubar.getProject();
-      if (src == undo) {
-        if (proj != null) {
-          proj.undoAction();
-        }
-      } else if (src == redo) {
-        if (proj != null) {
-          proj.redoAction();
-        }
-      }
-    }
-
-    public void projectChanged(ProjectEvent e) {
-      Project proj = menubar.getProject();
-      Action last = proj == null ? null : proj.getLastAction();
-      if (last == null) {
-        undo.setText(S.get("editCantUndoItem"));
-        undo.setEnabled(false);
-      } else {
-        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
-        undo.setEnabled(true);
-      }
-      
-      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
-      if (next != null) {
-        redo.setText(S.fmt("editRedoItem", next.getName()));
-        redo.setEnabled(true);
-      } else {
-        redo.setText(S.get("editCantRedoItem"));
-        redo.setEnabled(false);
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
-  private LogisimMenuBar menubar;
-  private JMenuItem undo = new JMenuItem();
-  private JMenuItem redo = new JMenuItem();
-  private MenuItemImpl cut = new MenuItemImpl(this, LogisimMenuBar.CUT);
-  private MenuItemImpl copy = new MenuItemImpl(this, LogisimMenuBar.COPY);
-  private MenuItemImpl paste = new MenuItemImpl(this, LogisimMenuBar.PASTE);
-  private MenuItemImpl delete = new MenuItemImpl(this, LogisimMenuBar.DELETE);
-  private MenuItemImpl dup = new MenuItemImpl(this, LogisimMenuBar.DUPLICATE);
-  private MenuItemImpl selall = new MenuItemImpl(this, LogisimMenuBar.SELECT_ALL);
-  private MenuItemImpl raise = new MenuItemImpl(this, LogisimMenuBar.RAISE);
-  private MenuItemImpl lower = new MenuItemImpl(this, LogisimMenuBar.LOWER);
-  private MenuItemImpl raiseTop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
-  private MenuItemImpl lowerBottom = new MenuItemImpl(this, LogisimMenuBar.LOWER_BOTTOM);
-  private MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
-  private MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
-  private MyListener myListener = new MyListener();
+  private final LogisimMenuBar menubar;
+  private final JMenuItem undo = new JMenuItem();
+  private final JMenuItem redo = new JMenuItem();
+  private final MenuItemImpl cut = new MenuItemImpl(this, LogisimMenuBar.CUT);
+  private final MenuItemImpl copy = new MenuItemImpl(this, LogisimMenuBar.COPY);
+  private final MenuItemImpl paste = new MenuItemImpl(this, LogisimMenuBar.PASTE);
+  private final MenuItemImpl delete = new MenuItemImpl(this, LogisimMenuBar.DELETE);
+  private final MenuItemImpl dup = new MenuItemImpl(this, LogisimMenuBar.DUPLICATE);
+  private final MenuItemImpl selall = new MenuItemImpl(this, LogisimMenuBar.SELECT_ALL);
+  private final MenuItemImpl raise = new MenuItemImpl(this, LogisimMenuBar.RAISE);
+  private final MenuItemImpl lower = new MenuItemImpl(this, LogisimMenuBar.LOWER);
+  private final MenuItemImpl raiseTop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
+  private final MenuItemImpl lowerBottom = new MenuItemImpl(this, LogisimMenuBar.LOWER_BOTTOM);
+  private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
+  private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
+  private final MyListener myListener = new MyListener();
 
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
-    int menuMask = getToolkit().getMenuShortcutKeyMask();
+    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
     redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask | KeyEvent.SHIFT_DOWN_MASK));
     cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, menuMask));
@@ -137,7 +98,7 @@ class MenuEdit extends Menu {
     add(addCtrl);
     add(remCtrl);
 
-    Project proj = menubar.getProject();
+    Project proj = menubar.getSaveProject();
     if (proj != null) {
       proj.addProjectListener(myListener);
       undo.addActionListener(myListener);
@@ -164,7 +125,7 @@ class MenuEdit extends Menu {
   @Override
   void computeEnabled() {
     setEnabled(
-        menubar.getProject() != null
+        menubar.getSaveProject() != null
             || cut.hasListeners()
             || copy.hasListeners()
             || paste.hasListeners()
@@ -194,5 +155,38 @@ class MenuEdit extends Menu {
     lowerBottom.setText(S.get("editLowerBottomItem"));
     addCtrl.setText(S.get("editAddControlItem"));
     remCtrl.setText(S.get("editRemoveControlItem"));
+  }
+
+  private class MyListener implements ProjectListener, ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+      Object src = e.getSource();
+      Project proj = menubar.getSaveProject();
+      if (src == undo && proj != null)
+        proj.undoAction();
+      else if (src == redo && proj != null)
+        proj.redoAction();
+    }
+
+    public void projectChanged(ProjectEvent e) {
+      Project proj = menubar.getSaveProject();
+      Action last = proj == null ? null : proj.getLastAction();
+      if (last == null) {
+        undo.setText(S.get("editCantUndoItem"));
+        undo.setEnabled(false);
+      } else {
+        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
+        undo.setEnabled(true);
+      }
+
+      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
+      if (next != null) {
+        redo.setText(S.fmt("editRedoItem", next.getName()));
+        redo.setEnabled(true);
+      } else {
+        redo.setText(S.get("editCantRedoItem"));
+        redo.setEnabled(false);
+      }
+    }
   }
 }

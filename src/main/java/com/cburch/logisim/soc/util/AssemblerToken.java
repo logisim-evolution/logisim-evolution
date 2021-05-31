@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,15 +59,23 @@ public class AssemblerToken {
    * be used for custom purposes.
    */
   
-  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<Integer>() {
+  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<>() {
     private static final long serialVersionUID = 1L;
-    {add(MATH_ADD); add (MATH_SUBTRACT); add(MATH_MUL); add(MATH_DIV); add(MATH_REM); 
-     add(MATH_SHIFT_LEFT); add(MATH_SHIFT_RIGHT);} 
+
+    {
+      add(MATH_ADD);
+      add(MATH_SUBTRACT);
+      add(MATH_MUL);
+      add(MATH_DIV);
+      add(MATH_REM);
+      add(MATH_SHIFT_LEFT);
+      add(MATH_SHIFT_RIGHT);
+    }
   };
   
   private int type;
   private String value;
-  private int offset;
+  private final int offset;
   private Boolean valid;
   private Boolean isLabel;
    

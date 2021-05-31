@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,8 +36,50 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
+  private final Set<Member<E>> set;
+
+  public MatchingSet() {
+    set = new HashSet<>();
+  }
+
+  public MatchingSet(Collection<E> initialContents) {
+    set = new HashSet<>(initialContents.size());
+    for (E value : initialContents) {
+      set.add(new Member<>(value));
+    }
+  }
+
+  @Override
+  public boolean add(E value) {
+    return set.add(new Member<>(value));
+  }
+
+  @Override
+  public boolean contains(Object value) {
+    @SuppressWarnings("unchecked")
+    E eValue = (E) value;
+    return set.contains(new Member<>(eValue));
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    return new MatchIterator<>(set.iterator());
+  }
+
+  @Override
+  public boolean remove(Object value) {
+    @SuppressWarnings("unchecked")
+    E eValue = (E) value;
+    return set.remove(new Member<>(eValue));
+  }
+
+  @Override
+  public int size() {
+    return set.size();
+  }
+
   private static class MatchIterator<E extends CanvasObject> implements Iterator<E> {
-    private Iterator<Member<E>> it;
+    private final Iterator<Member<E>> it;
 
     MatchIterator(Iterator<Member<E>> it) {
       this.it = it;
@@ -57,7 +99,7 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
   }
 
   private static class Member<E extends CanvasObject> {
-    E value;
+    final E value;
 
     public Member(E value) {
       this.value = value;
@@ -74,47 +116,5 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
     public int hashCode() {
       return value.matchesHashCode();
     }
-  }
-
-  private Set<Member<E>> set;
-
-  public MatchingSet() {
-    set = new HashSet<Member<E>>();
-  }
-
-  public MatchingSet(Collection<E> initialContents) {
-    set = new HashSet<Member<E>>(initialContents.size());
-    for (E value : initialContents) {
-      set.add(new Member<E>(value));
-    }
-  }
-
-  @Override
-  public boolean add(E value) {
-    return set.add(new Member<E>(value));
-  }
-
-  @Override
-  public boolean contains(Object value) {
-    @SuppressWarnings("unchecked")
-    E eValue = (E) value;
-    return set.contains(new Member<E>(eValue));
-  }
-
-  @Override
-  public Iterator<E> iterator() {
-    return new MatchIterator<E>(set.iterator());
-  }
-
-  @Override
-  public boolean remove(Object value) {
-    @SuppressWarnings("unchecked")
-    E eValue = (E) value;
-    return set.remove(new Member<E>(eValue));
-  }
-
-  @Override
-  public int size() {
-    return set.size();
   }
 }

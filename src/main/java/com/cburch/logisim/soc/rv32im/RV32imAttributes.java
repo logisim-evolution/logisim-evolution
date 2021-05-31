@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,10 +30,6 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
@@ -41,6 +37,9 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import java.awt.Font;
+import java.util.Arrays;
+import java.util.List;
 
 public class RV32imAttributes extends AbstractAttributeSet {
 
@@ -57,33 +56,31 @@ public class RV32imAttributes extends AbstractAttributeSet {
   public static final Attribute<BitWidth> NR_OF_IRQS = Attributes.forBitWidth("irqWidth", S.getter("rv32imIrqWidth"),0,32);
   public static final Attribute<Integer> RESET_VECTOR = Attributes.forHexInteger("resetVector", S.getter("rv32ResetVector"));
   public static final Attribute<Integer> EXCEPTION_VECTOR  = Attributes.forHexInteger("exceptionVector", S.getter("rv32ExceptionVector"));
-  public static final Attribute<Boolean> RV32IM_STATE_VISABLE = Attributes.forBoolean("stateVisable", S.getter("rv32StateVisable"));
+  public static final Attribute<Boolean> RV32IM_STATE_VISIBLE = Attributes.forBoolean("stateVisible", S.getter("rv32StateVisible"));
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean labelVisable = true;
+  private Boolean labelVisible = true;
   private RV32im_state upState = new RV32im_state();
-  private Boolean stateVisable = true;
+  private Boolean stateVisible = true;
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
-            new Attribute<?>[] {
-              RESET_VECTOR,
-              EXCEPTION_VECTOR,
-              NR_OF_IRQS,
-              RV32IM_STATE_VISABLE,
-              StdAttr.LABEL,
-              StdAttr.LABEL_FONT,
-              StdAttr.LABEL_VISIBILITY,
-              SocSimulationManager.SOC_BUS_SELECT,
-              RV32IM_STATE
-            });
+            RESET_VECTOR,
+            EXCEPTION_VECTOR,
+            NR_OF_IRQS,
+            RV32IM_STATE_VISIBLE,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            StdAttr.LABEL_VISIBILITY,
+            SocSimulationManager.SOC_BUS_SELECT,
+            RV32IM_STATE);
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
     RV32imAttributes d = (RV32imAttributes) dest;
     d.labelFont = labelFont;
-    d.labelVisable = labelVisable;
-    d.stateVisable = stateVisable;
+    d.labelVisible = labelVisible;
+    d.stateVisible = stateVisible;
     d.upState = new RV32im_state();
     upState.copyInto(d.upState);
   }
@@ -101,10 +98,10 @@ public class RV32imAttributes extends AbstractAttributeSet {
     if (attr == NR_OF_IRQS) return (V) BitWidth.create(upState.getNrOfIrqs());
     if (attr == StdAttr.LABEL) return (V) upState.getLabel();
     if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisable;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
     if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V)upState.getAttachedBus();
     if (attr == RV32IM_STATE) return (V) upState;
-    if (attr == RV32IM_STATE_VISABLE) return (V) stateVisable;
+    if (attr == RV32IM_STATE_VISIBLE) return (V) stateVisible;
     return null;
   }
 
@@ -156,16 +153,16 @@ public class RV32imAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean v = (Boolean) value;
-      if (v != labelVisable) {
-        labelVisable = v;
+      if (v != labelVisible) {
+        labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
-    if (attr == RV32IM_STATE_VISABLE) {
+    if (attr == RV32IM_STATE_VISIBLE) {
       Boolean v = (Boolean) value;
-      if (stateVisable != v) {
-        stateVisable = v;
+      if (stateVisible != v) {
+        stateVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;

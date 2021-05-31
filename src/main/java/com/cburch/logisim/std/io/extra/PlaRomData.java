@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,11 +49,11 @@ public class PlaRomData implements InstanceData {
   private Value[] InputValue;
   private Value[] AndValue;
   private Value[] OutputValue;
-  private String[] options =
+  private final String[] options =
       new String[] {
         new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
       };
-  private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+  private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
   private JScrollPane panel;
   private PlaRomPanel drawing;
 
@@ -86,8 +86,7 @@ public class PlaRomData implements InstanceData {
   @Override
   public PlaRomData clone() {
     try {
-      PlaRomData ret = (PlaRomData) super.clone();
-      return ret;
+      return (PlaRomData) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }
@@ -95,24 +94,24 @@ public class PlaRomData implements InstanceData {
 
   public void decodeSavedData(String s) {
     // if empty, all to false so don't do anything
-    if (s == null || s == "") return;
+    if (s == null || s.equals("")) return;
     // split the attribute content string in an array of strings with a single
     // information each one
     String[] datas = s.split(" "), tmp;
     byte value;
     int cnt = 0;
-    for (int i = 0; i < datas.length; i++) {
+    for (String data : datas) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
-      if (datas[i].contains("*")) {
-        tmp = datas[i].split("\\*");
+      if (data.contains("*")) {
+        tmp = data.split("\\*");
         for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = (byte) Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
         }
       } else {
-        value = (byte) Integer.parseInt(datas[i]);
+        value = (byte) Integer.parseInt(data);
         writeData(value, cnt);
         cnt++;
       }
@@ -207,7 +206,7 @@ public class PlaRomData implements InstanceData {
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
     boolean dirty = false;
-    String data = "";
+    StringBuilder data = new StringBuilder();
     // input-and matrix
     for (int i = 0; i < size1; i++) {
       row = i / getInputs();
@@ -227,9 +226,9 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size1 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size1 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size1 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
@@ -251,15 +250,15 @@ public class PlaRomData implements InstanceData {
         count++;
       }
       if (val != last || i == size2 - 1) {
-        if (count >= 3) data += last + "*" + count + ' ';
-        else for (int j = 0; j < count; j++) data += last + " ";
-        if (val != last && i == size2 - 1) data += val + " ";
+        if (count >= 3) data.append(last).append("*").append(count).append(' ');
+        else for (int j = 0; j < count; j++) data.append(last).append(" ");
+        if (val != last && i == size2 - 1) data.append(val).append(" ");
         count = 1;
         last = val;
       }
     }
-    if (!dirty) data = "";
-    SavedData = data;
+    if (!dirty) data = new StringBuilder();
+    SavedData = data.toString();
   }
 
   public void setAndOutputValue(int row, int column, boolean b) {
@@ -310,8 +309,8 @@ public class PlaRomData implements InstanceData {
 
   public void setInputsValue(Value[] inputs) {
     int mininputs = getInputs() < inputs.length ? getInputs() : inputs.length;
-    for (byte i = 0; i < mininputs; i++)
-      this.InputValue[i + getInputs() - mininputs] = inputs[i + inputs.length - mininputs];
+    System.arraycopy(inputs, inputs.length - mininputs, this.InputValue,
+        getInputs() - mininputs, mininputs);
     setAndValue();
     setOutputValue();
   }
@@ -339,20 +338,16 @@ public class PlaRomData implements InstanceData {
       this.inputs = inputs;
       this.outputs = outputs;
       this.and = and;
-      boolean oldInputAnd[][] = Arrays.copyOf(InputAnd, InputAnd.length);
-      boolean oldAndOutput[][] = Arrays.copyOf(AndOutput, AndOutput.length);
+      boolean[][] oldInputAnd = Arrays.copyOf(InputAnd, InputAnd.length);
+      boolean[][] oldAndOutput = Arrays.copyOf(AndOutput, AndOutput.length);
       InputAnd = new boolean[getAnd()][getInputs() * 2];
       AndOutput = new boolean[getAnd()][getOutputs()];
       InputValue = new Value[getInputs()];
       AndValue = new Value[getAnd()];
       OutputValue = new Value[getOutputs()];
       for (byte i = 0; i < minand; i++) {
-        for (byte j = 0; j < mininputs * 2; j++) {
-          InputAnd[i][j] = oldInputAnd[i][j];
-        }
-        for (byte k = 0; k < minoutputs; k++) {
-          AndOutput[i][k] = oldAndOutput[i][k];
-        }
+        System.arraycopy(oldInputAnd[i], 0, InputAnd[i], 0, mininputs * 2);
+        System.arraycopy(oldAndOutput[i], 0, AndOutput[i], 0, minoutputs);
       }
       InitializeInputValue();
       setAndValue();

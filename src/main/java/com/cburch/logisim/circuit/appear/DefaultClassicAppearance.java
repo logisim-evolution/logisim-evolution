@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,11 +51,11 @@ public class DefaultClassicAppearance {
 
   public static List<CanvasObject> build(Collection<Instance> pins) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.NORTH, new ArrayList<Instance>());
-    edge.put(Direction.SOUTH, new ArrayList<Instance>());
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.NORTH, new ArrayList<>());
+    edge.put(Direction.SOUTH, new ArrayList<>());
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     for (Instance pin : pins) {
       Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
       Direction pinEdge = pinFacing.reverse();
@@ -110,12 +110,12 @@ public class DefaultClassicAppearance {
     Location e1 = Location.create(rx + (width + 8) / 2, ry + 1);
     Location ct = Location.create(rx + width / 2, ry + 11);
     Curve notch = new Curve(e0, e1, ct);
-    notch.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+    notch.setValue(DrawAttr.STROKE_WIDTH, 2);
     notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
     Rectangle rect = new Rectangle(rx, ry, width, height);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+    rect.setValue(DrawAttr.STROKE_WIDTH, 2);
 
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    List<CanvasObject> ret = new ArrayList<>();
     ret.add(notch);
     ret.add(rect);
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, 10);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 class ProjectsDirty {
   private static class DirtyListener implements LibraryListener {
-    Project proj;
+    final Project proj;
 
     DirtyListener(Project proj) {
       this.proj = proj;
@@ -73,8 +73,8 @@ class ProjectsDirty {
     Projects.addPropertyChangeListener(Projects.projectListProperty, projectListListener);
   }
 
-  private static ProjectListListener projectListListener = new ProjectListListener();
-  private static ArrayList<DirtyListener> listeners = new ArrayList<DirtyListener>();
+  private static final ProjectListListener projectListListener = new ProjectListListener();
+  private static final ArrayList<DirtyListener> listeners = new ArrayList<>();
 
   private ProjectsDirty() {}
 }

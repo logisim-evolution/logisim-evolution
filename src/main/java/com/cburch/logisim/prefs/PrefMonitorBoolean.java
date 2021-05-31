@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,11 +32,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
-
 import javax.swing.JCheckBox;
 
 public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements ActionListener {
-  protected boolean dflt;
+  protected final boolean dflt;
   protected boolean value;
   private JCheckBox box;
 
@@ -45,12 +44,12 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     this.dflt = dflt;
     this.value = dflt;
     Preferences prefs = AppPreferences.getPrefs();
-    set(Boolean.valueOf(prefs.getBoolean(name, dflt)));
+    set(prefs.getBoolean(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }
 
   public Boolean get() {
-    return Boolean.valueOf(value);
+    return value;
   }
 
   @Override
@@ -73,7 +72,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
   }
 
   public void set(Boolean newValue) {
-    boolean newVal = newValue.booleanValue();
+    boolean newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
     }

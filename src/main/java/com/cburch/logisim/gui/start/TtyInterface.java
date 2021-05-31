@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -68,47 +68,17 @@ import org.slf4j.LoggerFactory;
 
 public class TtyInterface {
 
-  // It's possible to avoid using the separate thread using
-  // System.in.available(),
-  // but this doesn't quite work because on some systems, the keyboard input
-  // is not interactively echoed until System.in.read() is invoked.
-  private static class StdinThread extends UniquelyNamedThread {
-    private LinkedList<char[]> queue; // of char[]
-
-    public StdinThread() {
-      super("TtyInterface-StdInThread");
-      queue = new LinkedList<char[]>();
-    }
-
-    public char[] getBuffer() {
-      synchronized (queue) {
-        if (queue.isEmpty()) {
-          return null;
-        } else {
-          return queue.removeFirst();
-        }
-      }
-    }
-
-    @Override
-    public void run() {
-      InputStreamReader stdin = new InputStreamReader(System.in);
-      char[] buffer = new char[32];
-      while (true) {
-        try {
-          int nbytes = stdin.read(buffer);
-          if (nbytes > 0) {
-            char[] add = new char[nbytes];
-            System.arraycopy(buffer, 0, add, 0, nbytes);
-            synchronized (queue) {
-              queue.addLast(add);
-            }
-          }
-        } catch (IOException e) {
-        }
-      }
-    }
-  }
+  public static final int FORMAT_TABLE = 1;
+  public static final int FORMAT_SPEED = 2;
+  public static final int FORMAT_TTY = 4;
+  public static final int FORMAT_HALT = 8;
+  public static final int FORMAT_STATISTICS = 16;
+  public static final int FORMAT_TABLE_TABBED = 32;
+  public static final int FORMAT_TABLE_CSV = 64;
+  public static final int FORMAT_TABLE_BIN = 128;
+  public static final int FORMAT_TABLE_HEX = 256;
+  static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
+  private static boolean lastIsNewline = true;
 
   private static int countDigits(int num) {
     int digits = 1;
@@ -155,21 +125,21 @@ public class TtyInterface {
       String libName = lib == null ? "-" : lib.getDisplayName();
       System.out.printf(
           fmtNormal, // OK
-          Integer.valueOf(count.getUniqueCount()),
-          Integer.valueOf(count.getRecursiveCount()),
+          count.getUniqueCount(),
+          count.getRecursiveCount(),
           count.getFactory().getDisplayName(),
           libName);
     }
     FileStatistics.Count totalWithout = stats.getTotalWithoutSubcircuits();
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(totalWithout.getUniqueCount()),
-        Integer.valueOf(totalWithout.getRecursiveCount()),
+        totalWithout.getUniqueCount(),
+        totalWithout.getRecursiveCount(),
         S.get("statsTotalWithout"));
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(total.getUniqueCount()),
-        Integer.valueOf(total.getRecursiveCount()),
+        total.getUniqueCount(),
+        total.getRecursiveCount(),
         S.get("statsTotalWith"));
   }
 
@@ -324,8 +294,7 @@ public class TtyInterface {
     }
     Project proj = new Project(file);
     if (args.isFpgaDownload()) {
-      if (!args.FpgaDownload(proj))
-        System.exit(-1);
+      if (!args.FpgaDownload(proj)) System.exit(-1);
     }
 
     int format = args.getTtyFormat();
@@ -345,8 +314,8 @@ public class TtyInterface {
       circuit = file.getCircuit(circuitToTest);
     }
     Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-    ArrayList<Instance> outputPins = new ArrayList<Instance>();
-    ArrayList<Instance> inputPins = new ArrayList<Instance>();
+    ArrayList<Instance> outputPins = new ArrayList<>();
+    ArrayList<Instance> inputPins = new ArrayList<>();
     Instance haltPin = null;
     for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
       Instance pin = entry.getKey();
@@ -389,13 +358,13 @@ public class TtyInterface {
   private static int doTableAnalysis(
       Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
 
-    ArrayList<Instance> inputPins = new ArrayList<Instance>();
-    ArrayList<Var> inputVars = new ArrayList<Var>();
-    ArrayList<String> inputNames = new ArrayList<String>();
-    ArrayList<Instance> outputPins = new ArrayList<Instance>();
-    ArrayList<Var> outputVars = new ArrayList<Var>();
-    ArrayList<String> outputNames = new ArrayList<String>();
-    ArrayList<String> formats = new ArrayList<String>();
+    ArrayList<Instance> inputPins = new ArrayList<>();
+    ArrayList<Var> inputVars = new ArrayList<>();
+    ArrayList<String> inputNames = new ArrayList<>();
+    ArrayList<Instance> outputPins = new ArrayList<>();
+    ArrayList<Var> outputVars = new ArrayList<>();
+    ArrayList<String> outputNames = new ArrayList<>();
+    ArrayList<String> formats = new ArrayList<>();
     for (Map.Entry<Instance, String> entry : pinLabels.entrySet()) {
       Instance pin = entry.getKey();
       int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -441,10 +410,9 @@ public class TtyInterface {
       valueMap.clear();
       CircuitState circuitState = new CircuitState(proj, circuit);
       int incol = 0;
-      for (int j = 0; j < inputPins.size(); j++) {
-        Instance pin = inputPins.get(j);
+      for (Instance pin : inputPins) {
         int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
-        Value v[] = new Value[width];
+        Value[] v = new Value[width];
         for (int b = width - 1; b >= 0; b--) {
           boolean value = TruthTable.isInputSet(i, incol++, inputCount);
           v[b] = value ? Value.TRUE : Value.FALSE;
@@ -462,8 +430,7 @@ public class TtyInterface {
        */
       // TODO: Search for circuit state
 
-      for (int j = 0; j < outputPins.size(); j++) {
-        Instance pin = outputPins.get(j);
+      for (Instance pin : outputPins) {
         if (prop.isOscillating()) {
           BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
           valueMap.put(pin, Value.createError(width));
@@ -494,7 +461,7 @@ public class TtyInterface {
     ArrayList<InstanceState> keyboardStates = null;
     StdinThread stdinThread = null;
     if (showTty) {
-      keyboardStates = new ArrayList<InstanceState>();
+      keyboardStates = new ArrayList<>();
       boolean ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
@@ -515,7 +482,7 @@ public class TtyInterface {
     ArrayList<Value> prevOutputs = null;
     Propagator prop = circState.getPropagator();
     while (true) {
-      ArrayList<Value> curOutputs = new ArrayList<Value>();
+      ArrayList<Value> curOutputs = new ArrayList<>();
       for (Instance pin : outputPins) {
         InstanceState pinState = circState.getInstanceState(pin);
         Value val = Pin.FACTORY.getValue(pinState);
@@ -547,7 +514,7 @@ public class TtyInterface {
       }
       prevOutputs = curOutputs;
       tickCount++;
-      prop.tick();
+      prop.toggleClocks();
       prop.propagate();
     }
     long elapse = System.currentTimeMillis() - start;
@@ -570,25 +537,45 @@ public class TtyInterface {
     System.out.print(c); // OK
   }
 
-  static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
+  // It's possible to avoid using the separate thread using
+  // System.in.available(),
+  // but this doesn't quite work because on some systems, the keyboard input
+  // is not interactively echoed until System.in.read() is invoked.
+  private static class StdinThread extends UniquelyNamedThread {
+    private final LinkedList<char[]> queue; // of char[]
 
-  public static final int FORMAT_TABLE = 1;
+    public StdinThread() {
+      super("TtyInterface-StdInThread");
+      queue = new LinkedList<>();
+    }
 
-  public static final int FORMAT_SPEED = 2;
+    public char[] getBuffer() {
+      synchronized (queue) {
+        if (queue.isEmpty()) {
+          return null;
+        } else {
+          return queue.removeFirst();
+        }
+      }
+    }
 
-  public static final int FORMAT_TTY = 4;
-
-  public static final int FORMAT_HALT = 8;
-
-  public static final int FORMAT_STATISTICS = 16;
-
-  public static final int FORMAT_TABLE_TABBED = 32;
-
-  public static final int FORMAT_TABLE_CSV = 64;
-
-  public static final int FORMAT_TABLE_BIN = 128;
-
-  public static final int FORMAT_TABLE_HEX = 256;
-
-  private static boolean lastIsNewline = true;
+    @Override
+    public void run() {
+      InputStreamReader stdin = new InputStreamReader(System.in);
+      char[] buffer = new char[32];
+      while (true) {
+        try {
+          int nbytes = stdin.read(buffer);
+          if (nbytes > 0) {
+            char[] add = new char[nbytes];
+            System.arraycopy(buffer, 0, add, 0, nbytes);
+            synchronized (queue) {
+              queue.addLast(add);
+            }
+          }
+        } catch (IOException ignored) {
+        }
+      }
+    }
+  }
 }

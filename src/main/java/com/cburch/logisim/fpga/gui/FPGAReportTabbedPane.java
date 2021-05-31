@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -61,42 +61,42 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   private static final long serialVersionUID = 1L;
 
   private static final int FONT_SIZE = 12;
-  private static GridLayout consolesLayout = new GridLayout(1, 1);
-  private static int InfoTabIndex = 0;
-  private static int WarningsTabIndex = 1;
-  private static int ErrorsTabIndex = 2;
-  private static int ConsoleTabIndex = 3;
+  private static final GridLayout consolesLayout = new GridLayout(1, 1);
+  private static final int InfoTabIndex = 0;
+  private static final int WarningsTabIndex = 1;
+  private static final int ErrorsTabIndex = 2;
+  private static final int ConsoleTabIndex = 3;
 
-  private JTextArea textAreaInfo;
-  private JComponent panelInfos;
-  private ArrayList<String> InfoMessages;
+  private final JTextArea textAreaInfo;
+  private final JComponent panelInfos;
+  private final ArrayList<String> InfoMessages;
   private FPGACommanderTextWindow InfoWindow;
 
-  private JList<Object> Warnings;
-  private JComponent panelWarnings;
-  private FPGACommanderListModel WarningsList;
-  private FPGACommanderListWindow WarningsWindow;
+  private final JList<Object> Warnings;
+  private final JComponent panelWarnings;
+  private final FPGACommanderListModel WarningsList;
+  private final FPGACommanderListWindow WarningsWindow;
 
-  private JList<Object> Errors;
-  private JComponent panelErrors;
-  private FPGACommanderListModel ErrorsList;
-  private FPGACommanderListWindow ErrorsWindow;
+  private final JList<Object> Errors;
+  private final JComponent panelErrors;
+  private final FPGACommanderListModel ErrorsList;
+  private final FPGACommanderListWindow ErrorsWindow;
 
   private FPGACommanderTextWindow ConsoleWindow;
-  private JTextArea textAreaConsole;
-  private JComponent panelConsole;
-  private ArrayList<String> ConsoleMessages;
+  private final JTextArea textAreaConsole;
+  private final JComponent panelConsole;
+  private final ArrayList<String> ConsoleMessages;
 
   private boolean DRCTraceActive = false;
   private SimpleDRCContainer ActiveDRCContainer;
 
-  private Project MyProject;
+  private final Project MyProject;
 
   public FPGAReportTabbedPane(Project MyProject) {
     super();
     this.MyProject = MyProject;
     /* first we setup all info for the first tab, the Information window */
-    InfoMessages = new ArrayList<String>();
+    InfoMessages = new ArrayList<>();
     textAreaInfo = new JTextArea(10, 50);
     textAreaInfo.setForeground(Color.GRAY);
     textAreaInfo.setBackground(Color.BLACK);
@@ -116,7 +116,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
 
     /* now we setup the Warning window */
     WarningsList = new FPGACommanderListModel(true);
-    Warnings = new JList<Object>();
+    Warnings = new JList<>();
     Warnings.setBackground(Color.BLACK);
     Warnings.setForeground(Color.ORANGE);
     Warnings.setSelectionBackground(Color.ORANGE);
@@ -144,7 +144,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
 
     /* here we setup the Error window */
     ErrorsList = new FPGACommanderListModel(false);
-    Errors = new JList<Object>();
+    Errors = new JList<>();
     Errors.setBackground(Color.BLACK);
     Errors.setForeground(Color.RED);
     Errors.setSelectionBackground(Color.RED);
@@ -171,7 +171,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     Frame.ANNIMATIONICONTIMER.addParrent(ErrorsWindow);
 
     /* finally we define the console window */
-    ConsoleMessages = new ArrayList<String>();
+    ConsoleMessages = new ArrayList<>();
     textAreaConsole = new JTextArea(10, 50);
     textAreaConsole.setForeground(Color.LIGHT_GRAY);
     textAreaConsole.setBackground(Color.BLACK);
@@ -219,7 +219,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateInfoWindow() {
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     for (String mes : InfoMessages) {
       Line.append(mes);
     }
@@ -227,7 +227,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateInfoTab() {
-    StringBuffer Line = new StringBuffer();
+    StringBuilder Line = new StringBuilder();
     for (String mes : InfoMessages) {
       Line.append(mes);
     }
@@ -273,7 +273,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateConsoleWindow() {
-    StringBuffer Lines = new StringBuffer();
+    StringBuilder Lines = new StringBuilder();
     for (String mes : ConsoleMessages) {
       Lines.append(mes);
     }
@@ -281,7 +281,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   private void UpdateConsoleTab() {
-    StringBuffer Lines = new StringBuffer();
+    StringBuilder Lines = new StringBuilder();
     for (String mes : ConsoleMessages) {
       Lines.append(mes);
     }
@@ -421,9 +421,9 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   @Override
   public void mouseReleased(MouseEvent e) {
     boolean SourceIsWarningsWindow =
-        (WarningsWindow == null) ? false : e.getSource().equals(WarningsWindow.getListObject());
+        WarningsWindow != null && e.getSource().equals(WarningsWindow.getListObject());
     boolean SourceIsErrorsWindow =
-        (ErrorsWindow == null) ? false : e.getSource().equals(ErrorsWindow.getListObject());
+        ErrorsWindow != null && e.getSource().equals(ErrorsWindow.getListObject());
     if (e.getSource().equals(Errors) || SourceIsErrorsWindow) {
       clearDRCTrace();
       int idx = -1;
@@ -466,7 +466,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     }
     if (e.getSource().equals(WarningsWindow)) {
       int idx = getComponentCount();
-      HashSet<Component> comps = new HashSet<Component>(Arrays.asList(getComponents()));
+      HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       if (comps.contains(panelErrors)) idx = indexOfComponent(panelErrors);
       add(panelWarnings, idx);
@@ -476,7 +476,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     }
     if (e.getSource().equals(ErrorsWindow)) {
       int idx = getComponentCount();
-      HashSet<Component> comps = new HashSet<Component>(Arrays.asList(getComponents()));
+      HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       add(panelErrors, idx);
       setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");

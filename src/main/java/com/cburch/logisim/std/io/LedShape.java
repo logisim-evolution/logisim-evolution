@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -89,17 +89,16 @@ public class LedShape extends DynamicElement {
       g.setColor(offColor);
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
-      g.drawOval(x, y, w, h);
     } else {
       Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
-      Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
+      Object desired = activ ? Value.TRUE : Value.FALSE;
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       Value val = data == null ? Value.FALSE : (Value) data.getValue();
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);
-      g.drawOval(x, y, w, h);
     }
+    g.drawOval(x, y, w, h);
     drawLabel(g);
   }
 

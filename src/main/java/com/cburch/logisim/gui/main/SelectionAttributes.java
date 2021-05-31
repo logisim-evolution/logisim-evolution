@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,36 +45,42 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 class SelectionAttributes extends AbstractAttributeSet {
 
-  private class Listener implements Selection.Listener, AttributeListener {
+  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
+  private static final Object[] EMPTY_VALUES = new Object[0];
+  private final Canvas canvas;
+  private final Selection selection;
+  private final Listener listener;
+  private boolean listening;
+  private Set<Component> selected;
+  private Attribute<?>[] attrs;
+  private boolean[] readOnly;
+  private Object[] values;
+  private List<Attribute<?>> attrsView;
 
-    @Override
-    public void attributeListChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
+  public SelectionAttributes(Canvas canvas, Selection selection) {
+    this.canvas = canvas;
+    this.selection = selection;
+    this.listener = new Listener();
+    this.listening = true;
+    this.selected = Collections.emptySet();
+    this.attrs = EMPTY_ATTRIBUTES;
+    this.values = EMPTY_VALUES;
+    this.attrsView = Collections.emptyList();
 
-    @Override
-    public void attributeValueChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
-
-    @Override
-    public void selectionChanged(Selection.Event e) {
-      updateList(true);
-    }
+    selection.addListener(listener);
+    updateList(true);
+    setListening(true);
   }
 
   private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(
       Collection<Component> newSel) {
     LinkedHashMap<Attribute<Object>, Object> attrMap;
-    attrMap = new LinkedHashMap<Attribute<Object>, Object>();
+    attrMap = new LinkedHashMap<>();
     Iterator<Component> sit = newSel.iterator();
     if (sit.hasNext()) {
       AttributeSet first = sit.next().getAttributeSet();
@@ -122,9 +128,9 @@ class SelectionAttributes extends AbstractAttributeSet {
     }
 
     if (includeWires) {
-      return new HashSet<Component>(comps);
+      return new HashSet<>(comps);
     } else {
-      HashSet<Component> ret = new HashSet<Component>();
+      HashSet<Component> ret = new HashSet<>();
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
           ret.add(comp);
@@ -136,7 +142,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
     if (a == null) {
-      return b == null ? true : b.isEmpty();
+      return b == null || b.isEmpty();
     } else if (b == null) {
       return a.isEmpty();
     } else if (a.size() != b.size()) {
@@ -168,44 +174,12 @@ class SelectionAttributes extends AbstractAttributeSet {
         }
         Object ov = oldValues[j];
         Object nv = entry.getValue();
-        if (ov == null ? nv != null : !ov.equals(nv)) {
+        if (!Objects.equals(ov, nv)) {
           return false;
         }
       }
       return true;
     }
-  }
-
-  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
-  private static final Object[] EMPTY_VALUES = new Object[0];
-  private Canvas canvas;
-  private Selection selection;
-  private Listener listener;
-  private boolean listening;
-
-  private Set<Component> selected;
-
-  private Attribute<?>[] attrs;
-
-  private boolean[] readOnly;
-
-  private Object[] values;
-
-  private List<Attribute<?>> attrsView;
-
-  public SelectionAttributes(Canvas canvas, Selection selection) {
-    this.canvas = canvas;
-    this.selection = selection;
-    this.listener = new Listener();
-    this.listening = true;
-    this.selected = Collections.emptySet();
-    this.attrs = EMPTY_ATTRIBUTES;
-    this.values = EMPTY_VALUES;
-    this.attrsView = Collections.emptyList();
-
-    selection.addListener(listener);
-    updateList(true);
-    setListening(true);
   }
 
   @Override
@@ -265,7 +239,7 @@ class SelectionAttributes extends AbstractAttributeSet {
     } else {
       int i = findIndex(attr);
       boolean[] ro = readOnly;
-      return i >= 0 && i < ro.length ? ro[i] : true;
+      return i < 0 || i >= ro.length || ro[i];
     }
   }
 
@@ -351,7 +325,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         this.selected = newSel;
       }
       this.attrs = newAttrs;
-      this.attrsView = new UnmodifiableList<Attribute<?>>(newAttrs);
+      this.attrsView = new UnmodifiableList<>(newAttrs);
       this.values = newValues;
       this.readOnly = newReadOnly;
 
@@ -368,7 +342,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         for (i = 0; i < oldValues.length; i++) {
           Object oldVal = oldValues[i];
           Object newVal = newValues[i];
-          boolean sameVals = oldVal == null ? newVal == null : oldVal.equals(newVal);
+          boolean sameVals = Objects.equals(oldVal, newVal);
           if (!sameVals) {
             @SuppressWarnings("unchecked")
             Attribute<Object> attr = (Attribute<Object>) oldAttrs[i];
@@ -378,6 +352,28 @@ class SelectionAttributes extends AbstractAttributeSet {
       } else {
         fireAttributeListChanged();
       }
+    }
+  }
+
+  private class Listener implements Selection.Listener, AttributeListener {
+
+    @Override
+    public void attributeListChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void attributeValueChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void selectionChanged(Selection.Event e) {
+      updateList(true);
     }
   }
 }

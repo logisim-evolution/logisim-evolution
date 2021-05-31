@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2OtherControlInstructions implements AssemblerExecutionInterface {
 
@@ -66,9 +65,9 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
           0x26, 0x2E, SIGN_EXTEND, SIGN_EXTEND, 0x0C, SIGN_EXTEND, SIGN_EXTEND, 0x29,
           0x04, 0x36 };
 
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
 
   private int instruction;
   private boolean valid;
@@ -117,22 +116,25 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
 
   public String getAsmInstruction() {
     if (!valid) return null;
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {
       case INSTR_BREAK   : 
-      case INSTR_TRAP    : if (immediate != 0) s.append(Integer.toString(immediate));
+      case INSTR_TRAP    : if (immediate != 0) s.append(immediate);
                            break;
-      case INSTR_RDCTL   : s.append(Nios2State.registerABINames[sourceA]+",ctl"+immediate);
+      case INSTR_RDCTL   : s.append(Nios2State.registerABINames[sourceA]).append(",ctl")
+          .append(immediate);
                            break;
-      case INSTR_WRCTL   : s.append("ctl"+immediate+","+Nios2State.registerABINames[sourceA]);
+      case INSTR_WRCTL   : s.append("ctl").append(immediate).append(",")
+          .append(Nios2State.registerABINames[sourceA]);
                            break;
       case INSTR_INITD   :
       case INSTR_INITDA  :
       case INSTR_FLUSHDA :
       case INSTR_FLUSHD  : int imm = ((immediate<<16)>>16);
-    	                   s.append(imm+"("+Nios2State.registerABINames[sourceA]+")");
+    	                   s.append(imm).append("(").append(Nios2State.registerABINames[sourceA])
+                             .append(")");
                            break;
       case INSTR_INITI   :
       case INSTR_FLUSHI  : s.append(Nios2State.registerABINames[sourceA]);
@@ -143,6 +145,7 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
 
   public int getBinInstruction() { return instruction; }
 
+  @SuppressWarnings("fallthrough")
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
     if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
@@ -170,7 +173,8 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
                              instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedZeroOrOneArgument"));
                            }
                            break;
-      case INSTR_WRCTL   : first = 1; 
+      case INSTR_WRCTL   : first = 1;
+                           // fall through 
       case INSTR_RDCTL   : if (instr.getNrOfParameters() != 2) {
     	                     valid = false;
     	                     instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedTwoArguments"));

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,11 +30,10 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.util.EnumSet;
-
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.RGBLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
+import java.util.EnumSet;
 
 public enum IOComponentTypes {
   LED,
@@ -73,7 +72,7 @@ public enum IOComponentTypes {
     return IOComponentTypes.Unknown;
   }
 
-  public static final int GetFPGAInOutRequirement(IOComponentTypes comp) {
+  public static int GetFPGAInOutRequirement(IOComponentTypes comp) {
     switch (comp) {
     case PortIO:
       return 8;
@@ -84,7 +83,7 @@ public enum IOComponentTypes {
     }
   }
 
-  public static final int GetFPGAInputRequirement(IOComponentTypes comp) {
+  public static int GetFPGAInputRequirement(IOComponentTypes comp) {
     switch (comp) {
     case Button:
       return 1;
@@ -97,7 +96,7 @@ public enum IOComponentTypes {
     }
   }
 
-  public static final int GetFPGAOutputRequirement(IOComponentTypes comp) {
+  public static int GetFPGAOutputRequirement(IOComponentTypes comp) {
     switch (comp) {
     case LED:
       return 1;
@@ -114,19 +113,19 @@ public enum IOComponentTypes {
     }
   }
   
-  public static final boolean nrOfInputPinsConfigurable(IOComponentTypes comp) {
+  public static boolean nrOfInputPinsConfigurable(IOComponentTypes comp) {
     return comp.equals(DIPSwitch);
   }
 
-  public static final boolean nrOfOutputPinsConfigurable(IOComponentTypes comp) {
+  public static boolean nrOfOutputPinsConfigurable(IOComponentTypes comp) {
     return false;
   }
 
-  public static final boolean nrOfIOPinsConfigurable(IOComponentTypes comp) {
+  public static boolean nrOfIOPinsConfigurable(IOComponentTypes comp) {
     return comp.equals(PortIO);
   }
   
-  public static final String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
+  public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
       case DIPSwitch : return DipSwitch.getInputLabel(id);
       case LocalBus  : return ReptarLocalBus.getInputLabel(id);
@@ -134,7 +133,7 @@ public enum IOComponentTypes {
     }
   }
   
-  public static final String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
+  public static String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
       case SevenSegmentNoDp : 
       case SevenSegment     : return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
@@ -144,14 +143,14 @@ public enum IOComponentTypes {
     }
   }
   
-  public static final String getIOLabel(int nrPins, int id, IOComponentTypes comp) {
-    switch (comp) {
-      case LocalBus : return ReptarLocalBus.getIOLabel(id);
-      default       : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+  public static String getIOLabel(int nrPins, int id, IOComponentTypes comp) {
+    if (comp == IOComponentTypes.LocalBus) {
+      return ReptarLocalBus.getIOLabel(id);
     }
+    return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
   
-  public static final int GetNrOfFPGAPins(IOComponentTypes comp) {
+  public static int GetNrOfFPGAPins(IOComponentTypes comp) {
     return  GetFPGAInOutRequirement(comp)+ GetFPGAInputRequirement(comp)+GetFPGAOutputRequirement(comp);
   }
 

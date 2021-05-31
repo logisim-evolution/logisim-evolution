@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,12 +37,12 @@ import javax.swing.event.ChangeListener;
 
 public class CardPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private ArrayList<ChangeListener> listeners;
+  private final ArrayList<ChangeListener> listeners;
   private String current;
 
   public CardPanel() {
     super(new CardLayout());
-    listeners = new ArrayList<ChangeListener>();
+    listeners = new ArrayList<>();
     current = "";
   }
 

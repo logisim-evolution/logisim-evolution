@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,10 +42,10 @@ import javax.swing.border.EmptyBorder;
 public class VhdlSimState extends JPanel implements VhdlSimulatorListener {
 
   private static final long serialVersionUID = 1L;
-  Ellipse2D.Double circle;
+  final Ellipse2D.Double circle;
   Color color;
-  private int margin = 5;
-  private Project proj;
+  private final int margin = 5;
+  private final Project proj;
 
   public VhdlSimState(Project proj) {
     this.proj = proj;

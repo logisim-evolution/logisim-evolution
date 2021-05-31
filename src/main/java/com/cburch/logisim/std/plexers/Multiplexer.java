@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -113,7 +113,7 @@ public class Multiplexer extends InstanceFactory {
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
       int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
-      return Boolean.valueOf(newer >= 0);
+      return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }
@@ -121,11 +121,10 @@ public class Multiplexer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
+    StringBuilder CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
-    CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+    CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
     return CompleteName.toString();
   }
 
@@ -156,9 +155,9 @@ public class Multiplexer extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new MultiplexerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -197,7 +196,7 @@ public class Multiplexer extends InstanceFactory {
     boolean wide = size == Plexers.SIZE_WIDE;
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
     int inputs = 1 << select.getWidth();
 
     // draw stubs for select/enable inputs that aren't on instance boundary
@@ -212,12 +211,10 @@ public class Multiplexer extends InstanceFactory {
       dy = vertical ? 2 * selMult : 0;
     } else if (vertical) {
       dx = (facing == Direction.EAST ? 1 : -1);
-      ;
       dy = 2 * selMult;
     } else {
       dx = -2 * selMult;
       dy = (facing == Direction.SOUTH ? 1 : -1);
-      ;
     }
     if (inputs == 2 || (!wide && oddside)) { // draw select wire
       Location pt = painter.getInstance().getPortLocation(inputs);
@@ -269,11 +266,10 @@ public class Multiplexer extends InstanceFactory {
     int lean;
     if (inputs == 2) {
       lean = (size == Plexers.SIZE_NARROW ? 7 : 10);
-      Plexers.drawTrapezoid(g, bds, facing, lean);
     } else {
       lean = (size == Plexers.SIZE_NARROW ? 10 : 20);
-      Plexers.drawTrapezoid(g, bds, facing, lean);
     }
+    Plexers.drawTrapezoid(g, bds, facing, lean);
     if (size == Plexers.SIZE_WIDE)
       GraphicsUtil.drawCenteredText(
           g, "MUX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
@@ -284,7 +280,7 @@ public class Multiplexer extends InstanceFactory {
   public void propagate(InstanceState state) {
     BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
     int inputs = 1 << select.getWidth();
     Value en = enable ? state.getPortValue(inputs + 1) : Value.TRUE;
     Value out;
@@ -317,7 +313,7 @@ public class Multiplexer extends InstanceFactory {
     int selMult = botLeft ? 1 : -1;
     BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
     BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
 
     int inputs = 1 << select.getWidth();
     Port[] ps = new Port[inputs + (enable ? 3 : 2)];

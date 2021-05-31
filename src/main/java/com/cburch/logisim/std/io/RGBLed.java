@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,6 +34,7 @@ import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
@@ -57,21 +58,30 @@ import java.util.ArrayList;
 public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   public static class Logger extends InstanceLogger {
+    static final BitWidth bitwidth = BitWidth.create(3);
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return bitwidth;
+    }
+    
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      if (data == null) return Value.FALSE;
-      return data.getValue() == Value.TRUE ? Value.TRUE : Value.FALSE;
+      int rgb = 0;
+      if (data == null)
+        return Value.createUnknown(bitwidth);
+      else
+        return Value.createKnown(bitwidth, (Integer) data.getValue());
     }
   }
 
-  public static final ArrayList<String> GetLabels() {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+  public static ArrayList<String> GetLabels() {
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 3; i++) LabelNames.add("");
     LabelNames.set(RED, "RED");
     LabelNames.set(GREEN, "GREEN");
@@ -79,7 +89,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     return LabelNames;
   }
   
-  public static final String getLabel(int id) {
+  public static String getLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
   }
@@ -162,9 +172,9 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -189,13 +199,13 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void paintInstance(InstancePainter painter) {
     InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-    int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+    int summ = (data == null ? 0 : (Integer) data.getValue());
     Bounds bds = painter.getBounds().expand(-1);
 
     Graphics g = painter.getGraphics();
     if (painter.getShowState()) {
       Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-      int mask = activ.booleanValue() ? 0 : 7;
+      int mask = activ ? 0 : 7;
       summ ^= mask;
       int red = ((summ >> RED) & 1) * 0xFF;
       int green = ((summ >> GREEN) & 1) * 0xFF;
@@ -219,7 +229,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
       Value val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }
-    Object value = Integer.valueOf(summary);
+    Object value = summary;
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -67,6 +67,7 @@ import java.awt.font.TextLayout;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.JPanel;
 
 public class KarnaughMapPanel extends JPanel
@@ -96,9 +97,11 @@ public class KarnaughMapPanel extends JPanel
 
   private static final long serialVersionUID = 1L;
 
-  private class KMapInfo {
-    private int headWidth, headHeight;
-    private int Width, Height;
+  private static class KMapInfo {
+    private final int headWidth;
+    private final int headHeight;
+    private final int Width;
+    private final int Height;
     private int xOff, yOff;
 
     public KMapInfo(int headWidth, int headHeight, int tableWidth, int tableHeight) {
@@ -148,24 +151,24 @@ public class KarnaughMapPanel extends JPanel
   private static final int CELL_HORZ_SEP = 10;
   private static final int CELL_VERT_SEP = 10;
 
-  private MyListener myListener = new MyListener();
-  private ExpressionView completeExpression;
-  private AnalyzerModel model;
+  private final MyListener myListener = new MyListener();
+  private final ExpressionView completeExpression;
+  private final AnalyzerModel model;
   private String output;
   private int cellWidth = 1;
   private int cellHeight = 1;
   private int provisionalX;
   private int provisionalY;
   private Entry provisionalValue = null;
-  private Font HeaderFont;
-  private Font EntryFont;
+  private final Font HeaderFont;
+  private final Font EntryFont;
   private boolean KMapLined;
   private Bounds KMapArea;
   private KMapInfo KLinedInfo;
   private KMapInfo KNumberedInfo;
-  private KMapGroups kMapGroups;
+  private final KMapGroups kMapGroups;
   private Bounds SelInfo;
-  private Point hover;
+  private final Point hover;
   private Notation notation = Notation.MATHEMATICAL;
   private boolean selected;
   private Dimension kMapDim;
@@ -263,7 +266,7 @@ public class KarnaughMapPanel extends JPanel
       boolean rowLabel,
       boolean addComma,
       FontRenderContext ctx) {
-    List<TextLayout> lines = new ArrayList<TextLayout>();
+    List<TextLayout> lines = new ArrayList<>();
     if (start >= end) return lines;
     StringBuilder ret = new StringBuilder(inputs.get(start));
     for (int i = start + 1; i < end; i++) {
@@ -341,7 +344,7 @@ public class KarnaughMapPanel extends JPanel
       cellHeight = 16;
       cellWidth = 24;
     } else {
-      FontRenderContext ctx = ((Graphics2D) g).getFontRenderContext();
+      FontRenderContext ctx = g.getFontRenderContext();
       FontMetrics fm = g.getFontMetrics(HeaderFont);
       int singleheight = StyledHeight(Styled("E", HeaderFont), ctx);
       headHeight = StyledHeight(Styled("E:2", HeaderFont), ctx) + (fm.getAscent() - singleheight);
@@ -443,16 +446,18 @@ public class KarnaughMapPanel extends JPanel
     if (row < 0) return null;
     int col = getOutputColumn(event);
     Entry entry = table.getOutputEntry(row, col);
-    String s = entry.getErrorMessage();
-    if (s == null) s = "";
-    else s += "<br>";
-    s += output + " = " + entry.getDescription();
+    StringBuilder s = new StringBuilder(
+        entry.getErrorMessage() == null
+            ? ""
+            : entry.getErrorMessage() + "<br>");
+    s.append(output).append(" = ").append(entry.getDescription());
     List<String> inputs = model.getInputs().bits;
     if (inputs.size() == 0) return "<html>" + s + "</html>";
-    s += "<br>When:";
+    s.append("<br>When:");
     int n = inputs.size();
     for (int i = 0; i < MAX_VARS && i < inputs.size(); i++) {
-      s += "<br>&nbsp;&nbsp;&nbsp;&nbsp;" + inputs.get(i) + " = " + ((row >> (n - i - 1)) & 1);
+      s.append("<br>&nbsp;&nbsp;&nbsp;&nbsp;").append(inputs.get(i)).append(" = ")
+          .append((row >> (n - i - 1)) & 1);
     }
     return "<html>" + s + "</html>";
   }
@@ -503,21 +508,22 @@ public class KarnaughMapPanel extends JPanel
       return;
     }
 
+    int x;
+    int y;
     if (KMapLined) {
-      int x = KLinedInfo.getXOffset();
-      int y = KLinedInfo.getYOffset();
+      x = KLinedInfo.getXOffset();
+      y = KLinedInfo.getYOffset();
       drawLinedHeader(g2, x, y);
       x += KLinedInfo.getHeaderHeight() + 11;
       y += KLinedInfo.getHeaderHeight() + 11;
-      PaintKMap(g2, x, y, table);
     } else {
-      int x = KNumberedInfo.getXOffset();
-      int y = KNumberedInfo.getYOffset();
+      x = KNumberedInfo.getXOffset();
+      y = KNumberedInfo.getYOffset();
       drawNumberedHeader(g2, x, y);
       x += KNumberedInfo.getHeaderWidth() + cellWidth;
       y += KNumberedInfo.getHeaderHeight() + cellHeight;
-      PaintKMap(g2, x, y, table);
     }
+    PaintKMap(g2, x, y, table);
     if (!selectionBlock)
       return;
     Expression expr = kMapGroups.GetHighlightedExpression();
@@ -551,6 +557,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private String label(int row, int rows) {
+    assert row >= 0 && row < rows : "Row " + row + " is outside range of " + rows + " rows.";
     switch (rows) {
       case 2:
         return "" + row;
@@ -564,7 +571,10 @@ public class KarnaughMapPanel extends JPanel
             return "11";
           case 3:
             return "10";
+          default:
+            assert false;
         }
+        break;
       case 8:
         switch (row) {
           case 0:
@@ -583,10 +593,14 @@ public class KarnaughMapPanel extends JPanel
             return "101";
           case 7:
             return "100";
+          default:
+            assert false;
         }
+        break;
       default:
-        return "";
+        assert false : "unhandled number of rows " + rows;
     }
+    return "";
   }
 
   private void drawNumberedHeader(Graphics2D g, int x, int y) {
@@ -618,11 +632,10 @@ public class KarnaughMapPanel extends JPanel
       Slabel.draw(
           g,
           (float) (tableXstart - Slabel.getBounds().getWidth() - Slabel.getDescent() - 3),
-          (float)
-              (tableYstart
-                  + (cellHeight - Slabel.getAscent()) / 2
-                  + Slabel.getAscent()
-                  + r * cellHeight));
+          tableYstart
+              + (cellHeight - Slabel.getAscent()) / 2
+              + Slabel.getAscent()
+              + r * cellHeight);
     }
     List<TextLayout> rowHeader = header(model.getInputs().bits, 0, rowVars, true, false, ctx);
     List<TextLayout> colHeader =
@@ -642,9 +655,9 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private AttributedString Styled(String header, Font font) {
-    ArrayList<Integer> starts = new ArrayList<Integer>();
-    ArrayList<Integer> stops = new ArrayList<Integer>();
-    StringBuffer str = new StringBuffer();
+    ArrayList<Integer> starts = new ArrayList<>();
+    ArrayList<Integer> stops = new ArrayList<>();
+    StringBuilder str = new StringBuilder();
     int idx = 0;
     while (header != null && idx < header.length()) {
       if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {
@@ -709,7 +722,7 @@ public class KarnaughMapPanel extends JPanel
     int headHeight = KLinedInfo.getHeaderHeight();
     for (int i = 0; i < inputCount; i++) {
       AttributedString header = Styled(model.getInputs().bits.get(i), HeaderFont);
-      Boolean rotated = false;
+      boolean rotated = false;
       int middleOffset = StyledWidth(header, ctx) >> 1;
       int xoffset = headHeight + 11;
       int yoffset = headHeight + 11;
@@ -948,7 +961,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   public void setOutput(String value) {
-    boolean recompute = (output == null || value == null) && output != value;
+    boolean recompute = (output == null || value == null) && !Objects.equals(output, value);
     output = value;
     kMapGroups.setOutput(value);
     if (recompute) computePreferredSize();

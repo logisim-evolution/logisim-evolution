@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,6 +30,7 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 
 public class Ttl7486 extends AbstractTtlGate {
 
-  private class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
@@ -45,28 +46,10 @@ public class Ttl7486 extends AbstractTtlGate {
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
-      if (HDLType.equals(VHDL))
-        Contents.add(
-            "   gate_"
-                + Integer.toString(index)
-                + "_O <= gate_"
-                + Integer.toString(index)
-                + "_A"
-                + " XOR gate_"
-                + Integer.toString(index)
-                + "_B;");
-      else
-        Contents.add(
-            "   assign gate_"
-                + Integer.toString(index)
-                + "_O = gate_"
-                + Integer.toString(index)
-                + "_A"
-                + " ^ gate_"
-                + Integer.toString(index)
-                + "_B;");
+    public ArrayList<String> GetLogicFunction(int index) {
+      ArrayList<String> Contents = new ArrayList<>();
+      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+"gate_"+index+"_A"+
+                   HDL.xorOperator()+"gate_"+index+"_B;");
       Contents.add("");
       return Contents;
     }
@@ -101,14 +84,12 @@ public class Ttl7486 extends AbstractTtlGate {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
-    CompleteName.append(CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase());
-    return CompleteName.toString();
+    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

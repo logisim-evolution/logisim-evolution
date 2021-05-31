@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,10 +32,9 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -47,14 +46,11 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
-      String ComponentName,
-      FPGAReport Reporter,
-      String HDLType) {
-    ArrayList<String> contents = new ArrayList<String>();
-    contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
+      String ComponentName) {
+    ArrayList<String> contents = new ArrayList<>();
+    contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    ;
     contents.add(content.getLibraries());
     contents.add(content.getArchitecture());
 
@@ -62,11 +58,10 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     for (Attribute<Integer> a : content.getGenericAttributes()) {
       VhdlEntityAttributes.VhdlGenericAttribute va = (VhdlEntityAttributes.VhdlGenericAttribute) a;
       VhdlContent.Generic g = va.getGeneric();
@@ -83,8 +78,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    ;
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int i = -1;
     for (VhdlContent.Generic g : content.getGenerics()) {
       Parameters.put(i--, g.getName());
@@ -99,11 +93,11 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> inputs = new TreeMap<>();
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType() == Port.INPUT) inputs.put(p.getName(), p.getWidth().getWidth());
+      if (p.getType().equals(Port.INPUT)) inputs.put(p.getName(), p.getWidth().getWidth());
     }
 
     return inputs;
@@ -111,20 +105,19 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> outputs = new TreeMap<>();
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType() == Port.OUTPUT) outputs.put(p.getName(), p.getWidth().getWidth());
+      if (p.getType().equals(Port.OUTPUT)) outputs.put(p.getName(), p.getWidth().getWidth());
     }
 
     return outputs;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
 
@@ -133,7 +126,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     int i = 0;
     for (VhdlParser.PortDescription p : content.getPorts()) {
-      PortMap.putAll(GetNetMap(p.getName(), true, ComponentInfo, i++, Reporter, HDLType, Nets));
+      PortMap.putAll(GetNetMap(p.getName(), true, ComponentInfo, i++, Nets));
     }
     return PortMap;
   }
@@ -144,7 +137,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return HDLType.equals(HDLGeneratorFactory.VHDL);
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+    return HDL.isVHDL();
   }
 }

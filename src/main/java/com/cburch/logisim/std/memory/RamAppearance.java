@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,12 +30,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -46,6 +40,11 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 
 public class RamAppearance {
@@ -115,11 +114,11 @@ public class RamAppearance {
            getNrClkPorts(attrs)+getNrLEPorts(attrs)+getNrBEPorts(attrs)+getNrClrPorts(attrs);
   }
   
-  public static int getAddrIndex(int portIndex, AttributeSet attrs) { 
-    switch (portIndex) {
-      case 0  : return 0;
-      default : return -1;
+  public static int getAddrIndex(int portIndex, AttributeSet attrs) {
+    if (portIndex == 0) {
+      return 0;
     }
+    return -1;
   }
   public static int getDataInIndex(int portIndex, AttributeSet attrs) {
     if (!seperatedBus(attrs)) 
@@ -234,7 +233,7 @@ public class RamAppearance {
     GraphicsUtil.drawCenteredText( g,
             type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
-                + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
+                + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
             bds.getY() + 6);
     /* draw the contents */
@@ -276,7 +275,7 @@ public class RamAppearance {
    GraphicsUtil.drawCenteredText( g,
             type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
-                + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
+                + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
             bds.getY() + 6);
     /* draw the contents */
@@ -790,8 +789,8 @@ public class RamAppearance {
     int height = 20;
     g.setFont(g.getFont().deriveFont(9.0f));
     int nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    StringBuffer doutLabel = new StringBuffer();
-    StringBuffer dinLabel = new StringBuffer();
+    StringBuilder doutLabel = new StringBuilder();
+    StringBuilder dinLabel = new StringBuilder();
     doutLabel.append("A");
     dinLabel.append("A");
     int cidx = 1;
@@ -800,20 +799,20 @@ public class RamAppearance {
     boolean drawDin = attrs.containsAttribute(RamAttributes.ATTR_DBUS);
     boolean seperate = seperatedBus(attrs) || !drawDin;
     for (int i = 0 ; i < getNrClkPorts(attrs) ; i++) {
-      if (!async) doutLabel.append(","+cidx);
-      dinLabel.append(","+cidx);
+      if (!async) doutLabel.append(",").append(cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrOEPorts(attrs); i++) {
-      doutLabel.append(","+cidx);
+      doutLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrWEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     for (int i = 0 ; i < getNrLEPorts(attrs); i++) {
-      dinLabel.append(","+cidx);
+      dinLabel.append(",").append(cidx);
       cidx++;
     }
     boolean appendBE = getNrBEPorts(attrs) > 0;
@@ -847,7 +846,7 @@ public class RamAppearance {
       if (drawDin)
         GraphicsUtil.drawText(
               g,
-              dinLabel.toString()+BEIndex+DLabel,
+              dinLabel +BEIndex+DLabel,
               x + (seperate ? 3 :  Mem.SymbolWidth-3),
               y + (seperate ? 10 : 13),
               seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,

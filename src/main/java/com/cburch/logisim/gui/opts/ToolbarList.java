@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,10 +48,31 @@ import javax.swing.ListSelectionModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
 class ToolbarList extends JList {
+  private final ToolbarData base;
+  private final Model model;
+
+  @SuppressWarnings("unchecked")
+  public ToolbarList(ToolbarData base) {
+    this.base = base;
+    this.model = new Model();
+
+    setModel(model);
+    setCellRenderer(new ListRenderer());
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    AppPreferences.GATE_SHAPE.addPropertyChangeListener(model);
+    base.addToolbarListener(model);
+    base.addToolAttributeListener(model);
+  }
+
+  public void localeChanged() {
+    model.toolbarChanged();
+  }
+
   private static class ListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(
-        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component ret;
       Icon icon;
       if (value instanceof Tool) {
@@ -73,6 +94,28 @@ class ToolbarList extends JList {
         ((JLabel) ret).setIcon(icon);
       }
       return ret;
+    }
+  }
+
+  private static class ToolIcon implements Icon {
+    private final Tool tool;
+
+    ToolIcon(Tool tool) {
+      this.tool = tool;
+    }
+
+    public int getIconHeight() {
+      return 20;
+    }
+
+    public int getIconWidth() {
+      return 20;
+    }
+
+    public void paintIcon(Component comp, Graphics g, int x, int y) {
+      Graphics gNew = g.create();
+      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
+      gNew.dispose();
     }
   }
 
@@ -101,48 +144,5 @@ class ToolbarList extends JList {
     public void toolbarChanged() {
       fireContentsChanged(this, 0, getSize());
     }
-  }
-
-  private static class ToolIcon implements Icon {
-    private Tool tool;
-
-    ToolIcon(Tool tool) {
-      this.tool = tool;
-    }
-
-    public int getIconHeight() {
-      return 20;
-    }
-
-    public int getIconWidth() {
-      return 20;
-    }
-
-    public void paintIcon(Component comp, Graphics g, int x, int y) {
-      Graphics gNew = g.create();
-      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
-      gNew.dispose();
-    }
-  }
-
-  private ToolbarData base;
-  private Model model;
-
-  @SuppressWarnings("unchecked")
-  public ToolbarList(ToolbarData base) {
-    this.base = base;
-    this.model = new Model();
-
-    setModel(model);
-    setCellRenderer(new ListRenderer());
-    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-    AppPreferences.GATE_SHAPE.addPropertyChangeListener(model);
-    base.addToolbarListener(model);
-    base.addToolAttributeListener(model);
-  }
-
-  public void localeChanged() {
-    model.toolbarChanged();
   }
 }

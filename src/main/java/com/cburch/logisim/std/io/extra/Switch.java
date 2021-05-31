@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,6 +63,11 @@ public class Switch extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       return state.getPortValue(1);
     }
@@ -72,8 +77,7 @@ public class Switch extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      if (data != null && (Boolean) data.getValue()) setActive(state, false);
-      else setActive(state, true);
+      setActive(state, data == null || !((Boolean) data.getValue()));
     }
 
     private void setActive(InstanceState state, boolean active) {
@@ -155,7 +159,7 @@ public class Switch extends InstanceFactory {
     boolean active = false;
     if (painter.getShowState() && !ghost) {
       InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-      active = data == null ? false : (Boolean) data.getValue();
+      active = data != null && (Boolean) data.getValue();
     }
 
     Color color = painter.getAttributeValue(Io.ATTR_COLOR);

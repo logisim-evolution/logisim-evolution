@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,7 +31,7 @@ package com.cburch.logisim.circuit;
 import java.util.Collection;
 
 public class CircuitTransactionResult {
-  private CircuitMutatorImpl mutator;
+  private final CircuitMutatorImpl mutator;
 
   CircuitTransactionResult(CircuitMutatorImpl mutator) {
     this.mutator = mutator;
@@ -48,5 +48,14 @@ public class CircuitTransactionResult {
 
   public CircuitTransaction getReverseTransaction() {
     return mutator.getReverseTransaction();
+  }
+  
+  public String toString() {
+    StringBuilder s = new StringBuilder("CircuitTransactionResult affecting...");
+    for (Circuit c : getModifiedCircuits()) {
+      s.append("\n    - circuit ").append(c).append(" with replacements...");
+      s.append("\n").append(getReplacementMap(c));
+    }
+    return s.toString();
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -68,32 +68,32 @@ public class Nios2Support {
   }
 
   public static int getRegCIndex(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 17)&0x1F;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 17) & 0x1F;
     }
+    return 0;
   }
 
   public static int getOPX(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 6)&0x7FF;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 6) & 0x7FF;
     }
+    return 0;
   }
 	  
   public static int getOPXCode(int instruction, int type) {
-    switch (type) {
-      case R_TYPE : return (instruction >> 11)&0x3F;
-      default     : return 0;
+    if (type == R_TYPE) {
+      return (instruction >> 11) & 0x3F;
     }
+    return 0;
   }
   
   public static int getOPXImm(int instruction, int type) {
-	    switch (type) {
-	      case R_TYPE : return (instruction >> 6)&0x1F;
-	      default     : return 0;
-	    }
-	  }
+    if (type == R_TYPE) {
+      return (instruction >> 6) & 0x1F;
+    }
+    return 0;
+  }
 	  
   public static int getITypeInstructionCode(int regA , int regB, int imm , int opc) {
     int instruction = opc&0x3F;

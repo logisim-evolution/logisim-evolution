@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,7 +53,7 @@ public final class Softwares {
     if (new File(FileUtil.correctPath(tmpDir.getCanonicalPath()) + "work").exists()) return true;
 
     try {
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VLIB]);
       command.add("work");
 
@@ -72,10 +72,6 @@ public final class Softwares {
       }
 
       return vlib.waitFor() == 0;
-    } catch (IOException e) {
-      throw e;
-    } catch (InterruptedException e) {
-      throw e;
     } finally {
       try {
         if (reader != null) reader.close();
@@ -155,9 +151,10 @@ public final class Softwares {
     if (software.equals(QUESTA)) programs = QUESTA_BIN;
     else return false;
 
-    for (int i = 0; i < programs.length; i++) {
-      File test = new File(FileUtil.correctPath(path) + programs[i]);
-      if (!test.exists()) return false;
+    for (String program : programs) {
+      File test = new File(FileUtil.correctPath(path) + program);
+      if (!test.exists())
+        return false;
     }
 
     return true;
@@ -187,7 +184,7 @@ public final class Softwares {
         return ERROR;
       }
 
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
       command.add("-reportprogress");
       command.add("300");

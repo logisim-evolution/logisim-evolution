@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -135,16 +135,14 @@ public class Value {
       else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
       else
         throw new Exception(
-            "unexpected character '" + t.substring(i, i + 1) + "' in \"" + t + "\"");
+            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
         throw new Exception(
-            "unexpected character '" + t.substring(i, i + 1) + "' in \"" + t + "\"");
+            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;
-      if ((value >> (radix == 10 ? 33 : w)) != 0 || (unknown >> 36) != 0)
-        throw new Exception("too many bits in \"" + t + "\"");
 
       if (radix != 10) {
         if (d == -1) unknown |= (radix - 1);
@@ -309,12 +307,10 @@ public class Value {
   public boolean equals(Object other_obj) {
     if (!(other_obj instanceof Value)) return false;
     Value other = (Value) other_obj;
-    boolean ret =
-        this.width == other.width
-            && this.error == other.error
-            && this.unknown == other.unknown
-            && this.value == other.value;
-    return ret;
+    return this.width == other.width
+        && this.error == other.error
+        && this.unknown == other.unknown
+        && this.value == other.value;
   }
 
   public Value extendWidth(int newWidth, Value others) {

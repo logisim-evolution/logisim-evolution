@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,15 +38,15 @@ public class VendorSoftware {
   public static final char VendorXilinx = 1;
   public static final char VendorVivado = 2;
   public static final char VendorUnknown = 255;
-  public static String[] Vendors = {"Altera", "Xilinx", "Vivado"};
-  private static String XilinxName = "XilinxToolsPath";
-  private static String AlteraName = "AlteraToolsPath";
-  private static String VivadoName = "VivadoToolsPath";
+  public static final String[] Vendors = {"Altera", "Xilinx", "Vivado"};
+  private static final String XilinxName = "XilinxToolsPath";
+  private static final String AlteraName = "AlteraToolsPath";
+  private static final String VivadoName = "VivadoToolsPath";
   public static String Unknown = "Unknown";
 
-  private char vendor;
-  private String name;
-  private String[] bin;
+  private final char vendor;
+  private final String name;
+  private final String[] bin;
 
   public VendorSoftware(char vendor, String name, String[] bin) {
     this.vendor = vendor;
@@ -83,7 +83,7 @@ public class VendorSoftware {
   }
 
   public static LinkedList<String> getVendorStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(VendorSoftware.Vendors[0]);
     result.add(VendorSoftware.Vendors[1]);
@@ -108,14 +108,11 @@ public class VendorSoftware {
   public static VendorSoftware getSoftware(char vendor) {
     switch (vendor) {
       case VendorAltera:
-        VendorSoftware altera = new VendorSoftware(VendorAltera, AlteraName, load(VendorAltera));
-        return altera;
+        return new VendorSoftware(VendorAltera, AlteraName, load(VendorAltera));
       case VendorXilinx:
-        VendorSoftware ise = new VendorSoftware(VendorXilinx, XilinxName, load(VendorXilinx));
-        return ise;
+        return new VendorSoftware(VendorXilinx, XilinxName, load(VendorXilinx));
       case VendorVivado:
-        VendorSoftware vivado = new VendorSoftware(VendorVivado, VivadoName, load(VendorVivado));
-        return vivado;
+        return new VendorSoftware(VendorVivado, VivadoName, load(VendorVivado));
       default:
         return null;
     }
@@ -193,9 +190,10 @@ public class VendorSoftware {
 
   public static boolean toolsPresent(char vendor, String path) {
     String[] tools = load(vendor);
-    for (int i = 0; i < tools.length; i++) {
-      File test = new File(CorrectPath(path + tools[i]));
-      if (!test.exists()) return false;
+    for (String tool : tools) {
+      File test = new File(CorrectPath(path + tool));
+      if (!test.exists())
+        return false;
     }
     return true;
   }

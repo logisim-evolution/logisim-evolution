@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,16 +31,14 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private long FpgaClockFrequency;
-  private double TickFrequency;
+  private final long FpgaClockFrequency;
+  private final double TickFrequency;
   // private boolean useFPGAClock;
   private static final String ReloadValueStr = "ReloadValue";
   private static final Integer ReloadValueId = -1;
@@ -65,27 +63,24 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("FPGAClock", 1);
     return Inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(VHDL)) ? "<=" : "=";
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the Output is defined", 3, HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the Output is defined", 3));
     if (TheNetlist.RequiresGlobalClockConnection()) {
-      Contents.add("   " + Preamble + "FPGATick " + AssignOperator + " '1';");
+      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
-      Contents.add("   " + Preamble + "FPGATick " + AssignOperator + " s_tick_reg;");
+      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
     }
     Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add(
           "   s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0,"
               + NrOfCounterBitsStr
@@ -102,7 +97,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       Contents.add("   assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;");
       Contents.add("   assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;");
       Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the simulation only initial is defined", 3, HDLType));
+      Contents.addAll(MakeRemarkBlock("Here the simulation only initial is defined", 3));
       Contents.add("   initial");
       Contents.add("   begin");
       Contents.add("      s_count_reg = 0;");
@@ -110,8 +105,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       Contents.add("   end");
       Contents.add("");
     }
-    Contents.addAll(MakeRemarkBlock("Here the flipflops are defined", 3, HDLType));
-    if (HDLType.equals(VHDL)) {
+    Contents.addAll(MakeRemarkBlock("Here the flipflops are defined", 3));
+    if (HDL.isVHDL()) {
       Contents.add("   make_tick : PROCESS( FPGAClock , s_tick_next )");
       Contents.add("   BEGIN");
       Contents.add("      IF (FPGAClock'event AND (FPGAClock = '1')) THEN");
@@ -137,27 +132,26 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("FPGATick", 1);
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(ReloadValueId, ReloadValueStr);
     Parameters.put(NrOfCounterBitsId, NrOfCounterBitsStr);
     return Parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     double ReloadValueAcc = ((double) FpgaClockFrequency) / TickFrequency;
     long ReloadValue = (long) ReloadValueAcc;
     int nr_of_bits = 0;
-    if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = (long) 0x7FFFFFFF;
+    if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = 0x7FFFFFFF;
     ParameterMap.put(ReloadValueStr, (int) ReloadValue);
     while (ReloadValue != 0) {
       nr_of_bits++;
@@ -168,17 +162,16 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGAClock);
     PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGATick);
     return PortMap;
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_tick_reg", 1);
     Regs.put("s_count_reg", NrOfCounterBitsId);
     return Regs;
@@ -191,14 +184,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_tick_next", 1);
     Wires.put("s_count_next", NrOfCounterBitsId);
     return Wires;
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

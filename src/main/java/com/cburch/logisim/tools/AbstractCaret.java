@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,8 +37,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class AbstractCaret implements Caret {
-  private ArrayList<CaretListener> listeners = new ArrayList<CaretListener>();
-  private List<CaretListener> listenersView;
+  private final ArrayList<CaretListener> listeners = new ArrayList<>();
+  private final List<CaretListener> listenersView;
   private Bounds bds = Bounds.EMPTY_BOUNDS;
 
   public AbstractCaret() {

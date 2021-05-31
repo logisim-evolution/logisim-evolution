@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,10 +29,10 @@
 package com.cburch.logisim.data;
 
 public class AttributeEvent {
-  private AttributeSet source;
-  private Attribute<?> attr;
-  private Object value;
-  private Object oldvalue;
+  private final AttributeSet source;
+  private final Attribute<?> attr;
+  private final Object value;
+  private final Object oldvalue;
 
   public AttributeEvent(AttributeSet source) {
     this(source, null, null, null);

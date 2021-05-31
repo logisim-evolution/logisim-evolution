@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,11 +37,12 @@ import com.cburch.logisim.data.Attribute;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class ModelChangeAttributeAction extends ModelAction {
-  private Map<AttributeMapKey, Object> oldValues;
-  private Map<AttributeMapKey, Object> newValues;
+  private final Map<AttributeMapKey, Object> oldValues;
+  private final Map<AttributeMapKey, Object> newValues;
   private Attribute<?> attr;
 
   public ModelChangeAttributeAction(
@@ -66,7 +67,7 @@ public class ModelChangeAttributeAction extends ModelAction {
       for (AttributeMapKey key : newValues.keySet()) {
         Attribute<?> at = key.getAttribute();
         if (found) {
-          if (a == null ? at != null : !a.equals(at)) {
+          if (!Objects.equals(a, at)) {
             a = null;
             break;
           }
@@ -86,7 +87,7 @@ public class ModelChangeAttributeAction extends ModelAction {
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    Set<CanvasObject> ret = new HashSet<CanvasObject>();
+    Set<CanvasObject> ret = new HashSet<>();
     for (AttributeMapKey key : newValues.keySet()) {
       ret.add(key.getObject());
     }

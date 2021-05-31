@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,9 +29,6 @@
 package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
-
-import java.awt.Font;
-import java.awt.Graphics2D;
 
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElement.Path;
@@ -59,26 +56,28 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.gui.SocCPUShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class Nios2 extends SocInstanceFactory implements DynamicElementProvider {
 
-  public static int CLOCK = 0;
-  public static int RESET = 1;
-  public static int DATAA = 2;
-  public static int DATAB = 3;
-  public static int START = 4;
-  public static int N = 5;
-  public static int A = 6;
-  public static int READRA = 7;
-  public static int B = 8;
-  public static int READRB = 9;
-  public static int C = 10;
-  public static int WRITERC = 11;
-  public static int RESULT = 12;
-  public static int DONE = 13;
-  public static int IRQSTART = 14;
+  public static final int CLOCK = 0;
+  public static final int RESET = 1;
+  public static final int DATAA = 2;
+  public static final int DATAB = 3;
+  public static final int START = 4;
+  public static final int N = 5;
+  public static final int A = 6;
+  public static final int READRA = 7;
+  public static final int B = 8;
+  public static final int READRB = 9;
+  public static final int C = 10;
+  public static final int WRITERC = 11;
+  public static final int RESULT = 12;
+  public static final int DONE = 13;
+  public static final int IRQSTART = 14;
   
-  private static String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
+  private static final String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
                                      "c","writerc","result","done"};
 
   public Nios2() {

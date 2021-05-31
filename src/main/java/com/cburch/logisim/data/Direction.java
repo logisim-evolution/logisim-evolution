@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,10 +52,10 @@ public class Direction implements AttributeOptionInterface {
 
   public static final Direction[] cardinals = {NORTH, EAST, SOUTH, WEST};
 
-  private String name;
-  private StringGetter disp;
-  private StringGetter vert;
-  private int id;
+  private final String name;
+  private final StringGetter disp;
+  private final StringGetter vert;
+  private final int id;
 
   private Direction(String name, StringGetter disp, StringGetter vert, int id) {
     this.name = name;
@@ -84,7 +84,6 @@ public class Direction implements AttributeOptionInterface {
     if (this == Direction.EAST) return Direction.SOUTH;
     if (this == Direction.WEST) return Direction.NORTH;
     if (this == Direction.NORTH) return Direction.EAST;
-    if (this == Direction.SOUTH) return Direction.WEST;
     return Direction.WEST;
   }
 

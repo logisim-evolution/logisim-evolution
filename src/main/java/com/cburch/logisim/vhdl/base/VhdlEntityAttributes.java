@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,8 +47,9 @@ import java.util.List;
 public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   public static class VhdlGenericAttribute extends Attribute<Integer> {
-    int start, end;
-    VhdlContent.Generic g;
+    final int start;
+    final int end;
+    final VhdlContent.Generic g;
 
     private VhdlGenericAttribute(
         String name, StringGetter disp, int start, int end, VhdlContent.Generic g) {
@@ -75,10 +76,10 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           || value.equals("default")
           || value.equals("(default)")
           || value.equals(toDisplayString(null))) return null;
-      long v = (long) Long.parseLong(value);
+      long v = Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
-      return Integer.valueOf((int) v);
+      return (int) v;
     }
 
     @Override
@@ -99,9 +100,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           "vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, g);
   }
 
-  private static List<Attribute<?>> static_attributes =
+  private static final List<Attribute<?>> static_attributes =
       Arrays.asList(
-          (Attribute<?>) VhdlEntity.NAME_ATTR,
+          VhdlEntity.NAME_ATTR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
@@ -130,10 +131,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     value[6] = "";
     for (int i = 0; i < g.length; i++) {
       attrs[6 + i] = a.get(i);
-      value[6 + i] = new Integer(g[i].getDefaultValue());
+      value[6 + i] = g[i].getDefaultValue();
     }
-    AttributeSet ret = AttributeSets.fixedSet(attrs, value);
-    return ret;
+    return AttributeSets.fixedSet(attrs, value);
   }
 
   private VhdlContent content;
@@ -142,7 +142,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   private String SimName = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Direction facing = Direction.EAST;
-  private Boolean labelVisable = false;
+  private Boolean labelVisible = false;
   private HashMap<Attribute<Integer>, Integer> genericValues;
   private List<Attribute<?>> instanceAttrs;
   private VhdlEntityListener listener;
@@ -173,7 +173,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   void updateGenerics() {
     List<Attribute<Integer>> genericAttrs = content.getGenericAttributes();
-    instanceAttrs = new ArrayList<Attribute<?>>(6 + genericAttrs.size());
+    instanceAttrs = new ArrayList<>(6 + genericAttrs.size());
     instanceAttrs.add(VhdlEntity.NAME_ATTR);
     instanceAttrs.add(StdAttr.LABEL);
     instanceAttrs.add(StdAttr.LABEL_FONT);
@@ -181,11 +181,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     instanceAttrs.add(StdAttr.FACING);
     instanceAttrs.add(StdAttr.APPEARANCE);
     instanceAttrs.add(VhdlSimConstants.SIM_NAME_ATTR);
-    for (Attribute<Integer> a : genericAttrs) {
-      instanceAttrs.add(a);
-    }
-    if (genericValues == null) genericValues = new HashMap<Attribute<Integer>, Integer>();
-    ArrayList<Attribute<Integer>> toRemove = new ArrayList<Attribute<Integer>>();
+    instanceAttrs.addAll(genericAttrs);
+    if (genericValues == null) genericValues = new HashMap<>();
+    ArrayList<Attribute<Integer>> toRemove = new ArrayList<>();
     for (Attribute<Integer> a : genericValues.keySet()) {
       if (!genericAttrs.contains(a)) toRemove.add(a);
     }
@@ -201,10 +199,10 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     attr.content = content; // .clone();
     // 	attr.label = unchanged;
     attr.labelFont = labelFont;
-    attr.labelVisable = labelVisable;
+    attr.labelVisible = labelVisible;
     attr.facing = facing;
     attr.instanceAttrs = instanceAttrs;
-    attr.genericValues = new HashMap<Attribute<Integer>, Integer>();
+    attr.genericValues = new HashMap<>();
     for (Attribute<Integer> a : genericValues.keySet())
       attr.genericValues.put(a, genericValues.get(a));
     attr.listener = null;
@@ -228,7 +226,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) labelVisable;
+      return (V) labelVisible;
     }
     if (attr == StdAttr.APPEARANCE) {
       return (V) content.getAppearance();
@@ -239,9 +237,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       return (V) SimName;
     }
-    if (genericValues.containsKey((Attribute<Integer>) attr)) {
-      V v = (V) genericValues.get((Attribute<Integer>) attr);
-      return v;
+    if (genericValues.containsKey(attr)) {
+      return (V) genericValues.get(attr);
     }
     return null;
   }
@@ -273,8 +270,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
       Boolean newvis = (Boolean) value;
-      if (labelVisable.equals(newvis)) return;
-      labelVisable = newvis;
+      if (labelVisible.equals(newvis)) return;
+      labelVisible = newvis;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
@@ -309,7 +306,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   }
 
   static class VhdlEntityListener implements HdlModelListener {
-    VhdlEntityAttributes attrs;
+    final VhdlEntityAttributes attrs;
 
     VhdlEntityListener(VhdlEntityAttributes attrs) {
       this.attrs = attrs;
@@ -320,7 +317,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       attrs.updateGenerics();
       attrs.vhdlInstance.fireInvalidated();
       attrs.vhdlInstance.recomputeBounds();
-      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, ((VhdlContent) source).getName(), null);
+      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, source.getName(), null);
     }
 
     @Override
@@ -339,9 +336,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return false;
-    }
-    return true;
+    return attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

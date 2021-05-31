@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,12 +64,22 @@ public class Random extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return state.getAttributeValue(StdAttr.WIDTH);
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
       if (dataWidth == null) dataWidth = BitWidth.create(0);
       StateData data = (StateData) state.getData();
       if (data == null) return Value.createKnown(dataWidth, 0);
       return Value.createKnown(dataWidth, data.value);
+    }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      return true;
     }
   }
 
@@ -104,7 +114,7 @@ public class Random extends InstanceFactory {
     }
 
     private long getRandomSeed(Object seed) {
-      long retValue = seed instanceof Integer ? ((Integer) seed).intValue() : 0;
+      long retValue = seed instanceof Integer ? (Integer) seed : 0;
       if (retValue == 0) {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
@@ -147,7 +157,7 @@ public class Random extends InstanceFactory {
         },
         new Object[] {
           BitWidth.create(8),
-          Integer.valueOf(0),
+            0,
           StdAttr.TRIG_RISING,
           "",
           StdAttr.DEFAULT_LABEL_FONT,
@@ -230,7 +240,7 @@ public class Random extends InstanceFactory {
     g.drawLine(xpos + 60, ypos + 60, xpos + 70, ypos + 60);
     g.drawLine(xpos + 20, ypos + 60, xpos + 20, ypos + 70);
     g.drawLine(xpos + 60, ypos + 60, xpos + 60, ypos + 70);
-    String Name = "RNG" + Integer.toString(NrOfBits);
+    String Name = "RNG" + NrOfBits;
     GraphicsUtil.drawText(
         g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
     g.drawLine(xpos, ypos + 30, xpos + 10, ypos + 30);
@@ -334,9 +344,9 @@ public class Random extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new RandomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

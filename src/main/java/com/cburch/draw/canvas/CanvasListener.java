@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,7 +42,7 @@ import java.util.List;
 
 class CanvasListener
     implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
-  private Canvas canvas;
+  private final Canvas canvas;
   private CanvasTool tool;
 
   public CanvasListener(Canvas canvas) {
@@ -52,6 +52,20 @@ class CanvasListener
 
   public CanvasTool getTool() {
     return tool;
+  }
+
+  public void setTool(CanvasTool value) {
+    CanvasTool oldValue = tool;
+    if (value != oldValue) {
+      tool = value;
+      if (oldValue != null) oldValue.toolDeselected(canvas);
+      if (value != null) {
+        value.toolSelected(canvas);
+        canvas.setCursor(value.getCursor(canvas));
+      } else {
+        canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    }
   }
 
   private void handlePopupTrigger(MouseEvent e) {
@@ -133,20 +147,6 @@ class CanvasListener
       handlePopupTrigger(e);
     } else if (e.getButton() == 1 && tool != null) {
       tool.mouseReleased(canvas, e);
-    }
-  }
-
-  public void setTool(CanvasTool value) {
-    CanvasTool oldValue = tool;
-    if (value != oldValue) {
-      tool = value;
-      if (oldValue != null) oldValue.toolDeselected(canvas);
-      if (value != null) {
-        value.toolSelected(canvas);
-        canvas.setCursor(value.getCursor(canvas));
-      } else {
-        canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      }
     }
   }
 }

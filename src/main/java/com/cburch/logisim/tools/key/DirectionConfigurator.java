@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,10 +33,10 @@ import com.cburch.logisim.data.Direction;
 import java.awt.event.KeyEvent;
 
 public class DirectionConfigurator implements KeyConfigurator, Cloneable {
-  private Attribute<? extends Object> attr;
-  private int modsEx;
+  private final Attribute<?> attr;
+  private final int modsEx;
 
-  public DirectionConfigurator(Attribute<? extends Object> attr, int modifiersEx) {
+  public DirectionConfigurator(Attribute<?> attr, int modifiersEx) {
     this.attr = attr;
     this.modsEx = modifiersEx;
   }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,7 +44,7 @@ import java.util.List;
 
 public class SplitterAttributes extends AbstractAttributeSet {
   public static class BitOutAttribute extends Attribute<Integer> {
-    int which;
+    final int which;
     BitOutOption[] options;
 
     private BitOutAttribute(int which, BitOutOption[] options) {
@@ -75,7 +75,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
     @SuppressWarnings({"rawtypes"})
     @Override
     public java.awt.Component getCellEditor(Integer value) {
-      int index = value.intValue();
+      int index = value;
       ComboBox combo = new ComboBox<>(options);
       combo.setSelectedIndex(index);
       combo.setMaximumRowCount(options.length);
@@ -83,27 +83,27 @@ public class SplitterAttributes extends AbstractAttributeSet {
     }
 
     public Object getDefault() {
-      return Integer.valueOf(which + 1);
+      return which + 1;
     }
 
     @Override
     public Integer parse(String value) {
       if (value.equals(unchosen_val)) {
-        return Integer.valueOf(0);
+        return 0;
       } else {
-        return Integer.valueOf(1 + Integer.parseInt(value));
+        return 1 + Integer.parseInt(value);
       }
     }
 
     @Override
     public String toDisplayString(Integer value) {
-      int index = value.intValue();
+      int index = value;
       return options[index].toString();
     }
 
     @Override
     public String toStandardString(Integer value) {
-      int index = value.intValue();
+      int index = value;
       if (index == 0) {
         return unchosen_val;
       } else {
@@ -113,9 +113,9 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
 
   private static class BitOutOption {
-    int value;
-    boolean isVertical;
-    boolean isLast;
+    final int value;
+    final boolean isVertical;
+    final boolean isLast;
 
     BitOutOption(int value, boolean isVertical, boolean isLast) {
       this.value = value;
@@ -221,12 +221,10 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> INIT_ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING
-          });
+          StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING);
 
   private static final String unchosen_val = "none";
-  private ArrayList<Attribute<?>> attrs = new ArrayList<Attribute<?>>(INIT_ATTRIBUTES);
+  private ArrayList<Attribute<?>> attrs = new ArrayList<>(INIT_ATTRIBUTES);
   private SplitterParameters parameters;
   AttributeOption appear = APPEAR_LEFT;
   Direction facing = Direction.EAST;
@@ -244,8 +242,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
   
   public boolean isNoConnect(int index) {
-    for (int i = 0; i < bit_end.length; i++) {
-      if (bit_end[i] == index)
+    for (byte b : bit_end) {
+      if (b == index)
         return false;
     }
     return true;
@@ -271,7 +269,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (bit_end[i] != dflt[i]) {
         BitOutAttribute attr = (BitOutAttribute) attrs.get(offs + i);
         bit_end[i] = dflt[i];
-        fireAttributeValueChanged(attr, Integer.valueOf(bit_end[i]), null);
+        fireAttributeValueChanged(attr, (int) bit_end[i], null);
       }
     }
 
@@ -306,7 +304,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet destObj) {
     SplitterAttributes dest = (SplitterAttributes) destObj;
     dest.parameters = this.parameters;
-    dest.attrs = new ArrayList<Attribute<?>>(this.attrs.size());
+    dest.attrs = new ArrayList<>(this.attrs.size());
     dest.attrs.addAll(INIT_ATTRIBUTES);
     for (int i = INIT_ATTRIBUTES.size(), n = this.attrs.size(); i < n; i++) {
       BitOutAttribute attr = (BitOutAttribute) this.attrs.get(i);
@@ -369,7 +367,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       configureOptions();
       parameters = null;
     } else if (attr == ATTR_FANOUT) {
-      int newValue = ((Integer) value).intValue();
+      int newValue = (Integer) value;
       byte[] bits = bit_end;
       for (int i = 0; i < bits.length; i++) {
         if (bits[i] > newValue) bits[i] = (byte) newValue;
@@ -399,7 +397,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       BitOutAttribute bitOutAttr = (BitOutAttribute) attr;
       int val;
       if (value instanceof Integer) {
-        val = ((Integer) value).intValue();
+        val = (Integer) value;
       } else {
         val = ((BitOutOption) value).value + 1;
       }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,22 +38,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public abstract class EditPopup extends JPopupMenu {
-  private class Listener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
-      for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
-        if (entry.getValue() == source) {
-          fire(entry.getKey());
-          return;
-        }
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
-  private Listener listener;
-  private Map<LogisimMenuItem, JMenuItem> items;
+  private final Listener listener;
+  private final Map<LogisimMenuItem, JMenuItem> items;
 
   public EditPopup() {
     this(false);
@@ -61,7 +48,7 @@ public abstract class EditPopup extends JPopupMenu {
 
   public EditPopup(boolean waitForInitialize) {
     listener = new Listener();
-    items = new HashMap<LogisimMenuItem, JMenuItem>();
+    items = new HashMap<>();
     if (!waitForInitialize) initialize();
   }
 
@@ -112,4 +99,16 @@ public abstract class EditPopup extends JPopupMenu {
   protected abstract boolean isEnabled(LogisimMenuItem item);
 
   protected abstract boolean shouldShow(LogisimMenuItem item);
+
+  private class Listener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      Object source = e.getSource();
+      for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
+        if (entry.getValue() == source) {
+          fire(entry.getKey());
+          return;
+        }
+      }
+    }
+  }
 }

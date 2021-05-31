@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,21 +29,27 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.Component;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
 class SelectionSave {
+  private Component[] floating;
+  private Component[] anchored;
+
+  private SelectionSave() {}
+
   public static SelectionSave create(Selection sel) {
     SelectionSave save = new SelectionSave();
 
     Collection<Component> lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
-      save.floating = lifted.toArray(new Component[lifted.size()]);
+      save.floating = lifted.toArray(new Component[0]);
     }
 
     Collection<Component> selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
-      save.anchored = selected.toArray(new Component[selected.size()]);
+      save.anchored = selected.toArray(new Component[0]);
     }
 
     return save;
@@ -70,16 +76,10 @@ class SelectionSave {
   }
 
   private static HashSet<Component> toSet(Component[] comps) {
-    HashSet<Component> ret = new HashSet<Component>(comps.length);
-    for (Component c : comps) ret.add(c);
+    HashSet<Component> ret = new HashSet<>(comps.length);
+    ret.addAll(Arrays.asList(comps));
     return ret;
   }
-
-  private Component[] floating;
-
-  private Component[] anchored;
-
-  private SelectionSave() {}
 
   @Override
   public boolean equals(Object other) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,30 +55,30 @@ import javax.swing.border.Border;
 
 public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
-  private JComboBox<String> quotes;
-  private JComboBox<String> seperators;
-  private JButton OkBut;
-  private JLabel[] JLabels;
-  private File file;
+  private final JComboBox<String> quotes;
+  private final JComboBox<String> seperators;
+  private final JButton OkBut;
+  private final JLabel[] JLabels;
+  private final File file;
 
   private static final long serialVersionUID = 1L;
 
-  private CsvParameter param;
-  private String SepSpace;
-  private boolean setVisable;
+  private final CsvParameter param;
+  private final String SepSpace;
+  private boolean setVisible;
 
   public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parrentFrame) {
     super(parrentFrame);
-    setVisable = true;
+    setVisible = true;
     this.file = file;
     SepSpace = S.get("seperatorSpace");
     String[] PossibleSeperators = {",", ";", ":", SepSpace, S.get("SeperatorTab")};
     String[] PossibleQuotes = {"\"", "'"};
     OkBut = new JButton(S.get("ConfirmCsvParameters"));
     OkBut.addActionListener(this);
-    quotes = new JComboBox<String>(PossibleQuotes);
+    quotes = new JComboBox<>(PossibleQuotes);
     quotes.addActionListener(this);
-    seperators = new JComboBox<String>(PossibleSeperators);
+    seperators = new JComboBox<>(PossibleSeperators);
     seperators.addActionListener(this);
     setLocationRelativeTo(parrentFrame);
     this.param = sel;
@@ -131,7 +131,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     pack();
     updateLabels();
     setModal(true);
-    setVisible(setVisable);
+    setVisible(setVisible);
   }
 
   private void updateLabels() {
@@ -153,7 +153,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
           S.fmt("cantReadMessage", file.getName()),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
-      setVisable = false;
+      setVisible = false;
       if (this.isVisible()) {
         setVisible(false);
         dispose();

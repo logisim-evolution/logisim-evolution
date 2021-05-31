@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,15 +33,16 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class Parser {
   //
   // parsing code
   //
   private static class Context {
-    int level;
-    Expression current;
-    Token cause;
+    final int level;
+    final Expression current;
+    final Token cause;
 
     Context(Expression current, int level, Token cause) {
       this.level = level;
@@ -52,10 +53,10 @@ public class Parser {
 
   private static class Token {
     int type;
-    int offset;
-    int length;
+    final int offset;
+    final int length;
     int precedence;
-    String text;
+    final String text;
 
     Token(int type, int offset, int length, String text, int precedence) {
       this.type = type;
@@ -69,7 +70,6 @@ public class Parser {
       this(type, offset, text.length(), text, precedence);
     }
 
-    @SuppressWarnings("unused")
     ParserException error(StringGetter message) {
       return new ParserException(message, offset, length);
     }
@@ -84,7 +84,7 @@ public class Parser {
   }
 
   private static Expression parse(ArrayList<Token> tokens) throws ParserException {
-    ArrayList<Context> stack = new ArrayList<Context>();
+    ArrayList<Context> stack = new ArrayList<>();
     Expression current = null;
     for (int i = 0; i < tokens.size(); i++) {
       Token t = tokens.get(i);
@@ -271,182 +271,217 @@ public class Parser {
     return ret.toString();
   }
 
-  private static ArrayList<Token> toTokens(String in, boolean includeWhite) {
-    ArrayList<Token> tokens = new ArrayList<Token>();
+  static class Tokenizer
+  {
+    private final String in;
+    private final boolean includeWhite;
+    private int pos;
+    private final int len;
 
-    // Guarantee that we will stop just after reading whitespace,
-    // not in the middle of a token.
-    in = in + " ";
-    int len = in.length();
-    int pos = 0;
-  outerloop:
-    while (true) {
-      int whiteStart = pos;
-      while (pos < len && Character.isWhitespace(in.charAt(pos))) pos++;
+    public Tokenizer(String in, boolean includeWhite) {
+      this.len = in.length();
+      // Guarantee that we will stop just after reading whitespace,
+      // not in the middle of a token.
+      this.in = in + " ";
+      this.includeWhite = includeWhite;
+    }
 
-      if (includeWhite && pos != whiteStart)
-        tokens.add(new Token(TOKEN_WHITE, whiteStart, in.substring(whiteStart, pos),0));
-      if (pos == len)
-        return tokens;
-      
-      int start = pos;
-      char startChar = in.charAt(pos);
-      pos++;
-      if (Character.isJavaIdentifierStart(startChar)) {
-        while (Character.isJavaIdentifierPart(in.charAt(pos))) pos++;
-        String name = in.substring(start, pos);
-        String subscript = null;
-        if (in.charAt(pos) == ':' && "012345679".indexOf(in.charAt(pos+1)) >= 0) {
-          pos++;
-          int substart = pos;
-          while ("0123456789".indexOf(in.charAt(pos)) >= 0) pos++;
-          subscript = in.substring(substart, pos);
-        } else if (in.charAt(pos) == '[') {
-          int bracestart = pos;
-          pos++;
-          while (pos < len && Character.isWhitespace(in.charAt(pos)))
-            pos++;
-          if (pos == len) {
-            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart),0));
-            continue outerloop;
+    boolean skipWhile(Predicate<Character> pred)
+    {
+      while (pos < len && pred.test(peek()))
+        pos++;
+      return pos == len;
+    }
+
+    boolean skipUntil(Predicate<Character> pred)
+    {
+      return skipWhile(pred.negate());
+    }
+
+    boolean skipSpaces()
+    {
+      return skipWhile(Character::isWhitespace);
+    }
+
+    String readNumber()
+    {
+      int substart = pos;
+      skipWhile(this::isDigit);
+      return in.substring(substart, pos);
+    }
+
+    boolean isDigit(char c)
+    {
+      return c >= '0' && c <= '9';
+    }
+
+    boolean accept(char c)
+    {
+      if (peek() == c)
+      {
+        pos++;
+        return true;
+      }
+
+      return false;
+    }
+
+    char peek()
+    {
+      return in.charAt(pos);
+    }
+
+    char next()
+    {
+      return in.charAt(pos++);
+    }
+    
+    Token readToken(char startChar, int start)
+    {
+      switch (startChar) {
+        case '(':
+          return new Token(TOKEN_LPAREN, start, "(", Integer.MAX_VALUE);
+        case ')':
+          return new Token(TOKEN_RPAREN, start, ")", Integer.MAX_VALUE);
+        case '1':
+        case '\u22A4': // down tack
+          return new Token(TOKEN_CONST, start, "1", Integer.MAX_VALUE);
+        case '0':
+        case '\u22A5': // up tack
+          return new Token(TOKEN_CONST, start, "0", Integer.MAX_VALUE);
+        case '~':
+        case '-':
+        case '\u00AC': // logical not
+        case '\u02DC': // tilde
+          return new Token(TOKEN_NOT, start, "~", Notation.NOT_PRECEDENCE);
+        case '!':
+          if (accept('='))
+          {
+            return new Token(TOKEN_XOR, start, in.substring(start, pos), Notation.LOGIC_PRECEDENCE);
+          } else {
+            return new Token(TOKEN_NOT, start, "~", Notation.NOT_PRECEDENCE);
           }
-          int substart = pos;
-          while ("0123456789".indexOf(in.charAt(pos)) >= 0)
-            pos++;
-          subscript = in.substring(substart, pos);
-          while (pos < len && Character.isWhitespace(in.charAt(pos)))
-            pos++;
-          if (pos == len) {
-            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart),0));
-            continue outerloop;
+        case '\'':
+          return new Token(TOKEN_NOT_POSTFIX, start, "'", Notation.NOT_PRECEDENCE);
+        case '^':
+        case '\u2295': // oplus
+          return new Token(TOKEN_XOR, start, "^", Notation.OPLUS_PRECEDENCE);
+        case '\u22BB': // vee-underbar
+        case '\u2262': // not-equiv
+        case '\u2260': // not-equals
+          return new Token(TOKEN_XOR, start, "^", Notation.LOGIC_PRECEDENCE);
+        case '+':
+        case '\u22C1': // large disjunction
+        case '\u2228': // small disjunction
+          return new Token(TOKEN_OR, start, "+", Notation.LOGIC_PRECEDENCE);
+        case '\u2225': // logical or
+          return new Token(TOKEN_OR, start, "+", Notation.OR_PRECEDENCE);
+        case '*':
+        case '\u22C0': // large conjunction
+        case '\u2227': // small conjunction
+          return new Token(TOKEN_AND, start, "*", Notation.LOGIC_PRECEDENCE);
+        case '\u22C5': // cdot
+        case '\u2219': // bullet
+        case '\u00B7': // middle-dot
+          return new Token(TOKEN_AND, start, "*", Notation.TIMES_PRECEDENCE);
+        case '\u2299': // otimes
+          return new Token(TOKEN_XNOR, start, "^", Notation.OTIMES_PRECEDENCE);
+        case '\u21D4': // left-right-doublearrow
+        case '\u2261': // equiv
+        case '\u2194': // left-right-arrow
+          return new Token(TOKEN_XNOR, start, "=", Notation.LOGIC_PRECEDENCE);
+        case '&':
+          if (accept('&')) {
+            return new Token(TOKEN_AND, start, "&&", Notation.AND_PRECEDENCE);
+          } else {
+            return new Token(TOKEN_AND, start, "&", Notation.BITAND_PRECEDENCE);
           }
-          if (in.charAt(pos) != ']') {
-            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart),0));
-            continue outerloop;
+        case '|':
+          if (accept('|')) {
+            return new Token(TOKEN_OR, start, "||", Notation.OR_PRECEDENCE);
+          } else {
+            return new Token(TOKEN_OR, start, "|", Notation.BITOR_PRECEDENCE);
           }
-          pos++;
+        case '=':
+          accept('=');
+          return new Token(TOKEN_XNOR, start, in.substring(start, pos), Notation.LOGIC_PRECEDENCE);
+        case ':':
+          accept('=');
+          return new Token(TOKEN_EQ, start, in.substring(start, pos), Notation.EQ_PRECEDENCE);
+        case '[':
+        case ']':
+          return new Token(TOKEN_ERROR_IDENT, start, in.substring(start, start + 1), 0);
+        default:
+          skipUntil(Parser::okCharacter);
+          String errorText = in.substring(start, pos);
+          return new Token(TOKEN_ERROR_BADCHAR, start, errorText, 0);
+      }
+    }
+
+    ArrayList<Token> tokenize()
+    {
+      ArrayList<Token> tokens = new ArrayList<>();
+
+      pos = 0;
+      while (true) {
+        int whiteStart = pos;
+        skipSpaces();
+
+        if (includeWhite && pos != whiteStart) {
+          tokens.add(new Token(TOKEN_WHITE, whiteStart, in.substring(whiteStart, pos), 0));
         }
-        if (subscript != null) {
-          subscript = subscript.trim();
-          if (subscript.equals("")) {
-            tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos),0));
-            continue outerloop;
+        if (pos == len) {
+          return tokens;
+        }
+
+        int start = pos;
+        char startChar = next();
+        if (Character.isJavaIdentifierStart(startChar)) {
+          skipWhile(Character::isJavaIdentifierPart);
+          String name = in.substring(start, pos);
+          String subscript = null;
+          if (in.charAt(pos) == ':' && isDigit(in.charAt(pos + 1))) {
+            pos++;
+            subscript = readNumber();
+          } else if (in.charAt(pos) == '[') {
+            int bracestart = pos;
+            pos++;
+            if (skipSpaces()) { // EOL
+              tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart), 0));
+              continue;
+            }
+            subscript = readNumber();
+            if (skipSpaces() || !accept(']')) { // EOL or missing bracket
+              tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart), 0));
+              continue;
+            }
+            pos++;
           }
-          try {
-            int s = Integer.parseInt(subscript);
-            tokens.add(new Token(TOKEN_IDENT, start, name + "[" + s + "]", Integer.MAX_VALUE));
-          } catch (NumberFormatException e) {
-            // should not happen
-            tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos),0));
+          if (subscript != null) {
+            subscript = subscript.trim();
+            if (subscript.isEmpty()) {
+              tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos), 0));
+              continue;
+            }
+            try {
+              int s = Integer.parseInt(subscript);
+              tokens.add(new Token(TOKEN_IDENT, start, name + "[" + s + "]", Integer.MAX_VALUE));
+            } catch (NumberFormatException e) {
+              // should not happen
+              tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos), 0));
+            }
+          } else {
+            tokens.add(new Token(TOKEN_IDENT, start, name, Integer.MAX_VALUE));
           }
         } else {
-          tokens.add(new Token(TOKEN_IDENT, start, name, Integer.MAX_VALUE));
-        }
-      } else {
-        switch (startChar) {
-          case '(':
-              tokens.add(new Token(TOKEN_LPAREN, start, "(", Integer.MAX_VALUE));
-              break;
-          case ')':
-              tokens.add(new Token(TOKEN_RPAREN, start, ")", Integer.MAX_VALUE));
-              break;
-          case '1':
-          case '\u22A4':
-              tokens.add(new Token(TOKEN_CONST, start, "1", Integer.MAX_VALUE));
-              break;
-          case '0':
-          case '\u22A5':
-              tokens.add(new Token(TOKEN_CONST,start,"0", Integer.MAX_VALUE));
-              break;
-          case '~':
-          case '-':
-          case '\u00AC': // logical not
-          case '\u02DC': // tilde
-              tokens.add(new Token(TOKEN_NOT, start, "~", Expression.Notation.NOT_PRECEDENCE));
-              break;
-          case '!':
-              if (in.charAt(pos) == '=') {
-                pos++;
-                tokens.add(new Token(TOKEN_XOR, start, in.substring(start, pos), Expression.Notation.LOGIC_PRECEDENCE));
-              } else {
-                tokens.add(new Token(TOKEN_NOT, start, "~", Expression.Notation.NOT_PRECEDENCE));
-              }
-              break;
-          case '\'':
-              tokens.add(new Token(TOKEN_NOT_POSTFIX, start, "'", Expression.Notation.NOT_PRECEDENCE));
-              break;
-          case '^':
-          case '\u2295': // oplus
-              tokens.add(new Token(TOKEN_XOR, start, "^", Expression.Notation.OPLUS_PRECEDENCE));
-              break;
-          case '\u22BB': // vee-underbar
-          case '\u2262': // not-equiv
-          case '\u2260': // not-equals
-              tokens.add(new Token(TOKEN_XOR, start, "^", Expression.Notation.LOGIC_PRECEDENCE));
-              break;
-          case '+':
-          case '\u22C1': // large disjunction
-          case '\u2228': // small disjunction
-        	  tokens.add(new Token(TOKEN_OR, start, "+", Expression.Notation.LOGIC_PRECEDENCE));
-              break;
-          case '\u2225': // logical or
-              tokens.add(new Token(TOKEN_OR, start, "+", Expression.Notation.OR_PRECEDENCE));
-              break;
-          case '*':
-          case '\u22C0': // large conjunction
-          case '\u2227': // small conjunction
-        	  tokens.add(new Token(TOKEN_AND, start, "*", Expression.Notation.LOGIC_PRECEDENCE));
-              break;
-          case '\u22C5': // cdot
-          case '\u2219': // bullet
-          case '\u00B7': // middle-dot
-        	  tokens.add(new Token(TOKEN_AND, start, "*", Expression.Notation.TIMES_PRECEDENCE));
-              break;
-          case '\u2299': // otimes
-              tokens.add(new Token(TOKEN_XNOR, start, "^", Expression.Notation.OTIMES_PRECEDENCE));
-              break;
-          case '\u21D4': // left-right-doublearrow
-          case '\u2261': // equiv
-          case '\u2194': // left-right-arrow
-              tokens.add(new Token(TOKEN_XNOR, start, "=", Expression.Notation.LOGIC_PRECEDENCE));
-              break;
-          case '&':
-              if (in.charAt(pos) == '&') {
-                pos++;
-                tokens.add(new Token(TOKEN_AND, start, in.substring(start, pos), Expression.Notation.AND_PRECEDENCE));
-              } else {
-                tokens.add(new Token(TOKEN_AND, start, in.substring(start, pos), Expression.Notation.BITAND_PRECEDENCE));
-              }
-              break;
-          case '|':
-              if (in.charAt(pos) == '|') {
-                pos++;
-                tokens.add(new Token(TOKEN_OR, start, in.substring(start, pos), Expression.Notation.OR_PRECEDENCE));
-              } else {
-                tokens.add(new Token(TOKEN_OR, start, in.substring(start, pos), Expression.Notation.BITOR_PRECEDENCE));
-              }
-              break;
-          case '=':
-              if (in.charAt(pos) == '=')
-                pos++;
-              tokens.add(new Token(TOKEN_XNOR, start, in.substring(start, pos), Expression.Notation.LOGIC_PRECEDENCE));
-              break;
-          case ':':
-              if (in.charAt(pos) == '=')
-                pos++;
-              tokens.add(new Token(TOKEN_EQ, start, in.substring(start, pos), Expression.Notation.EQ_PRECEDENCE));
-              break;
-          case '[':
-          case ']':
-              tokens.add(new Token(TOKEN_ERROR_IDENT, start, in.substring(start, start+1),0));
-              break;
-          default:
-              while (!okCharacter(in.charAt(pos))) pos++;
-              String errorText = in.substring(start, pos);
-              tokens.add(new Token(TOKEN_ERROR_BADCHAR, start, errorText,0));
+          tokens.add(readToken(startChar, start));
         }
       }
     }
+  }
+
+  private static ArrayList<Token> toTokens(String in, boolean includeWhite) {
+    return new Tokenizer(in, includeWhite).tokenize();
   }
 
   private static final int TOKEN_AND = 0;

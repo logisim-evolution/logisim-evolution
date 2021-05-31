@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,10 +37,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class AttrTableDrawManager implements PropertyChangeListener {
-  private Canvas canvas;
-  private AttrTable table;
-  private AttrTableSelectionModel selectionModel;
-  private AttrTableToolModel toolModel;
+  private final Canvas canvas;
+  private final AttrTable table;
+  private final AttrTableSelectionModel selectionModel;
+  private final AttrTableToolModel toolModel;
 
   public AttrTableDrawManager(Canvas canvas, AttrTable table, DrawingAttributeSet attrs) {
     this.canvas = canvas;

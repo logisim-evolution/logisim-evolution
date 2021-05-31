@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -74,7 +74,7 @@ class ClockState implements Cloneable {
     Value[] values = lastClock.getAll();
     if (values.length <= which) {
       Value[] nvalue = (Value.createKnown(BitWidth.create(which + 1), 0)).getAll();
-      for (int i = 0; i < values.length; i++) nvalue[i] = values[i];
+      System.arraycopy(values, 0, nvalue, 0, values.length);
       values = nvalue;
     }
     Value oldClock = values[which];

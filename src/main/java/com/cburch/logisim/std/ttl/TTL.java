@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,7 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class TTL extends Library {
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("7400", S.getter("TTL7400"), "ttl.gif", "Ttl7400"),
     new FactoryDescription("7402", S.getter("TTL7402"), "ttl.gif", "Ttl7402"),
     new FactoryDescription("7404", S.getter("TTL7404"), "ttl.gif", "Ttl7404"),
@@ -69,6 +69,7 @@ public class TTL extends Library {
     new FactoryDescription("7486", S.getter("TTL7486"), "ttl.gif", "Ttl7486"),
     new FactoryDescription("74125",S.getter("TTL74125"),"ttl.gif", "Ttl74125"),
     new FactoryDescription("74175", S.getter("TTL74175"), "ttl.gif", "Ttl74175"),
+    new FactoryDescription("74161", S.getter("TTL74161"), "ttl.gif", "Ttl74161"),
     new FactoryDescription("74165", S.getter("TTL74165"), "ttl.gif", "Ttl74165"),
     new FactoryDescription("74266", S.getter("TTL74266"), "ttl.gif", "Ttl74266"),
     new FactoryDescription("74273", S.getter("TTL74273"), "ttl.gif", "Ttl74273"),

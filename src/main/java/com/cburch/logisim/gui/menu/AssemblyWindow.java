@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,8 +30,8 @@ package com.cburch.logisim.gui.menu;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.SimulatorEvent;
-import com.cburch.logisim.circuit.SimulatorListener;
+import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.circuit.Simulator.Event;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -74,27 +74,27 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 
 public class AssemblyWindow
-    implements ActionListener, WindowListener, SimulatorListener, KeyListener {
+    implements ActionListener, WindowListener, Simulator.Listener, KeyListener {
 
-  private Preferences prefs;
-  private LFrame windows;
-  private JMenuBar winMenuBar;
-  private JCheckBoxMenuItem ontopItem;
-  private JMenuItem openFileItem;
-  private JMenuItem reloadFileItem;
-  private JMenuItem close;
-  private JButton refresh = new JButton("Get Registers");
-  private JLabel status = new JLabel();
+  private static Circuit curCircuit;
+  private static CircuitState curCircuitState;
+  private final Preferences prefs;
+  private final LFrame windows;
+  private final JMenuBar winMenuBar;
+  private final JCheckBoxMenuItem ontopItem;
+  private final JMenuItem openFileItem;
+  private final JMenuItem reloadFileItem;
+  private final JMenuItem close;
+  private final JButton refresh = new JButton("Get Registers");
+  private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
 
   @SuppressWarnings("rawtypes")
-  private JComboBox combo = new JComboBox<>();
+  private final JComboBox combo = new JComboBox<>();
 
-  private HashMap<String, Component> entry = new HashMap<String, Component>();
+  private final HashMap<String, Component> entry = new HashMap<>();
+  private final Project proj;
   private Component selReg = null;
-  private Project proj;
-  private static Circuit curCircuit;
-  private static CircuitState curCircuitState;
   private File file;
 
   public AssemblyWindow(Project proj) {
@@ -134,7 +134,7 @@ public class AssemblyWindow
     fileMenu.addSeparator();
     fileMenu.add(close);
 
-    windows = new LFrame(false,null);
+    windows = new LFrame.Dialog(null);
     windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
@@ -253,8 +253,8 @@ public class AssemblyWindow
       combo.setEnabled(true);
       Object[] objArr = entry.keySet().toArray();
       Arrays.sort(objArr);
-      for (int i = 0; i < objArr.length; i++) {
-        combo.addItem(objArr[i]);
+      for (Object o : objArr) {
+        combo.addItem(o);
       }
     }
   }
@@ -267,6 +267,11 @@ public class AssemblyWindow
     }
   }
 
+  public void setVisible(boolean bool) {
+    fillCombo();
+    windows.setVisible(bool);
+  }
+
   @Override
   public void keyPressed(KeyEvent ke) {
     // throw new UnsupportedOperationException("Not supported yet.");
@@ -276,8 +281,7 @@ public class AssemblyWindow
   public void keyReleased(KeyEvent ke) {
     int keyCode = ke.getKeyCode();
     if (keyCode == KeyEvent.VK_F2) {
-    	if (proj.getSimulator() != null)
-            proj.getSimulator().tick(2);
+      if (proj.getSimulator() != null) proj.getSimulator().tick(2);
     }
   }
 
@@ -287,8 +291,8 @@ public class AssemblyWindow
   }
 
   @Override
-  public void propagationCompleted(SimulatorEvent e) {
-    if (e.getSource().isRunning()) {
+  public void propagationCompleted(Simulator.Event e) {
+    if (e.getSource().isAutoTicking()) {
       updateHighlightLine();
     }
   }
@@ -297,21 +301,13 @@ public class AssemblyWindow
     windows.setTitle(title);
   }
 
-  public void setVisible(boolean bool) {
-    fillCombo();
-    windows.setVisible(bool);
-  }
-
   @Override
-  public void simulatorStateChanged(SimulatorEvent e) {}
+  public void simulatorStateChanged(Simulator.Event e) {}
 
   /*
    * Track the movement of the Caret by painting a background line at the
    * current caret position.
    */
-
-  @Override
-  public void tickCompleted(SimulatorEvent e) {}
 
   public void toFront() {
     if (windows != null) {
@@ -375,4 +371,7 @@ public class AssemblyWindow
 
   @Override
   public void windowOpened(WindowEvent e) {}
+
+  @Override
+  public void simulatorReset(Event e) { }
 }

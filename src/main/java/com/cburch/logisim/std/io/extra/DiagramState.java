@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,7 @@ class DiagramState implements InstanceData {
   private byte usedcell = -1;
   private Value LastClock;
   private boolean moveback = false;
-  private Boolean diagram[][];
+  private Boolean[][] diagram;
   private byte Inputs, Length; // current inputs and length (number of states)
   private byte clocknumber;
 
@@ -62,8 +62,7 @@ class DiagramState implements InstanceData {
   @Override
   public DiagramState clone() {
     try {
-      DiagramState ret = (DiagramState) super.clone();
-      return ret;
+      return (DiagramState) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }
@@ -90,11 +89,10 @@ class DiagramState implements InstanceData {
   }
 
   public void moveback() { // move back all old values
-    for (byte i = 0; i < Inputs; i++) {
-      for (byte j = 0; j < Length - 1; j++) {
-        diagram[i][j] = diagram[i][j + 1];
+    if (Length >= 1)
+      for (byte i = 0; i < Inputs; i++) {
+          System.arraycopy(diagram[i], 1, diagram[i], 0, Length - 1);
       }
-    }
   }
 
   public void setclocknumber(byte i) {
@@ -127,7 +125,7 @@ class DiagramState implements InstanceData {
       Length = length;
       clocknumber = (byte) (clocknumber + (Length - oldlength) / 2);
       // create a copy of old boolean matrix
-      Boolean olddiagram[][] = Arrays.copyOf(diagram, diagram.length);
+      Boolean[][] olddiagram = Arrays.copyOf(diagram, diagram.length);
       diagram = new Boolean[Inputs][Length];
       // set all to false
       clear();

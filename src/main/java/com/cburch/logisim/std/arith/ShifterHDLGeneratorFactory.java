@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,8 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -50,18 +50,17 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("DataA", attrs.getValue(StdAttr.WIDTH).getWidth());
     Inputs.put("ShiftAmount", getNrofShiftBits(attrs));
     return Inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add(
           "   -----------------------------------------------------------------------------");
       Contents.add(
@@ -98,7 +97,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "   -----------------------------------------------------------------------------");
         Contents.add("");
         Contents.add(
-            "   Result <= s_stage_" + Integer.toString(getNrofShiftBits(attrs) - 1) + "_result;");
+            "   Result <= s_stage_" + (getNrofShiftBits(attrs) - 1) + "_result;");
         Contents.add("");
       }
     } else {
@@ -139,7 +138,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add("");
         Contents.add(
             "   assign Result = s_stage_"
-                + Integer.toString(getNrofShiftBits(attrs) - 1)
+                + (getNrofShiftBits(attrs) - 1)
                 + "_result;");
         Contents.add("");
       }
@@ -156,7 +155,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     Outputs.put("Result", inputbits);
     return Outputs;
@@ -164,15 +163,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(ShiftModeId, ShiftModeStr);
     return Parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     Object shift = ComponentInfo.GetComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
     if (shift == Shifter.SHIFT_LOGICAL_LEFT) ParameterMap.put(ShiftModeStr, 0);
     else if (shift == Shifter.SHIFT_ROLL_LEFT) ParameterMap.put(ShiftModeStr, 1);
@@ -183,26 +181,24 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Reporter, HDLType, Nets));
-    PortMap.putAll(
-        GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Nets));
+    PortMap.putAll(GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Nets));
+    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Nets));
     return PortMap;
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int StageNumber, int NrOfBits) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int nr_of_bits_to_shift = (1 << StageNumber);
     Contents.add("   /***************************************************************************");
     Contents.add(
         "    ** Here stage "
             + StageNumber
-            + " of the binairy shift tree is defined                     **");
+            + " of the binary shift tree is defined                     **");
     Contents.add(
         "    ***************************************************************************/");
     Contents.add("");
@@ -213,7 +209,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "== 1)||("
               + ShiftModeStr
               + "==3)) ?");
-      Contents.add("                              DataA[" + Integer.toString(NrOfBits - 1) + "] :");
+      Contents.add("                              DataA[" + (NrOfBits - 1) + "] :");
       Contents.add("                              (" + ShiftModeStr + "== 4) ? DataA[0] : 0;");
       Contents.add("");
       Contents.add("   assign s_stage_0_result  = (ShiftAmount == 0) ? DataA :");
@@ -225,38 +221,38 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "== 1)) ?");
       Contents.add(
           "                              {DataA["
-              + Integer.toString(NrOfBits - 2)
+              + (NrOfBits - 2)
               + ":0],s_stage_0_shiftin} :");
       Contents.add(
           "                              {s_stage_0_shiftin,DataA["
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + ":1]};");
       Contents.add("");
     } else {
       Contents.add("   assign s_stage_" + StageNumber + "_shiftin = (" + ShiftModeStr + "== 1) ?");
       Contents.add(
           "                              s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result["
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + ":"
-              + Integer.toString(NrOfBits - nr_of_bits_to_shift)
+              + (NrOfBits - nr_of_bits_to_shift)
               + "] : ");
       Contents.add("                              (" + ShiftModeStr + "== 3) ?");
       Contents.add(
           "                              {"
               + nr_of_bits_to_shift
               + "{s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result["
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + "]}} :");
       Contents.add("                              (" + ShiftModeStr + "== 4) ?");
       Contents.add(
           "                              s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result["
-              + Integer.toString(nr_of_bits_to_shift - 1)
+              + (nr_of_bits_to_shift - 1)
               + ":0] : 0;");
       Contents.add("");
       Contents.add(
@@ -267,7 +263,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "]==0) ?");
       Contents.add(
           "                              s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result : ");
       Contents.add(
           "                              (("
@@ -277,9 +273,9 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "== 1)) ?");
       Contents.add(
           "                              {s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result["
-              + Integer.toString(NrOfBits - nr_of_bits_to_shift - 1)
+              + (NrOfBits - nr_of_bits_to_shift - 1)
               + ":0],s_stage_"
               + StageNumber
               + "_shiftin} :");
@@ -287,11 +283,11 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "                              {s_stage_"
               + StageNumber
               + "_shiftin,s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result["
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + ":"
-              + Integer.toString(nr_of_bits_to_shift)
+              + nr_of_bits_to_shift
               + "]};");
       Contents.add("");
     }
@@ -299,21 +295,21 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int StageNumber, int NrOfBits) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int nr_of_bits_to_shift = (1 << StageNumber);
     Contents.add(
         "   -----------------------------------------------------------------------------");
     Contents.add(
         "   --- Here stage "
             + StageNumber
-            + " of the binairy shift tree is defined                     ---");
+            + " of the binary shift tree is defined                     ---");
     Contents.add(
         "   -----------------------------------------------------------------------------");
     Contents.add("");
     if (StageNumber == 0) {
       Contents.add(
           "   s_stage_0_shiftin <= DataA("
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + ") WHEN "
               + ShiftModeStr
               + " = 1 OR "
@@ -326,7 +322,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       else Contents.add("                           WHEN ShiftAmount(0) = '0' ELSE");
       Contents.add(
           "                        DataA("
-              + Integer.toString(NrOfBits - 2)
+              + (NrOfBits - 2)
               + " DOWNTO 0)&s_stage_0_shiftin");
       Contents.add(
           "                           WHEN "
@@ -336,35 +332,34 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + " = 1 ELSE");
       Contents.add(
           "                        s_stage_0_shiftin&DataA("
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + " DOWNTO 1);");
-      Contents.add("");
     } else {
       Contents.add(
           "   s_stage_"
               + StageNumber
               + "_shiftin <= s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result( "
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + " DOWNTO "
-              + Integer.toString(NrOfBits - nr_of_bits_to_shift)
+              + (NrOfBits - nr_of_bits_to_shift)
               + " ) WHEN "
               + ShiftModeStr
               + " = 1 ELSE");
       Contents.add(
           "                        (OTHERS => s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result("
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + ")) WHEN "
               + ShiftModeStr
               + " = 3 ELSE");
       Contents.add(
           "                        s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result( "
-              + Integer.toString(nr_of_bits_to_shift - 1)
+              + (nr_of_bits_to_shift - 1)
               + " DOWNTO 0 ) WHEN "
               + ShiftModeStr
               + " = 4 ELSE");
@@ -374,14 +369,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   s_stage_"
               + StageNumber
               + "_result  <= s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result");
       Contents.add("                           WHEN ShiftAmount(" + StageNumber + ") = '0' ELSE");
       Contents.add(
           "                        s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result( "
-              + Integer.toString(NrOfBits - nr_of_bits_to_shift - 1)
+              + (NrOfBits - nr_of_bits_to_shift - 1)
               + " DOWNTO 0 )&s_stage_"
               + StageNumber
               + "_shiftin");
@@ -395,14 +390,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "                        s_stage_"
               + StageNumber
               + "_shiftin&s_stage_"
-              + Integer.toString(StageNumber - 1)
+              + (StageNumber - 1)
               + "_result( "
-              + Integer.toString(NrOfBits - 1)
+              + (NrOfBits - 1)
               + " DOWNTO "
-              + Integer.toString(nr_of_bits_to_shift)
+              + nr_of_bits_to_shift
               + " );");
-      Contents.add("");
     }
+    Contents.add("");
     return Contents;
   }
 
@@ -413,7 +408,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int shift = getNrofShiftBits(attrs);
     int loop;
     for (loop = 0; loop < shift; loop++) {
@@ -424,7 +419,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
 }

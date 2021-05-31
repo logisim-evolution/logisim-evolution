@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,10 +39,10 @@ public class AnalyzerModel {
   public static final int FORMAT_SUM_OF_PRODUCTS = 0;
   public static final int FORMAT_PRODUCT_OF_SUMS = 1;
 
-  private VariableList inputs = new VariableList(MAX_INPUTS);
-  private VariableList outputs = new VariableList(MAX_OUTPUTS);
-  private TruthTable table;
-  private OutputExpressions outputExpressions;
+  private final VariableList inputs = new VariableList(MAX_INPUTS);
+  private final VariableList outputs = new VariableList(MAX_OUTPUTS);
+  private final TruthTable table;
+  private final OutputExpressions outputExpressions;
   private Project currentProject = null;
   private Circuit currentCircuit = null;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -85,21 +85,21 @@ public class LogisimVersion {
       if (parts.length >= 3) release = Integer.parseInt(parts[2]);
       if (parts.length >= 4) revision = Integer.parseInt(parts[3]);
       if (parts.length >= 5) variant = parts[4];
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException ignored) {
     }
     return (new LogisimVersion(major, minor, release, revision, variant));
   }
 
   public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
-  private int major;
+  private final int major;
 
-  private int minor;
+  private final int minor;
 
-  private int release;
+  private final int release;
 
-  private int revision;
+  private final int revision;
 
-  private String variant;
+  private final String variant;
 
   private String repr;
 
@@ -152,7 +152,7 @@ public class LogisimVersion {
           && this.minor == o.minor
           && this.release == o.release
           && this.revision == o.revision
-          && this.variant == o.variant);
+          && this.variant.equals(o.variant));
     } else {
       return (false);
     }
@@ -186,7 +186,7 @@ public class LogisimVersion {
     if (ret == null) {
       ret = major + "." + minor + "." + release;
       if (revision != FINAL_REVISION) ret += "." + revision;
-      if (variant != "") ret += "." + variant;
+      if (!variant.equals("")) ret += "." + variant;
       repr = ret;
     }
     return (ret);

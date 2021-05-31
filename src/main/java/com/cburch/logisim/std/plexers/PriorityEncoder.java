@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -94,17 +94,15 @@ public class PriorityEncoder extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new PriorityEncoderHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT) {
       instance.recomputeBounds();
-      updatePorts(instance);
-    } else if (attr == Plexers.ATTR_SELECT) {
       updatePorts(instance);
     } else if (attr == Plexers.ATTR_DISABLED) {
       instance.fireInvalidated();

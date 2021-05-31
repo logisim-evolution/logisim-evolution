@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,28 +30,27 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
   private static final int NR_OF_BYTES_PER_LINE = 16;
-  private ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
-  private HashSet<Integer> acceptedParameterTypes;
+  private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<>();
+  private final HashSet<Integer> acceptedParameterTypes;
   
   public AbstractAssembler() {
-    acceptedParameterTypes = new HashSet<Integer>();
+    acceptedParameterTypes = new HashSet<>();
     acceptedParameterTypes.add(AssemblerToken.BRACKETED_REGISTER);
     acceptedParameterTypes.add(AssemblerToken.DEC_NUMBER);
     acceptedParameterTypes.add(AssemblerToken.HEX_NUMBER);
@@ -81,7 +80,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
   }
   
   public ArrayList<String> getOpcodes() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (AssemblerExecutionInterface exe : exeUnits)
       opcodes.addAll(exe.getInstructions());
     return opcodes;
@@ -145,8 +144,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       boolean stringFound = false;
       boolean zerosFound = false;
       if (labels.containsKey(SocSupport.convUnsignedLong(startAddress+i))) {
-        StringBuffer label = new StringBuffer();
-        label.append(labels.get(SocSupport.convUnsignedLong(startAddress+i))+":");
+        StringBuilder label = new StringBuilder();
+        label.append(labels.get(SocSupport.convUnsignedLong(startAddress + i))).append(":");
         while (label.length() < maxLabelSize) label.append(" ");
         if (nrBytesWritten != 0)  newLineNum = addLine(lines,"\n",newLineNum,true);
         newLineNum = addLine(lines,label.toString(),newLineNum,false);
@@ -155,7 +154,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       int kar = getByte(contents,i); 
       if (lookForStrings) {
         if (kar >= 32 && kar <= 127) {
-          StringBuffer str = new StringBuffer();
+          StringBuilder str = new StringBuilder();
           if (kar == 34 || kar == 92) str.append('\\');
           str.append((char)kar);
           int j = i+1;
@@ -196,7 +195,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (nrBytesWritten > 0) newLineNum = addLine(lines,"\n",newLineNum,true);
             if (nrBytesWritten >= 0) 
               for (int sp = 0 ; sp < maxLabelSize ; sp++) newLineNum = addLine(lines," ",newLineNum,false);
-            newLineNum = addLine(lines," "+type+" \""+str.toString()+"\"\n",newLineNum,true);
+            newLineNum = addLine(lines," "+type+" \""+ str +"\"\n",newLineNum,true);
             nrBytesWritten = 0;
           }
         }
@@ -221,11 +220,11 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       }
       if (!stringFound && !zerosFound) {
         if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
-          StringBuffer label = new StringBuffer();
+          StringBuilder label = new StringBuilder();
           while (label.length() < maxLabelSize) label.append(" ");
           if (nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,"\n",newLineNum,true);
           if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,label.toString(),newLineNum,false);
-          if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines," .byte ",newLineNum,false);
+          newLineNum = addLine(lines," .byte ",newLineNum,false);
           nrBytesWritten = 0;
         }
         if (nrBytesWritten > 0) newLineNum = addLine(lines,", ",newLineNum,false);
@@ -253,9 +252,9 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       /* The section header gives more information on the program, so we prefer this one over the
        * program header.
        */
-      HashMap<Integer,String> labels = new HashMap<Integer,String>();
+      HashMap<Integer,String> labels = new HashMap<>();
       int maxLabelSize = 0;
-      ArrayList<SectionHeader> sortedList = new ArrayList<SectionHeader>();
+      ArrayList<SectionHeader> sortedList = new ArrayList<>();
       for (SectionHeader sh : elfSections.getHeaders()) {
         if (sh.isAllocated()) {
           if (sortedList.isEmpty()) {
@@ -300,7 +299,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
         if (sh.isExecutable()) {
           /* first pass, we are going to insert labels where we can find them */
-          ArrayList<Integer> newLabels = new ArrayList<Integer>();
+          ArrayList<Integer> newLabels = new ArrayList<>();
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
@@ -334,7 +333,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (label != null && label.startsWith("logisim_label_")) {
               int index = 0;
               try { index = Integer.parseUnsignedInt(label.substring(14)); }
-              catch (NumberFormatException e) {};
+              catch (NumberFormatException ignored) {}
               if (index >= offset) offset = index+1;
             }
           }
@@ -345,21 +344,22 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (label.length() > maxLabelSize) maxLabelSize = label.length();
           }
           /* second pass, we are going to insert the code into the buffer */
-          StringBuffer remark = new StringBuffer();
-          int remarkOffset = (2*maxLabelSize)+23 < 60 ? 60 : (2*maxLabelSize)+23;
-          for (int i = 0 ; i <  remarkOffset ; i++) remark.append(" ");
+          StringBuilder remark = new StringBuilder();
+          int remarkOffset = Math.max((2 * maxLabelSize) + 23, 60);
+          remark.append(" ".repeat(remarkOffset));
           remark.append("#    pc:       opcode:\n");
           lineNum = addLine(lines,remark.toString(),lineNum,true);
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
-          StringBuffer line = new StringBuffer();
+          StringBuilder line = new StringBuilder();
           long addr = startAddress+(((long)pc)<<2);
-            StringBuffer label = new StringBuffer();
-            if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label.append(labels.get(SocSupport.convUnsignedLong(addr))+":");
+            StringBuilder label = new StringBuilder();
+            if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label
+                .append(labels.get(SocSupport.convUnsignedLong(addr))).append(":");
             while (label.length() <= maxLabelSize) label.append(" ");
-            line.append(label.toString()+" ");
+            line.append(label).append(" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe != null && exe instanceof AbstractExecutionUnitWithLabelSupport) {
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
               AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);
@@ -371,10 +371,11 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             } else if (exe != null) line.append(exe.getAsmInstruction());
             else line.append(S.get("UnknownInstruction"));
             while (line.length() < remarkOffset) line.append(" ");
-            line.append("# "+String.format("0x%08X", SocSupport.convUnsignedLong(startAddress+((long)pc<<2))));
-            line.append(" "+String.format("0x%08X", contents[pc]));
+            line.append("# ").append(String
+                .format("0x%08X", SocSupport.convUnsignedLong(startAddress + ((long) pc << 2))));
+            line.append(" ").append(String.format("0x%08X", contents[pc]));
             validDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
-            lineNum = addLine(lines,line.toString()+"\n",lineNum,true);
+            lineNum = addLine(lines, line +"\n",lineNum,true);
           }
         } else lineNum = getData(!sh.isWritable(),contents,size,startAddress,labels,maxLabelSize,lines,lineNum);
       }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,7 +36,6 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -48,17 +47,16 @@ import java.util.Locale;
 
 public class VivadoDownload implements VendorDownload {
 
-  private VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
-  private String ScriptPath;
-  private String SandboxPath;
-  private String xdcPath;
-  private String vivadoProjectPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
+  private final String ScriptPath;
+  private final String SandboxPath;
+  private final String xdcPath;
+  private final String vivadoProjectPath;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
 
   private static String _bitStreamPath;
   private static final String CREATE_PROJECT_TCL = "vivadoCreateProject.tcl";
@@ -69,7 +67,6 @@ public class VivadoDownload implements VendorDownload {
 
   public VivadoDownload(
       String ProjectPath,
-      FPGAReport Reporter,
       Netlist RootNetList,
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
@@ -77,7 +74,6 @@ public class VivadoDownload implements VendorDownload {
     this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
     this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
     this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDCPath);
-    this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -132,7 +128,7 @@ public class VivadoDownload implements VendorDownload {
 
   @Override
   public ProcessBuilder DownloadToBoard() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
@@ -146,11 +142,11 @@ public class VivadoDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     // create project files
-    File createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL, Reporter);
-    File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE, Reporter);
+    File createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL);
+    File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE);
     File generateBitstreamFile =
-        FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE, Reporter);
-    File loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE, Reporter);
+        FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
+    File loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
     if (createProjectFile == null
         || xdcFile == null
         || generateBitstreamFile == null
@@ -166,7 +162,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     // fill create project TCL script
-    ArrayList<String> contents = new ArrayList<String>();
+    ArrayList<String> contents = new ArrayList<>();
     contents.add(
         "create_project "
             + VIVADO_PROJECT_NAME
@@ -191,7 +187,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add(
         "add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
     contents.add("exit");
-    if (!FileWriter.WriteContents(createProjectFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(createProjectFile, contents)) return false;
     contents.clear();
 
     // fill the xdc file
@@ -207,7 +203,7 @@ public class VivadoDownload implements VendorDownload {
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
 
-      Long clockFrequency = BoardInfo.fpga.getClockFrequency();
+      long clockFrequency = BoardInfo.fpga.getClockFrequency();
       double clockPeriod = 1000000000.0 / clockFrequency;
       contents.add(
           "    create_clock -add -name sys_clk_pin -period "
@@ -220,7 +216,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     contents.addAll(GetPinLocStrings());
-    if (!FileWriter.WriteContents(xdcFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(xdcFile, contents)) return false;
     contents.clear();
 
     // generate bitstream
@@ -233,7 +229,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add("launch_runs impl_1 -to_step write_bitstream -jobs 8");
     contents.add("wait_on_run impl_1");
     contents.add("exit");
-    if (!FileWriter.WriteContents(generateBitstreamFile, contents, Reporter)) return false;
+    if (!FileWriter.WriteContents(generateBitstreamFile, contents)) return false;
     contents.clear();
 
     // load bitstream
@@ -248,11 +244,11 @@ public class VivadoDownload implements VendorDownload {
     contents.add("program_hw_device " + lindex);
     contents.add("close_hw");
     contents.add("exit");
-    return FileWriter.WriteContents(loadBitstreamFile, contents, Reporter);
+    return FileWriter.WriteContents(loadBitstreamFile, contents);
   }
   
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> contents = new ArrayList<String>();
+    ArrayList<String> contents = new ArrayList<>();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -290,7 +286,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Project() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
@@ -302,7 +298,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Bit() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");

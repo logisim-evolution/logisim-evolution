@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,8 +31,9 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -40,7 +41,7 @@ import java.util.TreeMap;
 public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private String GetBin(long value, int nr_of_bits) {
-    StringBuffer Bits = new StringBuffer();
+    StringBuilder Bits = new StringBuilder();
     long mask = (1L << (nr_of_bits - 1));
     int count;
     if (nr_of_bits == 1) Bits.append("'");
@@ -62,18 +63,17 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
     return Inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     long addr;
     MemContents rom = attrs.getValue(Rom.CONTENTS_ATTR);
-    if (HDLType.equals(VHDL)) {
+    if (HDL.isVHDL()) {
       Contents.add("   MakeRom : PROCESS( Address )");
       Contents.add("      BEGIN");
       Contents.add("         CASE (Address) IS");
@@ -94,7 +94,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("      END PROCESS MakeRom;");
     } else {
       Contents.add(
-          "   reg[" + Integer.toString(attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
+          "   reg[" + (attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
       Contents.add("");
       Contents.add("   always @ (Address)");
       Contents.add("   begin");
@@ -113,20 +113,19 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
     return Outputs;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Nets));
+    PortMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Nets));
     return PortMap;
   }
 
@@ -136,8 +135,9 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-	if (attrs == null) return false;
+  public boolean HDLTargetSupported(AttributeSet attrs) {
+	   if (attrs == null) return false;
+	   if (attrs.getValue(Mem.LINE_ATTR) == null) return false;
     return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);
   }
 }

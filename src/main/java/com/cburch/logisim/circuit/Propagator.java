@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,8 +44,8 @@ import java.util.Random;
 
 public class Propagator {
   private static class ComponentPoint {
-    Component cause;
-    Location loc;
+    final Component cause;
+    final Location loc;
 
     public ComponentPoint(Component cause, Location loc) {
       this.cause = cause;
@@ -66,10 +66,10 @@ public class Propagator {
   }
 
   private static class Listener implements AttributeListener {
-    WeakReference<Propagator> prop;
+    final WeakReference<Propagator> prop;
 
     public Listener(Propagator propagator) {
-      prop = new WeakReference<Propagator>(propagator);
+      prop = new WeakReference<>(propagator);
     }
 
     public void attributeListChanged(AttributeEvent e) {}
@@ -85,11 +85,11 @@ public class Propagator {
   }
 
   static class SetData implements Comparable<SetData> {
-    int time;
-    int serialNumber;
-    CircuitState state; // state of circuit containing component
-    Component cause; // component emitting the value
-    Location loc; // the location at which value is emitted
+    final int time;
+    final int serialNumber;
+    final CircuitState state; // state of circuit containing component
+    final Component cause; // component emitting the value
+    final Location loc; // the location at which value is emitted
     Value val; // value being emitted
     SetData next = null;
 
@@ -139,10 +139,10 @@ public class Propagator {
     return ret;
   }
 
-  private CircuitState root; // root of state tree
+  private final CircuitState root; // root of state tree
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
-  private int simLimit = 1000;
+  private static final int simLimit = 1000;
 
   /**
    * On average, one out of every 2**simRandomShift propagations through a component is delayed one
@@ -151,19 +151,19 @@ public class Propagator {
    */
   private volatile int simRandomShift;
 
-  private PriorityQueue<SetData> toProcess = new PriorityQueue<SetData>();
+  private final PriorityQueue<SetData> toProcess = new PriorityQueue<>();
   private int clock = 0;
   private boolean isOscillating = false;
   private boolean oscAdding = false;
   private PropagationPoints oscPoints = new PropagationPoints();
-  private int ticks = 0;
-  private Random noiseSource = new Random();
+  private int halfClockCycles = 0;
+  private final Random noiseSource = new Random();
   private int noiseCount = 0;
 
   private int setDataSerialNumber = 0;
   static int lastId = 0;
 
-  int id = lastId++;
+  final int id = lastId++;
 
   public Propagator(CircuitState root) {
     this.root = root;
@@ -222,14 +222,6 @@ public class Propagator {
     }
   }
 
-  private void clearDirtyComponents() {
-    root.processDirtyComponents();
-  }
-
-  private void clearDirtyPoints() {
-    root.processDirtyPoints();
-  }
-
   public void drawOscillatingPoints(ComponentDrawContext context) {
     if (isOscillating) oscPoints.draw(context);
   }
@@ -242,7 +234,7 @@ public class Propagator {
   }
 
   public int getTickCount() {
-    return ticks;
+    return halfClockCycles;
   }
 
   public boolean isOscillating() {
@@ -285,15 +277,21 @@ public class Propagator {
     if (oscAdding) oscPoints.add(state, loc);
   }
 
-  public void propagate() {
+  public boolean propagate() {
+    return propagate(null, null);
+  }
+
+  public boolean propagate(Simulator.Listener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
 
     int oscThreshold = simLimit;
     int logThreshold = 3 * oscThreshold / 4;
     int iters = 0;
     while (!toProcess.isEmpty()) {
+      if (iters > 0 && propListener != null)
+        propListener.propagationInProgress(propEvent);
       iters++;
 
       if (iters < logThreshold) {
@@ -304,17 +302,18 @@ public class Propagator {
       } else {
         isOscillating = true;
         oscAdding = false;
-        return;
+        return true;
       }
     }
     isOscillating = false;
     oscAdding = false;
     oscPoints.clear();
+    return iters > 0;
   }
 
   private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
     HashMap<Location, SetData> causes = state.causes;
-    if (head == null) {;
+    if (head == null) {
     } else if (head.cause == cause) {
       head = head.next;
       if (head == null) causes.remove(loc);
@@ -335,6 +334,7 @@ public class Propagator {
   }
 
   void reset() {
+    halfClockCycles = 0;
     toProcess.clear();
     root.reset();
     isOscillating = false;
@@ -371,10 +371,13 @@ public class Propagator {
     setDataSerialNumber++;
   }
 
-  void step(PropagationPoints changedPoints) {
+  boolean step(PropagationPoints changedPoints) {
     oscPoints.clear();
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
+
+    if (toProcess.isEmpty())
+      return false;
 
     PropagationPoints oldOsc = oscPoints;
     oscAdding = changedPoints != null;
@@ -382,6 +385,7 @@ public class Propagator {
     stepInternal(changedPoints);
     oscAdding = false;
     oscPoints = oldOsc;
+    return true;
   }
 
   private void stepInternal(PropagationPoints changedPoints) {
@@ -392,7 +396,7 @@ public class Propagator {
 
     // propagate all values for this clock tick
     HashMap<CircuitState, HashSet<ComponentPoint>> visited =
-        new HashMap<CircuitState, HashSet<ComponentPoint>>();
+        new HashMap<>();
     while (true) {
       SetData data = toProcess.peek();
       if (data == null || data.time != clock) break;
@@ -404,7 +408,7 @@ public class Propagator {
       if (handled != null) {
         if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
       } else {
-        handled = new HashSet<ComponentPoint>();
+        handled = new HashSet<>();
         visited.put(state, handled);
         handled.add(new ComponentPoint(data.cause, data.loc));
       }
@@ -429,13 +433,13 @@ public class Propagator {
       }
     }
 
-    clearDirtyPoints();
-    clearDirtyComponents();
+    root.processDirtyPoints();
+    root.processDirtyComponents();
   }
 
-  public boolean tick() {
-    ticks++;
-    return root.tick(ticks);
+  public boolean toggleClocks() {
+    halfClockCycles++;
+    return root.toggleClocks(halfClockCycles);
   }
 
   @Override
@@ -446,7 +450,7 @@ public class Propagator {
   private void updateRandomness() {
     Options opts = root.getProject().getOptions();
     Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    int val = ((Integer) rand).intValue();
+    int val = (Integer) rand;
     int logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;

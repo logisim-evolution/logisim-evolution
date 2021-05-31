@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,8 +36,8 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class BFHPraktika extends Library {
-  private static FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Binairy_to_BCD_converter", S.getter("Bin2BCD"), "", "bin2bcd"),
+  private static final FactoryDescription[] DESCRIPTIONS = {
+    new FactoryDescription("Binary_to_BCD_converter", S.getter("Bin2BCD"), "", "bin2bcd"),
     new FactoryDescription(
         "BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"), "", "bcd2sevenseg"),
   };
@@ -48,7 +48,7 @@ public class BFHPraktika extends Library {
 
   @Override
   public String getDisplayName() {
-    return S.get("BFH mega functions");
+    return S.get("BFHMegaFunctions");
   }
 
   @Override

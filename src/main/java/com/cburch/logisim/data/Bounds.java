@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -56,7 +56,7 @@ public class Bounds {
     return create(pt.getX(), pt.getY(), 1, 1);
   }
 
-  public static Bounds EMPTY_BOUNDS = new Bounds(0, 0, 0, 0);
+  public static final Bounds EMPTY_BOUNDS = new Bounds(0, 0, 0, 0);
 
   private static final Cache cache = new Cache();
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,17 +30,16 @@ package com.cburch.logisim.soc.file;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ProcessorReadElf {
 
@@ -59,9 +58,9 @@ public class ProcessorReadElf {
   private static final int NOT_SUPPORTED_YET_ERROR = 12;
   private static final int MEM_LOAD_ERROR = 13;
 
-  private SocProcessorInterface cpu;
-  private int architecture;
-  private File elfFile;
+  private final SocProcessorInterface cpu;
+  private final int architecture;
+  private final File elfFile;
   private FileInputStream elfFileStream;
   private int status;
   private ElfHeader elfHeader;
@@ -81,12 +80,12 @@ public class ProcessorReadElf {
       status = ELF_HEADER_ERROR;
       return;
     }
-    Integer arch = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE));
+    int arch = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE));
     if (arch != architecture) {
       status = ARCHITECTURE_ERROR;
       return;
     }
-    Integer type = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_TYPE));
+    int type = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_TYPE));
     if (type != ElfHeader.ET_EXEC) {
       status = NO_EXECUTABLE_ERROR;
       return;
@@ -219,6 +218,6 @@ public class ProcessorReadElf {
   private void close() {
     try {
       elfFileStream.close();
-    } catch (IOException e) {}
+    } catch (IOException ignored) {}
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -50,46 +49,44 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
-      MyInputs.put("gate_" + Integer.toString(i) + "_A", 1);
-      if (!IsInverter()) MyInputs.put("gate_" + Integer.toString(i) + "_B", 1);
+      MyInputs.put("gate_" + i + "_A", 1);
+      if (!IsInverter()) MyInputs.put("gate_" + i + "_B", 1);
     }
     return MyInputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
-      MyOutputs.put("gate_" + Integer.toString(i) + "_O", 1);
+      MyOutputs.put("gate_" + i + "_O", 1);
     }
     return MyOutputs;
   }
 
-  public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-    return new ArrayList<String>();
+  public ArrayList<String> GetLogicFunction(int index) {
+    return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(
-      Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    ArrayList<String> Contents = new ArrayList<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
       Contents.addAll(
-          MakeRemarkBlock("Here gate " + Integer.toString(i) + " is described", 3, HDLType));
-      Contents.addAll(GetLogicFunction(i, HDLType));
+          MakeRemarkBlock("Here gate " + i + " is described", 3));
+      Contents.addAll(GetLogicFunction(i));
     }
     return Contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(
-      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int NrOfGates = (IsInverter()) ? 6 : 4;
@@ -97,55 +94,15 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       if (IsInverter()) {
         int inindex = (i < 3) ? i * 2 : i * 2 + 1;
         int outindex = (i < 3) ? i * 2 + 1 : i * 2;
-        PortMap.putAll(
-            GetNetMap(
-                "gate_" + Integer.toString(i) + "_A",
-                true,
-                ComponentInfo,
-                inindex,
-                Reporter,
-                HDLType,
-                Nets));
-        PortMap.putAll(
-            GetNetMap(
-                "gate_" + Integer.toString(i) + "_O",
-                true,
-                ComponentInfo,
-                outindex,
-                Reporter,
-                HDLType,
-                Nets));
+        PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex, Nets));
+        PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));
       } else {
         int inindex1 = (i < 2) ? i * 3 : i * 3 + 1;
         int inindex2 = inindex1 + 1;
         int outindex = (i < 2) ? i * 3 + 2 : i * 3;
-        PortMap.putAll(
-            GetNetMap(
-                "gate_" + Integer.toString(i) + "_A",
-                true,
-                ComponentInfo,
-                inindex1,
-                Reporter,
-                HDLType,
-                Nets));
-        PortMap.putAll(
-            GetNetMap(
-                "gate_" + Integer.toString(i) + "_B",
-                true,
-                ComponentInfo,
-                inindex2,
-                Reporter,
-                HDLType,
-                Nets));
-        PortMap.putAll(
-            GetNetMap(
-                "gate_" + Integer.toString(i) + "_O",
-                true,
-                ComponentInfo,
-                outindex,
-                Reporter,
-                HDLType,
-                Nets));
+        PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex1, Nets));
+        PortMap.putAll(GetNetMap("gate_" + i + "_B", true, ComponentInfo, inindex2, Nets));
+        PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));
       }
     }
     return PortMap;
@@ -161,7 +118,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+  public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return !attrs.getValue(TTL.VCC_GND);

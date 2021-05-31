@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,9 +55,9 @@ public class DefaultEvolutionAppearance {
   public static List<CanvasObject> build(
       Collection<Instance> pins, String CircuitName, boolean FixedSize) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     int MaxLeftLabelLength = 0;
     int MaxRightLabelLength = 0;
     int TitleWidth =
@@ -94,9 +94,7 @@ public class DefaultEvolutionAppearance {
     int textWidth =
         (FixedSize)
             ? 25 * DrawAttr.FixedFontCharWidth
-            : (MaxLeftLabelLength + MaxRightLabelLength + 35) < (TitleWidth + 15)
-                ? TitleWidth + 15
-                : (MaxLeftLabelLength + MaxRightLabelLength + 35);
+            : Math.max((MaxLeftLabelLength + MaxRightLabelLength + 35), (TitleWidth + 15));
     int Thight = ((DrawAttr.FixedFontHeight + 10) / 10) * 10;
     int width = (textWidth / 10) * 10 + 20;
     int height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;
@@ -120,16 +118,16 @@ public class DefaultEvolutionAppearance {
     int rx = OFFS + (9 - (ax + 9) % 10);
     int ry = OFFS + (9 - (ay + 9) % 10);
 
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    List<CanvasObject> ret = new ArrayList<>();
     placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, FixedSize);
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, FixedSize);
     Rectangle rect = new Rectangle(rx + 10, ry + height - Thight, width - 20, Thight);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+    rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
     rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
     ret.add(rect);
     rect = new Rectangle(rx + 10, ry, width - 20, height);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+    rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     ret.add(rect);
     String Label = CircuitName == null ? "VHDL Component" : CircuitName;
     if (FixedSize) {
@@ -177,7 +175,7 @@ public class DefaultEvolutionAppearance {
         halign = EditableLabel.RIGHT;
         rect = new Rectangle(x - 10, y - offset, 10, height);
       }
-      rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+      rect.setValue(DrawAttr.STROKE_WIDTH, 1);
       rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
       rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
       dest.add(rect);

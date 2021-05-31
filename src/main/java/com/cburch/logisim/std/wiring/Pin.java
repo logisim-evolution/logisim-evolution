@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,7 +62,6 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -70,8 +69,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -79,7 +76,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.font.TextLayout;
 import java.math.BigInteger;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -93,12 +89,12 @@ public class Pin extends InstanceFactory {
   @SuppressWarnings("serial")
   private static class EditDecimal extends JDialog implements KeyListener, LocaleListener {
 
-    private JFormattedTextField text;
-    private int bitWidth;
-    PinState pinState;
-    InstanceState state;
-    RadixOption radix;
-    boolean tristate;
+    private final JFormattedTextField text;
+    private final int bitWidth;
+    final PinState pinState;
+    final InstanceState state;
+    final RadixOption radix;
+    final boolean tristate;
     private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
     private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
     final JButton ok;
@@ -125,17 +121,9 @@ public class Pin extends InstanceFactory {
       ok = new JButton(S.get("PinOkay"));
       cancel = new JButton(S.get("PinCancel"));
       ok.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              accept();
-            }
-          });
+          e -> accept());
       cancel.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              EditDecimal.this.setVisible(false);
-            }
-          });
+          e -> EditDecimal.this.setVisible(false));
       addWindowFocusListener(
           new WindowFocusListener() {
             public void windowLostFocus(WindowEvent e) {
@@ -274,9 +262,20 @@ public class Pin extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return state.getAttributeValue(StdAttr.WIDTH);
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       PinState s = getState(state);
       return s.intendedValue;
+    }
+    
+    @Override
+    public boolean isInput(InstanceState state, Object option) {
+      PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+      return attrs.type == EndData.INPUT_ONLY;
     }
   }
 
@@ -374,7 +373,7 @@ public class Pin extends InstanceFactory {
       PinState pinState = getState(state);
       int r = (radix == RadixOption.RADIX_16 ? 4 : (radix == RadixOption.RADIX_8 ? 3 : 1));
       if (bit + r > width.getWidth()) r = width.getWidth() - bit;
-      Value val[] = pinState.intendedValue.getAll();
+      Value[] val = pinState.intendedValue.getAll();
       boolean tristate = (attrs.threeState && attrs.pull == PULL_NONE);
       if (ch == 0) {
         boolean ones = true, defined = true;
@@ -388,7 +387,7 @@ public class Pin extends InstanceFactory {
           for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
         } else {
           int carry = 1;
-          Value v[] = new Value[] {Value.FALSE, Value.TRUE};
+          Value[] v = new Value[] {Value.FALSE, Value.TRUE};
           for (int b = bit; b < bit + r; b++) {
             int s = (val[b] == Value.TRUE ? 1 : 0) + carry;
             val[b] = v[(s % 2)];
@@ -695,7 +694,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 

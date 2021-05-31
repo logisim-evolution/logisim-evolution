@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,11 +36,12 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 class TextAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN});
+          Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
   private String text;
   private Font font;
@@ -58,7 +59,7 @@ class TextAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet destObj) {
-    ; // nothing to do
+    // nothing to do
   }
 
   @Override
@@ -71,7 +72,7 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getHorizontalAlign() {
-    return ((Integer) halign.getValue()).intValue();
+    return (Integer) halign.getValue();
   }
 
   Bounds getOffsetBounds() {
@@ -93,12 +94,12 @@ class TextAttributes extends AbstractAttributeSet {
   }
 
   int getVerticalAlign() {
-    return ((Integer) valign.getValue()).intValue();
+    return (Integer) valign.getValue();
   }
 
   boolean setOffsetBounds(Bounds value) {
     Bounds old = offsetBounds;
-    boolean same = old == null ? value == null : old.equals(value);
+    boolean same = Objects.equals(old, value);
     if (!same) {
       offsetBounds = value;
     }

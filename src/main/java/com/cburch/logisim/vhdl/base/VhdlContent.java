@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -108,19 +107,19 @@ public class VhdlContent extends HdlContent {
   protected AttributeSet staticAttrs;
   protected StringBuffer content;
   protected boolean valid;
-  protected List<VhdlParser.PortDescription> ports;
+  protected final List<VhdlParser.PortDescription> ports;
   protected Generic[] generics;
   protected List<Attribute<Integer>> genericAttrs;
   protected String name;
   protected AttributeOption appearance = StdAttr.APPEAR_EVOLUTION;
   protected String libraries;
   protected String architecture;
-  private LogisimFile logiFile;
+  private final LogisimFile logiFile;
 
   protected VhdlContent(String name, LogisimFile file) {
     logiFile = file;
     this.name = name;
-    ports = new ArrayList<VhdlParser.PortDescription>();
+    ports = new ArrayList<>();
   }
 
   public VhdlContent clone() {
@@ -172,7 +171,7 @@ public class VhdlContent extends HdlContent {
 
   public List<Attribute<Integer>> getGenericAttributes() {
     if (genericAttrs == null) {
-      genericAttrs = new ArrayList<Attribute<Integer>>();
+      genericAttrs = new ArrayList<>();
       for (Generic g : getGenerics()) {
         genericAttrs.add(VhdlEntityAttributes.forGeneric(g));
       }
@@ -226,8 +225,7 @@ public class VhdlContent extends HdlContent {
   public static boolean labelVHDLInvalid(String label) {
     if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
-    if (CorrectLabel.VHDLKeywords.contains(label.toLowerCase())) return true;
-    return (false);
+    return CorrectLabel.VHDLKeywords.contains(label.toLowerCase());
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
@@ -261,8 +259,8 @@ public class VhdlContent extends HdlContent {
     return setContent(s);
   }
 
-  private StringBuffer errTitle = new StringBuffer();
-  private StringBuffer errMessage = new StringBuffer();
+  private final StringBuffer errTitle = new StringBuffer();
+  private final StringBuffer errMessage = new StringBuffer();
   private int errCode = 0;
   private Exception errException;
 
@@ -341,7 +339,7 @@ public class VhdlContent extends HdlContent {
       List<Attribute<Integer>> oldAttrs = genericAttrs;
 
       generics = new Generic[parser.getGenerics().size()];
-      genericAttrs = new ArrayList<Attribute<Integer>>();
+      genericAttrs = new ArrayList<>();
       int i = 0;
       for (VhdlParser.GenericDescription g : parser.getGenerics()) {
         boolean found = false;

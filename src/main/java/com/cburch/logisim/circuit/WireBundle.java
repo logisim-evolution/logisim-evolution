@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,7 +40,7 @@ class WireBundle {
   private Location widthDeterminant = null;
   private boolean isBuss = false;
   WireThread[] threads = null;
-  CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<Location>(); // points
+  final CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<>(); // points
   // bundle
   // hits
   private WidthIncompatibilityData incompatibilityData = null;
@@ -108,15 +108,14 @@ class WireBundle {
     if (this.width != BitWidth.UNKNOWN) {
       if (width.equals(this.width)) {
         isBuss = width.getWidth() > 1;
-        return; // the widths match, and the bundle is already set;
         // nothing to do
       } else { // the widths are broken: Create incompatibilityData
         // holding this info
         incompatibilityData = new WidthIncompatibilityData();
         incompatibilityData.add(widthDeterminant, this.width);
         incompatibilityData.add(det, width);
-        return;
       }
+      return; // the widths match, and the bundle is already set;
     }
     this.width = width;
     this.widthDeterminant = det;

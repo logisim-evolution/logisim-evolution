@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,13 +45,13 @@ public class SimpleDRCContainer {
   public static final int MARK_LABEL = 2;
   public static final int MARK_WIRE = 4;
 
-  private String Message;
-  private int SeverityLevel;
+  private final String Message;
+  private final int SeverityLevel;
   private Set<Object> DRCComponents;
   private Circuit MyCircuit;
-  private int MarkType;
+  private final int MarkType;
   private int ListNumber;
-  private boolean SuppressCount;
+  private final boolean SuppressCount;
 
   public SimpleDRCContainer(String Message, int level) {
     this.Message = Message;
@@ -127,12 +127,12 @@ public class SimpleDRCContainer {
   }
 
   public void AddMarkComponent(Object comp) {
-    if (DRCComponents == null) DRCComponents = new HashSet<Object>();
+    if (DRCComponents == null) DRCComponents = new HashSet<>();
     DRCComponents.add(comp);
   }
 
   public void AddMarkComponents(Set<?> set) {
-    if (DRCComponents == null) DRCComponents = new HashSet<Object>();
+    if (DRCComponents == null) DRCComponents = new HashSet<>();
     DRCComponents.addAll(set);
   }
 

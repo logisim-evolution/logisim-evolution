@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,12 +33,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class KeyConfigurationResult {
-  private KeyConfigurationEvent event;
-  private Map<Attribute<?>, Object> attrValueMap;
+  private final KeyConfigurationEvent event;
+  private final Map<Attribute<?>, Object> attrValueMap;
 
   public KeyConfigurationResult(KeyConfigurationEvent event, Attribute<?> attr, Object value) {
     this.event = event;
-    Map<Attribute<?>, Object> singleMap = new HashMap<Attribute<?>, Object>(1);
+    Map<Attribute<?>, Object> singleMap = new HashMap<>(1);
     singleMap.put(attr, value);
     this.attrValueMap = singleMap;
   }

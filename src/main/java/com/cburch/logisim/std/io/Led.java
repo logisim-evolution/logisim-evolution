@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,6 +34,7 @@ import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
@@ -59,6 +60,11 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
+    }
+
+    @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return BitWidth.ONE;
     }
 
     @Override
@@ -121,9 +127,9 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -155,7 +161,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
       Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
       Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
       Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-      Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
+      Object desired = activ ? Value.TRUE : Value.FALSE;
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }

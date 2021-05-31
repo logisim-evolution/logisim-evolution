@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,10 +28,6 @@
 
 package com.cburch.logisim.soc.memory;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
-
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
@@ -41,14 +37,17 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Random;
 
 public class SocMemoryState implements SocBusSlaveInterface {
 
   public class SocMemoryInfo implements InstanceData,Cloneable {
     private class SocMemoryInfoBlock {
-      private LinkedList<Integer> contents = new LinkedList<Integer>();
+      private final LinkedList<Integer> contents = new LinkedList<>();
       private int startAddress;
-      private Random rand = new Random();
+      private final Random rand = new Random();
     
       public SocMemoryInfoBlock(int address, int data) {
         startAddress = (address>>2)<<2;
@@ -107,10 +106,10 @@ public class SocMemoryState implements SocBusSlaveInterface {
       }
     }
 
-    private ArrayList<SocMemoryInfoBlock> memInfo;
+    private final ArrayList<SocMemoryInfoBlock> memInfo;
     
     public SocMemoryInfo() {
-      memInfo = new ArrayList<SocMemoryInfoBlock>();
+      memInfo = new ArrayList<>();
     }
 
     public SocMemoryInfo clone() {
@@ -129,7 +128,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     }
 
     public void writeWord(int address, int wdata) {
-      ArrayList<SocMemoryInfoBlock> adders = new ArrayList<SocMemoryInfoBlock>();
+      ArrayList<SocMemoryInfoBlock> adders = new ArrayList<>();
       for (SocMemoryInfoBlock info : memInfo) {
         if (info.contains(address)) {
           info.addInfo(address, wdata);
@@ -170,17 +169,17 @@ public class SocMemoryState implements SocBusSlaveInterface {
   
   private int startAddress;
   private int sizeInBytes;
-  private Random rand = new Random();
-  private SocBusInfo attachedBus;
+  private final Random rand = new Random();
+  private final SocBusInfo attachedBus;
   private String label;
-  private ArrayList<SocBusSlaveListener> listeners;
+  private final ArrayList<SocBusSlaveListener> listeners;
   
   public SocMemoryState() {
     startAddress = 0;
     sizeInBytes = 1024;
     attachedBus = new SocBusInfo("");
     label = "";
-    listeners = new ArrayList<SocBusSlaveListener>();
+    listeners = new ArrayList<>();
   }
   
   public Integer getStartAddress() {
@@ -255,8 +254,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   }
   
   public void removeListener(SocBusSlaveListener l) {
-    if (listeners.contains(l))
-      listeners.remove(l);
+    listeners.remove(l);
   }
   
   public SocMemoryInfo getNewState() {
@@ -318,12 +316,11 @@ public class SocMemoryState implements SocBusSlaveInterface {
 	    if (bit1 == 1) {
 	      oldData &= 0xFFFF;
 	      mdata <<= 16;
-	      wdata = oldData|mdata;
-	    } else {
+      } else {
 	      oldData = ((oldData >>16)&0xFFFF)<<16;
-	      wdata = oldData|mdata;
-	    }
-	  } else {
+      }
+      wdata = oldData|mdata;
+    } else {
 	    int byte0 = oldData&0xFF;
 	    int byte1 = ((oldData>>8)&0xFF)<<8;
 	    int byte2 = ((oldData>>16)&0xFF)<<16;

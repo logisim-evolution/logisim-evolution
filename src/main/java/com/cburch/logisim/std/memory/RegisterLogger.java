@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,6 +39,11 @@ public class RegisterLogger extends InstanceLogger {
   public String getLogName(InstanceState state, Object option) {
     String ret = state.getAttributeValue(StdAttr.LABEL);
     return ret != null && !ret.equals("") ? ret : null;
+  }
+
+  @Override
+  public BitWidth getBitWidth(InstanceState state, Object option) {
+    return state.getAttributeValue(StdAttr.WIDTH);
   }
 
   @Override

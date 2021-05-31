@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -125,7 +125,7 @@ public class PlaRom extends InstanceFactory {
     /** */
     private static final long serialVersionUID = -53754819096800664L;
 
-    private PlaRomData data;
+    private final PlaRomData data;
 
     ContentsCell(PlaRomData data) {
       super(S.get("romContentsValue"));
@@ -160,6 +160,12 @@ public class PlaRom extends InstanceFactory {
     }
 
     @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      PlaRomData data = getPlaRomData(state);
+      return BitWidth.create(data.getOutputs());
+    }
+
+    @Override
     public Value getLogValue(InstanceState state, Object option) {
       return state.getPortValue(1);
     }
@@ -167,7 +173,7 @@ public class PlaRom extends InstanceFactory {
 
   private static class PlaMenu implements ActionListener, MenuExtender {
     private JMenuItem edit, clear;
-    private Instance instance;
+    private final Instance instance;
     private CircuitState circState;
 
     public PlaMenu(Instance instance) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class BoardList {
@@ -48,7 +47,7 @@ public class BoardList {
   }
 
   private static Collection<String> getBoards(Pattern p, String Match, String Element) {
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     File file = new File(Element);
     if (file.isDirectory()) {
       ret.addAll(getBoardsfromDirectory(p, Match, file));
@@ -59,7 +58,7 @@ public class BoardList {
   }
 
   private static Collection<String> getBoardsfromDirectory(Pattern p, String Match, File Dir) {
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     File[] fileList = Dir.listFiles();
     for (File file : fileList) {
       if (file.isDirectory()) {
@@ -83,18 +82,16 @@ public class BoardList {
     // All path separators are defined with File.Separator, but when
     // browsing the .jar, java uses slash even in Windows
     Match = Match.replaceAll("\\\\", "/");
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     ZipFile zf;
     try {
       zf = new ZipFile(Dir);
-    } catch (ZipException e) {
-      throw new Error(e);
     } catch (IOException e) {
       throw new Error(e);
     }
     Enumeration<? extends ZipEntry> e = zf.entries();
     while (e.hasMoreElements()) {
-      ZipEntry ze = (ZipEntry) e.nextElement();
+      ZipEntry ze = e.nextElement();
       String fileName = ze.getName();
       boolean accept = p.matcher(fileName).matches() && fileName.contains(Match);
       if (accept) {
@@ -109,10 +106,10 @@ public class BoardList {
     return ret;
   }
 
-  private static String BoardResourcePath =
+  private static final String BoardResourcePath =
       "resources" + File.separator + "logisim" + File.separator + "boards";
 
-  private ArrayList<String> DefinedBoards = new ArrayList<String>();
+  private final ArrayList<String> DefinedBoards = new ArrayList<>();
 
   public BoardList() {
     String classPath = System.getProperty("java.class.path", File.pathSeparator);
@@ -133,8 +130,7 @@ public class BoardList {
 
   public boolean RemoveExternalBoard(String Filename) {
     if (DefinedBoards.contains(Filename)) {
-      int index = DefinedBoards.indexOf(Filename);
-      DefinedBoards.remove(index);
+      DefinedBoards.remove(Filename);
       return true;
     }
     return false;
@@ -151,7 +147,7 @@ public class BoardList {
   }
 
   @SuppressWarnings("serial")
-  private class SortedArrayList<T> extends ArrayList<T> {
+  private static class SortedArrayList<T> extends ArrayList<T> {
 
     @SuppressWarnings("unchecked")
     public void insertSorted(T value) {
@@ -163,7 +159,7 @@ public class BoardList {
   }
 
   public ArrayList<String> GetBoardNames() {
-    SortedArrayList<String> ret = new SortedArrayList<String>();
+    SortedArrayList<String> ret = new SortedArrayList<>();
     for (String board : DefinedBoards) {
       ret.insertSorted(getBoardName(board));
     }

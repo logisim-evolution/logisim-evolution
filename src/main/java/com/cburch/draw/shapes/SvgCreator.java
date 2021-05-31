@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,6 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SvgCreator {
+  private SvgCreator() {}
+
   public static boolean colorMatches(Color a, Color b) {
     return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();
   }
@@ -92,7 +94,7 @@ public class SvgCreator {
     boolean first = true;
     for (Handle h : poly.getHandles(null)) {
       if (!first) points.append(" ");
-      points.append(h.getX() + "," + h.getY());
+      points.append(h.getX()).append(",").append(h.getY());
       first = false;
     }
     elt.setAttribute("points", points.toString());
@@ -117,7 +119,7 @@ public class SvgCreator {
 
   public static Element createRoundRectangle(Document doc, RoundRectangle rrect) {
     Element elt = createRectangular(doc, rrect);
-    int r = rrect.getValue(DrawAttr.CORNER_RADIUS).intValue();
+    int r = rrect.getValue(DrawAttr.CORNER_RADIUS);
     elt.setAttribute("rx", "" + r);
     elt.setAttribute("ry", "" + r);
     return elt;
@@ -172,15 +174,11 @@ public class SvgCreator {
   }
 
   public static String getColorString(Color color) {
-    return String.format(
-        "#%02x%02x%02x",
-        Integer.valueOf(color.getRed()),
-        Integer.valueOf(color.getGreen()),
-        Integer.valueOf(color.getBlue()));
+    return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
   }
 
   private static String getOpacityString(Color color) {
-    return String.format("%5.3f", Double.valueOf(color.getAlpha() / 255.0));
+    return String.format("%5.3f", color.getAlpha() / 255.0);
   }
 
   private static void populateFill(Element elt, AbstractCanvasObject shape) {
@@ -207,7 +205,7 @@ public class SvgCreator {
 
   private static void populateStroke(Element elt, AbstractCanvasObject shape) {
     Integer width = shape.getValue(DrawAttr.STROKE_WIDTH);
-    if (width != null && width.intValue() != 1) {
+    if (width != null && width != 1) {
       elt.setAttribute("stroke-width", width.toString());
     }
     Color stroke = shape.getValue(DrawAttr.STROKE_COLOR);
@@ -221,6 +219,4 @@ public class SvgCreator {
   private static boolean showOpacity(Color color) {
     return color.getAlpha() != 255;
   }
-
-  private SvgCreator() {}
 }

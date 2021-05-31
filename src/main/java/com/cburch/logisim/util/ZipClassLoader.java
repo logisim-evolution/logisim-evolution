@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 public class ZipClassLoader extends ClassLoader {
 
   private static class Request {
-    int action;
-    String resource;
+    final int action;
+    final String resource;
     boolean responseSent;
     Object response;
 
@@ -74,7 +74,7 @@ public class ZipClassLoader extends ClassLoader {
         while (!responseSent) {
           try {
             this.wait(1000);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
         }
         return response;
@@ -98,7 +98,7 @@ public class ZipClassLoader extends ClassLoader {
   }
 
   private class WorkThread extends UniquelyNamedThread {
-    private LinkedList<Request> requests = new LinkedList<Request>();
+    private final LinkedList<Request> requests = new LinkedList<>();
     private ZipFile zipFile = null;
 
     WorkThread() {
@@ -229,7 +229,7 @@ public class ZipClassLoader extends ClassLoader {
           }
           try {
             bgLock.wait(OPEN_TIME);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
           }
         }
         return requests.removeFirst();
@@ -255,9 +255,9 @@ public class ZipClassLoader extends ClassLoader {
 
   private static final int REQUEST_LOAD = 1;
 
-  private File zipPath;
-  private HashMap<String, Object> classes = new HashMap<String, Object>();
-  private Object bgLock = new Object();
+  private final File zipPath;
+  private final HashMap<String, Object> classes = new HashMap<>();
+  private final Object bgLock = new Object();
   private WorkThread bgThread = null;
 
   public ZipClassLoader(File zipFile) {
