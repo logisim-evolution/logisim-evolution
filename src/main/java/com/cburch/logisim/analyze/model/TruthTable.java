@@ -668,7 +668,7 @@ public class TruthTable {
         Row r = rows.get(i);
         if (r.inputs[index] == Entry.DONT_CARE)
           continue;
-        setDontCare(r, b, true, changed);
+        setDontCare(r, b, true, changed); // mutates row
       }
       int mask = b - 1; // _0000111
       ArrayList<Row> ret = new ArrayList<>(rows.size());
