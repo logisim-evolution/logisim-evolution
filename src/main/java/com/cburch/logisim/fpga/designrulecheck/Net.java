@@ -72,7 +72,7 @@ public class Net {
     return Segments;
   }
 
-  public boolean AddParrentBit(byte BitID) {
+  public boolean AddParentBit(byte BitID) {
     if (BitID < 0) return false;
     InheritedBits.add(BitID);
     return true;
@@ -271,11 +271,11 @@ public class Net {
     return true;
   }
 
-  public boolean setParent(Net Parrent) {
+  public boolean setParent(Net Parent) {
     if (Requires_to_be_root) return false;
-    if (Parrent == null) return false;
+    if (Parent == null) return false;
     if (MyParent != null) return false;
-    MyParent = Parrent;
+    MyParent = Parent;
     return true;
   }
 

@@ -34,13 +34,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class TtyIcon extends AnnimatedIcon {
+public class TtyIcon extends AnimatedIcon {
 
   private static final String display = "__Hello World!__";
   private int index = 0;
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     index = (index + 1) % (display.length() - 2);
   }
 

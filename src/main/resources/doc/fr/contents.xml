@@ -31,8 +31,8 @@
 			<tocitem target="subcirc_debug" text="Déboguer un sous-circuit"/>
 			<tocitem target="subcirc_library" text="Librairies Logisim"/>
 		</tocitem>
-		<tocitem target="features" text="Nappe de câbles">
-			<tocitem target="features_creating" text="Créer une nappe"/>
+		<tocitem target="features" text="Caractéristiques supplémentaires">
+			<tocitem target="features_creating" text="Créer des faisceaux de câbles"/>
 			<tocitem target="features_splitting" text="Répartiteur"/>
 			<tocitem target="features_colors" text="Couleur des câbles"/>
 			<tocitem target="features_autolabel" text="Étiquettes auto-numérotées "/>
@@ -46,6 +46,8 @@
 			<tocitem target="mem_v2raw" text="Fichier v2raw" />
 			<tocitem target="mem_v3word" text="Fichier v3word"/>
 			<tocitem target="mem_v3byte" text="Fichier v3byte"/>
+			<tocitem target="mem_binary" text="Fichier binaire"/>
+			<tocitem target="mem_ascii" text="Fichier ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Analyse combinatoire">
 			<tocitem target="analyze_open" text="Ouvrir l'analyse combinatoire"/>
@@ -56,8 +58,6 @@
 		<tocitem target="log" text="Chronogramme">
 			<tocitem target="log_selection" text="Sélection des signaux"/>
 			<tocitem target="log_timetable" text="Fenêtre Chronogramme " />	
-<!--			<tocitem target="log_table" text="Onglet table"/>
-			    <tocitem target="log_file" text="Onglet fichier"/> -->
 		</tocitem>
 		<tocitem target="verify" text="Vérifications en ligne de commande/a&gt;">
 			<tocitem target="verify_sub" text="Echanges de librairies"/>

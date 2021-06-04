@@ -53,7 +53,7 @@ public class ExpressionRenderData {
   private final Expression expr;
   private final Notation notation;
   private final int prefWidth;
-  private final int parrentWidth;
+  private final int parentWidth;
   private int height;
   private String[] lineText;
   private final ArrayList<ArrayList<Range>> lineNots;
@@ -74,7 +74,7 @@ public class ExpressionRenderData {
 
   public ExpressionRenderData(Expression expr, int width, Notation notation) {
     this.expr = expr;
-    this.parrentWidth = width;
+    this.parentWidth = width;
     this.notation = notation;
     NOT_SEP = AppPreferences.getScaled(3);
     EXTRA_LEADING = AppPreferences.getScaled(4);
@@ -140,7 +140,7 @@ public class ExpressionRenderData {
   }
   
   public int getParentWidth() {
-	  return parrentWidth;
+	  return parentWidth;
   }
 
   private void computeLineText() {
@@ -179,7 +179,7 @@ public class ExpressionRenderData {
     int i = bestBreakPositions.size()-1;
     int breakPosition = 0;
     while (i >= 0 && text.length()> 0 && (bestBreakPositions.get(i)-breakPosition) > 0) {
-    	if (getWidth(ctx,text,bestBreakPositions.get(i)-breakPosition,expr.subscripts,expr.marks)<=parrentWidth) {
+    	if (getWidth(ctx,text,bestBreakPositions.get(i)-breakPosition,expr.subscripts,expr.marks)<= parentWidth) {
     		String addedLine = text.substring(0, bestBreakPositions.get(i)-breakPosition);
     		lines.add(addedLine);
     		text = text.substring(bestBreakPositions.get(i)-breakPosition);
@@ -190,7 +190,8 @@ public class ExpressionRenderData {
     /* second pass, we are going to break on the second best positions if required */
     i = secondBestBreakPositions.size()-1;
     while (i >= 0 && text.length()> 0 && (secondBestBreakPositions.get(i)-breakPosition) > 0) {
-    	if (getWidth(ctx,text,secondBestBreakPositions.get(i)-breakPosition,expr.subscripts,expr.marks)<=parrentWidth ||
+    	if (getWidth(ctx,text,secondBestBreakPositions.get(i)-breakPosition,expr.subscripts,expr.marks)<= parentWidth
+          ||
               i==0 || secondBestBreakPositions.get(i-1)-breakPosition <= 0) {
     		String addedLine = text.substring(0, secondBestBreakPositions.get(i)-breakPosition);
     		lines.add(addedLine);

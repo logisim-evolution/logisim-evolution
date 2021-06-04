@@ -111,7 +111,7 @@ public abstract class Tool implements AttributeDefaultProvider {
 
   public void paintIcon(ComponentDrawContext c, int x, int y) {}
   
-  public void registerParrent(java.awt.Component parrent) {}
+  public void registerParent(java.awt.Component parent) {}
 
   public void select(Canvas canvas) {}
 

@@ -1101,7 +1101,7 @@ public class Netlist implements CircuitListener {
           byte[] BusBitConnection = ((Splitter) com).GetEndpoints();
           for (byte b = 0; b < BusBitConnection.length; b++) {
             if (BusBitConnection[b] == i) {
-              MyNets.get(ConnectedNet).AddParrentBit(b);
+              MyNets.get(ConnectedNet).AddParentBit(b);
             }
           }
         } else {
@@ -1244,7 +1244,7 @@ public class Netlist implements CircuitListener {
                   Rootbus = Rootbus.getParent();
                 }
                 ConnectionPoint SolderPoint = new ConnectionPoint(comp);
-                SolderPoint.SetParrentNet(Rootbus, ConnectedBusIndex);
+                SolderPoint.SetParentNet(Rootbus, ConnectedBusIndex);
                 boolean IsSink = true;
                 if (!thisnet.hasBitSource(bit)) {
                   if (HasHiddenSource(
@@ -1841,15 +1841,15 @@ public class Netlist implements CircuitListener {
     if (NrOfBits == 1) {
       return true;
     }
-    Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParrentNet();
-    byte ConnectedNetIndex = ConnectionInformation.GetConnection((byte) 0).GetParrentNetBitIndex();
+    Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
+    byte ConnectedNetIndex = ConnectionInformation.GetConnection((byte) 0).GetParentNetBitIndex();
     for (int i = 1; (i < NrOfBits) && ContinuesBus; i++) {
-      if (ConnectedNet != ConnectionInformation.GetConnection((byte) i).GetParrentNet()) {
+      if (ConnectedNet != ConnectionInformation.GetConnection((byte) i).GetParentNet()) {
         /* This bit is connected to another bus */
         ContinuesBus = false;
       }
       if ((ConnectedNetIndex + 1)
-          != ConnectionInformation.GetConnection((byte) i).GetParrentNetBitIndex()) {
+          != ConnectionInformation.GetConnection((byte) i).GetParentNetBitIndex()) {
         /* Connected to a none incremental position of the bus */
         ContinuesBus = false;
       } else {
@@ -1919,15 +1919,15 @@ public class Netlist implements CircuitListener {
       }
       ConnectionPoint SolderPoint = ClockConnection.GetConnection((byte) 0);
       /* Check if the clock source is connected */
-      if (SolderPoint.GetParrentNet() != null) {
+      if (SolderPoint.GetParentNet() != null) {
         /* Third pass: add this clock to the list of ClockSources */
         int clockid = ClockSources.getClockId(ClockSource.GetComponent());
         /* Forth pass: Add this source as clock source to the tree */
         MyClockInformation.AddClockSource(HierarchyNames, clockid, SolderPoint);
         /* Fifth pass: trace the clock net all the way */
         if (!TraceClockNet(
-            SolderPoint.GetParrentNet(),
-            SolderPoint.GetParrentNetBitIndex(),
+            SolderPoint.GetParentNet(),
+            SolderPoint.GetParentNetBitIndex(),
             clockid,
             false,
             HierarchyNames,
@@ -1966,8 +1966,8 @@ public class Netlist implements CircuitListener {
                   SimpleDRCContainer.LEVEL_FATAL,
                   SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE);
           for (ConnectionPoint sourceNet : sourceNets) {
-            Net connectedNet = sourceNet.GetParrentNet();
-            byte bitIndex = sourceNet.GetParrentNetBitIndex();
+            Net connectedNet = sourceNet.GetParentNet();
+            byte bitIndex = sourceNet.GetParentNetBitIndex();
             if (HasHiddenSource(net, (byte) 0, connectedNet, bitIndex, MyComplexSplitters,
                 new HashSet<>())) {
               SourceInfo source = GetHiddenSource(net, (byte) 0, connectedNet, bitIndex,
@@ -2041,7 +2041,7 @@ public class Netlist implements CircuitListener {
                 S.get("NetList_UnsourcedSink"),
                 SimpleDRCContainer.LEVEL_SEVERE,
                 SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
-        warn.AddMarkComponents(Sink.GetParrentNet().getWires());
+        warn.AddMarkComponents(Sink.GetParentNet().getWires());
         if (Sink.GetComp() != null) {
           warn.AddMarkComponent(Sink.GetComp());
         }
@@ -2153,7 +2153,7 @@ public class Netlist implements CircuitListener {
             return false;
           }
           ConnectionPoint ThisSolderPoint = ThisEnd.GetConnection(bitid);
-          ThisSolderPoint.SetParrentNet(RootNet, RootNetBitIndex);
+          ThisSolderPoint.SetParentNet(RootNet, RootNetBitIndex);
           if (PinIsSink) {
             RootNet.addSink(RootNetBitIndex, ThisSolderPoint);
           } else {
@@ -2217,7 +2217,7 @@ public class Netlist implements CircuitListener {
                     + "\n");
             return false;
           }
-          Subcircuit.getEnd(PinId).GetConnection(bitid).SetParrentNet(RootNet, RootNetBitIndex);
+          Subcircuit.getEnd(PinId).GetConnection(bitid).SetParentNet(RootNet, RootNetBitIndex);
           if (PinIsSink) {
             RootNet.addSink(RootNetBitIndex, Subcircuit.getEnd(PinId).GetConnection(bitid));
           } else {
@@ -2289,7 +2289,7 @@ public class Netlist implements CircuitListener {
               + "\n");
       return false;
     }
-    byte BitIndex = subCirc.GetConnectionBitIndex(p.GetParrentNet(), p.GetParrentNetBitIndex());
+    byte BitIndex = subCirc.GetConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
     if (BitIndex < 0) {
       Reporter.Report.AddFatalError(
           "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> "
@@ -2300,7 +2300,7 @@ public class Netlist implements CircuitListener {
       return false;
     }
     ConnectionPoint SubClockNet = InputPort.getEnd(0).GetConnection(BitIndex);
-    if (SubClockNet.GetParrentNet() != null) {
+    if (SubClockNet.GetParentNet() != null) {
       /* we have a connected pin */
       ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
       String Label = CorrectLabel.getCorrectLabel(
@@ -2313,8 +2313,8 @@ public class Netlist implements CircuitListener {
       return sub.getSubcircuit()
           .getNetList()
           .TraceClockNet(
-              SubClockNet.GetParrentNet(),
-              SubClockNet.GetParrentNetBitIndex(),
+              SubClockNet.GetParentNet(),
+              SubClockNet.GetParentNetBitIndex(),
               ClockSourceId,
               true,
               NewHierarchyNames,
@@ -2350,7 +2350,7 @@ public class Netlist implements CircuitListener {
                   + "\n");
           return false;
         }
-        byte bitindex = OutputPort.GetConnectionBitIndex(p.GetParrentNet(), p.GetParrentNetBitIndex());
+        byte bitindex = OutputPort.GetConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
         ConnectionPoint SubClockNet =
             HierarchyNetlists.get(HierarchyNetlists.size() - 2)
                 .GetNetlistConnectionForSubCircuit(
@@ -2366,7 +2366,7 @@ public class Netlist implements CircuitListener {
                   + "\n");
           return false;
         }
-        if (SubClockNet.GetParrentNet() == null) {
+        if (SubClockNet.GetParentNet() == null) {
         } else {
           ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
           NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
@@ -2376,8 +2376,8 @@ public class Netlist implements CircuitListener {
               .MarkClockNet(NewHierarchyNames, ClockSourceId, SubClockNet,true);
           if (!HierarchyNetlists.get(HierarchyNetlists.size() - 2)
               .TraceClockNet(
-                  SubClockNet.GetParrentNet(),
-                  SubClockNet.GetParrentNetBitIndex(),
+                  SubClockNet.GetParentNet(),
+                  SubClockNet.GetParentNetBitIndex(),
                   ClockSourceId,
                   true,
                   NewHierarchyNames,
@@ -2597,8 +2597,8 @@ public class Netlist implements CircuitListener {
     if (ClockNetName.isEmpty()) {
       /* we search for the source in case it is connected otherwise we ignore */
       ConnectionPoint connection = comp.getEnd(ClockPinIndex).GetConnection((byte) 0);
-      Net connectedNet = connection.GetParrentNet();
-      byte connectedNetindex = connection.GetParrentNetBitIndex();
+      Net connectedNet = connection.GetParentNet();
+      byte connectedNetindex = connection.GetParentNetBitIndex();
       if (connectedNet != null) {
         GatedClock = true;
         Set<Wire> Segments = new HashSet<>();
@@ -2701,14 +2701,14 @@ public class Netlist implements CircuitListener {
                 + "\n");
         return;
       }
-      if (SubNet.GetParrentNet() != null) {
+      if (SubNet.GetParentNet() != null) {
         ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
         NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
         ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
         NewHierarchyNetlists.remove(NewHierarchyNetlists.size() - 1);
         Netlist SubNetList = HierarchyNetlists.get(HierarchyNetlists.size() - 2);
-        Net NewNet = SubNet.GetParrentNet();
-        Byte NewNetIndex = SubNet.GetParrentNetBitIndex();
+        Net NewNet = SubNet.GetParentNet();
+        Byte NewNetIndex = SubNet.GetParentNetBitIndex();
         Set<Wire> Segments = new HashSet<>();
         SourceInfo source =
             SubNetList.GetHiddenSource(
@@ -2779,7 +2779,7 @@ public class Netlist implements CircuitListener {
                 + "\n");
         return;
       }
-      Net ConnectedNet = Source.GetParrentNet();
+      Net ConnectedNet = Source.GetParentNet();
       /* Find the correct subcircuit */
       NetlistComponent SubCirc = null;
       for (NetlistComponent subc : MySubCircuits) {
@@ -2805,7 +2805,7 @@ public class Netlist implements CircuitListener {
         return;
       }
       ConnectionPoint SubNet = OutputPort.getEnd(0).GetConnection(BitIndex);
-      if (SubNet.GetParrentNet() != null) {
+      if (SubNet.GetParentNet() != null) {
         /* we have a connected pin */
         Netlist SubNetList = sub.getSubcircuit().getNetList();
         ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
@@ -2814,8 +2814,8 @@ public class Netlist implements CircuitListener {
                 SubCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
         ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
         NewHierarchyNetlists.add(SubNetList);
-        Net NewNet = SubNet.GetParrentNet();
-        Byte NewNetIndex = SubNet.GetParrentNetBitIndex();
+        Net NewNet = SubNet.GetParentNet();
+        Byte NewNetIndex = SubNet.GetParentNetBitIndex();
         Set<Wire> Segments = new HashSet<>();
         SourceInfo source =
             SubNetList.GetHiddenSource(

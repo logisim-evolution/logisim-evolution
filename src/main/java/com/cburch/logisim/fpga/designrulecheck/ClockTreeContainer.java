@@ -76,29 +76,29 @@ public class ClockTreeContainer {
   public ArrayList<Byte> GetClockEntries(Net NetInfo) {
     ArrayList<Byte> result = new ArrayList<>();
     for (ConnectionPoint SolderPoint : ClockSources) {
-      if (SolderPoint.GetParrentNet().equals(NetInfo))
-        result.add(SolderPoint.GetParrentNetBitIndex());
+      if (SolderPoint.GetParentNet().equals(NetInfo))
+        result.add(SolderPoint.GetParentNetBitIndex());
     }
     for (ConnectionPoint SolderPoint : ClockNets) {
-      if (SolderPoint.GetParrentNet().equals(NetInfo))
-        result.add(SolderPoint.GetParrentNetBitIndex());
+      if (SolderPoint.GetParentNet().equals(NetInfo))
+        result.add(SolderPoint.GetParentNetBitIndex());
     }
     return result;
   }
 
   public boolean NetContainsClockConnection(Net NetInfo) {
     for (ConnectionPoint SolderPoint : ClockSources) {
-      if (SolderPoint.GetParrentNet().equals(NetInfo)) return true;
+      if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
     for (ConnectionPoint SolderPoint : ClockNets) {
-      if (SolderPoint.GetParrentNet().equals(NetInfo)) return true;
+      if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
     return false;
   }
 
   public boolean NetContainsClockSource(Net NetInfo) {
     for (ConnectionPoint SolderPoint : ClockSources) {
-      if (SolderPoint.GetParrentNet().equals(NetInfo)) return true;
+      if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
     return false;
   }

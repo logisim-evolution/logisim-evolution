@@ -46,6 +46,8 @@
 			<tocitem target="mem_v2raw" text="File v2raw" />
 			<tocitem target="mem_v3word" text="File v3word"/>
 			<tocitem target="mem_v3byte" text="File v3byte"/>
+			<tocitem target="mem_binary" text="File binary"/>
+			<tocitem target="mem_ascii" text="File ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Combinational analysis">
 			<tocitem target="analyze_open" text="Opening Combinational Analysis" />
@@ -56,8 +58,6 @@
 		<tocitem target="log" text="Logging">
 			<tocitem target="log_selection" text="The Selection tab" />
 			<tocitem target="log_timetable" text="Timetable window" />
-<!--        	 <tocitem target="log_table" text="The Table tab" />
-			     <tocitem target="log_file" text="The File tab" /> -->
 		</tocitem>
 		<tocitem target="verify" text="Command-line verification">
 			<tocitem target="verify_sub" text="Substituting libraries" />

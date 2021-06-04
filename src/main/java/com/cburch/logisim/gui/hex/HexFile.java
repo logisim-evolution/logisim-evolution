@@ -1470,9 +1470,9 @@ public class HexFile {
       while ((word = nextWord()) != null) {
         int i = 0, n = word.length();
         if (n >= 2 && (word.startsWith("0x") || word.startsWith("0X"))) i += 2;
-        int v = 0;
+        long v = 0;
         for (; i < n; i++) {
-          int d;
+          long d;
           try {
             d = hex2int(word.charAt(i));
           } catch (NumberFormatException e) {

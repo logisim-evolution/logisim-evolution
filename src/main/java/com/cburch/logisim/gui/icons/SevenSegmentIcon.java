@@ -33,7 +33,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class SevenSegmentIcon extends AnnimatedIcon {
+public class SevenSegmentIcon extends AnimatedIcon {
 
   private final boolean isHexDisplay;
   private int state;
@@ -44,7 +44,7 @@ public class SevenSegmentIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state++;
     state %= isHexDisplay ? 16 : 10;
   }

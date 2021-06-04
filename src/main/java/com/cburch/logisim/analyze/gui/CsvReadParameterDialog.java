@@ -67,8 +67,8 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
   private final String SepSpace;
   private boolean setVisible;
 
-  public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parrentFrame) {
-    super(parrentFrame);
+  public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parentFrame) {
+    super(parentFrame);
     setVisible = true;
     this.file = file;
     SepSpace = S.get("seperatorSpace");
@@ -80,7 +80,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     quotes.addActionListener(this);
     seperators = new JComboBox<>(PossibleSeperators);
     seperators.addActionListener(this);
-    setLocationRelativeTo(parrentFrame);
+    setLocationRelativeTo(parentFrame);
     this.param = sel;
     GridBagLayout gb = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
