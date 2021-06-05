@@ -91,14 +91,14 @@ public class MenuTool extends Tool {
             xn.toAction(S.getter("removeComponentAction", comp.getFactory().getDisplayGetter())));
       } else if (src == attrs) {
         proj.getFrame().viewComponentAttributes(circ, comp);
-      } else if (src == rotate) {
+      } else if (src == rotateRight) {
         Circuit circ = proj.getCurrentCircuit();
         CircuitMutation xn = new CircuitMutation(circ);
         Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
         xn.set(comp, StdAttr.FACING, d.getRight());
         proj.doAction(
             xn.toAction(S.getter("rotateComponentAction", comp.getFactory().getDisplayGetter())));
-      } else if (src == rotateccw) {
+      } else if (src == rotateLeft) {
         Circuit circ = proj.getCurrentCircuit();
         CircuitMutation xn = new CircuitMutation(circ);
         Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
