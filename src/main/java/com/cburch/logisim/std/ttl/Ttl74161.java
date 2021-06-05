@@ -66,20 +66,20 @@ public class Ttl74161 extends AbstractTtlGate {
                 (byte) 16,
                 new byte[]{11, 12, 13, 14, 15},
                 new String[]{
-                        "nClear",
-                        "Clock",
-                        "A",
-                        "B",
-                        "C",
-                        "D",
-                        "ENP",
-                        "nLoad",
-                        "Ent",
-                        "QD",
-                        "QC",
-                        "QB",
-                        "QA",
-                        "RC0"
+                        "MR/CLR (Reset, active LOW)",
+                        "CP/CLK (Clock)",
+                        "D0/A",
+                        "D1/B",
+                        "D2/C",
+                        "D3/D",
+                        "CE/ENP (Count Enable)",
+                        "PE/LOAD (Parallel Enable, active LOW)",
+                        "CET/ENT (Count Enable Carry)",
+                        "Q0/QD",
+                        "Q1/QC",
+                        "A2/QB",
+                        "A3/QA",
+                        "TC/RC0 (Terminal Count)"
                 });
         super.setInstancePoker(Poker.class);
     }
