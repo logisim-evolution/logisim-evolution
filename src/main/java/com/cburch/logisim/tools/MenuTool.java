@@ -58,7 +58,8 @@ public class MenuTool extends Tool {
     final Component comp;
     final JMenuItem del = new JMenuItem(S.get("compDeleteItem"));
     final JMenuItem attrs = new JMenuItem(S.get("compShowAttrItem"));
-    final JMenuItem rotate = new JMenuItem(S.get("compRotate"));
+    final JMenuItem rotateRight = new JMenuItem(S.get("compRotateRight"));
+    final JMenuItem rotateLeft = new JMenuItem(S.get("compRotateLeft"));
 
     MenuComponent(Project proj, Circuit circ, Component comp) {
       this.proj = proj;
@@ -67,8 +68,10 @@ public class MenuTool extends Tool {
       boolean canChange = proj.getLogisimFile().contains(circ);
 
       if (comp.getAttributeSet().containsAttribute(StdAttr.FACING)) {
-        add(rotate);
-        rotate.addActionListener(this);
+        add(rotateRight);
+        rotateRight.addActionListener(this);
+        add(rotateLeft);
+        rotateLeft.addActionListener(this);
       }
 
       add(del);
@@ -93,6 +96,13 @@ public class MenuTool extends Tool {
         CircuitMutation xn = new CircuitMutation(circ);
         Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
         xn.set(comp, StdAttr.FACING, d.getRight());
+        proj.doAction(
+            xn.toAction(S.getter("rotateComponentAction", comp.getFactory().getDisplayGetter())));
+      } else if (src == rotateccw) {
+        Circuit circ = proj.getCurrentCircuit();
+        CircuitMutation xn = new CircuitMutation(circ);
+        Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
+        xn.set(comp, StdAttr.FACING, d.getLeft());
         proj.doAction(
             xn.toAction(S.getter("rotateComponentAction", comp.getFactory().getDisplayGetter())));
       }
