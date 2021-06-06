@@ -58,7 +58,7 @@ public class TraceWindowTableModel extends AbstractTableModel
         CircuitListener {
 
   private static final long serialVersionUID = 1L;
-  private final SocBusMenuProvider.InstanceInformation parrent;
+  private final SocBusMenuProvider.InstanceInformation parent;
   private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private JTable table;
   private int BoxWidth = SocBusStateInfo.BlockWidth;
@@ -66,7 +66,7 @@ public class TraceWindowTableModel extends AbstractTableModel
       HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
       SocBusMenuProvider.InstanceInformation p) {
     myTraceList = traceList;
-    parrent = p;
+    parent = p;
     rebuild();
   }
 
@@ -195,7 +195,7 @@ public class TraceWindowTableModel extends AbstractTableModel
         myTraceList.get(i).deregisterComponentListener(this);
         myTraceList.put(i, null);
         rebuild();
-        if (getColumnCount() == 0) parrent.destroyTraceWindow();
+        if (getColumnCount() == 0) parent.destroyTraceWindow();
       }
     }
   }

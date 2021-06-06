@@ -44,7 +44,9 @@
     <mapID target="mem_hex"             url="pt/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="pt/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="pt/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="pt/html/guide/mem/mem-v3byte.html"/> 
+    <mapID target="mem_v3byte"          url="pt/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_binary"          url="pt/html/guide/mem/mem-vbinary.html"/>
+    <mapID target="mem_ascii"           url="pt/html/guide/mem/mem-vascii.html"/>	
 	<mapID target="analyze"             url="pt/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="pt/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="pt/html/guide/analyze/ana-table.html" />
@@ -53,8 +55,6 @@
 	<mapID target="log"                 url="pt/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="pt/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="pt/html/guide/log/timetable.html" />
-	<mapID target="log_table"           url="pt/html/guide/log/table.html" />  <!-- obsolete -->
-	<mapID target="log_file"            url="pt/html/guide/log/file.html" />   <!-- obsolete -->
 	<mapID target="verify"              url="pt/html/guide/verify/index.html" />
 	<mapID target="verify_sub"          url="pt/html/guide/verify/sub.html" />
 	<mapID target="verify_other"        url="pt/html/guide/verify/other.html" />

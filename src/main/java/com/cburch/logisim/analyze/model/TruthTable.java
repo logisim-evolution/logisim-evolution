@@ -663,10 +663,12 @@ public class TruthTable {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
-      for (Row r : rows) {
+      // loop rows by index to avoid java.util.ConcurrentModificationException
+      for (int i = 0; i < rows.size(); ++i) {
+        Row r = rows.get(i);
         if (r.inputs[index] == Entry.DONT_CARE)
           continue;
-        setDontCare(r, b, true, changed);
+        setDontCare(r, b, true, changed); // mutates row
       }
       int mask = b - 1; // _0000111
       ArrayList<Row> ret = new ArrayList<>(rows.size());

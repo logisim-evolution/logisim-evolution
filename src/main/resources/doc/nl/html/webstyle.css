@@ -1,0 +1,196 @@
+/* 
+This CSS document is suitable for use in java help v2.0
+It is not suitable for the web and hijacks some CSS rules
+*/
+/* For img */
+img {
+	width:86%;
+	max-width:100%;
+}
+/* For img icone in the text */
+img.intxt {
+	height:auto;
+	width:auto;
+	vertical-align:middle;
+}
+/* For Img not scal */
+img.notscal {
+	height:auto;
+	width:auto;
+	vertical-align:middle;
+}
+/* For spaces, page background */
+div.maindiv {
+	max-width:560px;
+	border:solid 0px;
+}
+div.codediv {
+	max-width:660px;
+	border:solid 0px;
+}
+
+div.leftdiv {
+   position:relative; 
+   float:left; 
+   max-width:160px;
+   border:solid 0px;   
+}
+div.twodiv{
+	display:inline-block;
+}
+div.forcode{
+	text-indent:-20px;
+}
+a {
+	color:#00137f;
+}
+a:hover{
+	color:#ff137f;
+}
+
+/* for titles */
+h1 {
+	color: #00137f;
+}
+h2 {
+	color: #00137f;
+}
+h3{
+	color: #00137f;
+}
+var {
+	color: #0025ff;
+	font-weight:bold;
+}
+tt {
+	font-size:110%;
+}
+
+/* for reference to menu */
+b.menu {
+	color: black;
+	background-color :#b0b0b0;
+	font-family:arial;
+	font-weight:bold;
+	font-size:12px;
+}
+/* for reference to button, tabs */
+b.button {
+	color: black;
+	background-color :#e0e0e0;
+	font-family:arial;
+	font-weight:normal;
+    font-size:12px;	
+}
+/* for reference to properties /library */
+b.propertie {
+	color:#00008B;
+	font-weight:bold;
+}
+
+/* for reference to keyboard/mouse keys */
+b.tkeybd {
+	color:#007F0E;
+}
+
+/* for reference to note: */
+b.note {
+	color:#007F0E;
+}
+
+/* for reference to the elements of the figures */
+b.reffig {
+	color: #00137f;
+	
+}
+
+/* for reference to the part of guide */
+b.refguide {
+	color:#00137f;
+}
+/* For reference to question or answer of the pgm */
+b.refquest {
+	color:#00137f;
+}
+/* For tables of truth tables */
+table.tblver {
+	text-align :center;
+	border-spacing: 2px;
+	border-style: dotted;
+	border-width: 0px;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
+}
+td.space {
+	background-color:#ffffff;
+}
+td.zerov {
+	color:#008000;
+	text-align :center;
+}
+td.unov {
+	color:#00FF00;
+	text-align :center;
+}
+td.xvalue {
+	color:#0000FF;
+	text-align :center;
+}
+td.evalue {
+	color:#FF0000;
+	text-align :center;
+}
+span.xvalue {
+	color:#0000FF;
+	text-align :center;
+}
+span.evalue {
+	color:#FF0000;
+	text-align :center;
+}
+
+/* Définition pour la table présentation de lib */
+
+/* Définition pour la table des composant de lib */
+
+/* For list items */
+dt {
+margin-top: 5px;
+}
+li  {
+margin-top: 5px;
+}
+li.chpitre {
+  background: #A3B7FF;
+  color: #A3B7FF ;
+  border: 1px solid #600 ;
+  margin-bottom: 1px ;
+  margin-top: 8px ;
+  width:311px;
+  list-style-type:none;
+}
+li.page {
+  background: #C3D7FF ;
+  color: #C3D7FF ;
+  border: 1px solid #600 ;
+  margin-bottom: 1px ;
+   width:270px;
+   list-style-type:none;
+}
+li.chpitre a {
+  display: block ;
+}
+
+li.chpitre a:hover,  li a:focus, li a:active {
+  background: #93A7EF;
+  text-decoration: underline ;
+}
+li.page a {
+  display: block ;
+}
+
+li.page a:hover,  li a:focus, li a:active {
+  background: #B3C7EF;
+}

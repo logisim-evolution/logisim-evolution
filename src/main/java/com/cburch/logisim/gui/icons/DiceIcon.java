@@ -32,12 +32,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DiceIcon extends AnnimatedIcon {
+public class DiceIcon extends AnimatedIcon {
 
   private int state = ThreadLocalRandom.current().nextInt(0, 6);
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = ThreadLocalRandom.current().nextInt(0, 6);
   }
 

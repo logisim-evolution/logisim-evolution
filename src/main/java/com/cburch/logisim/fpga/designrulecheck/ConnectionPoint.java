@@ -52,11 +52,11 @@ public class ConnectionPoint {
     return MyChildsPortIndex;
   }
 
-  public Net GetParrentNet() {
+  public Net GetParentNet() {
     return MyOwnNet;
   }
 
-  public Byte GetParrentNetBitIndex() {
+  public Byte GetParentNetBitIndex() {
     return MyOwnNetBitIndex;
   }
 
@@ -64,7 +64,7 @@ public class ConnectionPoint {
     MyChildsPortIndex = Index;
   }
 
-  public void SetParrentNet(Net ConnectedNet, Byte BitIndex) {
+  public void SetParentNet(Net ConnectedNet, Byte BitIndex) {
     MyOwnNet = ConnectedNet;
     MyOwnNetBitIndex = BitIndex;
   }

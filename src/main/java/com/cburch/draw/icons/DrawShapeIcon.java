@@ -28,13 +28,13 @@
 
 package com.cburch.draw.icons;
 
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.gui.icons.AnimatedIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class DrawShapeIcon extends AnnimatedIcon {
+public class DrawShapeIcon extends AnimatedIcon {
 
   public static final int RECTANGLE = 0;
   public static final int ROUNDEDRECTANGLE = 1;
@@ -67,7 +67,7 @@ public class DrawShapeIcon extends AnnimatedIcon {
   }
 
   @Override
-  public void annimationUpdate() {
+  public void animationUpdate() {
     state = (state + 1) & 3;
   }
 
