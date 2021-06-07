@@ -75,10 +75,10 @@ public class Ttl74161 extends AbstractTtlGate {
                         "CE/ENP (Count Enable)",
                         "PE/LOAD (Parallel Enable, active LOW)",
                         "CET/ENT (Count Enable Carry)",
-                        "Q0/QD",
-                        "Q1/QC",
+                        "Q4/QD",
+                        "Q3/QC",
                         "A2/QB",
-                        "A3/QA",
+                        "A1/QA",
                         "TC/RC0 (Terminal Count)"
                 });
         super.setInstancePoker(Poker.class);
