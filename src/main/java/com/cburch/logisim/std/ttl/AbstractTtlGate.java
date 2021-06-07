@@ -58,7 +58,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   protected final byte pinnumber;
   private final String name;
   private byte ngatestodraw = 0;
-  protected String[] portnames = null;
+  protected String[] portNames = null;
   private final HashSet<Byte> outputports = new HashSet<>();
   private final HashSet<Byte> unusedpins = new HashSet<>();
 
@@ -114,13 +114,13 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
     this(name, pins, outputports);
-    this.portnames = Ttlportnames;
+    this.portNames = Ttlportnames;
   }
 
   protected AbstractTtlGate(
       String name, byte pins, byte[] outputports, byte[] NotUsedPins, String[] Ttlportnames) {
     this(name, pins, outputports);
-    portnames = Ttlportnames;
+    portNames = Ttlportnames;
     if (NotUsedPins == null) return;
     for (byte notUsedPin : NotUsedPins)
       unusedpins.add(notUsedPin);
@@ -133,7 +133,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     // strings which will be tooltips of the corresponding port in order
     this(name, pins, outputports);
     this.height = height;
-    this.portnames = Ttlportnames;
+    this.portNames = Ttlportnames;
   }
 
   private void computeTextField(Instance instance) {
@@ -487,10 +487,10 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         portindex--;
       } else if (isoutput) { // output port
         ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
-        if (this.portnames == null || this.portnames.length <= portindex)
+        if (this.portNames == null || this.portNames.length <= portindex)
           ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + (i + 1)));
         else
-          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portnames[portindex]));
+          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portNames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
@@ -503,26 +503,26 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           portindex--;
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output
           ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
-          if (this.portnames == null || this.portnames.length <= portindex)
+          if (this.portNames == null || this.portNames.length <= portindex)
             ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
           else
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portnames[portindex]));
+            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
         }
       }
       portindex++;
     }
     instance.setPorts(ps);
   }
-  
+
   @Override
   public final void paintIcon(InstancePainter painter) {
     Graphics2D g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.setColor(Color.black);
-    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     int wh1 = AppPreferences.getScaled(3);
     int wh2 = AppPreferences.getScaled(2);
@@ -534,7 +534,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       g.drawRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
       g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
     }
-    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16), 
+    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.dispose();
   }

@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class Ttl74157 extends AbstractTtlGate {
 
   // IC pin indices as specified in the datasheet
-  public static final byte SELECT_nAB = 1;
+  public static final byte SELECT = 1;
   public static final byte L1_A = 2;
   public static final byte L1_B = 3;
   public static final byte L1_Y = 4;
@@ -50,7 +50,7 @@ public class Ttl74157 extends AbstractTtlGate {
   public static final byte L4_Y = 12;
   public static final byte L4_B = 13;
   public static final byte L4_A = 14;
-  public static final byte nSTROBE = 15;
+  public static final byte STROBE = 15;
   public static final byte VCC = 16;
 
   public static final int DELAY = 1;
@@ -77,11 +77,11 @@ public class Ttl74157 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     // As tooltips can be longer than what can fit as pin name while painting IC internals,
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
-    final int label_len_max = 4;
+    final int maxLabelLength = 4;
     ArrayList<String> names = new ArrayList<>();
-    for (String name: portnames) {
+    for (String name: portNames) {
       String[] tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0,label_len_max));
+      names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0,maxLabelLength));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -93,24 +93,24 @@ public class Ttl74157 extends AbstractTtlGate {
     return (byte)((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
   }
 
-  protected void computeState(InstanceState state, byte inSELECT, byte inSTROBE, byte inA, byte inB, byte out) {
-    final boolean strobe = state.getPortValue(mapPort(inSTROBE)) == Value.TRUE;
-    final boolean select = state.getPortValue(mapPort(inSELECT)) == Value.TRUE;
+  protected Value computeState(InstanceState state, byte inA, byte inB) {
+    final boolean strobe = state.getPortValue(mapPort(STROBE)) == Value.TRUE;
+    final boolean select = state.getPortValue(mapPort(SELECT)) == Value.TRUE;
     final boolean A = state.getPortValue(mapPort(inA)) == Value.TRUE;
     final boolean B = state.getPortValue(mapPort(inB)) == Value.TRUE;
 
     boolean Y = strobe ? false : ( select ? B : A );
     if (this.invertOutput) Y = !Y;
 
-    state.setPort(mapPort(out), Y ? Value.TRUE : Value.FALSE, DELAY);
+    return Y ? Value.TRUE : Value.FALSE;
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    computeState(state, SELECT_nAB, nSTROBE, L1_A, L1_B, L1_Y);
-    computeState(state, SELECT_nAB, nSTROBE, L2_A, L2_B, L2_Y);
-    computeState(state, SELECT_nAB, nSTROBE, L3_A, L3_B, L3_Y);
-    computeState(state, SELECT_nAB, nSTROBE, L4_A, L4_B, L4_Y);
+    state.setPort(mapPort(L1_Y), computeState(state, L1_A, L1_B), DELAY);
+    state.setPort(mapPort(L2_Y), computeState(state, L2_A, L2_B), DELAY);
+    state.setPort(mapPort(L3_Y), computeState(state, L3_A, L3_B), DELAY);
+    state.setPort(mapPort(L4_Y), computeState(state, L4_A, L4_B), DELAY);
   }
 
   @Override
