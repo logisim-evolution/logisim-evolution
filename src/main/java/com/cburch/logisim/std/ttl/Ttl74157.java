@@ -56,7 +56,7 @@ public class Ttl74157 extends AbstractTtlGate {
   public static final int DELAY = 1;
 
   // Needed for 74x158 implementation which is 74x157 with inverted output.
-  protected boolean invertOutput = false;
+  protected final boolean invertOutput;
 
   protected final static String[] pinNames = {
     "SELECT", "1A", "1B", "1Y", "2A", "2B", "2Y",
@@ -65,6 +65,7 @@ public class Ttl74157 extends AbstractTtlGate {
 
   public Ttl74157() {
     super("74157", (byte) 16, new byte[] { L1_Y, L2_Y, L3_Y, L4_Y }, pinNames);
+    invertOutput = false;
   }
 
   public Ttl74157(String icName, boolean invertOutput) {
