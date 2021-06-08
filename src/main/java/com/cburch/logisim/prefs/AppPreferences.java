@@ -583,9 +583,10 @@ public class AppPreferences {
   public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
   public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
   public static final String PIN_APPEAR_DOT_BIG = "dot-big";
+  public static final String PIN_APPEAR_DOT_BIGGER = "dot-bigger";
   public static final PrefMonitor<String> PinAppearance =
     create(new PrefMonitorStringOpts("pinAppearance",
-            new String[] {PIN_APPEAR_DOT_SMALL, PIN_APPEAR_DOT_MEDIUM, PIN_APPEAR_DOT_BIG},
+            new String[] {PIN_APPEAR_DOT_SMALL, PIN_APPEAR_DOT_MEDIUM, PIN_APPEAR_DOT_BIG, PIN_APPEAR_DOT_BIGGER},
             PIN_APPEAR_DOT_SMALL));
 
 

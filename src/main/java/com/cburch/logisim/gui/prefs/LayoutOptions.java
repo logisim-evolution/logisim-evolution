@@ -115,7 +115,8 @@ class LayoutOptions extends OptionsPanel {
             new PrefOption[] {
                   new PrefOption(AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
                   new PrefOption(AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig"))
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
             });
 
 
