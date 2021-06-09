@@ -85,8 +85,6 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       root = new RefTreeNode(S.fmt("showStateDialogEmptyNode", circuit.getName()));
     }
     tree = new CheckBoxTree(root);
-    //tree.getCheckingModel()
-    //    .setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE_PRESERVING_CHECK);
     tree.setCheckingPaths(getPaths());
     final var infoPane = new JScrollPane(tree);
 
