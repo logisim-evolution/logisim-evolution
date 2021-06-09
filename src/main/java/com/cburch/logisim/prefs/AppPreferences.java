@@ -611,7 +611,7 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> Memory_Startup_Unknown =
       create(new PrefMonitorBoolean("MemStartUnknown", false));
-  
+
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
       create(new PrefMonitorInt("SimTrueColor",0x0000D200));
@@ -677,7 +677,7 @@ public class AppPreferences {
 	      create(new PrefMonitorInt("KMAPColor15",0xAAFFC3));
   public static final PrefMonitor<Integer> KMAP16_COLOR =
 	      create(new PrefMonitorInt("KMAPColor16",0xF032E6));
-  
+
   // FPGA commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
           create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
@@ -768,7 +768,7 @@ public class AppPreferences {
               ((!GraphicsEnvironment.isHeadless())
                   ? Toolkit.getDefaultToolkit().getScreenSize().height
                   : 0)));
-  
+
   public static void resetWindow() {
 	  WINDOW_MAIN_SPLIT.set(0.251);
 	  WINDOW_LEFT_SPLIT.set(0.51);
