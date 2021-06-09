@@ -455,11 +455,11 @@ public class AppPreferences {
   private static Template emptyTemplate = null;
   private static Template customTemplate = null;
   private static File customTemplateFile = null;
-  
+
   public static int getIconSize() {
     return getScaled(IconSize);
   }
-  
+
   public static int getIconBorder() {
     return getScaled(IconBorder);
   }
@@ -518,6 +518,16 @@ public class AppPreferences {
   public static final PrefMonitor<String> LookAndFeel =
       create(
           new PrefMonitorString("LookAndFeel", UIManager.getCrossPlatformLookAndFeelClassName()));
+
+  public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
+          create(new PrefMonitorInt("canvasBgColor", 0xFFFFFFFF));
+  public static final PrefMonitor<Integer> GRID_BG_COLOR =
+          create(new PrefMonitorInt("gridBgColor", 0xFFFFFFFF));
+  public static final PrefMonitor<Integer> GRID_DOT_COLOR =
+          create(new PrefMonitorInt("gridDotColor", 0xFF777777));
+  public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
+          create(new PrefMonitorInt("gridZoomedDotColor", 0xFFCCCCCC));
+
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
