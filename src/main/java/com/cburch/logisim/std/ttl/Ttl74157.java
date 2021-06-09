@@ -79,7 +79,7 @@ public class Ttl74157 extends AbstractTtlGate {
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
     final int maxLabelLength = 4;
     ArrayList<String> names = new ArrayList<>();
-    for (String name: portNames) {
+    for (String name: portnames) {
       String[] tmp = name.split("\\s+");
       names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0,maxLabelLength));
     }

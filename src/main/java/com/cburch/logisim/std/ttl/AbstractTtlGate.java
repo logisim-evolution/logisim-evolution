@@ -58,7 +58,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   protected final byte pinnumber;
   private final String name;
   private byte ngatestodraw = 0;
-  protected String[] portNames = null;
+  protected String[] portnames = null;
   private final HashSet<Byte> outputports = new HashSet<>();
   private final HashSet<Byte> unusedpins = new HashSet<>();
 
@@ -114,13 +114,13 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
     this(name, pins, outputports);
-    this.portNames = Ttlportnames;
+    this.portnames = Ttlportnames;
   }
 
   protected AbstractTtlGate(
       String name, byte pins, byte[] outputports, byte[] NotUsedPins, String[] Ttlportnames) {
     this(name, pins, outputports);
-    portNames = Ttlportnames;
+    portnames = Ttlportnames;
     if (NotUsedPins == null) return;
     for (byte notUsedPin : NotUsedPins)
       unusedpins.add(notUsedPin);
@@ -133,7 +133,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     // strings which will be tooltips of the corresponding port in order
     this(name, pins, outputports);
     this.height = height;
-    this.portNames = Ttlportnames;
+    this.portnames = Ttlportnames;
   }
 
   private void computeTextField(Instance instance) {
@@ -487,10 +487,10 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         portindex--;
       } else if (isoutput) { // output port
         ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
-        if (this.portNames == null || this.portNames.length <= portindex)
+        if (this.portnames == null || this.portnames.length <= portindex)
           ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + (i + 1)));
         else
-          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portNames[portindex]));
+          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", (i + 1) + ": " + this.portnames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
@@ -503,10 +503,10 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           portindex--;
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output
           ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
-          if (this.portNames == null || this.portNames.length <= portindex)
+          if (this.portnames == null || this.portnames.length <= portindex)
             ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + (i + 1)));
           else
-            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portNames[portindex]));
+            ps[portindex].setToolTip(S.getter("multiplexerInTip", (i + 1) + ": " + this.portnames[portindex]));
         }
       }
       portindex++;
