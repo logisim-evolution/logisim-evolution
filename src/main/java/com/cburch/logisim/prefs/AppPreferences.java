@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -517,7 +518,7 @@ public class AppPreferences {
               Direction.NORTH.toString()));
   public static final PrefMonitor<String> LookAndFeel =
       create(
-          new PrefMonitorString("LookAndFeel", UIManager.getCrossPlatformLookAndFeelClassName()));
+          new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
           create(new PrefMonitorInt("canvasBgColor", 0xFFFFFFFF));
@@ -589,8 +590,18 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
 
+  public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
+  public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
+  public static final String PIN_APPEAR_DOT_BIG = "dot-big";
+  public static final String PIN_APPEAR_DOT_BIGGER = "dot-bigger";
+  public static final PrefMonitor<String> PinAppearance =
+    create(new PrefMonitorStringOpts("pinAppearance",
+            new String[] {PIN_APPEAR_DOT_SMALL, PIN_APPEAR_DOT_MEDIUM, PIN_APPEAR_DOT_BIG, PIN_APPEAR_DOT_BIGGER},
+            PIN_APPEAR_DOT_SMALL));
+
+
+  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
   public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {

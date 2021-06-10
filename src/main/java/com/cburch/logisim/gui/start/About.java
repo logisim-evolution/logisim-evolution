@@ -65,7 +65,7 @@ public class About {
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
     OptionPane.showMessageDialog(
-        owner, panel, "Logisim-evolution " + Main.VERSION_NAME, OptionPane.PLAIN_MESSAGE);
+        owner, panel, Main.APP_DISPLAY_NAME, OptionPane.PLAIN_MESSAGE);
   }
 
   private static class MyPanel extends JPanel implements AncestorListener {
@@ -182,7 +182,7 @@ public class About {
 
       g.setColor(headerColor);
       g.setFont(headerFont);
-      g.drawString("Logisim-evolution", x, y + 25);
+      g.drawString(Main.APP_NAME, x, y + 25);
 
       g.setFont(copyrightFont);
       fm = g.getFontMetrics();

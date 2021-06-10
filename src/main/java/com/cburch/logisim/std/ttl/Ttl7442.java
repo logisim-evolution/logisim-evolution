@@ -161,11 +161,6 @@ public class Ttl7442 extends AbstractTtlGate {
   }
 
   @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
-
-  @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7442HDLGenerator(IsExec3, IsGray);
     return MyHDLGenerator.HDLTargetSupported(attrs);
