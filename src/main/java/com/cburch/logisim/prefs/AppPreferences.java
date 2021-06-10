@@ -520,14 +520,28 @@ public class AppPreferences {
       create(
           new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
+  // defaiult grid colors
+  public static final int defaultCanvasBgColor = 0xFFFFFFFF;
+  public static final int defaultGridBgColor = 0xFFFFFFFF;
+  public static final int defaultGridDotColor = 0xFF777777;
+  public static final int defaultZoomedDotColor = 0xFFCCCCCC;
+
+  // restores default grid colors
+  public static void setDefaultGridColors() {
+    CANVAS_BG_COLOR.set(defaultCanvasBgColor);
+    GRID_BG_COLOR.set(defaultGridBgColor);
+    GRID_DOT_COLOR.set(defaultGridDotColor);
+    GRID_ZOOMED_DOT_COLOR.set(defaultZoomedDotColor);
+  }
+
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
-          create(new PrefMonitorInt("canvasBgColor", 0xFFFFFFFF));
+          create(new PrefMonitorInt("canvasBgColor", defaultCanvasBgColor));
   public static final PrefMonitor<Integer> GRID_BG_COLOR =
-          create(new PrefMonitorInt("gridBgColor", 0xFFFFFFFF));
+          create(new PrefMonitorInt("gridBgColor", defaultGridBgColor));
   public static final PrefMonitor<Integer> GRID_DOT_COLOR =
-          create(new PrefMonitorInt("gridDotColor", 0xFF777777));
+          create(new PrefMonitorInt("gridDotColor", defaultGridDotColor));
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
-          create(new PrefMonitorInt("gridZoomedDotColor", 0xFFCCCCCC));
+          create(new PrefMonitorInt("gridZoomedDotColor", defaultZoomedDotColor));
 
 
   // Layout preferences

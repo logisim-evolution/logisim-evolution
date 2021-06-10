@@ -78,8 +78,13 @@ class WindowOptions extends OptionsPanel {
   private final ColorChooserButton GridZoomedDotColor;
   private final JLabel GridZoomedDotColorTitle;
 
+  protected final String cmdResetWindowLayout = "reset-window-layout";
+  protected final String cmdResetGridColors = "reset-grid-colors";
+
   public WindowOptions(PreferencesFrame window) {
     super(window);
+
+    SettingsChangeListener listener = new SettingsChangeListener();
 
     checks =
         new PrefBoolean[] {
@@ -102,6 +107,7 @@ class WindowOptions extends OptionsPanel {
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
 
+
     CanvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
     CanvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
     panel.add(CanvasBgColorTitle);
@@ -118,6 +124,13 @@ class WindowOptions extends OptionsPanel {
     GridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
     panel.add(GridZoomedDotColorTitle);
     panel.add(GridZoomedDotColor);
+
+    JButton gridColorsResetButton = new JButton();
+    gridColorsResetButton.addActionListener(listener);
+    gridColorsResetButton.setActionCommand(cmdResetGridColors);
+    gridColorsResetButton.setText(S.get("windowGridColorsReset"));
+    panel.add(new JLabel());
+    panel.add(gridColorsResetButton);
 
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
@@ -137,9 +150,7 @@ class WindowOptions extends OptionsPanel {
 
     panel.add(ZoomLabel);
     panel.add(ZoomValue);
-
-    ZoomChange Listener = new ZoomChange();
-    ZoomValue.addChangeListener(Listener);
+    ZoomValue.addChangeListener(listener);
 
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
@@ -160,7 +171,7 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel = new JLabel(S.get("windowToolbarLookandfeel"));
     panel.add(lookfeelLabel);
     panel.add(LookAndFeel);
-    LookAndFeel.addActionListener(Listener);
+    LookAndFeel.addActionListener(listener);
 
     JLabel previewLabel = new JLabel(S.get("windowToolbarPreview"));
     panel.add(previewLabel);
@@ -170,7 +181,7 @@ class WindowOptions extends OptionsPanel {
 
     setLayout(new TableLayout(1));
     JButton but = new JButton();
-    but.addActionListener(Listener);
+    but.addActionListener(listener);
     but.setActionCommand("reset");
     but.setText(S.get("windowToolbarReset"));
     add(but);
@@ -223,7 +234,7 @@ class WindowOptions extends OptionsPanel {
     Importantb.setText(S.get("windowToolbarImportant"));
   }
 
-  private class ZoomChange implements ChangeListener, ActionListener {
+  private class SettingsChangeListener implements ChangeListener, ActionListener {
 
     @Override
     public void stateChanged(ChangeEvent e) {
@@ -247,12 +258,19 @@ class WindowOptions extends OptionsPanel {
           AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
           initThemePreviewer();
         }
-      } else if (e.getActionCommand().equals("reset")) {
+      } else if (e.getActionCommand().equals(cmdResetWindowLayout)) {
         AppPreferences.resetWindow();
         List<Project> nowOpen = Projects.getOpenProjects();
         for (Project proj : nowOpen) {
           proj.getFrame().resetLayout();
           proj.getFrame().revalidate();
+          proj.getFrame().repaint();
+        }
+      } else if (e.getActionCommand().equals(cmdResetGridColors)) {
+//        AppPreferences.resetWindow();
+        List<Project> nowOpen = Projects.getOpenProjects();
+        AppPreferences.setDefaultGridColors();
+        for (Project proj : nowOpen) {
           proj.getFrame().repaint();
         }
       }
