@@ -98,11 +98,6 @@ public class Ttl7485 extends AbstractTtlGate {
   }
 
   @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
-
-  @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7485HDLGenerator();
     return MyHDLGenerator.HDLTargetSupported(attrs);
