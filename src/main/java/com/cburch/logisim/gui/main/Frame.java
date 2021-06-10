@@ -336,15 +336,15 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   private void computeTitle() {
-    String s;
+    String title;
     Circuit circuit = project.getCurrentCircuit();
     String name = project.getLogisimFile().getName();
     if (circuit != null) {
-      s = StringUtil.format(S.get("titleCircFileKnown"), circuit.getName(), name);
+      title = StringUtil.format(S.get("titleCircFileKnown"), circuit.getName(), name);
     } else {
-      s = StringUtil.format(S.get("titleFileKnown"), name);
+      title = StringUtil.format(S.get("titleFileKnown"), name);
     }
-    this.setTitle(s + " (v " + Main.VERSION_NAME + ")");
+    this.setTitle(StringUtil.format("%s · %s", title, Main.APP_DISPLAY_NAME));
     myProjectListener.enableSave();
   }
 
