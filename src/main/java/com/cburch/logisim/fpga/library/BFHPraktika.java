@@ -37,9 +37,9 @@ import java.util.List;
 
 public class BFHPraktika extends Library {
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Binary_to_BCD_converter", S.getter("Bin2BCD"), "", "bin2bcd"),
+    new FactoryDescription("Binary_to_BCD_converter", S.getter("Bin2BCD"), "", bin2bcd.class),
     new FactoryDescription(
-        "BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"), "", "bcd2sevenseg"),
+        "BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"), "", bcd2sevenseg.class),
   };
 
   private List<Tool> tools = null;

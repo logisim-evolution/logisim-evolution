@@ -150,17 +150,15 @@ public class Plexers extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", "Multiplexer"),
+        "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", Multiplexer.class),
     new FactoryDescription(
-        "Demultiplexer", S.getter("demultiplexerComponent"), "demultiplexer.gif", "Demultiplexer"),
-    new FactoryDescription("Decoder", S.getter("decoderComponent"), "decoder.gif", "Decoder"),
+        "Demultiplexer", S.getter("demultiplexerComponent"), "demultiplexer.gif", Demultiplexer.class),
     new FactoryDescription(
-        "Priority Encoder",
-        S.getter("priorityEncoderComponent"),
-        "priencod.gif",
-        "PriorityEncoder"),
+        "Decoder", S.getter("decoderComponent"), "decoder.gif", Decoder.class),
     new FactoryDescription(
-        "BitSelector", S.getter("bitSelectorComponent"), "bitSelector.gif", "BitSelector"),
+        "Priority Encoder", S.getter("priorityEncoderComponent"), "priencod.gif", PriorityEncoder.class),
+    new FactoryDescription(
+        "BitSelector", S.getter("bitSelectorComponent"), "bitSelector.gif", BitSelector.class),
   };
 
   private List<Tool> tools = null;

@@ -54,18 +54,18 @@ public class Io extends Library {
   static final Color DEFAULT_BACKGROUND = new Color(255, 255, 255, 0);
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Button", S.getter("buttonComponent"), "button.gif", "Button"),
-    new FactoryDescription("DipSwitch", S.getter("dipswitchComponent"), "dipswitch.gif", "DipSwitch"),
-    new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", "Joystick"),
-    new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", "Keyboard"),
-    new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", "Led"),
-    new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", "RGBLed"),
-    new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", "SevenSegment"),
-    new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", "HexDigit"),
-    new FactoryDescription("DotMatrix", S.getter("dotMatrixComponent"), "dotmat.gif", "DotMatrix"),
-    new FactoryDescription("TTY", S.getter("ttyComponent"), "tty.gif", "Tty"),
-    new FactoryDescription("PortIO", S.getter("pioComponent"), "pio.gif", "PortIO"),
-    new FactoryDescription("ReptarLB", S.getter("repLBComponent"), "localbus.gif", "ReptarLocalBus"),
+    new FactoryDescription("Button", S.getter("buttonComponent"), "button.gif", Button.class),
+    new FactoryDescription("DipSwitch", S.getter("dipswitchComponent"), "dipswitch.gif", DipSwitch.class),
+    new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", Joystick.class),
+    new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", Keyboard.class),
+    new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", Led.class),
+    new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", RGBLed.class),
+    new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", SevenSegment.class),
+    new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", HexDigit.class),
+    new FactoryDescription("DotMatrix", S.getter("dotMatrixComponent"), "dotmat.gif", DotMatrix.class),
+    new FactoryDescription("TTY", S.getter("ttyComponent"), "tty.gif", Tty.class),
+    new FactoryDescription("PortIO", S.getter("pioComponent"), "pio.gif", PortIO.class),
+    new FactoryDescription("ReptarLB", S.getter("repLBComponent"), "localbus.gif", ReptarLocalBus.class),
   };
 
   private List<Tool> tools = null;

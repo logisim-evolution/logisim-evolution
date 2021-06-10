@@ -39,8 +39,8 @@ public class Tcl extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", "TclConsoleReds"),
-    new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", "TclGeneric")
+        "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", TclConsoleReds.class),
+    new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", TclGeneric.class)
   };
 
   private List<Tool> tools = null;
