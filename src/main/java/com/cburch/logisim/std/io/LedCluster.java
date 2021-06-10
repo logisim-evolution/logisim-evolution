@@ -163,14 +163,6 @@ public class LedCluster extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ButtonHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
