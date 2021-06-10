@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -455,11 +456,11 @@ public class AppPreferences {
   private static Template emptyTemplate = null;
   private static Template customTemplate = null;
   private static File customTemplateFile = null;
-  
+
   public static int getIconSize() {
     return getScaled(IconSize);
   }
-  
+
   public static int getIconBorder() {
     return getScaled(IconBorder);
   }
@@ -517,7 +518,7 @@ public class AppPreferences {
               Direction.NORTH.toString()));
   public static final PrefMonitor<String> LookAndFeel =
       create(
-          new PrefMonitorString("LookAndFeel", UIManager.getCrossPlatformLookAndFeelClassName()));
+          new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
@@ -579,8 +580,18 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
 
+  public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
+  public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
+  public static final String PIN_APPEAR_DOT_BIG = "dot-big";
+  public static final String PIN_APPEAR_DOT_BIGGER = "dot-bigger";
+  public static final PrefMonitor<String> PinAppearance =
+    create(new PrefMonitorStringOpts("pinAppearance",
+            new String[] {PIN_APPEAR_DOT_SMALL, PIN_APPEAR_DOT_MEDIUM, PIN_APPEAR_DOT_BIG, PIN_APPEAR_DOT_BIGGER},
+            PIN_APPEAR_DOT_SMALL));
+
+
+  public static final PrefMonitor<String> POKE_WIRE_RADIX1;
   public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
@@ -601,7 +612,7 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> Memory_Startup_Unknown =
       create(new PrefMonitorBoolean("MemStartUnknown", false));
-  
+
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
       create(new PrefMonitorInt("SimTrueColor",0x0000D200));
@@ -667,7 +678,7 @@ public class AppPreferences {
 	      create(new PrefMonitorInt("KMAPColor15",0xAAFFC3));
   public static final PrefMonitor<Integer> KMAP16_COLOR =
 	      create(new PrefMonitorInt("KMAPColor16",0xF032E6));
-  
+
   // FPGA commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
           create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
@@ -758,7 +769,7 @@ public class AppPreferences {
               ((!GraphicsEnvironment.isHeadless())
                   ? Toolkit.getDefaultToolkit().getScreenSize().height
                   : 0)));
-  
+
   public static void resetWindow() {
 	  WINDOW_MAIN_SPLIT.set(0.251);
 	  WINDOW_LEFT_SPLIT.set(0.51);
