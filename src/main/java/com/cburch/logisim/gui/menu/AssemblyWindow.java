@@ -57,17 +57,7 @@ import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -163,6 +153,11 @@ public class AssemblyWindow
     windows.setLocation(prefs.getInt("X", 0), prefs.getInt("Y", 0));
     windows.setSize(
         prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
+
+    // Close the frame once ESC is hit
+    windows.getRootPane().registerKeyboardAction(al -> windows.dispose(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   @Override
