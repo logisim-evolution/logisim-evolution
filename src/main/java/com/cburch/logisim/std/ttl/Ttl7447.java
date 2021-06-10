@@ -67,11 +67,6 @@ public class Ttl7447 extends AbstractTtlGate {
   }
 
   @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
-
-  @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7447HDLGenerator();
     return MyHDLGenerator.HDLTargetSupported(attrs);

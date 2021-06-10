@@ -36,6 +36,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -538,4 +539,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.dispose();
   }
+
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase();
+  }
+
 }

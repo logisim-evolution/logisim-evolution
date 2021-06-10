@@ -69,6 +69,15 @@ class WindowOptions extends OptionsPanel {
   private JPanel previewPanel;
   private int Index = 0;
 
+  private final ColorChooserButton CanvasBgColor;
+  private final JLabel CanvasBgColorTitle;
+  private final ColorChooserButton GridBgColor;
+  private final JLabel GridBgColorTitle;
+  private final ColorChooserButton GridDotColor;
+  private final JLabel GridDotColorTitle;
+  private final ColorChooserButton GridZoomedDotColor;
+  private final JLabel GridZoomedDotColorTitle;
+
   public WindowOptions(PreferencesFrame window) {
     super(window);
 
@@ -92,6 +101,23 @@ class WindowOptions extends OptionsPanel {
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
+
+    CanvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
+    CanvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
+    panel.add(CanvasBgColorTitle);
+    panel.add(CanvasBgColor);
+    GridBgColorTitle = new JLabel(S.get("windowGridBgColor"));
+    GridBgColor = new ColorChooserButton(window, AppPreferences.GRID_BG_COLOR);
+    panel.add(GridBgColorTitle);
+    panel.add(GridBgColor);
+    GridDotColorTitle = new JLabel(S.get("windowGridDotColor"));
+    GridDotColor = new ColorChooserButton(window, AppPreferences.GRID_DOT_COLOR);
+    panel.add(GridDotColorTitle);
+    panel.add(GridDotColor);
+    GridZoomedDotColorTitle = new JLabel(S.get("windowGridZoomedDotColor"));
+    GridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
+    panel.add(GridZoomedDotColorTitle);
+    panel.add(GridZoomedDotColor);
 
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
