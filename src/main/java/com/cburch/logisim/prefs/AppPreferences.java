@@ -520,6 +520,16 @@ public class AppPreferences {
       create(
           new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
+  public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
+          create(new PrefMonitorInt("canvasBgColor", 0xFFFFFFFF));
+  public static final PrefMonitor<Integer> GRID_BG_COLOR =
+          create(new PrefMonitorInt("gridBgColor", 0xFFFFFFFF));
+  public static final PrefMonitor<Integer> GRID_DOT_COLOR =
+          create(new PrefMonitorInt("gridDotColor", 0xFF777777));
+  public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
+          create(new PrefMonitorInt("gridZoomedDotColor", 0xFFCCCCCC));
+
+
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
   public static final String ADD_AFTER_EDIT = "edit";
