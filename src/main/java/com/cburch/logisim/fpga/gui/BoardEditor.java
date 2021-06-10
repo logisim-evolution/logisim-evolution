@@ -42,20 +42,12 @@ import com.cburch.logisim.util.LocaleListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-public class BoardEditor implements ActionListener, ComponentListener, 
+public class BoardEditor implements ActionListener, ComponentListener,
         LocaleListener, BoardManipulatorListener {
 
   private final JFrame panel;
@@ -108,7 +100,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     cancelButton.setActionCommand(CancelStr);
     cancelButton.addActionListener(this);
     ButtonPanel.add(cancelButton, gbc);
-    
+
     gbc.gridx = 1;
     gbc.gridy = 1;
     fpgaButton.setActionCommand(FPGAStr);
@@ -128,7 +120,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
     ButtonPanel.add(loadButton, gbc);
-    
+
     gbc.gridx = 4;
     importButton.setActionCommand("internal");
     importButton.addActionListener(this);
@@ -165,6 +157,11 @@ public class BoardEditor implements ActionListener, ComponentListener,
     int zoomY = (ScreenHeight * 100) / ImageHeight;
     picturepanel.setMaxZoom(Math.min(zoomX, zoomY));
     localeChanged();
+
+    // Close the frame once ESC is hit
+    panel.getRootPane().registerKeyboardAction(al -> panel.dispose(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   @Override
@@ -211,13 +208,13 @@ public class BoardEditor implements ActionListener, ComponentListener,
         break;
     }
   }
-  
+
   private void UpdateInfo(BoardReaderClass reader) {
     TheBoard = reader.GetBoardInformation();
     picturepanel.setBoard(TheBoard);
     picturepanel.repaint();
   }
-  
+
   private String getInternalBoardName() {
     ArrayList<String> boards = AppPreferences.Boards.GetBoardNames();
     return (String)OptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
@@ -268,7 +265,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     }
     return old;
   }
-  
+
   public JFrame GetPanel() {
     return panel;
   }
@@ -276,7 +273,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
   public boolean isActive() {
     return panel.isVisible();
   }
-  
+
   public void setActive() {
     this.clear();
     panel.setVisible(true);
