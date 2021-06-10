@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -517,7 +518,7 @@ public class AppPreferences {
               Direction.NORTH.toString()));
   public static final PrefMonitor<String> LookAndFeel =
       create(
-          new PrefMonitorString("LookAndFeel", UIManager.getCrossPlatformLookAndFeelClassName()));
+          new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
