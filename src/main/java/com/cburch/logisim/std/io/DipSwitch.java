@@ -128,7 +128,7 @@ public class DipSwitch extends InstanceFactory {
     }
     return LabelNames;
   }
-  
+
   public static String getInputLabel(int id) {
     return "sw_" + (id + 1);
   }
@@ -230,7 +230,7 @@ public class DipSwitch extends InstanceFactory {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
       ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
       if (map != null) {
-        map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(), 
+        map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(),
             GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
       }
     } else if (attr == StdAttr.FACING) {
@@ -242,6 +242,8 @@ public class DipSwitch extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
+    final int segmentWidth = 10;
+
     State state = (State) painter.getData();
     if (state == null || state.size != painter.getAttributeValue(ATTR_SIZE).getWidth()) {
       int val = (state == null) ? 0 : state.Value;
@@ -255,7 +257,7 @@ public class DipSwitch extends InstanceFactory {
     int x = loc.getX();
     int y = loc.getY();
     if (facing == Direction.SOUTH) {
-      x -= 10 * (n + 1);
+      x -= segmentWidth * (n + 1);
       y -= 40;
     }
     Graphics g = painter.getGraphics();
@@ -265,22 +267,30 @@ public class DipSwitch extends InstanceFactory {
       rotate = -facing.getRight().toRadians();
       ((Graphics2D) g).rotate(rotate);
     }
+
+    // draw switch background
     g.setColor(Color.DARK_GRAY);
-    g.fillRect(1, 1, (n + 1) * 10 - 2, 40 - 2);
-    g.setColor(Color.white);
+    g.fillRect(1, 1, (n + 1) * segmentWidth - 2, 40 - 2);
+
+    // switch bg and labels
     g.setFont(DrawAttr.DEFAULT_FONT);
     if (n > 9) {
       g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 0.6f));
     }
     for (int i = 0; i < n; i++) {
-      g.fillRect(7 + (i * 10), 16, 6, 20);
+      g.setColor(state.BitSet(i) ? Value.TRUE_COLOR : Color.white);
+      g.fillRect(7 + (i * segmentWidth), 16, 6, 20);
+
+      g.setColor(Color.white);
       String s = Integer.toString(i + 1);
-      GraphicsUtil.drawCenteredText(g, s, 9 + (i * 10), 8);
+      GraphicsUtil.drawCenteredText(g, s, 9 + (i * segmentWidth), 8);
     }
-    g.setColor(Color.GRAY);
+
+    // draw each switch state
     for (int i = 0; i < n; i++) {
-      int ypos = (state.BitSet(i)) ? 17 : 26;
-      g.fillRect(8 + (i * 10), ypos, 4, 9);
+      g.setColor(state.BitSet(i) ? Color.DARK_GRAY : Color.GRAY);
+      int ypos = state.BitSet(i) ? 17 : 26;
+      g.fillRect(8 + (i * segmentWidth), ypos, 4, 9);
     }
 
     if (rotate != 0.0) {

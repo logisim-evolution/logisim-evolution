@@ -219,7 +219,11 @@ public class KarnaughMapPanel extends JPanel
       message = S.get("karnaughNoOutputError");
     } else if (table.getInputColumnCount() > MAX_VARS) {
       message = S.get("karnaughTooManyInputsError");
-    } else if (table.getInputColumnCount() == 0) message = S.get("karnaughNoInputsError");
+    } else if (table.getInputColumnCount() == 0) {
+      message = S.get("karnaughNoInputsError");
+    } else if (table.getInputColumnCount() == 1) {
+      message = S.get("karnaughTooFewInputsError");
+    }
 
     if (message != null) {
       if (g == null) {
@@ -441,6 +445,7 @@ public class KarnaughMapPanel extends JPanel
 
   @Override
   public String getToolTipText(MouseEvent event) {
+    if (KMapArea == null) return null;
     TruthTable table = model.getTruthTable();
     int row = getRow(event);
     if (row < 0) return null;
@@ -501,6 +506,8 @@ public class KarnaughMapPanel extends JPanel
       message = S.get("karnaughTooManyInputsError");
     } else if (inputCount == 0) {
       message = S.get("karnaughNoInputsError");
+    } else if (inputCount == 1) {
+      message = S.get("karnaughTooFewInputsError");
     }
     if (message != null) {
       g.setFont(HeaderFont);

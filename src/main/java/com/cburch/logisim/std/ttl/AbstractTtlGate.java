@@ -36,6 +36,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -513,16 +514,16 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     }
     instance.setPorts(ps);
   }
-  
+
   @Override
   public final void paintIcon(InstancePainter painter) {
     Graphics2D g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.setColor(Color.black);
-    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     int wh1 = AppPreferences.getScaled(3);
     int wh2 = AppPreferences.getScaled(2);
@@ -534,8 +535,15 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       g.drawRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
       g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
     }
-    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16), 
+    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.dispose();
   }
+
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase();
+  }
+
 }
