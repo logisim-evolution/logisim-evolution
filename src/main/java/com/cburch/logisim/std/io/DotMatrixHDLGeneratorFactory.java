@@ -90,34 +90,86 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
       }
     } else {
-      /* TODO: fix bug when rows == 1 or cols == 1 */
-      String RowName = GetBusName(ComponentInfo, 1, Nets);
-      String ColName = GetBusName(ComponentInfo, 0, Nets);
+      String RowName = (rows == 1) ? GetNetName(ComponentInfo, 1, true, Nets)
+                                   : GetBusName(ComponentInfo, 1, Nets);
+      String ColName = (cols == 1) ? GetNetName(ComponentInfo, 0, true, Nets)
+                                   : GetBusName(ComponentInfo, 0, Nets);
+      boolean oneRow = (rows == 1);
+      boolean oneCol = (cols == 1);
       if (HDL.isVHDL()) {
-        Contents.add("   "+Label+"_1 : FOR r IN "+(rows-1)+" DOWNTO 0 GENERATE");
-        Contents.add("      "+Label+"_2 : FOR c IN "+(cols-1)+" DOWNTO 0 GENERATE");
-        if (RowName.isEmpty() || ColName.isEmpty())
-          Contents.add("         "+HDLGeneratorFactory.LocalOutputBubbleBusname+"(r*"+cols+
-              "+c+"+ComponentInfo.GetLocalBubbleOutputStartId()+") <= '0';");
-        else
-          Contents.add("         "+HDLGeneratorFactory.LocalOutputBubbleBusname+"(r*"+cols+
-                       "+c+"+ComponentInfo.GetLocalBubbleOutputStartId()+") <= "+
-                       RowName+"(r) AND "+ColName+"(c);");
-        Contents.add("      END GENERATE "+Label+"_2;");
-        Contents.add("    END GENERATE "+Label+"_1;");
+        String indent = "   ";
+        if (!oneRow) {
+          Contents.add(indent+Label+"_0 : FOR r IN "+(rows-1)+" DOWNTO 0 GENERATE");
+          indent += "   ";
+          RowName += "(r)";
+        }
+        if (!oneCol) {
+          Contents.add(indent+Label+"_1 : FOR c IN "+(cols-1)+" DOWNTO 0 GENERATE");
+          indent += "   ";
+          ColName += "(c)";
+        }
+        
+        String content = indent+HDLGeneratorFactory.LocalOutputBubbleBusname+"(";
+        
+        content +=  ((oneRow) ? "" : "r"+((oneCol) ? "" : "*"+cols+"+"))+
+                    ((oneCol) ? "" : "c") +
+                    ((oneRow && oneCol) ? "" : "+");
+        
+        content += ComponentInfo.GetLocalBubbleOutputStartId()+") <= "+RowName+" AND "+ColName+";";
+        Contents.add(content);
+        
+        if (!oneCol) {
+          indent = indent.substring(0,indent.length()-3);
+          Contents.add(indent+"END GENERATE "+Label+"_1;");
+        }
+        if (!oneRow) {
+          indent = indent.substring(0,indent.length()-3);
+          Contents.add(indent+"END GENERATE "+Label+"_0;");
+        }
+    
       } else {
-    	Contents.add("   genvar "+Label+"_r,"+Label+"_c;");
-        Contents.add("   generate");
-        Contents.add("      for ("+Label+"_r = 0 ; "+Label+"_r < "+rows+"; "+Label+"_r="+Label+"_r+1)");
-        Contents.add("      begin:"+Label+"_1");
-        Contents.add("         for ("+Label+"_c = 0 ; "+Label+"_c <"+cols+"; "+Label+"_c="+Label+"_c+1)");
-        Contents.add("         begin:"+Label+"_2");
-        Contents.add("            "+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+"["+Label+"_r*"+cols+
-                     "+"+Label+"_c+"+ComponentInfo.GetLocalBubbleOutputStartId()+"] = "+
-                     RowName+"["+Label+"_r] & "+ColName+"["+Label+"_c];");
-        Contents.add("         end");
-        Contents.add("      end");
-        Contents.add("   endgenerate");
+        String indent = "   ";
+        if (!oneRow || !oneCol) {
+          Contents.add(indent+"genvar "+ ((oneRow) ? "" : Label+"_r"+ ((oneCol) ? "" : ","))+
+                      ((oneCol) ? "" : Label+"_c")+";");
+          Contents.add(indent+"generate");
+          indent += "   ";
+        }
+        if (!oneRow) {
+          Contents.add(indent+"for ("+Label+"_r = 0 ; "+Label+"_r < "+rows+"; "+Label+"_r="+Label+"_r+1)");
+          Contents.add(indent+"begin:"+Label+"_0");
+          indent += "   ";
+          RowName += "["+Label+"_r]";
+        }
+        if (!oneCol) {
+          Contents.add(indent+"for ("+Label+"_c = 0 ; "+Label+"_c < "+cols+"; "+Label+"_c="+Label+"_c+1)");
+          Contents.add(indent+"begin:"+Label+"_1");
+          indent += "   ";
+          ColName += "["+Label+"_c]";
+        }
+        
+        String content = indent+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+"[";
+        
+        content +=  ((oneRow) ? "" : Label+"_r"+((oneCol) ? "" : "*"+cols+"+"))+
+                    ((oneCol) ? "" : Label+"_c") +
+                    ((oneRow && oneCol) ? "" : "+");
+        
+        content += ComponentInfo.GetLocalBubbleOutputStartId()+"] = "+RowName+" & "+ColName+";";
+        Contents.add(content);
+        
+        if (!oneCol) {
+          indent = indent.substring(0,indent.length()-3);
+          Contents.add(indent+"end");
+        }
+        if (!oneRow) {
+          indent = indent.substring(0,indent.length()-3);
+          Contents.add(indent+"end");
+        }
+        
+        if (!oneRow || !oneCol) {
+          indent = indent.substring(0,indent.length()-3);
+          Contents.add(indent+"endgenerate");
+        }
       }
     }
     Contents.add("  ");

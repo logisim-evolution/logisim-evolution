@@ -150,7 +150,7 @@ public class Canvas extends JPanel
     this.canvasPane = null;
     this.tickCounter = new TickCounter();
 
-    setBackground(Color.white);
+    setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
     addMouseListener(myListener);
     addMouseMotionListener(myListener);
     addMouseWheelListener(myListener);
@@ -168,6 +168,7 @@ public class Canvas extends JPanel
     AppPreferences.COMPONENT_TIPS.addPropertyChangeListener(myListener);
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
     AppPreferences.SHOW_TICK_RATE.addPropertyChangeListener(myListener);
+    AppPreferences.CANVAS_BG_COLOR.addPropertyChangeListener(myListener);
     loadOptions(options);
     paintThread.start();
   }
@@ -529,7 +530,7 @@ public class Canvas extends JPanel
            * Clear the screen so we don't get
            * artifacts due to aliasing (e.g. where
            * semi-transparent (gray) pixels on the
-           * edges of a line turn woudl darker if
+           * edges of a line turn would darker if
            * painted a second time.
            */
           g.setColor(Color.WHITE);
@@ -964,6 +965,8 @@ public class Canvas extends JPanel
       } else if (AppPreferences.COMPONENT_TIPS.isSource(event)) {
         boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
         setToolTipText(showTips ? "" : null);
+      } else if (AppPreferences.CANVAS_BG_COLOR.isSource(event)) {
+        setBackground(new Color(AppPreferences.CANVAS_BG_COLOR.get()));
       }
     }
 
@@ -1137,7 +1140,7 @@ public class Canvas extends JPanel
 
     @Override
     public void simulatorStateChanged(Simulator.Event e) { }
-    
+
     @Override
     public void simulatorReset(Simulator.Event e) {
       waitForRepaintDone();
@@ -1288,7 +1291,7 @@ public class Canvas extends JPanel
           g.drawString(hz, x, y);
         }
       }
-      
+
       if (!proj.getSimulator().isAutoPropagating()) {
         g.setColor(SINGLE_STEP_MSG_COLOR);
         Font old = g.getFont();
@@ -1296,7 +1299,7 @@ public class Canvas extends JPanel
         g.drawString(proj.getSimulator().getSingleStepMessage(), 10, 15);
         g.setFont(old);
       }
-      
+
       g.setColor(Color.BLACK);
     }
 
