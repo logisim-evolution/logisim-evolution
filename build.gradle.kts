@@ -32,7 +32,7 @@ dependencies {
     implementation("at.swimmesberger:swingx-core:1.6.8")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
-    implementation("com.github.weisj:darklaf-core:2.5.5")
+    implementation("com.formdev:flatlaf:1.2")
 
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }

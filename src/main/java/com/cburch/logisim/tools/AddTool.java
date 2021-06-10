@@ -162,7 +162,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
       AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
     }
   }
-  
+
   @Override
   public void registerParent(java.awt.Component parent) {
     ComponentFactory fac = getFactory();
@@ -732,7 +732,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
       return this.description.equals(o.description);
     }
   }
-  
+
   public static final DataFlavor dataFlavor;
   static {
     DataFlavor f = null;

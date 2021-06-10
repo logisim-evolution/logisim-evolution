@@ -28,7 +28,8 @@
 
 package com.cburch.logisim.gui.generic;
 
-import java.awt.Color;
+import com.cburch.logisim.prefs.AppPreferences;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -39,28 +40,27 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 
-public class GridPainter {
+public class GridPainter implements PropertyChangeListener {
   public static final String ZOOM_PROPERTY = "zoom";
   public static final String SHOW_GRID_PROPERTY = "showgrid";
-  private static final int GRID_DOT_COLOR = 0xFF777777;
-  private static final int GRID_DOT_ZOOMED_COLOR = 0xFFCCCCCC;
-  private static final Color GRID_ZOOMED_OUT_COLOR = new Color(210, 210, 210);
   private final Component destination;
   private final PropertyChangeSupport support;
-  private final int gridSize;
+  private final int gridSize = 10;
   private Listener listener;
   private ZoomModel zoomModel;
-  private boolean showGrid;
-  private double zoomFactor;
+  private boolean showGrid = true;
+  private double zoomFactor = 1.0;
   private Image gridImage;
   private int gridImageWidth;
+
   public GridPainter(Component destination) {
     this.destination = destination;
     support = new PropertyChangeSupport(this);
-    showGrid = true;
-    gridSize = 10;
-    zoomFactor = 1.0;
-    updateGridImage(gridSize, zoomFactor);
+    createGridImage(gridSize, zoomFactor);
+
+    AppPreferences.GRID_BG_COLOR.addPropertyChangeListener(this);
+    AppPreferences.GRID_DOT_COLOR.addPropertyChangeListener(this);
+    AppPreferences.GRID_ZOOMED_DOT_COLOR.addPropertyChangeListener(this);
   }
 
   public void addPropertyChangeListener(String prop, PropertyChangeListener listener) {
@@ -86,7 +86,7 @@ public class GridPainter {
     double oldValue = zoomFactor;
     if (oldValue != value) {
       zoomFactor = value;
-      updateGridImage(gridSize, value);
+      createGridImage(gridSize, value);
       support.firePropertyChange(ZOOM_PROPERTY, oldValue, value);
     }
   }
@@ -117,77 +117,15 @@ public class GridPainter {
   }
 
   public void paintGrid(Graphics g) {
-    Rectangle clip = g.getClipBounds();
-    double zoom = zoomFactor;
-
     if (!showGrid) return;
 
-    Image img = gridImage;
-    int w = gridImageWidth;
-    if (img == null) {
-      paintGridOld(g, gridSize, zoom, clip);
-      return;
-    }
-    int x0 = (clip.x / w) * w; // round down to multiple of w
-    int y0 = (clip.y / w) * w;
-    for (int x = 0; x < clip.width + w; x += w) {
-      for (int y = 0; y < clip.height + w; y += w) {
-        g.drawImage(img, x0 + x, y0 + y, destination);
+    Rectangle clip = g.getClipBounds();
+    int x0 = (clip.x / gridImageWidth) * gridImageWidth; // round down to multiple of w
+    int y0 = (clip.y / gridImageWidth) * gridImageWidth;
+    for (int x = 0; x < clip.width + gridImageWidth; x += gridImageWidth) {
+      for (int y = 0; y < clip.height + gridImageWidth; y += gridImageWidth) {
+        g.drawImage(gridImage, x0 + x, y0 + y, destination);
       }
-    }
-  }
-
-  private void paintGridOld(Graphics g, int size, double f, Rectangle clip) {
-    g.setColor(Color.GRAY);
-    if (f == 1.0) {
-      int start_x = ((clip.x + 9) / size) * size;
-      int start_y = ((clip.y + 9) / size) * size;
-      for (int x = 0; x < clip.width; x += size) {
-        for (int y = 0; y < clip.height; y += size) {
-          g.fillRect(start_x + x, start_y + y, 1, 1);
-        }
-      }
-    } else {
-      /* Kevin Walsh of Cornell suggested the code below instead. */
-      int x0 = size * (int) Math.ceil(clip.x / f / size);
-      int x1 = x0 + (int) (clip.width / f);
-      int y0 = size * (int) Math.ceil(clip.y / f / size);
-      int y1 = y0 + (int) (clip.height / f);
-      if (f <= 0.5) g.setColor(GRID_ZOOMED_OUT_COLOR);
-      for (double x = x0; x < x1; x += size) {
-        for (double y = y0; y < y1; y += size) {
-          int sx = (int) Math.round(f * x);
-          int sy = (int) Math.round(f * y);
-          g.fillRect(sx, sy, 1, 1);
-        }
-      }
-      if (f <= 0.5) { // make every 5th pixel darker
-        int size5 = 5 * size;
-        g.setColor(Color.GRAY);
-        x0 = size5 * (int) Math.ceil(clip.x / f / size5);
-        y0 = size5 * (int) Math.ceil(clip.y / f / size5);
-        for (double x = x0; x < x1; x += size5) {
-          for (double y = y0; y < y1; y += size5) {
-            int sx = (int) Math.round(f * x);
-            int sy = (int) Math.round(f * y);
-            g.fillRect(sx, sy, 1, 1);
-          }
-        }
-      }
-
-      /*
-       * Original code by Carl Burch int x0 = 10 * (int) Math.ceil(clip.x
-       * / f / 10); int x1 = x0 + (int)(clip.width / f); int y0 = 10 *
-       * (int) Math.ceil(clip.y / f / 10); int y1 = y0 + (int)
-       * (clip.height / f); int s = f > 0.5 ? 1 : f > 0.25 ? 2 : 3; int i0
-       * = s - ((x0 + 10*s - 1) % (s * 10)) / 10 - 1; int j0 = s - ((y1 +
-       * 10*s - 1) % (s * 10)) / 10 - 1; for (int i = 0; i < s; i++) { for
-       * (int x = x0+i*10; x < x1; x += s*10) { for (int j = 0; j < s;
-       * j++) { g.setColor(i == i0 && j == j0 ? Color.gray :
-       * GRID_ZOOMED_OUT_COLOR); for (int y = y0+j*10; y < y1; y += s*10)
-       * { int sx = (int) Math.round(f * x); int sy = (int) Math.round(f *
-       * y); g.fillRect(sx, sy, 1, 1); } } } }
-       */
     }
   }
 
@@ -195,21 +133,18 @@ public class GridPainter {
     support.removePropertyChangeListener(prop, listener);
   }
 
-  //
-  // creating the grid image
-  //
-  private void updateGridImage(int size, double f) {
+  private void createGridImage(int size, double f) {
     double ww = f * size * 5;
     while (2 * ww < 150) ww *= 2;
     int w = (int) Math.round(ww);
     int[] pix = new int[w * w];
-    Arrays.fill(pix, 0xFFFFFF);
+    Arrays.fill(pix, AppPreferences.GRID_BG_COLOR.get());
 
     if (f == 1.0) {
       int lineStep = size * w;
       for (int j = 0; j < pix.length; j += lineStep) {
         for (int i = 0; i < w; i += size) {
-          pix[i + j] = GRID_DOT_COLOR;
+          pix[i + j] = AppPreferences.GRID_DOT_COLOR.get();
         }
       }
     } else {
@@ -221,7 +156,7 @@ public class GridPainter {
         off1 = off0 + num;
       }
 
-      int dotColor = f <= 0.5 ? GRID_DOT_ZOOMED_COLOR : GRID_DOT_COLOR;
+      int dotColor = f <= 0.5 ? AppPreferences.GRID_ZOOMED_DOT_COLOR.get() : AppPreferences.GRID_DOT_COLOR.get();
       for (int j = 0; true; j += size) {
         int y = (int) Math.round(f * j);
         if (y + off0 >= w) break;
@@ -251,13 +186,22 @@ public class GridPainter {
           for (int i = 0; true; i += size5) {
             int x = (int) Math.round(f * i);
             if (x >= w) break;
-            pix[y + x] = GRID_DOT_COLOR;
+            pix[y + x] = AppPreferences.GRID_DOT_COLOR.get();
           }
         }
       }
     }
     gridImage = destination.createImage(new MemoryImageSource(w, w, pix, 0, w));
     gridImageWidth = w;
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent event) {
+    if (AppPreferences.GRID_BG_COLOR.isSource(event)
+        || AppPreferences.GRID_DOT_COLOR.isSource(event)
+        || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)) {
+      createGridImage(gridSize, zoomFactor);
+    }
   }
 
   private class Listener implements PropertyChangeListener {
@@ -273,4 +217,7 @@ public class GridPainter {
       }
     }
   }
+
+
+
 }

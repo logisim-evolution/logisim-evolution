@@ -380,9 +380,7 @@ public class DotMatrix extends InstanceFactory {
       }
     } else {
       if (rows <= 1) {
-        ps = new Port[] {new Port(0, 0, Port.INPUT, cols)};
-      } else if (cols <= 1) {
-        ps = new Port[] {new Port(0, 0, Port.INPUT, rows)};
+        ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
       } else {
         ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows)};
       }

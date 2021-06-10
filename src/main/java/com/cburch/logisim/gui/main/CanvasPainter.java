@@ -53,6 +53,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
+import java.util.prefs.PreferenceChangeEvent;
 
 class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
@@ -69,6 +70,10 @@ class CanvasPainter implements PropertyChangeListener {
 
     AppPreferences.PRINTER_VIEW.addPropertyChangeListener(this);
     AppPreferences.ATTRIBUTE_HALO.addPropertyChangeListener(this);
+    AppPreferences.CANVAS_BG_COLOR.addPropertyChangeListener(this);
+    AppPreferences.GRID_BG_COLOR.addPropertyChangeListener(this);
+    AppPreferences.GRID_DOT_COLOR.addPropertyChangeListener(this);
+    AppPreferences.GRID_ZOOMED_DOT_COLOR.addPropertyChangeListener(this);
   }
 
   private void drawWidthIncompatibilityData(Graphics base, Graphics g, Project proj) {
@@ -213,9 +218,6 @@ class CanvasPainter implements PropertyChangeListener {
     if (canvas.ifPaintDirtyReset() || clip == null) {
       clip = new Rectangle(0, 0, size.width, size.height);
     }
-    // YSY removed to don't overwrite background image
-    // g.setColor(Color.magenta);
-    // g.fillRect(clip.x, clip.y, clip.width, clip.height);
 
     grid.paintGrid(g);
     g.setColor(Color.black);
@@ -241,10 +243,11 @@ class CanvasPainter implements PropertyChangeListener {
   }
 
   public void propertyChange(PropertyChangeEvent event) {
-    if (AppPreferences.PRINTER_VIEW.isSource(event)
-        || AppPreferences.ATTRIBUTE_HALO.isSource(event)) {
-      canvas.repaint();
+    if (AppPreferences.GRID_BG_COLOR.isSource(event)
+          || AppPreferences.GRID_DOT_COLOR.isSource(event)
+          || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)) {
     }
+    canvas.repaint();
   }
 
   void setHaloedComponent(Circuit circ, Component comp) {

@@ -31,21 +31,30 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final PrefBoolean[] checks;
   private final PrefOptionList afterAdd;
   private final PrefOptionList DefaultAppear;
+  private final PrefOptionList PrefPinAppearance;
   private PrefOptionList radix1;
   private PrefOptionList radix2;
 
   public LayoutOptions(PreferencesFrame window) {
     super(window);
+
+    AppPreferences.getPrefs().addPreferenceChangeListener(new LayoutOptions.MyListener());
 
     checks =
         new PrefBoolean[] {
@@ -99,6 +108,18 @@ class LayoutOptions extends OptionsPanel {
                   StdAttr.APPEAR_EVOLUTION.toString(), StdAttr.APPEAR_EVOLUTION.getDisplayGetter())
             });
 
+    // How connection pins should be drawn like
+    PrefPinAppearance = new PrefOptionList(
+      AppPreferences.PinAppearance,
+        S.getter("layoutPinAppearance"),
+            new PrefOption[] {
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
+                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
+            });
+
+
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(DefaultAppear.getJLabel());
     panel.add(DefaultAppear.getJComboBox());
@@ -108,6 +129,8 @@ class LayoutOptions extends OptionsPanel {
     panel.add(radix1.getJComboBox());
     panel.add(radix2.getJLabel());
     panel.add(radix2.getJComboBox());
+    panel.add(PrefPinAppearance.getJLabel());
+    panel.add(PrefPinAppearance.getJComboBox());
 
     setLayout(new TableLayout(1));
     for (PrefBoolean check : checks) {
@@ -136,4 +159,20 @@ class LayoutOptions extends OptionsPanel {
     afterAdd.localeChanged();
     DefaultAppear.localeChanged();
   }
+
+
+  private static class MyListener implements PreferenceChangeListener {
+    @Override
+    public void preferenceChange(PreferenceChangeEvent evt) {
+      boolean update = false;
+      if (evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier())) {
+        update = true;
+      }
+      if (update) {
+        for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
+      }
+    }
+  }
+
+
 }
