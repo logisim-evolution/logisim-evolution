@@ -172,11 +172,11 @@
     <mapID target="socsimcontrol"       url="fr/html/libs/soc/socsimcontrol.html" />
 
 <!-- Icon help tree -->
-	<mapID target="icon_poke"        url="img-guide/poke.png" />
-	<mapID target="icon_edit"        url="img-guide/select.png" />
-	<mapID target="icon_select"      url="img-guide/select.png" />
+	<mapID target="icon_poke"        url="icons/poke.png" />
+	<mapID target="icon_edit"        url="icons/select.png" />
+	<mapID target="icon_select"      url="icons/select.png" />
 	<mapID target="icon_wiring"      url="icons/wiring.gif" />
-	<mapID target="icon_text"        url="img-guide/text.png" />
+	<mapID target="icon_text"        url="icons/text.png" />
 	<mapID target="icon_menu"        url="icons/menu.gif" />
 	<mapID target="icon_splitter"    url="icons/splitter.gif" />
 	<mapID target="icon_pin"         url="icons/pinInput.gif" />
@@ -186,7 +186,7 @@
 	<mapID target="icon_clock"       url="icons/clock.gif" />
     <mapID target="icon_por"         url="icons/por.png"/>
 	<mapID target="icon_extender"    url="icons/extender.gif" />
-	<mapID target="icon_label"       url="img-guide/text.png" />
+	<mapID target="icon_label"       url="icons/text.png" />
 	<mapID target="icon_constant"    url="icons/constant.gif" />
 	<mapID target="icon_const01"     url="icons/ground.gif" />
 	<mapID target="icon_transist"    url="icons/trans0.gif" />
