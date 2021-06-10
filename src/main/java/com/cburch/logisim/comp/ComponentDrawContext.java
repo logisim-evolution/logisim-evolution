@@ -161,6 +161,31 @@ public class ComponentDrawContext {
     drawHandle(left, top);
   }
 
+
+  protected void drawPinMarker(int x, int y) {
+    final int defaultRadius = 4;
+    final int defaultOffset = 2;
+    final int mediumDotRadius = 6;
+    final int mediumDotOffset = 3;
+    final int bigDotRadius = 8;
+    final int bigDotOffset = 4;
+
+    String appearance = AppPreferences.PinAppearance.get();
+    int radius = 4;
+    int offset = 2;
+    if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_MEDIUM)) {
+      radius = 6;
+      offset = 3;
+    } else if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_BIG)) {
+      radius = 8;
+      offset = 4;
+    } else if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_BIGGER)) {
+      radius = 10;
+      offset = 5;
+    }
+    g.fillOval(x - offset, y - offset, radius, radius);
+  }
+
   public void drawPin(Component comp, int i) {
     EndData e = comp.getEnd(i);
     Location pt = e.getLocation();
@@ -171,7 +196,7 @@ public class ComponentDrawContext {
     } else {
       g.setColor(Color.BLACK);
     }
-    g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+    drawPinMarker(pt.getX(), pt.getY());
     g.setColor(curColor);
   }
 
@@ -188,7 +213,7 @@ public class ComponentDrawContext {
     } else {
       g.setColor(Color.BLACK);
     }
-    g.fillOval(x - PIN_OFFS, y - PIN_OFFS, PIN_RAD, PIN_RAD);
+    drawPinMarker(x, y);
     g.setColor(curColor);
     if (dir == Direction.EAST) {
       GraphicsUtil.drawText(g, label, x + 3, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
@@ -211,7 +236,7 @@ public class ComponentDrawContext {
       } else {
         g.setColor(Color.BLACK);
       }
-      g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+      drawPinMarker(pt.getX(), pt.getY());
     }
     g.setColor(curColor);
   }
