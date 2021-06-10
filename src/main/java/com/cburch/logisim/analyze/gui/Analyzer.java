@@ -135,37 +135,6 @@ public class Analyzer extends LFrame.SubWindow {
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    Analyzer frame = new Analyzer();
-    AnalyzerModel model = frame.getModel();
-
-    if (args.length >= 2) {
-      ArrayList<Var> inputs = new ArrayList<>();
-      ArrayList<Var> outputs = new ArrayList<>();
-      for (String s: args[0].split(","))
-        inputs.add(Var.parse(s));
-      for (String s: args[1].split(","))
-        outputs.add(Var.parse(s));
-      model.setVariables(inputs, outputs);
-    }
-    for (int i = 2; i < args.length; i++) {
-      String s = args[i];
-      int idx = s.indexOf('=');
-      if (idx < 0) {
-        Parser.parse(s, model); // for testing Parser.parse
-        continue;
-      } else {
-        String name = s.substring(0, idx);
-        String exprString = s.substring(idx+1);
-        Expression expr = Parser.parse(exprString, model);
-        model.getOutputExpressions().setExpression(name, expr, exprString);
-      }
-    }
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.pack();
-    frame.setVisible(true);
-  }
-
   private static final long serialVersionUID = 1L;
   // used by circuit analysis to select the relevant tab automatically.
   public static final int IO_TAB = 0;
