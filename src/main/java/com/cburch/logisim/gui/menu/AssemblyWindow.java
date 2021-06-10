@@ -85,7 +85,7 @@ public class AssemblyWindow
   private final JMenuItem openFileItem;
   private final JMenuItem reloadFileItem;
   private final JMenuItem close;
-  private final JButton refresh = new JButton("Get Registers");
+  private final JButton refresh = new JButton("Get Registers"); // FIXME: hardcoded string
   private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
 
@@ -115,15 +115,15 @@ public class AssemblyWindow
     combo.setFocusable(false);
     refresh.addActionListener(this);
     refresh.setFocusable(false);
-    refresh.setToolTipText("Get register list of current displayed circuit.");
+    refresh.setToolTipText("Get register list of current displayed circuit.");  // FIXME: hardcoded string
 
-    ontopItem = new JCheckBoxMenuItem("Set on top", true);
+    ontopItem = new JCheckBoxMenuItem("Set on top", true);  // FIXME: hardcoded string
     ontopItem.addActionListener(this);
-    openFileItem = new JMenuItem("Open lss file");
+    openFileItem = new JMenuItem("Open lss file");  // FIXME: hardcoded string
     openFileItem.addActionListener(this);
-    reloadFileItem = new JMenuItem("Reload lss file");
+    reloadFileItem = new JMenuItem("Reload lss file");  // FIXME: hardcoded string
     reloadFileItem.addActionListener(this);
-    close = new JMenuItem("Close");
+    close = new JMenuItem("Close"); // FIXME: hardcoded string
     close.addActionListener(this);
     winMenuBar.add(fileMenu);
     winMenuBar.add(windowMenu);
@@ -135,7 +135,7 @@ public class AssemblyWindow
     fileMenu.add(close);
 
     windows = new LFrame.Dialog(null);
-    windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
+    windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());  // FIXME: hardcoded string
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
     windows.setAlwaysOnTop(true);
@@ -143,7 +143,7 @@ public class AssemblyWindow
     windows.addWindowListener(this);
     windows.addKeyListener(this);
 
-    north.add(new JLabel("Register: "));
+    north.add(new JLabel("Register: "));  // FIXME: hardcoded string
     north.add(combo);
     north.add(refresh);
 
