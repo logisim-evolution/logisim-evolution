@@ -38,9 +38,11 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.*;
 
 public class PreferencesFrame extends LFrame.Dialog {
 
@@ -53,6 +55,8 @@ public class PreferencesFrame extends LFrame.Dialog {
 
   private PreferencesFrame() {
     super(null);
+
+    System.out.print("Prefs\n");
 
     panels =
         new OptionsPanel[] {
@@ -82,6 +86,11 @@ public class PreferencesFrame extends LFrame.Dialog {
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
     pack();
+
+    // Close the frame once ESC is hit
+    getRootPane().registerKeyboardAction(al -> dispose(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   public static void initializeManager() {
