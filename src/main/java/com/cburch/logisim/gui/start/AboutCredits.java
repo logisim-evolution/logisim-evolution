@@ -46,8 +46,6 @@ import javax.swing.JComponent;
 
 class AboutCredits extends JComponent {
   private static final long serialVersionUID = 1L;
-  /** Time to spend freezing the credits before after after scrolling */
-  private static final int MILLIS_FREEZE = 1000;
   /** Speed of how quickly the scrolling occurs */
   private static final int MILLIS_PER_PIXEL = 20;
   /**
@@ -161,35 +159,21 @@ class AboutCredits extends JComponent {
     int height = getHeight();
     int initY = Math.min(0, initialHeight - height + About.IMAGE_BORDER);
     int maxY = linesHeight - height - initY;
-    int totalMillis = 2 * MILLIS_FREEZE + (linesHeight + height) * MILLIS_PER_PIXEL;
+    int totalMillis = (linesHeight + height) * MILLIS_PER_PIXEL;
     int offs = scroll % totalMillis;
-    if (offs >= 0 && offs < MILLIS_FREEZE) {
-      // frozen before starting the credits scroll
-      int a = 255 * (MILLIS_FREEZE - offs) / MILLIS_FREEZE;
-      if (a > 245) {
-        paint = null;
-      } else if (a < 15) {
-        paint = paintSteady;
-      } else {
-        paint = new Paint[colorBase.length];
-        for (int i = 0; i < paint.length; i++) {
-          Color hue = colorBase[i];
-          paint[i] = new GradientPaint(0.0f, 0.0f, derive(hue, a), 0.0f, fadeStop, hue);
-        }
-      }
-      yPos = initY;
-    } else if (offs < MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
+
+    if (offs < maxY * MILLIS_PER_PIXEL) {
       // scrolling through credits
-      yPos = initY + (offs - MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-    } else if (offs < 2 * MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
+      yPos = initY + offs / MILLIS_PER_PIXEL;
+    } else if (offs < maxY * MILLIS_PER_PIXEL) {
       // freezing at bottom of scroll
       yPos = initY + maxY;
-    } else if (offs < 2 * MILLIS_FREEZE + (linesHeight - initY) * MILLIS_PER_PIXEL) {
+    } else if (offs < (linesHeight - initY) * MILLIS_PER_PIXEL) {
       // scrolling bottom off screen
-      yPos = initY + (offs - 2 * MILLIS_FREEZE) / MILLIS_PER_PIXEL;
+      yPos = initY + offs / MILLIS_PER_PIXEL;
     } else {
       // scrolling next credits onto screen
-      int millis = offs - 2 * MILLIS_FREEZE - (linesHeight - initY) * MILLIS_PER_PIXEL;
+      int millis = offs - (linesHeight - initY) * MILLIS_PER_PIXEL;
       paint = null;
       yPos = -height + millis / MILLIS_PER_PIXEL;
     }
