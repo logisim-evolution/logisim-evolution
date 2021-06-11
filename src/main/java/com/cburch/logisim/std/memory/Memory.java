@@ -36,6 +36,15 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class Memory extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Memory";
+
   protected static final int DELAY = 5;
 
   private static final FactoryDescription[] DESCRIPTIONS = {
@@ -61,11 +70,6 @@ public class Memory extends Library {
   @Override
   public String getDisplayName() {
     return S.get("memoryLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Memory";
   }
 
   @Override

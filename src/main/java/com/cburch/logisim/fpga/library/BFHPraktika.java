@@ -36,6 +36,15 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class BFHPraktika extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "BFH-Praktika";
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Binary_to_BCD_converter", S.getter("Bin2BCD"), "", bin2bcd.class),
     new FactoryDescription(
@@ -47,11 +56,6 @@ public class BFHPraktika extends Library {
   @Override
   public String getDisplayName() {
     return S.get("BFHMegaFunctions");
-  }
-
-  @Override
-  public String getName() {
-    return "BFH-Praktika";
   }
 
   @Override

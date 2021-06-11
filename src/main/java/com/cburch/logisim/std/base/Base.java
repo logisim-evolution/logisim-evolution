@@ -44,6 +44,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Base";
+
   private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
@@ -78,11 +87,6 @@ public class Base extends Library {
   @Override
   public String getDisplayName() {
     return S.get("baseLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Base";
   }
 
   @Override

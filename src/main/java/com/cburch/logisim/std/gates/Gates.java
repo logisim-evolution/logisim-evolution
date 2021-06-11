@@ -37,16 +37,20 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Gates extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Gates";
+
   private List<Tool> tools = null;
 
   @Override
   public String getDisplayName() {
     return S.get("gatesLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Gates";
   }
 
   @Override

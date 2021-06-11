@@ -49,7 +49,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Library of built-in component libraries
+ */
 public class Builtin extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Builtin";
+
   private List<Library> libraries = null;
 
   @Override
@@ -76,11 +88,6 @@ public class Builtin extends Library {
         new Soc());
     }
     return libraries;
-  }
-
-  @Override
-  public String getName() {
-    return "Builtin";
   }
 
   @Override

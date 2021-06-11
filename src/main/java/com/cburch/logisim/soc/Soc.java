@@ -44,6 +44,14 @@ import java.util.List;
 
 public class Soc extends Library {
 
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Soc";
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", Rv32im_riscv.class),
@@ -66,11 +74,6 @@ public class Soc extends Library {
   @Override
   public String getDisplayName() {
     return S.get("socLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Soc";
   }
 
   @Override

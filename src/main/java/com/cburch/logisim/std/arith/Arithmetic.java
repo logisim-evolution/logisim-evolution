@@ -36,6 +36,15 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class Arithmetic extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Arithmetic";
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Adder", S.getter("adderComponent"), "adder.gif", Adder.class),
     new FactoryDescription("Subtractor", S.getter("subtractorComponent"), "subtractor.gif", Subtractor.class),
@@ -53,11 +62,6 @@ public class Arithmetic extends Library {
   @Override
   public String getDisplayName() {
     return S.get("arithmeticLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Arithmetic";
   }
 
   @Override
