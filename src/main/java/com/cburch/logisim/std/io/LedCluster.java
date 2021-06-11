@@ -119,8 +119,6 @@ public class LedCluster extends InstanceFactory {
         JoinedConfigurator.create(
             new BitWidthConfigurator(ATTR_SIZE),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
-
-    System.out.print(LedCluster.class.getSimpleName()+"\n");
   }
 
   @Override
