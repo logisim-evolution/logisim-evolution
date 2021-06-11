@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.std.ttl;
 
+/**
+ * TTL 74x27: triple 3-input NOR gate
+ */
 public class Ttl7427 extends Ttl7410 {
 
   public Ttl7427() {
