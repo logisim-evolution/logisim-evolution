@@ -87,6 +87,7 @@ public class Main {
   public static final String VERSION_NAME = VERSION.toString();
   public static final int COPYRIGHT_YEAR = 2021;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION_NAME;
+  public static final String APP_URL = "https://github.com/logisim-evolution/logisim-evolution";
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
