@@ -70,6 +70,14 @@ import java.awt.image.IndexColorModel;
 
 // 128 x 128 pixel LCD display with 8bpp color (byte addressed)
 class Video extends ManagedComponent implements ToolTipMaker, AttributeListener {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "RGB Video";
+
   public static final ComponentFactory factory = new Factory();
 
   static final String BLINK_YES = "Blinking Dot";
@@ -121,7 +129,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     private Factory() {}
 
     public String getName() {
-      return "RGB Video";
+      return _ID;
     }
 
     public String getDisplayName() {
@@ -178,7 +186,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   public ComponentFactory getFactory() {
     return factory;
   }
-  
+
   public void setFactory(ComponentFactory fact) {}
 
   Location loc(int pin) {
@@ -251,9 +259,9 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     g.fillRect(ten, ten, five, five);
     g.dispose();
   }
-  
+
   private static int scale(int v) {
-    return AppPreferences.getScaled(v);  
+    return AppPreferences.getScaled(v);
   }
 
   boolean blink() {

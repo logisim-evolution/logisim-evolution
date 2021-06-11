@@ -57,6 +57,14 @@ import java.util.Arrays;
 // TODO repropagate when rows/cols change
 
 public class DotMatrix extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "DotMatrix";
+
   private static class State implements InstanceData, Cloneable {
     private int rows;
     private int cols;
@@ -193,7 +201,7 @@ public class DotMatrix extends InstanceFactory {
   static final Attribute<Integer> ATTR_PERSIST =
       new DurationAttribute(
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
-  
+
   private static ArrayList<String> GetLabels(int rows , int cols) {
     ArrayList<String> result = new ArrayList<>();
     for (int r = 0 ; r < rows ; r++)
@@ -203,7 +211,7 @@ public class DotMatrix extends InstanceFactory {
   }
 
   public DotMatrix() {
-    super("DotMatrix", S.getter("dotMatrixComponent"));
+    super(_ID, S.getter("dotMatrixComponent"));
     setAttributes(
         new Attribute<?>[] {
           ATTR_INPUT_TYPE,
