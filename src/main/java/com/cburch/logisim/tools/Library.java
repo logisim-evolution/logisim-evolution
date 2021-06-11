@@ -48,9 +48,17 @@ public abstract class Library {
     return false;
   }
 
+  /**
+   * Returns the name of the library that the user will see.
+   */
   public String getDisplayName() {
     return getName();
   }
+
+  /**
+   * Returns library name/id
+   */
+  abstract public String getName();
 
   public List<Library> getLibraries() {
     return Collections.emptyList();
@@ -69,10 +77,6 @@ public abstract class Library {
     return false;
   }
 
-  public String getName() {
-    return getClass().getName();
-  }
-
   public Tool getTool(String name) {
     for (Tool tool : getTools()) {
       if (tool.getName().equals(name)) {
@@ -82,6 +86,9 @@ public abstract class Library {
     return null;
   }
 
+  /**
+   * Returns a list of all the tools available in this library.
+   */
   public abstract List<? extends Tool> getTools();
 
   public int indexOf(ComponentFactory query) {

@@ -61,6 +61,11 @@ public class Components extends Library {
     return "Gray Tools";
   }
 
+  /** Returns library name/id */
+  public String getName() {
+    return getClass().getName();
+  }
+
   /** Returns a list of all the tools available in this library. */
   @Override
   public List<AddTool> getTools() {
