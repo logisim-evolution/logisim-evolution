@@ -74,9 +74,7 @@ class MenuHelp extends JMenu implements ActionListener {
     add(tutorial);
     add(guide);
     add(library);
-    // On Linux this feature depends on Gnome, so may not be
-    // working on all distros (i.e. KDE).
-    if (Desktop.isDesktopSupported()) {
+    if (browserIntegrationSupported()) {
       addSeparator();
       add(www);
     }
@@ -149,10 +147,15 @@ class MenuHelp extends JMenu implements ActionListener {
     }
   }
 
+  // On Linux this feature depends on Gnome, so may not be
+  // working on all distros (i.e. KDE).
+  private boolean browserIntegrationSupported() {
+    return Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
+  }
 
   public void openProjectWebsite() {
     try {
-      if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      if (browserIntegrationSupported()) {
         Desktop.getDesktop().browse(new URI(Main.APP_URL));
       }
     } catch (Exception e) {
