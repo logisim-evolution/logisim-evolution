@@ -51,11 +51,11 @@ public class PioMenu implements ActionListener, MenuExtender {
   private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
-  
+
   public PioMenu(Instance inst) {
     instance = inst;
   }
-  
+
   @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     this.frame = proj.getFrame();
@@ -86,14 +86,8 @@ public class PioMenu implements ActionListener, MenuExtender {
       FileWriter cFile = null;
       try {
         headerFile = new FileWriter(headerFileName,false);
-      } catch (IOException e) {
-    	headerFile = null;
-      }
-      try {
         cFile = new FileWriter(cFileName,false);
-      } catch (IOException e) {
-        cFile = null;
-      }
+      } catch (IOException e) {}
       if (headerFile == null || cFile == null) {
         OptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), OptionPane.ERROR_MESSAGE);
         return;
@@ -129,7 +123,7 @@ public class PioMenu implements ActionListener, MenuExtender {
         if (myState.inputGeneratesIrq()) {
           functName = "IrqMaskReg";
           String reactName = myState.getIrqType() == PioAttributes.IRQ_EDGE ? S.get("PioMenuIrqEdge") : S.get("PioMenuIrqLevel");
-          headerWriter.println(S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));          
+          headerWriter.println(S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));
           SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,2);
         }
         if (myState.inputIsCapturedSynchronisely()) {
@@ -162,5 +156,5 @@ public class PioMenu implements ActionListener, MenuExtender {
       OptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
-  
+
 }

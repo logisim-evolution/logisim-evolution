@@ -125,7 +125,6 @@ class SearchNode implements Comparable<SearchNode> {
     int dy = dst.getY() - cur.getY();
     int ret = -1;
     if (extendsWire) {
-      ret = -1;
       if (curDir == Direction.EAST) {
         if (dx > 0) ret = dx / 10 * 9 + Math.abs(dy);
       } else if (curDir == Direction.WEST) {
