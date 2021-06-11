@@ -1172,17 +1172,17 @@ class XmlReader {
     if (oldBaseElt != null) {
       wiringLabel = oldBaseLabel;
       wiringElt = oldBaseElt;
-      wiringElt.setAttribute("desc", "#Wiring");
+      wiringElt.setAttribute("desc", "#" + Wiring._ID);
 
       newBaseLabel = "" + (maxLabel + 1);
       newBaseElt = doc.createElement("lib");
-      newBaseElt.setAttribute("desc", "#Base");
+      newBaseElt.setAttribute("desc", "#" + Base._ID);
       newBaseElt.setAttribute("name", newBaseLabel);
       root.insertBefore(newBaseElt, lastLibElt.getNextSibling());
     } else {
       wiringLabel = "" + (maxLabel + 1);
       wiringElt = doc.createElement("lib");
-      wiringElt.setAttribute("desc", "#Wiring");
+      wiringElt.setAttribute("desc", "#" + Wiring._ID);
       wiringElt.setAttribute("name", wiringLabel);
       root.insertBefore(wiringElt, lastLibElt.getNextSibling());
 
