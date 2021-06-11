@@ -324,9 +324,7 @@ public class TableSorter extends AbstractTableModel {
         try {
           // make the comparison
           retVal = m.invoke(o1, o2);
-        } catch (IllegalAccessException e) {
-          throw new ClassCastException();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
           throw new ClassCastException();
         }
 
