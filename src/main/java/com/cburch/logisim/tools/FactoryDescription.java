@@ -40,8 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class allows an object to be created holding all the information essential to showing a
  * ComponentFactory in the explorer window, but without actually loading the ComponentFactory unless
- * a program genuinely gets around to needing to use it. Note that for this to work, the relevant
- * ComponentFactory class must be in the same package as its Library class, the ComponentFactory
+ * a program genuinely gets around to needing to use it. Note that for this to work, the ComponentFactory
  * class must be public, and it must include a public no-arguments constructor.
  */
 public class FactoryDescription {
@@ -62,37 +61,35 @@ public class FactoryDescription {
   private String iconName;
   private boolean iconLoadAttempted;
   private Icon icon;
-  private final String factoryClassName;
+  private final Class factoryClass;
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;
 
-  public FactoryDescription(
-      String name, StringGetter displayName, Icon icon, String factoryClassName) {
-    this(name, displayName, factoryClassName);
-    this.iconName = "???";
-    this.iconLoadAttempted = true;
-    this.icon = icon;
+  public FactoryDescription(String name, StringGetter displayName, Icon icon,
+                            Class<? extends ComponentFactory> factoryClass) {
+    this(name, displayName, factoryClass);
   }
 
-  public FactoryDescription(String name, StringGetter displayName, String factoryClassName) {
+  public FactoryDescription(String name, StringGetter displayName, String iconName,
+                            Class<? extends ComponentFactory> factoryClass) {
+    this(name, displayName, factoryClass);
+    this.iconName = iconName;
+    this.iconLoadAttempted = false;
+    this.icon = null;
+  }
+
+  public FactoryDescription(String name, StringGetter displayName,
+                            Class<? extends ComponentFactory> factoryClass) {
     this.name = name;
     this.displayName = displayName;
     this.iconName = "???";
     this.iconLoadAttempted = true;
     this.icon = null;
-    this.factoryClassName = factoryClassName;
+    this.factoryClass = factoryClass;
     this.factoryLoadAttempted = false;
     this.factory = null;
     this.toolTip = null;
-  }
-
-  public FactoryDescription(
-      String name, StringGetter displayName, String iconName, String factoryClassName) {
-    this(name, displayName, factoryClassName);
-    this.iconName = iconName;
-    this.iconLoadAttempted = false;
-    this.icon = null;
   }
 
   public String getDisplayName() {
@@ -103,41 +100,32 @@ public class FactoryDescription {
     ComponentFactory ret = factory;
     if (factory != null || factoryLoadAttempted) {
       return ret;
-    } else {
-      String msg = "";
-      try {
-        msg = "getting class loader";
-        ClassLoader loader = libraryClass.getClassLoader();
-        msg = "getting package name";
-        String name;
-        Package pack = libraryClass.getPackage();
-        if (pack == null) {
-          name = factoryClassName;
-        } else {
-          name = pack.getName() + "." + factoryClassName;
-        }
-        msg = "loading class";
-        Class<?> factoryClass = loader.loadClass(name);
-        msg = "creating instance";
-        Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
-        msg = "converting to factory";
-        if (factoryValue instanceof ComponentFactory) {
-          ret = (ComponentFactory) factoryValue;
-          factory = ret;
-          factoryLoadAttempted = true;
-          return ret;
-        }
-      } catch (Exception t) {
-        String name = t.getClass().getName();
-        String m = t.getMessage();
-        if (m != null) msg = msg + ": " + name + ": " + m;
-        else msg = msg + ": " + name;
-      }
-      logger.error("Error while {}", msg);
-      factory = null;
-      factoryLoadAttempted = true;
-      return null;
     }
+
+    String errorMsg = "";
+    try {
+      errorMsg = "Getting class loader";
+      ClassLoader loader = this.factoryClass.getClassLoader();
+      errorMsg = "Loading class";
+      Class<?> factoryClass = loader.loadClass(this.factoryClass.getCanonicalName());
+      errorMsg = "Creating instance";
+      Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
+      errorMsg = "Converting to ComponentFactory";
+      factory = (ComponentFactory) factoryValue;;
+      factoryLoadAttempted = true;
+      return factory;
+    } catch (Exception t) {
+      String name = t.getClass().getName();
+      String m = t.getMessage();
+
+      errorMsg += ": " + name;
+      if (m != null) errorMsg += ": " + m;
+    }
+
+    logger.error("Error while {}", errorMsg);
+    factory = null;
+    factoryLoadAttempted = true;
+    return null;
   }
 
   public Icon getIcon() {
