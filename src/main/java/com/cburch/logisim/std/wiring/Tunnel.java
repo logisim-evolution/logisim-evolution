@@ -49,6 +49,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 public class Tunnel extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Tunnel";
+
   public static final Tunnel FACTORY = new Tunnel();
 
   static final int MARGIN = 3;
@@ -58,7 +66,7 @@ public class Tunnel extends InstanceFactory {
   static final int ARROW_MAX_WIDTH = 20;
 
   public Tunnel() {
-    super("Tunnel", S.getter("tunnelComponent"));
+    super(_ID, S.getter("tunnelComponent"));
     setIconName("tunnel.gif");
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
