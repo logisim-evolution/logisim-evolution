@@ -39,8 +39,8 @@ import java.util.List;
 public class Hdl extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("VHDL Entity", S.getter("vhdlComponent"), new ArithmeticIcon("VHDL"), 
-    		"VhdlEntityComponent"),
+    new FactoryDescription("VHDL Entity", S.getter("vhdlComponent"), new ArithmeticIcon("VHDL"),
+    		VhdlEntityComponent.class),
   };
 
   private List<Tool> tools = null;

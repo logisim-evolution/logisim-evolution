@@ -40,20 +40,20 @@ public class Memory extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "D Flip-Flop", S.getter("dFlipFlopComponent"), "dFlipFlop.gif", "DFlipFlop"),
+        "D Flip-Flop", S.getter("dFlipFlopComponent"), "dFlipFlop.gif", DFlipFlop.class),
     new FactoryDescription(
-        "T Flip-Flop", S.getter("tFlipFlopComponent"), "tFlipFlop.gif", "TFlipFlop"),
+        "T Flip-Flop", S.getter("tFlipFlopComponent"), "tFlipFlop.gif", TFlipFlop.class),
     new FactoryDescription(
-        "J-K Flip-Flop", S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif", "JKFlipFlop"),
+        "J-K Flip-Flop", S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif", JKFlipFlop.class),
     new FactoryDescription(
-        "S-R Flip-Flop", S.getter("srFlipFlopComponent"), "srFlipFlop.gif", "SRFlipFlop"),
-    new FactoryDescription("Register", S.getter("registerComponent"), "register.gif", "Register"),
-    new FactoryDescription("Counter", S.getter("counterComponent"), "counter.gif", "Counter"),
+        "S-R Flip-Flop", S.getter("srFlipFlopComponent"), "srFlipFlop.gif", SRFlipFlop.class),
+    new FactoryDescription("Register", S.getter("registerComponent"), "register.gif", Register.class),
+    new FactoryDescription("Counter", S.getter("counterComponent"), "counter.gif", Counter.class),
     new FactoryDescription(
-        "Shift Register", S.getter("shiftRegisterComponent"), "shiftreg.gif", "ShiftRegister"),
-    new FactoryDescription("Random", S.getter("randomComponent"), "random.gif", "Random"),
-    new FactoryDescription("RAM", S.getter("ramComponent"), "ram.gif", "Ram"),
-    new FactoryDescription("ROM", S.getter("romComponent"), "rom.gif", "Rom"),
+        "Shift Register", S.getter("shiftRegisterComponent"), "shiftreg.gif", ShiftRegister.class),
+    new FactoryDescription("Random", S.getter("randomComponent"), "random.gif", Random.class),
+    new FactoryDescription("RAM", S.getter("ramComponent"), "ram.gif", Ram.class),
+    new FactoryDescription("ROM", S.getter("romComponent"), "rom.gif", Rom.class),
   };
 
   private List<Tool> tools = null;

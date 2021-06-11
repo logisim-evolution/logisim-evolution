@@ -28,56 +28,60 @@ import com.cburch.logisim.instance.InstanceState;
 import java.util.ArrayList;
 
 /**
- * TTL 74x139 Dual 2-line to 4-line decoders/multiplexers
- * Model based on https://www.ti.com/product/SN74LS139A datasheet.
+ * TTL 74x157: Quadruple 2-line to 1-line data selector
+ *
+ * Model based on https://www.ti.com/product/SN74LS157 datasheet.
  */
-public class Ttl74139 extends AbstractTtlGate {
+public class Ttl74157 extends AbstractTtlGate {
 
   // IC pin indices as specified in the datasheet
-  public static final byte L1_nEN = 1;
+  public static final byte SELECT = 1;
   public static final byte L1_A = 2;
   public static final byte L1_B = 3;
-  public static final byte L1_Y0 = 4;
-  public static final byte L1_Y1 = 5;
-  public static final byte L1_Y2 = 6;
-  public static final byte L1_Y3 = 7;
+  public static final byte L1_Y = 4;
+  public static final byte L2_A = 5;
+  public static final byte L2_B = 6;
+  public static final byte L2_Y = 7;
   public static final byte GND = 8;
 
-  public static final byte L2_Y3 = 9;
-  public static final byte L2_Y2 = 10;
-  public static final byte L2_Y1 = 11;
-  public static final byte L2_Y0 = 12;
-  public static final byte L2_B = 13;
-  public static final byte L2_A = 14;
-  public static final byte L2_nEN = 15;
+  public static final byte L3_Y = 9;
+  public static final byte L3_B = 10;
+  public static final byte L3_A = 11;
+  public static final byte L4_Y = 12;
+  public static final byte L4_B = 13;
+  public static final byte L4_A = 14;
+  public static final byte STROBE = 15;
   public static final byte VCC = 16;
 
   public static final int DELAY = 1;
 
-  public Ttl74139() {
-    super(
-        "74139",
-        (byte) 16,
+  // Needed for 74x158 implementation which is 74x157 with inverted output.
+  protected final boolean invertOutput;
 
-        new byte[] {
-          L1_Y0, L1_Y1, L1_Y2, L1_Y3,
-          L2_Y0, L2_Y1, L2_Y2, L2_Y3
-        },
-        new String[] {
-          "1nG Enable (active LOW)", "1A", "1B", "1Y0", "1Y1", "1Y2", "1Y3",
-          "2Y3", "2Y2", "2Y1", "2Y0", "2B", "2A", "1nG Enable (active LOW)"
-        });
+  protected final static String[] pinNames = {
+    "SELECT", "1A", "1B", "1Y", "2A", "2B", "2Y",
+    "3Y", "3B", "3A", "4Y", "4B", "4A", "nSTROBE (active LOW)"
+  };
+
+  public Ttl74157() {
+    super("74157", (byte) 16, new byte[] { L1_Y, L2_Y, L3_Y, L4_Y }, pinNames);
+    invertOutput = false;
+  }
+
+  public Ttl74157(String icName, boolean invertOutput) {
+    super(icName, (byte) 16, new byte[] { L1_Y, L2_Y, L3_Y, L4_Y }, pinNames);
+    this.invertOutput = invertOutput;
   }
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     // As tooltips can be longer than what can fit as pin name while painting IC internals,
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
-    final int label_len_max = 4;
+    final int maxLabelLength = 4;
     ArrayList<String> names = new ArrayList<>();
     for (String name: portnames) {
       String[] tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0,label_len_max));
+      names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0,maxLabelLength));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -89,30 +93,24 @@ public class Ttl74139 extends AbstractTtlGate {
     return (byte)((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
   }
 
-  protected void computeState(InstanceState state, byte inEn, byte inA, byte inB, byte[] outPorts) {
-    final boolean enabled = state.getPortValue(mapPort(inEn)) == Value.FALSE; // Active LOW
-    final byte A = state.getPortValue(mapPort(inA)) == Value.TRUE ? (byte) 1 : 0;
-    final byte B = state.getPortValue(mapPort(inB)) == Value.TRUE ? (byte) 2 : 0;
+  protected Value computeState(InstanceState state, byte inA, byte inB) {
+    final boolean strobe = state.getPortValue(mapPort(STROBE)) == Value.TRUE;
+    final boolean select = state.getPortValue(mapPort(SELECT)) == Value.TRUE;
+    final boolean A = state.getPortValue(mapPort(inA)) == Value.TRUE;
+    final boolean B = state.getPortValue(mapPort(inB)) == Value.TRUE;
 
-    final int[][] outputPortStates = {
-      {1, 0, 0, 0},
-      {0, 1, 0, 0},
-      {0, 0, 1, 0},
-      {0, 0, 0, 1},
-    };
+    boolean Y = strobe ? false : ( select ? B : A );
+    if (this.invertOutput) Y = !Y;
 
-    for (int i = 0; i < 4; i++) {
-      Value val = enabled ? (outputPortStates[A + B][i] == 1 ? Value.TRUE : Value.FALSE) : Value.TRUE;
-      state.setPort(mapPort(outPorts[i]), val, DELAY);
-    }
+    return Y ? Value.TRUE : Value.FALSE;
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    byte[] out1 = {L1_Y0, L1_Y1, L1_Y2, L1_Y3};
-    computeState(state, L1_nEN, L1_A, L1_B, out1);
-    byte[] out2 = {L2_Y0, L2_Y1, L2_Y2, L2_Y3};
-    computeState(state, L2_nEN, L2_A, L2_B, out2);
+    state.setPort(mapPort(L1_Y), computeState(state, L1_A, L1_B), DELAY);
+    state.setPort(mapPort(L2_Y), computeState(state, L2_A, L2_B), DELAY);
+    state.setPort(mapPort(L3_Y), computeState(state, L3_A, L3_B), DELAY);
+    state.setPort(mapPort(L4_Y), computeState(state, L4_A, L4_B), DELAY);
   }
 
 }

@@ -40,15 +40,12 @@ import java.util.List;
 public class ITA_IO extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", "Switch"),
-    new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
-    new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", "Slider"),
+    new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", Switch.class),
+    new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", Buzzer.class),
+    new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", Slider.class),
     new FactoryDescription(
-        "Digital Oscilloscope",
-        S.getter("DigitalOscilloscopeComponent"),
-        "digitaloscilloscope.gif",
-        "DigitalOscilloscope"),
-    new FactoryDescription("PlaRom", S.getter("PlaRomComponent"), "plarom.gif", "PlaRom"),
+        "Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"), "digitaloscilloscope.gif", DigitalOscilloscope.class),
+    new FactoryDescription("PlaRom", S.getter("PlaRomComponent"), "plarom.gif", PlaRom.class),
   };
 
   private List<Tool> tools = null;
