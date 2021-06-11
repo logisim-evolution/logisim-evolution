@@ -31,6 +31,8 @@ package com.cburch.logisim.tools;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
+
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Icon;
@@ -56,7 +58,6 @@ public class FactoryDescription {
 
   static final Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
 
-  private final String name;
   private final StringGetter displayName;
   private String iconName;
   private boolean iconLoadAttempted;
@@ -66,22 +67,19 @@ public class FactoryDescription {
   private ComponentFactory factory;
   private StringGetter toolTip;
 
-  public FactoryDescription(String name, StringGetter displayName, Icon icon,
-                            Class<? extends ComponentFactory> factoryClass) {
-    this(name, displayName, factoryClass);
+
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, Icon icon) {
+    this(factoryClass, displayName);
   }
 
-  public FactoryDescription(String name, StringGetter displayName, String iconName,
-                            Class<? extends ComponentFactory> factoryClass) {
-    this(name, displayName, factoryClass);
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, String iconName) {
+    this(factoryClass, displayName);
     this.iconName = iconName;
     this.iconLoadAttempted = false;
     this.icon = null;
   }
 
-  public FactoryDescription(String name, StringGetter displayName,
-                            Class<? extends ComponentFactory> factoryClass) {
-    this.name = name;
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName) {
     this.displayName = displayName;
     this.iconName = "???";
     this.iconLoadAttempted = true;
@@ -138,8 +136,26 @@ public class FactoryDescription {
     return ret;
   }
 
+  /**
+   * Returns unique library identifier.
+   *
+   * As we want to have static _ID per library, generic
+   * implementation must look for it in the current instance
+   *
+   * FIXME this is the same code we have in Library.java to get the ID
+   */
   public String getName() {
-    return name;
+    try {
+      Field[] fields = factoryClass.getDeclaredFields();
+      for (int i = 0; i < fields.length; i++) {
+        if (fields[i].getName().equals("_ID")) {
+          return (String)fields[i].get(this);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public String getToolTip() {

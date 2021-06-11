@@ -149,16 +149,11 @@ public class Plexers extends Library {
   public static final int DELAY = 3;
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", Multiplexer.class),
-    new FactoryDescription(
-        "Demultiplexer", S.getter("demultiplexerComponent"), "demultiplexer.gif", Demultiplexer.class),
-    new FactoryDescription(
-        "Decoder", S.getter("decoderComponent"), "decoder.gif", Decoder.class),
-    new FactoryDescription(
-        "Priority Encoder", S.getter("priorityEncoderComponent"), "priencod.gif", PriorityEncoder.class),
-    new FactoryDescription(
-        "BitSelector", S.getter("bitSelectorComponent"), "bitSelector.gif", BitSelector.class),
+    new FactoryDescription(Multiplexer.class, S.getter("multiplexerComponent"), "multiplexer.gif"),
+    new FactoryDescription(Demultiplexer.class, S.getter("demultiplexerComponent"), "demultiplexer.gif"),
+    new FactoryDescription(Decoder.class, S.getter("decoderComponent"), "decoder.gif"),
+    new FactoryDescription(PriorityEncoder.class, S.getter("priorityEncoderComponent"), "priencod.gif"),
+    new FactoryDescription(BitSelector.class, S.getter("bitSelectorComponent"), "bitSelector.gif"),
   };
 
   private List<Tool> tools = null;
