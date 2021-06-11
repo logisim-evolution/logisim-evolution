@@ -25,10 +25,17 @@ package com.cburch.logisim.std.ttl;
  * Model based on https://www.ti.com/product/SN74LS157 datasheet.
  */
 public class Ttl74158 extends Ttl74157 {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74158";
 
   // 74x158 is 74x157 with inverted outputs.
   public Ttl74158() {
-    super("74158", true);
+    super(_ID, true);
   }
 
 }
