@@ -287,7 +287,7 @@ class XmlReader {
       }
       return known;
     }
-    
+
     void loadMap(Element board, String boardName, Circuit circ) {
       HashMap<String,CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
@@ -1192,11 +1192,13 @@ class XmlReader {
         labelMap,
         oldBaseLabel,
         newBaseLabel,
+        // FIXME: we should use _IDs here, right?
         "Poke Tool;" + "Edit Tool;Select Tool;Wiring Tool;Text Tool;Menu Tool;Text");
     addToLabelMap(
         labelMap,
         oldBaseLabel,
         wiringLabel,
+        // FIXME: we should use _IDs here, right?
         "Splitter;Pin;" + "Probe;Tunnel;Clock;Pull Resistor;Bit Extender");
     addToLabelMap(labelMap, gatesLabel, wiringLabel, "Constant");
     relocateTools(oldBaseElt, newBaseElt, labelMap);
