@@ -83,7 +83,8 @@ public abstract class Library {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return null;
+
+    throw new NullPointerException("Missing _ID for " + getClass());
   }
 
   public List<Library> getLibraries() {
