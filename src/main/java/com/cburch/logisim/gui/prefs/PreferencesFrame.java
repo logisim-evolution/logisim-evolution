@@ -56,8 +56,6 @@ public class PreferencesFrame extends LFrame.Dialog {
   private PreferencesFrame() {
     super(null);
 
-    System.out.print("Prefs\n");
-
     panels =
         new OptionsPanel[] {
           new TemplateOptions(this),
