@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import static com.cburch.logisim.fpga.Strings.S;
-
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.IOComponentsInformation;
@@ -42,10 +40,23 @@ import com.cburch.logisim.util.LocaleListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import static com.cburch.logisim.fpga.Strings.S;
 
 public class BoardEditor implements ActionListener, ComponentListener,
         LocaleListener, BoardManipulatorListener {

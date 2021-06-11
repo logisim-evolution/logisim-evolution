@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import static com.cburch.logisim.gui.Strings.S;
-
 import com.cburch.logisim.comp.ComponentEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -45,10 +43,32 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.util.Arrays;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.InputVerifier;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.Scrollable;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
+
+import static com.cburch.logisim.gui.Strings.S;
 
 class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, Model.Listener {
 
@@ -464,7 +484,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
       @Override
       public java.awt.Component getListCellRendererComponent(JList<?> list,
-          Object w, int index, boolean isSelected, boolean cellHasFocus) {
+                                                             Object w, int index, boolean isSelected, boolean cellHasFocus) {
         @SuppressWarnings("unchecked")
         final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);

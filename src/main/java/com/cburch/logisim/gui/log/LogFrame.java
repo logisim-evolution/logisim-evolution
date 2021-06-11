@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import static com.cburch.logisim.gui.Strings.S;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
@@ -50,14 +48,19 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import static com.cburch.logisim.gui.Strings.S;
 
 public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final LogMenuListener menuListener;
