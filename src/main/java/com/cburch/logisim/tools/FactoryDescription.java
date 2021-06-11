@@ -155,7 +155,8 @@ public class FactoryDescription {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return null;
+
+    throw new NullPointerException("Missing _ID for " + factoryClass);
   }
 
   public String getToolTip() {
