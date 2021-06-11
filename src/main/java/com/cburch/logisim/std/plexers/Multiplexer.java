@@ -53,6 +53,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Multiplexer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Multiplexer";
+
   static void drawSelectCircle(Graphics g, Bounds bds, Location loc) {
     if (Math.min(bds.getHeight(), bds.getWidth()) <= 20) return; // no dot for narrow mode
     int locDelta = Math.max(bds.getHeight(), bds.getWidth()) <= 50 ? 8 : 6;
@@ -79,7 +87,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   public Multiplexer() {
-    super("Multiplexer", S.getter("multiplexerComponent"));
+    super(_ID, S.getter("multiplexerComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
