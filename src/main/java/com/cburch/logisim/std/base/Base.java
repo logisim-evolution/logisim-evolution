@@ -59,7 +59,7 @@ public class Base extends Library {
         new TextTool(),
         new MenuTool());
     }
-  
+
   @Override
   public boolean contains(ComponentFactory querry) {
     return super.contains(querry) || (querry instanceof Text);
@@ -89,9 +89,4 @@ public class Base extends Library {
   public List<Tool> getTools() {
     return tools;
   }
-
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
-
 }

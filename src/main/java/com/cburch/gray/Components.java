@@ -66,8 +66,4 @@ public class Components extends Library {
   public List<AddTool> getTools() {
     return tools;
   }
-
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
 }

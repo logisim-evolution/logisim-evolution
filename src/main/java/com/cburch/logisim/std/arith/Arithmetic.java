@@ -65,12 +65,8 @@ public class Arithmetic extends Library {
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Arithmetic.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(getClass(), DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

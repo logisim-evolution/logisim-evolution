@@ -34,7 +34,7 @@ import java.util.List;
 
 public abstract class Library {
   private boolean hidden = false;
-	
+
   public boolean contains(ComponentFactory query) {
     return indexOf(query) >= 0;
   }
@@ -65,7 +65,9 @@ public abstract class Library {
     return null;
   }
 
-  public abstract boolean removeLibrary(String name);
+  public boolean removeLibrary(String Name) {
+    return false;
+  }
 
   public String getName() {
     return getClass().getName();
@@ -97,11 +99,11 @@ public abstract class Library {
   public boolean isDirty() {
     return false;
   }
-  
+
   public boolean isHidden() {
-    return hidden;  
+    return hidden;
   }
-  
+
   public void setHidden() {
     hidden = true;
   }

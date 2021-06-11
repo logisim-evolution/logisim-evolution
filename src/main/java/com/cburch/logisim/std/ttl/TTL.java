@@ -100,10 +100,4 @@ public class TTL extends Library {
     }
     return tools;
   }
-
-  @Override
-  public boolean removeLibrary(String name) {
-    // TODO Auto-generated method stub
-    return false;
-  }
 }
