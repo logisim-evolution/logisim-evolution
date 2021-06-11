@@ -39,26 +39,6 @@ import java.util.List;
 public class Gates extends Library {
   private List<Tool> tools = null;
 
-  public Gates() {
-    tools =
-        Arrays.asList(
-            new Tool[] {
-              new AddTool(NotGate.FACTORY),
-              new AddTool(Buffer.FACTORY),
-              new AddTool(AndGate.FACTORY),
-              new AddTool(OrGate.FACTORY),
-              new AddTool(NandGate.FACTORY),
-              new AddTool(NorGate.FACTORY),
-              new AddTool(XorGate.FACTORY),
-              new AddTool(XnorGate.FACTORY),
-              new AddTool(OddParityGate.FACTORY),
-              new AddTool(EvenParityGate.FACTORY),
-              new AddTool(ControlledBuffer.FACTORY_BUFFER),
-              new AddTool(ControlledBuffer.FACTORY_INVERTER),
-              new AddTool(PLA.FACTORY)
-            });
-  }
-
   @Override
   public String getDisplayName() {
     return S.get("gatesLibrary");
@@ -71,6 +51,24 @@ public class Gates extends Library {
 
   @Override
   public List<Tool> getTools() {
+    if (tools == null) {
+      tools = Arrays.asList(
+        new Tool[] {
+          new AddTool(NotGate.FACTORY),
+          new AddTool(Buffer.FACTORY),
+          new AddTool(AndGate.FACTORY),
+          new AddTool(OrGate.FACTORY),
+          new AddTool(NandGate.FACTORY),
+          new AddTool(NorGate.FACTORY),
+          new AddTool(XorGate.FACTORY),
+          new AddTool(XnorGate.FACTORY),
+          new AddTool(OddParityGate.FACTORY),
+          new AddTool(EvenParityGate.FACTORY),
+          new AddTool(ControlledBuffer.FACTORY_BUFFER),
+          new AddTool(ControlledBuffer.FACTORY_INVERTER),
+          new AddTool(PLA.FACTORY)
+        });
+    }
     return tools;
   }
 }

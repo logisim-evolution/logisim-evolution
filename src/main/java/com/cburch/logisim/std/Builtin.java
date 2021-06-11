@@ -52,24 +52,6 @@ import java.util.List;
 public class Builtin extends Library {
   private List<Library> libraries = null;
 
-  public Builtin() {
-    libraries =
-        Arrays.asList(
-            new Base(),
-            new Gates(),
-            new Wiring(),
-            new Plexers(),
-            new Arithmetic(),
-            new Memory(),
-            new Io(),
-            new TTL(),
-            new Hdl(),
-            new Tcl(),
-            new BFHPraktika(),
-            new ITA_IO(),
-            new Soc());
-  }
-
   @Override
   public String getDisplayName() {
     return S.get("builtinLibrary");
@@ -77,6 +59,22 @@ public class Builtin extends Library {
 
   @Override
   public List<Library> getLibraries() {
+    if (libraries == null) {
+      libraries = Arrays.asList(
+        new Base(),
+        new Gates(),
+        new Wiring(),
+        new Plexers(),
+        new Arithmetic(),
+        new Memory(),
+        new Io(),
+        new TTL(),
+        new Hdl(),
+        new Tcl(),
+        new BFHPraktika(),
+        new ITA_IO(),
+        new Soc());
+    }
     return libraries;
   }
 

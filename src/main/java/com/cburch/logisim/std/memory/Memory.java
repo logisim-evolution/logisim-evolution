@@ -58,8 +58,6 @@ public class Memory extends Library {
 
   private List<Tool> tools = null;
 
-  public Memory() {}
-
   @Override
   public String getDisplayName() {
     return S.get("memoryLibrary");

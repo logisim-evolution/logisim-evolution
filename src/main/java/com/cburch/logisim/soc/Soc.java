@@ -42,7 +42,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Soc  extends Library {
+public class Soc extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(

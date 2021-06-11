@@ -44,8 +44,6 @@ public class BFHPraktika extends Library {
 
   private List<Tool> tools = null;
 
-  public BFHPraktika() {}
-
   @Override
   public String getDisplayName() {
     return S.get("BFHMegaFunctions");

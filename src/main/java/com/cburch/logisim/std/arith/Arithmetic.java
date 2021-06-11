@@ -50,8 +50,6 @@ public class Arithmetic extends Library {
 
   private List<Tool> tools = null;
 
-  public Arithmetic() {}
-
   @Override
   public String getDisplayName() {
     return S.get("arithmeticLibrary");

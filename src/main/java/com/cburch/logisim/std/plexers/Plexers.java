@@ -163,8 +163,6 @@ public class Plexers extends Library {
 
   private List<Tool> tools = null;
 
-  public Plexers() {}
-
   @Override
   public String getDisplayName() {
     return S.get("plexerLibrary");

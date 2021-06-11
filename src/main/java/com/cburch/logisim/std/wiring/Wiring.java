@@ -76,8 +76,6 @@ public class Wiring extends Library {
 
   private List<Tool> tools = null;
 
-  public Wiring() {}
-
   @Override
   public String getDisplayName() {
     return S.get("wiringLibrary");

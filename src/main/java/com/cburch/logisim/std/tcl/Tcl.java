@@ -45,8 +45,6 @@ public class Tcl extends Library {
 
   private List<Tool> tools = null;
 
-  public Tcl() {}
-
   @Override
   public String getDisplayName() {
     return S.get("tclLibrary");

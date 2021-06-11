@@ -45,8 +45,6 @@ public class Hdl extends Library {
 
   private List<Tool> tools = null;
 
-  public Hdl() {}
-
   @Override
   public String getDisplayName() {
     return S.get("hdlLibrary");

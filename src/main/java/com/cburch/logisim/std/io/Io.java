@@ -70,8 +70,6 @@ public class Io extends Library {
 
   private List<Tool> tools = null;
 
-  public Io() {}
-
   @Override
   public String getDisplayName() {
     return S.get("ioLibrary");
