@@ -22,7 +22,7 @@ package com.cburch.logisim.gui.icons;
 import java.awt.*;
 import java.awt.font.TextLayout;
 
-public class LedClusterIcon extends AnimatedIcon {
+public class LedLightBarIcon extends AnimatedIcon {
 
   private int state = 0;
 

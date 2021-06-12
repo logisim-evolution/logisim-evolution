@@ -60,7 +60,7 @@ public class Io extends Library {
     new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", Joystick.class),
     new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", Keyboard.class),
     new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", Led.class),
-    new FactoryDescription("LedCluster", S.getter("ioClusterComponent"), "ledcluster.gif", LedCluster.class),
+    new FactoryDescription("LedLightBar", S.getter("ioLightBarComponent"), "ledlightbar.gif", LedLightBar.class),
     new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", RGBLed.class),
     new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", SevenSegment.class),
     new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", HexDigit.class),

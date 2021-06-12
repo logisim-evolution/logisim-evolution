@@ -48,7 +48,7 @@ public enum IOComponentTypes {
   Bus,
   Open,
   Constant,
-  LedCluster,
+  LedLightBar,
   Unknown;
 
   /*
@@ -171,7 +171,7 @@ public enum IOComponentTypes {
       IOComponentTypes.RGBLED,
       IOComponentTypes.SevenSegment,
       IOComponentTypes.SevenSegmentNoDp,
-      IOComponentTypes.LedCluster);
+      IOComponentTypes.LedLightBar);
 
   public static final EnumSet<IOComponentTypes> InOutComponentSet =
     EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);

@@ -172,7 +172,7 @@ abstract public class DotMatrixBase extends InstanceFactory {
 
   protected static final AttributeOption SHAPE_CIRCLE = new AttributeOption("circle", S.getter("ioShapeCircle"));
   protected static final AttributeOption SHAPE_SQUARE = new AttributeOption("square", S.getter("ioShapeSquare"));
-  protected static final AttributeOption SHAPE_CLUSTER_SEGMENT = new AttributeOption("clusterSegment", S.getter("ioShapeCluster"));
+  protected static final AttributeOption SHAPE_PADDED_SQUARE = new AttributeOption("clusterSegment", S.getter("ioShapePaddedSquare"));
 
   protected static final Attribute<AttributeOption> ATTR_INPUT_TYPE =
       Attributes.forOption("inputtype", S.getter("ioMatrixInput"),
@@ -182,7 +182,7 @@ abstract public class DotMatrixBase extends InstanceFactory {
       "dotshape", S.getter("ioMatrixShape"), new AttributeOption[]{
           SHAPE_CIRCLE,
           SHAPE_SQUARE,
-          SHAPE_CLUSTER_SEGMENT,
+          SHAPE_PADDED_SQUARE,
       });
 
   protected static final Attribute<Integer> ATTR_PERSIST =
@@ -313,7 +313,7 @@ abstract public class DotMatrixBase extends InstanceFactory {
     g.fillRect(x , y, 10 * scaleX, 10 * scaleY);
   }
 
-  protected void drawClusterSegment(Graphics g, int x, int y) {
+  protected void drawPaddedSquare(Graphics g, int x, int y) {
     final int paddingY = 2;
     final int paddingX = 2;
     g.fillRect(x + (paddingX * scaleX), y + (paddingY * scaleY),
@@ -365,8 +365,8 @@ abstract public class DotMatrixBase extends InstanceFactory {
         g.setColor(c);
         if (SHAPE_SQUARE.equals(shape)) {
           drawSquare(g, x, y);
-        } else if (SHAPE_CLUSTER_SEGMENT.equals(shape)) {
-          drawClusterSegment(g, x, y);
+        } else if (SHAPE_PADDED_SQUARE.equals(shape)) {
+          drawPaddedSquare(g, x, y);
         } else {
           // SHAPE_CIRCLE is default shape
           drawCircle(g, x, y);
