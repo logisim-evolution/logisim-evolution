@@ -75,7 +75,7 @@
 			<tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
 			<tocitem target="menu_exportab" text="Exportation d'images "/>  
 			<tocitem target="menu_printertab" text="Imprimer "/>
-<!--		<tocitem target="menu_assembly" text="Assembly viewer"/> -->
+			<tocitem target="menu_assembly" text="Assembly viewer"/>
 		</tocitem>
 		<tocitem target="prefs" text="Préférences de l'application">
 			<tocitem target="prefs_template" text="L'onglet Modèle"/>

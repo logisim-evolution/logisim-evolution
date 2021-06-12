@@ -52,6 +52,7 @@
 	<mapID target="analyze_table"       url="en/html/guide/analyze/ana-table.html" />
 	<mapID target="analyze_expr"        url="en/html/guide/analyze/ana-expr.html" />
 	<mapID target="analyze_gen"         url="en/html/guide/analyze/ana-gen.html" />
+    <mapID target="analyze_expimp"      url="en/html/guide/analyze/ana-expimp.html" />
 	<mapID target="log"                 url="en/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="en/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="en/html/guide/log/timetable.html" />

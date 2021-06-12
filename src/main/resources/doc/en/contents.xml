@@ -75,7 +75,6 @@
 			<tocitem target="menu_exportab" text="Export Image"/>
 			<tocitem target="menu_printertab" text="Printing "/>
 			<tocitem target="menu_assembly" text="Assembly viewer"/>
-			<!--<tocitem target="menu_assembly" text="Assembly viewer"/> -->
 		</tocitem>
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
@@ -102,8 +101,8 @@
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
 			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
-			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />-->
-		</tocitem>
+			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
+		</tocitem>-->
 		<tocitem target="jar" text="JAR libraries">
 			<tocitem target="jar_incr" text="Gray Code Incrementer" />
 			<tocitem target="jar_library" text="Library Class" />
