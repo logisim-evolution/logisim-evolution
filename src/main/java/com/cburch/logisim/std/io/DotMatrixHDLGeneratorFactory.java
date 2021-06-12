@@ -50,25 +50,26 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    ArrayList<String> contents = new ArrayList<>();
-    String label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    boolean colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_COLUMN;
-    boolean rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_ROW;
+    var contents = new ArrayList<String>();
+    var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
+    var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
+    var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
     int rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
     int cols = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+
     contents.add("  ");
     if (colBased) {
       for (int r = 0 ; r < rows ; r++)
         for (int c = 0 ; c < cols ; c++) {
-          String Colname = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
+          String colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
                                        : GetBusName(componentInfo, c, netlist);
-          int idx = r*cols+c+componentInfo.GetLocalBubbleOutputStartId();
-          if (Colname.isEmpty())
+          int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+          if (colName.isEmpty())
             contents.add("   "+HDL.assignPreamble()+
                 HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                 idx+HDL.BracketClose()+HDL.assignOperator()+HDL.zeroBit()+";");
           else {
-            String Wire = (rows == 1) ? Colname : Colname+HDL.BracketOpen()+r+HDL.BracketClose();
+            String Wire = (rows == 1) ? colName : colName+HDL.BracketOpen()+r+HDL.BracketClose();
             contents.add("   "+HDL.assignPreamble()+
                          HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                          idx+HDL.BracketClose()+HDL.assignOperator()+
@@ -124,36 +125,36 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add(content);
 
         if (!oneCol) {
-          indent = indent.substring(0,indent.length()-3);
-          contents.add(indent+"END GENERATE "+label+"_1;");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "END GENERATE " + label + "_1;");
         }
         if (!oneRow) {
-          indent = indent.substring(0,indent.length()-3);
-          contents.add(indent+"END GENERATE "+label+"_0;");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "END GENERATE " + label + "_0;");
         }
 
       } else {
         String indent = "   ";
         if (!oneRow || !oneCol) {
-          contents.add(indent+"genvar "+ ((oneRow) ? "" : label+"_r"+ ((oneCol) ? "" : ","))+
-                      ((oneCol) ? "" : label+"_c")+";");
-          contents.add(indent+"generate");
+          contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) +
+                  ((oneCol) ? "" : label + "_c") + ";");
+          contents.add(indent + "generate");
           indent += "   ";
         }
         if (!oneRow) {
-          contents.add(indent+"for ("+label+"_r = 0 ; "+label+"_r < "+rows+"; "+label+"_r="+label+"_r+1)");
-          contents.add(indent+"begin:"+label+"_0");
+          contents.add(indent + "for (" + label + "_r = 0 ; " + label + "_r < " + rows + "; " + label + "_r=" + label + "_r+1)");
+        contents.add(indent + "begin:" + label + "_0");
           indent += "   ";
           rowName += "["+label+"_r]";
         }
         if (!oneCol) {
-          contents.add(indent+"for ("+label+"_c = 0 ; "+label+"_c < "+cols+"; "+label+"_c="+label+"_c+1)");
-          contents.add(indent+"begin:"+label+"_1");
+          contents.add(indent + "for (" + label + "_c = 0 ; " + label + "_c < " + cols + "; " + label + "_c=" + label + "_c+1)");
+          contents.add(indent + "begin:" + label + "_1");
           indent += "   ";
-          colName += "["+label+"_c]";
+          colName += "[" + label + "_c]";
         }
 
-        String content = indent+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+"[";
+        var content = indent + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname + "[";
 
         content +=  ((oneRow) ? "" : label+"_r"+((oneCol) ? "" : "*"+cols+"+"))+
                     ((oneCol) ? "" : label+"_c") +
@@ -178,11 +179,12 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     contents.add("  ");
+
     return contents;
   }
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
-    return attrs.getValue(DotMatrix.ATTR_PERSIST) == 0;
+    return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;
   }
 
   @Override
