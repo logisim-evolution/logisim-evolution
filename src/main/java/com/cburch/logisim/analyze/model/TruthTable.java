@@ -664,7 +664,8 @@ public class TruthTable {
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
       // loop rows by index to avoid java.util.ConcurrentModificationException
-      for (Row r : rows) {
+      for (int i = 0; i < rows.size(); ++i) {
+        Row r = rows.get(i);
         if (r.inputs[index] != Entry.DONT_CARE) {
           setDontCare(r, b, true, changed); // mutates row
         }
