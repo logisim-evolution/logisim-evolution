@@ -43,7 +43,8 @@ import java.util.List;
 public class Io extends Library {
   public static final Attribute<Color> ATTR_COLOR =
       Attributes.forColor("color", S.getter("ioColorAttr"));
-  static final Attribute<Color> ATTR_ON_COLOR = Attributes.forColor("color", S.getter("ioOnColor"));
+  static final Attribute<Color> ATTR_ON_COLOR =
+          Attributes.forColor("color", S.getter("ioOnColor"));
   static final Attribute<Color> ATTR_OFF_COLOR =
       Attributes.forColor("offcolor", S.getter("ioOffColor"));
   static final Attribute<Color> ATTR_BACKGROUND =
@@ -59,6 +60,7 @@ public class Io extends Library {
     new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", Joystick.class),
     new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", Keyboard.class),
     new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", Led.class),
+    new FactoryDescription("LedCluster", S.getter("ioClusterComponent"), "ledcluster.gif", LedCluster.class),
     new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", RGBLed.class),
     new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", SevenSegment.class),
     new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", HexDigit.class),
