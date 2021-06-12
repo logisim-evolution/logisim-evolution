@@ -40,9 +40,9 @@
 		</tocitem>
 		<tocitem target="mem_guide" text="Speicherbauelemente">
 			<tocitem target="mem_poke" text="Speicherinhalte bearbeiten" />
+			<tocitem target="mem_hex" text="Hex-Editor" />	
 			<tocitem target="mem_menu" text="Kontextmenüs und Dateien" />
 			<tocitem target="mem_filetabel" text="Speicherdatei-Panel"/>
-			<tocitem target="mem_hex" text="Hex-Editor" />
 			<tocitem target="mem_v2raw" text="v2raw-Date" />
 			<tocitem target="mem_v3word" text="v3word-Date"/>
 			<tocitem target="mem_v3byte" text="v3byte-Date"/>
@@ -54,12 +54,11 @@
 			<tocitem target="analyze_table" text="Bearbeiten der Wahrheitstabelle" />
 			<tocitem target="analyze_expr" text="Erstellen von Ausdrücken" />
 			<tocitem target="analyze_gen" text="Erstellen einer Schaltung" />
+			<tocitem target="analyze_expimp" text="Tabelle exportieren / importieren"/>
 		</tocitem>
 		<tocitem target="log" text="Ablaufverfolgung">
 			<tocitem target="log_selection" text="Die Registerkarte &quot;Auswahl&quot;" />
 			<tocitem target="log_timetable" text="Timetable window" />
-<!--			<tocitem target="log_table" text="Die Registerkarte &quot;Tabelle&quot;" />
-				<tocitem target="log_file" text="Die Registerkarte &quot;Datei&quot;" /> -->
 		</tocitem>
 		<tocitem target="verify" text="Benutzung der Kommandozeile">
 			<tocitem target="verify_sub" text="Bibliotheken austauschen" />
@@ -72,17 +71,21 @@
 			<tocitem target="menu_edit" text="Das Bearbeitungsmenü" />
 			<tocitem target="menu_project" text="Das Projektmenü" />
 			<tocitem target="menu_simulate" text="Das Simulationsmenü" />
+			<tocitem target="menu_fpga" text="Das FPGAmenü"/>
 			<tocitem target="menu_winhelp" text="Die Fenster- und Hilfe-Menüs" />
 			<tocitem target="menu_exportab" text="Export Image"/>  
 			<tocitem target="menu_printertab" text="Printing "/>
-			<tocitem target="menu_assembly" text="Assembly viewer"/>
+<!--		<tocitem target="menu_assembly" text="Assembly viewer"/>-->
 		</tocitem>
 		<tocitem target="prefs" text="Programmbezogene Einstellungen">
 			<tocitem target="prefs_template" text="Die Registerkarte &quot;Vorlage&quot;" />
 			<tocitem target="prefs_intl" text="Die Registerkarte &quot;Internationalisierung&quot;" />
 			<tocitem target="prefs_window" text="Die Registerkarte &quot;Fenster&quot;" />
 			<tocitem target="prefs_layout" text="Die Registerkarte &quot;Layouteditor&quot;" />
+<!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->			
 			<tocitem target="prefs_exp" text="Die Registerkarte &quot;Experimentell&quot;" />
+<!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
+<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->			
 			<tocitem target="prefs_cmdline" text="Die Kommandozeile" />
 		</tocitem>
 		<tocitem target="opts" text="Projektbezogene Einstellungen">
@@ -95,12 +98,12 @@
 			<tocitem target="prop_oscillate" text="Fehler durch Oszillationen" />
 			<tocitem target="prop_shortcome" text="Schwachstellen" />
 		</tocitem>
-		<tocitem target="hdl-ip" text="HDL IP">
+<!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
 			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
-		</tocitem>
+		</tocitem> -->
 		<tocitem target="jar" text="JAR-Bibliotheken">
 			<tocitem target="jar_incr" text="Gray-Kode-Inkrementierer" />
 			<tocitem target="jar_library" text="Bibliotheksklasse" />

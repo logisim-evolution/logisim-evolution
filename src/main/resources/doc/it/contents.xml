@@ -39,20 +39,22 @@
 			<tocitem target="features_matrix" text="Placing components in a matrix" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Memory components">
-            <tocitem target="mem_poke" text="Memory poke" />  
+            <tocitem target="mem_poke" text="Memory poke" />
+			<tocitem target="mem_hex" text="Editeur hexadécimal" />			
 			<tocitem target="mem_menu" text="Pop-up menus and files" />
-			<tocitem target="mem_hex" text="Hex editor" />
-			<tocitem target="mem_v2raw" text="v2raw file" />
-			<tocitem target="mem_v3word" text="v3word file"/>
-			<tocitem target="mem_v3byte" text="v3byte file"/>
-			<tocitem target="mem_binary" text="Binary file"/>
-			<tocitem target="mem_ascii" text="ASCII File"/>
+			<tocitem target="mem_filetabel" text="Memory file panel"/>
+			<tocitem target="mem_v2raw" text="File v2raw" />
+			<tocitem target="mem_v3word" text="File v3word"/>
+			<tocitem target="mem_v3byte" text="File v3byte"/>
+			<tocitem target="mem_binary" text="File binary"/>
+			<tocitem target="mem_ascii" text="File ASCII"/>
 		</tocitem>
 		<tocitem target="analyze" text="Combinational analysis">
 			<tocitem target="analyze_open" text="Opening Combinational Analysis" />
 			<tocitem target="analyze_table" text="Editing the truth table" />
 			<tocitem target="analyze_expr" text="Creating expressions" />
 			<tocitem target="analyze_gen" text="Generating a circuit" />
+			<tocitem target="analyze_expimp" text="Buttons Export / Import Table "/>
 		</tocitem>
 		<tocitem target="log" text="Logging">
 			<tocitem target="log_selection" text="The Selection tab" />
@@ -73,13 +75,17 @@
 			<tocitem target="menu_exportab" text="Export Image"/>
 			<tocitem target="menu_printertab" text="Printing "/>
 			<tocitem target="menu_assembly" text="Assembly viewer"/>
+			<!--<tocitem target="menu_assembly" text="Assembly viewer"/> -->
 		</tocitem>
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
 			<tocitem target="prefs_intl" text="The International tab" />
 			<tocitem target="prefs_window" text="The Window tab" />
 			<tocitem target="prefs_layout" text="The Layout tab" />
+<!--	<tocitem target="prefs_simulation" text="The  simulation tab"/> -->
 			<tocitem target="prefs_exp" text="The Experimental tab" />
+<!--	<tocitem target="prefs_sofware" text="The Sofware tab"/> -->
+<!--	<tocitem target="prefs_fpga" text="The FPGA Commander settings tab"/> -->
 			<tocitem target="prefs_cmdline" text="The command line" />
 		</tocitem>
 		<tocitem target="opts" text="Project options">
@@ -92,11 +98,11 @@
 			<tocitem target="prop_oscillate" text="Oscillation errors" />
 			<tocitem target="prop_shortcome" text="Shortcomings" />
 		</tocitem>
-		<tocitem target="hdl-ip" text="HDL IP">
+<!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
 			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
-			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
+			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />-->
 		</tocitem>
 		<tocitem target="jar" text="JAR libraries">
 			<tocitem target="jar_incr" text="Gray Code Incrementer" />
@@ -110,7 +116,7 @@
 			<!-- <tocitem target="about_gpl_en" text="GNU General Public License (en)"/> -->
 		</tocitem>
 	</tocitem>
-
+	
 	<tocitem target="libs" text="Library Reference">
 		<tocitem target="wiring" text="Wiring library">
 			<tocitem target="wiring_splitter" text="Splitter" image="icon_splitter" />
@@ -182,7 +188,7 @@
 		</tocitem>
 		<!-- TTL mega functions 
 		<tocitem target="ttl" text="TTL">
-			<tocitem target="ttl_xxxx" text=button image="ttl_xxxx" />
+			<tocitem target="ttl_xxxx" text="button" image="ttl_xxxx" />
 		</tocitem>
 		-->
 		<tocitem target="tcl" text="TCL library">
@@ -209,10 +215,7 @@
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
 		</tocitem>
-		<tocitem target="Tests_for_doc" text="Tests for documentation">
-			<tocitem target="test_hml_css" text="test_hml_css" />
-			<tocitem target="Translation_status" text="Translation status" />
-		</tocitem>
+		
 <!--
 		<tocitem target="base" text="Base library">
 			<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
@@ -224,7 +227,10 @@
 			<tocitem target="base_label" text="Text" image="icon_label" />
 		</tocitem>
 -->
-      <tocitem targ
 	</tocitem>
-</tocitem>
+	<tocitem target="Tests_for_doc" text="Tests for documentation">
+		<tocitem target="test_hmlcss" text="test_hml_css" />
+		<tocitem target="Translation_status" text="Translation status" />
+	</tocitem>
+  </tocitem>
 </toc>

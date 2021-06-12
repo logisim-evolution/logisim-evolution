@@ -40,8 +40,9 @@
 		</tocitem>
 		<tocitem target="mem_guide" text="Компоненты памяти">
 			<tocitem target="mem_poke" text="Нажатие на память" />
+			<tocitem target="mem_hex" text="Шестнадцатеричный редактор" />	
 			<tocitem target="mem_menu" text="Всплывающие меню и файлы" />
-			<tocitem target="mem_hex" text="Шестнадцатеричный редактор" />
+			<tocitem target="mem_filetabel" text="Панель файлов памяти "/>
 			<tocitem target="mem_v2raw" text="Файл v2raw" />
 			<tocitem target="mem_v3word" text="Файл v3word"/>
 			<tocitem target="mem_v3byte" text="Файл v3byte"/>
@@ -69,17 +70,21 @@
 			<tocitem target="menu_edit" text="Меню Правка" />
 			<tocitem target="menu_project" text="Меню Проект" />
 			<tocitem target="menu_simulate" text="Меню Моделировать" />
+			<tocitem target="menu_fpga" text="Меню FPGA"/>
 			<tocitem target="menu_winhelp" text="Меню Окно и Справка" />
 			<tocitem target="menu_exportab" text="Export Image"/>  
 			<tocitem target="menu_printertab" text="Printing "/>
-			<tocitem target="menu_assembly" text="Assembly viewer"/>
+<!--			<tocitem target="menu_assembly" text="Assembly viewer"/> -->
 		</tocitem>
 		<tocitem target="prefs" text="Настройки приложения">
 			<tocitem target="prefs_template" text="Вкладка Шаблон" />
 			<tocitem target="prefs_intl" text="Вкладка Интернациональные" />
 			<tocitem target="prefs_window" text="Вкладка Окно" />
 			<tocitem target="prefs_layout" text="Вкладка Чертёж" />
+<!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->			
 			<tocitem target="prefs_exp" text="Вкладка Экспериментальные" />
+<!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
+<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
 			<tocitem target="prefs_cmdline" text="Командная строка" />
 		</tocitem>
 		<tocitem target="opts" text="Параметры проекта">
@@ -92,12 +97,12 @@
 			<tocitem target="prop_oscillate" text="Ошибки при возбуждении" />
 			<tocitem target="prop_shortcome" text="Недостатки" />
 		</tocitem>
-		<tocitem target="hdl-ip" text="HDL IP">
+<!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
 			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
-		</tocitem>
+		</tocitem> -->
 		<tocitem target="jar" text="Библиотеки JAR">
 			<tocitem target="jar_incr" text="Инкрементатор кода Грея" />
 			<tocitem target="jar_library" text="Класс Library" />

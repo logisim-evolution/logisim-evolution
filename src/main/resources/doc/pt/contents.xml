@@ -40,8 +40,9 @@
 		</tocitem>
 		<tocitem target="mem_guide" text="Componentes de memória">
 			<tocitem target="mem_poke" text="Para testar memória" />
+			<tocitem target="mem_hex" text="Editor hexadecimal " />	
 			<tocitem target="mem_menu" text="Menus pop-up e arquivos" />
-			<tocitem target="mem_hex" text="Editor hexadecimal" />
+			<tocitem target="mem_filetabel" text="Painel de arquivo de memória"/>
 			<tocitem target="mem_v2raw" text="Arquivo v2raw" />
 			<tocitem target="mem_v3word" text="Arquivo v3word"/>
 			<tocitem target="mem_v3byte" text="Arquivo v3byte"/>
@@ -53,6 +54,7 @@
 			<tocitem target="analyze_table" text="Para editar a tabela-verdade" />
 			<tocitem target="analyze_expr" text="Para criar expressões" />
 			<tocitem target="analyze_gen" text="Para gerar um circuito" />
+			<tocitem target="analyze_expimp" text="Exportar / importar a tabela "/>
 		</tocitem>
 		<tocitem target="log" text="Registro">
 			<tocitem target="log_selection" text="A aba Seleção" />
@@ -72,14 +74,17 @@
 			<tocitem target="menu_winhelp" text="Os menus Janela e Ajuda" />
 			<tocitem target="menu_exportab" text="Export Image"/>  
 			<tocitem target="menu_printertab" text="Printing "/>
-			<tocitem target="menu_assembly" text="Assembly viewer"/>
+<!--			<tocitem target="menu_assembly" text="Assembly viewer"/> -->
 		</tocitem>
 		<tocitem target="prefs" text="Preferências para a aplicação">
 			<tocitem target="prefs_template" text="A aba Gabarito" />
 			<tocitem target="prefs_intl" text="A aba Internacional" />
 			<tocitem target="prefs_window" text="A aba Janela" />
 			<tocitem target="prefs_layout" text="A aba Layout" />
+<!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->
 			<tocitem target="prefs_exp" text="A aba Experimental" />
+<!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
+<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
 			<tocitem target="prefs_cmdline" text="A linha de comando" />
 		</tocitem>
 		<tocitem target="opts" text="Opções de projeto">
@@ -92,12 +97,12 @@
 			<tocitem target="prop_oscillate" text="Erros de oscilação" />
 			<tocitem target="prop_shortcome" text="Deficiências" />
 		</tocitem>
-		<tocitem target="hdl-ip" text="HDL IP">
+<!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
 			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
-		</tocitem>
+		</tocitem> -->
 		<tocitem target="jar" text="Bibliotecas JAR">
 			<tocitem target="jar_incr" text="Incrementador em código de Gray" />
 			<tocitem target="jar_library" text="Classe Biblioteca" />
