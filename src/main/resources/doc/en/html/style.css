@@ -27,8 +27,8 @@ kbd {
 
 /* For img in the text */
 img.intxt {
-	height:auto;
-	width:auto;
+	height:16;
+	width:16;
 	vertical-align:middle;
 	margin:2px;
 }

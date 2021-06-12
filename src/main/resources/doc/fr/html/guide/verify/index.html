@@ -39,10 +39,10 @@
         <tt>java -jar logisim-evolution.jar adder-test.circ -tty table</tt>
       </blockquote>
       <p>
-        Sans affichage de la fenêtre graphique, Logisim charge le circuit et commence la simulation, il fait avancer les horloges aussi vite que possible tout en traitant les propagations entre chaque tic. Après chaque propagation, Logisim compare les valeurs générées des broches de sortie. Si des modifications ont été apportées à la propagation précédente, toutes les valeurs sont affichées dans un format délimité par des tabulations. Il est possible de tester la fin de la simulation à l'aide d'une broche spéciale labellisée <var>halt</var>. Elle ne s'affiche pas, mais quand elle change d'état vers le niveau haut (1) cela termine la simulation.
+        Sans affichage de la fenêtre graphique, Logisim charge le circuit et commence la simulation, il fait avancer les horloges aussi vite que possible tout en traitant les propagations entre chaque tic. Après chaque propagation, Logisim compare les valeurs générées des broches de sortie. Si des modifications ont été apportées à la propagation précédente, toutes les valeurs sont affichées dans un format délimité par des tabulations. Il est possible de tester la fin de la simulation à l'aide d'une broche spéciale labellisée <var>halt</var> (Sensible au casse). Elle ne s'affiche pas, mais quand elle change d'état vers le niveau haut (1) cela termine la simulation.
       </p>
       <p>
-        Dans notre exemple, Logisim affiche le tableau ci-dessous. Dans notre circuit nous avons trois sorties <var>a</var>, <var>b</var> et <var>sum</var>. Deux correspondent aux entrées <var>a</var> et <var>b</var> de l'additionneur et <var>sum</var> correspond à la sortie de l'additionneur à deux bits. L'affichage des colonnes dans la sortie console est organisé de gauche à droite et correspond à l'ordre descendant du positionnement des broches dans le schéma du circuit.
+        Dans notre exemple, Logisim affiche le tableau ci-dessous. Dans notre affichage nous avons trois colonnes <var>a</var>, <var>b</var> et <var>sum</var>. Deux correspondent aux entrées <var>a</var> et <var>b</var> de l'additionneur et <var>sum</var> correspond à la sortie de l'additionneur à deux bits. L'affichage des colonnes dans la sortie console est organisé de gauche à droite et correspond à l'ordre descendant du positionnement des broches dans le schéma du circuit.
       </p>
       <blockquote>
         <pre>00      00      000
