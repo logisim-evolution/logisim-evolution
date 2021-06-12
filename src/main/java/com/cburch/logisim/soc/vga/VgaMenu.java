@@ -51,7 +51,7 @@ public class VgaMenu implements ActionListener, MenuExtender {
   private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
-  
+
   public VgaMenu( Instance inst ) {
     instance = inst;
   }
@@ -86,14 +86,8 @@ public class VgaMenu implements ActionListener, MenuExtender {
       FileWriter cFile = null;
       try {
         headerFile = new FileWriter(headerFileName,false);
-      } catch (IOException e) {
-        headerFile = null;
-      }
-      try {
         cFile = new FileWriter(cFileName,false);
-      } catch (IOException e) {
-        cFile = null;
-      }
+      } catch (IOException e) {}
       if (headerFile == null || cFile == null) {
         OptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), OptionPane.ERROR_MESSAGE);
         return;

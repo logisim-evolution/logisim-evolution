@@ -47,7 +47,7 @@ class NorGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      StringBuffer OneLine = new StringBuffer();
+      StringBuilder OneLine = new StringBuilder();
       OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "(");
       int TabWidth = OneLine.length();
       boolean first = true;
