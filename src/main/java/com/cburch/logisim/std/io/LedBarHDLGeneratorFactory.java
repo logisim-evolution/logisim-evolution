@@ -31,15 +31,15 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
 
-public class LedLightBarHDLGeneratorFactory extends DotMatrixHDLGeneratorFactory {
+public class LedBarHDLGeneratorFactory extends DotMatrixHDLGeneratorFactory {
 
   @Override
   protected Attribute<BitWidth> getAttributeRows() {
-    return LedLightBar.ATTR_MATRIX_ROWS;
+    return LedBar.ATTR_MATRIX_ROWS;
   }
   @Override
   protected Attribute<BitWidth> getAttributeColumns() {
-    return LedLightBar.ATTR_MATRIX_COLS;
+    return LedBar.ATTR_MATRIX_COLS;
   }
 
 }

@@ -25,19 +25,19 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.icons.LedLightBarIcon;
+import com.cburch.logisim.gui.icons.LedBarIcon;
 
 import static com.cburch.logisim.std.Strings.S;
 
 /**
  * LED cluster
  */
-public class LedLightBar extends DotMatrixBase {
+public class LedBar extends DotMatrixBase {
 
   protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS
           = Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
   protected static final Attribute<BitWidth> ATTR_MATRIX_COLS
-          = Attributes.forBitWidth("matrixcols", S.getter("ioLightBarSegments"), 1, Value.MAX_WIDTH);
+          = Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
 
   protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE = Attributes.forOption(
           "dotshape", S.getter("ioMatrixShape"), new AttributeOption[]{SHAPE_PADDED_SQUARE,});
@@ -61,9 +61,9 @@ public class LedLightBar extends DotMatrixBase {
 
   /* ****************************************************************** */
 
-  public LedLightBar() {
-    super("LedLightBar", S.getter("ioLightBarComponent"), 8, 1);
-    setIcon(new LedLightBarIcon());
+  public LedBar() {
+    super("LedLightBar", S.getter("ioLedBarComponent"), 8, 1);
+    setIcon(new LedBarIcon());
 
     ATTR_DOT_SHAPE.setHidden(true);
     ATTR_MATRIX_ROWS.setHidden(true);
@@ -76,7 +76,7 @@ public class LedLightBar extends DotMatrixBase {
 
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new LedLightBarHDLGeneratorFactory();
+    if (MyHDLGenerator == null) MyHDLGenerator = new LedBarHDLGeneratorFactory();
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
