@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.std.ttl;
 
+/**
+ * TTL 74x24: quad 2-input NAND gate
+ */
 public class Ttl7424 extends Ttl7400 {
 
   public Ttl7424() {

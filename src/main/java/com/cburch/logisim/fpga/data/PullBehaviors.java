@@ -47,7 +47,6 @@ public class PullBehaviors {
     char result = 0;
     LinkedList<String> thelist = PullBehaviors.getStrings();
     Iterator<String> iter = thelist.iterator();
-    result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
       result++;

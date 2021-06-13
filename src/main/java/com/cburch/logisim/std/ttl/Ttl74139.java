@@ -115,9 +115,4 @@ public class Ttl74139 extends AbstractTtlGate {
     computeState(state, L2_nEN, L2_A, L2_B, out2);
   }
 
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
-
 }

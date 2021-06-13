@@ -242,7 +242,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
     return o;
   }
-  
+
   protected InstanceComponent getComponent(CircuitState state) {
     Object o = state.getData(path.elt[0]);
     InstanceComponent comp = path.elt[0];
@@ -280,12 +280,26 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       strokeWidth = Integer.parseInt(elt.getAttribute("stroke-width").trim());
     if (elt.hasAttribute("label")) {
       String loc = elt.getAttribute("label").trim().toLowerCase();
-      if (loc.equals("left")) labelLoc = LABEL_LEFT;
-      else if (loc.equals("right")) labelLoc = LABEL_RIGHT;
-      else if (loc.equals("top")) labelLoc = LABEL_TOP;
-      else if (loc.equals("bottom")) labelLoc = LABEL_BOTTOM;
-      else if (loc.equals("center")) labelLoc = LABEL_CENTER;
-      else if (loc.equals("none")) labelLoc = LABEL_NONE;
+      switch (loc) {
+        case "left":
+          labelLoc = LABEL_LEFT;
+          break;
+        case "right":
+          labelLoc = LABEL_RIGHT;
+          break;
+        case "top":
+          labelLoc = LABEL_TOP;
+          break;
+        case "bottom":
+          labelLoc = LABEL_BOTTOM;
+          break;
+        case "center":
+          labelLoc = LABEL_CENTER;
+          break;
+        case "none":
+          labelLoc = LABEL_NONE;
+          break;
+      }
     }
     labelFont = SvgReader.getFontAttribute(elt, "", "SansSerif", 7);
     if (elt.hasAttribute("label-color"))

@@ -259,8 +259,4 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     return new int[] {9};
   }
 
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
 }
