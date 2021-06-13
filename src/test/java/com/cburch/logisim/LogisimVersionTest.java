@@ -60,9 +60,7 @@ public class LogisimVersionTest {
 	public void shouldTestParse() {
 		assertNotNull(LogisimVersion.fromString("1.2.3"));
 		// Should return a new object
-		assertNotSame(LogisimVersion.fromString("1.2.3"),
-				LogisimVersion.fromString("1.2.3"));
-    assertEquals(LogisimVersion.fromString("1.2.3"), LogisimVersion.fromString("1.2.3"));
+		assertNotSame(LogisimVersion.fromString("1.2.3"), LogisimVersion.fromString("1.2.3"));
 		assertEquals("1.2.3", LogisimVersion.fromString("1.2.3").toString());
 	}
 
