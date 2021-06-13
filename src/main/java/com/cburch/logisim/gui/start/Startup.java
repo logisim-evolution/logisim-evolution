@@ -219,20 +219,6 @@ public class Startup implements AWTEventListener {
       AppPreferences.clear();
     }
 
-    if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
-      System.out.println("First time startup");
-      int Result =
-          OptionPane.showConfirmDialog(
-              null,
-              "Logisim can automatically check for new updates and versions.\n"
-                  + "Would you like to enable this feature?\n"
-                  + "(This feature can be disabled in Window -> Preferences -> Software)\n",
-              "Autoupdate",
-              OptionPane.YES_NO_OPTION);
-      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
-      AppPreferences.FirstTimeStartup.set(false);
-    }
-
     // parse arguments
     for (int i = 0; i < args.length; i++) {
       String arg = args[i];
@@ -482,8 +468,6 @@ public class Startup implements AWTEventListener {
         // already handled above
       } else if (arg.equals("-analyze")) {
         Main.ANALYZE = true;
-      } else if (arg.equals("-noupdates")) {
-        AppPreferences.AutomaticUpdateCheck.setBoolean(false);
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
