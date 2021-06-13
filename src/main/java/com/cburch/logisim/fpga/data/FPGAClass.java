@@ -37,7 +37,6 @@ public class FPGAClass {
     char result = 0;
     LinkedList<String> thelist = VendorSoftware.getVendorStrings();
     Iterator<String> iter = thelist.iterator();
-    result = 0;
     while (iter.hasNext()) {
       if (iter.next().equalsIgnoreCase(identifier)) return result;
       result++;

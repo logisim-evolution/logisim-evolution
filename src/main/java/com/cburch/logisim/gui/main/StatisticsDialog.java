@@ -40,14 +40,17 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -84,6 +87,11 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       if (pref.height > 550) pref.height = 550;
       this.setSize(pref);
     }
+
+    // Close the frame once ESC is hit
+    getRootPane().registerKeyboardAction(al -> dispose(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   public static void show(JFrame parent, LogisimFile file, Circuit circuit) {

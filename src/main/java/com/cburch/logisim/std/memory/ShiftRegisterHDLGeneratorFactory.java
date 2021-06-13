@@ -350,7 +350,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     String ClockNetName = GetClockNetName(ComponentInfo, ShiftRegister.CK, Nets);
     GatedClock = ClockNetName.isEmpty();
     ActiveLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
-    boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD).booleanValue();
+    boolean HasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     PortMap.putAll(GetNetMap("Reset", true, ComponentInfo, ShiftRegister.CLR, Nets));
     if (HasClock && !GatedClock) {
       if (Nets.RequiresGlobalClockConnection()) {
@@ -497,7 +497,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
     } else {
       PortMap.put("Q", HDL.unconnected(true));
-      StringBuffer Temp = new StringBuffer();
+      StringBuilder Temp = new StringBuilder();
       if (HDL.isVerilog()) {
         Temp.append("0");
       } else {
