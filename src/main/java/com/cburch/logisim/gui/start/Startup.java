@@ -523,30 +523,35 @@ public class Startup implements AWTEventListener {
 
   private static void printUsage() {
     System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
-    System.err.println(); // OK
+    System.err.println();
     System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argNoUpdatesOption")); // OK
-    System.err.println("   " + S.get("argGeometryOption")); // OK
-    System.err.println("   " + S.get("argAccentsOption")); // OK
-    System.err.println("   " + S.get("argClearOption")); // OK
-    System.err.println("   " + S.get("argEmptyOption")); // OK
-    System.err.println("   " + S.get("argAnalyzeOption")); // OK
-    System.err.println("   " + S.get("argTestOption")); // OK
-    System.err.println("   " + S.get("argGatesOption")); // OK
-    System.err.println("   " + S.get("argHelpOption")); // OK
-    System.err.println("   " + S.get("argLoadOption")); // OK
-    System.err.println("   " + S.get("argLocaleOption")); // OK
-    System.err.println("   " + S.get("argNoSplashOption")); // OK
-    System.err.println("   " + S.get("argPlainOption")); // OK
-    System.err.println("   " + S.get("argSubOption")); // OK
-    System.err.println("   " + S.get("argTemplateOption")); // OK
-    System.err.println("   " + S.get("argTtyOption")); // OK
-    System.err.println("   " + S.get("argQuestaOption")); // OK
-    System.err.println("   " + S.get("argVersionOption")); // OK
-    System.err.println("   " + S.get("argTestCircGen")); // OK
-    System.err.println("   " + S.get("argTestCircuit")); // OK
-    System.err.println("   " + S.get("argTestImplement")); // OK
-    System.err.println("   " + S.get("argCircuitOption")); // OK
+
+    String[] opts = {
+            "argGeometryOption",
+            "argAccentsOption",
+            "argClearOption",
+            "argEmptyOption",
+            "argAnalyzeOption",
+            "argTestOption",
+            "argGatesOption",
+            "argHelpOption",
+            "argLoadOption",
+            "argLocaleOption",
+            "argNoSplashOption",
+            "argPlainOption",
+            "argSubOption",
+            "argTemplateOption",
+            "argTtyOption",
+            "argQuestaOption",
+            "argVersionOption",
+            "argTestCircGen",
+            "argTestCircuit",
+            "argTestImplement",
+            "argCircuitOption",
+    };
+    for(String opt: opts) {
+      System.err.println("   " + S.get(opt));
+    }
 
     System.exit(-1);
   }
