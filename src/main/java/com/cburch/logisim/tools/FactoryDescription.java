@@ -30,6 +30,7 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.LibraryUtil;
 import com.cburch.logisim.util.StringGetter;
 
 import java.lang.reflect.Field;
@@ -141,22 +142,9 @@ public class FactoryDescription {
    *
    * As we want to have static _ID per library, generic
    * implementation must look for it in the current instance
-   *
-   * FIXME this is the same code we have in Library.java to get the ID
    */
   public String getName() {
-    try {
-      Field[] fields = factoryClass.getDeclaredFields();
-      for (int i = 0; i < fields.length; i++) {
-        if (fields[i].getName().equals("_ID")) {
-          return (String)fields[i].get(this);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    throw new NullPointerException("Missing _ID for " + factoryClass);
+    return LibraryUtil.getName(factoryClass);
   }
 
   public String getToolTip() {

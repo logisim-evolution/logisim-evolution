@@ -30,6 +30,7 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
 
+import com.cburch.logisim.util.LibraryUtil;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
@@ -68,23 +69,9 @@ public abstract class Library {
 
   /**
    * Returns unique library identifier.
-   *
-   * As we want to have static _ID per library, generic
-   * implementation must look for it in the current instance
    */
   public String getName() {
-    try {
-      Field[] fields = getClass().getDeclaredFields();
-      for (int i = 0; i < fields.length; i++) {
-        if (fields[i].getName().equals("_ID")) {
-          return (String)fields[i].get(this);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    throw new NullPointerException("Missing _ID for " + getClass());
+    return LibraryUtil.getName(getClass());
   }
 
   public List<Library> getLibraries() {
