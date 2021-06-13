@@ -553,7 +553,7 @@ public class Startup implements AWTEventListener {
       System.err.println("   " + S.get(opt));
     }
 
-    System.exit(-1);
+    System.exit(0);
   }
 
   private static void registerHandler() {
