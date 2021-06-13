@@ -27,10 +27,10 @@ Logisim supports many languages. Many of them were automatically translated usin
 * VHDL component -- a new component type whose behavior is specified in VHDL
 * TCL/TK console -- interfaces between the circuit and the user
 * DIP switches
+* More TTL chips
 * RGB LEDs
 * Large number of bug fixes
 * GUI improvements
-* Automatic updates
 * Code refactoring
 * …
 
