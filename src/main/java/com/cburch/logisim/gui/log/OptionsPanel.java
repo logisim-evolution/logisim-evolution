@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-import static com.cburch.logisim.gui.Strings.S;
-
 import com.cburch.logisim.comp.ComponentEvent;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -42,6 +40,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.util.Arrays;
 import javax.swing.BorderFactory;
@@ -61,12 +60,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
+
+import static com.cburch.logisim.gui.Strings.S;
 
 class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, Model.Listener {
 
@@ -90,13 +92,13 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   //     Transient signal fluctuations are captured. Each second of real time is
   //     recorded as {5ms} of simulated circuit time.
   // [ ] Clocked mode [ time_scale: 5ms per tick ] [ clock_cycle_length: 2 ticks ]
-  //   [ ] Coarse-grained summary 
+  //   [ ] Coarse-grained summary
   //     Data is captured at the end of each clock cycle (2 ticks), hiding any
   //     transient fluctuations that happen during the clock cycle.
   //     Each clock cycle is recorded as if it took {10ms} per cycle ({5ms} per tick).
   //   [ ] Fine-grained details  [ gate_delay: 10ns ]
   //     Data is captured whenever any signal value changes, including any
-  //     transient signal fluctuations that may happen during propagation. 
+  //     transient signal fluctuations that may happen during propagation.
   //     Transient fluctuations are recorded as if the gate delay were {10ns},
   //     and each clock cycle is recorded as if it took {10ms} per cycle ({5ms}
   //     per tick).
@@ -127,7 +129,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     Model.CLOCK_HIGH, Model.CLOCK_LOW };
   final JLabeledComboBox<String> clockDiscipline = new JLabeledComboBox<>("clockDisciplineLabel", clockDisciplineNames);
   final JLabel clockTicks = new JLabel();
-  
+
   final JCheckBox unlimited = new JCheckBox();
   final JSpinner limit = new JSpinner();
   final JLabel limitLabel = new JLabel();
@@ -145,7 +147,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   final JScrollPane pane;
 
   // todo: tooltips?
-  OptionsPanel(LogFrame frame) {
+  public OptionsPanel(LogFrame frame) {
     super(frame);
 
     selectionButton = frame.makeSelectionButton();
@@ -158,9 +160,9 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     modePanel.add(stepTime);
     modePanel.add(realTime);
     modePanel.add(clockTime);
-    
+
     // middle has timing options for each mode
-    stepFine.setAlignmentX(0.0f); 
+    stepFine.setAlignmentX(0.0f);
     stepFine.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     stepOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     stepOptionsPanel.add(stepFine);
@@ -178,7 +180,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     realOptionsPanel.add(realScale.getPanel());
     realOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-    clockFine.setAlignmentX(0.0f); 
+    clockFine.setAlignmentX(0.0f);
     clockFine.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     clockOptionsPanel.add(clockFine);
@@ -189,7 +191,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     clockOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     Box clockSrcBox = new Box(BoxLayout.X_AXIS);
     clockSrcBox.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
-    clockSrcBox.setAlignmentX(0.0f); 
+    clockSrcBox.setAlignmentX(0.0f);
     clockSrcBox.add(clockSrcLabel);
     clockSrcBox.add(Box.createRigidArea(new Dimension(6, 0)));
     clockSrcBox.add(clockSrcButton);
@@ -289,7 +291,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     stepTime.setSelected(false);
     realTime.setSelected(false);
     clockTime.setSelected(false);
-    modelChanged(null, getModel());    
+    modelChanged(null, getModel());
     localeChanged();
 
     addComponentListener(new ComponentAdapter() {
@@ -299,12 +301,13 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       }
     });
 
+    // Close the frame once ESC is hit
+    frame.getRootPane().registerKeyboardAction(al -> frame.dispose(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   static class ScrollablePanel extends JPanel implements Scrollable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     public Dimension getPreferredScrollableViewportSize() {
@@ -329,7 +332,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   @Override
-  public void stateChanged(ChangeEvent e) {              
+  public void stateChanged(ChangeEvent e) {
     Model m = getLogFrame().getModel();
     limit.setEnabled(!unlimited.isSelected());
     if (unlimited.isSelected()) {
@@ -355,7 +358,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {              
+  public void actionPerformed(ActionEvent e) {
     Model m = getLogFrame().getModel();
     if (e.getSource() == unlimited) {
       stateChanged(null);
@@ -369,7 +372,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       } else {
         String d = clockDiscipline.getValue();
         int discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
-        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(), 
+        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(),
             clockGate.getValue());
       }
       updateDescription();
@@ -472,13 +475,13 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     }
     class Renderer extends DefaultListCellRenderer {
       /**
-       * 
+       *
        */
       private static final long serialVersionUID = 1L;
 
       @Override
       public java.awt.Component getListCellRendererComponent(JList<?> list,
-          Object w, int index, boolean isSelected, boolean cellHasFocus) {
+                                                             Object w, int index, boolean isSelected, boolean cellHasFocus) {
         @SuppressWarnings("unchecked")
         final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -495,7 +498,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
         1000000L, 2000000L, 5000000L, 10000000L, 20000000L, 50000000L, 100000000L, 200000000L, 500000000L, // ms
           1000000000L // s
     };
- 
+
     TimeSelector(String labelKey, long nsDefault, String suffix) {
       super(labelKey, defaultVals);
       setSelectedItem(nsDefault);
@@ -540,7 +543,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
     unlimited.setText(S.get("historyUnlimited"));
     limitLabel.setText(S.get("historyLimit"));
-    
+
     clockSrcLabel.setText(S.get("clockSourceLabel"));
 
     stepScale.localeChanged();
