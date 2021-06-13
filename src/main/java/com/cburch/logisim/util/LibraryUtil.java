@@ -25,29 +25,27 @@ import java.util.NoSuchElementException;
 public class LibraryUtil {
 
   /**
-   * Tries to read unique identifier from object (mainly Library or Tool)
-   * stored in object's class static field named as set in idFieldName.
+   * Tries to read unique identifier from object (mainly Library or Tool) stored in object's class
+   * static field named as set in idFieldName.
    *
-   * As we want to have static _ID per library, generic implementation must
-   * look for it in the current instance using Reflection.
+   * <p>As we want to have static _ID per library, generic implementation must look for it in the
+   * current instance using Reflection.
    *
-   * Throws NoSuchElementException if no ID field is found.
-   * Throws NullPointerException if ID filed is present but its value is NULL
+   * <p>Throws NoSuchElementException if no ID field is found. Throws NullPointerException if ID
+   * filed is present but its value is NULL
    *
    * @param cls Class of the object to obtain ID/Name from.
-   *
    * @return ID of the object
    */
   public static String getName(Class cls) {
     final String idFieldName = "_ID";
     try {
       Field[] fields = cls.getDeclaredFields();
-      for (int i = 0; i < fields.length; i++) {
-        if (fields[i].getName().equals(idFieldName)) {
-          String id = (String)fields[i].get(null);
+      for (Field field : fields) {
+        if (field.getName().equals(idFieldName)) {
+          String id = (String) field.get(null);
           if (id != null) return id;
-          throw new NullPointerException(
-                  "The " + idFieldName + " for " + cls + " cannot be NULL");
+          throw new NullPointerException("The " + idFieldName + " for " + cls + " cannot be NULL");
         }
       }
     } catch (Exception ex) {
@@ -58,8 +56,6 @@ public class LibraryUtil {
       }
     }
 
-    throw new NoSuchElementException(
-            "Missing " + idFieldName + " static const field for " + cls);
+    throw new NoSuchElementException("Missing " + idFieldName + " static const field for " + cls);
   }
-
 }
