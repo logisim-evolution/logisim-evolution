@@ -55,7 +55,7 @@ class InstanceLoggerAdapter implements Loggable {
           t.getClass().getName());
       String msg = t.getMessage();
       if (msg != null)
-        loggerS.error("  ({})", msg); // OK
+        loggerS.error("  ({})", msg);
       logger = null;
     }
   }
@@ -67,7 +67,7 @@ class InstanceLoggerAdapter implements Loggable {
   public BitWidth getBitWidth(Object option) {
     return logger == null ? null : logger.getBitWidth(state, option);
   }
-  
+
   public boolean isInput(Object option) {
     return logger == null ? false : logger.isInput(state, option);
   }
