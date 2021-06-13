@@ -30,10 +30,10 @@ package com.cburch.logisim.std;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.fpga.library.BFHPraktika;
 import com.cburch.logisim.soc.Soc;
 import com.cburch.logisim.std.arith.Arithmetic;
 import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.bfh.BFHPraktika;
 import com.cburch.logisim.std.gates.Gates;
 import com.cburch.logisim.std.hdl.Hdl;
 import com.cburch.logisim.std.io.Io;
