@@ -308,9 +308,6 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   static class ScrollablePanel extends JPanel implements Scrollable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     public Dimension getPreferredScrollableViewportSize() {
