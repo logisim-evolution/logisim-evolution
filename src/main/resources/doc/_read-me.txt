@@ -1,10 +1,13 @@
 Organization of these files
 
-The doc_xx.hs files are the java help configuration by language.
+The "doc_xx.hs" files are the java help configuration by language.
 
-The map_xx.jhm files contain the configuration of the help tree in conjunction with the .\xx\contents.xml file .
+The "map_xx.jhm" files contain the configuration of the help tree in conjunction with the .\xx\contents.xml file .
+
+The "search_lookup_xx" folder contains the keyword search base of the help.
 
 (xx = abbreviated language (fr/en/it...)
+
 
 The "icons" folder contains the icons for the doc
 
