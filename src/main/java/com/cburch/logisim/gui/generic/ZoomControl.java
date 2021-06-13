@@ -59,11 +59,10 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
-public class ZoomControl extends JPanel implements LocaleListener {
+public class ZoomControl extends JPanel {
   private static final long serialVersionUID = 1L;
   private final ZoomLabel label;
   private final JSlider slider;
-  private final JLabel zoomText;
   private final GridIcon grid;
   private final Canvas canvas;
   private final JButton plus;
@@ -90,8 +89,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
     zoom.add(label, BorderLayout.CENTER);
     zoom.add(plus, BorderLayout.EAST);
     zoom.add(slider, BorderLayout.SOUTH);
-    zoomText = new JLabel(S.get("ZoomText"), SwingConstants.CENTER);
-    zoom.add(zoomText, BorderLayout.NORTH);
 
     this.add(zoom, BorderLayout.NORTH);
 
@@ -108,7 +105,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
     model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
     model.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
     model.addPropertyChangeListener(ZoomModel.ZOOM, label);
-    LocaleManager.addLocaleListener(this);
   }
 
   private int nearestZoomOption() {
@@ -177,7 +173,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
         label.setEnabled(false);
         plus.setEnabled(false);
         minus.setEnabled(false);
-        zoomText.setEnabled(false);
       } else {
         slider.setEnabled(true);
         ZoomButton.setEnabled(true);
@@ -185,7 +180,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
         label.setEnabled(true);
         plus.setEnabled(true);
         minus.setEnabled(true);
-        zoomText.setEnabled(true);
         sliderModel = new SliderModel(model);
         slider.setModel(sliderModel);
         grid.update();
@@ -197,11 +191,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
         label.setText(zoomString());
       }
     }
-  }
-
-  @Override
-  public void localeChanged() {
-    zoomText.setText(S.get("ZoomText"));
   }
 
   private class GridIcon extends JComponent implements MouseListener, PropertyChangeListener {
