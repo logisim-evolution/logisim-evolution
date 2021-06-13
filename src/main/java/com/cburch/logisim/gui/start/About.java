@@ -208,12 +208,7 @@ public class About {
 
       g.setFont(versionFont);
       fm = g.getFontMetrics();
-      str = "Version " + Main.VERSION.mainVersion();
-      g.drawString(str, x + IMAGE_WIDTH - fm.stringWidth(str), y + 50);
-
-      g.setFont(copyrightFont);
-      fm = g.getFontMetrics();
-      str = Main.VERSION.rev();
+      str = "Version " + Main.VERSION;
       g.drawString(str, x + IMAGE_WIDTH - fm.stringWidth(str), y + 50);
     }
 

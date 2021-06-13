@@ -47,23 +47,23 @@ public class LogisimVersionTest {
 
 	@Before
 	public void setUp() {
-		older = LogisimVersion.get(1, 2, 3);
-		newer = LogisimVersion.get(1, 2, 4);
-		newerToo = LogisimVersion.get(1, 2, 4);
+		older = new LogisimVersion(1, 2, 3);
+		newer = new LogisimVersion(1, 2, 4);
+		newerToo = new LogisimVersion(1, 2, 4);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.cburch.logisim.LogisimVersion#parse(java.lang.String)}.
+	 * {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}.
 	 */
 	@Test
 	public void shouldTestParse() {
-		assertNotNull(LogisimVersion.parse("1.2.3"));
+		assertNotNull(LogisimVersion.fromString("1.2.3"));
 		// Should return a new object
-		assertNotSame(LogisimVersion.parse("1.2.3"),
-				LogisimVersion.parse("1.2.3"));
-    assertEquals(LogisimVersion.parse("1.2.3"), LogisimVersion.parse("1.2.3"));
-		assertEquals("1.2.3", LogisimVersion.parse("1.2.3").mainVersion());
+		assertNotSame(LogisimVersion.fromString("1.2.3"),
+				LogisimVersion.fromString("1.2.3"));
+    assertEquals(LogisimVersion.fromString("1.2.3"), LogisimVersion.fromString("1.2.3"));
+		assertEquals("1.2.3", LogisimVersion.fromString("1.2.3").toString());
 	}
 
 	/**

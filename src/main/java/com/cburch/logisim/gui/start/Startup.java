@@ -294,7 +294,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION_NAME); // OK
+        System.out.println(Main.VERSION); // OK
         return null;
       } else if (arg.equals("-gates")) {
         i++;
