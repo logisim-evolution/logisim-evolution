@@ -52,7 +52,7 @@ class AndGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      StringBuffer OneLine = new StringBuffer();
+      StringBuilder OneLine = new StringBuilder();
       OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator());
       int TabWidth = OneLine.length();
       boolean first = true;
@@ -115,7 +115,7 @@ class AndGate extends AbstractGate {
 
   @Override
   protected void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    paintIconANSI(g, iconSize, borderSize, negateSize,false);  
+    paintIconANSI(g, iconSize, borderSize, negateSize,false);
   }
 
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {

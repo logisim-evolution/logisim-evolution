@@ -36,6 +36,9 @@ import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+/**
+ * TTL 74x00: quad 2-input NAND gate
+ */
 public class Ttl7400 extends AbstractTtlGate {
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
@@ -55,12 +58,15 @@ public class Ttl7400 extends AbstractTtlGate {
     }
   }
 
+  private final static byte pinCount = 14;
+  private final static byte[] outPins = {3, 6, 8, 11};
+
   public Ttl7400() {
-    super("7400", (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super("7400", pinCount, outPins, true);
   }
 
   public Ttl7400(String name) {
-    super(name, (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(name, pinCount, outPins, true);
   }
 
   @Override

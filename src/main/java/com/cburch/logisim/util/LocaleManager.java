@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.swing.JComponent;
@@ -166,7 +167,7 @@ public class LocaleManager {
     }
     return ret.toString();
   }
-  
+
   private static void updateButtonText() {
     UIManager.put("FileChooser.openDialogTitleText", S.get("LMopenDialogTitleText"));
     UIManager.put("FileChooser.saveDialogTitleText", S.get("LMsaveDialogTitleText"));
@@ -217,11 +218,7 @@ public class LocaleManager {
         }
       }
       if (select == null) {
-        if (backup == null) {
-          select = new Locale("en");
-        } else {
-          select = backup;
-        }
+        select = Objects.requireNonNullElseGet(backup, () -> new Locale("en"));
       }
 
       curLocale = select;

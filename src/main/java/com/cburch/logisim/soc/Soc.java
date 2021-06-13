@@ -30,30 +30,45 @@ package com.cburch.logisim.soc;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.soc.bus.SocBus;
+import com.cburch.logisim.soc.jtaguart.JtagUart;
+import com.cburch.logisim.soc.memory.SocMemory;
+import com.cburch.logisim.soc.nios2.Nios2;
+import com.cburch.logisim.soc.pio.SocPio;
+import com.cburch.logisim.soc.rv32im.Rv32im_riscv;
+import com.cburch.logisim.soc.vga.SocVga;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Soc  extends Library {
+public class Soc extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Soc";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", "rv32im.Rv32im_riscv"),
+        "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", Rv32im_riscv.class),
     new FactoryDescription(
-        "Nios2", S.getter("Nios2Component"), "Nios2.gif", "nios2.Nios2"),
+        "Nios2", S.getter("Nios2Component"), "Nios2.gif", Nios2.class),
     new FactoryDescription(
-        "SocBus", S.getter("SocBusComponent"), "" , "bus.SocBus" ),
+        "SocBus", S.getter("SocBusComponent"), "" , SocBus.class ),
     new FactoryDescription(
-         "Socmem", S.getter("SocMemoryComponent"), "" , "memory.SocMemory" ),
+         "Socmem", S.getter("SocMemoryComponent"), "" , SocMemory.class ),
     new FactoryDescription(
-            "SocPio", S.getter("SocPioComponent"), "" , "pio.SocPio" ),
+            "SocPio", S.getter("SocPioComponent"), "" , SocPio.class),
     new FactoryDescription(
-            "SocVga", S.getter("SocVgaComponent"), "" , "vga.SocVga" ),
+            "SocVga", S.getter("SocVgaComponent"), "" , SocVga.class),
     new FactoryDescription(
-            "SocJtagUart", S.getter("SocJtagUartComponent"), "" , "jtaguart.JtagUart" ),
+            "SocJtagUart", S.getter("SocJtagUartComponent"), "" , JtagUart.class),
   };
-  
+
   private List<Tool> tools = null;
 
   @Override
@@ -62,19 +77,10 @@ public class Soc  extends Library {
   }
 
   @Override
-  public String getName() {
-    return "Soc";
-  }
-
-  @Override
   public List<Tool> getTools() {
     if (tools == null) {
       tools = FactoryDescription.getTools(Soc.class, DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

@@ -37,27 +37,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Gates extends Library {
-  private List<Tool> tools = null;
 
-  public Gates() {
-    tools =
-        Arrays.asList(
-            new Tool[] {
-              new AddTool(NotGate.FACTORY),
-              new AddTool(Buffer.FACTORY),
-              new AddTool(AndGate.FACTORY),
-              new AddTool(OrGate.FACTORY),
-              new AddTool(NandGate.FACTORY),
-              new AddTool(NorGate.FACTORY),
-              new AddTool(XorGate.FACTORY),
-              new AddTool(XnorGate.FACTORY),
-              new AddTool(OddParityGate.FACTORY),
-              new AddTool(EvenParityGate.FACTORY),
-              new AddTool(ControlledBuffer.FACTORY_BUFFER),
-              new AddTool(ControlledBuffer.FACTORY_INVERTER),
-              new AddTool(PLA.FACTORY)
-            });
-  }
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Gates";
+
+  private List<Tool> tools = null;
 
   @Override
   public String getDisplayName() {
@@ -65,16 +54,25 @@ public class Gates extends Library {
   }
 
   @Override
-  public String getName() {
-    return "Gates";
-  }
-
-  @Override
   public List<Tool> getTools() {
+    if (tools == null) {
+      tools = Arrays.asList(
+        new Tool[] {
+          new AddTool(NotGate.FACTORY),
+          new AddTool(Buffer.FACTORY),
+          new AddTool(AndGate.FACTORY),
+          new AddTool(OrGate.FACTORY),
+          new AddTool(NandGate.FACTORY),
+          new AddTool(NorGate.FACTORY),
+          new AddTool(XorGate.FACTORY),
+          new AddTool(XnorGate.FACTORY),
+          new AddTool(OddParityGate.FACTORY),
+          new AddTool(EvenParityGate.FACTORY),
+          new AddTool(ControlledBuffer.FACTORY_BUFFER),
+          new AddTool(ControlledBuffer.FACTORY_INVERTER),
+          new AddTool(PLA.FACTORY)
+        });
+    }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

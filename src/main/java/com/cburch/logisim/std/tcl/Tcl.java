@@ -37,24 +37,25 @@ import java.util.List;
 
 public class Tcl extends Library {
 
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "TCL";
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", "TclConsoleReds"),
-    new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", "TclGeneric")
+        "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", TclConsoleReds.class),
+    new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", TclGeneric.class)
   };
 
   private List<Tool> tools = null;
 
-  public Tcl() {}
-
   @Override
   public String getDisplayName() {
     return S.get("tclLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "TCL";
   }
 
   @Override
@@ -63,9 +64,5 @@ public class Tcl extends Library {
       tools = FactoryDescription.getTools(Tcl.class, DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

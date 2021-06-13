@@ -45,6 +45,15 @@ import java.awt.Graphics;
 import java.util.List;
 
 public class Plexers extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Plexers";
+
   static boolean contains(Location loc, Bounds bds, Direction facing) {
     if (bds.contains(loc, 1)) {
       int x = loc.getX();
@@ -150,31 +159,22 @@ public class Plexers extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
-        "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", "Multiplexer"),
+        "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", Multiplexer.class),
     new FactoryDescription(
-        "Demultiplexer", S.getter("demultiplexerComponent"), "demultiplexer.gif", "Demultiplexer"),
-    new FactoryDescription("Decoder", S.getter("decoderComponent"), "decoder.gif", "Decoder"),
+        "Demultiplexer", S.getter("demultiplexerComponent"), "demultiplexer.gif", Demultiplexer.class),
     new FactoryDescription(
-        "Priority Encoder",
-        S.getter("priorityEncoderComponent"),
-        "priencod.gif",
-        "PriorityEncoder"),
+        "Decoder", S.getter("decoderComponent"), "decoder.gif", Decoder.class),
     new FactoryDescription(
-        "BitSelector", S.getter("bitSelectorComponent"), "bitSelector.gif", "BitSelector"),
+        "Priority Encoder", S.getter("priorityEncoderComponent"), "priencod.gif", PriorityEncoder.class),
+    new FactoryDescription(
+        "BitSelector", S.getter("bitSelectorComponent"), "bitSelector.gif", BitSelector.class),
   };
 
   private List<Tool> tools = null;
 
-  public Plexers() {}
-
   @Override
   public String getDisplayName() {
     return S.get("plexerLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Plexers";
   }
 
   @Override
@@ -183,9 +183,5 @@ public class Plexers extends Library {
       tools = FactoryDescription.getTools(Plexers.class, DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

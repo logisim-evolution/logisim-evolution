@@ -1392,170 +1392,115 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 4:
-          {
-            addNullToken();
-            return firstToken;
-          }
+          addNullToken();
+          return firstToken;
+        case 9:
         case 24:
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+        case 30:
+        case 31:
+        case 32:
+        case 33:
+        case 34:
+        case 35:
+        case 36:
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+        case 41:
+        case 42:
+        case 43:
+        case 44:
+        case 45:
+        case 46:
           break;
         case 18:
-          {
-            addToken(Token.LITERAL_CHAR);
-          }
-        case 25:
+          addToken(Token.LITERAL_CHAR);
           break;
         case 6:
-          {
-            addToken(Token.WHITESPACE);
-          }
-        case 26:
+          addToken(Token.WHITESPACE);
           break;
         case 17:
-          {
-            addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
-          }
-        case 27:
+          addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
           break;
         case 21:
-          {
-            addToken(Token.ERROR_STRING_DOUBLE);
-          }
-        case 28:
+          addToken(Token.ERROR_STRING_DOUBLE);
           break;
         case 15:
-          {
-            addToken(Token.LITERAL_NUMBER_FLOAT);
-          }
-        case 29:
+          addToken(Token.LITERAL_NUMBER_FLOAT);
           break;
         case 16:
-          {
-            addToken(Token.RESERVED_WORD);
-          }
-        case 30:
+          addToken(Token.RESERVED_WORD);
           break;
         case 8:
-          {
-            addToken(Token.SEPARATOR);
-          }
-        case 31:
+          addToken(Token.SEPARATOR);
           break;
         case 1:
-          {
-            addToken(Token.IDENTIFIER);
-          }
-        case 32:
+          addToken(Token.IDENTIFIER);
           break;
         case 10:
-          {
-            addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-            addNullToken();
-            return firstToken;
-          }
-        case 33:
-          break;
+          addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+          addNullToken();
+          return firstToken;
         case 14:
-          {
-            start = zzMarkedPos - 2;
-            yybegin(EOL_COMMENT);
-          }
-        case 34:
+          start = zzMarkedPos - 2;
+          yybegin(EOL_COMMENT);
           break;
         case 19:
-          {
-            addToken(Token.FUNCTION);
-          }
-        case 35:
+          addToken(Token.FUNCTION);
           break;
         case 3:
-          {
-            addToken(Token.ERROR_CHAR);
-            addNullToken();
-            return firstToken;
-          }
-        case 36:
-          break;
+          addToken(Token.ERROR_CHAR);
+          addNullToken();
+          return firstToken;
         case 5:
-          {
-            addToken(Token.ERROR_STRING_DOUBLE);
-            addNullToken();
-            return firstToken;
-          }
-        case 37:
-          break;
+          addToken(Token.ERROR_STRING_DOUBLE);
+          addNullToken();
+          return firstToken;
         case 20:
-          {
-            addToken(Token.DATA_TYPE);
-          }
-        case 38:
+          addToken(Token.DATA_TYPE);
           break;
         case 12:
-          {
-            addToken(Token.ERROR_CHAR);
-          }
-        case 39:
+          addToken(Token.ERROR_CHAR);
           break;
         case 13:
-          {
-            addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
-          }
-        case 40:
+          addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
           break;
         case 23:
-          {
-            int temp = zzStartRead;
-            addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-            addHyperlinkToken(temp, zzMarkedPos - 1, Token.COMMENT_EOL);
-            start = zzMarkedPos;
-          }
-        case 41:
+          int temp = zzStartRead;
+          addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+          addHyperlinkToken(temp, zzMarkedPos - 1, Token.COMMENT_EOL);
+          start = zzMarkedPos;
           break;
         case 22:
-          {
-            addToken(Token.RESERVED_WORD_2);
-          }
-        case 42:
+          addToken(Token.RESERVED_WORD_2);
           break;
         case 11:
-          {
-            addToken(Token.ERROR_NUMBER_FORMAT);
-          }
-        case 43:
+          addToken(Token.ERROR_NUMBER_FORMAT);
           break;
         case 2:
-          {
-            addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
-          }
-        case 44:
+          addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
           break;
         case 7:
-          {
-            addToken(Token.OPERATOR);
-          }
-        case 45:
-          break;
-        case 9:
-          {
-          }
-        case 46:
+          addToken(Token.OPERATOR);
           break;
         default:
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;
             switch (zzLexicalState) {
               case EOL_COMMENT:
-                {
-                  addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-                  addNullToken();
-                  return firstToken;
-                }
-              case 433:
-                break;
+                addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+                addNullToken();
+                return firstToken;
               case YYINITIAL:
-                {
-                  addNullToken();
-                  return firstToken;
-                }
+                addNullToken();
+                return firstToken;
+              case 433:
               case 434:
                 break;
               default:
@@ -1564,7 +1509,9 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
           } else {
             zzScanError(ZZ_NO_MATCH);
           }
-      }
+          break;
+      } // switch
+
     }
   }
 }

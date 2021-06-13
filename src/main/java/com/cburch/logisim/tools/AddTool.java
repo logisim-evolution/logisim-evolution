@@ -56,6 +56,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
@@ -204,7 +205,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
     if (afterAdd.equals(AppPreferences.ADD_AFTER_UNCHANGED)) {
       return null;
     } else { // switch to Edit Tool
-      Library base = proj.getLogisimFile().getLibrary("Base");
+      Library base = proj.getLogisimFile().getLibrary(Base._ID);
       if (base == null) {
         return null;
       } else {
@@ -421,7 +422,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
               break;
             case KeyEvent.VK_ESCAPE:
               Project proj = canvas.getProject();
-              Library base = proj.getLogisimFile().getLibrary("Base");
+              Library base = proj.getLogisimFile().getLibrary(Base._ID);
               Tool next = (base == null) ? null : base.getTool("Edit Tool");
               if (next != null) {
                 proj.setTool(next);
