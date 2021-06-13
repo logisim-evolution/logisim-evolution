@@ -509,7 +509,6 @@ public class Startup implements AWTEventListener {
     System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
     System.err.println(); // OK
     System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argNoUpdatesOption")); // OK
     System.err.println("   " + S.get("argGeometryOption")); // OK
     System.err.println("   " + S.get("argAccentsOption")); // OK
     System.err.println("   " + S.get("argClearOption")); // OK
