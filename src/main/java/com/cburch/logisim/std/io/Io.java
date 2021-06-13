@@ -41,6 +41,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Io extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "I/O";
+
   public static final Attribute<Color> ATTR_COLOR =
       Attributes.forColor("color", S.getter("ioColorAttr"));
   static final Attribute<Color> ATTR_ON_COLOR = Attributes.forColor("color", S.getter("ioOnColor"));
@@ -70,16 +79,9 @@ public class Io extends Library {
 
   private List<Tool> tools = null;
 
-  public Io() {}
-
   @Override
   public String getDisplayName() {
     return S.get("ioLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "I/O";
   }
 
   @Override
@@ -90,9 +92,5 @@ public class Io extends Library {
       tools.add(new AddTool(Video.factory));
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

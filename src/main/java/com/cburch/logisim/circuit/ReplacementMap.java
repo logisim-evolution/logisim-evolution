@@ -170,13 +170,13 @@ public class ReplacementMap {
 
   public void put(Component a, Collection<? extends Component> bs) {
     if (frozen)
-      throw new IllegalStateException("cannot change map after frozen");
+      throw new IllegalStateException("Cannot change map after frozen.");
 
-    HashSet<Component> oldBs = map.computeIfAbsent(a, k -> new HashSet<Component>(bs.size()));
+    var oldBs = map.computeIfAbsent(a, k -> new HashSet<Component>(bs.size()));
     oldBs.addAll(bs);
 
     for (Component b : bs) {
-      HashSet<Component> oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
+      var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
       oldAs.add(a);
     }
   }

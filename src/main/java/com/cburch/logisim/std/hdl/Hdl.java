@@ -38,22 +38,23 @@ import java.util.List;
 
 public class Hdl extends Library {
 
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "HDL-IP";
+
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
   };
 
   private List<Tool> tools = null;
 
-  public Hdl() {}
-
   @Override
   public String getDisplayName() {
     return S.get("hdlLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "HDL-IP";
   }
 
   @Override
@@ -62,9 +63,5 @@ public class Hdl extends Library {
       tools = FactoryDescription.getTools(Hdl.class, DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -281,7 +282,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public void addLibrary(Library lib) {
-    if (!lib.getName().equals("Base")) {
+    if (!lib.getName().equals(Base._ID)) {
       for (Tool tool : lib.getTools()) {
         AddTool tool1 = (AddTool) tool;
         AttributeSet atrs = tool1.getAttributeSet();

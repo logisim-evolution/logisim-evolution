@@ -48,8 +48,11 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.gates.Gates;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
+import com.cburch.logisim.std.wiring.Wiring;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -1139,14 +1142,14 @@ class XmlReader {
       String label = libElt.getAttribute("name");
       if (desc == null) {
         // skip these tests
-      } else if (desc.equals("#Base")) {
+      } else if (desc.equals("#" + Base._ID)) {
         oldBaseElt = libElt;
         oldBaseLabel = label;
-      } else if (desc.equals("#Wiring")) {
+      } else if (desc.equals("#" + Wiring._ID)) {
         // Wiring library already in file. This shouldn't happen, but if
         // somehow it does, we don't want to add it again.
         return;
-      } else if (desc.equals("#Gates")) {
+      } else if (desc.equals("#" + Gates._ID)) {
         gatesElt = libElt;
         gatesLabel = label;
       }
@@ -1169,17 +1172,17 @@ class XmlReader {
     if (oldBaseElt != null) {
       wiringLabel = oldBaseLabel;
       wiringElt = oldBaseElt;
-      wiringElt.setAttribute("desc", "#Wiring");
+      wiringElt.setAttribute("desc", "#" + Wiring._ID);
 
       newBaseLabel = "" + (maxLabel + 1);
       newBaseElt = doc.createElement("lib");
-      newBaseElt.setAttribute("desc", "#Base");
+      newBaseElt.setAttribute("desc", "#" + Base._ID);
       newBaseElt.setAttribute("name", newBaseLabel);
       root.insertBefore(newBaseElt, lastLibElt.getNextSibling());
     } else {
       wiringLabel = "" + (maxLabel + 1);
       wiringElt = doc.createElement("lib");
-      wiringElt.setAttribute("desc", "#Wiring");
+      wiringElt.setAttribute("desc", "#" + Wiring._ID);
       wiringElt.setAttribute("name", wiringLabel);
       root.insertBefore(wiringElt, lastLibElt.getNextSibling());
 

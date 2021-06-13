@@ -49,26 +49,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Library of built-in component libraries
+ */
 public class Builtin extends Library {
-  private List<Library> libraries = null;
 
-  public Builtin() {
-    libraries =
-        Arrays.asList(
-            new Base(),
-            new Gates(),
-            new Wiring(),
-            new Plexers(),
-            new Arithmetic(),
-            new Memory(),
-            new Io(),
-            new TTL(),
-            new Hdl(),
-            new Tcl(),
-            new BFHPraktika(),
-            new ITA_IO(),
-            new Soc());
-  }
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Builtin";
+
+  private List<Library> libraries = null;
 
   @Override
   public String getDisplayName() {
@@ -77,20 +71,27 @@ public class Builtin extends Library {
 
   @Override
   public List<Library> getLibraries() {
+    if (libraries == null) {
+      libraries = Arrays.asList(
+        new Base(),
+        new Gates(),
+        new Wiring(),
+        new Plexers(),
+        new Arithmetic(),
+        new Memory(),
+        new Io(),
+        new TTL(),
+        new Hdl(),
+        new Tcl(),
+        new BFHPraktika(),
+        new ITA_IO(),
+        new Soc());
+    }
     return libraries;
-  }
-
-  @Override
-  public String getName() {
-    return "Builtin";
   }
 
   @Override
   public List<Tool> getTools() {
     return Collections.emptyList();
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }
