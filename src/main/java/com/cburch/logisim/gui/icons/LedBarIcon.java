@@ -19,8 +19,8 @@
 
 package com.cburch.logisim.gui.icons;
 
-import java.awt.*;
-import java.awt.font.TextLayout;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class LedBarIcon extends AnimatedIcon {
 
