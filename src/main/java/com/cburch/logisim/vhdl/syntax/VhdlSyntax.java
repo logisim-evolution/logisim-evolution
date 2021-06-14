@@ -1,4 +1,15 @@
 /*
+ * WARNING: THIS IS AUTO-GENERATED FILE - DO NOT EDIT!
+ ****************************************************************
+ *
+ * To update this file edit src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.flex
+ * then use Jflex (https://jflex.de/) to generate this file from it.
+ *
+ * See: https://github.com/logisim-evolution/logisim-evolution/issues/563
+ */
+
+
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
