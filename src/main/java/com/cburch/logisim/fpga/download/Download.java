@@ -75,7 +75,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private final Object lock = new Object();
   private JFrame parent;
 
-
+  
   private final ArrayList<ActionListener> Listeners = new ArrayList<>();
 
   public Download(
@@ -92,7 +92,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     MyProgress = Progress;
     parent = myParent;
     SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
-       MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);
+       MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
 
   public Download(
@@ -105,9 +105,9 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       boolean DownloadOnly,
       boolean gegerateHdlOnly) {
     SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
-        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);
+        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
-
+  
   private void SetUpDownload(
       Project MyProject,
       String TopLevelSheet,
@@ -172,16 +172,16 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     }
     if (MyProgress == null) UseGui = false;
     if (UseGui) {
-      steps += Downloader.GetNumberOfStages();
+      if (Downloader != null) steps += Downloader.GetNumberOfStages();
       MyProgress.setMaximum(steps);
       MyProgress.setString(S.get("FpgaDownloadInfo"));
     }
   }
-
+  
   public void DoDownload() {
     new Thread(this).start();
   }
-
+  
   public void stop() {
     StopRequested = true;
     MyProgress.setString(S.get("FpgaGuiCanceling"));
@@ -357,7 +357,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       MyProgress.setString(S.get("FPGAState3"));
       ComponentMapDialog MapPannel;
       if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-        MapPannel = new ComponentMapDialog( parent,
+        MapPannel = new ComponentMapDialog( parent, 
                 MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
                 MyBoardInformation, MyMappableResources);
       } else {

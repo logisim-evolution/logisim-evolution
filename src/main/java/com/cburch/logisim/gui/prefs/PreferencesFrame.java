@@ -28,25 +28,22 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.fpga.prefs.FPGAOptions;
 import com.cburch.logisim.fpga.prefs.SoftwaresOptions;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
-
-import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Container;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.event.KeyEvent;
-
-import static com.cburch.logisim.gui.Strings.S;
 
 public class PreferencesFrame extends LFrame.Dialog {
+
   private static final long serialVersionUID = 1L;
   private static WindowMenuManager MENU_MANAGER = null;
   private final MyListener myListener = new MyListener();
@@ -85,11 +82,6 @@ public class PreferencesFrame extends LFrame.Dialog {
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
     pack();
-
-    // Close the frame once ESC is hit
-    getRootPane().registerKeyboardAction(al -> dispose(),
-            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   public static void initializeManager() {

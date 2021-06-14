@@ -36,6 +36,7 @@ public class PinActivity {
     char result = 0;
     LinkedList<String> thelist = PinActivity.getStrings();
     Iterator<String> iter = thelist.iterator();
+    result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
       result++;

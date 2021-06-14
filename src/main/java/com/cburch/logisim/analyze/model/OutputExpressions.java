@@ -302,7 +302,7 @@ public class OutputExpressions {
     if (a == null) {
       return b == null || b.size() == 0;
     } else if (b == null) {
-      return a.size() == 0;
+      return a == null || a.size() == 0;
     } else if (a.size() != b.size()) {
       return false;
     } else {
@@ -471,9 +471,9 @@ public class OutputExpressions {
   public void disableUpdates() {
     allowUpdates = false;
   }
-
+  
   public boolean UpdatesEnabled() {
 	  return allowUpdates;
   }
-
+  
 }

@@ -67,7 +67,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	      ArrayList<String> Hierarchy) {
 	   return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
   }
-
+  
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
@@ -195,12 +195,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + comp.GetLocalBubbleOutputEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleOutputStartId()
-                      + HDL.BracketClose();
+                      + HDL.BracketClose(); 
       case 2 : return HDL.BracketOpen()
                       + comp.GetLocalBubbleInOutEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleInOutStartId()
-                      + HDL.BracketClose();
+                      + HDL.BracketClose(); 
     }
     return "";
   }
@@ -260,7 +260,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuilder OneLine = new StringBuilder();
+    StringBuffer OneLine = new StringBuffer();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
       if (ThisNet.IsForcedRootNet()) {
@@ -673,7 +673,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           if (HDL.isVerilog())
             PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
         } else {
-          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname,
+          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 
         		  HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(ComponentInfo, 2));
         }
       }
@@ -692,7 +692,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 Reporter.Report.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                       + PinLabel
                       + "'");
-
+            
               } else {
                 PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
               }
@@ -732,7 +732,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 CorrectLabel.getCorrectLabel(
                     selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
             if (topLevel) {
-              PortMap.put(PinLabel, Preamble+PinLabel);
+              PortMap.put(PinLabel, Preamble+PinLabel);	
             } else {
               int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
               if (endid < 0) {
@@ -756,10 +756,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       int EndIndex,
       int TabSize,
       Netlist TheNets) {
-    StringBuilder Contents = new StringBuilder();
-    StringBuilder Source = new StringBuilder();
-    StringBuilder Destination = new StringBuilder();
-    StringBuilder Tab = new StringBuilder();
+    StringBuffer Contents = new StringBuffer();
+    StringBuffer Source = new StringBuffer();
+    StringBuffer Destination = new StringBuffer();
+    StringBuffer Tab = new StringBuffer();
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"

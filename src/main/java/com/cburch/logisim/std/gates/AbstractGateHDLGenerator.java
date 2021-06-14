@@ -164,7 +164,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuilder OneLine = new StringBuilder();
+    StringBuffer OneLine = new StringBuffer();
     OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
     if (inverted) OneLine.append(HDL.notOperator() + "(");
     int spaces = OneLine.length();
@@ -272,7 +272,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuilder OneLine = new StringBuilder();
+    StringBuffer OneLine = new StringBuffer();
     OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
     if (inverted) OneLine.append(HDL.notOperator() + "(");
     int spaces = OneLine.length();

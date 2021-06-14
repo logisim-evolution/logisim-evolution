@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.gui.log;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
@@ -59,8 +61,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import static com.cburch.logisim.gui.Strings.S;
 
 public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final LogMenuListener menuListener;
@@ -167,7 +167,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final Map<CircuitState, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final MyChangeListener myChangeListener = new MyChangeListener();
-
+  
   private final WindowMenuManager windowManager;
   private final LogPanel[] panels;
   // private SelectionPanel selPanel;
@@ -215,7 +215,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     tabbedPane.addChangeListener(myChangeListener);
     myChangeListener.stateChanged(null);
-
+    
     Container contents = getContentPane();
     int w = Math.max(550, project.getFrame().getWidth());
     int h = 300;
@@ -260,7 +260,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   public LogMenuListener getMenuListener() {
     return menuListener;
   }
-
+  
   public Model getModel() {
     return curModel;
   }
@@ -275,7 +275,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       return false;
     }
     menubar.setCircuitState(value, state);
-
+    
     if (curSimulator != null)
       curSimulator.removeSimulatorListener(myListener);
     if (curModel != null)
@@ -313,7 +313,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     super.setVisible(value);
   }
-
+  
   @Override
   public void requestClose() {
     super.requestClose();
