@@ -42,7 +42,15 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Soc  extends Library {
+public class Soc extends Library {
+
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Soc";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
@@ -69,19 +77,10 @@ public class Soc  extends Library {
   }
 
   @Override
-  public String getName() {
-    return "Soc";
-  }
-
-  @Override
   public List<Tool> getTools() {
     if (tools == null) {
       tools = FactoryDescription.getTools(Soc.class, DESCRIPTIONS);
     }
     return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
   }
 }

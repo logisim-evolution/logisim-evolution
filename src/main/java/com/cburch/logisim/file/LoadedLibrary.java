@@ -174,6 +174,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     return base.getLibraries();
   }
 
+  @Override
   public boolean removeLibrary(String Name) {
     return base.removeLibrary(Name);
   }

@@ -121,15 +121,13 @@ public class EditableLabel implements Cloneable {
     w = Math.max(w, dim.width);
     int h = dim.height;
     switch (horzAlign) {
-      case LEFT:
-        x0 = x0 - border;
-        break;
       case CENTER:
         x0 = x0 - (w / 2.0f) + 1;
         break;
       case RIGHT:
         x0 = x0 - w + border + 1;
         break;
+      case LEFT:
       default:
         x0 = x0 - border;
     }
@@ -168,10 +166,9 @@ public class EditableLabel implements Cloneable {
         return y + ascent;
       case MIDDLE:
         return y + (ascent - descent) / 2.0f;
-      case BASELINE:
-        return y;
       case BOTTOM:
         return y - descent;
+      case BASELINE:
       default:
         return y;
     }
@@ -219,12 +216,11 @@ public class EditableLabel implements Cloneable {
 
   private float getLeftX() {
     switch (horzAlign) {
-      case LEFT:
-        return x;
       case CENTER:
         return x - width / 2.0f;
       case RIGHT:
         return x - width;
+      case LEFT:
       default:
         return x;
     }

@@ -38,9 +38,9 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
 
-import javax.swing.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;

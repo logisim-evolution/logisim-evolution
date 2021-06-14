@@ -88,7 +88,7 @@ public class HexFile {
   // each optionally prefixed with a decimal count and a "*", spread out on as
   // many lines as desired. Anything on a line after a "#" is ignored. The parser
   // is a bit forgiving, and actually accepts any text that can get past java's
-  // Long.parseLong(text, 16) function. Each number corresponds to one location in
+  // Long.parseUnsignedLong(text,16). Each number corresponds to one location in
   // the resulting memory. For example, if the memory uses words that are 10 bits
   // wide, each number should be in the range 0-1023, and if the memory words are
   // only 2 bits wide, each number should be in the range 0-3.
@@ -1314,34 +1314,32 @@ public class HexFile {
       if (pos >= data.length) return data;
       for (String word = nextWord(); word != null; word = nextWord()) {
         int star = word.indexOf("*");
-        if (star < 0) {
-          try {
-            rleValue = Long.parseLong(word, 16);
-          } catch (NumberFormatException e) {
-            warn("\"%s\" is not valid hex data.", word);
-            continue;
-          }
-          rleCount = 1;
-        } else if (star == 0) {
+        if (star == 0) {
           warn("Run-length encoded token \"%s\" missing count, use \"count*data\" instead.", word);
           continue;
         } else if (star == word.length() - 1) {
-          warn(
-              "Run-length encoded token \"%s\" missing hex data, use \"count*data\" instead.",
+          warn("Run-length encoded token \"%s\" missing hex data, use \"count*data\" instead.",
               word);
           continue;
-        } else {
+        }
+        String hexWord = star < 0 ? word : word.substring(star + 1);
+        try {
+          rleValue = Long.parseUnsignedLong(hexWord, 16);
+        } catch (NumberFormatException e) {
           try {
-            rleCount = Long.parseLong(word.substring(0, star));
-          } catch (NumberFormatException e) {
-            warn("\"%s\" is not valid (base-10 decimal) count.", word.substring(0, star));
+            rleValue = Long.parseLong(hexWord, 16);
+          } catch (NumberFormatException f) {
+            warn("\"%s\" is not valid hex data.", hexWord);
             continue;
           }
+        }
+        if (star < 0) {
+          rleCount = 1;
+        } else {
           try {
-            rleValue = Long.parseLong(word.substring(star + 1), 16);
+            rleCount = Long.parseUnsignedLong(word.substring(0, star));
           } catch (NumberFormatException e) {
-            warn("\"%s\" is not valid hex data.", word.substring(star + 1));
-            rleCount = 0;
+            warn("\"%s\" is not valid (base-10 decimal) count.", word.substring(0, star));
             continue;
           }
         }
