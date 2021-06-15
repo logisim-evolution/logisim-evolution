@@ -34,8 +34,6 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.std.base.Base;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,7 +67,7 @@ public class LibraryTools {
 
   public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
     boolean ret = true;
-    if (!lib.getName().equals(Base._ID)) {
+    if (!lib.getName().equals("Base")) {
       for (Tool tool1 : lib.getTools()) {
         if (Tools.containsKey(tool1.getName().toUpperCase()))
           ret = false;

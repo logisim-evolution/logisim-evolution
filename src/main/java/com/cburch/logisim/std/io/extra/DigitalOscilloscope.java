@@ -278,7 +278,9 @@ public class DigitalOscilloscope extends InstanceFactory {
             g.setColor(painter.getAttributeValue(ATTR_COLOR).darker());
             GraphicsUtil.drawCenteredText(
                 g, Integer.toString(cknum), x + border + 15 * j + 7, y + border + 5);
-            g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+            if (showclock == 1 && i == 0)
+              g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+            else g.setColor(Color.BLACK);
           }
         }
         // 0 line
