@@ -38,15 +38,6 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class TTL extends Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "TTL";
-
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("7400", S.getter("TTL7400"), "ttl.gif", Ttl7400.class),
     new FactoryDescription("7402", S.getter("TTL7402"), "ttl.gif", Ttl7402.class),
@@ -95,11 +86,24 @@ public class TTL extends Library {
 
   private List<Tool> tools = null;
 
+  public TTL() {}
+
+  @Override
+  public String getName() {
+    return "TTL";
+  }
+
   @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
       tools = FactoryDescription.getTools(TTL.class, DESCRIPTIONS);
     }
     return tools;
+  }
+
+  @Override
+  public boolean removeLibrary(String name) {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

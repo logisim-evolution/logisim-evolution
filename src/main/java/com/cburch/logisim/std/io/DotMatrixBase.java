@@ -58,7 +58,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 // TODO repropagate when rows/cols change
 
-abstract public class DotMatrixBase extends InstanceFactory {
+public abstract class DotMatrixBase extends InstanceFactory {
   protected static class State implements InstanceData, Cloneable {
     protected int rows;
     protected int cols;
@@ -166,84 +166,112 @@ abstract public class DotMatrixBase extends InstanceFactory {
     }
   }
 
-  protected static final AttributeOption INPUT_SELECT = new AttributeOption("select", S.getter("ioInputSelect"));
-  protected static final AttributeOption INPUT_COLUMN = new AttributeOption("column", S.getter("ioInputColumn"));
-  protected static final AttributeOption INPUT_ROW = new AttributeOption("row", S.getter("ioInputRow"));
+  protected static final AttributeOption INPUT_SELECT =
+      new AttributeOption("select", S.getter("ioInputSelect"));
+  protected static final AttributeOption INPUT_COLUMN =
+      new AttributeOption("column", S.getter("ioInputColumn"));
+  protected static final AttributeOption INPUT_ROW =
+      new AttributeOption("row", S.getter("ioInputRow"));
 
-  protected static final AttributeOption SHAPE_CIRCLE = new AttributeOption("circle", S.getter("ioShapeCircle"));
-  protected static final AttributeOption SHAPE_SQUARE = new AttributeOption("square", S.getter("ioShapeSquare"));
-  protected static final AttributeOption SHAPE_PADDED_SQUARE = new AttributeOption("clusterSegment", S.getter("ioShapePaddedSquare"));
+  protected static final AttributeOption SHAPE_CIRCLE =
+      new AttributeOption("circle", S.getter("ioShapeCircle"));
+  protected static final AttributeOption SHAPE_SQUARE =
+      new AttributeOption("square", S.getter("ioShapeSquare"));
+  protected static final AttributeOption SHAPE_PADDED_SQUARE =
+      new AttributeOption("clusterSegment", S.getter("ioShapePaddedSquare"));
 
   protected static final Attribute<AttributeOption> ATTR_INPUT_TYPE =
-      Attributes.forOption("inputtype", S.getter("ioMatrixInput"),
-              new AttributeOption[] {INPUT_COLUMN, INPUT_ROW, INPUT_SELECT});
+      Attributes.forOption(
+          "inputtype",
+          S.getter("ioMatrixInput"),
+          new AttributeOption[] {INPUT_COLUMN, INPUT_ROW, INPUT_SELECT});
 
-  protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE = Attributes.forOption(
-      "dotshape", S.getter("ioMatrixShape"), new AttributeOption[]{
-          SHAPE_CIRCLE,
-          SHAPE_SQUARE,
-          SHAPE_PADDED_SQUARE,
-      });
+  protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
+      Attributes.forOption(
+          "dotshape",
+          S.getter("ioMatrixShape"),
+          new AttributeOption[] {
+            SHAPE_CIRCLE, SHAPE_SQUARE, SHAPE_PADDED_SQUARE,
+          });
 
   protected static final Attribute<Integer> ATTR_PERSIST =
-      new DurationAttribute("persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
+      new DurationAttribute(
+          "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
 
-  protected static ArrayList<String> GetLabels(int rows , int cols) {
+  protected static ArrayList<String> GetLabels(int rows, int cols) {
     ArrayList<String> result = new ArrayList<>();
-    for (int r = 0 ; r < rows ; r++)
-      for (int c = 0 ; c < cols ; c++)
-        result.add("Row"+r+"Col"+c);
+    for (int r = 0; r < rows; r++) for (int c = 0; c < cols; c++) result.add("Row" + r + "Col" + c);
     return result;
   }
 
   protected boolean drawBorder = true;
-  public void setDrawBorder(boolean val) { drawBorder = val; }
+
+  public void setDrawBorder(boolean val) {
+    drawBorder = val;
+  }
 
   protected int scaleX = 1;
   protected int scaleY = 1;
-  public void setScaleX(int val) { scaleX = val; }
-  public void setScaleY(int val) { scaleY = val; }
+
+  public void setScaleX(int val) {
+    scaleX = val;
+  }
+
+  public void setScaleY(int val) {
+    scaleY = val;
+  }
 
   public DotMatrixBase(String name, StringGetter displayName, int cols, int rows) {
     super(name, displayName);
     setAttributes(
-      new Attribute<?>[] {
-        ATTR_INPUT_TYPE,
-        getAttributeColumns(),
-        getAttributeRows(),
-        Io.ATTR_ON_COLOR,
-        Io.ATTR_OFF_COLOR,
-        ATTR_PERSIST,
-        getAttributeShape(),
-        StdAttr.LABEL,
-        StdAttr.LABEL_LOC,
-        StdAttr.LABEL_FONT,
-        StdAttr.LABEL_COLOR,
-        StdAttr.LABEL_VISIBILITY,
-        StdAttr.MAPINFO
-      },
-      new Object[] {
-        INPUT_COLUMN,
-        BitWidth.create(cols),
-        BitWidth.create(rows),
-        Color.GREEN,
-        Color.gray,
-        0,
-        getDefaultShape(),
-        "",
-        Direction.NORTH,
-        StdAttr.DEFAULT_LABEL_FONT,
-        StdAttr.DEFAULT_LABEL_COLOR,
-        true,
-        new ComponentMapInformationContainer(0, cols * rows, 0, null, GetLabels(rows, cols), null)
-      });
+        new Attribute<?>[] {
+          getAttributeInputType(),
+          getAttributeColumns(),
+          getAttributeRows(),
+          Io.ATTR_ON_COLOR,
+          Io.ATTR_OFF_COLOR,
+          ATTR_PERSIST,
+          getAttributeShape(),
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_COLOR,
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
+        },
+        new Object[] {
+          getAttributeItemColumn(),
+          BitWidth.create(cols),
+          BitWidth.create(rows),
+          Color.GREEN,
+          Color.gray,
+          0,
+          getDefaultShape(),
+          "",
+          Direction.NORTH,
+          StdAttr.DEFAULT_LABEL_FONT,
+          StdAttr.DEFAULT_LABEL_COLOR,
+          true,
+          new ComponentMapInformationContainer(0, cols * rows, 0, null, GetLabels(rows, cols), null)
+        });
     setIcon(new LedMatrixIcon());
   }
 
-  abstract public Attribute<BitWidth> getAttributeRows();
-  abstract public Attribute<BitWidth> getAttributeColumns();
-  abstract public Attribute<AttributeOption> getAttributeShape();
-  abstract public AttributeOption getDefaultShape();
+  public abstract Attribute<BitWidth> getAttributeRows();
+
+  public abstract Attribute<BitWidth> getAttributeColumns();
+
+  public abstract Attribute<AttributeOption> getAttributeShape();
+
+  public abstract AttributeOption getDefaultShape();
+
+  public abstract Attribute<AttributeOption> getAttributeInputType();
+
+  public abstract AttributeOption getAttributeItemColumn();
+
+  public abstract AttributeOption getAttributeItemRow();
+
+  public abstract AttributeOption getAttributeItemSelect();
 
   @Override
   protected void configureNewInstance(Instance instance) {
@@ -252,17 +280,23 @@ abstract public class DotMatrixBase extends InstanceFactory {
     updatePorts(instance);
     int rows = instance.getAttributeValue(getAttributeRows()).getWidth();
     int cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
-    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, rows*cols, 0, null, GetLabels(rows,cols), null));
+    instance
+        .getAttributeSet()
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(
+                0, rows * cols, 0, null, GetLabels(rows, cols), null));
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Object input = attrs.getValue(ATTR_INPUT_TYPE);
+    Object input = attrs.getValue(getAttributeInputType());
     int cols = attrs.getValue(getAttributeColumns()).getWidth();
     int rows = attrs.getValue(getAttributeRows()).getWidth();
-    if (input == INPUT_COLUMN) {
-      return Bounds.create(-5 * scaleX, -10 * scaleY * rows, 10 * scaleX * cols, 10 * scaleY * rows);
-    } else if (input == INPUT_ROW) {
+    if (input.equals(getAttributeItemColumn())) {
+      return Bounds.create(
+          -5 * scaleX, -10 * scaleY * rows, 10 * scaleX * cols, 10 * scaleY * rows);
+    } else if (input.equals(getAttributeItemRow())) {
       return Bounds.create(0, -5 * scaleY, 10 * scaleX * cols, 10 * scaleY * rows);
     } else { // input == INPUT_SELECT
       if (rows == 1) {
@@ -292,7 +326,9 @@ abstract public class DotMatrixBase extends InstanceFactory {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
-    } else if (attr == getAttributeRows() || attr == getAttributeColumns() || attr == ATTR_INPUT_TYPE) {
+    } else if (attr == getAttributeRows()
+        || attr == getAttributeColumns()
+        || attr == getAttributeInputType()) {
       instance.recomputeBounds();
       instance.computeLabelTextField(Instance.AVOID_LEFT);
       updatePorts(instance);
@@ -300,7 +336,7 @@ abstract public class DotMatrixBase extends InstanceFactory {
         int rows = instance.getAttributeValue(getAttributeRows()).getWidth();
         int cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
         ComponentMapInformationContainer cm = instance.getAttributeValue(StdAttr.MAPINFO);
-        cm.setNrOfOutports(rows*cols, GetLabels(rows,cols));
+        cm.setNrOfOutports(rows * cols, GetLabels(rows, cols));
       }
     }
   }
@@ -310,14 +346,17 @@ abstract public class DotMatrixBase extends InstanceFactory {
   }
 
   protected void drawSquare(Graphics g, int x, int y) {
-    g.fillRect(x , y, 10 * scaleX, 10 * scaleY);
+    g.fillRect(x, y, 10 * scaleX, 10 * scaleY);
   }
 
   protected void drawPaddedSquare(Graphics g, int x, int y) {
     final int paddingY = 2;
     final int paddingX = 2;
-    g.fillRect(x + (paddingX * scaleX), y + (paddingY * scaleY),
-            (10 - (2 * paddingX)) * scaleX, (10 - (2 * paddingY)) * scaleY);
+    g.fillRect(
+        x + (paddingX * scaleX),
+        y + (paddingY * scaleY),
+        (10 - (2 * paddingX)) * scaleX,
+        (10 - (2 * paddingY)) * scaleY);
   }
 
   @Override
@@ -385,22 +424,22 @@ abstract public class DotMatrixBase extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    Object type = state.getAttributeValue(ATTR_INPUT_TYPE);
+    Object type = state.getAttributeValue(getAttributeInputType());
     int rows = state.getAttributeValue(getAttributeRows()).getWidth();
     int cols = state.getAttributeValue(getAttributeColumns()).getWidth();
     long clock = state.getTickCount();
     long persist = clock + state.getAttributeValue(ATTR_PERSIST);
 
     State data = getState(state);
-    if (INPUT_ROW.equals(type)) {
+    if (getAttributeItemRow().equals(type)) {
       for (int i = 0; i < rows; i++) {
         data.setRow(i, state.getPortValue(i), persist);
       }
-    } else if (INPUT_COLUMN.equals(type)) {
+    } else if (getAttributeItemColumn().equals(type)) {
       for (int i = 0; i < cols; i++) {
         data.setColumn(i, state.getPortValue(i), persist);
       }
-    } else if (INPUT_SELECT.equals(type)) {
+    } else if (getAttributeItemSelect().equals(type)) {
       data.setSelect(state.getPortValue(1), state.getPortValue(0), persist);
     } else {
       throw new RuntimeException("Unexpected matrix type: " + type);
@@ -408,23 +447,24 @@ abstract public class DotMatrixBase extends InstanceFactory {
   }
 
   protected void updatePorts(Instance instance) {
-    Object input = instance.getAttributeValue(ATTR_INPUT_TYPE);
+    Object input = instance.getAttributeValue(getAttributeInputType());
     int rows = instance.getAttributeValue(getAttributeRows()).getWidth();
     int cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
     Port[] ps;
-    if (input == INPUT_COLUMN) {
+    if (input == getAttributeItemColumn()) {
       ps = new Port[cols];
       for (int i = 0; i < cols; i++) {
         ps[i] = new Port(10 * i, 0, Port.INPUT, rows);
       }
-    } else if (input == INPUT_ROW) {
+    } else if (input == getAttributeItemRow()) {
       ps = new Port[rows];
       for (int i = 0; i < rows; i++) {
         ps[i] = new Port(0, 10 * i, Port.INPUT, cols);
       }
     } else {
       if (rows <= 1) {
-        ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
+        ps =
+            new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
       } else {
         ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows)};
       }
@@ -442,5 +482,4 @@ abstract public class DotMatrixBase extends InstanceFactory {
     if (MyHDLGenerator == null) MyHDLGenerator = new DotMatrixHDLGeneratorFactory();
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
-
 }

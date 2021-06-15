@@ -36,29 +36,51 @@ import com.cburch.logisim.data.Value;
 
 import static com.cburch.logisim.std.Strings.S;
 
-/**
- * LED dot Matrix
- */
+/** LED dot Matrix */
 public class DotMatrix extends DotMatrixBase {
 
   public DotMatrix() {
     super("DotMatrix", S.getter("dotMatrixComponent"), 5, 7);
   }
 
-  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS = Attributes.forBitWidth("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
-  protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS = Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
+  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
+      Attributes.forBitWidth("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
+  protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
+      Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
 
   public Attribute<BitWidth> getAttributeRows() {
     return ATTR_MATRIX_ROWS;
   }
+
   public Attribute<BitWidth> getAttributeColumns() {
     return ATTR_MATRIX_COLS;
   }
+
   public Attribute<AttributeOption> getAttributeShape() {
     return ATTR_DOT_SHAPE;
   }
+
   public AttributeOption getDefaultShape() {
     return SHAPE_SQUARE;
   }
 
+  @Override
+  public Attribute<AttributeOption> getAttributeInputType() {
+    return ATTR_INPUT_TYPE;
+  }
+
+  @Override
+  public AttributeOption getAttributeItemColumn() {
+    return INPUT_COLUMN;
+  }
+
+  @Override
+  public AttributeOption getAttributeItemRow() {
+    return INPUT_ROW;
+  }
+
+  @Override
+  public AttributeOption getAttributeItemSelect() {
+    return INPUT_SELECT;
+  }
 }

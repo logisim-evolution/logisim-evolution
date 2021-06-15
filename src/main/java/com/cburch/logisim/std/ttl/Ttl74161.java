@@ -37,9 +37,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 import static com.cburch.logisim.data.Value.FALSE_COLOR;
@@ -119,7 +117,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
         @Override
         public void mouseReleased(InstanceState state, MouseEvent e) {
-            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
             if (isPressed && isInside(state, e)) {
                 int index = getIndex(state, e);
 

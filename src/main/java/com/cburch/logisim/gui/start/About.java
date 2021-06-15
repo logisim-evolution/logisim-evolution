@@ -54,12 +54,12 @@ public class About {
 
   private About() {}
 
-  public static AboutPanel getImagePanel() {
-    return new AboutPanel();
+  public static MyPanel getImagePanel() {
+    return new MyPanel();
   }
 
   public static void showAboutDialog(JFrame owner) {
-    AboutPanel imgPanel = getImagePanel();
+    MyPanel imgPanel = getImagePanel();
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(imgPanel);
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -68,7 +68,7 @@ public class About {
         owner, panel, Main.APP_DISPLAY_NAME, OptionPane.PLAIN_MESSAGE);
   }
 
-  private static class AboutPanel extends JPanel implements AncestorListener {
+  private static class MyPanel extends JPanel implements AncestorListener {
     private static final long serialVersionUID = 1L;
     private final Color fadeColor = new Color(255, 255, 255, 128);
     private final Color headerColor = new Color(143, 0, 0);
@@ -81,7 +81,7 @@ public class About {
     private Value lower = Value.TRUE;
     private PanelThread thread = null;
 
-    public AboutPanel() {
+    public MyPanel() {
       setLayout(null);
 
       int prefWidth = IMAGE_WIDTH + 2 * IMAGE_BORDER;
@@ -93,20 +93,6 @@ public class About {
       credits = new AboutCredits();
       credits.setBounds(0, prefHeight / 2, prefWidth, prefHeight / 2);
       add(credits);
-    }
-
-    long start = 0;
-    public void tick() {
-      if (start == 0) {
-        start = System.currentTimeMillis();
-      }
-
-      long elapse = System.currentTimeMillis() - start;
-      int count = (int) (elapse / 500) % 4;
-      upper = (count == 2 || count == 3) ? Value.TRUE : Value.FALSE;
-      lower = (count == 1 || count == 2) ? Value.TRUE : Value.FALSE;
-      credits.setScroll((int) elapse);
-      repaint();
     }
 
     private static int toDim(int offs) {
@@ -283,27 +269,32 @@ public class About {
       } catch (Throwable ignored) {
       }
     }
-  } // AboutPanel
+  }
 
   private static class PanelThread extends UniquelyNamedThread {
-    private final AboutPanel panel;
+    private final MyPanel panel;
     private boolean running = true;
 
-    PanelThread(AboutPanel panel) {
+    PanelThread(MyPanel panel) {
       super("About-PanelThread");
       this.panel = panel;
     }
 
     @Override
     public void run() {
+      long start = System.currentTimeMillis();
       while (running) {
-        panel.tick();
+        long elapse = System.currentTimeMillis() - start;
+        int count = (int) (elapse / 500) % 4;
+        panel.upper = (count == 2 || count == 3) ? Value.TRUE : Value.FALSE;
+        panel.lower = (count == 1 || count == 2) ? Value.TRUE : Value.FALSE;
+        panel.credits.setScroll((int) elapse);
+        panel.repaint();
         try {
           Thread.sleep(20);
         } catch (InterruptedException ignored) {
         }
       }
     }
-  } // PanelThread
-
+  }
 }
