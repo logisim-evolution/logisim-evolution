@@ -99,5 +99,5 @@ public class Main {
 
   /** URL for the automatic updater */
   public static final String UPDATE_URL =
-      "https://raw.githubusercontent.com/reds-heig/logisim-evolution/develop/logisim_evolution_version.xml";
+      "https://raw.githubusercontent.com/logisim-evolution/logisim-evolution/develop/logisim_evolution_version.xml";
 }
