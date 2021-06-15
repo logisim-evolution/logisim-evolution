@@ -44,15 +44,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "Base";
-
   private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
@@ -68,7 +59,7 @@ public class Base extends Library {
         new TextTool(),
         new MenuTool());
     }
-
+  
   @Override
   public boolean contains(ComponentFactory querry) {
     return super.contains(querry) || (querry instanceof Text);
@@ -90,7 +81,17 @@ public class Base extends Library {
   }
 
   @Override
+  public String getName() {
+    return "Base";
+  }
+
+  @Override
   public List<Tool> getTools() {
     return tools;
   }
+
+  public boolean removeLibrary(String Name) {
+    return false;
+  }
+
 }

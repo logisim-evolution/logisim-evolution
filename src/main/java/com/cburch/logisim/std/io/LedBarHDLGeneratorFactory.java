@@ -26,38 +26,20 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.data;
+package com.cburch.logisim.std.io;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.BitWidth;
 
-public class PinActivity {
-  public static char getId(String identifier) {
-    char result = 0;
-    LinkedList<String> thelist = PinActivity.getStrings();
-    Iterator<String> iter = thelist.iterator();
-    result = 0;
-    while (iter.hasNext()) {
-      if (iter.next().equals(identifier)) return result;
-      result++;
-    }
-    return Unknown;
+public class LedBarHDLGeneratorFactory extends DotMatrixHDLGeneratorFactory {
+
+  @Override
+  protected Attribute<BitWidth> getAttributeRows() {
+    return LedBar.ATTR_MATRIX_ROWS;
+  }
+  @Override
+  protected Attribute<BitWidth> getAttributeColumns() {
+    return LedBar.ATTR_MATRIX_COLS;
   }
 
-  public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<>();
-
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
-
-    return result;
-  }
-
-  public static final String ActivityAttributeString = "ActivityLevel";
-  public static final char ActiveLow = 0;
-  public static final char ActiveHigh = 1;
-
-  public static final char Unknown = 255;
-
-  public static final String[] Behavior_strings = {"Active low", "Active high"};
 }

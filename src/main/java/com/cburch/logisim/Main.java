@@ -66,16 +66,20 @@ public class Main {
     Startup startup = Startup.parseArgs(args);
     if (startup == null) {
       System.exit(0);
-    }
-
-    try {
-      startup.run();
-    } catch (Throwable e) {
-      Writer result = new StringWriter();
-      PrintWriter printWriter = new PrintWriter(result);
-      e.printStackTrace(printWriter);
-      OptionPane.showMessageDialog(null, result.toString());
-      System.exit(-1);
+    } else {
+      // If the auto-updater actually performed an update, then quit the
+      // program, otherwise continue with the execution
+      if (!startup.autoUpdate()) {
+        try {
+          startup.run();
+        } catch (Throwable e) {
+          Writer result = new StringWriter();
+          PrintWriter printWriter = new PrintWriter(result);
+          e.printStackTrace(printWriter);
+          OptionPane.showMessageDialog(null, result.toString());
+          System.exit(-1);
+        }
+      }
     }
   }
 
@@ -91,4 +95,8 @@ public class Main {
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean hasGui() { return !headless; }
+
+  /** URL for the automatic updater */
+  public static final String UPDATE_URL =
+      "https://raw.githubusercontent.com/reds-heig/logisim-evolution/develop/logisim_evolution_version.xml";
 }
