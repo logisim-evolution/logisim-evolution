@@ -77,11 +77,13 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
       FillableCanvasObject that = (FillableCanvasObject) other;
       boolean ret = this.paintType == that.paintType;
       if (ret && this.paintType != DrawAttr.PAINT_FILL) {
-        ret = (this.strokeWidth == that.strokeWidth)
+        ret =
+            ret
+                && this.strokeWidth == that.strokeWidth
                 && this.strokeColor.equals(that.strokeColor);
       }
       if (ret && this.paintType != DrawAttr.PAINT_STROKE) {
-        ret = this.fillColor.equals(that.fillColor);
+        ret = ret && this.fillColor.equals(that.fillColor);
       }
       return ret;
     } else {
