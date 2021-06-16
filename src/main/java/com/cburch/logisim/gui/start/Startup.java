@@ -48,6 +48,8 @@ import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
+import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.gates.Gates;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
@@ -645,8 +647,8 @@ public class Startup implements AWTEventListener {
     }
     Loader templLoader = new Loader(monitor);
     int count =
-        templLoader.getBuiltin().getLibrary("Base").getTools().size()
-            + templLoader.getBuiltin().getLibrary("Gates").getTools().size();
+        templLoader.getBuiltin().getLibrary(Base._ID).getTools().size()
+            + templLoader.getBuiltin().getLibrary(Gates._ID).getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
       logger.error("FATAL ERROR - no components"); // OK

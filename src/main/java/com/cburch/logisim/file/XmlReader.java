@@ -35,6 +35,7 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMapInfo;
+import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.appear.AppearanceSvgReader;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -48,10 +49,22 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.wiring.BitExtender;
+import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
+import com.cburch.logisim.std.wiring.PullResistor;
+import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.MenuTool;
+import com.cburch.logisim.tools.PokeTool;
+import com.cburch.logisim.tools.SelectTool;
+import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
@@ -61,6 +74,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -287,7 +301,7 @@ class XmlReader {
       }
       return known;
     }
-    
+
     void loadMap(Element board, String boardName, Circuit circ) {
       HashMap<String,CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
@@ -1007,13 +1021,13 @@ class XmlReader {
         for (Element elt : XmlIterator.forChildElements(toolbar, "tool")) {
           String eltName = elt.getAttribute("name");
           if (eltName != null && !eltName.equals("")) {
-            if (eltName.equals("Select Tool")) select = elt;
-            if (eltName.equals("Wiring Tool")) wiring = elt;
-            if (eltName.equals("Edit Tool")) edit = elt;
+            if (eltName.equals(SelectTool._ID)) select = elt;
+            if (eltName.equals(WiringTool._ID)) wiring = elt;
+            if (eltName.equals(EditTool._ID)) edit = elt;
           }
         }
         if (select != null && wiring != null && edit == null) {
-          select.setAttribute("name", "Edit Tool");
+          select.setAttribute("name", EditTool._ID);
           toolbar.removeChild(wiring);
         }
       }
@@ -1192,14 +1206,30 @@ class XmlReader {
         labelMap,
         oldBaseLabel,
         newBaseLabel,
-        // FIXME: we should use _IDs here, right?
-        "Poke Tool;" + "Edit Tool;Select Tool;Wiring Tool;Text Tool;Menu Tool;Text");
+        String.join(
+            ";",
+            Arrays.asList(
+                PokeTool._ID,
+                EditTool._ID,
+                SelectTool._ID,
+                WiringTool._ID,
+                TextTool._ID,
+                MenuTool._ID,
+                Text._ID)));
     addToLabelMap(
         labelMap,
         oldBaseLabel,
         wiringLabel,
-        // FIXME: we should use _IDs here, right?
-        "Splitter;Pin;" + "Probe;Tunnel;Clock;Pull Resistor;Bit Extender");
+        String.join(
+            ";",
+            Arrays.asList(
+                Splitter._ID,
+                Pin._ID,
+                Probe._ID,
+                Tunnel._ID,
+                Clock._ID,
+                PullResistor._ID,
+                BitExtender._ID)));
     addToLabelMap(labelMap, gatesLabel, wiringLabel, "Constant");
     relocateTools(oldBaseElt, newBaseElt, labelMap);
     relocateTools(oldBaseElt, wiringElt, labelMap);
