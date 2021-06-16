@@ -32,8 +32,6 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.LibraryUtil;
 import com.cburch.logisim.util.StringGetter;
-
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Icon;

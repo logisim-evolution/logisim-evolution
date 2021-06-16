@@ -31,16 +31,14 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
-
-import javax.swing.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
