@@ -105,7 +105,7 @@ public abstract class HDL {
   }
 
   public static String GetZeroVector(int NrOfBits, boolean FloatingPinTiedToGround) {
-    StringBuffer Contents = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
     if (isVHDL()) {
       String FillValue = (FloatingPinTiedToGround) ? "0" : "1";
       String HexFillValue = (FloatingPinTiedToGround) ? "0" : "F";
