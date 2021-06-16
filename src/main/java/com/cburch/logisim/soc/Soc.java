@@ -42,31 +42,16 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Soc extends Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "Soc";
+public class Soc  extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", Rv32im_riscv.class),
-    new FactoryDescription(
-        "Nios2", S.getter("Nios2Component"), "Nios2.gif", Nios2.class),
-    new FactoryDescription(
-        "SocBus", S.getter("SocBusComponent"), "" , SocBus.class ),
-    new FactoryDescription(
-         "Socmem", S.getter("SocMemoryComponent"), "" , SocMemory.class ),
-    new FactoryDescription(
-            "SocPio", S.getter("SocPioComponent"), "" , SocPio.class),
-    new FactoryDescription(
-            "SocVga", S.getter("SocVgaComponent"), "" , SocVga.class),
-    new FactoryDescription(
-            "SocJtagUart", S.getter("SocJtagUartComponent"), "" , JtagUart.class),
+    new FactoryDescription(Rv32im_riscv.class, S.getter("Rv32imComponent"), "Rv32im.gif"),
+    new FactoryDescription(Nios2.class, S.getter("Nios2Component"), "Nios2.gif"),
+    new FactoryDescription(SocBus.class, S.getter("SocBusComponent")),
+    new FactoryDescription(SocMemory.class, S.getter("SocMemoryComponent")),
+    new FactoryDescription(SocPio.class, S.getter("SocPioComponent")),
+    new FactoryDescription(SocVga.class, S.getter("SocVgaComponent")),
+    new FactoryDescription(JtagUart.class, S.getter("SocJtagUartComponent")),
   };
 
   private List<Tool> tools = null;
@@ -77,10 +62,19 @@ public class Soc extends Library {
   }
 
   @Override
+  public String getName() {
+    return "Soc";
+  }
+
+  @Override
   public List<Tool> getTools() {
     if (tools == null) {
       tools = FactoryDescription.getTools(Soc.class, DESCRIPTIONS);
     }
     return tools;
+  }
+
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

@@ -35,12 +35,19 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Ttl74377 extends AbstractOctalFlops {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74377";
 
   public static class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
-      return "TTL74377";
+      return "TTL" + _ID;
     }
 
     @Override
@@ -57,7 +64,7 @@ public class Ttl74377 extends AbstractOctalFlops {
 
   public Ttl74377() {
     super(
-        "74377",
+        _ID,
         (byte) 20,
         new byte[] {2, 5, 6, 9, 12, 15, 16, 19},
         new String[] {

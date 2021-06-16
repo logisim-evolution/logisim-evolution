@@ -36,28 +36,27 @@ import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
 
 public class Ttl7442 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7442";
 
   private boolean IsExec3 = false;
   private boolean IsGray = false;
 
+  private static final byte pinCount = 14;
+  private static final byte[] outPins = {1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
+  private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
+
   public Ttl7442() {
-    super(
-        "7442",
-        (byte) 16,
-        new byte[] {1, 2, 3, 4, 5, 6, 7, 9, 10, 11},
-        new String[] {
-          "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"
-        });
+    super(_ID, pinCount, outPins, pinNames);
   }
 
   public Ttl7442(String name, int encoding) {
-    super(
-        name,
-        (byte) 16,
-        new byte[] {1, 2, 3, 4, 5, 6, 7, 9, 10, 11},
-        new String[] {
-          "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"
-        });
+    super(name, pinCount, outPins, pinNames);
     IsExec3 = encoding == 1;
     IsGray = encoding == 2;
   }

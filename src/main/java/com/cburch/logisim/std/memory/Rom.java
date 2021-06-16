@@ -60,6 +60,14 @@ import java.util.WeakHashMap;
 import javax.swing.JLabel;
 
 public class Rom extends Mem {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "ROM";
+
   static class ContentsAttribute extends Attribute<MemContents> {
     public ContentsAttribute() {
       super("contents", S.getter("romContentsAttr"));
@@ -143,7 +151,7 @@ public class Rom extends Mem {
   private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
-    super("ROM", S.getter("romComponent"), 0);
+    super(_ID, S.getter("romComponent"), 0);
     setIcon(new ArithmeticIcon("ROM",3));
     memListeners = new WeakHashMap<>();
   }
@@ -195,7 +203,7 @@ public class Rom extends Mem {
   public static MemContents getMemContents(Instance instance) {
     return instance.getAttributeValue(CONTENTS_ATTR);
   }
-  
+
   public static void closeHexFrame(Component c) {
     if (!(c instanceof InstanceComponent)) return;
     Instance inst =((InstanceComponent)c).getInstance();
@@ -281,8 +289,8 @@ public class Rom extends Mem {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);
     }
-    
-    boolean misaligned = addr%nrDataLines != 0; 
+
+    boolean misaligned = addr%nrDataLines != 0;
     boolean misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
     for (int i = 0 ; i < nrDataLines ; i++) {
@@ -291,7 +299,7 @@ public class Rom extends Mem {
               misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
     }
   }
-  
+
   @Override
   public void removeComponent(Circuit circ, Component c , CircuitState state) {
     closeHexFrame(c);

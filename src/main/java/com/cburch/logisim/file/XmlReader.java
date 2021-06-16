@@ -48,11 +48,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.gates.Gates;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
-import com.cburch.logisim.std.wiring.Wiring;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -290,7 +287,7 @@ class XmlReader {
       }
       return known;
     }
-
+    
     void loadMap(Element board, String boardName, Circuit circ) {
       HashMap<String,CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
@@ -407,7 +404,7 @@ class XmlReader {
       if (versionString.equals("")) {
         sourceVersion = Main.VERSION;
       } else {
-        sourceVersion = LogisimVersion.parse(versionString);
+        sourceVersion = LogisimVersion.fromString(versionString);
         HolyCrossFile = versionString.endsWith("-HC");
       }
 
@@ -418,7 +415,7 @@ class XmlReader {
       // We have therefore to warn the user that things might be a little
       // strange in their
       // circuits...
-      if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
+      if (sourceVersion.compareTo(new LogisimVersion(2, 7, 2)) < 0) {
         IsEvolutionFile = true;
         OptionPane.showMessageDialog(
             null,
@@ -998,8 +995,8 @@ class XmlReader {
   }
 
   private void considerRepairs(Document doc, Element root) {
-    LogisimVersion version = LogisimVersion.parse(root.getAttribute("source"));
-    if (version.compareTo(LogisimVersion.get(2, 3, 0)) < 0) {
+    LogisimVersion version = LogisimVersion.fromString(root.getAttribute("source"));
+    if (version.compareTo(new LogisimVersion(2, 3, 0)) < 0) {
       // This file was saved before an Edit tool existed. Most likely
       // we should replace the Select and Wiring tools in the toolbar
       // with the Edit tool instead.
@@ -1021,7 +1018,7 @@ class XmlReader {
         }
       }
     }
-    if (version.compareTo(LogisimVersion.get(2, 6, 3)) < 0) {
+    if (version.compareTo(new LogisimVersion(2, 6, 3)) < 0) {
       for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
           String name = attrElt.getAttribute("name");
@@ -1142,14 +1139,14 @@ class XmlReader {
       String label = libElt.getAttribute("name");
       if (desc == null) {
         // skip these tests
-      } else if (desc.equals("#" + Base._ID)) {
+      } else if (desc.equals("#Base")) {
         oldBaseElt = libElt;
         oldBaseLabel = label;
-      } else if (desc.equals("#" + Wiring._ID)) {
+      } else if (desc.equals("#Wiring")) {
         // Wiring library already in file. This shouldn't happen, but if
         // somehow it does, we don't want to add it again.
         return;
-      } else if (desc.equals("#" + Gates._ID)) {
+      } else if (desc.equals("#Gates")) {
         gatesElt = libElt;
         gatesLabel = label;
       }
@@ -1172,17 +1169,17 @@ class XmlReader {
     if (oldBaseElt != null) {
       wiringLabel = oldBaseLabel;
       wiringElt = oldBaseElt;
-      wiringElt.setAttribute("desc", "#" + Wiring._ID);
+      wiringElt.setAttribute("desc", "#Wiring");
 
       newBaseLabel = "" + (maxLabel + 1);
       newBaseElt = doc.createElement("lib");
-      newBaseElt.setAttribute("desc", "#" + Base._ID);
+      newBaseElt.setAttribute("desc", "#Base");
       newBaseElt.setAttribute("name", newBaseLabel);
       root.insertBefore(newBaseElt, lastLibElt.getNextSibling());
     } else {
       wiringLabel = "" + (maxLabel + 1);
       wiringElt = doc.createElement("lib");
-      wiringElt.setAttribute("desc", "#" + Wiring._ID);
+      wiringElt.setAttribute("desc", "#Wiring");
       wiringElt.setAttribute("name", wiringLabel);
       root.insertBefore(wiringElt, lastLibElt.getNextSibling());
 
@@ -1195,11 +1192,13 @@ class XmlReader {
         labelMap,
         oldBaseLabel,
         newBaseLabel,
+        // FIXME: we should use _IDs here, right?
         "Poke Tool;" + "Edit Tool;Select Tool;Wiring Tool;Text Tool;Menu Tool;Text");
     addToLabelMap(
         labelMap,
         oldBaseLabel,
         wiringLabel,
+        // FIXME: we should use _IDs here, right?
         "Splitter;Pin;" + "Probe;Tunnel;Clock;Pull Resistor;Bit Extender");
     addToLabelMap(labelMap, gatesLabel, wiringLabel, "Constant");
     relocateTools(oldBaseElt, newBaseElt, labelMap);

@@ -52,12 +52,19 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class HexDigit extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Hex Digit Display";
 
   protected static final int HEX = 0;
   protected static final int DP = 1;
 
   public HexDigit() {
-    super("Hex Digit Display", S.getter("hexDigitComponent"));
+    super(_ID, S.getter("hexDigitComponent"));
     setAttributes(
         new Attribute[] {
           Io.ATTR_ON_COLOR,
@@ -79,13 +86,13 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
-          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null) 
+          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null)
         });
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
     setIcon(new SevenSegmentIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
   }
-  
+
   private void updatePorts(Instance instance) {
     int nrPorts = instance.getAttributeValue(SevenSegment.ATTR_DP) ? 2 : 1;
     Port[] ps = new Port[nrPorts];
@@ -106,7 +113,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     updatePorts(instance);
     SevenSegment.computeTextField(instance);
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
@@ -115,12 +122,12 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       updatePorts(instance);
     }
   }
-  
+
   @Override
   public void paintInstance(InstancePainter painter) {
     SevenSegment.drawBase(painter, painter.getAttributeValue(SevenSegment.ATTR_DP));
   }
-  
+
   public static int getSegs(int value) {
     int segs; // each nibble is one segment, in top-down, left-to-right
     // order: middle three nibbles are the three horizontal segments
@@ -182,7 +189,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     }
     return segs;
   }
-  
+
   public static final int SEG_A_MASK = 0x10000;
   public static final int SEG_B_MASK = 0x10;
   public static final int SEG_C_MASK = 0x1;

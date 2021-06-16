@@ -88,7 +88,7 @@ public class HexFile {
   // each optionally prefixed with a decimal count and a "*", spread out on as
   // many lines as desired. Anything on a line after a "#" is ignored. The parser
   // is a bit forgiving, and actually accepts any text that can get past java's
-  // Long.parseUnsignedLong(text,16). Each number corresponds to one location in
+  // Long.parseUnsignedLong(text, 16) function. Each number corresponds to one location in
   // the resulting memory. For example, if the memory uses words that are 10 bits
   // wide, each number should be in the range 0-1023, and if the memory words are
   // only 2 bits wide, each number should be in the range 0-3.
@@ -1326,7 +1326,7 @@ public class HexFile {
         try {
           rleValue = Long.parseUnsignedLong(hexWord, 16);
         } catch (NumberFormatException e) {
-          try {
+          try {            
             rleValue = Long.parseLong(hexWord, 16);
           } catch (NumberFormatException f) {
             warn("\"%s\" is not valid hex data.", hexWord);
@@ -1337,7 +1337,7 @@ public class HexFile {
           rleCount = 1;
         } else {
           try {
-            rleCount = Long.parseUnsignedLong(word.substring(0, star));
+            rleValue = Long.parseUnsignedLong(word.substring(0), star);
           } catch (NumberFormatException e) {
             warn("\"%s\" is not valid (base-10 decimal) count.", word.substring(0, star));
             continue;

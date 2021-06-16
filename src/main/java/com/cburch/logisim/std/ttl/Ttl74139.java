@@ -32,6 +32,13 @@ import java.util.ArrayList;
  * Model based on https://www.ti.com/product/SN74LS139A datasheet.
  */
 public class Ttl74139 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74139";
 
   // IC pin indices as specified in the datasheet
   public static final byte L1_nEN = 1;
@@ -56,7 +63,7 @@ public class Ttl74139 extends AbstractTtlGate {
 
   public Ttl74139() {
     super(
-        "74139",
+        _ID,
         (byte) 16,
 
         new byte[] {

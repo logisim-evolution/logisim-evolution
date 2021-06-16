@@ -41,10 +41,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DFlipFlop extends AbstractFlipFlop {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "D Flip-Flop";
+
   private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
-      return "D Flip-Flop";
+      return _ID;
     }
 
     @Override
@@ -70,7 +78,7 @@ public class DFlipFlop extends AbstractFlipFlop {
   }
 
   public DFlipFlop() {
-    super("D Flip-Flop", new FlipFlopIcon(FlipFlopIcon.D_FLIPFLOP), S.getter("dFlipFlopComponent"), 1, true);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.D_FLIPFLOP), S.getter("dFlipFlopComponent"), 1, true);
   }
 
   @Override

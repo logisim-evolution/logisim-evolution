@@ -29,21 +29,11 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
-
-import java.lang.reflect.Field;
+import com.cburch.logisim.util.LibraryUtil;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = null;
-
   private boolean hidden = false;
 
   public boolean contains(ComponentFactory query) {
@@ -59,32 +49,13 @@ public abstract class Library {
     return false;
   }
 
-  /**
-   * Returns the name of the library that the user will see.
-   */
   public String getDisplayName() {
     return getName();
   }
 
-  /**
-   * Returns unique library identifier.
-   *
-   * As we want to have static _ID per library, generic
-   * implementation must look for it in the current instance
-   */
+  /** Returns unique library identifier. */
   public String getName() {
-    try {
-      Field[] fields = getClass().getDeclaredFields();
-      for (int i = 0; i < fields.length; i++) {
-        if (fields[i].getName().equals("_ID")) {
-          return (String)fields[i].get(this);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    throw new NullPointerException("Missing _ID for " + getClass());
+    return LibraryUtil.getName(getClass());
   }
 
   public List<Library> getLibraries() {
@@ -93,16 +64,14 @@ public abstract class Library {
 
   public Library getLibrary(String name) {
     for (Library lib : getLibraries()) {
-      if (name.equals(lib.getName())) {
+      if (lib.getName().equals(name)) {
         return lib;
       }
     }
     return null;
   }
 
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
+  public abstract boolean removeLibrary(String name);
 
   public Tool getTool(String name) {
     for (Tool tool : getTools()) {
@@ -113,9 +82,6 @@ public abstract class Library {
     return null;
   }
 
-  /**
-   * Returns a list of all the tools available in this library.
-   */
   public abstract List<? extends Tool> getTools();
 
   public int indexOf(ComponentFactory query) {

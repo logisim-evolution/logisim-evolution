@@ -60,9 +60,16 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Rv32im";
 
   public Rv32im_riscv() {
-    super("Rv32im",S.getter("Rv32imComponent"),SocMaster);
+    super(_ID, S.getter("Rv32imComponent"),SocMaster);
     setIcon(new ArithmeticIcon("uP",2));
     setOffsetBounds(Bounds.create(0, 0, 640, 640));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);
@@ -72,7 +79,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   public AttributeSet createAttributeSet() {
     return new RV32imAttributes();
   }
-  
+
   @Override
   public boolean providesSubCircuitMenu() {
     return true;
@@ -99,7 +106,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     }
     instance.setPorts(ps);
   }
-	
+
   @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
@@ -141,8 +148,8 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX()+320, loc.getY()+630);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
-    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(), 
+    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2,
+    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(),
     				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
     RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
     state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISIBLE), painter.getData());
@@ -150,7 +157,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
 
   @Override
   public void propagate(InstanceState state) {
-    RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData(); 
+    RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData();
 	if (data == null) {
 	  data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
 	  state.setData(data);
@@ -174,5 +181,5 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
 
   @Override
   public DynamicElement createDynamicElement(int x, int y, Path path) { return new SocCPUShape(x,y,path); }
-  
+
 }

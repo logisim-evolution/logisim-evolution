@@ -36,28 +36,21 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class Arithmetic extends Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "Arithmetic";
-
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Adder", S.getter("adderComponent"), "adder.gif", Adder.class),
-    new FactoryDescription("Subtractor", S.getter("subtractorComponent"), "subtractor.gif", Subtractor.class),
-    new FactoryDescription("Multiplier", S.getter("multiplierComponent"), "multiplier.gif", Multiplier.class),
-    new FactoryDescription("Divider", S.getter("dividerComponent"), "divider.gif", Divider.class),
-    new FactoryDescription("Negator", S.getter("negatorComponent"), "negator.gif", Negator.class),
-    new FactoryDescription("Comparator", S.getter("comparatorComponent"), "comparator.gif", Comparator.class),
-    new FactoryDescription("Shifter", S.getter("shifterComponent"), "shifter.gif", Shifter.class),
-    new FactoryDescription("BitAdder", S.getter("bitAdderComponent"), "bitadder.gif", BitAdder.class),
-    new FactoryDescription("BitFinder", S.getter("bitFinderComponent"), "bitfindr.gif", BitFinder.class),
+    new FactoryDescription(Adder.class, S.getter("adderComponent"), "adder.gif"),
+    new FactoryDescription(Subtractor.class, S.getter("subtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(Multiplier.class, S.getter("multiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(Divider.class, S.getter("dividerComponent"), "divider.gif"),
+    new FactoryDescription(Negator.class, S.getter("negatorComponent"), "negator.gif"),
+    new FactoryDescription(Comparator.class, S.getter("comparatorComponent"), "comparator.gif"),
+    new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
+    new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
+    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
   };
 
   private List<Tool> tools = null;
+
+  public Arithmetic() {}
 
   @Override
   public String getDisplayName() {
@@ -65,10 +58,19 @@ public class Arithmetic extends Library {
   }
 
   @Override
+  public String getName() {
+    return "Arithmetic";
+  }
+
+  @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(getClass(), DESCRIPTIONS);
+      tools = FactoryDescription.getTools(Arithmetic.class, DESCRIPTIONS);
     }
     return tools;
+  }
+
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

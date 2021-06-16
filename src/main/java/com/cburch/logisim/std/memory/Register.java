@@ -61,6 +61,14 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 public class Register extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Register";
+
   public static void DrawRegisterClassic(
       InstancePainter painter,
       int x,
@@ -217,7 +225,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       Attributes.forBoolean("showInTab", S.getter("registerShowInTab"));
 
   public Register() {
-    super("Register", S.getter("registerComponent"));
+    super(_ID, S.getter("registerComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,

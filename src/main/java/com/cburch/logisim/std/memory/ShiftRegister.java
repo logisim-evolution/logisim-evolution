@@ -56,6 +56,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class ShiftRegister extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Shift Register";
+
   static final Attribute<Integer> ATTR_LENGTH =
       Attributes.forIntegerRange("length", S.getter("shiftRegLengthAttr"), 1, 64);
   static final Attribute<Boolean> ATTR_LOAD =
@@ -70,7 +78,7 @@ public class ShiftRegister extends InstanceFactory {
   static final int SymbolWidth = 100;
 
   public ShiftRegister() {
-    super("Shift Register", S.getter("shiftRegisterComponent"));
+    super(_ID, S.getter("shiftRegisterComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,

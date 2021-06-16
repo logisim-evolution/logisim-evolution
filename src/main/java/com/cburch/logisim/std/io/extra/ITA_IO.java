@@ -39,21 +39,12 @@ import java.util.List;
 
 public class ITA_IO extends Library {
 
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "Input/Output-Extra";
-
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", Switch.class),
-    new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", Buzzer.class),
-    new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", Slider.class),
-    new FactoryDescription(
-        "Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"), "digitaloscilloscope.gif", DigitalOscilloscope.class),
-    new FactoryDescription("PlaRom", S.getter("PlaRomComponent"), "plarom.gif", PlaRom.class),
+    new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),
+    new FactoryDescription(Buzzer.class, S.getter("buzzerComponent"), "buzzer.gif"),
+    new FactoryDescription(Slider.class, S.getter("Slider"), "slider.gif"),
+    new FactoryDescription(DigitalOscilloscope.class, S.getter("DigitalOscilloscopeComponent"), "digitaloscilloscope.gif"),
+    new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent"), "plarom.gif"),
   };
 
   private List<Tool> tools = null;
@@ -64,6 +55,17 @@ public class ITA_IO extends Library {
   @Override
   public String getDisplayName() {
     return S.get("input.output.extra");
+  }
+
+  @Override
+  public String getName() {
+    return "Input/Output-Extra";
+  }
+
+  @Override
+  public boolean removeLibrary(String name) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
   @Override

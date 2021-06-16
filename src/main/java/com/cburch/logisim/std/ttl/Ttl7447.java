@@ -34,10 +34,17 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
 public class Ttl7447 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7447";
 
   public Ttl7447() {
     super(
-        "7447",
+        _ID,
         (byte) 16,
         new byte[] {9, 10, 11, 12, 13, 14, 15},
         new String[] {"B", "C", "LT", "BI", "RBI", "D", "A", "e", "d", "c", "b", "a", "g", "f"});

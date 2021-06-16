@@ -53,11 +53,18 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 public class PowerOnReset extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "POR";
 
   public static final PowerOnReset FACTORY = new PowerOnReset();
 
   public PowerOnReset() {
-    super("POR", S.getter("PowerOnResetComponent"));
+    super(_ID, S.getter("PowerOnResetComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

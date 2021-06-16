@@ -28,7 +28,9 @@
 
 package com.cburch.logisim.std.io;
 
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
@@ -39,50 +41,54 @@ import java.util.ArrayList;
 
 public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
+  protected Attribute<BitWidth> getAttributeRows() {
+    return DotMatrix.ATTR_MATRIX_ROWS;
+  }
+  protected Attribute<BitWidth> getAttributeColumns() {
+    return DotMatrix.ATTR_MATRIX_COLS;
+  }
+
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    boolean colbased = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_COLUMN;
-    boolean rowbased = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_ROW;
-    int rows = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
-    int cols = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
-    Contents.add("  ");
-    if (colbased) {
+  public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
+    var contents = new ArrayList<String>();
+    var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
+    var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
+    var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
+    int rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
+    int cols = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+
+    contents.add("  ");
+    if (colBased) {
       for (int r = 0 ; r < rows ; r++)
         for (int c = 0 ; c < cols ; c++) {
-          String Colname = (rows == 1) ? GetNetName(ComponentInfo, c, true, Nets)
-                                       : GetBusName(ComponentInfo, c, Nets);  
-          int idx = r*cols+c+ComponentInfo.GetLocalBubbleOutputStartId();
-          if (Colname.isEmpty())
-            Contents.add("   "+HDL.assignPreamble()+
+          String colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
+                                       : GetBusName(componentInfo, c, netlist);
+          int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+          if (colName.isEmpty())
+            contents.add("   "+HDL.assignPreamble()+
                 HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                 idx+HDL.BracketClose()+HDL.assignOperator()+HDL.zeroBit()+";");
           else {
-            String Wire = (rows == 1) ? Colname : Colname+HDL.BracketOpen()+r+HDL.BracketClose();  
-            Contents.add("   "+HDL.assignPreamble()+
+            String Wire = (rows == 1) ? colName : colName+HDL.BracketOpen()+r+HDL.BracketClose();
+            contents.add("   "+HDL.assignPreamble()+
                          HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                          idx+HDL.BracketClose()+HDL.assignOperator()+
                          Wire+";");
           }
         }
-    } else if (rowbased) {
+    } else if (rowBased) {
       for (int r = 0 ; r < rows ; r++) {
-        String Rowname = (cols == 1) ? GetNetName(ComponentInfo, r, true, Nets)
-                                     : GetBusName(ComponentInfo, r, Nets);
+        String rowName = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
+                                     : GetBusName(componentInfo, r, netlist);
         for (int c = 0 ; c < cols ; c++) {
-          int idx = r*cols+c+ComponentInfo.GetLocalBubbleOutputStartId();
-          if (Rowname.isEmpty())
-            Contents.add("   "+HDL.assignPreamble()+
+          int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+          if (rowName.isEmpty())
+            contents.add("   "+HDL.assignPreamble()+
                 HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                 idx+HDL.BracketClose()+HDL.assignOperator()+HDL.zeroBit()+";");
           else {
-            String Wire = (cols == 1) ? Rowname : Rowname+HDL.BracketOpen()+c+HDL.BracketClose();  
-            Contents.add("   "+HDL.assignPreamble()+
+            String Wire = (cols == 1) ? rowName : rowName+HDL.BracketOpen()+c+HDL.BracketClose();
+            contents.add("   "+HDL.assignPreamble()+
                          HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
                          idx+HDL.BracketClose()+HDL.assignOperator()+
                          Wire+";");
@@ -90,94 +96,95 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
       }
     } else {
-      String RowName = (rows == 1) ? GetNetName(ComponentInfo, 1, true, Nets)
-                                   : GetBusName(ComponentInfo, 1, Nets);
-      String ColName = (cols == 1) ? GetNetName(ComponentInfo, 0, true, Nets)
-                                   : GetBusName(ComponentInfo, 0, Nets);
+      String rowName = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
+                                   : GetBusName(componentInfo, 1, netlist);
+      String colName = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
+                                   : GetBusName(componentInfo, 0, netlist);
       boolean oneRow = (rows == 1);
       boolean oneCol = (cols == 1);
       if (HDL.isVHDL()) {
         String indent = "   ";
         if (!oneRow) {
-          Contents.add(indent+Label+"_0 : FOR r IN "+(rows-1)+" DOWNTO 0 GENERATE");
+          contents.add(indent+label+"_0 : FOR r IN "+(rows-1)+" DOWNTO 0 GENERATE");
           indent += "   ";
-          RowName += "(r)";
+          rowName += "(r)";
         }
         if (!oneCol) {
-          Contents.add(indent+Label+"_1 : FOR c IN "+(cols-1)+" DOWNTO 0 GENERATE");
+          contents.add(indent+label+"_1 : FOR c IN "+(cols-1)+" DOWNTO 0 GENERATE");
           indent += "   ";
-          ColName += "(c)";
+          colName += "(c)";
         }
-        
+
         String content = indent+HDLGeneratorFactory.LocalOutputBubbleBusname+"(";
-        
+
         content +=  ((oneRow) ? "" : "r"+((oneCol) ? "" : "*"+cols+"+"))+
                     ((oneCol) ? "" : "c") +
                     ((oneRow && oneCol) ? "" : "+");
-        
-        content += ComponentInfo.GetLocalBubbleOutputStartId()+") <= "+RowName+" AND "+ColName+";";
-        Contents.add(content);
-        
+
+        content += componentInfo.GetLocalBubbleOutputStartId()+") <= "+rowName+" AND "+colName+";";
+        contents.add(content);
+
         if (!oneCol) {
-          indent = indent.substring(0,indent.length()-3);
-          Contents.add(indent+"END GENERATE "+Label+"_1;");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "END GENERATE " + label + "_1;");
         }
         if (!oneRow) {
-          indent = indent.substring(0,indent.length()-3);
-          Contents.add(indent+"END GENERATE "+Label+"_0;");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "END GENERATE " + label + "_0;");
         }
-    
+
       } else {
         String indent = "   ";
         if (!oneRow || !oneCol) {
-          Contents.add(indent+"genvar "+ ((oneRow) ? "" : Label+"_r"+ ((oneCol) ? "" : ","))+
-                      ((oneCol) ? "" : Label+"_c")+";");
-          Contents.add(indent+"generate");
+          contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) +
+                  ((oneCol) ? "" : label + "_c") + ";");
+          contents.add(indent + "generate");
           indent += "   ";
         }
         if (!oneRow) {
-          Contents.add(indent+"for ("+Label+"_r = 0 ; "+Label+"_r < "+rows+"; "+Label+"_r="+Label+"_r+1)");
-          Contents.add(indent+"begin:"+Label+"_0");
+          contents.add(indent + "for (" + label + "_r = 0 ; " + label + "_r < " + rows + "; " + label + "_r=" + label + "_r+1)");
+        contents.add(indent + "begin:" + label + "_0");
           indent += "   ";
-          RowName += "["+Label+"_r]";
+          rowName += "["+label+"_r]";
         }
         if (!oneCol) {
-          Contents.add(indent+"for ("+Label+"_c = 0 ; "+Label+"_c < "+cols+"; "+Label+"_c="+Label+"_c+1)");
-          Contents.add(indent+"begin:"+Label+"_1");
+          contents.add(indent + "for (" + label + "_c = 0 ; " + label + "_c < " + cols + "; " + label + "_c=" + label + "_c+1)");
+          contents.add(indent + "begin:" + label + "_1");
           indent += "   ";
-          ColName += "["+Label+"_c]";
+          colName += "[" + label + "_c]";
         }
-        
-        String content = indent+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+"[";
-        
-        content +=  ((oneRow) ? "" : Label+"_r"+((oneCol) ? "" : "*"+cols+"+"))+
-                    ((oneCol) ? "" : Label+"_c") +
+
+        var content = indent + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname + "[";
+
+        content +=  ((oneRow) ? "" : label+"_r"+((oneCol) ? "" : "*"+cols+"+"))+
+                    ((oneCol) ? "" : label+"_c") +
                     ((oneRow && oneCol) ? "" : "+");
-        
-        content += ComponentInfo.GetLocalBubbleOutputStartId()+"] = "+RowName+" & "+ColName+";";
-        Contents.add(content);
-        
+
+        content += componentInfo.GetLocalBubbleOutputStartId()+"] = "+rowName+" & "+colName+";";
+        contents.add(content);
+
         if (!oneCol) {
           indent = indent.substring(0,indent.length()-3);
-          Contents.add(indent+"end");
+          contents.add(indent+"end");
         }
         if (!oneRow) {
           indent = indent.substring(0,indent.length()-3);
-          Contents.add(indent+"end");
+          contents.add(indent+"end");
         }
-        
+
         if (!oneRow || !oneCol) {
           indent = indent.substring(0,indent.length()-3);
-          Contents.add(indent+"endgenerate");
+          contents.add(indent+"endgenerate");
         }
       }
     }
-    Contents.add("  ");
-    return Contents;
+    contents.add("  ");
+
+    return contents;
   }
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
-    return attrs.getValue(DotMatrix.ATTR_PERSIST) == 0;
+    return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;
   }
 
   @Override

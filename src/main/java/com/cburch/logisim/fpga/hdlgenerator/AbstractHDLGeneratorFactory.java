@@ -123,14 +123,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       AttributeSet attrs,
       String ComponentName) {
     ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs);
+    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs); 
     Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
     Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
     Map<Integer, String> ParameterList = GetParameterList(attrs);
     Map<String, Integer> WireList = GetWireList(attrs, TheNetlist);
     Map<String, Integer> RegList = GetRegList(attrs);
     Map<String, Integer> MemList = GetMemList(attrs);
-    StringBuilder OneLine = new StringBuilder();
+    StringBuffer OneLine = new StringBuffer();
     Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
     if (HDL.isVHDL()) {
       ArrayList<String> libs = GetExtraLibraries();
@@ -451,7 +451,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       boolean FloatingNetTiedToGround,
       int bitindex,
       Netlist TheNets) {
-    StringBuilder Contents = new StringBuilder();
+    StringBuffer Contents = new StringBuffer();
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
       ConnectionEnd ThisEnd = comp.getEnd(EndIndex);
       boolean IsOutput = ThisEnd.IsOutputEnd();
@@ -835,7 +835,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           /* The last case, we have to enumerate through each bit */
           if (HDL.isVHDL()) {
-            StringBuilder SourceNetName = new StringBuilder();
+            StringBuffer SourceNetName = new StringBuffer();
             for (int i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */
               SourceNetName.setLength(0);
@@ -926,7 +926,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       int EndIndex,
       boolean FloatingNetTiedToGround,
       Netlist MyNetlist) {
-    StringBuilder Contents = new StringBuilder();
+    StringBuffer Contents = new StringBuffer();
     String FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
       ConnectionEnd ThisEnd = comp.getEnd(EndIndex);
@@ -1353,7 +1353,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     contents.add(" ");
     return contents;
   }
-
+  
   private static void allign(StringBuffer s) {
     while (s.length() < 40) s.append(" ");
   }

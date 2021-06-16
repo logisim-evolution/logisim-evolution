@@ -70,7 +70,7 @@ public class LeftPanel extends JTable {
 
   private class SignalTableModel extends AbstractTableModel {
     /**
-     *
+     * 
      */
     private static final long serialVersionUID = 1L;
     @Override
@@ -100,16 +100,18 @@ public class LeftPanel extends JTable {
 
   private class SignalRenderer extends DefaultTableCellRenderer {
     /**
-     *
+     * 
      */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                   boolean hasFocus, int row, int col) {
-      if (!(value instanceof SignalInfo)) return null;
-      Component ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
-      if (ret instanceof JLabel) {
+    public Component getTableCellRendererComponent(JTable table,
+        Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+      if (!(value instanceof SignalInfo))
+        return null;
+      Component ret = super.getTableCellRendererComponent(table,
+          value, false, false, row, col);
+      if (ret instanceof JLabel && value instanceof SignalInfo) {
         JLabel label = (JLabel)ret;
         label.setBorder(rowInsets);
         SignalInfo item = (SignalInfo)value;
@@ -122,7 +124,7 @@ public class LeftPanel extends JTable {
 
   private class ValueRenderer extends DefaultTableCellRenderer {
     /**
-     *
+     * 
      */
     private static final long serialVersionUID = 1L;
 
@@ -373,7 +375,7 @@ public class LeftPanel extends JTable {
 
   private class SignalTransferHandler extends TransferHandler {
     /**
-     *
+     * 
      */
     private static final long serialVersionUID = 1L;
     Signal.List removing = null;

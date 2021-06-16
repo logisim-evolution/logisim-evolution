@@ -51,6 +51,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 public class BitExtender extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Bit Extender";
+
   private static final Attribute<BitWidth> ATTR_IN_WIDTH =
       Attributes.forBitWidth("in_width", S.getter("extenderInAttr"));
   private static final Attribute<BitWidth> ATTR_OUT_WIDTH =
@@ -69,7 +77,7 @@ public class BitExtender extends InstanceFactory {
   public static final BitExtender FACTORY = new BitExtender();
 
   public BitExtender() {
-    super("Bit Extender", S.getter("extenderComponent"));
+    super(_ID, S.getter("extenderComponent"));
     setIconName("extender.gif");
     setAttributes(
         new Attribute[] {ATTR_IN_WIDTH, ATTR_OUT_WIDTH, ATTR_TYPE},
@@ -134,23 +142,11 @@ public class BitExtender extends InstanceFactory {
 
     String s0;
     String type = getType(painter.getAttributeSet());
-    switch (type) {
-      case "zero":
-        s0 = S.get("extenderZeroLabel");
-        break;
-      case "one":
-        s0 = S.get("extenderOneLabel");
-        break;
-      case "sign":
-        s0 = S.get("extenderSignLabel");
-        break;
-      case "input":
-        s0 = S.get("extenderInputLabel");
-        break;
-      default:
-        s0 = "???"; // should never happen
-        break;
-    }
+    if (type.equals("zero")) s0 = S.get("extenderZeroLabel");
+    else if (type.equals("one")) s0 = S.get("extenderOneLabel");
+    else if (type.equals("sign")) s0 = S.get("extenderSignLabel");
+    else if (type.equals("input")) s0 = S.get("extenderInputLabel");
+    else s0 = "???"; // should never happen
     String s1 = S.get("extenderMainLabel");
     Bounds bds = painter.getBounds();
     int x = bds.getX() + bds.getWidth() / 2;
@@ -172,21 +168,16 @@ public class BitExtender extends InstanceFactory {
     BitWidth wout = state.getAttributeValue(ATTR_OUT_WIDTH);
     String type = getType(state.getAttributeSet());
     Value extend;
-    switch (type) {
-      case "one":
-        extend = Value.TRUE;
-        break;
-      case "sign":
-        int win = in.getWidth();
-        extend = win > 0 ? in.get(win - 1) : Value.ERROR;
-        break;
-      case "input":
-        extend = state.getPortValue(2);
-        if (extend.getWidth() != 1) extend = Value.ERROR;
-        break;
-      default:
-        extend = Value.FALSE;
-        break;
+    if (type.equals("one")) {
+      extend = Value.TRUE;
+    } else if (type.equals("sign")) {
+      int win = in.getWidth();
+      extend = win > 0 ? in.get(win - 1) : Value.ERROR;
+    } else if (type.equals("input")) {
+      extend = state.getPortValue(2);
+      if (extend.getWidth() != 1) extend = Value.ERROR;
+    } else {
+      extend = Value.FALSE;
     }
 
     Value out = in.extendWidth(wout.getWidth(), extend);

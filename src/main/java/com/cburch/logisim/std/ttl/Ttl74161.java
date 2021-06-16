@@ -44,6 +44,13 @@ import static com.cburch.logisim.data.Value.FALSE_COLOR;
 import static com.cburch.logisim.data.Value.TRUE_COLOR;
 
 public class Ttl74161 extends AbstractTtlGate {
+    /**
+     * Unique identifier of the tool, used as reference in project files.
+     * Do NOT change as it will prevent project files from loading.
+     *
+     * Identifier value must MUST be unique string among all tools.
+     */
+    public static final String _ID = "74161";
 
     public static final int PORT_INDEX_nCLR = 0;
     public static final int PORT_INDEX_CLK = 1;
@@ -62,7 +69,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
     public Ttl74161() {
         super(
-                "74161",
+                _ID,
                 (byte) 16,
                 new byte[]{11, 12, 13, 14, 15},
                 new String[]{
@@ -117,7 +124,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
         @Override
         public void mouseReleased(InstanceState state, MouseEvent e) {
-            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
             if (isPressed && isInside(state, e)) {
                 int index = getIndex(state, e);
 

@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
@@ -49,9 +48,6 @@ import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.gates.Gates;
-import com.cburch.logisim.util.ArgonXML;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
@@ -60,17 +56,7 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -98,7 +84,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
-import javax.swing.ProgressMonitor;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import org.drjekyll.fontchooser.FontChooser;
@@ -219,20 +204,6 @@ public class Startup implements AWTEventListener {
       AppPreferences.clear();
     }
 
-    if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
-      System.out.println("First time startup");
-      int Result =
-          OptionPane.showConfirmDialog(
-              null,
-              "Logisim can automatically check for new updates and versions.\n"
-                  + "Would you like to enable this feature?\n"
-                  + "(This feature can be disabled in Window -> Preferences -> Software)\n",
-              "Autoupdate",
-              OptionPane.YES_NO_OPTION);
-      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
-      AppPreferences.FirstTimeStartup.set(false);
-    }
-
     // parse arguments
     for (int i = 0; i < args.length; i++) {
       String arg = args[i];
@@ -294,7 +265,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION_NAME); // OK
+        System.out.println(Main.VERSION);
         return null;
       } else if (arg.equals("-gates")) {
         i++;
@@ -482,8 +453,6 @@ public class Startup implements AWTEventListener {
         // already handled above
       } else if (arg.equals("-analyze")) {
         Main.ANALYZE = true;
-      } else if (arg.equals("-noupdates")) {
-        AppPreferences.AutomaticUpdateCheck.setBoolean(false);
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
@@ -522,31 +491,31 @@ public class Startup implements AWTEventListener {
   }
 
   private static void printUsage() {
-    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
-    System.err.println(); // OK
-    System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argNoUpdatesOption")); // OK
-    System.err.println("   " + S.get("argGeometryOption")); // OK
-    System.err.println("   " + S.get("argAccentsOption")); // OK
-    System.err.println("   " + S.get("argClearOption")); // OK
-    System.err.println("   " + S.get("argEmptyOption")); // OK
-    System.err.println("   " + S.get("argAnalyzeOption")); // OK
-    System.err.println("   " + S.get("argTestOption")); // OK
-    System.err.println("   " + S.get("argGatesOption")); // OK
-    System.err.println("   " + S.get("argHelpOption")); // OK
-    System.err.println("   " + S.get("argLoadOption")); // OK
-    System.err.println("   " + S.get("argLocaleOption")); // OK
-    System.err.println("   " + S.get("argNoSplashOption")); // OK
-    System.err.println("   " + S.get("argPlainOption")); // OK
-    System.err.println("   " + S.get("argSubOption")); // OK
-    System.err.println("   " + S.get("argTemplateOption")); // OK
-    System.err.println("   " + S.get("argTtyOption")); // OK
-    System.err.println("   " + S.get("argQuestaOption")); // OK
-    System.err.println("   " + S.get("argVersionOption")); // OK
-    System.err.println("   " + S.get("argTestCircGen")); // OK
-    System.err.println("   " + S.get("argTestCircuit")); // OK
-    System.err.println("   " + S.get("argTestImplement")); // OK
-    System.err.println("   " + S.get("argCircuitOption")); // OK
+    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName()));
+    System.err.println();
+    System.err.println(S.get("argOptionHeader"));
+    System.err.println("   " + S.get("argNoUpdatesOption"));
+    System.err.println("   " + S.get("argGeometryOption"));
+    System.err.println("   " + S.get("argAccentsOption"));
+    System.err.println("   " + S.get("argClearOption"));
+    System.err.println("   " + S.get("argEmptyOption"));
+    System.err.println("   " + S.get("argAnalyzeOption"));
+    System.err.println("   " + S.get("argTestOption"));
+    System.err.println("   " + S.get("argGatesOption"));
+    System.err.println("   " + S.get("argHelpOption"));
+    System.err.println("   " + S.get("argLoadOption"));
+    System.err.println("   " + S.get("argLocaleOption"));
+    System.err.println("   " + S.get("argNoSplashOption"));
+    System.err.println("   " + S.get("argPlainOption"));
+    System.err.println("   " + S.get("argSubOption"));
+    System.err.println("   " + S.get("argTemplateOption"));
+    System.err.println("   " + S.get("argTtyOption"));
+    System.err.println("   " + S.get("argQuestaOption"));
+    System.err.println("   " + S.get("argVersionOption"));
+    System.err.println("   " + S.get("argTestCircGen"));
+    System.err.println("   " + S.get("argTestCircuit"));
+    System.err.println("   " + S.get("argTestImplement"));
+    System.err.println("   " + S.get("argCircuitOption"));
 
     System.exit(-1);
   }
@@ -677,11 +646,11 @@ public class Startup implements AWTEventListener {
     }
     Loader templLoader = new Loader(monitor);
     int count =
-        templLoader.getBuiltin().getLibrary(Base._ID).getTools().size()
-            + templLoader.getBuiltin().getLibrary(Gates._ID).getTools().size();
+        templLoader.getBuiltin().getLibrary("Base").getTools().size()
+            + templLoader.getBuiltin().getLibrary("Gates").getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
-      logger.error("FATAL ERROR - no components"); // OK
+      logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
 

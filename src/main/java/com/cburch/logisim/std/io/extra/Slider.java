@@ -58,6 +58,14 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 public class Slider extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Slider";
+
   public static class Poker extends InstancePoker {
     private SliderValue data;
     private boolean dragging = false;
@@ -192,7 +200,7 @@ public class Slider extends InstanceFactory {
   }
 
   public Slider() {
-    super("Slider", S.getter("Slider"));
+    super(_ID, S.getter("Slider"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

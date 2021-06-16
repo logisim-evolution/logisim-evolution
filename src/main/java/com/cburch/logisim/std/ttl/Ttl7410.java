@@ -39,6 +39,14 @@ import java.awt.Graphics;
  * TTL 74x10: triple 3-input NAND gate
  */
 public class Ttl7410 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7410";
+
   private boolean inverted = true;
   private boolean isAND = true;
 
@@ -46,16 +54,16 @@ public class Ttl7410 extends AbstractTtlGate {
   private final static byte[] outPorts = {6, 8, 12};
 
   public Ttl7410() {
-    super("7410", pinCount, outPorts);
+    super(_ID, pinCount, outPorts);
   }
 
   public Ttl7410(String val, boolean inverted) {
-    super(val, pinCount, outPorts);
+    super(val, (byte) pinCount, outPorts);
     this.inverted = inverted;
   }
 
   public Ttl7410(String val, boolean inverted, boolean isOR) {
-    super(val, pinCount, outPorts);
+    super(val, (byte) pinCount, outPorts);
     this.inverted = inverted;
     isAND = !isOR;
   }
