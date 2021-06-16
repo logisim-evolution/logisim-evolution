@@ -1,4 +1,15 @@
 /*
+ * WARNING: THIS IS AUTO-GENERATED FILE - DO NOT EDIT!
+ ****************************************************************
+ *
+ * To update this file edit src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.flex
+ * then use Jflex (https://jflex.de/) to generate this file from it.
+ *
+ * See: https://github.com/logisim-evolution/logisim-evolution/issues/563
+ */
+
+
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -1392,115 +1403,170 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 4:
-          addNullToken();
-          return firstToken;
-        case 9:
+          {
+            addNullToken();
+            return firstToken;
+          }
         case 24:
-        case 25:
-        case 26:
-        case 27:
-        case 28:
-        case 29:
-        case 30:
-        case 31:
-        case 32:
-        case 33:
-        case 34:
-        case 35:
-        case 36:
-        case 37:
-        case 38:
-        case 39:
-        case 40:
-        case 41:
-        case 42:
-        case 43:
-        case 44:
-        case 45:
-        case 46:
           break;
         case 18:
-          addToken(Token.LITERAL_CHAR);
+          {
+            addToken(Token.LITERAL_CHAR);
+          }
+        case 25:
           break;
         case 6:
-          addToken(Token.WHITESPACE);
+          {
+            addToken(Token.WHITESPACE);
+          }
+        case 26:
           break;
         case 17:
-          addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
+          {
+            addToken(Token.LITERAL_NUMBER_HEXADECIMAL);
+          }
+        case 27:
           break;
         case 21:
-          addToken(Token.ERROR_STRING_DOUBLE);
+          {
+            addToken(Token.ERROR_STRING_DOUBLE);
+          }
+        case 28:
           break;
         case 15:
-          addToken(Token.LITERAL_NUMBER_FLOAT);
+          {
+            addToken(Token.LITERAL_NUMBER_FLOAT);
+          }
+        case 29:
           break;
         case 16:
-          addToken(Token.RESERVED_WORD);
+          {
+            addToken(Token.RESERVED_WORD);
+          }
+        case 30:
           break;
         case 8:
-          addToken(Token.SEPARATOR);
+          {
+            addToken(Token.SEPARATOR);
+          }
+        case 31:
           break;
         case 1:
-          addToken(Token.IDENTIFIER);
+          {
+            addToken(Token.IDENTIFIER);
+          }
+        case 32:
           break;
         case 10:
-          addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-          addNullToken();
-          return firstToken;
+          {
+            addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+            addNullToken();
+            return firstToken;
+          }
+        case 33:
+          break;
         case 14:
-          start = zzMarkedPos - 2;
-          yybegin(EOL_COMMENT);
+          {
+            start = zzMarkedPos - 2;
+            yybegin(EOL_COMMENT);
+          }
+        case 34:
           break;
         case 19:
-          addToken(Token.FUNCTION);
+          {
+            addToken(Token.FUNCTION);
+          }
+        case 35:
           break;
         case 3:
-          addToken(Token.ERROR_CHAR);
-          addNullToken();
-          return firstToken;
+          {
+            addToken(Token.ERROR_CHAR);
+            addNullToken();
+            return firstToken;
+          }
+        case 36:
+          break;
         case 5:
-          addToken(Token.ERROR_STRING_DOUBLE);
-          addNullToken();
-          return firstToken;
+          {
+            addToken(Token.ERROR_STRING_DOUBLE);
+            addNullToken();
+            return firstToken;
+          }
+        case 37:
+          break;
         case 20:
-          addToken(Token.DATA_TYPE);
+          {
+            addToken(Token.DATA_TYPE);
+          }
+        case 38:
           break;
         case 12:
-          addToken(Token.ERROR_CHAR);
+          {
+            addToken(Token.ERROR_CHAR);
+          }
+        case 39:
           break;
         case 13:
-          addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
+          {
+            addToken(Token.LITERAL_STRING_DOUBLE_QUOTE);
+          }
+        case 40:
           break;
         case 23:
-          int temp = zzStartRead;
-          addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-          addHyperlinkToken(temp, zzMarkedPos - 1, Token.COMMENT_EOL);
-          start = zzMarkedPos;
+          {
+            int temp = zzStartRead;
+            addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+            addHyperlinkToken(temp, zzMarkedPos - 1, Token.COMMENT_EOL);
+            start = zzMarkedPos;
+          }
+        case 41:
           break;
         case 22:
-          addToken(Token.RESERVED_WORD_2);
+          {
+            addToken(Token.RESERVED_WORD_2);
+          }
+        case 42:
           break;
         case 11:
-          addToken(Token.ERROR_NUMBER_FORMAT);
+          {
+            addToken(Token.ERROR_NUMBER_FORMAT);
+          }
+        case 43:
           break;
         case 2:
-          addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          {
+            addToken(Token.LITERAL_NUMBER_DECIMAL_INT);
+          }
+        case 44:
           break;
         case 7:
-          addToken(Token.OPERATOR);
+          {
+            addToken(Token.OPERATOR);
+          }
+        case 45:
+          break;
+        case 9:
+          {
+          }
+        case 46:
           break;
         default:
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;
             switch (zzLexicalState) {
               case EOL_COMMENT:
-                addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
-                addNullToken();
-                return firstToken;
-              case YYINITIAL:
-                addNullToken();
-                return firstToken;
+                {
+                  addToken(start, zzStartRead - 1, Token.COMMENT_EOL);
+                  addNullToken();
+                  return firstToken;
+                }
               case 433:
+                break;
+              case YYINITIAL:
+                {
+                  addNullToken();
+                  return firstToken;
+                }
               case 434:
                 break;
               default:
@@ -1509,9 +1575,7 @@ public class VhdlSyntax extends AbstractJFlexTokenMaker {
           } else {
             zzScanError(ZZ_NO_MATCH);
           }
-          break;
-      } // switch
-
+      }
     }
   }
 }

@@ -228,7 +228,6 @@ public class CircuitChange {
 
   CircuitChange getReverseChange() {
     switch (type) {
-      case REMOVE_ALL:    // FIXME do we need two separate types here?
       case CLEAR:
         return CircuitChange.addAll(circuit, comps);
       case ADD:
@@ -237,6 +236,8 @@ public class CircuitChange {
         return CircuitChange.removeAll(circuit, comps);
       case REMOVE:
         return CircuitChange.add(circuit, comp);
+      case REMOVE_ALL:
+        return CircuitChange.addAll(circuit, comps);
       case SET:
         return CircuitChange.set(circuit, comp, attr, newValue, oldValue);
       case SET_FOR_CIRCUIT:
