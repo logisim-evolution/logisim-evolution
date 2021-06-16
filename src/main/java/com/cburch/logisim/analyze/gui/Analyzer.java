@@ -151,14 +151,13 @@ public class Analyzer extends LFrame.SubWindow {
     for (int i = 2; i < args.length; i++) {
       String s = args[i];
       int idx = s.indexOf('=');
-      if (idx < 0) {
-        Parser.parse(s, model); // for testing Parser.parse
-        continue;
-      } else {
+      if (idx >= 0) {
         String name = s.substring(0, idx);
         String exprString = s.substring(idx+1);
         Expression expr = Parser.parse(exprString, model);
         model.getOutputExpressions().setExpression(name, expr, exprString);
+      } else {
+        Parser.parse(s, model); // for testing Parser.parse
       }
     }
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
