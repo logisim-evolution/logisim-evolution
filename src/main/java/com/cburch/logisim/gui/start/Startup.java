@@ -157,7 +157,7 @@ public class Startup implements AWTEventListener {
       startupTemp.doPrintFile(file);
     }
   }
-  
+
   private static int parseTtyFormat(String fmt)
   {
     switch (fmt) {
@@ -215,20 +215,6 @@ public class Startup implements AWTEventListener {
 
     if (isClearPreferences) {
       AppPreferences.clear();
-    }
-
-    if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
-      System.out.println("First time startup");
-      int Result =
-          OptionPane.showConfirmDialog(
-              null,
-              "Logisim can automatically check for new updates and versions.\n"
-                  + "Would you like to enable this feature?\n"
-                  + "(This feature can be disabled in Window -> Preferences -> Software)\n",
-              "Autoupdate",
-              OptionPane.YES_NO_OPTION);
-      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
-      AppPreferences.FirstTimeStartup.set(false);
     }
 
     // parse arguments
@@ -292,7 +278,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION_NAME); // OK
+        System.out.println(Main.VERSION); // OK
         return null;
       } else if (arg.equals("-gates")) {
         i++;
@@ -480,8 +466,6 @@ public class Startup implements AWTEventListener {
         // already handled above
       } else if (arg.equals("-analyze")) {
         Main.ANALYZE = true;
-      } else if (arg.equals("-noupdates")) {
-        AppPreferences.AutomaticUpdateCheck.setBoolean(false);
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
@@ -523,7 +507,6 @@ public class Startup implements AWTEventListener {
     System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
     System.err.println(); // OK
     System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argNoUpdatesOption")); // OK
     System.err.println("   " + S.get("argGeometryOption")); // OK
     System.err.println("   " + S.get("argAccentsOption")); // OK
     System.err.println("   " + S.get("argClearOption")); // OK
@@ -623,7 +606,7 @@ public class Startup implements AWTEventListener {
     Monitor.setProgress(2);
 
     // Get the appropriate remote version number
-    LogisimVersion remoteVersion = LogisimVersion.parse(logisimData.child("version").content());
+    LogisimVersion remoteVersion = LogisimVersion.fromString(logisimData.child("version").content());
 
     // If the remote version is newer, perform the update
     Monitor.setProgress(3);
