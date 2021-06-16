@@ -265,7 +265,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION); // OK
+        System.out.println(Main.VERSION);
         return null;
       } else if (arg.equals("-gates")) {
         i++;
@@ -491,30 +491,31 @@ public class Startup implements AWTEventListener {
   }
 
   private static void printUsage() {
-    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
-    System.err.println(); // OK
-    System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argGeometryOption")); // OK
-    System.err.println("   " + S.get("argAccentsOption")); // OK
-    System.err.println("   " + S.get("argClearOption")); // OK
-    System.err.println("   " + S.get("argEmptyOption")); // OK
-    System.err.println("   " + S.get("argAnalyzeOption")); // OK
-    System.err.println("   " + S.get("argTestOption")); // OK
-    System.err.println("   " + S.get("argGatesOption")); // OK
-    System.err.println("   " + S.get("argHelpOption")); // OK
-    System.err.println("   " + S.get("argLoadOption")); // OK
-    System.err.println("   " + S.get("argLocaleOption")); // OK
-    System.err.println("   " + S.get("argNoSplashOption")); // OK
-    System.err.println("   " + S.get("argPlainOption")); // OK
-    System.err.println("   " + S.get("argSubOption")); // OK
-    System.err.println("   " + S.get("argTemplateOption")); // OK
-    System.err.println("   " + S.get("argTtyOption")); // OK
-    System.err.println("   " + S.get("argQuestaOption")); // OK
-    System.err.println("   " + S.get("argVersionOption")); // OK
-    System.err.println("   " + S.get("argTestCircGen")); // OK
-    System.err.println("   " + S.get("argTestCircuit")); // OK
-    System.err.println("   " + S.get("argTestImplement")); // OK
-    System.err.println("   " + S.get("argCircuitOption")); // OK
+    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName()));
+    System.err.println();
+    System.err.println(S.get("argOptionHeader"));
+    System.err.println("   " + S.get("argNoUpdatesOption"));
+    System.err.println("   " + S.get("argGeometryOption"));
+    System.err.println("   " + S.get("argAccentsOption"));
+    System.err.println("   " + S.get("argClearOption"));
+    System.err.println("   " + S.get("argEmptyOption"));
+    System.err.println("   " + S.get("argAnalyzeOption"));
+    System.err.println("   " + S.get("argTestOption"));
+    System.err.println("   " + S.get("argGatesOption"));
+    System.err.println("   " + S.get("argHelpOption"));
+    System.err.println("   " + S.get("argLoadOption"));
+    System.err.println("   " + S.get("argLocaleOption"));
+    System.err.println("   " + S.get("argNoSplashOption"));
+    System.err.println("   " + S.get("argPlainOption"));
+    System.err.println("   " + S.get("argSubOption"));
+    System.err.println("   " + S.get("argTemplateOption"));
+    System.err.println("   " + S.get("argTtyOption"));
+    System.err.println("   " + S.get("argQuestaOption"));
+    System.err.println("   " + S.get("argVersionOption"));
+    System.err.println("   " + S.get("argTestCircGen"));
+    System.err.println("   " + S.get("argTestCircuit"));
+    System.err.println("   " + S.get("argTestImplement"));
+    System.err.println("   " + S.get("argCircuitOption"));
 
     System.exit(-1);
   }
@@ -649,7 +650,7 @@ public class Startup implements AWTEventListener {
             + templLoader.getBuiltin().getLibrary("Gates").getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
-      logger.error("FATAL ERROR - no components"); // OK
+      logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
 
