@@ -27,10 +27,10 @@ Logisim supports many languages. Many of them were automatically translated usin
 * VHDL component -- a new component type whose behavior is specified in VHDL
 * TCL/TK console -- interfaces between the circuit and the user
 * DIP switches
+* More TTL chips
 * RGB LEDs
 * Large number of bug fixes
 * GUI improvements
-* Automatic updates
 * Code refactoring
 * …
 
@@ -117,7 +117,8 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 
 ## Code style
 
-All of Logisim's Java files have been formatted using [`google-java-format`](https://github.com/google/google-java-format). If you are using [Eclipse](https://www.eclipse.org/), there is a [plugin](https://github.com/google/google-java-format#eclipse) available to enforce this formatting. At the moment, version 1.6 of the plugin is used.
+All of Logisim's Java files have been formatted using [`google-java-format`](https://github.com/google/google-java-format). If you are using [Eclipse](https://www.eclipse.org/), there is a [plugin](https://github.com/google/google-java-format#eclipse) available to enforce this formatting. If you are using [InteliJ IDEA](https://www.jetbrains.com/idea/), the corresponding plugin is available via its [Marketplace](https://plugins.jetbrains.com/plugin/8527-google-java-format).
+Code style to use is `Default Google java style`.
 
 
 ## Documentation
