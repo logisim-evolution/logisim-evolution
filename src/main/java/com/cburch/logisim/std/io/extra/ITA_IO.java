@@ -38,6 +38,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ITA_IO extends Library {
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Input/Output-Extra";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),
@@ -55,11 +62,6 @@ public class ITA_IO extends Library {
   @Override
   public String getDisplayName() {
     return S.get("input.output.extra");
-  }
-
-  @Override
-  public String getName() {
-    return "Input/Output-Extra";
   }
 
   @Override

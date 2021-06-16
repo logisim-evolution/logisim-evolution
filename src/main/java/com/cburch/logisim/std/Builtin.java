@@ -50,6 +50,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class Builtin extends Library {
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Builtin";
+
   private List<Library> libraries = null;
 
   public Builtin() {
@@ -78,11 +86,6 @@ public class Builtin extends Library {
   @Override
   public List<Library> getLibraries() {
     return libraries;
-  }
-
-  @Override
-  public String getName() {
-    return "Builtin";
   }
 
   @Override

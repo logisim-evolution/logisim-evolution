@@ -45,6 +45,14 @@ import java.awt.Graphics;
 import java.util.List;
 
 public class Plexers extends Library {
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Plexers";
+
   static boolean contains(Location loc, Bounds bds, Direction facing) {
     if (bds.contains(loc, 1)) {
       int x = loc.getX();
@@ -158,17 +166,11 @@ public class Plexers extends Library {
 
   private List<Tool> tools = null;
 
-  public Plexers() {}
-
   @Override
   public String getDisplayName() {
     return S.get("plexerLibrary");
   }
 
-  @Override
-  public String getName() {
-    return "Plexers";
-  }
 
   @Override
   public List<Tool> getTools() {
