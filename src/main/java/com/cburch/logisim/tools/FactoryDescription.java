@@ -108,7 +108,7 @@ public class FactoryDescription {
       errorMsg = "Creating instance";
       Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
       errorMsg = "Converting to ComponentFactory";
-      factory = (ComponentFactory) factoryValue;;
+      factory = (ComponentFactory) factoryValue;
       factoryLoadAttempted = true;
       return factory;
     } catch (Exception t) {
