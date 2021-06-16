@@ -497,7 +497,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
     } else {
       PortMap.put("Q", HDL.unconnected(true));
-      StringBuffer Temp = new StringBuffer();
+      StringBuilder Temp = new StringBuilder();
       if (HDL.isVerilog()) {
         Temp.append("0");
       } else {

@@ -173,15 +173,19 @@ public class ComponentDrawContext {
     String appearance = AppPreferences.PinAppearance.get();
     int radius = 4;
     int offset = 2;
-    if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_MEDIUM)) {
-      radius = 6;
-      offset = 3;
-    } else if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_BIG)) {
-      radius = 8;
-      offset = 4;
-    } else if (appearance.equals(AppPreferences.PIN_APPEAR_DOT_BIGGER)) {
-      radius = 10;
-      offset = 5;
+    switch (appearance) {
+      case AppPreferences.PIN_APPEAR_DOT_MEDIUM:
+        radius = 6;
+        offset = 3;
+        break;
+      case AppPreferences.PIN_APPEAR_DOT_BIG:
+        radius = 8;
+        offset = 4;
+        break;
+      case AppPreferences.PIN_APPEAR_DOT_BIGGER:
+        radius = 10;
+        offset = 5;
+        break;
     }
     g.fillOval(x - offset, y - offset, radius, radius);
   }

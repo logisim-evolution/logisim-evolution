@@ -52,6 +52,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 class LayoutToolbarModel extends AbstractToolbarModel {
   private final Frame frame;
@@ -97,11 +98,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       } else {
         if (tool instanceof AddTool) tool.registerParent(frame.getToolbar());
         ToolbarItem i = findItem(oldItems, tool);
-        if (i == null) {
-          newItems.add(new ToolItem(tool));
-        } else {
-          newItems.add(i);
-        }
+        newItems.add(Objects.requireNonNullElseGet(i, () -> new ToolItem(tool)));
       }
     }
     items = Collections.unmodifiableList(newItems);

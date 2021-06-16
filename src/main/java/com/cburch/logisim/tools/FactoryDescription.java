@@ -32,8 +32,6 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.LibraryUtil;
 import com.cburch.logisim.util.StringGetter;
-
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Icon;
@@ -50,7 +48,7 @@ public class FactoryDescription {
 
   public static List<Tool> getTools(
       Class<? extends Library> base, FactoryDescription[] descriptions) {
-    Tool[] tools = new Tool[descriptions.length];
+    var tools = new Tool[descriptions.length];
     for (int i = 0; i < tools.length; i++) {
       tools[i] = new AddTool(base, descriptions[i]);
     }
@@ -101,16 +99,16 @@ public class FactoryDescription {
       return ret;
     }
 
-    String errorMsg = "";
+    var errorMsg = "";
     try {
       errorMsg = "Getting class loader";
-      ClassLoader loader = this.factoryClass.getClassLoader();
+      var loader = this.factoryClass.getClassLoader();
       errorMsg = "Loading class";
-      Class<?> factoryClass = loader.loadClass(this.factoryClass.getCanonicalName());
+      Class<?> factoryCls = loader.loadClass(this.factoryClass.getCanonicalName());
       errorMsg = "Creating instance";
-      Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
+      Object factoryValue = factoryCls.getDeclaredConstructor().newInstance();
       errorMsg = "Converting to ComponentFactory";
-      factory = (ComponentFactory) factoryValue;;
+      factory = (ComponentFactory) factoryValue;
       factoryLoadAttempted = true;
       return factory;
     } catch (Exception t) {

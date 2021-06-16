@@ -67,7 +67,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	      ArrayList<String> Hierarchy) {
 	   return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
   }
-  
+
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
@@ -195,12 +195,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + comp.GetLocalBubbleOutputEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleOutputStartId()
-                      + HDL.BracketClose(); 
+                      + HDL.BracketClose();
       case 2 : return HDL.BracketOpen()
                       + comp.GetLocalBubbleInOutEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleInOutStartId()
-                      + HDL.BracketClose(); 
+                      + HDL.BracketClose();
     }
     return "";
   }
@@ -260,7 +260,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
       if (ThisNet.IsForcedRootNet()) {
@@ -284,7 +284,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             }
             String line = "   "+
                           HDL.assignPreamble()+
-                          OneLine.toString()+
+                    OneLine +
                           HDL.assignOperator()+
                           BusName+
                           TheNets.GetNetId(Source.GetParentNet())+
@@ -316,7 +316,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            String line = "   "+HDL.assignPreamble()+OneLine.toString()+";";
+            String line = "   "+HDL.assignPreamble()+ OneLine +";";
             if (!Contents.contains(line)) Contents.add(line);
           }
         }
@@ -420,7 +420,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + Temp
                 + HDL.assignOperator()
                 + ClockNet
                 + HDL.BracketOpen()
@@ -431,7 +431,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + Temp
                 + HDL.assignOperator()
                 + TickComponentHDLGeneratorFactory.FPGAClock
                 + ";");
@@ -673,7 +673,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           if (HDL.isVerilog())
             PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
         } else {
-          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 
+          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname,
         		  HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(ComponentInfo, 2));
         }
       }
@@ -692,7 +692,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 Reporter.Report.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                       + PinLabel
                       + "'");
-            
+
               } else {
                 PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
               }
@@ -732,7 +732,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 CorrectLabel.getCorrectLabel(
                     selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
             if (topLevel) {
-              PortMap.put(PinLabel, Preamble+PinLabel);	
+              PortMap.put(PinLabel, Preamble+PinLabel);
             } else {
               int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
               if (endid < 0) {
@@ -756,10 +756,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       int EndIndex,
       int TabSize,
       Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
-    StringBuffer Source = new StringBuffer();
-    StringBuffer Destination = new StringBuffer();
-    StringBuffer Tab = new StringBuffer();
+    StringBuilder Contents = new StringBuilder();
+    StringBuilder Source = new StringBuilder();
+    StringBuilder Destination = new StringBuilder();
+    StringBuilder Tab = new StringBuilder();
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"
@@ -792,7 +792,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       while (Destination.length() < SallignmentSize) {
         Destination.append(" ");
       }
-      Contents.append(Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+      Contents.append(Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -818,9 +818,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Destination.append(" ");
         }
         Contents.append(
-            Tab.toString()
+            Tab
                 + HDL.assignPreamble()
-                + Destination.toString()
+                + Destination
                 + HDL.assignOperator()
                 + HDL.GetZeroVector(NrOfBits, true)
                 + ";");
@@ -844,7 +844,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Destination.append(" ");
           }
           Contents.append(
-              Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+              Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (int bit = 0; bit < NrOfBits; bit++) {
@@ -905,7 +905,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Contents.append("\n");
             }
             Contents.append(
-                Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+                Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
           }
         }
       }
