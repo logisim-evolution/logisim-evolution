@@ -494,30 +494,34 @@ public class Startup implements AWTEventListener {
     System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName()));
     System.err.println();
     System.err.println(S.get("argOptionHeader"));
-    System.err.println("   " + S.get("argNoUpdatesOption"));
-    System.err.println("   " + S.get("argGeometryOption"));
-    System.err.println("   " + S.get("argAccentsOption"));
-    System.err.println("   " + S.get("argClearOption"));
-    System.err.println("   " + S.get("argEmptyOption"));
-    System.err.println("   " + S.get("argAnalyzeOption"));
-    System.err.println("   " + S.get("argTestOption"));
-    System.err.println("   " + S.get("argGatesOption"));
-    System.err.println("   " + S.get("argHelpOption"));
-    System.err.println("   " + S.get("argLoadOption"));
-    System.err.println("   " + S.get("argLocaleOption"));
-    System.err.println("   " + S.get("argNoSplashOption"));
-    System.err.println("   " + S.get("argPlainOption"));
-    System.err.println("   " + S.get("argSubOption"));
-    System.err.println("   " + S.get("argTemplateOption"));
-    System.err.println("   " + S.get("argTtyOption"));
-    System.err.println("   " + S.get("argQuestaOption"));
-    System.err.println("   " + S.get("argVersionOption"));
-    System.err.println("   " + S.get("argTestCircGen"));
-    System.err.println("   " + S.get("argTestCircuit"));
-    System.err.println("   " + S.get("argTestImplement"));
-    System.err.println("   " + S.get("argCircuitOption"));
+    String[] opts = {
+            "argGeometryOption",
+            "argAccentsOption",
+            "argClearOption",
+            "argEmptyOption",
+            "argAnalyzeOption",
+            "argTestOption",
+            "argGatesOption",
+            "argHelpOption",
+            "argLoadOption",
+            "argLocaleOption",
+            "argNoSplashOption",
+            "argPlainOption",
+            "argSubOption",
+            "argTemplateOption",
+            "argTtyOption",
+            "argQuestaOption",
+            "argVersionOption",
+            "argTestCircGen",
+            "argTestCircuit",
+            "argTestImplement",
+            "argCircuitOption",
+    };
+    for(String opt: opts) {
+      System.err.println("   " + S.get(opt));
+    }
 
-    System.exit(-1);
+    System.exit(0);
   }
 
   private static void registerHandler() {
