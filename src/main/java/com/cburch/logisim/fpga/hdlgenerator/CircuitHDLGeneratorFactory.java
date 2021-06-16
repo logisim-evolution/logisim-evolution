@@ -535,15 +535,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         String compName =
             comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
         if (comp.IsGatedInstance())  compName = compName.concat("_gated");
-        String CompId = worker.getComponentStringIdentifier();
-        Long id;
-        if (compIds.containsKey(CompId)) {
-          id = compIds.get(CompId);
-        } else {
-          id = (long) 1;
-        }
-        ArrayList<String> CompMap = worker.GetComponentMap(theNetlist, id++, comp, null, compName);
-        if (!CompMap.isEmpty()) {
+        var CompId = worker.getComponentStringIdentifier();
+        Long id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
+        var compMap = worker.GetComponentMap(theNetlist, id++, comp, null, compName);
+        if (!compMap.isEmpty()) {
           if (isFirstLine) {
             contents.add("");
             contents.addAll(MakeRemarkBlock("Here all sub-circuits are defined", 3));
@@ -551,7 +546,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
           compIds.remove(CompId);
           compIds.put(CompId, id);
-          contents.addAll(CompMap);
+          contents.addAll(compMap);
         }
       }
     }
@@ -560,18 +555,16 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist MyNetList, AttributeSet attrs) {
+  public SortedMap<String, Integer> GetOutputList(Netlist myNetList, AttributeSet attrs) {
     SortedMap<String, Integer> outputs = new TreeMap<>();
-    int OutputBubbles = MyNetList.NumberOfOutputBubbles();
-    if (OutputBubbles > 0) {
-      if (OutputBubbles > 1) {
-        outputs.put(HDLGeneratorFactory.LocalOutputBubbleBusname, OutputBubbles);
-      } else {
-        outputs.put(HDLGeneratorFactory.LocalOutputBubbleBusname, 0);
-      }
+    int outputBubbles = myNetList.NumberOfOutputBubbles();
+    if (outputBubbles > 0) {
+      outputs.put(
+          HDLGeneratorFactory.LocalOutputBubbleBusname, (outputBubbles == 1) ? 0 : outputBubbles);
     }
-    for (int i = 0; i < MyNetList.NumberOfOutputPorts(); i++) {
-      NetlistComponent selected = MyNetList.GetOutputPin(i);
+
+    for (int i = 0; i < myNetList.NumberOfOutputPorts(); i++) {
+      NetlistComponent selected = myNetList.GetOutputPin(i);
       if (selected != null) {
           outputs.put(
               CorrectLabel.getCorrectLabel(
