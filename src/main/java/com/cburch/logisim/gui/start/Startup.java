@@ -265,7 +265,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION); // OK
+        System.out.println(Main.VERSION);
         return null;
       } else if (arg.equals("-gates")) {
         i++;
@@ -654,7 +654,7 @@ public class Startup implements AWTEventListener {
             + templLoader.getBuiltin().getLibrary("Gates").getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
-      logger.error("FATAL ERROR - no components"); // OK
+      logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
 
