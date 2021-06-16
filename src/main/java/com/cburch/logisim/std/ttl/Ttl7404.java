@@ -40,6 +40,13 @@ import java.util.ArrayList;
  * TTL 74x04: hex inverter gate
  */
 public class Ttl7404 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7404";
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -63,12 +70,15 @@ public class Ttl7404 extends AbstractTtlGate {
     }
   }
 
+  private static final byte portCount = 14;
+  private static final byte[] outPorts = {2, 4, 6, 8, 10, 12};
+
   public Ttl7404() {
-    super("7404", (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+    super(_ID, portCount, outPorts, true);
   }
 
-  public Ttl7404(String Name) {
-    super(Name, (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+  public Ttl7404(String name) {
+    super(name, portCount, outPorts, true);
   }
 
   @Override

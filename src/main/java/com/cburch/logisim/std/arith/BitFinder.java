@@ -49,6 +49,14 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
 
 public class BitFinder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "BitFinder";
+
   static final AttributeOption LOW_ONE =
       new AttributeOption("low1", S.getter("bitFinderLowOption", "1"));
   static final AttributeOption HIGH_ONE =
@@ -64,7 +72,7 @@ public class BitFinder extends InstanceFactory {
           new AttributeOption[] {LOW_ONE, HIGH_ONE, LOW_ZERO, HIGH_ZERO});
 
   public BitFinder() {
-    super("BitFinder", S.getter("bitFinderComponent"));
+    super(_ID, S.getter("bitFinderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, TYPE}, new Object[] {BitWidth.create(8), LOW_ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));

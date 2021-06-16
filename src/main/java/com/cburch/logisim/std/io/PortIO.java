@@ -61,6 +61,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PortIO extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "PortIO";
 
   public static ArrayList<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
@@ -169,7 +176,7 @@ public class PortIO extends InstanceFactory {
   private static final int INITPORTSIZE = 8;
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
-  
+
   public static final AttributeOption INPUT =
      new AttributeOption("onlyinput", S.getter("pioInput"));
   public static final AttributeOption OUTPUT =
@@ -178,15 +185,15 @@ public class PortIO extends InstanceFactory {
      new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
   public static final AttributeOption INOUTME =
      new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
-  
+
   public static final Attribute<AttributeOption> ATTR_DIR =
-     Attributes.forOption("direction", S.getter("pioDirection"), 
+     Attributes.forOption("direction", S.getter("pioDirection"),
          new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
 
   protected static final int DELAY = 1;
 
   public PortIO() {
-    super("PortIO", S.getter("pioComponent"));
+    super(_ID, S.getter("pioComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -208,7 +215,7 @@ public class PortIO extends InstanceFactory {
           false,
           BitWidth.create(INITPORTSIZE),
           INOUTSE,
-          new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) ) 
+          new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) )
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
@@ -326,7 +333,7 @@ public class PortIO extends InstanceFactory {
         int inputs = 0;
         int outputs = 0;
         int ios = 0;
-        ArrayList<String> labels = GetLabels(nrPins); 
+        ArrayList<String> labels = GetLabels(nrPins);
         if (instance.getAttributeValue(ATTR_DIR)==INPUT) {
           inputs = nrPins;
         } else if (instance.getAttributeValue(ATTR_DIR)==OUTPUT) {

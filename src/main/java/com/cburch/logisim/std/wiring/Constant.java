@@ -57,6 +57,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Constant extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Constant";
+
   private static class ConstantAttributes extends AbstractAttributeSet {
     private Direction facing = Direction.EAST;
     private BitWidth width = BitWidth.ONE;
@@ -138,7 +146,7 @@ public class Constant extends InstanceFactory {
       Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
-    super("Constant", S.getter("constantComponent"));
+    super(_ID, S.getter("constantComponent"));
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(

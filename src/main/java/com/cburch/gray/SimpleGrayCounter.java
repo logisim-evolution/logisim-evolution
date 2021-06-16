@@ -44,6 +44,14 @@ import com.cburch.logisim.util.StringUtil;
  * appears in CounterData class.
  */
 class SimpleGrayCounter extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Gray Counter (Simple)";
+
   private static final BitWidth BIT_WIDTH = BitWidth.create(4);
 
   // Again, notice how we don't have any instance variables related to an
@@ -52,7 +60,7 @@ class SimpleGrayCounter extends InstanceFactory {
   // instances that appear in any circuits.
 
   public SimpleGrayCounter() {
-    super("Gray Counter (Simple)");
+    super(_ID);
     setOffsetBounds(Bounds.create(-30, -15, 30, 30));
     setPorts(
         new Port[] {

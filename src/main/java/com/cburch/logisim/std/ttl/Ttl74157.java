@@ -33,6 +33,13 @@ import java.util.ArrayList;
  * Model based on https://www.ti.com/product/SN74LS157 datasheet.
  */
 public class Ttl74157 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74157";
 
   // IC pin indices as specified in the datasheet
   public static final byte SELECT = 1;
@@ -63,13 +70,16 @@ public class Ttl74157 extends AbstractTtlGate {
     "3Y", "3B", "3A", "4Y", "4B", "4A", "nSTROBE (active LOW)"
   };
 
+  private static final byte pinCount = 16;
+  private static final byte[] outPins = { L1_Y, L2_Y, L3_Y, L4_Y };
+
   public Ttl74157() {
-    super("74157", (byte) 16, new byte[] { L1_Y, L2_Y, L3_Y, L4_Y }, pinNames);
+    super(_ID, pinCount, outPins, pinNames);
     invertOutput = false;
   }
 
   public Ttl74157(String icName, boolean invertOutput) {
-    super(icName, (byte) 16, new byte[] { L1_Y, L2_Y, L3_Y, L4_Y }, pinNames);
+    super(icName, pinCount, outPins, pinNames);
     this.invertOutput = invertOutput;
   }
 

@@ -69,6 +69,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 class PLA extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "PLA";
+
   static final int IN_PORT = 0;
   static final int OUT_PORT = 1;
 
@@ -190,7 +198,7 @@ class PLA extends InstanceFactory {
   }
 
   public PLA() {
-    super("PLA", S.getter("PLA"));
+    super(_ID, S.getter("PLA"));
     setIconName("pla.gif");
     setFacingAttribute(StdAttr.FACING);
   }

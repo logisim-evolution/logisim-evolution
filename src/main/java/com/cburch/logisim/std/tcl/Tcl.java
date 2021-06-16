@@ -38,9 +38,8 @@ import java.util.List;
 public class Tcl extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", TclConsoleReds.class),
-    new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", TclGeneric.class)
+    new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
+    new FactoryDescription(TclGeneric.class, S.getter("tclGeneric"), "tcl.gif"),
   };
 
   private List<Tool> tools = null;

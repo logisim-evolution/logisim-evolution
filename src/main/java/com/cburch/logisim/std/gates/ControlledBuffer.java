@@ -56,6 +56,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 class ControlledBuffer extends InstanceFactory {
+
+  // FIXME: No _ID const here due to constructor logic
+
   private static final AttributeOption RIGHT_HANDED =
       new AttributeOption("right", S.getter("controlledRightHanded"));
   private static final AttributeOption LEFT_HANDED =
@@ -108,7 +111,7 @@ class ControlledBuffer extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
-  
+
   public boolean isInverter() { return isInverter; }
 
   //
@@ -279,7 +282,7 @@ class ControlledBuffer extends InstanceFactory {
       state.setPort(0, out, GateAttributes.DELAY);
     }
   }
-  
+
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new ControlledBufferHDLGenerator();
