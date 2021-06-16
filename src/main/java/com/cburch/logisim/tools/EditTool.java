@@ -62,6 +62,14 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class EditTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Edit Tool";
+
   private class Listener implements CircuitListener, Selection.Listener {
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() != CircuitEvent.ACTION_INVALIDATE) {
@@ -223,11 +231,6 @@ public class EditTool extends Tool {
   @Override
   public Set<Component> getHiddenComponents(Canvas canvas) {
     return current.getHiddenComponents(canvas);
-  }
-
-  @Override
-  public String getName() {
-    return "Edit Tool";
   }
 
   @Override

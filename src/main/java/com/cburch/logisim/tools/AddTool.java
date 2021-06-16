@@ -56,6 +56,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
@@ -204,11 +205,11 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
     if (afterAdd.equals(AppPreferences.ADD_AFTER_UNCHANGED)) {
       return null;
     } else { // switch to Edit Tool
-      Library base = proj.getLogisimFile().getLibrary("Base");
+      Library base = proj.getLogisimFile().getLibrary(Base._ID);
       if (base == null) {
         return null;
       } else {
-        return base.getTool("Edit Tool");
+        return base.getTool(EditTool._ID);
       }
     }
   }
@@ -421,8 +422,8 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
               break;
             case KeyEvent.VK_ESCAPE:
               Project proj = canvas.getProject();
-              Library base = proj.getLogisimFile().getLibrary("Base");
-              Tool next = (base == null) ? null : base.getTool("Edit Tool");
+              Library base = proj.getLogisimFile().getLibrary(Base._ID);
+              Tool next = (base == null) ? null : base.getTool(EditTool._ID);
               if (next != null) {
                 proj.setTool(next);
                 Action act = SelectionActions.dropAll(canvas.getSelection());
@@ -559,7 +560,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
             if (!okay) {
               OptionPane.showMessageDialog(
                   null,
-                  "Base label either has wrong syntax or is contained in circuit",
+                  "Base label either has wrong syntax or is contained in circuit",  // FIXME: hardcoded string
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);
               matrix.UndoLabel();

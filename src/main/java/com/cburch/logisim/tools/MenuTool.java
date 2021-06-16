@@ -51,6 +51,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MenuTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Menu Tool";
+
   private static class MenuComponent extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
     final Project proj;
@@ -162,11 +170,6 @@ public class MenuTool extends Tool {
   @Override
   public String getDisplayName() {
     return S.get("menuTool");
-  }
-
-  @Override
-  public String getName() {
-    return "Menu Tool";
   }
 
   @Override

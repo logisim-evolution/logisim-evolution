@@ -75,6 +75,14 @@ import java.util.Set;
 import java.util.SortedSet;
 
 public class SelectTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Select Tool";
+
   private static class ComputingMessage implements StringGetter {
     private final int dx;
     private final int dy;
@@ -303,11 +311,6 @@ public class SelectTool extends Tool {
     } else {
       return null;
     }
-  }
-
-  @Override
-  public String getName() {
-    return "Select Tool";
   }
 
   private void handleMoveDrag(Canvas canvas, int dx, int dy, int modsEx) {

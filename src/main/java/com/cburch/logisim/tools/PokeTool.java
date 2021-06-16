@@ -58,6 +58,14 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 
 public class PokeTool extends Tool {
+    /**
+     * Unique identifier of the tool, used as reference in project files.
+     * Do NOT change as it will prevent project files from loading.
+     *
+     * Identifier value must MUST be unique string among all tools.
+     */
+    public static final String _ID = "Poke Tool";
+
   private class Listener implements CircuitListener {
     public void circuitChanged(CircuitEvent event) {
       Circuit circ = pokedCircuit;
@@ -179,11 +187,6 @@ public class PokeTool extends Tool {
   @Override
   public String getDisplayName() {
     return S.get("pokeTool");
-  }
-
-  @Override
-  public String getName() {
-    return "Poke Tool";
   }
 
   @Override
@@ -311,7 +314,7 @@ public class PokeTool extends Tool {
     g2.draw(p);
     g2.dispose();
   }
-  
+
   private static double scale(double s) {
     return AppPreferences.getScaled(s);
   }

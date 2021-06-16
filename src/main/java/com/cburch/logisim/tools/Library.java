@@ -53,7 +53,9 @@ public abstract class Library {
     return getName();
   }
 
-  /** Returns unique library identifier. */
+  /**
+   * Returns unique library identifier as specified in library static const "_ID" attribute.
+   */
   public String getName() {
     return LibraryUtil.getName(getClass());
   }
