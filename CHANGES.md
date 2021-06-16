@@ -2,6 +2,7 @@
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
   * Made pins' tooltips more descriptive for 74161.
+  * Added new component LED Bar.
   * Added 74157 and 74158: Quad 2-line to1-line selectors.
   * Added option to configure canvas' and grid's colors.
   * Added DIP switch state visual feedback for ON state.
