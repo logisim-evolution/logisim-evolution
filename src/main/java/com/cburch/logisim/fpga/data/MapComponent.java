@@ -51,11 +51,11 @@ public class MapComponent {
   public static final String CONSTANT_KEY = "vconst";
   public static final String PIN_MAP = "pmap";
   public static final String NO_MAP = "u";
-  
+
   private static class MapClass {
     private final FPGAIOInformationContainer IOcomp;
     private Integer pin;
-    
+
     public MapClass(FPGAIOInformationContainer IOcomp,Integer pin) {
       this.IOcomp = IOcomp;
       this.pin = pin;
@@ -64,17 +64,17 @@ public class MapComponent {
     public void unmap() {
       IOcomp.unmap(pin);
     }
-    
+
     public boolean update(MapComponent comp) {
       return IOcomp.updateMap(pin, comp);
     }
-    
+
     public FPGAIOInformationContainer getIOComp() { return IOcomp; }
     public int getIOPin() { return pin; }
     public void setIOPin(int value) { pin = value; }
   }
 
-  /* 
+  /*
    * In the below structure the first Integer is the pin identifier, the second is the global bubble id
    */
   private final HashMap<Integer,Integer> MyInputBubles = new HashMap<>();
@@ -84,16 +84,16 @@ public class MapComponent {
    * The following structure defines if the pin is mapped
    */
   private final ComponentFactory myFactory;
-  
+
   private final ArrayList<String> myName;
-  
+
   private ArrayList<MapClass> maps = new ArrayList<>();
   private ArrayList<Boolean> opens = new ArrayList<>();
   private ArrayList<Integer> constants = new ArrayList<>();
   private final ArrayList<String> pinLabels = new ArrayList<>();
-  
-  private int NrOfPins;
-  
+
+  private int nrOfPins;
+
   public MapComponent(ArrayList<String> name, NetlistComponent comp) {
     myFactory = comp.GetComponent().getFactory();
     myName = name;
@@ -101,34 +101,34 @@ public class MapComponent {
     ArrayList<String> bName = new ArrayList<>();
     for (int i = 1 ; i < name.size() ; i++) bName.add(name.get(i));
     BubbleInformationContainer BubbleInfo = comp.GetGlobalBubbleId(bName);
-    NrOfPins = 0;
+    nrOfPins = 0;
     for (int i = 0 ; i < mapInfo.GetNrOfInports() ; i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
       int idx = BubbleInfo == null ? -1 : BubbleInfo.GetInputStartIndex()+i;
       pinLabels.add(mapInfo.GetInportLabel(i));
-      MyInputBubles.put(NrOfPins++, idx);
+      MyInputBubles.put(nrOfPins++, idx);
     }
     for (int i = 0 ; i < mapInfo.GetNrOfOutports() ; i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      int idx = BubbleInfo == null ? -1 : BubbleInfo.GetOutputStartIndex()+i; 
+      int idx = BubbleInfo == null ? -1 : BubbleInfo.GetOutputStartIndex()+i;
       pinLabels.add(mapInfo.GetOutportLabel(i));
-      MyOutputBubles.put(NrOfPins++, idx);
+      MyOutputBubles.put(nrOfPins++, idx);
     }
     for (int i = 0 ; i < mapInfo.GetNrOfInOutports() ; i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      int idx = BubbleInfo == null ? -1 : BubbleInfo.GetInOutStartIndex()+i; 
+      int idx = BubbleInfo == null ? -1 : BubbleInfo.GetInOutStartIndex()+i;
       pinLabels.add(mapInfo.GetInOutportLabel(i));
-      MyIOBubles.put(NrOfPins++, idx);
+      MyIOBubles.put(nrOfPins++, idx);
     }
   }
-  
-  public int getNrOfPins() { return NrOfPins; }
+
+  public int getNrOfPins() { return nrOfPins; }
   public boolean hasInputs() { return MyInputBubles.keySet().size() != 0; }
   public boolean hasOutputs() { return MyOutputBubles.keySet().size() != 0; }
   public boolean hasIOs() { return MyIOBubles.keySet().size() != 0; }
@@ -138,54 +138,54 @@ public class MapComponent {
   public int nrInputs() { return MyInputBubles.keySet().size(); }
   public int nrOutputs() { return MyOutputBubles.keySet().size(); }
   public int nrIOs() { return MyIOBubles.keySet().size(); }
-  
+
   public int getIOBublePinId(int id) {
 	for (int key : MyIOBubles.keySet())
 	  if (MyIOBubles.get(key) == id) return key;
     return -1;
   }
-  
+
   public String getPinLocation(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return null;
+    if (pin < 0 || pin >= nrOfPins) return null;
     if (maps.get(pin) == null) return null;
     int iopin = maps.get(pin).getIOPin();
     return maps.get(pin).getIOComp().getPinLocation(iopin);
   }
-  
+
   public boolean isMapped(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return false;
+    if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin)!= null) return true;
     if (opens.get(pin)) return true;
     return constants.get(pin) >= 0;
   }
-  
+
   public boolean isBoardMapped(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return false;
+    if (pin < 0 || pin >= nrOfPins) return false;
     return maps.get(pin) != null;
   }
-  
+
   public boolean isExternalInverted(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return false;
+    if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
     return maps.get(pin).getIOComp().GetActivityLevel() == PinActivity.ActiveLow;
   }
-  
+
   public boolean requiresPullup(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return false;
+    if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
     return maps.get(pin).getIOComp().GetPullBehavior() == PullBehaviors.PullUp;
   }
-  
+
   public FPGAIOInformationContainer getFpgaInfo(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return null;
+    if (pin < 0 || pin >= nrOfPins) return null;
     if (maps.get(pin) == null) return null;
     return maps.get(pin).getIOComp();
   }
-  
+
   public boolean equalsType(NetlistComponent comp) {
     return myFactory.equals(comp.GetComponent().getFactory());
   }
-  
+
   public void unmap(int pin) {
     if (pin < 0 || pin >= maps.size()) return;
     MapClass map = maps.get(pin);
@@ -194,9 +194,9 @@ public class MapComponent {
     opens.set(pin, false);
     constants.set(pin, -1);
   }
-  
+
   public void unmap() {
-    for (int i = 0 ; i < NrOfPins ; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       MapClass map = maps.get(i);
       if (map != null) {
         map.unmap();
@@ -205,33 +205,33 @@ public class MapComponent {
       constants.set(i, -1);
     }
   }
-  
+
   public void copyMapFrom(MapComponent comp) {
-    if (comp.NrOfPins != NrOfPins || !comp.myFactory.equals(myFactory)) {
+    if (comp.nrOfPins != nrOfPins || !comp.myFactory.equals(myFactory)) {
       comp.unmap();
       return;
     }
     maps = comp.maps;
     opens = comp.opens;
     constants = comp.constants;
-    for (int i = 0 ; i < NrOfPins ; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       MapClass map = maps.get(i);
-      if (map != null) 
+      if (map != null)
         if (!map.update(this))
           unmap(i);
     }
   }
-  
+
   public void tryMap(CircuitMapInfo cmap, List<FPGAIOInformationContainer> IOcomps) {
     if (cmap.isOpen()) {
       if (cmap.isSinglePin()) {
         int pin = cmap.getPinId();
-        if (pin < 0 || pin >= NrOfPins) return;
+        if (pin < 0 || pin >= nrOfPins) return;
         unmap(pin);
         constants.set(pin, -1);
         opens.set(pin, true);
       } else {
-        for (int i = 0 ; i < NrOfPins ; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           unmap(i);
           constants.set(i, -1);
           opens.set(i, true);
@@ -240,14 +240,14 @@ public class MapComponent {
     } else if (cmap.isConst()) {
       if (cmap.isSinglePin()) {
         int pin = cmap.getPinId();
-        if (pin < 0 || pin >= NrOfPins) return;
+        if (pin < 0 || pin >= nrOfPins) return;
         unmap(pin);
         opens.set(pin, false);
         constants.set(pin, cmap.getConstValue().intValue()&1);
       } else {
         long mask = 1L;
         long val = cmap.getConstValue();
-        for (int i = 0 ; i < NrOfPins; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           unmap(i);
           opens.set(i, false);
           int value = (val&mask) == 0 ? 0 : 1;
@@ -269,8 +269,8 @@ public class MapComponent {
       }
     } else {
       ArrayList<CircuitMapInfo> pmaps = cmap.getPinMaps();
-      if (pmaps.size() != NrOfPins) return;
-      for (int i = 0 ; i < NrOfPins ; i++) {
+      if (pmaps.size() != nrOfPins) return;
+      for (int i = 0; i < nrOfPins; i++) {
     	opens.set(i, false);
     	constants.set(i, -1);
     	if (maps.get(i) != null) maps.get(i).unmap();
@@ -289,9 +289,9 @@ public class MapComponent {
       }
     }
   }
-  
+
   public boolean tryMap(int myPin, FPGAIOInformationContainer comp, int compPin) {
-    if (myPin < 0 || myPin >= NrOfPins) return false;
+    if (myPin < 0 || myPin >= nrOfPins) return false;
     MapClass map = new MapClass(comp, compPin);
     if (!comp.tryMap(this, myPin, compPin)) return false;
     maps.set(myPin, map);
@@ -299,7 +299,7 @@ public class MapComponent {
     constants.set(myPin, -1);
     return true;
   }
-  
+
   public boolean tryMap(String PinKey, CircuitMapInfo cmap, List<FPGAIOInformationContainer> IOcomps) {
     /* this is for backward compatibility */
 	String[] parts = PinKey.split("#");
@@ -330,12 +330,12 @@ public class MapComponent {
 	}
     return false;
   }
-  
+
   public boolean tryConstantMap(int pin, long value) {
     if (pin < 0) {
       long maskinp = 1L;
       boolean change = false;
-      for (int i = 0 ; i < NrOfPins; i++) {
+      for (int i = 0; i < nrOfPins; i++) {
         if (MyInputBubles.containsKey(i)) {
           if (maps.get(i) != null) maps.get(i).unmap();
           maps.set(i, null);
@@ -357,10 +357,10 @@ public class MapComponent {
     }
     return false;
   }
-  
+
   public boolean tryOpenMap(int pin) {
     if (pin < 0) {
-      for (int i = 0 ; i < NrOfPins ; i++) {
+      for (int i = 0; i < nrOfPins; i++) {
         if (MyOutputBubles.containsKey(i) || MyIOBubles.containsKey(i)) {
           if (maps.get(i) != null)  maps.get(i).unmap();
           maps.set(i, null);
@@ -380,19 +380,19 @@ public class MapComponent {
     }
     return false;
   }
-   
+
   public boolean tryMap(FPGAIOInformationContainer comp) {
     /* first we make a copy of the current map in case we have to restore */
     ArrayList<MapClass> oldmaps = new ArrayList<>();
     ArrayList<Boolean> oldOpens = new ArrayList<>();
     ArrayList<Integer> oldConstants = new ArrayList<>();
-    for (int i = 0 ; i < NrOfPins; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       oldmaps.add(maps.get(i));
       oldOpens.add(opens.get(i));
       oldConstants.add(constants.get(i));
     }
     boolean success = true;
-    for (int i = 0 ; i < NrOfPins; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       MapClass newMap = new MapClass(comp, -1);
       MapClass oldMap = maps.get(i);
       if (oldMap != null) oldMap.unmap();
@@ -401,7 +401,7 @@ public class MapComponent {
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
       } else if (MyOutputBubles.containsKey(i)) {
-        int outputid = i-(MyInputBubles == null ? 0 : MyInputBubles.size()); 
+        int outputid = i-(MyInputBubles == null ? 0 : MyInputBubles.size());
         FPGAIOInformationContainer.MapResultClass res = comp.tryOutputMap(this, i, outputid);
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
@@ -422,7 +422,7 @@ public class MapComponent {
     }
     if (!success) {
       /* restore the old situation */
-      for (int i = 0 ; i < NrOfPins && maps != null; i++) {
+      for (int i = 0; i < nrOfPins && maps != null; i++) {
     	if (maps != null && maps.get(i) != null) maps.get(i).unmap();
         MapClass map = oldmaps.get(i);
         if (map != null) {
@@ -435,46 +435,46 @@ public class MapComponent {
     }
     return success;
   }
-  
+
   public boolean hasMap() {
-    for (int i = 0 ; i < NrOfPins ; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       if (opens.get(i)) return true;
       if (constants.get(i) >= 0) return true;
       if (maps.get(i) != null) return true;
     }
     return false;
   }
-  
+
   public boolean isNotMapped() {
-    for (int i = 0 ; i < NrOfPins ; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       if (opens.get(i)) return false;
       if (constants.get(i) >= 0) return false;
       if (maps.get(i) != null) return false;
     }
     return true;
   }
-  
+
   public boolean IsOpenMapped(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return true;
+    if (pin < 0 || pin >= nrOfPins) return true;
     return opens.get(pin);
   }
-  
+
   public boolean IsConstantMapped(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return false;
+    if (pin < 0 || pin >= nrOfPins) return false;
     return (constants.get(pin) >= 0);
   }
-  
+
   public boolean isZeroConstantMap(int pin) {
-    if (pin < 0 || pin >= NrOfPins) return true;
+    if (pin < 0 || pin >= nrOfPins) return true;
     return constants.get(pin) == 0;
   }
-  
+
   public boolean isCompleteMap(boolean bothSides) {
 	FPGAIOInformationContainer io = null;
 	int nrConstants = 0;
 	int nrOpens = 0;
 	int nrMaps = 0;
-    for (int i = 0 ; i < NrOfPins; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       if (opens.get(i)) nrOpens++;
       else if (constants.get(i)>= 0) nrConstants++;
       else if (maps.get(i) != null) {
@@ -483,23 +483,23 @@ public class MapComponent {
         else if (!io.equals(maps.get(i).IOcomp)) return false;
       } else return false;
     }
-    if (nrOpens != 0 && nrOpens == NrOfPins) return true;
-    if (nrConstants != 0 && nrConstants == NrOfPins) return true;
-    if (nrMaps != 0 && nrMaps == NrOfPins) return !bothSides || io.isCompletelyMappedBy(this);
+    if (nrOpens != 0 && nrOpens == nrOfPins) return true;
+    if (nrConstants != 0 && nrConstants == nrOfPins) return true;
+    if (nrMaps != 0 && nrMaps == nrOfPins) return !bothSides || io.isCompletelyMappedBy(this);
     return false;
   }
-  
+
   public String getHdlString(int pin) {
-	if (pin < 0 || pin >= NrOfPins) return null;
-    StringBuilder s = new StringBuilder();
+	if (pin < 0 || pin >= nrOfPins) return null;
+    var s = new StringBuilder();
     /* The first element is the BoardName, so we skip */
     for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
     s.append(s.length() == 0 ? "" : "_").append(pinLabels.get(pin));
     return s.toString();
   }
-  
+
   public String getHdlSignalName(int pin) {
-   	if (pin < 0 || pin >= NrOfPins) return null;
+   	if (pin < 0 || pin >= nrOfPins) return null;
     if (MyInputBubles.containsKey(pin) && MyInputBubles.get(pin) >= 0) {
       return "s_"+HDLGeneratorFactory.LocalInputBubbleBusname+HDL.BracketOpen()+MyInputBubles.get(pin)+HDL.BracketClose();
     }
@@ -511,17 +511,18 @@ public class MapComponent {
     s.append("s_");
     /* The first element is the BoardName, so we skip */
     for (int i = 1 ; i < myName.size() ; i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
-    if (NrOfPins > 1)
-      s.append(HDL.BracketOpen()+pin+HDL.BracketClose());
+    if (nrOfPins > 1) {
+      s.append(HDL.BracketOpen()).append(pin).append(HDL.BracketClose());
+    }
     return s.toString();
   }
-  
+
   public String getDisplayString(int pin) {
 	StringBuilder s = new StringBuilder();
 	/* The first element is the BoardName, so we skip */
 	for (int i = 1 ; i < myName.size() ; i++) s.append("/").append(myName.get(i));
     if (pin >= 0) {
-      if (pin < NrOfPins) s.append("#").append(pinLabels.get(pin));
+      if (pin < nrOfPins) s.append("#").append(pinLabels.get(pin));
       else s.append("#unknown").append(pin);
       if (opens.get(pin)) s.append("->").append(S.get("MapOpen"));
       if (constants.get(pin)>=0) s.append("->").append(constants.get(pin) & 1);
@@ -533,7 +534,7 @@ public class MapComponent {
       long inpConst = 0;
       long ioConst = 0;
       String open = S.get("MapOpen");
-      for (int i = NrOfPins-1 ; i >= 0 ; i--) {
+      for (int i = nrOfPins -1; i >= 0 ; i--) {
         if (MyInputBubles.containsKey(i)) {
           inpAllConst &= constants.get(i) >= 0;
           inpConst <<= 1;
@@ -573,7 +574,7 @@ public class MapComponent {
     }
     return s.toString();
   }
-  
+
   public void getMapElement(Element Map) throws DOMException {
 	if (!hasMap()) return;
     Map.setAttribute(MAP_KEY, getDisplayString(-1));
@@ -582,7 +583,7 @@ public class MapComponent {
         Map.setAttribute("open", "open");
       } else if (constants.get(0) >= 0) {
         long value = 0L;
-        for (int i = NrOfPins-1 ; i >= 0 ; i--) {
+        for (int i = nrOfPins -1; i >= 0 ; i--) {
           value <<= 1L;
           value += constants.get(i);
         }
@@ -593,7 +594,7 @@ public class MapComponent {
       }
     } else {
       StringBuilder s = null;
-      for (int i = 0 ; i < NrOfPins ; i++) {
+      for (int i = 0; i < nrOfPins; i++) {
         if (s == null) s = new StringBuilder();
         else s.append(",");
         if (opens.get(i)) s.append(OPEN_KEY);
@@ -607,7 +608,7 @@ public class MapComponent {
       Map.setAttribute(PIN_MAP, s.toString());
     }
   }
-  
+
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
     ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
@@ -639,7 +640,7 @@ public class MapComponent {
       Map.setAttribute(COMPLETE_MAP, br.getXpos()+","+br.getYpos());
     }
   }
-  
+
   public static CircuitMapInfo getMapInfo(Element map) throws DOMException {
     if (map.hasAttribute(COMPLETE_MAP)) {
       String[] xy = map.getAttribute(COMPLETE_MAP).split(",");
@@ -685,5 +686,5 @@ public class MapComponent {
     }
     return null;
   }
-  
+
 }
