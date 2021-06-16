@@ -44,10 +44,17 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 public class Ttl74165 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74165";
 
   public Ttl74165() {
     super(
-        "74165",
+        _ID,
         (byte) 16,
         new byte[] {7, 9},
         new String[] {

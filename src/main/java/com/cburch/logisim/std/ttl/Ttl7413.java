@@ -36,35 +36,32 @@ import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
 
 public class Ttl7413 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7413";
 
   private boolean inverted = true;
 
-  public Ttl7413(String Name, boolean inv) {
-    super(
-        Name,
-        (byte) 14,
-        new byte[] {6, 8},
-        new byte[] {3, 11},
-        new String[] {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"});
+  private static final byte pinCount = 14;
+  private static final byte[] outPorts = {6, 8};
+  private static final byte[] unusedPorts = {3, 11};
+  private static final String[] portNames = {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"};
+
+  public Ttl7413(String name, boolean inv) {
+    super(name, pinCount, outPorts, unusedPorts, portNames);
     inverted = inv;
   }
 
-  public Ttl7413(String Name) {
-    super(
-        Name,
-        (byte) 14,
-        new byte[] {6, 8},
-        new byte[] {3, 11},
-        new String[] {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"});
+  public Ttl7413(String name) {
+    super(name, pinCount, outPorts, unusedPorts, portNames);
   }
 
   public Ttl7413() {
-    super(
-        "7413",
-        (byte) 14,
-        new byte[] {6, 8},
-        new byte[] {3, 11},
-        new String[] {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"});
+    super(_ID, pinCount, outPorts, unusedPorts, portNames);
   }
 
   @Override

@@ -61,6 +61,13 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class DipSwitch extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "DipSwitch";
 
   public static class Poker extends InstancePoker {
 
@@ -140,7 +147,7 @@ public class DipSwitch extends InstanceFactory {
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
 
   public DipSwitch() {
-    super("DipSwitch", S.getter("DipSwitchComponent"));
+    super(_ID, S.getter("DipSwitchComponent"));
     int dipSize = 8;
     setAttributes(
         new Attribute[] {

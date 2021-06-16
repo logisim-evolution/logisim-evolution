@@ -62,6 +62,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VhdlEntityComponent extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "VHDL Entity";
 
   static class ContentAttribute extends Attribute<VhdlContentComponent> {
 
@@ -122,7 +129,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
-    super("VHDL Entity", S.getter("vhdlComponent"));
+    super(_ID, S.getter("vhdlComponent"));
 
     this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
@@ -166,11 +173,10 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   @Override
   public String getHDLTopName(AttributeSet attrs) {
-
     String label = "";
-
-    if (!attrs.getValue(StdAttr.LABEL).equals(""))
+    if (!attrs.getValue(StdAttr.LABEL).equals("")) {
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
+    }
 
     return getHDLName(attrs) + label;
   }

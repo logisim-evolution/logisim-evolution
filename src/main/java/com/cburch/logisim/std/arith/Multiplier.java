@@ -52,6 +52,13 @@ import java.awt.Graphics;
 import java.math.BigInteger;
 
 public class Multiplier extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Multiplier";
 
   public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
   public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
@@ -155,7 +162,7 @@ public class Multiplier extends InstanceFactory {
   public static final int C_OUT = 4;
 
   public Multiplier() {
-    super("Multiplier", S.getter("multiplierComponent"));
+    super(_ID, S.getter("multiplierComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
@@ -187,12 +194,12 @@ public class Multiplier extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == MODE_ATTR) instance.fireInvalidated();
-  }  
-  
+  }
+
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();

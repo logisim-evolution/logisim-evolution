@@ -40,6 +40,13 @@ import java.util.ArrayList;
  * TTL 74x00: quad 2-input NAND gate
  */
 public class Ttl7400 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7400";
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -62,7 +69,7 @@ public class Ttl7400 extends AbstractTtlGate {
   private final static byte[] outPins = {3, 6, 8, 11};
 
   public Ttl7400() {
-    super("7400", pinCount, outPins, true);
+    super(_ID, pinCount, outPins, true);
   }
 
   public Ttl7400(String name) {

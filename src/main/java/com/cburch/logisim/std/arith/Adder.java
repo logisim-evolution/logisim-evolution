@@ -50,6 +50,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Adder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Adder";
+
   static Value[] computeSum(BitWidth width, Value a, Value b, Value c_in) {
     int w = width.getWidth();
     if (c_in == Value.UNKNOWN || c_in == Value.NIL) c_in = Value.FALSE;
@@ -113,7 +121,7 @@ public class Adder extends InstanceFactory {
   private static final int C_OUT = 4;
 
   public Adder() {
-    super("Adder", S.getter("adderComponent"));
+    super(_ID, S.getter("adderComponent"));
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));

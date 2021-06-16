@@ -52,8 +52,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Decoder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Decoder";
+
   public Decoder() {
-    super("Decoder", S.getter("decoderComponent"));
+    super(_ID, S.getter("decoderComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

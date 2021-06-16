@@ -55,6 +55,13 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 public class Led extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "LED";
 
   public static class Logger extends InstanceLogger {
     @Override
@@ -76,7 +83,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   }
 
   public Led() {
-    super("LED", S.getter("ledComponent"));
+    super(_ID, S.getter("ledComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -100,7 +107,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer( 0, 1, 0 ) 
+          new ComponentMapInformationContainer( 0, 1, 0 )
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(false));

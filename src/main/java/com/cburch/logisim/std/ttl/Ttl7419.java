@@ -29,7 +29,15 @@
 package com.cburch.logisim.std.ttl;
 
 public class Ttl7419 extends Ttl7404 {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7419";
+
   public Ttl7419() {
-    super("7419");
+    super(_ID);
   }
 }

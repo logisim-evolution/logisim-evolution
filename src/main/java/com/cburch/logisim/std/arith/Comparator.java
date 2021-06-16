@@ -49,6 +49,14 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
 public class Comparator extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Comparator";
+
   public static final AttributeOption SIGNED_OPTION =
       new AttributeOption("twosComplement", "twosComplement", S.getter("twosComplementOption"));
   public static final AttributeOption UNSIGNED_OPTION =
@@ -66,7 +74,7 @@ public class Comparator extends InstanceFactory {
   private static final int LT = 4;
 
   public Comparator() {
-    super("Comparator", S.getter("comparatorComponent"));
+    super(_ID, S.getter("comparatorComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTRIBUTE},
         new Object[] {BitWidth.create(8), SIGNED_OPTION});

@@ -51,6 +51,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class JtagUart extends SocInstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "SocJtagUart";
 
   public static final int ClockPin = 0;
   public static final int ResetPin = 1;
@@ -63,9 +70,9 @@ public class JtagUart extends SocInstanceFactory {
   public static final int WritePin = 8;
   public static final int ClearTtyPin = 9;
 
-	
+
   public JtagUart() {
-    super("SocJtagUart",S.getter("SocJtagUartComponent"),SocSlave);
+    super(_ID,S.getter("SocJtagUartComponent"),SocSlave);
     setIcon(new ArithmeticIcon("JtagUart",4));
     setOffsetBounds(Bounds.create(0, 0, 300, 60));
   }
@@ -116,7 +123,7 @@ public class JtagUart extends SocInstanceFactory {
       instance.fireInvalidated();
     } else super.instanceAttributeChanged(instance, attr);
   }
-  
+
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics();
@@ -137,16 +144,16 @@ public class JtagUart extends SocInstanceFactory {
     GraphicsUtil.drawCenteredText(g2, "Jtag Uart", loc.getX()+250, loc.getY()+10);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
+    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2,
     		Bounds.create(loc.getX()+40, loc.getY()+41, 220, 18));
   }
-  
+
   @Override
   public void propagate(InstanceState state) {
     JtagUartState myState = state.getAttributeValue(JtagUartAttributes.JTAG_STATE);
     myState.handleOperations(state);
   }
-  
+
   @Override
   public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) {
     return attrs.getValue(JtagUartAttributes.JTAG_STATE);

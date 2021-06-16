@@ -53,6 +53,13 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 public class DigitalOscilloscope extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Digital Oscilloscope";
 
   private static final Attribute<Integer> ATTR_INPUTS =
       Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 32);
@@ -82,7 +89,7 @@ public class DigitalOscilloscope extends InstanceFactory {
   private final int border = 10;
 
   public DigitalOscilloscope() {
-    super("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"));
+    super(_ID, S.getter("DigitalOscilloscopeComponent"));
     setAttributes(
         new Attribute<?>[] {
           ATTR_INPUTS,

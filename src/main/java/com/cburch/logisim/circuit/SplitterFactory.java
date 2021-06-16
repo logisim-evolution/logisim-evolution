@@ -52,6 +52,14 @@ import java.awt.event.InputEvent;
 import javax.swing.Icon;
 
 public class SplitterFactory extends AbstractComponentFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Splitter";
+
   public static final SplitterFactory instance = new SplitterFactory();
 
   private static final Icon toolIcon = Icons.getIcon("splitter.gif");
@@ -124,7 +132,7 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   @Override
   public String getName() {
-    return "Splitter";
+    return _ID;
   }
 
   @Override

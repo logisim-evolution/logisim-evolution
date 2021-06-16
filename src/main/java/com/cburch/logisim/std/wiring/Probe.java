@@ -57,6 +57,14 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 public class Probe extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Probe";
+
   public static class ProbeLogger extends InstanceLogger {
     public ProbeLogger() {}
 
@@ -279,7 +287,7 @@ public class Probe extends InstanceFactory {
   public static final Probe FACTORY = new Probe();
 
   public Probe() {
-    super("Probe", S.getter("probeComponent"));
+    super(_ID, S.getter("probeComponent"));
     setIconName("probe.gif");
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setFacingAttribute(StdAttr.FACING);

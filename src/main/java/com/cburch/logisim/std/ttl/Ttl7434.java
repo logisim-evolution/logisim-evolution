@@ -31,6 +31,13 @@ import java.util.ArrayList;
  * TTL 74x34: hex buffer gate
  */
 public class Ttl7434 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7434";
 
   private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
@@ -53,17 +60,15 @@ public class Ttl7434 extends AbstractTtlGate {
     }
   }
 
-  public final static String COMPONENT_NAME = "7434";
-
   private final static byte pinCount = 14;
   private final static byte[] outPins = {2, 4, 6, 8, 10, 12};
 
   public Ttl7434() {
-    super(COMPONENT_NAME, pinCount, outPins, true);
+    super(_ID, pinCount, outPins, true);
   }
 
-  public Ttl7434(String Name) {
-    super(Name, pinCount, outPins, true);
+  public Ttl7434(String name) {
+    super(name, pinCount, outPins, true);
   }
 
   @Override

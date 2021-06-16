@@ -53,12 +53,19 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class SocPio extends SocInstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "SocPio";
 
   public static final int ResetIndex = 0;
   public static final int IRQIndex = 1;
 
   public SocPio() {
-    super("SocPio", S.getter("SocPioComponent"), SocSlave);
+    super(_ID, S.getter("SocPioComponent"), SocSlave);
     setIcon(new ArithmeticIcon("SocPIO", 3));
     setOffsetBounds(Bounds.create(0, 0, 380, 120));
   }

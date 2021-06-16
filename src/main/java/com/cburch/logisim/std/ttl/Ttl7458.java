@@ -37,10 +37,17 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Graphics;
 
 public class Ttl7458 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7458";
 
   public Ttl7458() {
     super(
-        "7458",
+        _ID,
         (byte) 14,
         new byte[] {6, 8},
         new String[] {"A0", "A1", "B1", "C1", "D1", "Y1", "Y0", "D0", "E0", "F0", "B0", "C0"});
