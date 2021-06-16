@@ -41,18 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Io extends Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "I/O";
-
   public static final Attribute<Color> ATTR_COLOR =
       Attributes.forColor("color", S.getter("ioColorAttr"));
-  static final Attribute<Color> ATTR_ON_COLOR = Attributes.forColor("color", S.getter("ioOnColor"));
+  static final Attribute<Color> ATTR_ON_COLOR =
+          Attributes.forColor("color", S.getter("ioOnColor"));
   static final Attribute<Color> ATTR_OFF_COLOR =
       Attributes.forColor("offcolor", S.getter("ioOffColor"));
   static final Attribute<Color> ATTR_BACKGROUND =
@@ -68,6 +60,7 @@ public class Io extends Library {
     new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", Joystick.class),
     new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", Keyboard.class),
     new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", Led.class),
+    new FactoryDescription("LedBar", S.getter("ioLedBarComponent"), "ledlightbar.gif", LedBar.class),
     new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", RGBLed.class),
     new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", SevenSegment.class),
     new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", HexDigit.class),
@@ -79,9 +72,16 @@ public class Io extends Library {
 
   private List<Tool> tools = null;
 
+  public Io() {}
+
   @Override
   public String getDisplayName() {
     return S.get("ioLibrary");
+  }
+
+  @Override
+  public String getName() {
+    return "I/O";
   }
 
   @Override
@@ -92,5 +92,9 @@ public class Io extends Library {
       tools.add(new AddTool(Video.factory));
     }
     return tools;
+  }
+
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

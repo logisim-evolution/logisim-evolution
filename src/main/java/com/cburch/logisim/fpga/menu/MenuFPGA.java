@@ -43,42 +43,42 @@ import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
 public class MenuFPGA extends JMenu implements ActionListener {
-  private final Project thisCircuit;
-  private final JMenuItem boardEditor = new JMenuItem();
-  private final JMenuItem fpgaCommander = new JMenuItem();
-  private BoardEditor editor = null;
-  private FPGACommander commander = null;
+  private final Project ThisCircuit;
+  private final JMenuItem BoardEditor = new JMenuItem();
+  private final JMenuItem FPGACommander = new JMenuItem();
+  private BoardEditor Editor = null;
+  private FPGACommander Commander = null;
 
   public MenuFPGA(JFrame parent, LogisimMenuBar menubar, Project proj) {
-    thisCircuit = proj;
+    ThisCircuit = proj;
 
-    boardEditor.addActionListener(this);
-    fpgaCommander.addActionListener(this);
+    BoardEditor.addActionListener(this);
+    FPGACommander.addActionListener(this);
 
-    add(boardEditor);
-    add(fpgaCommander);
+    add(BoardEditor);
+    add(FPGACommander);
     setEnabled(parent instanceof Frame);
   }
 
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == boardEditor) {
-      if (editor == null) {
-        editor = new BoardEditor();
+    if (src == BoardEditor) {
+      if (Editor == null) {
+        Editor = new BoardEditor();
       } else {
-        if (!editor.isActive()) {
-          editor.setActive();
+        if (!Editor.isActive()) {
+          Editor.setActive();
         }
       }
-    } else if (src == fpgaCommander) {
-      if (commander == null) commander = new FPGACommander(thisCircuit);
-      commander.ShowGui();
+    } else if (src == FPGACommander) {
+      if (Commander == null) Commander = new FPGACommander(ThisCircuit);
+      Commander.ShowGui();
     }
   }
 
   public void localeChanged() {
     this.setText(S.get("FPGAMenu"));
-    boardEditor.setText(S.get("FPGABoardEditor"));
-    fpgaCommander.setText(S.get("FPGACommander"));
+    BoardEditor.setText(S.get("FPGABoardEditor"));
+    FPGACommander.setText(S.get("FPGACommander"));
   }
 }

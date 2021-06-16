@@ -60,7 +60,6 @@ import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -69,7 +68,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -87,7 +85,7 @@ public class AssemblyWindow
   private final JMenuItem openFileItem;
   private final JMenuItem reloadFileItem;
   private final JMenuItem close;
-  private final JButton refresh = new JButton("Get Registers"); // FIXME: hardcoded string
+  private final JButton refresh = new JButton("Get Registers");
   private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
 
@@ -117,15 +115,15 @@ public class AssemblyWindow
     combo.setFocusable(false);
     refresh.addActionListener(this);
     refresh.setFocusable(false);
-    refresh.setToolTipText("Get register list of current displayed circuit.");  // FIXME: hardcoded string
+    refresh.setToolTipText("Get register list of current displayed circuit.");
 
-    ontopItem = new JCheckBoxMenuItem("Set on top", true);  // FIXME: hardcoded string
+    ontopItem = new JCheckBoxMenuItem("Set on top", true);
     ontopItem.addActionListener(this);
-    openFileItem = new JMenuItem("Open lss file");  // FIXME: hardcoded string
+    openFileItem = new JMenuItem("Open lss file");
     openFileItem.addActionListener(this);
-    reloadFileItem = new JMenuItem("Reload lss file");  // FIXME: hardcoded string
+    reloadFileItem = new JMenuItem("Reload lss file");
     reloadFileItem.addActionListener(this);
-    close = new JMenuItem("Close"); // FIXME: hardcoded string
+    close = new JMenuItem("Close");
     close.addActionListener(this);
     winMenuBar.add(fileMenu);
     winMenuBar.add(windowMenu);
@@ -137,7 +135,7 @@ public class AssemblyWindow
     fileMenu.add(close);
 
     windows = new LFrame.Dialog(null);
-    windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());  // FIXME: hardcoded string
+    windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
     windows.setAlwaysOnTop(true);
@@ -145,7 +143,7 @@ public class AssemblyWindow
     windows.addWindowListener(this);
     windows.addKeyListener(this);
 
-    north.add(new JLabel("Register: "));  // FIXME: hardcoded string
+    north.add(new JLabel("Register: "));
     north.add(combo);
     north.add(refresh);
 
@@ -165,11 +163,6 @@ public class AssemblyWindow
     windows.setLocation(prefs.getInt("X", 0), prefs.getInt("Y", 0));
     windows.setSize(
         prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
-
-    // Close the frame once ESC is hit
-    windows.getRootPane().registerKeyboardAction(al -> windows.dispose(),
-            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-            JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   @Override

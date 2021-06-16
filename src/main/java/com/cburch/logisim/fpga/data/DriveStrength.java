@@ -43,6 +43,7 @@ public class DriveStrength {
     char result = 0;
     LinkedList<String> thelist = DriveStrength.getStrings();
     Iterator<String> iter = thelist.iterator();
+    result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
       result++;
