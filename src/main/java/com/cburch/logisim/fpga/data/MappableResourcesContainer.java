@@ -60,7 +60,7 @@ public class MappableResourcesContainer {
    *
    * The MappedList keeps track of the display names.
    */
-  public MappableResourcesContainer(BoardInformation CurrentBoard, 
+  public MappableResourcesContainer(BoardInformation CurrentBoard,
                                     Circuit circ) {
     currentUsedBoard = CurrentBoard;
     myCircuit = circ;
@@ -72,14 +72,14 @@ public class MappableResourcesContainer {
         FPGAIOInformationContainer clone = (FPGAIOInformationContainer) io.clone();
         clone.setMapMode();
         myIOComponents.add(clone);
-      } catch (CloneNotSupportedException e) { continue; }
+      } catch (CloneNotSupportedException e) {}
     }
     updateMapableComponents();
     circ.setBoardMap(CurrentBoard.getBoardName(), this);
   }
-  
+
 /*
- * Here we define the new structure of MappableResourcesContainer that allows for more features 
+ * Here we define the new structure of MappableResourcesContainer that allows for more features
  * and has less complexity; being compatible with the old version
  */
   public IOComponentsInformation getIOComponentInformation() {
@@ -90,14 +90,14 @@ public class MappableResourcesContainer {
     }
     return IOcomps;
   }
-  
+
   public Map<ArrayList<String>, MapComponent> getMappableResources() { return myMappableResources; }
-  
-  public void destroyIOComponentInformation() { 
+
+  public void destroyIOComponentInformation() {
     IOcomps.clear();
     IOcomps = null;
   }
-  
+
   public String getToplevelName() { return myCircuit.getName(); }
 
   public BoardInformation getBoardInformation() {
@@ -107,7 +107,7 @@ public class MappableResourcesContainer {
   public void save() {
     ProjectActions.doSave(myCircuit.getProject());
   }
-  
+
   public void updateMapableComponents() {
     HashSet<ArrayList<String>> cur = new HashSet<>();
     if (myMappableResources == null)
@@ -116,7 +116,7 @@ public class MappableResourcesContainer {
       cur.addAll(myMappableResources.keySet());
     ArrayList<String> BoardId = new ArrayList<>();
     BoardId.add(currentUsedBoard.getBoardName());
-    Map<ArrayList<String>, NetlistComponent> newMappableResources = 
+    Map<ArrayList<String>, NetlistComponent> newMappableResources =
            myCircuit.getNetList().GetMappableResources(BoardId, true);
     for (ArrayList<String> key : newMappableResources.keySet()) {
       if (cur.contains(key)) {
@@ -139,18 +139,18 @@ public class MappableResourcesContainer {
       myMappableResources.remove(key);
     }
   }
-  
+
   public void tryMap(String mapKey, CircuitMapInfo cmap) {
     ArrayList<String> key = getHierarchyName(mapKey);
     if (!myMappableResources.containsKey(key)) return;
     if (mapKey.contains("#")) myMappableResources.get(key).tryMap(mapKey, cmap, myIOComponents);
     else  myMappableResources.get(key).tryMap(cmap,myIOComponents);
   }
-  
+
   public void tryMap(String mapKey, BoardRectangle rect) {
     tryMap(mapKey, new CircuitMapInfo(rect));
   }
-  
+
   public Map<String,CircuitMapInfo> getCircuitMap() {
     int id = 0;
     HashMap<String,CircuitMapInfo> result = new HashMap<>();
@@ -159,27 +159,27 @@ public class MappableResourcesContainer {
     }
     return result;
   }
-  
+
   public void unMapAll() {
     for (ArrayList<String> key : myMappableResources.keySet())
       myMappableResources.get(key).unmap();
   }
-  
+
   private ArrayList<String> getHierarchyName(String mapKey) {
     String[] split1 = mapKey.split(" ");
     String hier = split1[split1.length-1];
     String[] split2 = hier.split("#");
     ArrayList<String> result = new ArrayList<>();
     result.add(currentUsedBoard.getBoardName());
-    for (String key : split2[0].split("/")) 
+    for (String key : split2[0].split("/"))
       if (!key.isEmpty()) result.add(key);
     return result;
   }
-  
+
   public void markChanged() {
     myCircuit.getProject().setForcedDirty();
   }
-  
+
   public boolean isCompletelyMapped() {
 boolean result = true;
     for (ArrayList<String> key : myMappableResources.keySet()) {
@@ -189,7 +189,7 @@ boolean result = true;
     }
     return result;
   }
-  
+
   public ArrayList<String> GetMappedIOPinNames() {
     ArrayList<String> result = new ArrayList<>();
     for (ArrayList<String> key : myMappableResources.keySet()) {

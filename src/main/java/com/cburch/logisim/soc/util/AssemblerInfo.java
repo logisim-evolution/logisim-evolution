@@ -353,12 +353,15 @@ public class AssemblerInfo {
     for (int i = 0 ; i < macroTokens.size() ; i++) {
       AssemblerToken asm = macroTokens.get(i);
       switch (asm.getType()) {
-        case AssemblerToken.INSTRUCTION     : i += handleInstruction(macroTokens,i,asm);
-                                              continue;
-        case AssemblerToken.MACRO           : i += handleMacros(macroTokens,i,asm,macros);
-                                              continue;
-        default                             : errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
-                                              continue;
+        case AssemblerToken.INSTRUCTION:
+          i += handleInstruction(macroTokens, i, asm);
+          break;
+        case AssemblerToken.MACRO:
+          i += handleMacros(macroTokens, i, asm, macros);
+          break;
+        default:
+          errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
+          break;
       }
     }
     return skip;
