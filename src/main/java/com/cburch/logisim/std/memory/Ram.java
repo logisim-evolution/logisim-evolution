@@ -53,6 +53,13 @@ import com.cburch.logisim.proj.Project;
 import java.util.WeakHashMap;
 
 public class Ram extends Mem {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "RAM";
 
   public static class Logger extends InstanceLogger {
 
@@ -111,7 +118,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
-    super("RAM", S.getter("ramComponent"), 3);
+    super(_ID, S.getter("ramComponent"), 3);
     setIcon(new ArithmeticIcon("RAM",3));
     setInstanceLogger(Logger.class);
   }
@@ -150,10 +157,10 @@ public class Ram extends Mem {
       return "RAMCONTENTS_" + Label;
     }
   }
-  
+
   private MemContents getNewContents(AttributeSet attrs) {
-    MemContents contents = MemContents.create(attrs.getValue(Mem.ADDR_ATTR).getWidth(), 
-                                             attrs.getValue(Mem.DATA_ATTR).getWidth()); 
+    MemContents contents = MemContents.create(attrs.getValue(Mem.ADDR_ATTR).getWidth(),
+                                             attrs.getValue(Mem.DATA_ATTR).getWidth());
     contents.condFillRandom();
     return contents;
   }
@@ -168,7 +175,7 @@ public class Ram extends Mem {
       return ret;
     }
   }
-  
+
   public static void closeHexFrame(RamState state) {
     MemContents contents = state.getContents();
     HexFrame ret;
@@ -184,7 +191,7 @@ public class Ram extends Mem {
     RamState ret = (RamState) instance.getData(circState);
     return getHexFrame((ret == null) ? getNewContents(instance.getAttributeSet()) : ret.getContents(), proj, instance);
   }
-  
+
   public boolean reset(CircuitState state, Instance instance) {
     RamState ret = (RamState) instance.getData(state);
     if (ret == null) return true;
@@ -260,7 +267,7 @@ public class Ram extends Mem {
   public void propagate(InstanceState state) {
     AttributeSet attrs = state.getAttributeSet();
     RamState myState = (RamState) getState(state);
-    
+
     // first we check the clear pin
     if (attrs.getValue(RamAttributes.CLEAR_PIN)) {
       Value clearValue = state.getPortValue(RamAppearance.getClrIndex(0, attrs));
@@ -286,7 +293,7 @@ public class Ram extends Mem {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);
     }
-    
+
     // now we handle the two different behaviors, line-enables or byte-enables
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       propagateLineEnables(state,addr,goodAddr,addrValue.isErrorValue());
@@ -294,7 +301,7 @@ public class Ram extends Mem {
       propagateByteEnables(state,addr,goodAddr,addrValue.isErrorValue());
     }
   }
-  
+
   private void propagateLineEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     AttributeSet attrs = state.getAttributeSet();
     RamState myState = (RamState) getState(state);
@@ -336,7 +343,7 @@ public class Ram extends Mem {
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(width), DELAY);
     }
   }
-  
+
   private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     AttributeSet attrs = state.getAttributeSet();
     RamState myState = (RamState) getState(state);
@@ -350,7 +357,7 @@ public class Ram extends Mem {
     boolean edge =
         !async && myState
             .setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
-    boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) || 
+    boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) ||
                       (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
     if (goodAddr && weTriggered) {
@@ -369,7 +376,7 @@ public class Ram extends Mem {
       }
       myState.getContents().set(addr, newMemValue);
     }
-    
+
     // perform reads
     BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
     boolean outputNotEnabled = state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
@@ -380,20 +387,20 @@ public class Ram extends Mem {
     }
     /* if the OE is not activated return */
     if (outputNotEnabled) return;
-    
+
     /* if the address is bogus set error value */
     if (!goodAddr || errorValue) {
       state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createError(dataBits), DELAY);
       return;
     }
-    
+
     boolean asyncRead = async || attrs.getValue(Mem.ASYNC_READ);
-    
+
     if (asyncRead) {
       state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, newMemValue), DELAY);
       return;
     }
-    
+
     if (edge) {
       if (attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE))
         state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, newMemValue), DELAY);
@@ -401,12 +408,12 @@ public class Ram extends Mem {
         state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, oldMemValue), DELAY);
     }
   }
-  
+
   @Override
   public void removeComponent(Circuit circ, Component c , CircuitState state) {
-    if (state != null) closeHexFrame((RamState)state.getData(c));  
+    if (state != null) closeHexFrame((RamState)state.getData(c));
   }
-  
+
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
     return bus == null || bus.equals(RamAttributes.BUS_SEP);

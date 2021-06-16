@@ -52,8 +52,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
-public abstract class AbstractTtlGate extends InstanceFactory {
-
+abstract public class AbstractTtlGate extends InstanceFactory {
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
   protected final byte pinnumber;

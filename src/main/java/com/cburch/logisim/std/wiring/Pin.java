@@ -85,6 +85,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class Pin extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Pin";
 
   @SuppressWarnings("serial")
   private static class EditDecimal extends JDialog implements KeyListener, LocaleListener {
@@ -184,8 +191,8 @@ public class Pin extends InstanceFactory {
       String s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
-            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || 
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
+            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) ||
             s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
@@ -213,7 +220,7 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
+      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
           s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
       try {
     	BigInteger n = new BigInteger(s);
@@ -271,7 +278,7 @@ public class Pin extends InstanceFactory {
       PinState s = getState(state);
       return s.intendedValue;
     }
-    
+
     @Override
     public boolean isInput(InstanceState state, Object option) {
       PinAttributes attrs = (PinAttributes) state.getAttributeSet();
@@ -394,7 +401,7 @@ public class Pin extends InstanceFactory {
             carry = s / 2;
           }
         }
-      } else if (tristate && (ch == Character.toLowerCase(Value.UNKNOWNCHAR) || 
+      } else if (tristate && (ch == Character.toLowerCase(Value.UNKNOWNCHAR) ||
                  ch == Character.toUpperCase(Value.UNKNOWNCHAR))) {
         for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
       } else {
@@ -573,7 +580,7 @@ public class Pin extends InstanceFactory {
       return Value.createKnown(expectedWidth, 0);
     }
   }
-  
+
   public static final Attribute<Boolean> ATTR_TRISTATE =
       Attributes.forBoolean("tristate", S.getter("pinThreeStateAttr"));
   public static final Attribute<Boolean> ATTR_TYPE =
@@ -596,7 +603,7 @@ public class Pin extends InstanceFactory {
   public static final int DIGIT_WIDTH = 8;
 
   public Pin() {
-    super("Pin", S.getter("pinComponent"));
+    super(_ID, S.getter("pinComponent"));
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(

@@ -51,6 +51,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 public class BitExtender extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Bit Extender";
+
   private static final Attribute<BitWidth> ATTR_IN_WIDTH =
       Attributes.forBitWidth("in_width", S.getter("extenderInAttr"));
   private static final Attribute<BitWidth> ATTR_OUT_WIDTH =
@@ -69,7 +77,7 @@ public class BitExtender extends InstanceFactory {
   public static final BitExtender FACTORY = new BitExtender();
 
   public BitExtender() {
-    super("Bit Extender", S.getter("extenderComponent"));
+    super(_ID, S.getter("extenderComponent"));
     setIconName("extender.gif");
     setAttributes(
         new Attribute[] {ATTR_IN_WIDTH, ATTR_OUT_WIDTH, ATTR_TYPE},

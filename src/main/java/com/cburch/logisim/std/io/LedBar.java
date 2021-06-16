@@ -32,6 +32,14 @@ import static com.cburch.logisim.std.Strings.S;
 /** LED cluster */
 public class LedBar extends DotMatrixBase {
 
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "LedBar";
+
   protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
       Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
   protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
@@ -100,7 +108,7 @@ public class LedBar extends DotMatrixBase {
   /* ****************************************************************** */
 
   public LedBar() {
-    super("LedLightBar", S.getter("ioLedBarComponent"), 8, 1);
+    super(_ID, S.getter("ioLedBarComponent"), 8, 1);
     setIcon(new LedBarIcon());
 
     ATTR_DOT_SHAPE.setHidden(true);

@@ -48,6 +48,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class DisplayDecoder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "DisplayDecoder";
 
   private static final Attribute<Boolean> MULTI_BIT =
       Attributes.forBoolean("multibit", S.getter("ioMultiBit"));
@@ -260,7 +267,7 @@ public class DisplayDecoder extends InstanceFactory {
   }
 
   public DisplayDecoder() {
-    super("DisplayDecoder", S.getter("DisplayDecoderComponent"));
+    super(_ID, S.getter("DisplayDecoderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.FACING, MULTI_BIT}, new Object[] {Direction.EAST, Boolean.TRUE});
     setFacingAttribute(StdAttr.FACING);

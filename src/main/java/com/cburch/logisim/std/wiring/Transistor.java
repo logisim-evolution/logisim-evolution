@@ -55,6 +55,14 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 public class Transistor extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Transistor";
+
   static final AttributeOption TYPE_P = new AttributeOption("p", S.getter("transistorTypeP"));
   static final AttributeOption TYPE_N = new AttributeOption("n", S.getter("transistorTypeN"));
   static final Attribute<AttributeOption> ATTR_TYPE =
@@ -69,7 +77,7 @@ public class Transistor extends InstanceFactory {
   private static final Icon ICON_P = Icons.getIcon("trans0.gif");
 
   public Transistor() {
-    super("Transistor", S.getter("transistorComponent"));
+    super(_ID, S.getter("transistorComponent"));
     setAttributes(
         new Attribute[] {ATTR_TYPE, StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.WIDTH},
         new Object[] {TYPE_P, Direction.EAST, Wiring.GATE_TOP_LEFT, BitWidth.ONE});

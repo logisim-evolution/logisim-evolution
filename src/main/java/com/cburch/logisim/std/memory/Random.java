@@ -56,6 +56,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Random extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Random";
+
   public static class Logger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -76,7 +84,7 @@ public class Random extends InstanceFactory {
       if (data == null) return Value.createKnown(dataWidth, 0);
       return Value.createKnown(dataWidth, data.value);
     }
-    
+
     @Override
     public boolean isInput(InstanceState state, Object option) {
       return true;
@@ -145,7 +153,7 @@ public class Random extends InstanceFactory {
   static final int RST = 3;
 
   public Random() {
-    super("Random", S.getter("randomComponent"));
+    super(_ID, S.getter("randomComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,

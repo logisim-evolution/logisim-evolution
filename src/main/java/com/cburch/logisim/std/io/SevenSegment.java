@@ -55,6 +55,14 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class SevenSegment extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7-Segment Display";
+
   static void drawBase(InstancePainter painter, boolean DrawPoint) {
     ensureSegments();
     InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
@@ -121,7 +129,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     LabelNames.set(DP, "DecimalPoint");
     return LabelNames;
   }
-  
+
   public static String getOutputLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
@@ -140,12 +148,12 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   static Bounds[] SEGMENTS = null;
 
   static final Color DEFAULT_OFF = new Color(220, 220, 220);
-  
-  public static final Attribute<Boolean> ATTR_DP = 
+
+  public static final Attribute<Boolean> ATTR_DP =
     Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
-    super("7-Segment Display", S.getter("sevenSegmentComponent"));
+    super(_ID, S.getter("sevenSegmentComponent"));
     setAttributes(
         new Attribute[] {
           Io.ATTR_ON_COLOR,
@@ -175,7 +183,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     setIcon(new SevenSegmentIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
   }
-  
+
   private void updatePorts(Instance instance) {
 	boolean hasDp = instance.getAttributeValue(ATTR_DP);
     Port[] ps = new Port[hasDp ? 8 : 7];

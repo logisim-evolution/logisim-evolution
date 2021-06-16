@@ -52,21 +52,28 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 public class SocVga extends SocInstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "SocVga";
 
   public SocVga() {
-    super("SocVga",S.getter("SocVgaComponent"),SocSlave|SocSniffer|SocMaster);
+    super(_ID,S.getter("SocVgaComponent"),SocSlave|SocSniffer|SocMaster);
     setIcon(new ArithmeticIcon("SocVGA",3));
   }
-  
+
   @Override
   public AttributeSet createAttributeSet() { return new VgaAttributes(); }
-  
+
   @Override
   public void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     setTextField(instance);
   }
-  
+
   public void setTextField(Instance instance) {
     instance.recomputeBounds();
     Bounds bds = instance.getBounds();
@@ -78,12 +85,12 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
             GraphicsUtil.H_CENTER,
             GraphicsUtil.V_BASELINE);
   }
-  
+
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
     return VgaState.getSize(VgaAttributes.getModeIndex(attrsBase.getValue(VgaAttributes.VGA_STATE).getCurrentMode()));
   }
-  
+
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == MenuExtender.class) {
@@ -114,8 +121,8 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
     g.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g, "SOC VGA", bds.getWidth()/2, 10);
     g.setFont(f);
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g, 
-            Bounds.create(VgaState.LEFT_MARGIN, bds.getHeight()-VgaState.BOTTOM_MARGIN+1, 
+    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g,
+            Bounds.create(VgaState.LEFT_MARGIN, bds.getHeight()-VgaState.BOTTOM_MARGIN+1,
                 bds.getWidth()-VgaState.LEFT_MARGIN-VgaState.RIGHT_MARGIN, VgaState.BOTTOM_MARGIN-2));
     VgaState.VgaDisplayState data = (VgaState.VgaDisplayState) painter.getData();
     if (data != null)

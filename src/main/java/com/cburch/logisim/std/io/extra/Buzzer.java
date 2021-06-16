@@ -62,6 +62,13 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class Buzzer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Buzzer";
 
   private static final byte FREQ = 0;
   private static final byte ENABLE = 1;
@@ -104,7 +111,7 @@ public class Buzzer extends InstanceFactory {
       Attributes.forIntegerRange("smooth_width", S.getter("buzzerSmoothWidth"), 1, 10);
 
   public Buzzer() {
-    super("Buzzer", S.getter("buzzerComponent"));
+    super(_ID, S.getter("buzzerComponent"));
     setAttributes(
         new Attribute[]{
             StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT,

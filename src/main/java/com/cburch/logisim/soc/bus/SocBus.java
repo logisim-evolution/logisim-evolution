@@ -54,11 +54,18 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class SocBus extends SocInstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "SocBus";
 
   public static final SocBusMenuProvider MENU_PROVIDER = new SocBusMenuProvider();
 
   public SocBus() {
-    super("SocBus", S.getter("SocBusComponent"), SocBus);
+    super(_ID, S.getter("SocBusComponent"), SocBus);
     setIcon(new ArithmeticIcon("SOCBus", 3));
   }
 
