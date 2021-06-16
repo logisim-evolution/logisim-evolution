@@ -162,10 +162,7 @@ class LayoutOptions extends OptionsPanel {
   private static class MyListener implements PreferenceChangeListener {
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-      boolean update = false;
-      if (evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier())) {
-        update = true;
-      }
+      boolean update = evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier());
       if (update) {
         for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
       }

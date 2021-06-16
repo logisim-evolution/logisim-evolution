@@ -89,7 +89,7 @@ public class CircuitState implements InstanceData {
             substate.parentComp = null;
             substate.reset();
           }
-        } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider) 
+        } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider)getData(comp)).destroy();
         if (comp instanceof Wire) {
           Wire w = (Wire) comp;
@@ -135,7 +135,7 @@ public class CircuitState implements InstanceData {
         if (map == null) return;
         for (Component comp : map.getRemovals()) {
           Object compState = componentData.remove(comp);
-          if (compState != null) continue; 
+          if (compState != null) continue;
           Class<?> compFactory = comp.getFactory().getClass();
           boolean found = false;
           for (Component repl : map.getReplacementsFor(comp)) {
@@ -522,7 +522,7 @@ public class CircuitState implements InstanceData {
       ret |= Clock.tick(this, ticks, clock);
 
     CircuitState[] subs = new CircuitState[substates.size()];
-    for (CircuitState substate : substates.toArray(subs)) 
+    for (CircuitState substate : substates.toArray(subs))
       ret |= substate.toggleClocks(ticks);
     return ret;
   }
@@ -563,7 +563,7 @@ public class CircuitState implements InstanceData {
 
   public boolean setTemporaryClock(Component clk) {
     temporaryClock = clk;
-    return clk == null ? true : temporaryClockValidateOrTick(-1);
+    return clk == null || temporaryClockValidateOrTick(-1);
   }
 
   public Component getTemporaryClock() {
