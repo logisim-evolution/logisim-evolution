@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.library;
+package com.cburch.logisim.std.bfh;
 
 import static com.cburch.logisim.std.Strings.S;
 
