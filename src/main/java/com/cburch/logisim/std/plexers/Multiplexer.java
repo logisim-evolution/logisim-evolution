@@ -120,7 +120,7 @@ public class Multiplexer extends InstanceFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
-      int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
+      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);

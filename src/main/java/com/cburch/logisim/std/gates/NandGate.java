@@ -51,7 +51,7 @@ class NandGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      StringBuilder OneLine = new StringBuilder();
+      StringBuffer OneLine = new StringBuffer();
       OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.andOperator() + HDL.notOperator() + "(");
       int TabWidth = OneLine.length();
       boolean first = true;

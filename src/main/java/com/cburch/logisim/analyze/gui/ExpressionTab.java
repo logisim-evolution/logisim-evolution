@@ -104,13 +104,13 @@ class ExpressionTab extends AnalyzerTab {
   public class ExpressionTableModel extends AbstractTableModel implements VariableListListener, OutputExpressionsListener {
     private static final long serialVersionUID = 1L;
     NamedExpression[] listCopy;
-
+    
     public ExpressionTableModel() {
         updateCopy();
         model.getOutputs().addVariableListListener(this);
         model.getOutputExpressions().addOutputExpressionsListener(this);
     }
-
+    
     @Override
     public void fireTableChanged(TableModelEvent event) {
       int    index;
@@ -180,7 +180,6 @@ class ExpressionTab extends AnalyzerTab {
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-      case VariableListEvent.MOVE:
       case VariableListEvent.ALL_REPLACED:
         fireTableDataChanged();
         return;
@@ -189,6 +188,9 @@ class ExpressionTab extends AnalyzerTab {
         return;
       case VariableListEvent.REMOVE:
         fireTableRowsDeleted(idx, idx);
+        return;
+      case VariableListEvent.MOVE:
+        fireTableDataChanged();
         return;
       case VariableListEvent.REPLACE:
         fireTableRowsUpdated(idx, idx);
@@ -218,7 +220,7 @@ class ExpressionTab extends AnalyzerTab {
       }
     }
   }
-
+    
   public class ExpressionTableCellRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
@@ -315,7 +317,7 @@ class ExpressionTab extends AnalyzerTab {
       return false;
     }
   }
-
+  
   private class MyListener implements ItemListener {
 
 	@Override
@@ -328,9 +330,9 @@ class ExpressionTab extends AnalyzerTab {
 	        }
 		}
 	}
-
+	  
   }
-
+  
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
   private final JLabel notationLabel = new JLabel();
@@ -338,7 +340,7 @@ class ExpressionTab extends AnalyzerTab {
   private Notation notation = Notation.MATHEMATICAL;
   private final MyListener myListener = new MyListener();
   private final ExpressionView prettyView = new ExpressionView();
-
+  
   public ExpressionTab(AnalyzerModel model, LogisimMenuBar menubar) {
     localeChanged();
     this.model = model;
@@ -352,7 +354,7 @@ class ExpressionTab extends AnalyzerTab {
     TransferHandler ccp = new ExpressionTransferHandler();
     table.setTransferHandler(ccp);
     table.setDropMode(DropMode.ON);
-
+    
     InputMap inputMap = table.getInputMap();
     for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
       KeyStroke accel = menubar.getAccelerator(item);
@@ -366,7 +368,7 @@ class ExpressionTab extends AnalyzerTab {
     GridBagConstraints gc = new GridBagConstraints();
     setLayout(gb);
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+    
     gc.weightx = 1.0;
     gc.gridx = 0;
     gc.gridy = GridBagConstraints.RELATIVE;
@@ -393,7 +395,7 @@ class ExpressionTab extends AnalyzerTab {
     gc.fill = GridBagConstraints.HORIZONTAL;
     gb.setConstraints(error, gc);
     add(error);
-
+    
     FocusListener f = new FocusListener() {
       public void focusGained(FocusEvent e) {
         if (e.isTemporary()) return;
@@ -456,7 +458,7 @@ class ExpressionTab extends AnalyzerTab {
   void updateTab() {
 	  tableModel.update();
   }
-
+  
   @Override
   EditHandler getEditHandler() {
     return editHandler;

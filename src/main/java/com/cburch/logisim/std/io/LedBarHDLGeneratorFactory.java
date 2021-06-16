@@ -26,45 +26,20 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.tcl;
+package com.cburch.logisim.std.io;
 
-import static com.cburch.logisim.std.Strings.S;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.BitWidth;
 
-import com.cburch.logisim.tools.FactoryDescription;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-import java.util.List;
-
-public class Tcl extends Library {
-
-  private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
-    new FactoryDescription(TclGeneric.class, S.getter("tclGeneric"), "tcl.gif"),
-  };
-
-  private List<Tool> tools = null;
-
-  public Tcl() {}
+public class LedBarHDLGeneratorFactory extends DotMatrixHDLGeneratorFactory {
 
   @Override
-  public String getDisplayName() {
-    return S.get("tclLibrary");
+  protected Attribute<BitWidth> getAttributeRows() {
+    return LedBar.ATTR_MATRIX_ROWS;
   }
-
   @Override
-  public String getName() {
-    return "TCL";
+  protected Attribute<BitWidth> getAttributeColumns() {
+    return LedBar.ATTR_MATRIX_COLS;
   }
 
-  @Override
-  public List<Tool> getTools() {
-    if (tools == null) {
-      tools = FactoryDescription.getTools(Tcl.class, DESCRIPTIONS);
-    }
-    return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
 }

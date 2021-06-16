@@ -44,14 +44,6 @@ import java.util.List;
 
 public class Wiring extends Library {
 
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "Wiring";
-
   static final AttributeOption GATE_TOP_LEFT =
       new AttributeOption("tl", S.getter("wiringGateTopLeftOption"));
   static final AttributeOption GATE_BOTTOM_RIGHT =
@@ -84,9 +76,16 @@ public class Wiring extends Library {
 
   private List<Tool> tools = null;
 
+  public Wiring() {}
+
   @Override
   public String getDisplayName() {
     return S.get("wiringLibrary");
+  }
+
+  @Override
+  public String getName() {
+    return "Wiring";
   }
 
   @Override
@@ -98,5 +97,9 @@ public class Wiring extends Library {
       tools = ret;
     }
     return tools;
+  }
+
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

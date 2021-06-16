@@ -66,31 +66,30 @@ public class Main {
     Startup startup = Startup.parseArgs(args);
     if (startup == null) {
       System.exit(0);
-    }
-
-    try {
-      startup.run();
-    } catch (Throwable e) {
-      Writer result = new StringWriter();
-      PrintWriter printWriter = new PrintWriter(result);
-      e.printStackTrace(printWriter);
-      OptionPane.showMessageDialog(null, result.toString());
-      System.exit(-1);
+    } else {
+      try {
+        startup.run();
+      } catch (Throwable e) {
+        Writer result = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(result);
+        e.printStackTrace(printWriter);
+        OptionPane.showMessageDialog(null, result.toString());
+        System.exit(-1);
+      }
     }
   }
 
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final String APP_NAME = "Logisim-evolution";
-  public static final LogisimVersion VERSION =
-    LogisimVersion.get(3, 5, 0, LogisimVersion.FINAL_REVISION);
-  public static final String VERSION_NAME = VERSION.toString();
+  public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
   public static final int COPYRIGHT_YEAR = 2021;
-  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION_NAME;
+  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean hasGui() { return !headless; }
+
 }

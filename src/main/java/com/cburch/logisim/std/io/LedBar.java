@@ -14,30 +14,23 @@
  * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Original code by Marcin Orlowski (http://MarcinOrlowski.com), 2021
  */
 
 package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.LedBarIcon;
 
 import static com.cburch.logisim.std.Strings.S;
 
-/** LED dot Matrix */
-public class DotMatrix extends DotMatrixBase {
+/** LED cluster */
+public class LedBar extends DotMatrixBase {
 
   /**
    * Unique identifier of the tool, used as reference in project files.
@@ -45,31 +38,50 @@ public class DotMatrix extends DotMatrixBase {
    *
    * Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "DotMatrix";
+  public static final String _ID = "LedBar";
 
-  public DotMatrix() {
-    super(_ID, S.getter("dotMatrixComponent"), 5, 7);
-  }
-
-  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
-      Attributes.forBitWidth("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
   protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
       Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
+  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
+      Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
 
+  protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
+      Attributes.forOption(
+          "dotshape",
+          S.getter("ioMatrixShape"),
+          new AttributeOption[] {
+            SHAPE_PADDED_SQUARE,
+          });
+
+  protected static final AttributeOption INPUT_ONE_WIRE =
+      new AttributeOption("row", S.getter("ioLedBarInputOneWire"));
+  protected static final AttributeOption INPUT_SEPARATED =
+      new AttributeOption("column", S.getter("ioLedBarInputSeparated"));
+
+  protected static final Attribute<AttributeOption> ATTR_INPUT_TYPE =
+      Attributes.forOption(
+          "inputtype",
+          S.getter("ioLedBarInput"),
+          new AttributeOption[] {INPUT_SEPARATED, INPUT_ONE_WIRE});
+
+  @Override
   public Attribute<BitWidth> getAttributeRows() {
     return ATTR_MATRIX_ROWS;
   }
 
+  @Override
   public Attribute<BitWidth> getAttributeColumns() {
     return ATTR_MATRIX_COLS;
   }
 
+  @Override
   public Attribute<AttributeOption> getAttributeShape() {
     return ATTR_DOT_SHAPE;
   }
 
+  @Override
   public AttributeOption getDefaultShape() {
-    return SHAPE_SQUARE;
+    return SHAPE_PADDED_SQUARE;
   }
 
   @Override
@@ -79,16 +91,38 @@ public class DotMatrix extends DotMatrixBase {
 
   @Override
   public AttributeOption getAttributeItemColumn() {
-    return INPUT_COLUMN;
+    return INPUT_SEPARATED;
   }
 
   @Override
   public AttributeOption getAttributeItemRow() {
-    return INPUT_ROW;
+    return INPUT_ONE_WIRE;
   }
 
   @Override
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
+  }
+
+
+  /* ****************************************************************** */
+
+  public LedBar() {
+    super(_ID, S.getter("ioLedBarComponent"), 8, 1);
+    setIcon(new LedBarIcon());
+
+    ATTR_DOT_SHAPE.setHidden(true);
+    ATTR_MATRIX_ROWS.setHidden(true);
+
+    setScaleY(3);
+    setDrawBorder(false);
+  }
+
+  /* ****************************************************************** */
+
+  @Override
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new LedBarHDLGeneratorFactory();
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

@@ -29,22 +29,11 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
-
 import com.cburch.logisim.util.LibraryUtil;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Library {
-
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = null;
-
   private boolean hidden = false;
 
   public boolean contains(ComponentFactory query) {
@@ -60,16 +49,11 @@ public abstract class Library {
     return false;
   }
 
-  /**
-   * Returns the name of the library that the user will see.
-   */
   public String getDisplayName() {
     return getName();
   }
 
-  /**
-   * Returns unique library identifier.
-   */
+  /** Returns unique library identifier. */
   public String getName() {
     return LibraryUtil.getName(getClass());
   }
@@ -80,16 +64,14 @@ public abstract class Library {
 
   public Library getLibrary(String name) {
     for (Library lib : getLibraries()) {
-      if (name.equals(lib.getName())) {
+      if (lib.getName().equals(name)) {
         return lib;
       }
     }
     return null;
   }
 
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
+  public abstract boolean removeLibrary(String name);
 
   public Tool getTool(String name) {
     for (Tool tool : getTools()) {
@@ -100,9 +82,6 @@ public abstract class Library {
     return null;
   }
 
-  /**
-   * Returns a list of all the tools available in this library.
-   */
   public abstract List<? extends Tool> getTools();
 
   public int indexOf(ComponentFactory query) {
