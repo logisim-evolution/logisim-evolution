@@ -26,58 +26,55 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.io.extra;
+package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ITA_IO extends Library {
+public class MemoryLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "Input/Output-Extra";
+  public static final String _ID = "MemoryLibrary";
+
+  protected static final int DELAY = 5;
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),
-    new FactoryDescription(Buzzer.class, S.getter("buzzerComponent"), "buzzer.gif"),
-    new FactoryDescription(Slider.class, S.getter("Slider"), "slider.gif"),
-    new FactoryDescription(DigitalOscilloscope.class, S.getter("DigitalOscilloscopeComponent"), "digitaloscilloscope.gif"),
-    new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent"), "plarom.gif"),
+    new FactoryDescription(DFlipFlop.class, S.getter("dFlipFlopComponent"), "dFlipFlop.gif"),
+    new FactoryDescription(TFlipFlop.class, S.getter("tFlipFlopComponent"), "tFlipFlop.gif"),
+    new FactoryDescription(JKFlipFlop.class, S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif"),
+    new FactoryDescription(SRFlipFlop.class, S.getter("srFlipFlopComponent"), "srFlipFlop.gif"),
+    new FactoryDescription(Register.class, S.getter("registerComponent"), "register.gif"),
+    new FactoryDescription(Counter.class, S.getter("counterComponent"), "counter.gif"),
+    new FactoryDescription(ShiftRegister.class, S.getter("shiftRegisterComponent"), "shiftreg.gif"),
+    new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
+    new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
+    new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
   };
 
   private List<Tool> tools = null;
-  private final Tool[] ADD_TOOLS = {
-//    new AddTool(ProgrammableGenerator.FACTORY), /* TODO: Broken component, fix */
-  };
 
   @Override
   public String getDisplayName() {
-    return S.get("input.output.extra");
+    return S.get("memoryLibrary");
   }
 
   @Override
-  public boolean removeLibrary(String name) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public List<? extends Tool> getTools() {
+  public List<Tool> getTools() {
     if (tools == null) {
-      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
-      ret.addAll(Arrays.asList(ADD_TOOLS));
-      ret.addAll(FactoryDescription.getTools(ITA_IO.class, DESCRIPTIONS));
-      tools = ret;
+      tools = FactoryDescription.getTools(MemoryLibrary.class, DESCRIPTIONS);
     }
     return tools;
+  }
+
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

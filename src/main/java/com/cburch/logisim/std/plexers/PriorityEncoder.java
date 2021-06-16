@@ -65,9 +65,9 @@ public class PriorityEncoder extends InstanceFactory {
   public PriorityEncoder() {
     super(_ID, S.getter("priorityEncoderComponent"));
     setAttributes(
-        new Attribute[] {StdAttr.FACING, Plexers.ATTR_SELECT, Plexers.ATTR_DISABLED},
-        new Object[] {Direction.EAST, BitWidth.create(3), Plexers.DISABLED_ZERO});
-    setKeyConfigurator(new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0));
+        new Attribute[] {StdAttr.FACING, PlexersLibrary.ATTR_SELECT, PlexersLibrary.ATTR_DISABLED},
+        new Object[] {Direction.EAST, BitWidth.create(3), PlexersLibrary.DISABLED_ZERO});
+    setKeyConfigurator(new BitWidthConfigurator(PlexersLibrary.ATTR_SELECT, 1, 5, 0));
     setIcon(new ArithmeticIcon("Pri"));
     setFacingAttribute(StdAttr.FACING);
   }
@@ -81,7 +81,7 @@ public class PriorityEncoder extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction dir = attrs.getValue(StdAttr.FACING);
-    BitWidth select = attrs.getValue(Plexers.ATTR_SELECT);
+    BitWidth select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     int inputs = 1 << select.getWidth();
     int offs = -5 * inputs;
     int len = 10 * inputs + 10;
@@ -98,7 +98,7 @@ public class PriorityEncoder extends InstanceFactory {
 
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
-    return (attrs.getValue(Plexers.ATTR_DISABLED) == Plexers.DISABLED_FLOATING);
+    return (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING);
   }
 
   @Override
@@ -109,10 +109,10 @@ public class PriorityEncoder extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT) {
+    if (attr == StdAttr.FACING || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == Plexers.ATTR_DISABLED) {
+    } else if (attr == PlexersLibrary.ATTR_DISABLED) {
       instance.fireInvalidated();
     }
   }
@@ -154,7 +154,7 @@ public class PriorityEncoder extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
+    BitWidth select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     int n = 1 << select.getWidth();
     boolean enabled = state.getPortValue(n + EN_IN) != Value.FALSE;
 
@@ -169,24 +169,24 @@ public class PriorityEncoder extends InstanceFactory {
         }
       }
     } else {
-      Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-      Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
+      Object opt = state.getAttributeValue(PlexersLibrary.ATTR_DISABLED);
+      Value base = opt == PlexersLibrary.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
       outDefault = Value.repeat(base, select.getWidth());
     }
     if (out < 0) {
-      state.setPort(n + OUT, outDefault, Plexers.DELAY);
-      state.setPort(n + EN_OUT, enabled ? Value.TRUE : Value.FALSE, Plexers.DELAY);
-      state.setPort(n + GS, Value.FALSE, Plexers.DELAY);
+      state.setPort(n + OUT, outDefault, PlexersLibrary.DELAY);
+      state.setPort(n + EN_OUT, enabled ? Value.TRUE : Value.FALSE, PlexersLibrary.DELAY);
+      state.setPort(n + GS, Value.FALSE, PlexersLibrary.DELAY);
     } else {
-      state.setPort(n + OUT, Value.createKnown(select, out), Plexers.DELAY);
-      state.setPort(n + EN_OUT, Value.FALSE, Plexers.DELAY);
-      state.setPort(n + GS, Value.TRUE, Plexers.DELAY);
+      state.setPort(n + OUT, Value.createKnown(select, out), PlexersLibrary.DELAY);
+      state.setPort(n + EN_OUT, Value.FALSE, PlexersLibrary.DELAY);
+      state.setPort(n + GS, Value.TRUE, PlexersLibrary.DELAY);
     }
   }
 
   private void updatePorts(Instance instance) {
     Object dir = instance.getAttributeValue(StdAttr.FACING);
-    BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
+    BitWidth select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     int n = 1 << select.getWidth();
     Port[] ps = new Port[n + 4];
     if (dir == Direction.NORTH || dir == Direction.SOUTH) {

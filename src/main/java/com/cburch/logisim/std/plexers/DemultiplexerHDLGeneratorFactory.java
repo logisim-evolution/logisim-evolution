@@ -52,7 +52,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     Inputs.put("DemuxIn", NrOfBits);
     Inputs.put("Enable", 1);
     Inputs.put("Sel", nr_of_select_bits);
@@ -63,7 +63,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     String Space = "  ";
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
     for (int i = 0; i < num_outputs; i++) {
       if (i == 10) {
@@ -94,7 +94,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Outputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     for (int i = 0; i < (1 << nr_of_select_bits); i++) {
       Outputs.put("DemuxOut_" + i, NrOfBits);
     }
@@ -124,7 +124,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int select_input_index = (1 << nr_of_select_bits);
     // begin with connecting all outputs of demultiplexer
     for (int i = 0; i < select_input_index; i++)
@@ -133,7 +133,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     PortMap.putAll(
         GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
     // now connect enable input...
-    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Nets));
     } else {
       PortMap.put("Enable", HDL.oneBit());

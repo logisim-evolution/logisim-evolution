@@ -47,7 +47,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.Io;
+import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -107,7 +107,7 @@ public class Switch extends InstanceFactory {
         new Attribute[] {
           StdAttr.FACING,
           StdAttr.WIDTH,
-          Io.ATTR_COLOR,
+          IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT
@@ -170,7 +170,7 @@ public class Switch extends InstanceFactory {
       active = data != null && (Boolean) data.getValue();
     }
 
-    Color color = painter.getAttributeValue(Io.ATTR_COLOR);
+    Color color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
     if (!painter.shouldDrawColor()) {
       int hue = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
       color = new Color(hue, hue, hue);

@@ -37,14 +37,14 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class TTL extends Library {
+public class TtlLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "TTL";
+  public static final String _ID = "TTL-Library";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
       new FactoryDescription(Ttl7400.class, S.getter("TTL7400"), "ttl.gif"),
@@ -97,7 +97,7 @@ public class TTL extends Library {
   @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(TTL.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(TtlLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

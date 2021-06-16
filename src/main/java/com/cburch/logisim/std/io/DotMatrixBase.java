@@ -228,8 +228,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
           getAttributeInputType(),
           getAttributeColumns(),
           getAttributeRows(),
-          Io.ATTR_ON_COLOR,
-          Io.ATTR_OFF_COLOR,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
           ATTR_PERSIST,
           getAttributeShape(),
           StdAttr.LABEL,
@@ -361,8 +361,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-    Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
+    Color onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
+    Color offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
     AttributeOption shape = painter.getAttributeValue(getAttributeShape());
 
     State data = getState(painter);

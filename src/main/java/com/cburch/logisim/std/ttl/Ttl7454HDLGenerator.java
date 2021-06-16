@@ -104,6 +104,6 @@ public class Ttl7454HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND));
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

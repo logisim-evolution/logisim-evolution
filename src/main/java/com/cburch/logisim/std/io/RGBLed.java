@@ -110,7 +110,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          Io.ATTR_ACTIVE,
+          IoLibrary.ATTR_ACTIVE,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -162,7 +162,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public boolean ActiveOnHigh(AttributeSet attrs) {
-    return attrs.getValue(Io.ATTR_ACTIVE);
+    return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
   @Override
@@ -211,7 +211,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
     Graphics g = painter.getGraphics();
     if (painter.getShowState()) {
-      Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
+      Boolean activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       int mask = activ ? 0 : 7;
       summ ^= mask;
       int red = ((summ >> RED) & 1) * 0xFF;

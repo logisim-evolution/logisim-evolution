@@ -26,17 +26,16 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.std.tcl;
 
-import static com.cburch.logisim.vhdl.Strings.S;
+import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Hdl extends Library {
+public class TclLibrary extends Library {
 
   /**
    * Unique identifier of the library, used as reference in project files.
@@ -44,25 +43,24 @@ public class Hdl extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "HDL-IP";
+  public static final String _ID = "TCL-Library";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
+    new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
+    new FactoryDescription(TclGeneric.class, S.getter("tclGeneric"), "tcl.gif"),
   };
 
   private List<Tool> tools = null;
 
-  public Hdl() {}
-
   @Override
   public String getDisplayName() {
-    return S.get("hdlLibrary");
+    return S.get("tclLibrary");
   }
 
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Hdl.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(TclLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

@@ -51,7 +51,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     for (int i = 0; i < (1 << nr_of_select_bits); i++)
       Inputs.put("MuxIn_" + i, NrOfBits);
@@ -63,7 +63,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
       Contents.add("   make_mux : PROCESS( Enable,");
       for (int i = 0; i < (1 << nr_of_select_bits); i++)
@@ -143,7 +143,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int select_input_index = (1 << nr_of_select_bits);
     // begin with connecting all inputs of multiplexer
     for (int i = 0; i < select_input_index; i++)
@@ -156,7 +156,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     // now connect enable input...
     if (ComponentInfo.GetComponent()
         .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)) {
+        .getValue(PlexersLibrary.ATTR_ENABLE)) {
       PortMap.putAll(
           GetNetMap(
               "Enable", false, ComponentInfo, select_input_index + 1, Nets));

@@ -31,18 +31,18 @@ package com.cburch.logisim.std;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.soc.Soc;
-import com.cburch.logisim.std.arith.Arithmetic;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.bfh.BFHPraktika;
-import com.cburch.logisim.std.gates.Gates;
-import com.cburch.logisim.std.hdl.Hdl;
-import com.cburch.logisim.std.io.Io;
-import com.cburch.logisim.std.io.extra.ITA_IO;
-import com.cburch.logisim.std.memory.Memory;
-import com.cburch.logisim.std.plexers.Plexers;
-import com.cburch.logisim.std.tcl.Tcl;
-import com.cburch.logisim.std.ttl.TTL;
-import com.cburch.logisim.std.wiring.Wiring;
+import com.cburch.logisim.std.arith.ArithmeticLibrary;
+import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.std.bfh.BfhLibrary;
+import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.std.hdl.HdlLibrary;
+import com.cburch.logisim.std.io.IoLibrary;
+import com.cburch.logisim.std.io.extra.ExtraIoLibrary;
+import com.cburch.logisim.std.memory.MemoryLibrary;
+import com.cburch.logisim.std.plexers.PlexersLibrary;
+import com.cburch.logisim.std.tcl.TclLibrary;
+import com.cburch.logisim.std.ttl.TtlLibrary;
+import com.cburch.logisim.std.wiring.WiringLibrary;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.Arrays;
@@ -63,18 +63,18 @@ public class Builtin extends Library {
   public Builtin() {
     libraries =
         Arrays.asList(
-            new Base(),
-            new Gates(),
-            new Wiring(),
-            new Plexers(),
-            new Arithmetic(),
-            new Memory(),
-            new Io(),
-            new TTL(),
-            new Hdl(),
-            new Tcl(),
-            new BFHPraktika(),
-            new ITA_IO(),
+            new BaseLibrary(),
+            new GatesLibrary(),
+            new WiringLibrary(),
+            new PlexersLibrary(),
+            new ArithmeticLibrary(),
+            new MemoryLibrary(),
+            new IoLibrary(),
+            new TtlLibrary(),
+            new HdlLibrary(),
+            new TclLibrary(),
+            new BfhLibrary(),
+            new ExtraIoLibrary(),
             new Soc());
   }
 

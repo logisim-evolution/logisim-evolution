@@ -117,7 +117,7 @@ public class Button extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          Io.ATTR_COLOR,
+          IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -187,7 +187,7 @@ public class Button extends InstanceFactory {
       val = Value.FALSE;
     }
 
-    Color color = painter.getAttributeValue(Io.ATTR_COLOR);
+    Color color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
     if (!painter.shouldDrawColor()) {
       int hue = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
       color = new Color(hue, hue, hue);

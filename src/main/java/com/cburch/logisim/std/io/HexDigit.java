@@ -67,9 +67,9 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     super(_ID, S.getter("hexDigitComponent"));
     setAttributes(
         new Attribute[] {
-          Io.ATTR_ON_COLOR,
-          Io.ATTR_OFF_COLOR,
-          Io.ATTR_BACKGROUND,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
+          IoLibrary.ATTR_BACKGROUND,
           SevenSegment.ATTR_DP,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
@@ -80,7 +80,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         new Object[] {
           new Color(240, 0, 0),
           SevenSegment.DEFAULT_OFF,
-          Io.DEFAULT_BACKGROUND,
+          IoLibrary.DEFAULT_BACKGROUND,
           Boolean.TRUE,
           "",
           Direction.EAST,

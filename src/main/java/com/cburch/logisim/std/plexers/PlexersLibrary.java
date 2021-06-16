@@ -44,14 +44,14 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
 import java.util.List;
 
-public class Plexers extends Library {
+public class PlexersLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "Plexers";
+  public static final String _ID = "PlexersLibrary";
 
   static boolean contains(Location loc, Bounds bds, Direction facing) {
     if (bds.contains(loc, 1)) {
@@ -175,7 +175,7 @@ public class Plexers extends Library {
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Plexers.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(PlexersLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

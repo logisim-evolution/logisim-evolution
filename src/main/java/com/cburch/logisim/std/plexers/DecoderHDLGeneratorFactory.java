@@ -49,14 +49,14 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Enable", 1);
-    Inputs.put("Sel", attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    Inputs.put("Sel", attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
     return Inputs;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
     String Space = " ";
     for (int i = 0; i < num_outputs; i++) {
@@ -81,7 +81,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Outputs = new TreeMap<>();
-    for (int i = 0; i < (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()); i++) {
+    for (int i = 0; i < (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth()); i++) {
       Outputs.put("DecoderOut_" + i, 1);
     }
     return Outputs;
@@ -93,7 +93,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     int select_input_index = (1 << nr_of_select_bits);
     // first outputs
     for (int i = 0; i < select_input_index; i++)
@@ -102,7 +102,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     PortMap.putAll(GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
 
     // now connect enable input...
-    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Nets));
     } else {
       PortMap.put("Enable", HDL.oneBit());

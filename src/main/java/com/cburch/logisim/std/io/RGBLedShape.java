@@ -57,7 +57,7 @@ public class RGBLedShape extends LedShape {
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
+      Boolean activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       int summ = (data == null ? 0 : (Integer) data.getValue());
       int mask = activ ? 0 : 7;

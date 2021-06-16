@@ -26,45 +26,75 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.bfh;
+package com.cburch.logisim.std.base;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.tools.FactoryDescription;
+import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.MenuTool;
+import com.cburch.logisim.tools.PokeTool;
+import com.cburch.logisim.tools.SelectTool;
+import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.tools.WiringTool;
+import java.util.Arrays;
 import java.util.List;
 
-public class BFHPraktika extends Library {
+public class BaseLibrary extends Library {
   /**
-   * Unique identifier of the library, used as reference in project files.
+   * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "BFH-Praktika";
+  public static final String _ID = "BaseLibrary";
 
-  private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(bin2bcd.class, S.getter("Bin2BCD")),
-    new FactoryDescription(bcd2sevenseg.class, S.getter("BCD2SevenSegment")),
-  };
+  private final List<Tool> tools;
+  private final AddTool textAdder = new AddTool(Text.FACTORY);
+  private final SelectTool selectTool = new SelectTool();
 
-  private List<Tool> tools = null;
+  public BaseLibrary() {
+    setHidden();
+    WiringTool wiring = new WiringTool();
+
+    tools = Arrays.asList(
+        new PokeTool(),
+        new EditTool(selectTool, wiring),
+        wiring,
+        new TextTool(),
+        new MenuTool());
+    }
+
+  @Override
+  public boolean contains(ComponentFactory querry) {
+    return super.contains(querry) || (querry instanceof Text);
+  }
+
+  @Override
+  public Tool getTool(String name) {
+    Tool t = super.getTool(name);
+    if (t == null) {
+      if (name.equals(Text._ID))
+        return textAdder; // needed by XmlCircuitReader
+    }
+    return t;
+  }
 
   @Override
   public String getDisplayName() {
-    return S.get("BFHMegaFunctions");
+    return S.get("baseLibrary");
   }
 
   @Override
   public List<Tool> getTools() {
-    if (tools == null) {
-      tools = FactoryDescription.getTools(BFHPraktika.class, DESCRIPTIONS);
-    }
     return tools;
   }
 
   public boolean removeLibrary(String Name) {
     return false;
   }
+
 }

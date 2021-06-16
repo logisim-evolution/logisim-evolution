@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Wiring extends Library {
+public class WiringLibrary extends Library {
 
   /**
    * Unique identifier of the library, used as reference in project files.
@@ -50,7 +50,7 @@ public class Wiring extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "Wiring";
+  public static final String _ID = "WiringLibrary";
 
   static final AttributeOption GATE_TOP_LEFT =
       new AttributeOption("tl", S.getter("wiringGateTopLeftOption"));
@@ -94,7 +94,7 @@ public class Wiring extends Library {
     if (tools == null) {
       List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
       ret.addAll(Arrays.asList(ADD_TOOLS));
-      ret.addAll(FactoryDescription.getTools(Wiring.class, DESCRIPTIONS));
+      ret.addAll(FactoryDescription.getTools(WiringLibrary.class, DESCRIPTIONS));
       tools = ret;
     }
     return tools;

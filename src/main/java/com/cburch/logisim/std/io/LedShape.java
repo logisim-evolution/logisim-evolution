@@ -78,8 +78,8 @@ public class LedShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    Color offColor = path.leaf().getAttributeSet().getValue(Io.ATTR_OFF_COLOR);
-    Color onColor = path.leaf().getAttributeSet().getValue(Io.ATTR_ON_COLOR);
+    Color offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+    Color onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
     int x = bounds.getX() + 1;
     int y = bounds.getY() + 1;
     int w = bounds.getWidth() - 2;
@@ -90,7 +90,7 @@ public class LedShape extends DynamicElement {
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
+      Boolean activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       Object desired = activ ? Value.TRUE : Value.FALSE;
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       Value val = data == null ? Value.FALSE : (Value) data.getValue();

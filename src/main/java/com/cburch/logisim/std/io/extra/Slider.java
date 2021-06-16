@@ -47,7 +47,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.Io;
+import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
@@ -206,7 +206,7 @@ public class Slider extends InstanceFactory {
           StdAttr.FACING,
           StdAttr.WIDTH,
           RadixOption.ATTRIBUTE,
-          Io.ATTR_COLOR,
+          IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
@@ -280,7 +280,7 @@ public class Slider extends InstanceFactory {
     Bounds bds = painter.getBounds();
     SliderValue data = getValueState(painter);
     int x = bds.getX(), y = bds.getY();
-    painter.drawRoundBounds(painter.getAttributeValue(Io.ATTR_COLOR));
+    painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
     GraphicsUtil.switchToWidth(g, 2);
     // slider line
     g.drawLine(x + 10, y + bds.getHeight() - 10, x + bds.getWidth() - 10, y + bds.getHeight() - 10);
