@@ -404,7 +404,7 @@ class XmlReader {
       if (versionString.equals("")) {
         sourceVersion = Main.VERSION;
       } else {
-        sourceVersion = LogisimVersion.parse(versionString);
+        sourceVersion = LogisimVersion.fromString(versionString);
         HolyCrossFile = versionString.endsWith("-HC");
       }
 
@@ -415,7 +415,7 @@ class XmlReader {
       // We have therefore to warn the user that things might be a little
       // strange in their
       // circuits...
-      if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
+      if (sourceVersion.compareTo(new LogisimVersion(2, 7, 2)) < 0) {
         IsEvolutionFile = true;
         OptionPane.showMessageDialog(
             null,
@@ -995,8 +995,8 @@ class XmlReader {
   }
 
   private void considerRepairs(Document doc, Element root) {
-    LogisimVersion version = LogisimVersion.parse(root.getAttribute("source"));
-    if (version.compareTo(LogisimVersion.get(2, 3, 0)) < 0) {
+    LogisimVersion version = LogisimVersion.fromString(root.getAttribute("source"));
+    if (version.compareTo(new LogisimVersion(2, 3, 0)) < 0) {
       // This file was saved before an Edit tool existed. Most likely
       // we should replace the Select and Wiring tools in the toolbar
       // with the Edit tool instead.
@@ -1018,7 +1018,7 @@ class XmlReader {
         }
       }
     }
-    if (version.compareTo(LogisimVersion.get(2, 6, 3)) < 0) {
+    if (version.compareTo(new LogisimVersion(2, 6, 3)) < 0) {
       for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
           String name = attrElt.getAttribute("name");

@@ -157,7 +157,7 @@ public class Startup implements AWTEventListener {
       startupTemp.doPrintFile(file);
     }
   }
-  
+
   private static int parseTtyFormat(String fmt)
   {
     switch (fmt) {
@@ -292,7 +292,7 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION_NAME); // OK
+        System.out.println(Main.VERSION); // OK
         return null;
       } else if (arg.equals("-gates")) {
         i++;
@@ -623,7 +623,7 @@ public class Startup implements AWTEventListener {
     Monitor.setProgress(2);
 
     // Get the appropriate remote version number
-    LogisimVersion remoteVersion = LogisimVersion.parse(logisimData.child("version").content());
+    LogisimVersion remoteVersion = LogisimVersion.fromString(logisimData.child("version").content());
 
     // If the remote version is newer, perform the update
     Monitor.setProgress(3);

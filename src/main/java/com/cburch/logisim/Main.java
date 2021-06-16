@@ -86,11 +86,10 @@ public class Main {
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final String APP_NAME = "Logisim-evolution";
-  public static final LogisimVersion VERSION =
-    LogisimVersion.get(3, 5, 0, LogisimVersion.FINAL_REVISION);
-  public static final String VERSION_NAME = VERSION.toString();
+  public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
   public static final int COPYRIGHT_YEAR = 2021;
-  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION_NAME;
+  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
+  public static final String APP_URL = "https://github.com/logisim-evolution/";
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
