@@ -51,6 +51,13 @@ import java.awt.Graphics;
 import java.math.BigInteger;
 
 public class Divider extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Divider";
 
   public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
   public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
@@ -88,7 +95,7 @@ public class Divider extends InstanceFactory {
   static final int REM = 4;
 
   public Divider() {
-    super("Divider", S.getter("dividerComponent"));
+    super(_ID, S.getter("dividerComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
@@ -114,11 +121,11 @@ public class Divider extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == MODE_ATTR) instance.fireInvalidated();
-  }  
+  }
 
   @Override
   public void paintInstance(InstancePainter painter) {

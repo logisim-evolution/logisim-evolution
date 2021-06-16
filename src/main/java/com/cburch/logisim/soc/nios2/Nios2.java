@@ -60,6 +60,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Nios2 extends SocInstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Nios2";
 
   public static final int CLOCK = 0;
   public static final int RESET = 1;
@@ -76,12 +83,12 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   public static final int RESULT = 12;
   public static final int DONE = 13;
   public static final int IRQSTART = 14;
-  
+
   private static final String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
                                      "c","writerc","result","done"};
 
   public Nios2() {
-    super("Nios2",S.getter("Nios2Component"),SocMaster);
+    super(_ID,S.getter("Nios2Component"),SocMaster);
     setIcon(new ArithmeticIcon("uP",2));
     setOffsetBounds(Bounds.create(0, 0, 640, 650));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);
@@ -91,7 +98,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   public AttributeSet createAttributeSet() {
     return new Nios2Attributes();
   }
-  
+
   @Override
   public boolean providesSubCircuitMenu() {
     return true;
@@ -188,8 +195,8 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
     GraphicsUtil.drawCenteredText(g2, "Nios2s simulator", loc.getX()+320, loc.getY()+640);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
-    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY()+10, 
+    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2,
+    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY()+10,
     				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
     Nios2State state = painter.getAttributeValue(Nios2Attributes.NIOS2_STATE);
     state.paint(loc.getX(), loc.getY()+10, g2,painter.getInstance(),painter.getAttributeValue(Nios2Attributes.NIOS_STATE_VISIBLE), painter.getData());
@@ -197,7 +204,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
 
   @Override
   public void propagate(InstanceState state) {
-    Nios2State.ProcessorState data = (Nios2State.ProcessorState) state.getData(); 
+    Nios2State.ProcessorState data = (Nios2State.ProcessorState) state.getData();
 	if (data == null) {
 	  data = state.getAttributeValue(Nios2Attributes.NIOS2_STATE).getNewState(state.getInstance());
 	  state.setData(data);

@@ -43,6 +43,14 @@ import com.cburch.logisim.instance.StdAttr;
  * instance, given input 0100 the output is 1100.
  */
 class GrayIncrementer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Gray Code Incrementer";
+
   /*
    * Note that there are no instance variables. There is only one instance of
    * this class created, which manages all instances of the component. Any
@@ -53,7 +61,7 @@ class GrayIncrementer extends InstanceFactory {
 
   /** The constructor configures the factory. */
   GrayIncrementer() {
-    super("Gray Code Incrementer");
+    super(_ID);
 
     /*
      * This is how we can set up the attributes for GrayIncrementers. In

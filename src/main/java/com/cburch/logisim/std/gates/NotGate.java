@@ -60,6 +60,13 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class NotGate extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "NOT Gate";
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
@@ -110,7 +117,7 @@ class NotGate extends InstanceFactory {
   public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
-    super("NOT Gate", S.getter("notGateComponent"));
+    super(_ID, S.getter("notGateComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -262,7 +269,7 @@ class NotGate extends InstanceFactory {
   @Override
   public void paintIcon(InstancePainter painter) {
     Graphics2D g = (Graphics2D)painter.getGraphics();
-    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR) 
+    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, RECT_LABEL, true,true);
     else
       AbstractGate.paintIconBufferANSI(g, true,false);

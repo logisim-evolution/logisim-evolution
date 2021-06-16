@@ -49,6 +49,14 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
 
 public class Power extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Power";
+
   private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
     public long GetConstant(AttributeSet attrs) {
@@ -62,7 +70,7 @@ public class Power extends InstanceFactory {
   }
 
   public Power() {
-    super("Power", S.getter("powerComponent"));
+    super(_ID, S.getter("powerComponent"));
     setIconName("power.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},

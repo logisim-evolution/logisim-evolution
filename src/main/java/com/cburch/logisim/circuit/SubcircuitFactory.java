@@ -99,8 +99,8 @@ public class SubcircuitFactory extends InstanceFactory {
       hi.addComponent(instance.getComponent());
       getSubMenuItems(menu,proj,(CircuitState)instance.getData(proj.getCircuitState()),hi);
     }
-    
-    public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state, 
+
+    public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
       for (Component comp : source.getNonWires()) {
         if (comp instanceof InstanceComponent) {
@@ -127,7 +127,7 @@ public class SubcircuitFactory extends InstanceFactory {
       return source.getName();
     }
   }
-  
+
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {
@@ -442,7 +442,7 @@ public class SubcircuitFactory extends InstanceFactory {
   public boolean RequiresNonZeroLabel() {
     return true;
   }
-  
+
   @Override
   public void paintIcon(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
@@ -459,10 +459,10 @@ public class SubcircuitFactory extends InstanceFactory {
   public static void paintClasicIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.GRAY);
-    g2.drawArc(AppPreferences.getScaled(6), AppPreferences.getScaled(-2), AppPreferences.getScaled(4), 
+    g2.drawArc(AppPreferences.getScaled(6), AppPreferences.getScaled(-2), AppPreferences.getScaled(4),
     		AppPreferences.getScaled(6), 180, 180);
     g2.setColor(Color.BLACK);
-    g2.drawRect(AppPreferences.getScaled(2), AppPreferences.getScaled(1), 
+    g2.drawRect(AppPreferences.getScaled(2), AppPreferences.getScaled(1),
     		AppPreferences.getScaled(12), AppPreferences.getScaled(14));
     int wh = AppPreferences.getScaled(3);
     for (int y = 0 ; y < 3 ; y++) {
@@ -477,15 +477,15 @@ public class SubcircuitFactory extends InstanceFactory {
       }
     }
   }
-  
+
   public static void paintHCIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.BLACK);
-    g2.drawRect(AppPreferences.getScaled(1), AppPreferences.getScaled(1), 
+    g2.drawRect(AppPreferences.getScaled(1), AppPreferences.getScaled(1),
     	  AppPreferences.getScaled(14), AppPreferences.getScaled(14));
     Font f = g2.getFont().deriveFont((float)AppPreferences.getIconSize()/4);
     TextLayout l = new TextLayout("main",f,g2.getFontRenderContext());
-    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()), 
+    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()),
            (float)(AppPreferences.getIconSize()/4-l.getBounds().getCenterY()));
     int wh = AppPreferences.getScaled(3);
     for (int y = 1 ; y < 3 ; y++) {
@@ -500,13 +500,13 @@ public class SubcircuitFactory extends InstanceFactory {
       }
     }
   }
-  
+
   public static void paintEvolutionIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.BLACK);
-    g2.drawRect(AppPreferences.getScaled(2), 0, 
+    g2.drawRect(AppPreferences.getScaled(2), 0,
     	  AppPreferences.getScaled(12), AppPreferences.getScaled(16));
-    g2.fillRect(AppPreferences.getScaled(2), (3*AppPreferences.getIconSize())/4, 
+    g2.fillRect(AppPreferences.getScaled(2), (3*AppPreferences.getIconSize())/4,
       	  AppPreferences.getScaled(12), AppPreferences.getIconSize()/4);
     for (int y = 0 ; y < 3 ; y++) {
       g2.drawLine(0, AppPreferences.getScaled(y*4+2), AppPreferences.getScaled(2), AppPreferences.getScaled(y*4+2));
@@ -516,10 +516,10 @@ public class SubcircuitFactory extends InstanceFactory {
     g2.setColor(Color.WHITE);
     Font f = g2.getFont().deriveFont((float)AppPreferences.getIconSize()/4);
     TextLayout l = new TextLayout("main",f,g2.getFontRenderContext());
-    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()), 
+    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()),
            (float)((7*AppPreferences.getIconSize())/8-l.getBounds().getCenterY()));
   }
-  
+
   @Override
   public void removeComponent(Circuit circ, Component c , CircuitState state) {
     getSubcircuit().removeComponent(c);

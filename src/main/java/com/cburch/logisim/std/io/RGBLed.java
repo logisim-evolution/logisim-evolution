@@ -56,6 +56,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class RGBLed extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "RGBLED";
 
   public static class Logger extends InstanceLogger {
     static final BitWidth bitwidth = BitWidth.create(3);
@@ -68,7 +75,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     public BitWidth getBitWidth(InstanceState state, Object option) {
       return bitwidth;
     }
-    
+
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
@@ -88,7 +95,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     LabelNames.set(BLUE, "BLUE");
     return LabelNames;
   }
-  
+
   public static String getLabel(int id) {
     if (id < 0 || id > GetLabels().size()) return "Undefined";
     return GetLabels().get(id);
@@ -99,7 +106,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   public static final int BLUE = 2;
 
   public RGBLed() {
-    super("RGBLED", S.getter("RGBledComponent"));
+    super(_ID, S.getter("RGBledComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -119,7 +126,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer( 0, 3, 0, null, GetLabels(), null ) 
+          new ComponentMapInformationContainer( 0, 3, 0, null, GetLabels(), null )
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(true));

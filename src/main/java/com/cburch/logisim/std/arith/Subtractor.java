@@ -50,6 +50,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Subtractor extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Subtractor";
+
   private static final int IN0 = 0;
   private static final int IN1 = 1;
   private static final int OUT = 2;
@@ -57,7 +65,7 @@ public class Subtractor extends InstanceFactory {
   private static final int B_OUT = 4;
 
   public Subtractor() {
-    super("Subtractor", S.getter("subtractorComponent"));
+    super(_ID, S.getter("subtractorComponent"));
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));

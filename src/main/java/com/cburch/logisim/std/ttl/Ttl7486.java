@@ -37,6 +37,13 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Ttl7486 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7486";
 
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -56,7 +63,7 @@ public class Ttl7486 extends AbstractTtlGate {
   }
 
   public Ttl7486() {
-    super("7486", (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true);
   }
 
   @Override

@@ -39,8 +39,16 @@ import static com.cburch.logisim.std.Strings.S;
 /** LED dot Matrix */
 public class DotMatrix extends DotMatrixBase {
 
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "DotMatrix";
+
   public DotMatrix() {
-    super("DotMatrix", S.getter("dotMatrixComponent"), 5, 7);
+    super(_ID, S.getter("dotMatrixComponent"), 5, 7);
   }
 
   protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =

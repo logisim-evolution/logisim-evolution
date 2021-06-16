@@ -54,6 +54,14 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 public class PullResistor extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Pull Resistor";
+
   private static Value getPullValue(AttributeSet attrs) {
     AttributeOption opt = attrs.getValue(ATTR_PULL_TYPE);
     return (Value) opt.getValue();
@@ -79,7 +87,7 @@ public class PullResistor extends InstanceFactory {
   private static final Icon ICON_RECTANGULAR = Icons.getIcon("pullrect.gif");
 
   public PullResistor() {
-    super("Pull Resistor", S.getter("pullComponent"));
+    super(_ID, S.getter("pullComponent"));
     setAttributes(
         new Attribute[] {StdAttr.FACING, ATTR_PULL_TYPE},
         new Object[] {Direction.SOUTH, ATTR_PULL_TYPE.parse("0")});

@@ -52,7 +52,15 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
-public class Tty extends InstanceFactory  implements DynamicElementProvider {
+public class Tty extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "TTY";
+
   private static int getColumnCount(Object val) {
     if (val instanceof Integer) return (Integer) val;
     else return 16;
@@ -83,7 +91,7 @@ public class Tty extends InstanceFactory  implements DynamicElementProvider {
       Attributes.forIntegerRange("rows", S.getter("ttyRowsAttr"), 1, 48);
 
   public Tty() {
-    super("TTY", S.getter("ttyComponent"));
+    super(_ID, S.getter("ttyComponent"));
     setAttributes(
         new Attribute[] {
           ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND
