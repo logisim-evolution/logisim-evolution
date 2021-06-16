@@ -284,7 +284,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             }
             String line = "   "+
                           HDL.assignPreamble()+
-                          OneLine.toString()+
+                    OneLine +
                           HDL.assignOperator()+
                           BusName+
                           TheNets.GetNetId(Source.GetParentNet())+
@@ -316,7 +316,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            String line = "   "+HDL.assignPreamble()+OneLine.toString()+";";
+            String line = "   "+HDL.assignPreamble()+ OneLine +";";
             if (!Contents.contains(line)) Contents.add(line);
           }
         }
@@ -420,7 +420,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + Temp
                 + HDL.assignOperator()
                 + ClockNet
                 + HDL.BracketOpen()
@@ -431,7 +431,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + Temp
                 + HDL.assignOperator()
                 + TickComponentHDLGeneratorFactory.FPGAClock
                 + ";");
@@ -792,7 +792,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       while (Destination.length() < SallignmentSize) {
         Destination.append(" ");
       }
-      Contents.append(Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+      Contents.append(Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -818,9 +818,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Destination.append(" ");
         }
         Contents.append(
-            Tab.toString()
+            Tab
                 + HDL.assignPreamble()
-                + Destination.toString()
+                + Destination
                 + HDL.assignOperator()
                 + HDL.GetZeroVector(NrOfBits, true)
                 + ";");
@@ -844,7 +844,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Destination.append(" ");
           }
           Contents.append(
-              Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+              Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (int bit = 0; bit < NrOfBits; bit++) {
@@ -905,7 +905,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Contents.append("\n");
             }
             Contents.append(
-                Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+                Tab + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
           }
         }
       }
