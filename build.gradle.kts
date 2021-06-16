@@ -9,7 +9,7 @@ plugins {
     java
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
-} 
+}
 
 repositories {
     mavenCentral()
@@ -190,10 +190,10 @@ tasks.register("createApp") {
       if (OperatingSystem.current().isMacOsX) {
          val appDirname = ext.get("appDirname") as String
          delete(appDirname)
-         var appname = ext.get("uppercaseProjectName") as String
+         val appName = ext.get("uppercaseProjectName") as String
          val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
-            "--name", appname,
+            "--name", appName,
             "--file-associations", "$projectDir/support/jpackage/macos/file.jpackage",
             "--icon", "$projectDir/support/jpackage/macos/Logisim-evolution.icns",
             "--type", "app-image"
@@ -204,7 +204,7 @@ tasks.register("createApp") {
          if (process1.waitFor() != 0) {
             throw GradleException("Error while creating app directory")
          }
-         val plistfilename = "$buildDir/dist/" + appname + ".app/Contents/Info.plist"
+         val plistfilename = "$buildDir/dist/" + appName + ".app/Contents/Info.plist"
          val parameters2 = ArrayList<String>(Arrays.asList(
             "awk", "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};{print >\"$buildDir/dist/Info.plist\"};/NSHighResolutionCapable/{print \"  <string>true</string>\" >\"$buildDir/dist/Info.plist\"; print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"$buildDir/dist/Info.plist\"}",
             plistfilename
@@ -245,12 +245,12 @@ tasks.register("createDmg") {
    outputs.file(ext.get("dmgFilename") as String)
    doLast {
       if (OperatingSystem.current().isMacOsX) {
-         var appname = ext.get("uppercaseProjectName") as String
+         val appName = ext.get("uppercaseProjectName") as String
          val parameters1 = ArrayList<String>(Arrays.asList(
             ext.get("jpackagecmd") as String,
             "--type", "dmg",
-            "--app-image", "$buildDir" + File.separator + "dist" + File.separator +  appname + ".app",
-            "--name", appname,
+            "--app-image", "$buildDir" + File.separator + "dist" + File.separator +  appName + ".app",
+            "--name", appName,
             "--app-version", project.version as String,
             "--dest", "$buildDir/dist"
          ))
