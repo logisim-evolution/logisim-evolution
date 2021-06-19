@@ -40,8 +40,8 @@ img.notscal {
 }
 
 img.iconlibs{
-	height:16px;
-	width:16px;
+	height:32;
+	width:32;
 	border:0;
 	vertical-align:middle;
 }
@@ -49,7 +49,6 @@ img.iconlibs{
 img.icontxt{
 	height:16px;
 	width:16px;
-	border:0
 	vertical-align:middle;
 }
 /* For spaces, page background */
@@ -215,8 +214,4 @@ margin-top:5px;
 }
 li  {
 margin-top:5px; 
-}
-
-p.blue {
-  color:#008000;
 }

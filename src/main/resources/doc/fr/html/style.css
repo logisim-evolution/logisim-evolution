@@ -38,6 +38,11 @@ img.notscal {
 	width:auto;
 	vertical-align:middle;
 }
+img.icondocs {
+	height:32;
+	width:32;
+	vertical-align:middle;
+}
 
 img.iconlibs{
 	height:32;

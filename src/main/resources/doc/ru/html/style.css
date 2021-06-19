@@ -40,8 +40,9 @@ img.notscal {
 }
 
 img.iconlibs{
-	height:16px;
-	width:16px;
+	height:32;
+	width:32;
+	border:0;
 	vertical-align:middle;
 }
 /* For icon in the text */
@@ -213,8 +214,4 @@ margin-top:5px;
 }
 li  {
 margin-top:5px; 
-}
-
-p.blue {
-  color:#008000;
 }
