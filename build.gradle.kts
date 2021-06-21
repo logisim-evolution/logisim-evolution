@@ -5,6 +5,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
 plugins {
+    checkstyle
     id("com.github.ben-manes.versions") version "0.38.0"
     java
     application
@@ -296,4 +297,22 @@ tasks {
             include("README.md")
         }
     }
+
+    // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
+    checkstyle {
+        // If you are going to upgrade checkstyle version ensure you are upgrading also
+        // XML config file to match. The simplest approach is to go project release page:
+        // https://github.com/checkstyle/checkstyle/releases and grab source archive for
+        // version of your choice and copy out "src/main/resources/google_checks.xml" here.
+        toolVersion = "8.37"
+        configFile = file("${project.rootDir}/checkstyle/google_checks.xml")
+    }
+    checkstyleMain {
+        source = fileTree("src/main/java") 
+    }
+    checkstyleTest {
+        source = fileTree("src/test/java")
+    }
+
 }
+
