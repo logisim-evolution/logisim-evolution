@@ -183,10 +183,10 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
           if (attr.equals(StdAttr.LABEL)) {
             if (labler.hasNext(circuit)) {
               if (comps.size() > 1) {
-                act.set(comp, attr, labler.GetNext(circuit, comp.getFactory()));
+                act.set(comp, attr, labler.getNext(circuit, comp.getFactory()));
               } else {
                 if (getAttributeSet().getValue(StdAttr.LABEL).equals(value)) return;
-                else act.set(comp, attr, labler.GetCurrent(circuit, comp.getFactory()));
+                else act.set(comp, attr, labler.getCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
           } else act.set(comp, attr, value);

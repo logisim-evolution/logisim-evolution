@@ -51,9 +51,8 @@ public class InputEventUtil {
     }
     return ret;
   }
-  
-  private static int parseInput(String s)
-  {
+
+  private static int parseInput(String s) {
     switch (s) {
       case CTRL:
         return InputEvent.CTRL_DOWN_MASK;

@@ -288,11 +288,11 @@ public class Circuit {
   public void SetProject(Project proj) {
     this.proj = proj;
   }
-  
+
   public Project getProject() {
     return proj;
   }
-  
+
   public SocSimulationManager getSocSimulationManager() {
     return socSim;
   }
@@ -337,7 +337,7 @@ public class Circuit {
     if (this.proj == null) this.proj = proj;
     this.Annotate(ClearExistingLabels,InsideLibrary);
   }
-  
+
   public void Annotate(boolean ClearExistingLabels, boolean InsideLibrary) {
     /* If I am already completely annotated, return */
     if (Annotated) {
@@ -401,7 +401,7 @@ public class Circuit {
             "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
         return;
       } else {
-        String NewLabel = lablers.get(ComponentName).GetNext(this, comp.getFactory());
+        String NewLabel = lablers.get(ComponentName).getNext(this, comp.getFactory());
         SetAttributeAction act =
             new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, NewLabel);
@@ -686,7 +686,7 @@ public class Circuit {
   public Collection<Circuit> getCircuitsUsingThis() {
     return circuitsUsingThis.values();
   }
-  
+
   public void removeComponent(Component c) {
     circuitsUsingThis.remove(c);
   }
@@ -721,18 +721,18 @@ public class Circuit {
   public Netlist getNetList() {
     return MyNetList;
   }
-  
+
   public void addLoadedMap(String BoardName, HashMap<String,CircuitMapInfo> map) {
     LoadedMaps.put(BoardName, map);
   }
-  
+
   public Set<String> getBoardMapNamestoSave() {
     HashSet<String> ret = new HashSet<>();
     ret.addAll(LoadedMaps.keySet());
     ret.addAll(MyMappableResources.keySet());
     return ret;
   }
-  
+
   public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
     if (MyMappableResources.containsKey(BoardName))
       return MyMappableResources.get(BoardName).getCircuitMap();
@@ -740,7 +740,7 @@ public class Circuit {
       return LoadedMaps.get(BoardName);
     return new HashMap<>();
   }
-  
+
   public void setBoardMap(String BoardName, MappableResourcesContainer map) {
 	if (LoadedMaps.containsKey(BoardName)) {
       for (String key : LoadedMaps.get(BoardName).keySet()) {
@@ -751,13 +751,13 @@ public class Circuit {
 	}
     MyMappableResources.put(BoardName,map);
   }
-  
+
   public MappableResourcesContainer getBoardMap(String BoardName) {
     if (MyMappableResources.containsKey(BoardName))
       return MyMappableResources.get(BoardName);
     return null;
   }
-  
+
   public Set<String> getMapableBoards() {
     return MyMappableResources.keySet();
   }

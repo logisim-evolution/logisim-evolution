@@ -1,4 +1,3 @@
-
 /*
  * This file is part of logisim-evolution.
  *
@@ -49,6 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
+  /**
+   * Application entry point.
+   *
+   * @param args Optional arguments.
+   */
   public static void main(String[] args) {
     System.setProperty("apple.awt.application.name", APP_NAME);
     try {
@@ -59,9 +63,14 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put(
+            "ToolTip.font",
+            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
-    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+    } catch (ClassNotFoundException
+        | UnsupportedLookAndFeelException
+        | IllegalAccessException
+        | InstantiationException e) {
       e.printStackTrace();
     }
     Startup startup = Startup.parseArgs(args);
@@ -91,6 +100,8 @@ public class Main {
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
-  public static boolean hasGui() { return !headless; }
 
+  public static boolean hasGui() {
+    return !headless;
+  }
 }
