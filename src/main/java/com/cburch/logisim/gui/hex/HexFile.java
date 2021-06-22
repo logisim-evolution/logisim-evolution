@@ -1326,7 +1326,7 @@ public class HexFile {
         try {
           rleValue = Long.parseUnsignedLong(hexWord, 16);
         } catch (NumberFormatException e) {
-          try {            
+          try {
             rleValue = Long.parseLong(hexWord, 16);
           } catch (NumberFormatException f) {
             warn("\"%s\" is not valid hex data.", hexWord);
@@ -1337,7 +1337,7 @@ public class HexFile {
           rleCount = 1;
         } else {
           try {
-            rleValue = Long.parseUnsignedLong(word.substring(0), star);
+            rleCount = Long.parseUnsignedLong(word.substring(0, star));
           } catch (NumberFormatException e) {
             warn("\"%s\" is not valid (base-10 decimal) count.", word.substring(0, star));
             continue;
