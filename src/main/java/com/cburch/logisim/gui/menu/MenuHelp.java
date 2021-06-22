@@ -30,14 +30,17 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.About;
 import com.cburch.logisim.util.MacCompatibility;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
 import javax.help.HelpSet;
@@ -53,6 +56,7 @@ class MenuHelp extends JMenu implements ActionListener {
   private final JMenuItem guide = new JMenuItem();
   private final JMenuItem library = new JMenuItem();
   private final JMenuItem about = new JMenuItem();
+  private final JMenuItem www = new JMenuItem();
   private HelpSet helpSet;
   private String helpSetUrl = "";
   private JHelp helpComponent;
@@ -65,26 +69,34 @@ class MenuHelp extends JMenu implements ActionListener {
     guide.addActionListener(this);
     library.addActionListener(this);
     about.addActionListener(this);
+    www.addActionListener(this);
 
     add(tutorial);
     add(guide);
     add(library);
+    if (browserIntegrationSupported()) {
+      addSeparator();
+      add(www);
+    }
     if (!MacCompatibility.isAboutAutomaticallyPresent()) {
       addSeparator();
       add(about);
     }
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == guide) {
+    if (guide.equals(src)) {
       showHelp("guide");
-    } else if (src == tutorial) {
+    } else if (tutorial.equals(src)) {
       showHelp("tutorial");
-    } else if (src == library) {
+    } else if (library.equals(src)) {
       showHelp("libs");
-    } else if (src == about) {
+    } else if (about.equals(src)) {
       About.showAboutDialog(menubar.getParentFrame());
+    } else if (www.equals(src)) {
+      openProjectWebsite();
     }
   }
 
@@ -92,6 +104,7 @@ class MenuHelp extends JMenu implements ActionListener {
     guide.setEnabled(false);
     tutorial.setEnabled(false);
     library.setEnabled(false);
+    www.setEnabled(false);
   }
 
   private void loadBroker() {
@@ -134,6 +147,23 @@ class MenuHelp extends JMenu implements ActionListener {
     }
   }
 
+  // On Linux this feature depends on Gnome, so may not be
+  // working on all distros (i.e. KDE).
+  private boolean browserIntegrationSupported() {
+    return Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
+  }
+
+  public void openProjectWebsite() {
+    if (!browserIntegrationSupported()) return;
+    try {
+      if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        Desktop.getDesktop().browse(new URI(Main.APP_URL));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public void localeChanged() {
     this.setText(S.get("helpMenu"));
     if (helpFrame != null) {
@@ -143,6 +173,7 @@ class MenuHelp extends JMenu implements ActionListener {
     guide.setText(S.get("helpGuideItem"));
     library.setText(S.get("helpLibraryItem"));
     about.setText(S.get("helpAboutItem"));
+    www.setText(S.get("helpProjectWebsite"));
     if (helpFrame != null) {
       helpFrame.setLocale(Locale.getDefault());
       loadBroker();

@@ -28,8 +28,7 @@
 
 package com.cburch.logisim.gui.start;
 
-import static com.cburch.logisim.gui.Strings.S;
-
+import com.cburch.logisim.Main;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,10 +42,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import javax.swing.JComponent;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 class AboutCredits extends JComponent {
   private static final long serialVersionUID = 1L;
-  /** Time to spend freezing the credits before after after scrolling */
-  private static final int MILLIS_FREEZE = 1000;
   /** Speed of how quickly the scrolling occurs */
   private static final int MILLIS_PER_PIXEL = 20;
   /**
@@ -54,16 +53,55 @@ class AboutCredits extends JComponent {
    * rather than replacing this.
    */
   private static final String HENDRIX_PATH = "resources/logisim/hendrix.png";
+
   private static final int HENDRIX_WIDTH = 50;
+
   private final Color[] colorBase;
-  private final Paint[] paintSteady;
   private final Font[] font;
+  private final Paint[] paintSteady;
   private final float fadeStop;
-  private final ArrayList<CreditsLine> lines;
+  private final Lines lines;
   private int scroll;
-  private int initialLines; // number of lines to show in initial freeze
   private int initialHeight; // computed in code based on above
   private int linesHeight; // computed in code based on above
+
+  private class Lines extends ArrayList<CreditsLine> {
+    public Lines separator() {
+      add(new CreditsLine(CreditsLine.SEPARATOR, ""));
+      return this;
+    }
+
+    public Lines title(String line) {
+      add(new CreditsLine(CreditsLine.TITLE, line));
+      return this;
+    }
+
+    public Lines h1(String line) {
+      add(new CreditsLine(CreditsLine.H1, line));
+      return this;
+    }
+
+    public Lines h2(String line) {
+      add(new CreditsLine(CreditsLine.H2, line));
+      return this;
+    }
+
+    public Lines url(String line) {
+      add(new CreditsLine(CreditsLine.URL, line));
+      return this;
+    }
+
+    public Lines text(String line) {
+      add(new CreditsLine(CreditsLine.TEXT, line));
+      return this;
+    }
+
+    public Lines img(Image img, int displayWidth) {
+      add(new CreditsLine(CreditsLine.IMG, "", img, displayWidth));
+      return this;
+    }
+  }
+
   public AboutCredits() {
     scroll = 0;
     setOpaque(false);
@@ -75,15 +113,25 @@ class AboutCredits extends JComponent {
     fadeStop = (float) (About.IMAGE_HEIGHT / 4.0);
 
     colorBase =
-        new Color[] {
-          new Color(143, 0, 0), new Color(48, 0, 96), new Color(48, 0, 96),
-        };
+            new Color[] {
+                    new Color(0x00, 0x80, 0x00), // TITLE
+                    new Color(143, 0, 0), // H1
+                    new Color(105, 0, 0), // H2
+                    new Color(0xCC, 0x80, 0x00), // URL
+                    new Color(48, 0, 96), // TEXT
+                    new Color(0, 0, 0), // SEPARATOR
+                    new Color(0, 0, 0), // IMG
+            };
     font =
-        new Font[] {
-          new Font("Sans Serif", Font.ITALIC, 20),
-          new Font("Sans Serif", Font.BOLD, 24),
-          new Font("Sans Serif", Font.BOLD, 18),
-        };
+            new Font[] {
+                    new Font("Sans Serif", Font.ITALIC | Font.BOLD, 30), // TITLE
+                    new Font("Sans Serif", Font.ITALIC | Font.BOLD, 24), // H1
+                    new Font("Sans Serif", Font.BOLD, 20), // H2
+                    new Font("Sans Serif", Font.BOLD, 18), // URL
+                    new Font("Sans Serif", Font.BOLD, 20), // TEXT
+                    new Font("Sans Serif", Font.PLAIN, 10), // SEP
+                    new Font("Sans Serif", Font.PLAIN, 10), // IMG
+            };
     paintSteady = new Paint[colorBase.length];
     for (int i = 0; i < colorBase.length; i++) {
       Color hue = colorBase[i];
@@ -96,36 +144,38 @@ class AboutCredits extends JComponent {
       hendrixLogo = getToolkit().createImage(url);
     }
 
-    // Logisim's policy concerning who is given credit:
-    // Past contributors are not acknowledged in the About dialog for the
-    // current
-    // version, but they do appear in the acknowledgements section of the
-    // User's
-    // Guide. Current contributors appear in both locations.
+    linesHeight = 0; // computed in paintComponent()
 
-    lines = new ArrayList<>();
-    linesHeight = 0; // computed in paintComponent
-    lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
-    lines.add(new CreditsLine(1, "College of the Holy Cross"));
-    lines.add(new CreditsLine(2, "https://www.holycross.edu"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/"));
-    lines.add(new CreditsLine(1, "Berner Fachhochschule"));
-    lines.add(new CreditsLine(2, "https://www.bfh.ch"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
-    lines.add(new CreditsLine(1, "et d'architecture de Gen\u00E8ve"));
-    lines.add(new CreditsLine(2, "https://hepia.hesge.ch"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
-    lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
-    lines.add(new CreditsLine(2, "https://www.heig-vd.ch"));
-
-    /*
-     * If you fork Logisim, feel free to change the above lines, but please
-     * do not change these last four lines!
-     */
-    lines.add(new CreditsLine(0, S.get("creditsRoleOriginal"), hendrixLogo, HENDRIX_WIDTH));
-    lines.add(new CreditsLine(1, "Carl Burch"));
-    lines.add(new CreditsLine(2, "Hendrix College"));
-    lines.add(new CreditsLine(1, "www.cburch.com/logisim/"));
+    lines = new Lines();
+    lines
+            .separator()
+            .title(Main.APP_DISPLAY_NAME)
+            .h2("Copyright \u00A9" + Main.COPYRIGHT_YEAR + " " + Main.APP_NAME + " developers")
+            .url(Main.APP_URL)
+            .separator()
+            .h1(S.get("creditsRoleFork"))
+            .text("College of the Holy Cross")
+            .url("https://www.holycross.edu")
+            .text("Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/")
+            .text("Berner Fachhochschule")
+            .url("https://www.bfh.ch/")
+            .text("Haute \u00C9cole du paysage, d'ing\u00E9nierie")
+            .text("et d'architecture de Gen\u00E8ve")
+            .url("https://hepia.hesge.ch")
+            .text("Haute \u00C9cole d'Ing\u00E9nierie")
+            .text("et de Gestion du Canton de Vaud")
+            .url("https://www.heig-vd.ch/")
+            .separator()
+            .h1(S.get("creditsRoleOriginal"))
+            .text("Carl Burch")
+            .text("Hendrix College")
+            .url("http://www.cburch.com/logisim/")
+            .img(hendrixLogo, HENDRIX_WIDTH)
+            .separator()
+            .separator()
+            .separator()
+            .separator()
+            .separator();
   }
 
   private Color derive(Color base, int alpha) {
@@ -143,7 +193,7 @@ class AboutCredits extends JComponent {
       int index = -1;
       for (CreditsLine line : lines) {
         index++;
-        if (index == initialLines) initialHeight = y;
+        if (index == 0) initialHeight = y;
         if (line.type == 0) y += 10;
         FontMetrics fm = fms[line.type];
         line.y = y + fm.getAscent();
@@ -157,35 +207,18 @@ class AboutCredits extends JComponent {
     int height = getHeight();
     int initY = Math.min(0, initialHeight - height + About.IMAGE_BORDER);
     int maxY = linesHeight - height - initY;
-    int totalMillis = 2 * MILLIS_FREEZE + (linesHeight + height) * MILLIS_PER_PIXEL;
+    int totalMillis = (linesHeight + height) * MILLIS_PER_PIXEL;
     int offs = scroll % totalMillis;
-    if (offs >= 0 && offs < MILLIS_FREEZE) {
-      // frozen before starting the credits scroll
-      int a = 255 * (MILLIS_FREEZE - offs) / MILLIS_FREEZE;
-      if (a > 245) {
-        paint = null;
-      } else if (a < 15) {
-        paint = paintSteady;
-      } else {
-        paint = new Paint[colorBase.length];
-        for (int i = 0; i < paint.length; i++) {
-          Color hue = colorBase[i];
-          paint[i] = new GradientPaint(0.0f, 0.0f, derive(hue, a), 0.0f, fadeStop, hue);
-        }
-      }
-      yPos = initY;
-    } else if (offs < MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
+
+    if (offs < maxY * MILLIS_PER_PIXEL) {
       // scrolling through credits
-      yPos = initY + (offs - MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-    } else if (offs < 2 * MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
-      // freezing at bottom of scroll
-      yPos = initY + maxY;
-    } else if (offs < 2 * MILLIS_FREEZE + (linesHeight - initY) * MILLIS_PER_PIXEL) {
+      yPos = initY + offs / MILLIS_PER_PIXEL;
+    } else if (offs < (linesHeight - initY) * MILLIS_PER_PIXEL) {
       // scrolling bottom off screen
-      yPos = initY + (offs - 2 * MILLIS_FREEZE) / MILLIS_PER_PIXEL;
+      yPos = initY + offs / MILLIS_PER_PIXEL;
     } else {
       // scrolling next credits onto screen
-      int millis = offs - 2 * MILLIS_FREEZE - (linesHeight - initY) * MILLIS_PER_PIXEL;
+      int millis = offs - (linesHeight - initY) * MILLIS_PER_PIXEL;
       paint = null;
       yPos = -height + millis / MILLIS_PER_PIXEL;
     }
@@ -197,21 +230,20 @@ class AboutCredits extends JComponent {
       int y = line.y - yPos;
       if (y < -100 || y > maxY + 50) continue;
 
-      int type = line.type;
-      if (paint == null) {
-        g.setColor(colorBase[type]);
-      } else {
-        ((Graphics2D) g).setPaint(paint[type]);
-      }
-      g.setFont(font[type]);
-      int textWidth = fms[type].stringWidth(line.text);
-      g.drawString(line.text, centerX - textWidth / 2, line.y - yPos);
+      if (line.img == null) {
+        int type = line.type;
+        if (paint == null) {
+          g.setColor(colorBase[type]);
+        } else {
+          ((Graphics2D) g).setPaint(paint[type]);
+        }
+        g.setFont(font[type]);
+        int textWidth = fms[type].stringWidth(line.text);
+        g.drawString(line.text, centerX - textWidth / 2, line.y - yPos);
 
-      Image img = line.img;
-      if (img != null) {
-        int x = width - line.imgWidth - About.IMAGE_BORDER;
-        int top = y - fms[type].getAscent();
-        g.drawImage(img, x, top, this);
+      } else {
+        int x = (width - line.imgWidth) / 2;
+        g.drawImage(line.img, x, y, this);
       }
     }
   }
@@ -227,6 +259,14 @@ class AboutCredits extends JComponent {
     private final Image img;
     private final int imgWidth;
     private int y;
+
+    public static final int TITLE = 0;
+    public static final int H1 = 1;
+    public static final int H2 = 2;
+    public static final int URL = 3;
+    public static final int TEXT = 4;
+    public static final int SEPARATOR = 5;
+    public static final int IMG = 6;
 
     public CreditsLine(int type, String text) {
       this(type, text, null, 0);
