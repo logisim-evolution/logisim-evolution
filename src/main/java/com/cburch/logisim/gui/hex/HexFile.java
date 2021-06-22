@@ -1337,7 +1337,7 @@ public class HexFile {
           rleCount = 1;
         } else {
           try {
-            rleCount = Long.parseUnsignedLong(word.substring(0, star));
+            rleValue = Long.parseUnsignedLong(word.substring(0), star);
           } catch (NumberFormatException e) {
             warn("\"%s\" is not valid (base-10 decimal) count.", word.substring(0, star));
             continue;
@@ -1563,16 +1563,12 @@ public class HexFile {
           String word = curWords[i];
           if (word.startsWith("0x") || word.startsWith("0X")) word = word.substring(2);
           long val;
-          if (word.startsWith("'")) {
-        	  val = word.charAt(1);
-          } else {
-	          try {
-	            val = hex2ulong(word);
-	          } catch (Exception e) {
-	            warn("Data word \"%s\" contains non-hex characters.", OutputStreamEscaper.escape(word));
-	            continue;
-	          }
-	      }
+          try {
+            val = hex2ulong(word);
+          } catch (Exception e) {
+            warn("Data word \"%s\" contains non-hex characters.", OutputStreamEscaper.escape(word));
+            continue;
+          }
           set(offs++, val);
         }
         findNonemptyLine(false);
