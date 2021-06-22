@@ -5,6 +5,7 @@ in `checkstyle/logisim.xml` file), with the following checks currently disabled:
 
 * "MissingJavadocMethod"
 * "NeedBraces
+* "JavadocParagraph"
 
 # Using Logisim style with InteliJ #
 
