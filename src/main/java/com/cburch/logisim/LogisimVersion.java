@@ -28,10 +28,7 @@
 
 package com.cburch.logisim;
 
-/**
- * Logisim follows Semantic Versioning
- * https://semver.org/
- */
+/** Logisim follows Semantic Versioning https://semver.org/ */
 public class LogisimVersion {
   private int major = 0;
   private int minor = 0;
@@ -41,7 +38,6 @@ public class LogisimVersion {
     this.major = major;
     this.minor = minor;
     this.patch = patch;
-
   }
 
   /**

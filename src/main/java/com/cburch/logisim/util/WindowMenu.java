@@ -98,6 +98,11 @@ public class WindowMenu extends JMenu {
   private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
   private final ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
 
+  /**
+   * Constructor for "Window" menu.
+   *
+   * @param owner Parent frame.
+   */
   public WindowMenu(JFrame owner) {
     this.owner = owner;
     WindowMenuManager.addMenu(this);
