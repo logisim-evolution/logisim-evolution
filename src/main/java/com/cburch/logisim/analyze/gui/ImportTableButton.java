@@ -68,7 +68,7 @@ public class ImportTableButton extends JButton {
       if (c != null) lastFile = new File(c.getName() + ".txt");
       else lastFile = new File("truthtable.txt");
     }
-    JFileChooser chooser = JFileChoosers.createSelected(lastFile);
+    final var chooser = JFileChoosers.createSelected(lastFile);
     chooser.setDialogTitle(S.get("openButton"));
     chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
     chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
@@ -93,15 +93,15 @@ public class ImportTableButton extends JButton {
         return;
       }
       try {
-        String FileName = file.getName();
-        int idx = FileName.lastIndexOf(".");
-        String ext = FileName.substring(idx + 1);
+        final var fileName = file.getName();
+        int idx = fileName.lastIndexOf(".");
+        final var ext = fileName.substring(idx + 1);
         if (ext.equals("txt")) TruthtableTextFile.doLoad(file, model, parent);
         else if (ext.equals("csv")) TruthtableCsvFile.doLoad(file, model, parent);
         else {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("DoNotKnowHowto", FileName),
+              S.fmt("DoNotKnowHowto", fileName),
               S.get("openErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return;

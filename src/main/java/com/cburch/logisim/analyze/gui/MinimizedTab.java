@@ -43,6 +43,7 @@ import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -176,37 +177,40 @@ class MinimizedTab extends AnalyzerTab {
       return choices[selected];
     }
   }
-  
+
   @SuppressWarnings("rawtypes")
   public static class NotationModel extends AbstractListModel implements ComboBoxModel {
     private static final long serialVersionUID = 1L;
-    
+
     private final String[] choices;
     private int selected;
 
     public NotationModel() {
-    selected = 0;
-    choices = new String[5];
-    localeChanged();
+      selected = 0;
+      choices = new String[5];
+      localeChanged();
     }
-    
+
+    @Override
     public int getSize() {
-    return choices.length;
+      return choices.length;
     }
-    
+
+    @Override
     public Object getElementAt(int index) {
-    return choices[index];
+      return choices[index];
     }
-    
+
     public void localeChanged() {
-    choices[Notation.LOGIC.Id] = S.get("expressionLogicrepresentation");
-    choices[Notation.MATHEMATICAL.Id] = S.get("expressionMathrepresentation");
-    choices[Notation.ALTLOGIC.Id] = S.get("expressionAltLogicrepresentation");
-    choices[Notation.PROGBITS.Id] = S.get("expressionProgbitsrepresentation");
-    choices[Notation.PROGBOOLS.Id] = S.get("expressionProgboolsrepresentation");
-    fireContentsChanged(this, 0, choices.length);
+      choices[Notation.LOGIC.id] = S.get("expressionLogicrepresentation");
+      choices[Notation.MATHEMATICAL.id] = S.get("expressionMathrepresentation");
+      choices[Notation.ALTLOGIC.id] = S.get("expressionAltLogicrepresentation");
+      choices[Notation.PROGBITS.id] = S.get("expressionProgbitsrepresentation");
+      choices[Notation.PROGBOOLS.id] = S.get("expressionProgboolsrepresentation");
+      fireContentsChanged(this, 0, choices.length);
     }
-    
+
+    @Override
     public void setSelectedItem(Object anItem) {
       for (int i = 0; i < choices.length; i++) {
         if (choices[i].equals(anItem)) {
@@ -214,12 +218,11 @@ class MinimizedTab extends AnalyzerTab {
         }
       }
     }
-    
+
     @Override
     public Object getSelectedItem() {
       return choices[selected];
     }
-
   }
 
   private class MyListener implements OutputExpressionsListener, ActionListener, ItemListener {
@@ -274,7 +277,7 @@ class MinimizedTab extends AnalyzerTab {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private final JComboBox formatStyle = new JComboBox<>(new StyleModel());
-  
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
@@ -292,17 +295,17 @@ class MinimizedTab extends AnalyzerTab {
 
     selector = new OutputSelector(model);
     selector.addItemListener(myListener);
-    karnaughMap = new KarnaughMapPanel(model,minimizedExpr);
+    karnaughMap = new KarnaughMapPanel(model, minimizedExpr);
     setAsExpr.addActionListener(myListener);
     formatChoice.addItemListener(myListener);
     formatStyle.addItemListener(myListener);
     notationChoice.addItemListener(myListener);
 
-    JPanel buttons = new JPanel(new GridLayout(1, 1));
+    final var buttons = new JPanel(new GridLayout(1, 1));
     buttons.add(setAsExpr);
 
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
+    final var gb = new GridBagLayout();
+    final var gc = new GridBagConstraints();
     setLayout(gb);
     gc.weightx = 1.0;
     gc.gridwidth = 1;
@@ -310,12 +313,12 @@ class MinimizedTab extends AnalyzerTab {
     gc.gridx = 0;
     gc.fill = GridBagConstraints.NONE;
     gc.anchor = GridBagConstraints.CENTER;
-    JPanel cntrl = control();
+    final var cntrl = control();
     gb.setConstraints(cntrl, gc);
     add(cntrl);
     gb.setConstraints(karnaughMap, gc);
     add(karnaughMap);
-    Insets oldInsets = gc.insets;
+    final var oldInsets = gc.insets;
     gc.insets = new Insets(20, 0, 20, 0);
     gc.fill = GridBagConstraints.BOTH;
     gb.setConstraints(minimizedExpr, gc);
@@ -325,16 +328,16 @@ class MinimizedTab extends AnalyzerTab {
     gb.setConstraints(buttons, gc);
     add(buttons);
 
-    String selected = selector.getSelectedOutput();
+    final var selected = selector.getSelectedOutput();
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
     setTransferHandler(new MinimizedTransferHandler());
     karnaughMap.setTransferHandler(new KmapTransferHandler());
     minimizedExpr.setTransferHandler(new ExpressionTransferHandler());
 
-    InputMap inputMap1 = getInputMap();
-    InputMap inputMap2 = karnaughMap.getInputMap();
-    InputMap inputMap3 = minimizedExpr.getInputMap();
-    for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
+    final var inputMap1 = getInputMap();
+    final var inputMap2 = karnaughMap.getInputMap();
+    final var inputMap3 = minimizedExpr.getInputMap();
+    for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
       KeyStroke accel = menubar.getAccelerator(item);
       inputMap1.put(accel, item);
       inputMap2.put(accel, item);
@@ -345,13 +348,14 @@ class MinimizedTab extends AnalyzerTab {
     karnaughMap.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
 
-    MouseMotionAdapter m = new MouseMotionAdapter() {
-      public void mouseDragged(MouseEvent e) {
-        JComponent c = (JComponent)e.getSource();
-        TransferHandler handler = c.getTransferHandler();
-        handler.exportAsDrag(c, e, TransferHandler.COPY);
-      }
-    };
+    MouseMotionAdapter m =
+        new MouseMotionAdapter() {
+          public void mouseDragged(MouseEvent e) {
+            JComponent c = (JComponent) e.getSource();
+            TransferHandler handler = c.getTransferHandler();
+            handler.exportAsDrag(c, e, TransferHandler.COPY);
+          }
+        };
     karnaughMap.addMouseMotionListener(m);
     minimizedExpr.addMouseMotionListener(m);
 
@@ -361,16 +365,18 @@ class MinimizedTab extends AnalyzerTab {
       }
     });
 
-    FocusListener f = new FocusListener() {
-      public void focusGained(FocusEvent e) {
-        if (e.isTemporary()) return;
-        editHandler.computeEnabled();
-      }
-      public void focusLost(FocusEvent e) {
-        if (e.isTemporary()) return;
-        editHandler.computeEnabled();
-      }
-    };
+    final var f =
+        new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            if (e.isTemporary()) return;
+            editHandler.computeEnabled();
+          }
+
+          public void focusLost(FocusEvent e) {
+            if (e.isTemporary()) return;
+            editHandler.computeEnabled();
+          }
+        };
     addFocusListener(f);
     minimizedExpr.addFocusListener(f);
     karnaughMap.addFocusListener(f);
@@ -453,43 +459,44 @@ class MinimizedTab extends AnalyzerTab {
     minimizedExpr.setExpression(outputExprs.getMinimalExpression(output));
     setAsExpr.setEnabled(output != null && !outputExprs.isExpressionMinimal(output));
   }
-  
+
   @Override
   EditHandler getEditHandler() {
     return editHandler;
   }
 
-  final EditHandler editHandler = new EditHandler() {
-    @Override
-    public void computeEnabled() {
-      boolean viewing = minimizedExpr.isFocusOwner()
-          || karnaughMap.isFocusOwner();
-      setEnabled(LogisimMenuBar.CUT, false);
-      setEnabled(LogisimMenuBar.COPY, viewing);
-      setEnabled(LogisimMenuBar.PASTE, false);
-      setEnabled(LogisimMenuBar.DELETE, false);
-      setEnabled(LogisimMenuBar.DUPLICATE, false);
-      setEnabled(LogisimMenuBar.SELECT_ALL, false);
-      setEnabled(LogisimMenuBar.RAISE, false);
-      setEnabled(LogisimMenuBar.LOWER, false);
-      setEnabled(LogisimMenuBar.RAISE_TOP, false);
-      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
-      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
-      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Object action = e.getSource();
-      if (minimizedExpr.isSelected())
-        minimizedExpr.getActionMap().get(action).actionPerformed(e);
-      else if (karnaughMap.isSelected())
-        karnaughMap.getActionMap().get(action).actionPerformed(e);
-    }
-  };
+  final EditHandler editHandler =
+      new EditHandler() {
+        @Override
+        public void computeEnabled() {
+          boolean viewing = minimizedExpr.isFocusOwner() || karnaughMap.isFocusOwner();
+          setEnabled(LogisimMenuBar.CUT, false);
+          setEnabled(LogisimMenuBar.COPY, viewing);
+          setEnabled(LogisimMenuBar.PASTE, false);
+          setEnabled(LogisimMenuBar.DELETE, false);
+          setEnabled(LogisimMenuBar.DUPLICATE, false);
+          setEnabled(LogisimMenuBar.SELECT_ALL, false);
+          setEnabled(LogisimMenuBar.RAISE, false);
+          setEnabled(LogisimMenuBar.LOWER, false);
+          setEnabled(LogisimMenuBar.RAISE_TOP, false);
+          setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+          setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+          setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          Object action = e.getSource();
+          if (minimizedExpr.isSelected())
+            minimizedExpr.getActionMap().get(action).actionPerformed(e);
+          else if (karnaughMap.isSelected())
+            karnaughMap.getActionMap().get(action).actionPerformed(e);
+        }
+      };
 
   private class MinimizedTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
-    
+
     @Override
     protected Transferable createTransferable(JComponent c) {
       if (minimizedExpr.isFocusOwner()) {
@@ -500,16 +507,26 @@ class MinimizedTab extends AnalyzerTab {
         return null;
       }
     }
+
     @Override
-    public int getSourceActions(JComponent c) { return COPY; }
+    public int getSourceActions(JComponent c) {
+      return COPY;
+    }
+
     @Override
-    public boolean importData(TransferHandler.TransferSupport info) { return false; }
+    public boolean importData(TransferHandler.TransferSupport info) {
+      return false;
+    }
+
     @Override
     protected void exportDone(JComponent c, Transferable tdata, int action) { }
+
     @Override
-    public boolean canImport(TransferHandler.TransferSupport support) { return false; }
+    public boolean canImport(TransferHandler.TransferSupport support) {
+      return false;
+    }
   }
-  
+
   private class KmapTransferHandler extends MinimizedTransferHandler {
     private static final long serialVersionUID = 1L;
 
@@ -518,7 +535,7 @@ class MinimizedTab extends AnalyzerTab {
       return new KmapSelection(karnaughMap);
     }
   }
-  
+
   private class ExpressionTransferHandler extends MinimizedTransferHandler {
     private static final long serialVersionUID = 1L;
 
@@ -527,7 +544,7 @@ class MinimizedTab extends AnalyzerTab {
       return new ExpressionSelection(minimizedExpr.getRenderData());
     }
   }
-  
+
   static class ImageSelection implements Transferable {
     private Image image;
 
@@ -565,7 +582,7 @@ class MinimizedTab extends AnalyzerTab {
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, w, h);
       g.setColor(Color.BLACK);
-      kmap.paintKmap(g,false);
+      kmap.paintKmap(g, false);
       g.dispose();
       setImage(img);
     }
@@ -583,64 +600,60 @@ class MinimizedTab extends AnalyzerTab {
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, w, h);
       g.setColor(Color.BLACK);
-      prettyView.paint(g,0,0);
+      prettyView.paint(g, 0, 0);
       g.dispose();
       setImage(img);
     }
   }
-  
+
 
   @Override
   PrintHandler getPrintHandler() {
     return printHandler;
   }
 
-  final PrintHandler printHandler = new PrintHandler() {
-    @Override
-    public Dimension getExportImageSize() {
-      int kWidth = karnaughMap.getKMapDim().width;
-      int kHeight = karnaughMap.getKMapDim().height;
-      int eWidth = minimizedExpr.getRenderData().getPreferredSize().width;
-      int eHeight = minimizedExpr.getRenderData().getPreferredSize().height;
-      int width = Math.max(kWidth, eWidth);
-      int height = kHeight + 30 + eHeight;
-      return new Dimension(width, height);
-    }
+  final PrintHandler printHandler =
+      new PrintHandler() {
+        @Override
+        public Dimension getExportImageSize() {
+          int kWidth = karnaughMap.getKMapDim().width;
+          int kHeight = karnaughMap.getKMapDim().height;
+          int eWidth = minimizedExpr.getRenderData().getPreferredSize().width;
+          int eHeight = minimizedExpr.getRenderData().getPreferredSize().height;
 
-    @Override
-    public void paintExportImage(BufferedImage img, Graphics2D g) {
-      int width = img.getWidth();
-      int height = img.getHeight();
-      g.setClip(0, 0, width, height);
+          int width = Math.max(kWidth, eWidth);
+          int height = kHeight + 30 + eHeight;
 
-      AffineTransform xform = g.getTransform();
-      g.translate((width - karnaughMap.getWidth())/2, 0);
-      g.setColor(Color.BLACK);
-      karnaughMap.paintKmap(g,false);
-      g.setTransform(xform);
+          return new Dimension(width, height);
+        }
 
-      ExpressionRenderData prettyView = minimizedExpr.getRenderData();
-      g.translate((width - prettyView.getWidth())/2, karnaughMap.getKMapDim().height + 30);
-      g.setColor(Color.BLACK);
-      prettyView.paint(g,0,0);
-    }
+        @Override
+        public void paintExportImage(BufferedImage img, Graphics2D g) {
+          int width = img.getWidth();
+          int height = img.getHeight();
+          g.setClip(0, 0, width, height);
 
-    @Override
-    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
-      if (pageNum != 0)
-        return Printable.NO_SUCH_PAGE;
+          doPrint(g, width);
+        }
 
-      AffineTransform xform = g.getTransform();
-      g.translate((w - karnaughMap.getWidth())/2, 0);
-      g.setColor(Color.BLACK);
-      karnaughMap.paintKmap(g,false);
-      g.setTransform(xform);
+        @Override
+        public int print(Graphics2D g, PageFormat pf, int pageNum, double width, double height) {
+          if (pageNum != 0) return Printable.NO_SUCH_PAGE;
+          return doPrint(g, width);
+        }
 
-      ExpressionRenderData prettyView = minimizedExpr.getRenderData();
-      g.translate((w - prettyView.getWidth())/2, karnaughMap.getKMapDim().height + 30);
-      g.setColor(Color.BLACK);
-      prettyView.paint(g,0,0);
-      return Printable.PAGE_EXISTS;
-    }
-  };
+        private int doPrint(Graphics2D g, double width) {
+          final var xform = g.getTransform();
+          g.translate((width - karnaughMap.getWidth()) / 2, 0);
+          g.setColor(Color.BLACK);
+          karnaughMap.paintKmap(g, false);
+          g.setTransform(xform);
+
+          final var prettyView = minimizedExpr.getRenderData();
+          g.translate((width - prettyView.getWidth()) / 2, karnaughMap.getKMapDim().height + 30);
+          g.setColor(Color.BLACK);
+          prettyView.paint(g, 0, 0);
+          return Printable.PAGE_EXISTS;
+        }
+      };
 }

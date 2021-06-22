@@ -117,7 +117,7 @@ public class VariableTab extends AnalyzerTab {
     table.setDropMode(DropMode.INSERT_ROWS);
 
     InputMap inputMap = table.getInputMap();
-    for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
+    for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
       KeyStroke accel = menubar.getAccelerator(item);
       inputMap.put(accel, item);
     }
@@ -127,80 +127,86 @@ public class VariableTab extends AnalyzerTab {
     actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
-    actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
-      private static final long serialVersionUID = 1L;
+    actionMap.put(
+        LogisimMenuBar.DELETE,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
-        int idx = table.getSelectedRow();
-        if (idx < 0 || idx >= data.vars.size())
-          return;
-        data.remove(data.vars.get(idx));
-        if (idx >= data.vars.size())
-        idx = data.vars.size() - 1;
-      if (idx >= 0)
-        table.changeSelection(idx, 0, false, false);
-      }
-    });
-    actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
-      private static final long serialVersionUID = 1L;
+          public void actionPerformed(ActionEvent e) {
+            int idx = table.getSelectedRow();
+            if (idx < 0 || idx >= data.vars.size()) return;
+            data.remove(data.vars.get(idx));
+            if (idx >= data.vars.size()) idx = data.vars.size() - 1;
+            if (idx >= 0) table.changeSelection(idx, 0, false, false);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.RAISE,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
-        int idx = table.getSelectedRow();
-        if (idx <= 0 || idx > data.vars.size()-1)
-          return;
-        data.move(data.vars.get(idx), -1);
-        table.changeSelection(idx-1, 0, false, false);
-      }
-    });
-    actionMap.put(LogisimMenuBar.LOWER, new AbstractAction() {
-      private static final long serialVersionUID = 1L;
+          public void actionPerformed(ActionEvent e) {
+            int idx = table.getSelectedRow();
+            if (idx <= 0 || idx > data.vars.size() - 1) return;
+            data.move(data.vars.get(idx), -1);
+            table.changeSelection(idx - 1, 0, false, false);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.LOWER,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
-        int idx = table.getSelectedRow();
-        if (idx < 0 || idx >= data.vars.size()-1)
-          return;
-        data.move(data.vars.get(idx), +1);
-        table.changeSelection(idx+1, 0, false, false);
-      }
-    });
-    actionMap.put(LogisimMenuBar.RAISE_TOP, new AbstractAction() {
-      private static final long serialVersionUID = 1L;
+          public void actionPerformed(ActionEvent e) {
+            int idx = table.getSelectedRow();
+            if (idx < 0 || idx >= data.vars.size() - 1) return;
+            data.move(data.vars.get(idx), +1);
+            table.changeSelection(idx + 1, 0, false, false);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.RAISE_TOP,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
-        int idx = table.getSelectedRow();
-        if (idx <= 0 || idx > data.vars.size()-1)
-          return;
-        data.move(data.vars.get(idx), -idx);
-        table.changeSelection(0, 0, false, false);
-      }
-    });
-    actionMap.put(LogisimMenuBar.LOWER_BOTTOM, new AbstractAction() {
-      private static final long serialVersionUID = 1L;
+          public void actionPerformed(ActionEvent e) {
+            int idx = table.getSelectedRow();
+            if (idx <= 0 || idx > data.vars.size() - 1) return;
+            data.move(data.vars.get(idx), -idx);
+            table.changeSelection(0, 0, false, false);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.LOWER_BOTTOM,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
-        int idx = table.getSelectedRow();
-        int end = data.vars.size() - 1;
-        if (idx < 0 || idx >= data.vars.size()-1)
-          return;
-        data.move(data.vars.get(idx), end-idx);
-        table.changeSelection(end, 0, false, false);
-      }
-    });
+          public void actionPerformed(ActionEvent e) {
+            int idx = table.getSelectedRow();
+            int end = data.vars.size() - 1;
+            if (idx < 0 || idx >= data.vars.size() - 1) return;
+            data.move(data.vars.get(idx), end - idx);
+            table.changeSelection(end, 0, false, false);
+          }
+        });
     return table;
   }
 
   private JTable focus;
+
   private JScrollPane wrap(JTable table) {
     JScrollPane scroll = new JScrollPane(table,
-		        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
-    scroll.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent me) {
-          table.changeSelection(table.getRowCount()-1, 0, false, false);
-          table.grabFocus();
-        }
-      });
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scroll.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
+    scroll.addMouseListener(
+        new MouseAdapter() {
+          public void mouseClicked(MouseEvent me) {
+            table.changeSelection(table.getRowCount() - 1, 0, false, false);
+            table.grabFocus();
+          }
+        });
     scroll.setTransferHandler(table.getTransferHandler());
 
     table.addFocusListener(new FocusListener() {
@@ -209,6 +215,7 @@ public class VariableTab extends AnalyzerTab {
         focus = table;
         editHandler.computeEnabled();
       }
+
       public void focusLost(FocusEvent e) {
         if (e.isTemporary()) return;
         table.clearSelection();
@@ -228,19 +235,19 @@ public class VariableTab extends AnalyzerTab {
 
     inputsTable = ioTable(inputs, menubar);
     outputsTable = ioTable(outputs, menubar);
-    JScrollPane inputsTablePane = wrap(inputsTable);
-    JScrollPane outputsTablePane = wrap(outputsTable);
+    final var inputsTablePane = wrap(inputsTable);
+    final var outputsTablePane = wrap(outputsTable);
 
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
+    final var gb = new GridBagLayout();
+    final var gc = new GridBagConstraints();
     setLayout(gb);
-    
+
     gc.insets = new Insets(10, 10, 2, 10);
     gc.fill = GridBagConstraints.HORIZONTAL;
     gc.weightx = gc.weighty = 0.0;
 
     inputsLabel = new JLabel("Input Variables");
-    
+
     gc.gridx = 0;
     gc.gridy = 0;
     gb.setConstraints(inputsLabel, gc);
@@ -301,9 +308,9 @@ public class VariableTab extends AnalyzerTab {
 
   @Override
   void updateTab() {
-    VariableTableModel inputModel = (VariableTableModel)inputsTable.getModel();
+    var inputModel = (VariableTableModel) inputsTable.getModel();
     inputModel.update();
-    VariableTableModel outputModel = (VariableTableModel)outputsTable.getModel();
+    var outputModel = (VariableTableModel) outputsTable.getModel();
     outputModel.update();
   }
 
@@ -329,12 +336,12 @@ public class VariableTab extends AnalyzerTab {
     if (index.charAt(pos++) != '[') return NO_START_PAR;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
     if (pos == 1) return NO_VALID_MSB_INDEX;
-    int MSBIndex = Integer.parseInt(index.substring(1, pos));
+    int msbIndex = Integer.parseInt(index.substring(1, pos));
     if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos) == ']') {
       pos++;
       if (pos != length) return INVALID_CHARS;
-      else return MSBIndex;
+      else return msbIndex;
     }
     if (pos >= length - 2) return NO_VALID_INDEX_SEP;
     if (!index.startsWith("..", pos)) return NO_VALID_INDEX_SEP;
@@ -342,12 +349,12 @@ public class VariableTab extends AnalyzerTab {
     int curpos = pos;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
     if (pos == curpos) return NO_VALID_LSB_INDEX;
-    int LSBIndex = Integer.parseInt(index.substring(curpos, pos));
-    if (LSBIndex > MSBIndex) return LSB_BIGGER_MSB;
+    int lsbIndex = Integer.parseInt(index.substring(curpos, pos));
+    if (lsbIndex > msbIndex) return LSB_BIGGER_MSB;
     if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos++) != ']') return NO_FINAL_PAR;
     if (pos != length) return INVALID_CHARS;
-    return MSBIndex - LSBIndex + 1;
+    return msbIndex - lsbIndex + 1;
   }
 
   private int validateInput(VariableList data, Var oldVar, String text, int w) {
@@ -369,8 +376,8 @@ public class VariableTab extends AnalyzerTab {
     if (err == OK) {
       String message = SyntaxChecker.getErrorMessage(text);
       if (message != null) {
-    	  err = BAD_NAME;
-    	  error.setText(message);
+        err = BAD_NAME;
+        error.setText(message);
       }
     }
 
@@ -380,8 +387,8 @@ public class VariableTab extends AnalyzerTab {
     }
     if (err == OK) {
       if (data.containsDuplicate(data, oldVar, text)) {
-          error.setText(S.get("variableDuplicateError"));
-          err = DUP_NAME;
+        error.setText(S.get("variableDuplicateError"));
+        err = DUP_NAME;
       }
     }
     if (err == OK || err == EMPTY) {
@@ -394,40 +401,41 @@ public class VariableTab extends AnalyzerTab {
     }
     return err;
   }
-  
+
   @Override
   EditHandler getEditHandler() {
     return editHandler;
   }
 
-  final EditHandler editHandler = new EditHandler() {
-    @Override
-    public void computeEnabled() {
-      int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
-      int i = (focus == null || focus.isEditing()) ? -1 : focus.getSelectedRow();
-      setEnabled(LogisimMenuBar.CUT, true);
-      setEnabled(LogisimMenuBar.COPY, true);
-      setEnabled(LogisimMenuBar.PASTE, true);
-      setEnabled(LogisimMenuBar.DELETE, true);
-      setEnabled(LogisimMenuBar.DUPLICATE, false);
-      setEnabled(LogisimMenuBar.SELECT_ALL, focus != null && focus.isEditing());
-      setEnabled(LogisimMenuBar.RAISE, 0 < i && i <= n-1);
-      setEnabled(LogisimMenuBar.LOWER, 0 <= i && i < n-1);
-      setEnabled(LogisimMenuBar.RAISE_TOP, 0 < i && i <= n-1);
-      setEnabled(LogisimMenuBar.LOWER_BOTTOM, 0 <= i && i < n-1);
-      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
-      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Object action = e.getSource();
-      if (focus != null) focus.getActionMap().get(action).actionPerformed(null);
-    }
-  };
+  final EditHandler editHandler =
+      new EditHandler() {
+        @Override
+        public void computeEnabled() {
+          final int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
+          final int i = (focus == null || focus.isEditing()) ? -1 : focus.getSelectedRow();
+          setEnabled(LogisimMenuBar.CUT, true);
+          setEnabled(LogisimMenuBar.COPY, true);
+          setEnabled(LogisimMenuBar.PASTE, true);
+          setEnabled(LogisimMenuBar.DELETE, true);
+          setEnabled(LogisimMenuBar.DUPLICATE, false);
+          setEnabled(LogisimMenuBar.SELECT_ALL, focus != null && focus.isEditing());
+          setEnabled(LogisimMenuBar.RAISE, 0 < i && i <= n - 1);
+          setEnabled(LogisimMenuBar.LOWER, 0 <= i && i < n - 1);
+          setEnabled(LogisimMenuBar.RAISE_TOP, 0 < i && i <= n - 1);
+          setEnabled(LogisimMenuBar.LOWER_BOTTOM, 0 <= i && i < n - 1);
+          setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+          setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+        }
 
-  private static class VariableTableModel
-    extends AbstractTableModel implements VariableListListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          Object action = e.getSource();
+          if (focus != null) focus.getActionMap().get(action).actionPerformed(null);
+        }
+      };
+
+  private static class VariableTableModel extends AbstractTableModel
+      implements VariableListListener {
     private static final long serialVersionUID = 1L;
     private final JTable table;
     private final VariableList list;
@@ -445,14 +453,14 @@ public class VariableTab extends AnalyzerTab {
       return true;
     }
 
-    public void setValueAt(Object o, int row, int column) {
-      Var newVar = (Var)o;
-      Var oldVar = (Var)getValueAt(row, column);
+    public void setValueAt(Object obj, int row, int column) {
+      Var newVar = (Var) obj;
+      Var oldVar = (Var) getValueAt(row, column);
       if (newVar == null || newVar.name.equals("") || newVar.equals(oldVar))
         return;
       if (row == listCopy.length) {
         list.add(newVar);
-        table.changeSelection(row+1, column, false, false);
+        table.changeSelection(row + 1, column, false, false);
       } else {
         list.replace(oldVar, newVar);
         table.changeSelection(row, column, false, false);
@@ -469,32 +477,45 @@ public class VariableTab extends AnalyzerTab {
         return null;
     }
 
-    public int getColumnCount() { return 1; }
+    public int getColumnCount() {
+      return 1;
+    }
 
-    public String getColumnName(int column) { return ""; }
-    public Class<?> getColumnClass(int columnIndex) { return Var.class; }
-    public int getRowCount() { return listCopy.length + 1; }
+    public String getColumnName(int column) {
+      return "";
+    }
+
+    public Class<?> getColumnClass(int columnIndex) {
+      return Var.class;
+    }
+
+    public int getRowCount() {
+      return listCopy.length + 1;
+    }
 
     public void listChanged(VariableListEvent event) {
       int oldSize = listCopy.length;
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-      case VariableListEvent.ALL_REPLACED:
-        fireTableRowsUpdated(0, oldSize);
-        return;
-      case VariableListEvent.ADD:
-        fireTableRowsInserted(idx, idx);
-        return;
-      case VariableListEvent.REMOVE:
-        fireTableRowsDeleted(idx, idx);
-        return;
-      case VariableListEvent.MOVE:
-        fireTableRowsUpdated(0, listCopy.length-1);
-        return;
-      case VariableListEvent.REPLACE:
-        fireTableRowsUpdated(idx, idx);
-        return;
+        case VariableListEvent.ALL_REPLACED:
+          fireTableRowsUpdated(0, oldSize);
+          break;
+        case VariableListEvent.ADD:
+          fireTableRowsInserted(idx, idx);
+          break;
+        case VariableListEvent.REMOVE:
+          fireTableRowsDeleted(idx, idx);
+          break;
+        case VariableListEvent.MOVE:
+          fireTableRowsUpdated(0, listCopy.length - 1);
+          break;
+        case VariableListEvent.REPLACE:
+          fireTableRowsUpdated(idx, idx);
+          break;
+        default:
+          // do nothing
+          break;
       }
     }
 
@@ -513,19 +534,22 @@ public class VariableTab extends AnalyzerTab {
     final Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
     final Font plain;
     final Font italic;
+
     public VarRenderer() {
       setBorder(border);
       plain = AppPreferences.getScaledFont(getFont());
       italic = AppPreferences.getScaledFont(plain.deriveFont(Font.ITALIC));
     }
+
     @Override
     public Component getTableCellRendererComponent(JTable table,
         Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       boolean empty = value.toString().equals("");
       if (empty)
         value = S.get("variableClickToAdd");
-      JComponent c = (JComponent)super.getTableCellRendererComponent(table,
-          value, isSelected, hasFocus, row, column);
+      JComponent c =
+          (JComponent)
+              super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       c.setFont(empty ? italic : plain);
       return c;
     }
@@ -533,12 +557,14 @@ public class VariableTab extends AnalyzerTab {
 
   static class BitWidthRenderer extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
+
     public BitWidthRenderer() {
     }
+
     @Override
     public Component getListCellRendererComponent(JList<?> list,
         Object w, int index, boolean isSelected, boolean cellHasFocus) {
-      String s = ((Integer)w) == 1 ? ("1 bit") : (w + " bits");
+      String s = ((Integer) w) == 1 ? ("1 bit") : (w + " bits");
       return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
     }
   }
@@ -549,16 +575,15 @@ public class VariableTab extends AnalyzerTab {
     final JComboBox<Integer> width;
     Var editing;
     final VariableList data;
-    
+
     public SingleClickVarEditor(VariableList data) {
       field.setBorder(BorderFactory.createCompoundBorder(
             field.getBorder(),
             BorderFactory.createEmptyBorder(1, 3, 1, 3)));
       this.data = data;
       int maxwidth = data.getMaximumSize();
-      Integer[] widths = new Integer[Math.min(maxwidth, 32)];
-      for (int i = 0; i < widths.length; i++)
-        widths[i] = i+1;
+      var widths = new Integer[Math.min(maxwidth, 32)];
+      for (int i = 0; i < widths.length; i++) widths[i] = i + 1;
       width = new JComboBox<>(widths);
       width.setFocusable(false);
       width.setRenderer(new BitWidthRenderer());
@@ -568,15 +593,15 @@ public class VariableTab extends AnalyzerTab {
 
     @Override
     public Object getCellEditorValue() {
-      String name = field.getText().trim();
-      int w = (Integer)width.getSelectedItem();
+      var name = field.getText().trim();
+      int w = (Integer) width.getSelectedItem();
       return new Var(name, w);
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table,
-        Object value, boolean isSelected, int row, int column) {
-      editing = (Var)value;
+    public Component getTableCellEditorComponent(
+        JTable table, Object value, boolean isSelected, int row, int column) {
+      editing = (Var) value;
       field.setText(editing.name);
       width.setSelectedItem(editing.width);
       return field;
@@ -591,13 +616,13 @@ public class VariableTab extends AnalyzerTab {
         return false;
       }
     }
-    
+
     boolean ok() {
-      Var oldVar = editing;
+      var oldVar = editing;
       editing = null;
-      String text = field.getText().trim();
-      String name = "";
-      String index = "";
+      var text = field.getText().trim();
+      var name = "";
+      var index = "";
       int w;
       if (text.contains("[")) {
         int idx = text.indexOf('[');
@@ -605,27 +630,27 @@ public class VariableTab extends AnalyzerTab {
         index = text.substring(idx);
         w = checkindex(index);
         if (w <= 0) {
-          String ErrorText = null;
-          if (w == NO_START_PAR) ErrorText = S.get("variableRangeStartPar");
-          else if (w == NO_VALID_MSB_INDEX) ErrorText = S.get("variableRangeMSBWrong");
-          else if (w == NO_VALID_INDEX_SEP) ErrorText = S.get("variableRangeWrongSep");
-          else if (w == NO_VALID_LSB_INDEX) ErrorText = S.get("variableRangeWrongSep");
-          else if (w == LSB_BIGGER_MSB) ErrorText = S.get("variableRangeWrongLB");
-          else if (w == NO_FINAL_PAR) ErrorText = S.get("variableRangeFinalPar");
-          else if (w == INVALID_CHARS) ErrorText = S.get("variableRangeInvalChar");
-          if (ErrorText != null) {
-            error.setText(ErrorText);
+          String errorText = null;
+          if (w == NO_START_PAR) errorText = S.get("variableRangeStartPar");
+          else if (w == NO_VALID_MSB_INDEX) errorText = S.get("variableRangeMSBWrong");
+          else if (w == NO_VALID_INDEX_SEP) errorText = S.get("variableRangeWrongSep");
+          else if (w == NO_VALID_LSB_INDEX) errorText = S.get("variableRangeWrongSep");
+          else if (w == LSB_BIGGER_MSB) errorText = S.get("variableRangeWrongLB");
+          else if (w == NO_FINAL_PAR) errorText = S.get("variableRangeFinalPar");
+          else if (w == INVALID_CHARS) errorText = S.get("variableRangeInvalChar");
+          if (errorText != null) {
+            error.setText(errorText);
           }
-          w = (Integer)width.getSelectedItem();
+          w = (Integer) width.getSelectedItem();
           return false;
         } else {
-          width.setSelectedIndex(w-1);
+          width.setSelectedIndex(w - 1);
           w -= 1;
           field.setText(name);
         }
       } else {
-      	name = text;
-      	w = (Integer)width.getSelectedItem();
+        name = text;
+        w = (Integer) width.getSelectedItem();
       }
       if (oldVar == null || oldVar.name.equals("")) {
         // validate new name and width
@@ -643,15 +668,17 @@ public class VariableTab extends AnalyzerTab {
         if (err == UNCHANGED)
           return true; // do nothing, unchanged Var will be ignored in setValueAt()
         return err == OK || err == RESIZED; // modified Var will be created in setValueAt()
-      }// should never happen
+      } // should never happen
     }
   }
 
   public class DoubleClickVarEditor extends SingleClickVarEditor {
     private static final long serialVersionUID = 1L;
+
     public DoubleClickVarEditor(VariableList data) {
       super(data);
     }
+
     @Override
     public boolean isCellEditable(EventObject e) {
       if (super.isCellEditable(e)) {
@@ -692,7 +719,7 @@ public class VariableTab extends AnalyzerTab {
     public boolean importData(TransferHandler.TransferSupport info) {
       String s;
       try {
-        s = (String)info.getTransferable().getTransferData(DataFlavor.stringFlavor);
+        s = (String) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
       } catch (Exception e) {
         return false;
       }
@@ -703,7 +730,7 @@ public class VariableTab extends AnalyzerTab {
       int newIdx = data.vars.size();
       if (info.isDrop()) {
         try {
-          JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
+          JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
           newIdx = Math.min(dl.getRow(), data.vars.size());
         } catch (ClassCastException ignored) {
         }

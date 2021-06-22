@@ -41,7 +41,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ItemListener;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedString;
@@ -90,21 +89,26 @@ class OutputSelector {
           return;
         }
         Graphics2D g2 = (Graphics2D) g.create();
-        Insets i = getInsets();
-        Font font = getFont();
+        final var i = getInsets();
+        final var font = getFont();
         g2.setPaint(getBackground());
         g2.fillRect(0, 0, getWidth(), getHeight());
-        FontRenderContext frc = g2.getFontRenderContext();
+        final var frc = g2.getFontRenderContext();
         AttributedString as;
         if (txt.contains(":")) {
           int idx = txt.indexOf(':');
           as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1));
-          as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
+          as.addAttribute(
+              TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
         } else if (txt.contains("[")) {
           int start = txt.indexOf('[');
           int stop = txt.lastIndexOf(']');
-          as = new AttributedString(txt.substring(0,start)+txt.substring(start+1,stop));
-          as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, start, start+(stop-start-1));
+          as = new AttributedString(txt.substring(0, start) + txt.substring(start + 1, stop));
+          as.addAttribute(
+              TextAttribute.SUPERSCRIPT,
+              TextAttribute.SUPERSCRIPT_SUB,
+              start,
+              start + (stop - start - 1));
         } else {
           as = new AttributedString(txt);
         }
@@ -118,10 +122,10 @@ class OutputSelector {
 
     private static final long serialVersionUID = 1L;
     private String selected;
-    private final AttributedJLabel MyRenderer = new AttributedJLabel();
+    private final AttributedJLabel myRenderer = new AttributedJLabel();
 
     public ListCellRenderer<Object> getMyRenderer() {
-      return MyRenderer;
+      return myRenderer;
     }
 
     @Override
