@@ -1,4 +1,5 @@
 * @dev (????-??-??)
+  * Introducing project logo 
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
   * Made pins' tooltips more descriptive for 74161.
