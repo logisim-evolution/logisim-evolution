@@ -186,8 +186,8 @@ class Measures {
   public long toAddress(int x, int y) {
     HexModel model = hex.getModel();
     if (model == null) return Integer.MIN_VALUE;
-    long addr0 = model.getFirstOffset();
-    long addr1 = model.getLastOffset();
+    final long addr0 = model.getFirstOffset();
+    final long addr1 = model.getLastOffset();
 
     long base = getBaseAddress(model) + ((long) y / cellHeight) * cols;
     int offs = (x - baseX) / (cellWidth + (spacerWidth + 2) / 4);

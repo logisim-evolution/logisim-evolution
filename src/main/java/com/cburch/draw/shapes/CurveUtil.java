@@ -55,17 +55,17 @@ public class CurveUtil {
   // (costs about 80 multiplications+additions)
   // note: p0 and p2 are endpoints, p1 is control point
   public static double[] findNearestPoint(double[] q, double[] p0, double[] p1, double[] p2) {
-    double[] A = computeA(p0, p1);
-    double[] B = computeB(p0, p1, p2);
+    double[] a = computeA(p0, p1);
+    double[] b = computeB(p0, p1, p2);
 
     // a temporary util vect = p0 - (x,y)
     double[] pos = {p0[0] - q[0], p0[1] - q[1]};
     // search points P of bezier curve with PM.(dP / dt) = 0
     // a calculus leads to a 3d degree equation :
-    double a = B[0] * B[0] + B[1] * B[1];
-    double b = 3 * (A[0] * B[0] + A[1] * B[1]);
-    double c = 2 * (A[0] * A[0] + A[1] * A[1]) + pos[0] * B[0] + pos[1] * B[1];
-    double d = pos[0] * A[0] + pos[1] * A[1];
+    double a = b[0] * b[0] + b[1] * b[1];
+    double b = 3 * (a[0] * b[0] + a[1] * b[1]);
+    double c = 2 * (a[0] * a[0] + a[1] * a[1]) + pos[0] * b[0] + pos[1] * b[1];
+    double d = pos[0] * a[0] + pos[1] * a[1];
     double[] roots = solveCubic(a, b, c, d);
     if (roots == null) return null;
 
@@ -105,8 +105,8 @@ public class CurveUtil {
 
   // note: p0 and p2 are endpoints, p1 is control point
   public static Bounds getBounds(double[] p0, double[] p1, double[] p2) {
-    double[] A = computeA(p0, p1);
-    double[] B = computeB(p0, p1, p2);
+    double[] a = computeA(p0, p1);
+    double[] b = computeB(p0, p1, p2);
 
     // rough evaluation of bounds:
     double xMin = Math.min(p0[0], Math.min(p1[0], p2[0]));
@@ -117,13 +117,13 @@ public class CurveUtil {
     // more accurate evaluation:
     // see Andree Michelle for a faster but less readable method
     if (xMin == p1[0] || xMax == p1[0]) {
-      double u = -A[0] / B[0]; // u where getTan(u)[0] == 0
+      double u = -a[0] / b[0]; // u where getTan(u)[0] == 0
       u = (1 - u) * (1 - u) * p0[0] + 2 * u * (1 - u) * p1[0] + u * u * p2[0];
       if (xMin == p1[0]) xMin = u;
       else xMax = u;
     }
     if (yMin == p1[1] || yMax == p1[1]) {
-      double u = -A[1] / B[1]; // u where getTan(u)[1] == 0
+      double u = -a[1] / b[1]; // u where getTan(u)[1] == 0
       u = (1 - u) * (1 - u) * p0[1] + 2 * u * (1 - u) * p1[1] + u * u * p2[1];
       if (yMin == p1[1]) yMin = u;
       else yMax = u;
