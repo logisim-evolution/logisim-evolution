@@ -302,11 +302,10 @@ tasks {
     // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
     checkstyle {
         // If you are going to upgrade checkstyle version ensure you are upgrading also
-        // XML config file to match. The simplest approach is to go project release page:
-        // https://github.com/checkstyle/checkstyle/releases and grab source archive for
-        // version of your choice and copy out "src/main/resources/google_checks.xml" here.
+        // XML config file to match or CheckStyle may fail to work. See `checkstyle/README.md`
+        // for details!
         toolVersion = "8.37"
-        configFile = file("${project.rootDir}/checkstyle/google_checks.xml")
+        configFile = file("${project.rootDir}/checkstyle/logisim.xml")
     }
     checkstyleMain {
         source = fileTree("src/main/java")
