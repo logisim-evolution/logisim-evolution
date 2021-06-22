@@ -1,5 +1,8 @@
-Logisim-evolution
-=================
+![Logisim-evolution](src/main/resources/resources/logisim/img/logisim-evolution-logo.svg)
+
+# Digital logic designer and simulator #
+
+
 
 Branch [`master`](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
 
