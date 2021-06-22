@@ -153,7 +153,7 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar") && !name.equals("appear")) {
       Node[] a = new Node[n];
       for (int i = 0; i < n; i++) a[i] = children.item(i);
       Arrays.sort(a, nodeComparator);
