@@ -127,6 +127,8 @@ Code style to use is `Default Google java style`.
 
 Another good reference is [this book](https://github.com/grself/CIS221_Text/raw/master/dl.pdf), the accompanying [lab manual](https://github.com/grself/CIS221_Lab_Manual/raw/master/dl_lab.pdf), and [YouTube channel](http://bit.ly/2KLMcoc), where basic electronics is explained with the help of Logisim.
 
+Some circuit examples, ranging from simple combinational and sequential logic to advanced datapaths, that are useful for teaching and learning computer organization topics can be found [here](https://github.com/mkayaalp/computer-organization-logisim).
+
 
 ## Development
 
