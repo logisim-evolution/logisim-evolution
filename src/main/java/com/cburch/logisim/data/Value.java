@@ -98,6 +98,14 @@ public class Value {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
 
+  public static Value createKnown(float value) {
+    return Value.create(32, 0, 0, Float.floatToIntBits(value));
+  }
+
+  public static Value createKnown(double value) {
+    return Value.create(64, 0, 0, Double.doubleToLongBits(value));
+  }
+
   public static Value createUnknown(BitWidth bits) {
     return Value.create(bits.getWidth(), 0, -1, 0);
   }
@@ -544,6 +552,20 @@ public class Value {
     if (error != 0) return -1L;
     if (unknown != 0) return -1L;
     return value;
+  }
+
+  public float toFloatValue() {
+    if (error != 0) return Float.NaN;
+    if (unknown != 0) return Float.NaN;
+    if (width != 32) return Float.NaN;
+    return Float.intBitsToFloat((int) value);
+  }
+
+  public double toDoubleValue() {
+    if (error != 0) return Double.NaN;
+    if (unknown != 0) return Double.NaN;
+    if (width != 64) return Double.NaN;
+    return Double.longBitsToDouble(value);
   }
 
   public String toOctalString() {
