@@ -104,33 +104,33 @@ public abstract class HDL {
     return isVHDL() ? " DOWNTO " : ":";
   }
 
-  public static String GetZeroVector(int NrOfBits, boolean FloatingPinTiedToGround) {
-    StringBuilder Contents = new StringBuilder();
+  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+    var contents = new StringBuilder();
     if (isVHDL()) {
-      String FillValue = (FloatingPinTiedToGround) ? "0" : "1";
-      String HexFillValue = (FloatingPinTiedToGround) ? "0" : "F";
-      if (NrOfBits == 1) {
-        Contents.append("'" + FillValue + "'");
+      var fillValue = (floatingPinTiedToGround) ? "0" : "1";
+      var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
+      if (nrOfBits == 1) {
+        contents.append("'").append(fillValue).append("'");
       } else {
-        if ((NrOfBits % 4) > 0) {
-          Contents.append("\"");
-          Contents.append(FillValue.repeat((NrOfBits % 4)));
-          Contents.append("\"");
-          if (NrOfBits > 3) {
-            Contents.append("&");
+        if ((nrOfBits % 4) > 0) {
+          contents.append("\"");
+          contents.append(fillValue.repeat((nrOfBits % 4)));
+          contents.append("\"");
+          if (nrOfBits > 3) {
+            contents.append("&");
           }
         }
-        if ((NrOfBits / 4) > 0) {
-          Contents.append("X\"");
-          Contents.append(HexFillValue.repeat(Math.max(0, (NrOfBits / 4))));
-          Contents.append("\"");
+        if ((nrOfBits / 4) > 0) {
+          contents.append("X\"");
+          contents.append(hexFillValue.repeat(Math.max(0, (nrOfBits / 4))));
+          contents.append("\"");
         }
       }
     } else {
-      Contents.append(NrOfBits + "'d");
-      Contents.append(FloatingPinTiedToGround ? "0" : "-1");
+      contents.append(nrOfBits).append("'d");
+      contents.append(floatingPinTiedToGround ? "0" : "-1");
     }
-    return Contents.toString();
+    return contents.toString();
   }
 
 }
