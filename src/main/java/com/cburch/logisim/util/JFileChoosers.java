@@ -84,11 +84,9 @@ public class JFileChoosers {
           }
         }
       } catch (RuntimeException t) {
-        if (first == null)
-          first = t;
+        if (first == null) first = t;
         Throwable u = t.getCause();
-        if (!(u instanceof IOException))
-          throw t;
+        if (!(u instanceof IOException)) throw t;
       }
     }
     throw first;

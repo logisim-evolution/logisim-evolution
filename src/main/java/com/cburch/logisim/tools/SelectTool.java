@@ -358,7 +358,7 @@ public class SelectTool extends Tool {
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else {
       SortedSet<Component> comps =
-          AutoLabel.Sort(canvas.getProject().getSelection().getComponents());
+          AutoLabel.sort(canvas.getProject().getSelection().getComponents());
       int KeybEvent = e.getKeyCode();
       boolean KeyTaken = false;
       for (Component comp : comps) {
@@ -376,7 +376,7 @@ public class SelectTool extends Tool {
               new SetAttributeAction(
                   canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
           KeyTaken |=
-              AutoLabler.LabelKeyboardHandler(
+              AutoLabler.labelKeyboardHandler(
                   KeybEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
@@ -556,7 +556,7 @@ public class SelectTool extends Tool {
             SetAttributeAction act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-            AutoLabler.AskAndSetLabel(
+            AutoLabler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
                 OldLabel,
                 canvas.getCircuit(),
