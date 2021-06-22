@@ -49,6 +49,7 @@ public class ClipboardActions extends Action {
   private final Map<CanvasObject, Integer> affected;
   private final ClipboardContents newClipboard;
   private ClipboardContents oldClipboard;
+
   private ClipboardActions(boolean remove, AppearanceCanvas canvas) {
     this.remove = remove;
     this.canvas = canvas;

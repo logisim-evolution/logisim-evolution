@@ -77,7 +77,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     this.canvas = canvas;
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-    Circuit circuit = canvas.getCircuit();
+    final var circuit = canvas.getCircuit();
     setTitle(S.fmt("showStateDialogTitle", circuit.getName()));
 
     root = enumerate(circuit, null);
@@ -88,7 +88,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     tree.getCheckingModel()
         .setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE_PRESERVING_CHECK);
     tree.setCheckingPaths(getPaths());
-    JScrollPane infoPane = new JScrollPane(tree);
+    final var infoPane = new JScrollPane(tree);
 
     ok = new JButton(S.get("showStateDialogOkButton"));
     cancel = new JButton(S.get("showStateDialogCancelButton"));
@@ -298,15 +298,15 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class CircuitRef extends Ref {
-    final Circuit c;
+    final Circuit circuit;
 
     CircuitRef(Circuit c, InstanceComponent ic) {
       super(ic);
-      this.c = c;
+      this.circuit = c;
     }
 
     public String toString() {
-      if (ic == null) return S.fmt("showStateDialogNodeTitle", c.getName());
+      if (ic == null) return S.fmt("showStateDialogNodeTitle", circuit.getName());
       else return super.toString();
     }
   }

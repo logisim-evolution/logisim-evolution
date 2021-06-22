@@ -53,8 +53,13 @@ public final class Instance implements Location.At {
     return instance.comp;
   }
 
-  static Instance makeFor(InstanceComponent comp) { return new Instance(comp); }
-  private Instance(InstanceComponent comp) { this.comp = comp; }
+  static Instance makeFor(InstanceComponent comp) {
+    return new Instance(comp);
+  }
+
+  private Instance(InstanceComponent comp) {
+    this.comp = comp;
+  }
 
   private final InstanceComponent comp;
 

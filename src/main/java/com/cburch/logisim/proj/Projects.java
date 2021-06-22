@@ -117,16 +117,15 @@ public class Projects {
   }
 
   public static Point getCenteredLoc(int width, int height) {
-    int x, y;
+    int x = 0;
+    int y = 0;
 
-    if (getTopFrame() == null) {
-      return new Point(0, 0);
+    if (getTopFrame() != null) {
+      x = getTopFrame().getX() + getTopFrame().getWidth() / 2;
+      x -= width / 2;
+      y = getTopFrame().getY() + getTopFrame().getHeight() / 2;
+      y -= height / 2;
     }
-
-    x = getTopFrame().getX() + getTopFrame().getWidth() / 2;
-    x -= width / 2;
-    y = getTopFrame().getY() + getTopFrame().getHeight() / 2;
-    y -= height / 2;
     return new Point(x, y);
   }
 

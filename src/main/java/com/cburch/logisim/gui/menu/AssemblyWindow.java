@@ -98,15 +98,14 @@ public class AssemblyWindow
   private File file;
 
   public AssemblyWindow(Project proj) {
-
     this.proj = proj;
     curCircuit = proj.getCurrentCircuit();
     curCircuitState = proj.getCircuitState();
     winMenuBar = new JMenuBar();
-    JMenu windowMenu = new JMenu("Window");
-    JMenu fileMenu = new JMenu("File");
-    JPanel main = new JPanel(new BorderLayout());
-    JPanel north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+    final var windowMenu = new JMenu("Window");
+    final var fileMenu = new JMenu("File");
+    final var main = new JPanel(new BorderLayout());
+    final var north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
     /* LinePainter painter = new LinePainter(document); */
 
     windowMenu.setMnemonic('W');

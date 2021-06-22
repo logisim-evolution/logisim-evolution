@@ -83,7 +83,7 @@ class MouseOptions extends OptionsPanel {
   public MouseOptions(OptionsFrame window) {
     super(window, new GridLayout(1, 3));
 
-    explorer = new ProjectExplorer(getProject(),true);
+    explorer = new ProjectExplorer(getProject(), true);
     explorer.setListener(listener);
 
     // Area for adding mappings
@@ -96,10 +96,10 @@ class MouseOptions extends OptionsPanel {
     mappings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mappings.getSelectionModel().addListSelectionListener(listener);
     mappings.clearSelection();
-    JScrollPane mapPane = new JScrollPane(mappings);
+    final var mapPane = new JScrollPane(mappings);
 
     // Button for removing current mapping
-    JPanel removeArea = new JPanel();
+    var removeArea = new JPanel();
     remove.addActionListener(listener);
     remove.setEnabled(false);
     removeArea.add(remove);
@@ -107,14 +107,14 @@ class MouseOptions extends OptionsPanel {
     // Area for viewing/changing attributes
     attrTable = new AttrTable(getOptionsFrame());
 
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    var gridbag = new GridBagLayout();
+    var gbc = new GridBagConstraints();
     setLayout(gridbag);
     gbc.weightx = 1.0;
     gbc.weighty = 1.0;
     gbc.gridheight = 4;
     gbc.fill = GridBagConstraints.BOTH;
-    JScrollPane explorerPane =
+    var explorerPane =
         new JScrollPane(
             explorer,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -122,7 +122,7 @@ class MouseOptions extends OptionsPanel {
     gridbag.setConstraints(explorerPane, gbc);
     add(explorerPane);
     gbc.weightx = 0.0;
-    JPanel gap = new JPanel();
+    var gap = new JPanel();
     gap.setPreferredSize(new Dimension(10, 10));
     gridbag.setConstraints(gap, gbc);
     add(gap);
@@ -226,7 +226,7 @@ class MouseOptions extends OptionsPanel {
 
   private class MappingsModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
-    ArrayList<Integer> cur_keys;
+    ArrayList<Integer> curKeys;
 
     MappingsModel() {
       fireTableStructureChanged();
@@ -235,8 +235,8 @@ class MouseOptions extends OptionsPanel {
     // AbstractTableModel methods
     @Override
     public void fireTableStructureChanged() {
-      cur_keys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
-      Collections.sort(cur_keys);
+      curKeys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
+      Collections.sort(curKeys);
       super.fireTableStructureChanged();
     }
 
@@ -246,27 +246,27 @@ class MouseOptions extends OptionsPanel {
 
     // other methods
     Integer getKey(int row) {
-      return cur_keys.get(row);
+      return curKeys.get(row);
     }
 
     int getRow(Integer mods) {
-      int row = Collections.binarySearch(cur_keys, mods);
+      int row = Collections.binarySearch(curKeys, mods);
       if (row < 0) row = -(row + 1);
       return row;
     }
 
     public int getRowCount() {
-      return cur_keys.size();
+      return curKeys.size();
     }
 
     Tool getTool(int row) {
-      if (row < 0 || row >= cur_keys.size()) return null;
-      Integer key = cur_keys.get(row);
+      if (row < 0 || row >= curKeys.size()) return null;
+      Integer key = curKeys.get(row);
       return getOptions().getMouseMappings().getToolFor(key.intValue());
     }
 
     public Object getValueAt(int row, int column) {
-      Integer key = cur_keys.get(row);
+      Integer key = curKeys.get(row);
       if (column == 0) {
         return InputEventUtil.toDisplayString(key);
       } else {

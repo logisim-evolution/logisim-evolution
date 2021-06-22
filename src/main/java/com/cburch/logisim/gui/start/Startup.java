@@ -596,7 +596,7 @@ public class Startup implements AWTEventListener {
             proj,
             testCircuitImpName,
             testTickFrequency,
-            new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard))
+            new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,
             false,

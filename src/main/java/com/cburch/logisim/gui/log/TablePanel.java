@@ -142,21 +142,20 @@ class TablePanel extends LogPanel {
       myListener.update();
       repaint();
     }
+
     @Override
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
 
       Dimension sz = getSize();
-      int top = Math.max(0, (sz.height - tableHeight) / 2);
-      int left = Math.max(0, (sz.width - tableWidth) / 2);
+      final int top = Math.max(0, (sz.height - tableHeight) / 2);
+      final int left = Math.max(0, (sz.width - tableWidth) / 2);
       Model model = getModel();
-      if (model == null)
-        return;
+      if (model == null) return;
       int columns = model.getSignalCount();
       if (columns == 0) {
         g.setFont(BODY_FONT);
-        GraphicsUtil.drawCenteredText(g, S.get("tableEmptyMessage"),
-            sz.width / 2, sz.height / 2);
+        GraphicsUtil.drawCenteredText(g, S.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
         return;
       }
 
@@ -176,8 +175,7 @@ class TablePanel extends LogPanel {
       FontMetrics bodyMetric = g.getFontMetrics();
       Rectangle clip = g.getClipBounds();
       int firstRow = Math.max(0, (clip.y - y) / cellHeight - 1);
-      int lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y)
-          / cellHeight);
+      int lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y) / cellHeight);
       int y0 = top + cellHeight + HEADER_SEP;
       x = left;
       // for (int col = 0; col < columns; col++) {
@@ -197,8 +195,7 @@ class TablePanel extends LogPanel {
       // }
     }
 
-    private int paintHeader(String header, int x, int y, Graphics g,
-        FontMetrics fm) {
+    private int paintHeader(String header, int x, int y, Graphics g, FontMetrics fm) {
       int width = fm.stringWidth(header);
       g.drawString(header, x + (cellWidth - width) / 2, y);
       return x + cellWidth + COLUMN_SEP;
@@ -206,9 +203,10 @@ class TablePanel extends LogPanel {
   }
 
   private static class MyListener implements Model.Listener {
-    private void computeRowCount() { }
+    private void computeRowCount() {}
 
-    void update() { }
+    void update() {}
+
     @Override
     public void modeChanged(Model.Event event) {
       System.out.println("todo");
@@ -217,7 +215,7 @@ class TablePanel extends LogPanel {
     @Override
     public void historyLimitChanged(Model.Event event) {
       System.out.println("todo");
-     //  update(); maybe?
+      //  update(); maybe?
     }
 
     @Override
@@ -229,7 +227,7 @@ class TablePanel extends LogPanel {
     public void signalsReset(Model.Event event) {
       update();
     }
-    
+
     public void filePropertyChanged(Model.Event event) {}
 
     public void selectionChanged(Model.Event event) {

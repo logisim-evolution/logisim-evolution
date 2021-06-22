@@ -29,7 +29,6 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.prefs.AppPreferences;
-
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -156,7 +155,10 @@ public class GridPainter implements PropertyChangeListener {
         off1 = off0 + num;
       }
 
-      int dotColor = f <= 0.5 ? AppPreferences.GRID_ZOOMED_DOT_COLOR.get() : AppPreferences.GRID_DOT_COLOR.get();
+      int dotColor =
+          f <= 0.5
+              ? AppPreferences.GRID_ZOOMED_DOT_COLOR.get()
+              : AppPreferences.GRID_DOT_COLOR.get();
       for (int j = 0; true; j += size) {
         int y = (int) Math.round(f * j);
         if (y + off0 >= w) break;

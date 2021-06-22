@@ -61,7 +61,7 @@ class ToolbarOptions extends OptionsPanel {
 
   public ToolbarOptions(OptionsFrame window) {
     super(window);
-    explorer = new ProjectExplorer(getProject(),true);
+    explorer = new ProjectExplorer(getProject(), true);
     addTool = new JButton();
     addSeparator = new JButton();
     moveUp = new JButton();
@@ -88,15 +88,15 @@ class ToolbarOptions extends OptionsPanel {
     list.addListSelectionListener(listener);
     listener.computeEnabled();
 
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    var gridbag = new GridBagLayout();
+    var gbc = new GridBagConstraints();
     setLayout(gridbag);
-    JScrollPane explorerPane =
+    final var explorerPane =
         new JScrollPane(
             explorer,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    JScrollPane listPane =
+    final var listPane =
         new JScrollPane(
             list,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -137,7 +137,8 @@ class ToolbarOptions extends OptionsPanel {
     list.localeChanged();
   }
 
-  private class Listener implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
+  private class Listener
+      implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == addTool) {

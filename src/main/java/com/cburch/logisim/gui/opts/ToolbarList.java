@@ -113,9 +113,9 @@ class ToolbarList extends JList {
     }
 
     public void paintIcon(Component comp, Graphics g, int x, int y) {
-      Graphics gNew = g.create();
-      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
-      gNew.dispose();
+      var gfxNew = g.create();
+      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gfxNew), x + 2, y + 2);
+      gfxNew.dispose();
     }
   }
 

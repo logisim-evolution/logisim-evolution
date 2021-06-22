@@ -110,30 +110,28 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     }
 
     if (variousFound) {
-      SetInstance(factory);
+      setInstance(factory);
       return S.fmt("selectionVarious", "" + totalCount);
     } else if (factoryCount == 0) {
       Circuit circ = frame.getCanvas().getCircuit();
       if (circ != null) {
         String circName = circ.getName();
-        SetInstance(circ.getSubcircuitFactory());
+        setInstance(circ.getSubcircuitFactory());
         return S.fmt("circuitAttrTitle", circName);
       } else {
         VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
         String circName = hdl.getName();
-        SetInstance(null);
+        setInstance(null);
         return S.fmt("hdlAttrTitle", circName);
       }
     } else if (factoryCount == 1) {
-      SetInstance(factory);
+      setInstance(factory);
       if (label != null && label.length() > 0)
         return S.fmt("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
-      else if (loc != null)
-        return S.fmt("selectionOne", factory.getDisplayName() + " " + loc);
-      else
-        return S.fmt( "selectionOne", factory.getDisplayName());
+      else if (loc != null) return S.fmt("selectionOne", factory.getDisplayName() + " " + loc);
+      else return S.fmt("selectionOne", factory.getDisplayName());
     } else {
-      SetInstance(factory);
+      setInstance(factory);
       return S.fmt("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
     }
   }
@@ -195,5 +193,4 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       project.doAction(act);
     }
   }
-
 }

@@ -54,21 +54,24 @@ public class ClockSource extends JDialogOk {
     super("Clock Source Selection", true);
     this.msg = msg;
 
-    selector = new ComponentSelector(circ,
-        requireDriveable
-        ? ComponentSelector.DRIVEABLE_CLOCKS
-        : ComponentSelector.OBSERVEABLE_CLOCKS);
+    selector =
+        new ComponentSelector(
+            circ,
+            requireDriveable
+                ? ComponentSelector.DRIVEABLE_CLOCKS
+                : ComponentSelector.OBSERVEABLE_CLOCKS);
 
-    JScrollPane explorerPane = new JScrollPane(selector,
-        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    JScrollPane explorerPane =
+        new JScrollPane(
+            selector,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     explorerPane.setPreferredSize(new Dimension(120, 200));
 
     msgLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     explorerPane.setBorder(
         BorderFactory.createCompoundBorder(
-          BorderFactory.createEmptyBorder(0, 10, 10, 10),
-          explorerPane.getBorder()));
+            BorderFactory.createEmptyBorder(0, 10, 10, 10), explorerPane.getBorder()));
     getContentPane().add(msgLabel, BorderLayout.NORTH);
     getContentPane().add(explorerPane, BorderLayout.CENTER);
 
@@ -86,48 +89,40 @@ public class ClockSource extends JDialogOk {
 
   public void okClicked() {
     SignalInfo.List list = selector.getSelectedItems();
-    if (list == null || list.size() != 1)
-      return;
+    if (list == null || list.size() != 1) return;
     item = list.get(0);
   }
 
   public static Component doClockDriverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(
-        S.getter("selectClockDriverMessage"),
-        circ, true);
+    ClockSource dialog = new ClockSource(S.getter("selectClockDriverMessage"), circ, true);
     dialog.setVisible(true);
     return dialog.item == null ? null : dialog.item.getComponent(); // always top-level
   }
 
   public static SignalInfo doClockMissingObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(
-        S.getter("selectClockMissingMessage"),
-        circ, false);
+    ClockSource dialog = new ClockSource(S.getter("selectClockMissingMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
 
   public static SignalInfo doClockMultipleObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(
-        S.getter("selectClockMultipleMessage"),
-        circ, false);
+    ClockSource dialog = new ClockSource(S.getter("selectClockMultipleMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
 
   public static SignalInfo doClockObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(
-        S.getter("selectClockObserverMessage"),
-        circ, false);
+    ClockSource dialog = new ClockSource(S.getter("selectClockObserverMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
-  
+
   public static class CycleInfo {
     public final int hi;
     public final int lo;
     public final int phase;
     public final int ticks;
+
     public CycleInfo(int h, int l, int p) {
       hi = h;
       lo = l;
@@ -135,7 +130,7 @@ public class ClockSource extends JDialogOk {
       ticks = hi + lo;
     }
   }
-  
+
   public static final CycleInfo DEFAULT_CYCLE_INFO = new CycleInfo(1, 1, 0);
 
   public static CycleInfo getCycleInfo(SignalInfo clockSource) {
@@ -148,5 +143,4 @@ public class ClockSource extends JDialogOk {
     }
     return DEFAULT_CYCLE_INFO;
   }
-
 }

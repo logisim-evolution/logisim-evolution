@@ -102,13 +102,13 @@ public class FPGACommander
   private final Project MyProject;
   private BoardInformation MyBoardInformation = null;
 
-  
+
   @Override
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
       MyBoardInformation =
-          new BoardReaderClass(AppPreferences.Boards.GetSelectedBoardFileName())
+          new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
               .GetBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
       boardIcon = new BoardIcon(MyBoardInformation.GetImage());
@@ -147,7 +147,7 @@ public class FPGACommander
 
   @Override
   public void simulatorReset(Simulator.Event e) { }
-  
+
   @Override
   public void circuitChanged(CircuitEvent event) {
     int act = event.getAction();
@@ -168,11 +168,11 @@ public class FPGACommander
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     MyBoardInformation =
-        new BoardReaderClass(AppPreferences.Boards.GetSelectedBoardFileName())
+        new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
             .GetBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     boardIcon = new BoardIcon(MyBoardInformation.GetImage());
-    JComboBox<String> selector = AppPreferences.Boards.BoardSelector();
+    JComboBox<String> selector = AppPreferences.Boards.boardSelector();
     selector.setPreferredSize(new Dimension(boardIcon.getIconWidth(),AppPreferences.getScaled(20)));
     BoardSelectionPanel.add(selector, c);
     c.gridy++;
@@ -188,12 +188,12 @@ public class FPGACommander
     }
     FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
   }
-  
+
   private void setBoardSelectionEnabled( boolean enabled ) {
-    AppPreferences.Boards.BoardSelector().setEnabled(enabled);
+    AppPreferences.Boards.boardSelector().setEnabled(enabled);
     ToolPath.setEnabled(enabled);
   }
-  
+
   private JPanel getProgressBar() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
@@ -210,7 +210,7 @@ public class FPGACommander
     pan.add(StopButton,BorderLayout.EAST);
     return pan;
   }
-  
+
   private JPanel getAnnotationWindow() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
@@ -225,12 +225,12 @@ public class FPGACommander
     pan.add(annotateButton, BorderLayout.CENTER);
     return pan;
   }
-  
+
   private void setAnnotationWindowEnabled( boolean enabled ) {
     annotationList.setEnabled(enabled);
     annotateButton.setEnabled(enabled);
   }
-  
+
   private JPanel getExecuteWindow() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
@@ -253,7 +253,7 @@ public class FPGACommander
     pan.add(validateButton,BorderLayout.SOUTH);
     return pan;
   }
-  
+
   private void setExecuteWindowEnabled(boolean enabled) {
     circuitsList.setEnabled(enabled);
     textMainCircuit.setEnabled(enabled);
@@ -287,7 +287,7 @@ public class FPGACommander
     panel.add(FrequencyPanel, c);
     c.gridy++;
     panel.add(getAnnotationWindow(), c);
-    
+
     // Here the action window is placed
     c.gridy++;
     panel.add(getExecuteWindow(),c);
@@ -305,7 +305,7 @@ public class FPGACommander
     pan1.add(Settings, BorderLayout.NORTH);
     panel.add(pan1, c);
     c.gridheight = 1;
-    
+
 
     // Progress bar
     c.gridx = 0;
@@ -348,7 +348,7 @@ public class FPGACommander
       if (MyBoardInformation.fpga.isFlashDefined()) {
         actionCommands.addItem(S.getter("FpgaGuiWriteFlash"));
       }
-    } 
+    }
     if (sel == 0 && nrItems > 1) sel = 1;
     if (sel < nrItems) actionCommands.setSelectedIndex(sel);
     else actionCommands.setSelectedIndex(0);

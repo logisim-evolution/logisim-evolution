@@ -59,9 +59,14 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put(
+            "ToolTip.font",
+            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
-    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+    } catch (ClassNotFoundException
+        | UnsupportedLookAndFeelException
+        | IllegalAccessException
+        | InstantiationException e) {
       e.printStackTrace();
     }
     Startup startup = Startup.parseArgs(args);
@@ -91,6 +96,8 @@ public class Main {
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
-  public static boolean hasGui() { return !headless; }
 
+  public static boolean hasGui() {
+    return !headless;
+  }
 }
