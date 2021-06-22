@@ -302,24 +302,22 @@ public class TruthtableTextFile {
   public static void doLoad(File file, AnalyzerModel model, JFrame parent) throws IOException {
     int lineno = 0;
     try (Scanner sc = new Scanner(file)) {
-      VariableList inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-      VariableList outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-      ArrayList<Entry[]> rows = new ArrayList<>();
+      var inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+      var outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+      var rows = new ArrayList<Entry[]>();
       while (sc.hasNextLine()) {
         lineno++;
         String line = sc.nextLine();
         int ix = line.indexOf('#');
-        if (ix >= 0)
-          line = line.substring(0, ix);
+        if (ix >= 0) line = line.substring(0, ix);
         line = line.trim();
-        if (line.equals(""))
+        if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
           continue;
-        else if (line.matches("\\s*[~_=-][ ~_=-|]*"))
-          continue;
-        else if (inputs.vars.size() == 0)
+        } else if (inputs.vars.size() == 0) {
           validateHeader(line, inputs, outputs, lineno);
-        else
+        } else {
           validateRow(line, inputs, outputs, rows, lineno);
+        }
       }
       if (rows.size() == 0)
         throw new IOException("End of file: Truth table has no rows.");
