@@ -40,11 +40,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
-    
+
   private static final int JAL = 0x6F;
   private static final int JALR = 0x67;
   private static final int BRANCH = 0x63;
-  
+
   private static final int INSTR_BEQ = 0;
   private static final int INSTR_BNE = 1;
   private static final int INSTR_JAL = 2;
@@ -58,18 +58,19 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   private static final int INSTR_RET = 10;
   private static final int INSTR_BNEZ = 11;
   private static final int INSTR_BEQZ = 12;
-  
+
   /* pseudo instructions:
    * J pc+imm => JAL x0,pc+imm
-   * JR rs => JALR x0,rs+0  
+   * JR rs => JALR x0,rs+0
    * RET  => JALR x0,x1+0
-   * BNEZ rs,pc+imm => BNE r0,rs,pc+imm 
-   * BEQZ rs,pc+imm => BEQ r0,rs,pc+imm 
+   * BNEZ rs,pc+imm => BNE r0,rs,pc+imm
+   * BEQZ rs,pc+imm => BEQ r0,rs,pc+imm
    */
-  
+
   /* TODO: add all other pseudo branch instructions like BLZ,BGEZ, etc */
-  private final static String[] AsmOpcodes = {"BEQ","BNE","JAL","JALR","BLT","BGE","BLTU","BGEU","J","JR",
-          "RET","BNEZ","BEQZ"};
+  private static final String[] AsmOpcodes = {
+    "BEQ", "BNE", "JAL", "JALR", "BLT", "BGE", "BLTU", "BGEU", "J", "JR",
+    "RET", "BNEZ", "BEQZ"};
 
   private boolean valid = false;
   private boolean jumped = false;
@@ -80,19 +81,19 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   private int source1;
   private int source2;
   public boolean isPcRelative;
-  
+
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
-  public boolean execute(Object state, CircuitState cState) {
+  public boolean execute(Object state,  CircuitState cState) {
     if (!valid)
       return false;
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     jumped = false;
-    int target = cpuState.getProgramCounter()+immediate;
-    int nextPc = cpuState.getProgramCounter()+4;
+    int target = cpuState.getProgramCounter() + immediate;
+    int nextPc = cpuState.getProgramCounter() + 4;
     int reg1 = cpuState.getRegisterValue(source1);
     int reg2 = cpuState.getRegisterValue(source2);
     switch (operation) {
@@ -103,8 +104,8 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         return true;
       case INSTR_RET  :
       case INSTR_JR   :
-      case INSTR_JALR : target = cpuState.getRegisterValue(source1)+immediate;
-                        target = (target >>1)<<1;
+      case INSTR_JALR : target = cpuState.getRegisterValue(source1) + immediate;
+                        target = (target >> 1) << 1;
                         cpuState.setProgramCounter(target);
                         jumped = true;
                         cpuState.writeRegister(destination, nextPc);
@@ -151,7 +152,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
       return null;
     StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
-    while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
+    while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     switch (operation) {
       case INSTR_RET  : break;
@@ -175,9 +176,9 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     }
     return s.toString();
   }
-  
+
   @SuppressWarnings("fallthrough")
-  public String getAsmInstruction( String label ) {
+  public String getAsmInstruction(String label) {
     if (!valid)
       return null;
     StringBuilder s = new StringBuilder();
@@ -204,10 +205,10 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     }
     return s.toString();
   }
-      
-  
 
-  public int getBinInstruction() { return instruction; }
+  public int getBinInstruction() {
+    return instruction;
+  }
 
   public boolean setBinInstruction(int instr) {
     instruction = instr;
@@ -215,11 +216,15 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     valid = decodeBin();
     return valid;
   }
-  
-  public boolean performedJump() {return valid&jumped;}
 
-  public boolean isValid() { return valid; }
-  
+  public boolean performedJump() {
+    return valid & jumped;
+  }
+
+  public boolean isValid() {
+    return valid;
+  }
+
   private boolean decodeBin() {
     int opcode = RV32imSupport.getOpcode(instruction);
     isPcRelative = true;
@@ -262,7 +267,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
-    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
       if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
     if (operation < 0) {
       valid = false;
@@ -387,7 +392,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           imm -= instr.getProgramCounter();
                           immediate = (int) imm;
                           if (immediate >= (1<<19) || immediate < -(1<<19)) {
-                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
                                 S.getter("AssemblerImmediateOutOfRange"));
                             errors = true;
                             break;
@@ -395,7 +400,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           instruction = RV32imSupport.getJTypeInstruction(JAL, destination, immediate);
                           break;
          case INSTR_JALR: if (immediate >= (1<<10) || immediate < -(1<<10)) {
-        	                instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+        	                instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
                                 S.getter("AssemblerImmediateOutOfRange"));
         	                errors = true;
         	                break;
@@ -411,7 +416,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           imm -= instr.getProgramCounter();
                           immediate = (int) imm;
                           if (immediate >= (1<<11) || immediate < -(1<<11)) {
-                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
                                 S.getter("AssemblerImmediateOutOfRange"));
                             errors = true;
                             break;
@@ -426,12 +431,16 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     valid = !errors;
     if (valid) {
       instr.setInstructionByteCode(instruction, 4);
-      // DEBUG: System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter() , instruction));
+      // DEBUG: System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter(), instruction));
     }
     return true;
   }
 
-  public boolean isLabelSupported() { return isPcRelative; }
-  public long getLabelAddress(long pc) { return pc+immediate; }
+  public boolean isLabelSupported() {
+    return isPcRelative;
+  }
 
+  public long getLabelAddress(long pc) {
+    return pc + immediate;
+  }
 }

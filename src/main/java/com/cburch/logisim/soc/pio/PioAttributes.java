@@ -46,51 +46,75 @@ import java.util.List;
 public class PioAttributes extends AbstractAttributeSet {
 
   private static class PIOStateAttribute extends Attribute<PioState> {
+    @Override
+    public PioState parse(String value) {
+      return null;
+    }
 
-	@Override
-	public PioState parse(String value) {return null;}
-	
-	@Override
-    public boolean isHidden() {return true;}
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
   }
-  
-  public static final AttributeOption PORT_BIDIR = new AttributeOption("bidir",S.getter("SocPioBidir"));
-  public static final AttributeOption PORT_INPUT = new AttributeOption("inputonly",S.getter("SocPioInputOnly"));
-  public static final AttributeOption PORT_OUTPUT = new AttributeOption("outputonly",S.getter("SocPioOutputOnly"));
-  public static final AttributeOption PORT_INOUT = new AttributeOption("inout",S.getter("SocPioInout"));
-  
-  public static final AttributeOption CAPT_RISING = new AttributeOption("rising",S.getter("SocPioRisingEdge"));
-  public static final AttributeOption CAPT_FALLING = new AttributeOption("falling",S.getter("SocPioFallingEdge"));
-  public static final AttributeOption CAPT_ANY = new AttributeOption("any",S.getter("SocPioAnyEdge"));
-  
-  public static final AttributeOption IRQ_LEVEL = new AttributeOption("level",S.getter("SocPioIrqLevel"));
-  public static final AttributeOption IRQ_EDGE = new AttributeOption("edge",S.getter("SocPioIrQEdge"));
-  
+
+  public static final AttributeOption PORT_BIDIR =
+      new AttributeOption("bidir", S.getter("SocPioBidir"));
+  public static final AttributeOption PORT_INPUT =
+      new AttributeOption("inputonly", S.getter("SocPioInputOnly"));
+  public static final AttributeOption PORT_OUTPUT =
+      new AttributeOption("outputonly", S.getter("SocPioOutputOnly"));
+  public static final AttributeOption PORT_INOUT =
+      new AttributeOption("inout", S.getter("SocPioInout"));
+
+  public static final AttributeOption CAPT_RISING =
+      new AttributeOption("rising", S.getter("SocPioRisingEdge"));
+  public static final AttributeOption CAPT_FALLING =
+      new AttributeOption("falling", S.getter("SocPioFallingEdge"));
+  public static final AttributeOption CAPT_ANY =
+      new AttributeOption("any", S.getter("SocPioAnyEdge"));
+
+  public static final AttributeOption IRQ_LEVEL =
+      new AttributeOption("level", S.getter("SocPioIrqLevel"));
+  public static final AttributeOption IRQ_EDGE =
+      new AttributeOption("edge", S.getter("SocPioIrQEdge"));
+
   public static final Attribute<PioState> PIO_STATE = new PIOStateAttribute();
-  public static final Attribute<AttributeOption> PIO_DIRECTION = Attributes.forOption("direction", 
-          S.getter("SocPioDirection"), new AttributeOption[] {PORT_BIDIR,PORT_INPUT,PORT_OUTPUT,PORT_INOUT});
-  public static final Attribute<Integer> PIO_OUT_RESET = Attributes.forHexInteger("outputresetvalue", S.getter("SocPioOutputResetValue"));
-  public static final Attribute<Boolean> PIO_OUT_BIT = Attributes.forBoolean("outputbitsetclear", S.getter("SocPioOutputIndividualBits"));
-  public static final Attribute<Boolean> PIO_SYNC_CAPT = Attributes.forBoolean("inputssynccapt", S.getter("SocPioInputsSyncCapture"));
-  public static final Attribute<AttributeOption> PIO_CAPT_TYPE = Attributes.forOption("capturetype", 
-		  S.getter("SocPioCaptureEdge"), new AttributeOption[] {CAPT_RISING,CAPT_FALLING,CAPT_ANY});
-  public static final Attribute<Boolean> PIO_CAPT_BIT = Attributes.forBoolean("inputscaptbit",S.getter("SocPioInputCaptureBit"));
-  public static final Attribute<Boolean> PIO_GEN_IRQ = Attributes.forBoolean("genirq",S.getter("SocPioGenIRQ"));
-  public static final Attribute<AttributeOption> PIO_IRQ_TYPE = Attributes.forOption("irqtype", 
-          S.getter("SicPioIrqType"), new AttributeOption[] {IRQ_LEVEL,IRQ_EDGE});
-  
+  public static final Attribute<AttributeOption> PIO_DIRECTION =
+      Attributes.forOption(
+          "direction",
+          S.getter("SocPioDirection"),
+          new AttributeOption[] {PORT_BIDIR, PORT_INPUT, PORT_OUTPUT, PORT_INOUT});
+  public static final Attribute<Integer> PIO_OUT_RESET =
+      Attributes.forHexInteger("outputresetvalue", S.getter("SocPioOutputResetValue"));
+  public static final Attribute<Boolean> PIO_OUT_BIT =
+      Attributes.forBoolean("outputbitsetclear", S.getter("SocPioOutputIndividualBits"));
+  public static final Attribute<Boolean> PIO_SYNC_CAPT =
+      Attributes.forBoolean("inputssynccapt", S.getter("SocPioInputsSyncCapture"));
+  public static final Attribute<AttributeOption> PIO_CAPT_TYPE =
+      Attributes.forOption(
+          "capturetype",
+          S.getter("SocPioCaptureEdge"),
+          new AttributeOption[] {CAPT_RISING, CAPT_FALLING, CAPT_ANY});
+  public static final Attribute<Boolean> PIO_CAPT_BIT =
+      Attributes.forBoolean("inputscaptbit", S.getter("SocPioInputCaptureBit"));
+  public static final Attribute<Boolean> PIO_GEN_IRQ =
+      Attributes.forBoolean("genirq", S.getter("SocPioGenIRQ"));
+  public static final Attribute<AttributeOption> PIO_IRQ_TYPE =
+      Attributes.forOption(
+          "irqtype", S.getter("SicPioIrqType"), new AttributeOption[] {IRQ_LEVEL, IRQ_EDGE});
+
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
   private PioState state = new PioState();
-  
+
   private ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
-  
+
   public PioAttributes() {
     updateAttributeList();
   }
-  
+
   private boolean updateAttributeList() {
-    ArrayList<Attribute<?>>newList = new ArrayList<>();
+    ArrayList<Attribute<?>> newList = new ArrayList<>();
     boolean changes = false;
     newList.add(SocMemoryAttributes.START_ADDRESS);
     newList.add(StdAttr.WIDTH);
@@ -99,7 +123,7 @@ public class PioAttributes extends AbstractAttributeSet {
       changes |= !myAttributes.contains(PIO_OUT_RESET);
       newList.add(PIO_OUT_RESET);
       newList.add(PIO_OUT_BIT);
-    } else 
+    } else
       changes |= myAttributes.contains(PIO_OUT_RESET);
     if (state.getPortDirection() != PORT_OUTPUT) {
       changes |= !myAttributes.contains(PIO_SYNC_CAPT);
@@ -126,7 +150,7 @@ public class PioAttributes extends AbstractAttributeSet {
     myAttributes = newList;
     return changes;
   }
-  
+
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
     PioAttributes d = (PioAttributes) dest;
@@ -140,12 +164,12 @@ public class PioAttributes extends AbstractAttributeSet {
   public List<Attribute<?>> getAttributes() {
     return myAttributes;
   }
-  
+
   @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return attr == PIO_STATE;
   }
-  
+
   @Override
   public boolean isToSave(Attribute<?> attr) {
     return attr != PIO_STATE;
@@ -174,28 +198,25 @@ public class PioAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-	V oldValue = getValue(attr);
-   if (attr == SocMemoryAttributes.START_ADDRESS) {
-      if (state.setStartAddress((Integer)value))
-        fireAttributeValueChanged(attr, value, oldValue);
+    V oldValue = getValue(attr);
+    if (attr == SocMemoryAttributes.START_ADDRESS) {
+      if (state.setStartAddress((Integer) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.WIDTH) {
-      if (state.setNrOfIOs((BitWidth) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (state.setNrOfIOs((BitWidth) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_DIRECTION) {
       if (state.setPortDirection((AttributeOption) value)) {
-        if (updateAttributeList())
-          fireAttributeListChanged();
+        if (updateAttributeList()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == PIO_OUT_RESET) {
       if (state.setOutputResetValue((Integer) value))
-    	fireAttributeValueChanged(attr, value, oldValue);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_OUT_BIT) {
@@ -204,9 +225,8 @@ public class PioAttributes extends AbstractAttributeSet {
       return;
     }
     if (attr == PIO_SYNC_CAPT) {
-      if (state.setInputSynchronousCapture((Boolean)value)) {
-        if (updateAttributeList())
-            fireAttributeListChanged();
+      if (state.setInputSynchronousCapture((Boolean) value)) {
+        if (updateAttributeList()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
@@ -223,8 +243,7 @@ public class PioAttributes extends AbstractAttributeSet {
     }
     if (attr == PIO_GEN_IRQ) {
       if (state.setIrqGeneration((Boolean) value)) {
-        if (updateAttributeList())
-          fireAttributeListChanged();
+        if (updateAttributeList()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
@@ -235,8 +254,7 @@ public class PioAttributes extends AbstractAttributeSet {
       return;
     }
     if (attr == StdAttr.LABEL) {
-      if (state.setLabel((String) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (state.setLabel((String) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
@@ -261,5 +279,4 @@ public class PioAttributes extends AbstractAttributeSet {
       return;
     }
   }
-
 }

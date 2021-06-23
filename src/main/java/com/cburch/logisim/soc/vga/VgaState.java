@@ -46,27 +46,27 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,SocBusMasterInterface {
+public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, SocBusMasterInterface {
 
-  public class VgaDisplayState implements InstanceData,Cloneable {
+  public class VgaDisplayState implements InstanceData, Cloneable {
 
-    private int mode,lineSize,nrOfLines;
+    private int mode, lineSize, nrOfLines;
     private boolean modeSetBySoftware = false;
     private BufferedImage myImage;
     private boolean reload = true;
-    
+
     public VgaDisplayState() {
       mode = displayMode;
       sizeChanged(true);
     }
-    
+
     public int getMode() {
       if (modeSetBySoftware)
         return mode;
       else
         return displayMode;
     }
-    
+
     public boolean setSoftMode(int softMode) {
       modeSetBySoftware = true;
       if (softMode != mode) {
@@ -75,12 +75,12 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
       }
       return false;
     }
-    
+
     public BufferedImage getImage(CircuitState cState) {
       loadImage(cState);
       return myImage;
     }
-    
+
     public boolean sizeChanged(boolean initialSize) {
       if (initialSize && modeSetBySoftware)
         return false;
@@ -102,17 +102,17 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
                                           nrOfLines = 768;
                                           break;
       }
-      myImage = new BufferedImage(lineSize,nrOfLines,BufferedImage.TYPE_INT_RGB);
+      myImage = new BufferedImage(lineSize, nrOfLines, BufferedImage.TYPE_INT_RGB);
       return true;
     }
-    
+
     public int getDataSize() {
       if (myImage == null)
         return 0;
       else
-        return myImage.getHeight()*myImage.getWidth();
+        return myImage.getHeight() * myImage.getWidth();
     }
-    
+
     public void clear() {
       reload = true;
     }
@@ -124,34 +124,39 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
         return null;
       }
     }
-    
+
     private void loadImage(CircuitState cState) {
       if (reload) {
-        for (int line = 0 ; line < nrOfLines ; line++)
-          for (int pixel = 0 ; pixel < lineSize ; pixel++) {
-            int index = line*lineSize+pixel;
-          SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-        vgaBufferAddress+index*4,0,SocBusTransaction.WordAccess,"vgadma");
-        trans.setAsHiddenTransaction();
-        initializeTransaction(trans,attachedBus.getBusId(),cState);
-        int data = trans.hasError() ? 0 : trans.getReadData();
-        myImage.setRGB(pixel, line, data);
+        for (int line = 0; line < nrOfLines; line++)
+          for (int pixel = 0; pixel < lineSize; pixel++) {
+            int index = line * lineSize + pixel;
+            SocBusTransaction trans =
+                new SocBusTransaction(
+                    SocBusTransaction.READTransaction,
+                    vgaBufferAddress + index * 4,
+                    0,
+                    SocBusTransaction.WordAccess,
+                    "vgadma");
+            trans.setAsHiddenTransaction();
+            initializeTransaction(trans, attachedBus.getBusId(), cState);
+            int data = trans.hasError() ? 0 : trans.getReadData();
+            myImage.setRGB(pixel, line, data);
           }
         reload = false;
       }
     }
-    
-    public void paint(Graphics g,CircuitState cState) {
+
+    public void paint(Graphics g, CircuitState cState) {
       loadImage(cState);
       g.drawImage(myImage, LEFT_MARGIN, TOP_MARGIN, null);
     }
   }
-  
+
   public static final int TOP_MARGIN = 20;
   public static final int BOTTOM_MARGIN = 20;
   public static final int LEFT_MARGIN = 5;
   public static final int RIGHT_MARGIN = 5;
-  
+
   private Integer startAddress = 0;
   private Integer vgaBufferAddress = 0;
   private int displayMode = VgaAttributes.MODE_160_120;
@@ -163,31 +168,58 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
   private Boolean soft800x600 = false;
   private Boolean soft1024x768 = false;
   private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<>();
-  
-  public AttributeOption getInitialMode() { return VgaAttributes.MODES.get(displayMode); }
+
+  public AttributeOption getInitialMode() {
+    return VgaAttributes.MODES.get(displayMode);
+  }
+
   public AttributeOption getCurrentMode() {
     VgaDisplayState data = getRegCurrentState();
     int mode = (data == null) ?  displayMode : data.getMode();
-    return VgaAttributes.MODES.get(mode); 
+    return VgaAttributes.MODES.get(mode);
   }
-  public Integer getVgaBufferStartAddress() { return vgaBufferAddress; }
-  public String getLabel() { return label; }
-  public SocBusInfo getBusInfo() { return attachedBus; }
-  public Boolean getSoft160x120() { return soft160x120; }
-  public Boolean getSoft320x240() { return soft320x240; }
-  public Boolean getSoft640x480() { return soft640x480; }
-  public Boolean getSoft800x600() { return soft800x600; }
-  public Boolean getSoft1024x768() { return soft1024x768; }
-  
-  public boolean setStartAddress( Integer value ) {
+
+  public Integer getVgaBufferStartAddress() {
+    return vgaBufferAddress;
+  }
+
+  public String getLabel() {
+    return label;
+  }
+
+  public SocBusInfo getBusInfo() {
+    return attachedBus;
+  }
+
+  public Boolean getSoft160x120() {
+    return soft160x120;
+  }
+
+  public Boolean getSoft320x240() {
+    return soft320x240;
+  }
+
+  public Boolean getSoft640x480() {
+    return soft640x480;
+  }
+
+  public Boolean getSoft800x600() {
+    return soft800x600;
+  }
+
+  public Boolean getSoft1024x768() {
+    return soft1024x768;
+  }
+
+  public boolean setStartAddress(Integer value) {
     if (startAddress == value)
       return false;
     startAddress = value;
     firememMapChanged();
     return true;
   }
-  
-  public boolean setInitialMode( AttributeOption value ) {
+
+  public boolean setInitialMode(AttributeOption value) {
     int mode = VgaAttributes.MODES.contains(value) ? VgaAttributes.MODES.indexOf(value) : 0;
     if (displayMode == mode)
       return false;
@@ -196,13 +228,13 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
     if (data != null)
       if (data.sizeChanged(true)) {
         InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-        ((SocVga)comp.getFactory()).setTextField(comp.getInstance());
+        ((SocVga) comp.getFactory()).setTextField(comp.getInstance());
         comp.getInstance().fireInvalidated();
       }
     return true;
   }
-  
-  public boolean setVgaBufferStartAddress( Integer value ) {
+
+  public boolean setVgaBufferStartAddress(Integer value) {
     if (value == vgaBufferAddress)
       return false;
     vgaBufferAddress = value;
@@ -212,16 +244,16 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
     }
     return true;
   }
-  
-  public boolean setLabel( String l ) {
+
+  public boolean setLabel(String l) {
     if (label.equals(l))
       return false;
     label = l;
     fireNameChanged();
     return true;
   }
-  
-  public boolean setBusInfo( SocBusInfo bus ) {
+
+  public boolean setBusInfo(SocBusInfo bus) {
     if (bus.getBusId().equals(attachedBus.getBusId()))
       return false;
     attachedBus.setBusId(bus.getBusId());
@@ -231,42 +263,42 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
     }
     return true;
   }
-  
-  public boolean setSoft160x120( Boolean b) {
+
+  public boolean setSoft160x120(Boolean b) {
     if (soft160x120 == b)
       return false;
     soft160x120 = b;
     return true;
   }
-  
-  public boolean setSoft320x240( Boolean b) {
+
+  public boolean setSoft320x240(Boolean b) {
     if (soft320x240 == b)
       return false;
     soft320x240 = b;
     return true;
   }
-  
-  public boolean setSoft640x480( Boolean b) {
+
+  public boolean setSoft640x480(Boolean b) {
     if (soft640x480 == b)
       return false;
     soft640x480 = b;
     return true;
   }
-  
-  public boolean setSoft800x600( Boolean b) {
+
+  public boolean setSoft800x600(Boolean b) {
     if (soft800x600 == b)
       return false;
     soft800x600 = b;
     return true;
   }
-  
-  public boolean setSoft1024x768( Boolean b) {
+
+  public boolean setSoft1024x768(Boolean b) {
     if (soft1024x768 == b)
       return false;
     soft1024x768 = b;
     return true;
   }
-  
+
   public void copyInto(VgaState dest) {
     dest.setStartAddress(getStartAddress());
     dest.setInitialMode(getInitialMode());
@@ -279,21 +311,26 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
     dest.setLabel(getLabel());
     dest.setBusInfo(getBusInfo());
   }
-  
+
   public static Bounds getSize(int mode) {
     switch (mode) {
-      case VgaAttributes.MODE_320_240 : return Bounds.create(0, 0, LEFT_MARGIN+320+RIGHT_MARGIN, TOP_MARGIN+240+BOTTOM_MARGIN);
-      case VgaAttributes.MODE_640_480 : return Bounds.create(0, 0, LEFT_MARGIN+640+RIGHT_MARGIN, TOP_MARGIN+480+BOTTOM_MARGIN);
-      case VgaAttributes.MODE_800_600 : return Bounds.create(0, 0, LEFT_MARGIN+800+RIGHT_MARGIN, TOP_MARGIN+600+BOTTOM_MARGIN);
-      case VgaAttributes.MODE_1024_768: return Bounds.create(0, 0, LEFT_MARGIN+1024+RIGHT_MARGIN, TOP_MARGIN+768+BOTTOM_MARGIN);
-      default                         : return Bounds.create(0, 0, LEFT_MARGIN+160+RIGHT_MARGIN, TOP_MARGIN+120+BOTTOM_MARGIN);
+      case VgaAttributes.MODE_320_240:
+        return Bounds.create(0, 0, LEFT_MARGIN + 320 + RIGHT_MARGIN, TOP_MARGIN + 240 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_640_480:
+        return Bounds.create(0, 0, LEFT_MARGIN + 640 + RIGHT_MARGIN, TOP_MARGIN + 480 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_800_600:
+        return Bounds.create(0, 0, LEFT_MARGIN + 800 + RIGHT_MARGIN, TOP_MARGIN + 600 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_1024_768:
+        return Bounds.create(0, 0, LEFT_MARGIN + 1024 + RIGHT_MARGIN, TOP_MARGIN + 768 + BOTTOM_MARGIN);
+      default:
+        return Bounds.create(0, 0, LEFT_MARGIN + 160 + RIGHT_MARGIN, TOP_MARGIN + 120 + BOTTOM_MARGIN);
     }
   }
-  
+
   public VgaDisplayState getNewState() {
     return new VgaDisplayState();
   }
-  
+
   public VgaDisplayState getRegCurrentState() {
     InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
     if (comp == null)
@@ -303,16 +340,16 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
       return null;
     return (VgaDisplayState) state.getProject().getCircuitState().getData(comp);
   }
-  
+
   public VgaDisplayState getRegPropagateState() {
-    return (VgaDisplayState)attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
+    return (VgaDisplayState) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
   }
-  
+
   /* here all Socbus interface handles are defined */
   public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cState) {
     if (attachedBus.getSocSimulationManager() == null)
       return;
-    attachedBus.getSocSimulationManager().initializeTransaction(trans, busId,cState);
+    attachedBus.getSocSimulationManager().initializeTransaction(trans, busId, cState);
   }
 
   public void sniffTransaction(SocBusTransaction trans) {
@@ -322,18 +359,18 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
     VgaDisplayState state = getRegPropagateState();
     if (state == null)
       return;
-    long end = start+state.getDataSize()*4;
-    long addr = SocSupport.convUnsignedInt(trans.getAddress()); 
+    long end = start + state.getDataSize() * 4;
+    long addr = SocSupport.convUnsignedInt(trans.getAddress());
     if (addr >= start && addr < end) {
-      int index = SocSupport.convUnsignedLong(addr-start)>>2;
-      state.myImage.setRGB(index%state.lineSize, index/state.lineSize, trans.getWriteData());
+      int index = SocSupport.convUnsignedLong(addr - start) >> 2;
+      state.myImage.setRGB(index % state.lineSize, index / state.lineSize, trans.getWriteData());
     }
   }
 
   public boolean canHandleTransaction(SocBusTransaction trans) {
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
-    long end = startAddress+4;
+    long end = startAddress + 4;
     return addr >= start && addr < end;
   }
 
@@ -365,38 +402,46 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
       VgaDisplayState disp = getRegPropagateState();
       if (disp != null && disp.setSoftMode(mode)) {
         InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-        ((SocVga)comp.getFactory()).setTextField(comp.getInstance());
+        ((SocVga) comp.getFactory()).setTextField(comp.getInstance());
         comp.getInstance().fireInvalidated();
       }
     }
   }
 
-  public Integer getStartAddress() { return startAddress; }
+  public Integer getStartAddress() {
+    return startAddress;
+  }
 
-  public Integer getMemorySize() { return 4; }
+  public Integer getMemorySize() {
+    return 4;
+  }
 
   public String getName() {
     String name = label;
     if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = attachedBus.getComponent().getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;
   }
 
-  public void registerListener(SocBusSlaveListener l) { if (!listeners.contains(l)) listeners.add(l); }
+  public void registerListener(SocBusSlaveListener l) {
+    if (!listeners.contains(l)) listeners.add(l);
+  }
 
   public void removeListener(SocBusSlaveListener l) {
     listeners.remove(l);
   }
 
-  public InstanceComponent getComponent() { return (InstanceComponent) attachedBus.getComponent(); }
+  public InstanceComponent getComponent() {
+    return (InstanceComponent) attachedBus.getComponent();
+  }
 
   private void fireNameChanged() {
     for (SocBusSlaveListener l : listeners)
       l.labelChanged();
   }
-      
+
   private void firememMapChanged() {
     for (SocBusSlaveListener l : listeners)
       l.memoryMapChanged();
