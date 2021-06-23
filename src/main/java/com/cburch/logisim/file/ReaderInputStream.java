@@ -38,7 +38,7 @@ import java.io.Reader;
  */
 public class ReaderInputStream extends InputStream {
 
-  /** Source Reader */
+  /** Source Reader. */
   private Reader in;
 
   private String encoding = System.getProperty("file.encoding");
@@ -120,7 +120,8 @@ public class ReaderInputStream extends InputStream {
     }
   }
 
-  /** @return false - mark is not supported */
+  /**
+   *  @return false - mark is not supported */
   @Override
   public boolean markSupported() {
     return false; // would be imprecise

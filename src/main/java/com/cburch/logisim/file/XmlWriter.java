@@ -203,7 +203,7 @@ class XmlWriter {
   private final LogisimFile file;
   private final Document doc;
   /**
-   * Path of the file which is being written on disk -- used to relativize components stored in it
+   * Path of the file which is being written on disk -- used to relativize components stored in it.
    */
   private final String outFilepath;
 
@@ -297,7 +297,7 @@ class XmlWriter {
       if (elt != null) ret.appendChild(elt);
     }
     for (String board : circuit.getBoardMapNamestoSave()) {
-      Element elt = fromMap(circuit,board);
+      Element elt = fromMap(circuit, board);
       if (elt != null) ret.appendChild(elt);
     }
     return ret;
