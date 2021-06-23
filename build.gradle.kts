@@ -301,11 +301,19 @@ tasks {
 
     // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
     checkstyle {
-        // If you are going to upgrade checkstyle version ensure you are upgrading also
-        // XML config file to match or CheckStyle may fail to work. See `checkstyle/README.md`
-        // for details!
-        toolVersion = "8.37"
-        configFile = file("${project.rootDir}/checkstyle/logisim.xml")
+        // Checkstyle version to use
+        toolVersion = "8.43"
+
+        // let's use google_checks.xml config provided with Checkstyle.
+        // https://stackoverflow.com/a/67513272/1235698
+        val archive = configurations.checkstyle.get().resolve().filter {
+          it.name.startsWith("checkstyle")
+        }
+        config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
+
+        // FIXME there should be cleaner way of using custom suppression config with built-in style
+        // https://stackoverflow.com/a/64703619/1235698
+        System.setProperty( "org.checkstyle.google.suppressionfilter.config", "$projectDir/config/checkstyle/suppressions.xml")
     }
     checkstyleMain {
         source = fileTree("src/main/java")
