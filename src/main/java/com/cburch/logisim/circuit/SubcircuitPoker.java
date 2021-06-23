@@ -65,9 +65,13 @@ public class SubcircuitPoker extends InstancePoker {
 
   @Override
   public void mousePressed(InstanceState state, MouseEvent e) {
-    for (CanvasObject c : ((SubcircuitFactory)state.getInstance().getFactory()).getSubcircuit().getAppearance().getObjectsFromTop()) {
+    for (CanvasObject c :
+        ((SubcircuitFactory) state.getInstance().getFactory())
+            .getSubcircuit()
+            .getAppearance()
+            .getObjectsFromTop()) {
       if (c instanceof DynamicElementWithPoker)
-        ((DynamicElementWithPoker)c).mousePressed(state, e);
+        ((DynamicElementWithPoker) c).mousePressed(state, e);
     }
     if (isWithin(state, e)) {
       mouseDown = true;
@@ -77,9 +81,13 @@ public class SubcircuitPoker extends InstancePoker {
 
   @Override
   public void mouseReleased(InstanceState state, MouseEvent e) {
-   for (CanvasObject c : ((SubcircuitFactory)state.getInstance().getFactory()).getSubcircuit().getAppearance().getObjectsFromTop()) {
+    for (CanvasObject c :
+        ((SubcircuitFactory) state.getInstance().getFactory())
+            .getSubcircuit()
+            .getAppearance()
+            .getObjectsFromTop()) {
       if (c instanceof DynamicElementWithPoker)
-        ((DynamicElementWithPoker)c).mouseReleased(state, e);
+        ((DynamicElementWithPoker) c).mouseReleased(state, e);
     }
     if (mouseDown) {
       mouseDown = false;

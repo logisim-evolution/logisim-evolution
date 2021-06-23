@@ -581,9 +581,9 @@ class CircuitWires {
     }
   }
 
-  // void ensureComputed() {
-  //	getBundleMap();
-  // }
+  //  void ensureComputed() {
+  //    getBundleMap();
+  //  }
 
   // There are only two threads that need to use the bundle map, I think:
   // the AWT event thread, and the simulation worker thread.
@@ -767,7 +767,8 @@ class CircuitWires {
       WireBundle b = tb.b;
 
       Value bv = null;
-      if (!b.isValid() || b.threads == null) {// do nothing
+      if (!b.isValid() || b.threads == null) {
+        // do nothing
       } else if (b.threads.length == 1) {
         bv = s.thr_values.get(b.threads[0]);
       } else {

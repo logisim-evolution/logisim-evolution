@@ -138,8 +138,8 @@ class PropagationPoints {
   }
 
   String getSingleStepMessage() {
-    String n = data.isEmpty() ? "no" : ""+data.size();
-    String m = pendingInputs.isEmpty() ? "no" : ""+pendingInputs.size();
+    String n = data.isEmpty() ? "no" : "" + data.size();
+    String m = pendingInputs.isEmpty() ? "no" : "" + pendingInputs.size();
     return S.fmt("singleStepMessage", n, m);
   }
 }
