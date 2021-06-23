@@ -193,10 +193,12 @@ public class TruthtableTextFile {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
         if (a < 1 || b != 0)
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {
