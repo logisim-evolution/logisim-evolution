@@ -64,17 +64,18 @@ public class Attributes {
       else return S.get("booleanFalseOption");
     }
   }
-  
+
   private static class IOMapAttribute extends Attribute<ComponentMapInformationContainer> {
 
-	@Override
-	public ComponentMapInformationContainer parse(String value) {
-		return null;
-	}
-	
-	@Override
-	public boolean isHidden() {return true;}
-	  
+    @Override
+    public ComponentMapInformationContainer parse(String value) {
+      return null;
+    }
+
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
   }
 
   private static class ColorAttribute extends Attribute<Color> {
@@ -119,7 +120,6 @@ public class Attributes {
   }
 
   private static class ColorChooser extends ColorPicker implements JInputComponent {
-    /** */
     private static final long serialVersionUID = 1L;
 
     ColorChooser(Color initial) {
@@ -212,7 +212,6 @@ public class Attributes {
   }
 
   private static class LFontChooser extends FontChooser implements JInputComponent {
-    /** */
     private static final long serialVersionUID = 1L;
 
     LFontChooser(Font initial) {
@@ -506,7 +505,7 @@ public class Attributes {
   public static Attribute<Color> forColor(String name, StringGetter disp) {
     return new ColorAttribute(name, disp);
   }
-  
+
   public static Attribute<ComponentMapInformationContainer> forMap() {
     return new IOMapAttribute();
   }
@@ -539,12 +538,12 @@ public class Attributes {
     return forHexInteger(name, getter(name));
   }
 
-  public static Attribute<Long> forHexLong(String name) {
-    return forHexLong(name, getter(name));
-  }
-
   public static Attribute<Integer> forHexInteger(String name, StringGetter disp) {
     return new HexIntegerAttribute(name, disp);
+  }
+
+  public static Attribute<Long> forHexLong(String name) {
+    return forHexLong(name, getter(name));
   }
 
   public static Attribute<Long> forHexLong(String name, StringGetter disp) {
