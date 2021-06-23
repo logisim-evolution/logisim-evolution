@@ -61,12 +61,17 @@ import javax.swing.JTextField;
 
 public class FPGAIOInformationSettingsDialog {
 
-  private static void buildPinTable(int nr, IOComponentTypes type, JPanel pinPanel, 
-      ArrayList<JTextField> LocInputs, ArrayList<String> PinLabels, ArrayList<String> oldLocations) {
+  private static void buildPinTable(
+      int nr,
+      IOComponentTypes type,
+      JPanel pinPanel,
+      ArrayList<JTextField> LocInputs,
+      ArrayList<String> PinLabels,
+      ArrayList<String> oldLocations) {
     GridBagConstraints c = new GridBagConstraints();
     pinPanel.removeAll();
     if (LocInputs.size() == 0) {
-      for (int i = 0 ; i < nr ; i++) {
+      for (int i = 0; i < nr; i++) {
         JTextField txt = new JTextField(6);
         if (i < oldLocations.size())
           txt.setText(oldLocations.get(i));
@@ -79,7 +84,7 @@ public class FPGAIOInformationSettingsDialog {
       int idx = (LocInputs.indexOf(txt));
       if (idx < oldLocations.size()) txt.setText(oldLocations.get(idx));
     }
-    while (LocInputs.size() > nr) LocInputs.remove(LocInputs.size()-1);
+    while (LocInputs.size() > nr) LocInputs.remove(LocInputs.size() - 1);
     int offset = 0;
     int oldY = 0;
     int maxY = -1;
@@ -97,12 +102,13 @@ public class FPGAIOInformationSettingsDialog {
       maxY = Math.max(c.gridy, maxY);
     }
   }
-  
+
   private static JPanel getRectPanel(ArrayList<JTextField> rectLocations) {
     JPanel rectPanel = new JPanel();
     rectPanel.setLayout(new GridBagLayout());
-    rectPanel.setBorder(BorderFactory.createTitledBorder(
-      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoRecProp")));
+    rectPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoRecProp")));
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridy = 0;
@@ -115,18 +121,18 @@ public class FPGAIOInformationSettingsDialog {
     c.gridy++;
     rectPanel.add(new JLabel(S.get("FpgaIoHeight")), c);
     c.gridx = 1;
-    for (c.gridy = 0; c.gridy < 4 ; c.gridy++)
+    for (c.gridy = 0; c.gridy < 4; c.gridy++)
       rectPanel.add(rectLocations.get(c.gridy), c);
     return rectPanel;
   }
-  
+
   private static final int INPUT_ID = 0;
   private static final int OUTPUT_ID = 1;
   private static final int IO_ID = 2;
 
-  public static void GetSimpleInformationDialog(Boolean deleteButton, 
+  public static void GetSimpleInformationDialog(Boolean deleteButton,
         IOComponentsInformation IOcomps, FPGAIOInformationContainer info) {
-    HashMap<Integer,Integer> NrOfPins = new HashMap<>();
+    HashMap<Integer, Integer> NrOfPins = new HashMap<>();
     IOComponentTypes MyType = info.GetType();
     BoardRectangle MyRectangle = info.GetRectangle();
     if (info.getNrOfPins() == 0) {
@@ -138,7 +144,8 @@ public class FPGAIOInformationSettingsDialog {
       NrOfPins.put(OUTPUT_ID, info.getNrOfOutputPins());
       NrOfPins.put(IO_ID, info.getNrOfIOPins());
     }
-    final JDialog selWindow = new JDialog(IOcomps.getParentFrame(), MyType + " " + S.get("FpgaIoProperties"));
+    final JDialog selWindow =
+        new JDialog(IOcomps.getParentFrame(), MyType + " " + S.get("FpgaIoProperties"));
     final JPanel contents = new JPanel();
     JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
     JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
@@ -158,9 +165,9 @@ public class FPGAIOInformationSettingsDialog {
     ArrayList<String> oldInputLocations = new ArrayList<>();
     ArrayList<String> oldOutputLocations = new ArrayList<>();
     ArrayList<String> oldIOLocations = new ArrayList<>();
-    for (int cnt = 0 ; cnt < info.getNrOfPins() ; cnt++) {
+    for (int cnt = 0; cnt < info.getNrOfPins(); cnt++) {
       if (cnt < NrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
-      else if (cnt < NrOfPins.get(INPUT_ID)+NrOfPins.get(OUTPUT_ID))
+      else if (cnt < NrOfPins.get(INPUT_ID) + NrOfPins.get(OUTPUT_ID))
         oldOutputLocations.add(info.getPinLocation(cnt));
       else
         oldIOLocations.add(info.getPinLocation(cnt));
@@ -227,7 +234,7 @@ public class FPGAIOInformationSettingsDialog {
       c.fill = GridBagConstraints.NORTH;
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(getRectPanel(rectLocations),c);
+      contents.add(getRectPanel(rectLocations), c);
       c.gridwidth = 1;
     }
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -239,7 +246,7 @@ public class FPGAIOInformationSettingsDialog {
       InputsPanel.setLayout(new GridBagLayout());
       if (IOComponentTypes.nrOfInputPinsConfigurable(MyType)) {
         Inputsize.removeAllItems();
-        for (int i = 1 ; i < 129 ; i++) Inputsize.addItem(i);
+        for (int i = 1; i < 129; i++) Inputsize.addItem(i);
         Inputsize.setSelectedItem(NrOfPins.get(INPUT_ID));
         Inputsize.addActionListener(actionListener);
         Inputsize.setActionCommand("inputSize");
@@ -247,12 +254,13 @@ public class FPGAIOInformationSettingsDialog {
       }
       PinLabels.clear();
       int nr = NrOfPins.get(INPUT_ID);
-      for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-      buildPinTable(NrOfPins.get(INPUT_ID),MyType,InputsPanel,LocInputs,PinLabels,oldInputLocations);
+      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+      buildPinTable(
+          NrOfPins.get(INPUT_ID), MyType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
       panel.add(InputsPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(panel,c);
+      contents.add(panel, c);
       c.gridwidth = 1;
     }
     if (NrOfPins.get(OUTPUT_ID) > 0) {
@@ -263,7 +271,7 @@ public class FPGAIOInformationSettingsDialog {
       OutputsPanel.setLayout(new GridBagLayout());
       if (IOComponentTypes.nrOfOutputPinsConfigurable(MyType)) {
         Outputsize.removeAllItems();
-        for (int i = 1 ; i < 129 ; i++) Outputsize.addItem(i);
+        for (int i = 1; i < 129; i++) Outputsize.addItem(i);
         Outputsize.setSelectedItem(NrOfPins.get(OUTPUT_ID));
         Outputsize.addActionListener(actionListener);
         Outputsize.setActionCommand("outputSize");
@@ -271,12 +279,13 @@ public class FPGAIOInformationSettingsDialog {
       }
       PinLabels.clear();
       int nr = NrOfPins.get(OUTPUT_ID);
-      for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-      buildPinTable(NrOfPins.get(OUTPUT_ID),MyType,OutputsPanel,LocOutputs,PinLabels,oldOutputLocations);
+      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+      buildPinTable(
+          NrOfPins.get(OUTPUT_ID), MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
       panel.add(OutputsPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(panel,c);
+      contents.add(panel, c);
       c.gridwidth = 1;
     }
     if (NrOfPins.get(IO_ID) > 0) {
@@ -287,7 +296,7 @@ public class FPGAIOInformationSettingsDialog {
       IOPanel.setLayout(new GridBagLayout());
       if (IOComponentTypes.nrOfIOPinsConfigurable(MyType)) {
         IOsize.removeAllItems();
-        for (int i = 1 ; i < 129 ; i++) IOsize.addItem(i);
+        for (int i = 1; i < 129; i++) IOsize.addItem(i);
         IOsize.setSelectedItem(NrOfPins.get(IO_ID));
         IOsize.addActionListener(actionListener);
         IOsize.setActionCommand("ioSize");
@@ -295,12 +304,12 @@ public class FPGAIOInformationSettingsDialog {
       }
       PinLabels.clear();
       int nr = NrOfPins.get(IO_ID);
-      for (int i = 0 ; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
-      buildPinTable(NrOfPins.get(IO_ID),MyType,IOPanel,LocIOs,PinLabels,oldIOLocations);
+      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, MyType));
+      buildPinTable(NrOfPins.get(IO_ID), MyType, IOPanel, LocIOs, PinLabels, oldIOLocations);
       panel.add(IOPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(panel,c);
+      contents.add(panel, c);
       c.gridwidth = 1;
     }
 
@@ -318,7 +327,8 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     contents.add(StandardText, c);
     JComboBox<String> StandardInput = new JComboBox<>(IoStandards.Behavior_strings);
-    if (info.GetIOStandard() != IoStandards.Unknown) StandardInput.setSelectedIndex(info.GetIOStandard());
+    if (info.GetIOStandard() != IoStandards.Unknown)
+      StandardInput.setSelectedIndex(info.GetIOStandard());
     else StandardInput.setSelectedIndex(IOcomps.GetDefaultStandard());
     c.gridx = 1;
     contents.add(StandardInput, c);
@@ -339,7 +349,8 @@ public class FPGAIOInformationSettingsDialog {
       c.gridy++;
       c.gridx = 0;
       contents.add(PullText, c);
-      if (info.GetPullBehavior() != PullBehaviors.Unknown) PullInput.setSelectedIndex(info.GetPullBehavior());
+      if (info.GetPullBehavior() != PullBehaviors.Unknown)
+        PullInput.setSelectedIndex(info.GetPullBehavior());
       else PullInput.setSelectedIndex(IOcomps.GetDefaultPullSelection());
       c.gridx = 1;
       contents.add(PullInput, c);
@@ -350,7 +361,8 @@ public class FPGAIOInformationSettingsDialog {
       c.gridy++;
       c.gridx = 0;
       contents.add(ActiveText, c);
-      if (info.GetActivityLevel() != PinActivity.Unknown) ActiveInput.setSelectedIndex(info.GetActivityLevel());
+      if (info.GetActivityLevel() != PinActivity.Unknown)
+        ActiveInput.setSelectedIndex(info.GetActivityLevel());
       else ActiveInput.setSelectedIndex(IOcomps.GetDefaultActivity());
       c.gridx = 1;
       contents.add(ActiveInput, c);
@@ -363,7 +375,7 @@ public class FPGAIOInformationSettingsDialog {
       c.gridwidth = 2;
       c.gridx = 0;
       c.gridy++;
-      contents.add(delButton,c);
+      contents.add(delButton, c);
       c.gridwidth = 1;
     }
     JButton OkayButton = new JButton(S.get("FpgaBoardDone"));
@@ -389,13 +401,17 @@ public class FPGAIOInformationSettingsDialog {
       selWindow.setVisible(true);
       abort |= info.GetType().equals(IOComponentTypes.Unknown);
       if (!abort) {
-    	int NrPins = NrOfPins.get(INPUT_ID)+NrOfPins.get(OUTPUT_ID)+NrOfPins.get(IO_ID); 
+        int NrPins = NrOfPins.get(INPUT_ID) + NrOfPins.get(OUTPUT_ID) + NrOfPins.get(IO_ID);
         boolean correct = true;
         for (int i = 0; i < NrOfPins.get(INPUT_ID); i++) {
           if (LocInputs.get(i).getText().isEmpty()) {
             correct = false;
-            DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                S.fmt("FpgaIoPinLoc", IOComponentTypes.getInputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
+            DialogNotification.showDialogNotification(
+                IOcomps.getParentFrame(),
+                "Error",
+                S.fmt(
+                    "FpgaIoPinLoc",
+                    IOComponentTypes.getInputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
           }
         }
@@ -403,8 +419,12 @@ public class FPGAIOInformationSettingsDialog {
         for (int i = 0; i < NrOfPins.get(OUTPUT_ID); i++) {
           if (LocOutputs.get(i).getText().isEmpty()) {
             correct = false;
-            DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                S.fmt("FpgaIoPinLoc", IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
+            DialogNotification.showDialogNotification(
+                IOcomps.getParentFrame(),
+                "Error",
+                S.fmt(
+                    "FpgaIoPinLoc",
+                    IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
           }
         }
@@ -412,55 +432,68 @@ public class FPGAIOInformationSettingsDialog {
         for (int i = 0; i < NrOfPins.get(IO_ID); i++) {
           if (LocIOs.get(i).getText().isEmpty()) {
             correct = false;
-            DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                S.fmt("FpgaIoPinLoc", IOComponentTypes.getIOLabel(NrOfPins.get(INPUT_ID), i, MyType)));
+            DialogNotification.showDialogNotification(
+                IOcomps.getParentFrame(),
+                "Error",
+                S.fmt(
+                    "FpgaIoPinLoc",
+                    IOComponentTypes.getIOLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
           }
         }
         if (correct) {
           if (!rectLocations.isEmpty()) {
             int[] values = new int[4];
-            for (int i = 0 ; i < 4 ; i++) {
+            for (int i = 0; i < 4; i++) {
               try {
                 values[i] = Integer.parseUnsignedInt(rectLocations.get(i).getText());
               } catch (NumberFormatException e) {
-                correct=false;
+                correct = false;
                 switch (i) {
-                  case 0 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                               S.fmt("FpgaIoIntError", S.get("FpgaIoXpos"),rectLocations.get(i).getText()));
+                  case 0 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
+                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoXpos"),
+                                  rectLocations.get(i).getText()));
                            break;
-                  case 1 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                              S.fmt("FpgaIoIntError", S.get("FpgaIoYpos"),rectLocations.get(i).getText()));
+                  case 1 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
+                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoYpos"),
+                                  rectLocations.get(i).getText()));
                            break;
-                  case 2 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                              S.fmt("FpgaIoIntError", S.get("FpgaIoWidth"),rectLocations.get(i).getText()));
+                  case 2 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
+                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoWidth"),
+                                  rectLocations.get(i).getText()));
                             break;
-                  default : DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", 
-                              S.fmt("FpgaIoIntError", S.get("FpgaIoHeight"),rectLocations.get(i).getText()));
+                  default : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
+                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoHeight"),
+                                  rectLocations.get(i).getText()));
                             break;
                 }
               }
             }
             if (!correct) continue;
-            if (values[0] != MyRectangle.getXpos() ||
-                values[1] != MyRectangle.getYpos() ||
-                values[2] != MyRectangle.getWidth() ||
-                values[3] != MyRectangle.getHeight()) {
-              Rectangle update = new Rectangle(values[0],values[1],values[2],values[3]);
+            if (values[0] != MyRectangle.getXpos()
+                || values[1] != MyRectangle.getYpos()
+                || values[2] != MyRectangle.getWidth()
+                || values[3] != MyRectangle.getHeight()) {
+              Rectangle update = new Rectangle(values[0], values[1], values[2], values[3]);
               if (IOcomps.hasOverlap(MyRectangle, new BoardRectangle(update))) {
-              DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectError"));
+                DialogNotification.showDialogNotification(
+                    IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectError"));
                 continue;
-              } else if (update.getX()+update.getWidth() >= BoardManipulator.IMAGE_WIDTH) {
-                DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTWide"));
+              } else if (update.getX() + update.getWidth() >= BoardManipulator.IMAGE_WIDTH) {
+                DialogNotification.showDialogNotification(
+                    IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTWide"));
                 continue;
-              } else if (update.getY()+update.getHeight() >= BoardManipulator.IMAGE_HEIGHT) {
-                DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTHeigt"));
+              } else if (update.getY() + update.getHeight() >= BoardManipulator.IMAGE_HEIGHT) {
+                DialogNotification.showDialogNotification(
+                    IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTHeigt"));
                 continue;
               } else if (update.getWidth() < 2) {
-                DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectWNLE"));
+                DialogNotification.showDialogNotification(
+                    IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectWNLE"));
                 continue;
               } else if (update.getHeight() < 2) {
-                DialogNotification.showDialogNotification(IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectHNLE"));
+                DialogNotification.showDialogNotification(
+                    IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectHNLE"));
                 continue;
               } else {
                 MyRectangle.updateRectangle(update);
@@ -470,11 +503,11 @@ public class FPGAIOInformationSettingsDialog {
           IOcomps.SetDefaultStandard(StandardInput.getSelectedIndex());
           info.setNrOfPins(NrPins);
           int idx = 0;
-          for (int i = 0 ; i < NrOfPins.get(INPUT_ID) ; i++) 
+          for (int i = 0; i < NrOfPins.get(INPUT_ID); i++)
             info.setInputPinLocation(idx++, LocInputs.get(i).getText());
-          for (int i = 0 ; i < NrOfPins.get(OUTPUT_ID) ; i++) 
+          for (int i = 0; i < NrOfPins.get(OUTPUT_ID); i++)
             info.setOutputPinLocation(idx++, LocOutputs.get(i).getText());
-          for (int i = 0 ; i < NrOfPins.get(IO_ID) ; i++) 
+          for (int i = 0; i < NrOfPins.get(IO_ID); i++)
             info.setIOPinLocation(idx++, LocIOs.get(i).getText());
           if (LabelInput.getText() != null && LabelInput.getText().length() != 0)
             info.setLabel(LabelInput.getText());
@@ -498,9 +531,9 @@ public class FPGAIOInformationSettingsDialog {
     }
     selWindow.dispose();
   }
-  
+
   private static boolean abort;
-  
+
   public static void getFpgaInformation(Frame panel, BoardInformation TheBoard) {
     final JDialog selWindow = new JDialog(panel, S.get("FpgaBoardFpgaProp"));
     /* here the action listener is defined */
@@ -513,11 +546,12 @@ public class FPGAIOInformationSettingsDialog {
           selWindow.setVisible(false);
         };
     GridBagConstraints c = new GridBagConstraints();
-    /* Here the clock related settings are defined */    
+    /* Here the clock related settings are defined */
     JPanel ClockPanel = new JPanel();
     ClockPanel.setLayout(new GridBagLayout());
-    ClockPanel.setBorder(BorderFactory.createTitledBorder(
-      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardClkProp")));
+    ClockPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardClkProp")));
 
     JLabel FreqText = new JLabel(S.get("FpgaBoardClkFreq"));
     c.gridx = 0;
@@ -584,8 +618,9 @@ public class FPGAIOInformationSettingsDialog {
     /* Here the FPGA related settings are defined */
     JPanel FPGAPanel = new JPanel();
     FPGAPanel.setLayout(new GridBagLayout());
-    FPGAPanel.setBorder(BorderFactory.createTitledBorder(
-      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardFpgaProp")));
+    FPGAPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardFpgaProp")));
 
     JLabel VendorText = new JLabel(S.get("FpgaBoardFpgaVend"));
     c.gridx = 0;
@@ -655,8 +690,9 @@ public class FPGAIOInformationSettingsDialog {
     /* JTAG related Settings */
     JPanel JTAGPanel = new JPanel();
     JTAGPanel.setLayout(new GridBagLayout());
-    JTAGPanel.setBorder(BorderFactory.createTitledBorder(
-      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardJtagProp")));
+    JTAGPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardJtagProp")));
 
     JLabel PosText = new JLabel(S.get("FpgaBoardJtagLoc"));
     c.gridy = 0;
@@ -675,7 +711,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridy = 1;
     c.gridx = 0;
     JTAGPanel.add(FlashPosText, c);
-    
+
     JTextField FlashPosInput = new JTextField(5);
     FlashPosInput.setText("2");
     if (TheBoard.fpga.FpgaInfoPresent())
@@ -687,15 +723,16 @@ public class FPGAIOInformationSettingsDialog {
     /* misc settings */
     JPanel MiscPanel = new JPanel();
     MiscPanel.setLayout(new GridBagLayout());
-    MiscPanel.setBorder(BorderFactory.createTitledBorder(
-      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardMiscProp")));
+    MiscPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardMiscProp")));
 
     JLabel FlashName = new JLabel(S.get("FpgaBoardFlashType"));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     MiscPanel.add(FlashName, c);
-    
+
     JTextField FlashNameInput = new JTextField("");
     if (TheBoard.fpga.FpgaInfoPresent()) FlashNameInput.setText(TheBoard.fpga.getFlashName());
     c.gridx = 1;
@@ -721,7 +758,7 @@ public class FPGAIOInformationSettingsDialog {
     selWindow.add(FPGAPanel, c);
     c.gridx = 0;
     c.gridy = 1;
-    selWindow.add(JTAGPanel,c);
+    selWindow.add(JTAGPanel, c);
     c.gridx = 1;
     selWindow.add(MiscPanel, c);
 
@@ -752,7 +789,8 @@ public class FPGAIOInformationSettingsDialog {
       selWindow.setVisible(true);
       if (!abort) {
         save_settings = true;
-        switch ((int)getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
+        switch ((int)
+            getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
           case -2:
             save_settings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFreqError"));
@@ -850,5 +888,5 @@ public class FPGAIOInformationSettingsDialog {
     return result;
   }
 
-  
+
 }

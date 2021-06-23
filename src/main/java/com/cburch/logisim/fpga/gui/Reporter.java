@@ -28,12 +28,10 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import javax.swing.JProgressBar;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 
 public class Reporter {
 
@@ -42,12 +40,14 @@ public class Reporter {
   private FPGAReportTabbedPane myCommander = null;
   private JProgressBar progress = null;
 
-  public JProgressBar getProgressBar() { return progress; }
-  
+  public JProgressBar getProgressBar() {
+    return progress;
+  }
+
   public void setGuiLogger(FPGAReportTabbedPane gui) {
     myCommander = gui;
   }
-  
+
   public void setProgressBar(JProgressBar prog) {
     progress = prog;
   }
@@ -101,7 +101,8 @@ public class Reporter {
     if (myCommander == null)
       logger.warn(Message);
     else
-      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.AddWarning(
+          new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddWarning(Object Message) {

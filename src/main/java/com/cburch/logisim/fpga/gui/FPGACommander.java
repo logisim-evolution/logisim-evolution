@@ -161,8 +161,9 @@ public class FPGACommander
   private void rebuildBoardSelectionPanel() {
     BoardSelectionPanel.removeAll();
     BoardSelectionPanel.setLayout(new GridBagLayout());
-    BoardSelectionPanel.setBorder(BorderFactory.createTitledBorder(
-    BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiBoardSelect")));
+    BoardSelectionPanel.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiBoardSelect")));
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = 0;
@@ -173,23 +174,25 @@ public class FPGACommander
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     boardIcon = new BoardIcon(MyBoardInformation.GetImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
-    selector.setPreferredSize(new Dimension(boardIcon.getIconWidth(),AppPreferences.getScaled(20)));
+    selector.setPreferredSize(
+        new Dimension(boardIcon.getIconWidth(), AppPreferences.getScaled(20)));
     BoardSelectionPanel.add(selector, c);
     c.gridy++;
     // set board image on panel creation
     boardPic.setIcon(boardIcon);
     BoardSelectionPanel.add(boardPic, c);
-    if (MyBoardInformation!= null && !VendorSoftware.toolsPresent(
+    if (MyBoardInformation != null
+        && !VendorSoftware.toolsPresent(
             MyBoardInformation.fpga.getVendor(),
             VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
       /* add the select toolpath button */
       c.gridy++;
-      BoardSelectionPanel.add(ToolPath,c);
+      BoardSelectionPanel.add(ToolPath, c);
     }
     FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
   }
 
-  private void setBoardSelectionEnabled( boolean enabled ) {
+  private void setBoardSelectionEnabled(boolean enabled) {
     AppPreferences.Boards.boardSelector().setEnabled(enabled);
     ToolPath.setEnabled(enabled);
   }
@@ -200,14 +203,14 @@ public class FPGACommander
     pan.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiProgress")));
     Progress.setStringPainted(true);
-    pan.add(Progress,BorderLayout.CENTER);
+    pan.add(Progress, BorderLayout.CENTER);
     StopButton.setEnabled(false);
     StopButton.setActionCommand(StopRequested);
     StopButton.addActionListener(this);
     ProjectAddIcon bi = new ProjectAddIcon(true);
     bi.setDeselect(true);
     StopButton.setIcon(bi);
-    pan.add(StopButton,BorderLayout.EAST);
+    pan.add(StopButton, BorderLayout.EAST);
     return pan;
   }
 
@@ -226,7 +229,7 @@ public class FPGACommander
     return pan;
   }
 
-  private void setAnnotationWindowEnabled( boolean enabled ) {
+  private void setAnnotationWindowEnabled(boolean enabled) {
     annotationList.setEnabled(enabled);
     annotateButton.setEnabled(enabled);
   }
@@ -249,8 +252,8 @@ public class FPGACommander
     pan.add(pan1, BorderLayout.NORTH);
     validateButton.setActionCommand("Download");
     validateButton.addActionListener(this);
-    pan.add(actionCommands,BorderLayout.CENTER);
-    pan.add(validateButton,BorderLayout.SOUTH);
+    pan.add(actionCommands, BorderLayout.CENTER);
+    pan.add(validateButton, BorderLayout.SOUTH);
     return pan;
   }
 
@@ -290,7 +293,7 @@ public class FPGACommander
 
     // Here the action window is placed
     c.gridy++;
-    panel.add(getExecuteWindow(),c);
+    panel.add(getExecuteWindow(), c);
 
     /* Read the selected board information to retrieve board picture */
     JPanel pan1 = new JPanel();
@@ -338,9 +341,10 @@ public class FPGACommander
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
     ToolPath.setText(S.fmt("FpgaGuiToolpath",
           VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
-    if (MyBoardInformation!= null && VendorSoftware.toolsPresent(
-        MyBoardInformation.fpga.getVendor(),
-        VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
+    if (MyBoardInformation != null
+        && VendorSoftware.toolsPresent(
+            MyBoardInformation.fpga.getVendor(),
+            VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
       actionCommands.addItem(S.getter("FpgaGuiSyntAndD"));
       nrItems++;
       actionCommands.addItem(S.getter("FpgaGuiDownload"));
@@ -365,16 +369,15 @@ public class FPGACommander
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();
     } else if (e.getActionCommand().equals(StopRequested)) {
-      if (Downloader != null)
-        Downloader.stop();
-      ((ProjectAddIcon)StopButton.getIcon()).setDeselect(true);
+      if (Downloader != null) Downloader.stop();
+      ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
       StopButton.setEnabled(false);
     } else if (e.getActionCommand().equals("Download")) {
       setExecuteWindowEnabled(false);
       setAnnotationWindowEnabled(false);
       setBoardSelectionEnabled(false);
       FrequencyPanel.setEnabled(false);
-      ((ProjectAddIcon)StopButton.getIcon()).setDeselect(false);
+      ((ProjectAddIcon) StopButton.getIcon()).setDeselect(false);
       StopButton.setEnabled(true);
       ReporterGui.clearAllMessages();
       boolean writeFlash = actionCommands.getSelectedIndex() == 3;
@@ -399,7 +402,7 @@ public class FPGACommander
       setAnnotationWindowEnabled(true);
       setBoardSelectionEnabled(true);
       FrequencyPanel.setEnabled(true);
-      ((ProjectAddIcon)StopButton.getIcon()).setDeselect(true);
+      ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
       StopButton.setEnabled(false);
       Progress.setString(S.get("FpgaGuiIdle"));
       Progress.setValue(0);
@@ -496,7 +499,7 @@ public class FPGACommander
   @Override
   public void windowClosing(WindowEvent e) {
     ReporterGui.CloseOpenWindows();
-    if (e.getSource().equals(MyProject.getFrame())&&panel.isVisible()) {
+    if (e.getSource().equals(MyProject.getFrame()) && panel.isVisible()) {
       panel.setVisible(false);
     }
   }
@@ -519,7 +522,7 @@ public class FPGACommander
   @Override
   public void localeChanged() {
     textMainCircuit.setText(S.get("FpgaGuiMainCircuit"));
-    panel.setTitle(S.get("FpgaGuiTitle")+" " + MyProject.getLogisimFile().getName());
+    panel.setTitle(S.get("FpgaGuiTitle") + " " + MyProject.getLogisimFile().getName());
     annotationList.repaint();
     validateButton.setText(S.get("FpgaGuiExecute"));
     annotateButton.setText(S.get("FpgaGuiAnnotate"));

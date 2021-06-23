@@ -114,7 +114,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     fpgaButton.setActionCommand(FPGAStr);
     fpgaButton.addActionListener(this);
     fpgaButton.setEnabled(false);
-    ButtonPanel.add(fpgaButton,gbc);
+    ButtonPanel.add(fpgaButton, gbc);
 
     gbc.gridx = 2;
     gbc.gridy = 1;
@@ -220,9 +220,15 @@ public class BoardEditor implements ActionListener, ComponentListener,
 
   private String getInternalBoardName() {
     ArrayList<String> boards = AppPreferences.Boards.getBoardNames();
-    return (String)OptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
-        S.get("FpgaBoardLoadInternal"), OptionPane.PLAIN_MESSAGE, null,
-        boards.toArray(),boards.get(0));
+    return (String)
+        OptionPane.showInputDialog(
+            panel,
+            S.get("FpgaBoardSelect"),
+            S.get("FpgaBoardLoadInternal"),
+            OptionPane.PLAIN_MESSAGE,
+            null,
+            boards.toArray(),
+            boards.get(0));
   }
 
   private String checkIfEndsWithSlash(String path) {

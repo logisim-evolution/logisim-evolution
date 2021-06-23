@@ -59,7 +59,8 @@ import org.w3c.dom.Element;
 
 public class AlteraDownload implements VendorDownload {
 
-  private final VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
+  private final VendorSoftware alteraVendor =
+      VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
@@ -155,11 +156,11 @@ public class AlteraDownload implements VendorDownload {
     command.add("-o");
     // if there is no .sof generated, try with the .pof
     if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"+
-                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"
+                  + "@" + BoardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"+
-                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"
+                  + "@" + BoardInfo.fpga.getFpgaJTAGChainPosition());
     }
     ProcessBuilder Down = new ProcessBuilder(command);
     Down.directory(new File(SandboxPath));
@@ -276,13 +277,13 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("}");
     return FileWriter.WriteContents(ScriptFile, Contents);
   }
-  
+
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> Contents = new ArrayList<>();
     StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
-      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+      for (int i = 0; i < map.getNrOfPins(); i++) {
         Temp.setLength(0);
         Temp.append("    set_location_assignment ");
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
@@ -467,8 +468,8 @@ public class AlteraDownload implements VendorDownload {
 
   private String StripPackageSpeed() {
     /* For the Cyclone IV devices the name used for Syntesis is in form
-     * EP4CE15F23C8. For the programmer sof-file (for flash writing) we need to strip the part F23C8.
-     * For future supported devices this should be checked.
+     * EP4CE15F23C8. For the programmer sof-file (for flash writing) we need to strip
+     * the part F23C8. For future supported devices this should be checked.
      */
     String FpgaDevice = BoardInfo.fpga.getPart();
     int index = FpgaDevice.indexOf("F");

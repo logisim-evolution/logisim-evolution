@@ -48,14 +48,14 @@ public class ClockSourceContainer {
   }
 
   private boolean equals(Component comp1, Component comp2) {
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue() !=
-        comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
+    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()
+        != comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
     if (comp1.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()
         != comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()) {
       return false;
     }
-    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue() == comp2.getAttributeSet()
-        .getValue(Clock.ATTR_LOW).intValue();
+    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()
+        == comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
   }
 
   public int getClockId(Component comp) {
