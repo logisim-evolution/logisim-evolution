@@ -60,13 +60,16 @@ class TablePanel extends LogPanel {
   private int tableWidth;
   private int tableHeight;
 
+  // FIXME: method is unused
   public TablePanel(LogFrame frame) {
     super(frame);
     vsb = new VerticalScrollBar();
     tableview = new TableView();
-    JScrollPane pane = new JScrollPane(tableview,
-    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    JScrollPane pane =
+        new JScrollPane(
+            tableview,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     pane.setVerticalScrollBar(vsb);
     setLayout(new BorderLayout());
     add(pane);
