@@ -175,7 +175,7 @@ class MenuEdit extends Menu {
         undo.setText(S.get("editCantUndoItem"));
         undo.setEnabled(false);
       } else {
-        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
+        undo.setText(S.get("editUndoItem", last.getName()));
         undo.setEnabled(true);
       }
 

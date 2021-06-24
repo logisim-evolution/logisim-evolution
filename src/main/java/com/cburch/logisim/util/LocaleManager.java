@@ -287,12 +287,18 @@ public class LocaleManager {
     } catch (MissingResourceException e) {
       ret = key;
     }
-    HashMap<Character, String> repl = LocaleManager.repl;
+    var repl = LocaleManager.repl;
     if (repl != null) ret = replaceAccents(ret, repl);
     return ret;
   }
 
-  /* kwalsh >> */
+  public String get(String key, Object... args) {
+    return String.format(get(key), args);
+  }
+
+  /**
+   * @deprecated Use get(key, ...)
+   */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);
   }

@@ -328,7 +328,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       }
     }
     if (ret == null) {
-      ret = StringUtil.format(S.get("addToolText"), getDisplayName());
+      ret = S.get("addToolText", getDisplayName());
     }
     return ret;
   }

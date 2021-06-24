@@ -357,9 +357,9 @@ public class Startup implements AWTEventListener {
         }
         ret.templFile = new File(args[i]);
         if (!ret.templFile.exists()) {
-          logger.error("{}", StringUtil.format(S.get("templateMissingError"), args[i]));
+          logger.error("{}", S.get("templateMissingError", args[i]));
         } else if (!ret.templFile.canRead()) {
-          logger.error("{}", StringUtil.format(S.get("templateCannotReadError"), args[i]));
+          logger.error("{}", S.get("templateCannotReadError", args[i]));
         }
       } else if (arg.equals("-nosplash")) {
         ret.showSplash = false;
@@ -492,7 +492,7 @@ public class Startup implements AWTEventListener {
   }
 
   private static void printUsage() {
-    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName()));
+    System.err.println(S.get("argUsage", Startup.class.getName()));
     System.err.println();
     System.err.println(S.get("argOptionHeader"));
     String[] opts = {

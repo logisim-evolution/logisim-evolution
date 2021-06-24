@@ -129,7 +129,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       try {
         out.close();
       } catch (IOException e) {
-        file.loader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+        file.loader.showError(S.get("fileDuplicateError", e.toString()));
       }
     }
   }
@@ -180,7 +180,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         return loadSub(in, loader, file);
       } catch (Exception t) {
         firstExcept.printStackTrace();
-        loader.showError(StringUtil.format(S.get("xmlFormatError"), firstExcept.toString()));
+        loader.showError(S.get("xmlFormatError", firstExcept.toString()));
       } finally {
         try {
           in.close();
@@ -197,7 +197,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       return loadSub(in, loader);
     } catch (SAXException e) {
       e.printStackTrace();
-      loader.showError(StringUtil.format(S.get("xmlFormatError"), e.toString()));
+      loader.showError(S.get("xmlFormatError", e.toString()));
       return null;
     }
   }
@@ -317,14 +317,14 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     try {
       reader.connect(writer);
     } catch (IOException e) {
-      newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+      newloader.showError(S.get("fileDuplicateError", e.toString()));
       return null;
     }
     new WritingThread(writer, this).start();
     try {
       return LogisimFile.load(reader, newloader);
     } catch (IOException e) {
-      newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+      newloader.showError(S.get("fileDuplicateError", e.toString()));
       try {
         reader.close();
       } catch (IOException ignored) {
@@ -532,7 +532,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     for (Circuit circuit : getCircuits()) {
       for (Component comp : circuit.getNonWires()) {
         if (factories.contains(comp.getFactory())) {
-          return StringUtil.format(S.get("unloadUsedError"), circuit.getName());
+          return S.get("unloadUsedError", circuit.getName());
         }
       }
     }

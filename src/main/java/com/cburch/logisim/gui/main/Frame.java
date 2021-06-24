@@ -336,13 +336,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   private void computeTitle() {
-    String title;
-    Circuit circuit = project.getCurrentCircuit();
-    String name = project.getLogisimFile().getName();
+    var title = "";
+    var circuit = project.getCurrentCircuit();
+    var name = project.getLogisimFile().getName();
     if (circuit != null) {
-      title = StringUtil.format(S.get("titleCircFileKnown"), circuit.getName(), name);
+      title = S.fmt("titleCircFileKnown", circuit.getName(), name);
     } else {
-      title = StringUtil.format(S.get("titleFileKnown"), name);
+      title = S.fmt("titleFileKnown", name);
     }
     this.setTitle(StringUtil.format("%s · %s", title, Main.APP_DISPLAY_NAME));
     myProjectListener.enableSave();
@@ -354,8 +354,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   // returns true if user is OK with proceeding
   public boolean confirmClose(String title) {
-    String message =
-        StringUtil.format(S.get("confirmDiscardMessage"), project.getLogisimFile().getName());
+    String message = S.get("confirmDiscardMessage", project.getLogisimFile().getName());
 
     if (!project.isFileDirty()) {
       return true;

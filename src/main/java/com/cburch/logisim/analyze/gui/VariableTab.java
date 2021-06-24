@@ -393,7 +393,7 @@ public class VariableTab extends AnalyzerTab {
     }
     if (err == OK || err == EMPTY) {
       if (data.bits.size() + w > data.getMaximumSize()) {
-        error.setText(StringUtil.format(S.get("variableMaximumError"), "" + data.getMaximumSize()));
+        error.setText(S.get("variableMaximumError", "" + data.getMaximumSize()));
         err = TOO_WIDE;
       } else {
         error.setText(" ");
