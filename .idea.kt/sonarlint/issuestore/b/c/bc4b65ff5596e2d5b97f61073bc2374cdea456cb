@@ -1,0 +1,49 @@
+
+x
+java:S1192Ó"\Define a constant instead of duplicating this literal "questaValidationFailedTitle" 3 times.(Á¸µ˜üÿÿÿÿ
+e
+java:S1192G"ODefine a constant instead of duplicating this literal "line.separator" 6 times.(ğ¾ª
+J
+java:S1066["/Merge this if statement with the enclosing one.(…ƒ®Úùÿÿÿÿ
+A
+java:S5411¤"*Use the primitive boolean expression here.(¶Š¹Ş
+u
+java:S11491"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(ï»„İ
+v
+java:S1149£"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(õ–ŒÓ
+v
+java:S1149£"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(õ–ŒÓ
+9
+java:S2386ò"Make this member "protected".(ÜŒÇ©ûÿÿÿÿ
+J
+java:S6212<"/Declare this local variable with "var" instead.(¤ÆÙûÿÿÿÿ
+E
+java:S6212@"/Declare this local variable with "var" instead.(ŠˆÇ
+E
+java:S6212A"/Declare this local variable with "var" instead.(Ü¥­Ó
+E
+java:S20937"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ
+H
+java:S1172X"-Remove this unused method parameter "parent".(úÔóÆıÿÿÿÿ
+E
+java:S6212a"/Declare this local variable with "var" instead.(øüŞ
+J
+java:S6212f"/Declare this local variable with "var" instead.(ºù“…ûÿÿÿÿ
+J
+java:S6212r"/Declare this local variable with "var" instead.(Âÿ…Ôıÿÿÿÿ
+E
+java:S6212x"/Declare this local variable with "var" instead.(±Ÿ¾
+F
+java:S6212›"/Declare this local variable with "var" instead.(ŠĞ’¤
+u
+java:S2142Ş"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+F
+java:S6212²"/Declare this local variable with "var" instead.(éÏ€
+K
+java:S6212Ä"/Declare this local variable with "var" instead.(›†”ëıÿÿÿÿ
+F
+java:S6212È"/Declare this local variable with "var" instead.(ê¤½•
+F
+java:S6212É"/Declare this local variable with "var" instead.(Ü¥­Ó
+F
+java:S2093°"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ

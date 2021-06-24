@@ -1,0 +1,18 @@
+
+B
+java:S1444_"-Make this "public static ANALYZE" field final(ï˜
+D
+java:S1444`".Make this "public static headless" field final(ÒÁõ
+h
+java:S1104_"SMake ANALYZE a static final constant or non-public and provide accessors if needed.(ï˜
+j
+java:S1104`"TMake headless a static final constant or non-public and provide accessors if needed.(ÒÁõ
+g
+java:S3008_"RRename this field "ANALYZE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ï˜
+t	java:S115a"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(ä„£ƒÿÿÿÿÿ
+J
+java:S6212B"/Declare this local variable with "var" instead.(ÁˆÙüúÿÿÿÿ
+@
+java:S1181K"%Catch Exception instead of Throwable.(‡˜ÚÚøÿÿÿÿ
+E
+java:S6212M"/Declare this local variable with "var" instead.(Èçç

@@ -1,0 +1,36 @@
+
+\	java:S112í"FDefine and throw a dedicated exception instead of using a generic one.(‹œàÍ
+g	java:S117‹"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¥ïÒ
+g	java:S117‹"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¥ïÒ
+i	java:S116†"SRename this field "dir_name" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ß‘İØ
+p	java:S116‡"URename this field "file_start" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(èÁ×Ğıÿÿÿÿ
+P
+java:S1161D":Add the "@Override" annotation above this method signature(Á»›ê
+P
+java:S1161Q":Add the "@Override" annotation above this method signature(Á»›ê
+J
+java:S6212g"/Declare this local variable with "var" instead.(€Ç¸«ûÿÿÿÿ
+J
+java:S6212j"/Declare this local variable with "var" instead.(™ùâüıÿÿÿÿ
+K
+java:S6212"/Declare this local variable with "var" instead.(ùó›Ìøÿÿÿÿ
+F
+java:S6212’"/Declare this local variable with "var" instead.(Ñ†ÿ
+F
+java:S6212™"/Declare this local variable with "var" instead.(Üû×•
+h
+java:S3776Ì"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ï°¬
+K
+java:S6212Í"/Declare this local variable with "var" instead.(İ´ÕŞùÿÿÿÿ
+=
+java:S2885ü"&Make "parserSDF" an instance variable.(Ú“Æ÷
+K
+java:S6212•"/Declare this local variable with "var" instead.(İ´ÕŞùÿÿÿÿ
+P
+java:S1117£"9Rename "repl" which hides the field declared at line 258.( ¯¶À
+?	java:S108²")Either remove or fill this block of code.(º—¸
+F
+java:S6212·"/Declare this local variable with "var" instead.(ˆì’
+?	java:S108Ü")Either remove or fill this block of code.(º—¸
+?	java:S108ã")Either remove or fill this block of code.(º—¸
+?	java:S108è")Either remove or fill this block of code.(º—¸

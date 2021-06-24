@@ -1,0 +1,19 @@
+
+f	java:S117,"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¤ºß¯
+k	java:S117F"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÁË×éùÿÿÿÿ
+h	java:S116#"SRename this field "OldLabel" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·¾ËÉ
+p	java:S116$"VRename this field "SharedLabel" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(……ó¡ıÿÿÿÿ
+p	java:S116%"VRename this field "NrOfXCopies" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ŸÙ¾›şÿÿÿÿ
+p	java:S116&"VRename this field "NrOfYCopies" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ôÜ÷şÿÿÿÿ
+m	java:S116'"XRename this field "XDisplacement" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¨°Ş¾
+r	java:S116("XRename this field "YDisplacement" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ì¯Çûÿÿÿÿ
+e	java:S116)"PRename this field "XDmin" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­ù‹»
+e	java:S116*"PRename this field "YDmin" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ä’Ü
+c	java:S1001"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(øí¦¾
+c	java:S100>"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(²Ú©œ
+c	java:S100B"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(€ø¡Ô
+h	java:S100F"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÁË×éùÿÿÿÿ
+h	java:S100Z"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÃÔˆşÿÿÿÿ
+h	java:S100^"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­ËÅ‚ûÿÿÿÿ
+h	java:S100j"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¼Ûíùÿÿÿÿ
+h	java:S100n"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ƒÔ²åûÿÿÿÿ
