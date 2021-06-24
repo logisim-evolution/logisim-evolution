@@ -189,7 +189,7 @@ public class Shifter extends InstanceFactory {
     Value vd = state.getPortValue(IN1);
     Value vy; // y will by x shifted by d
     if (vd.isFullyDefined() && vx.getWidth() == bits) {
-      int d = (int)vd.toLongValue();
+      int d = (int) vd.toLongValue();
       Object shift = state.getAttributeValue(ATTR_SHIFT);
       if (d == 0) {
         vy = vx;

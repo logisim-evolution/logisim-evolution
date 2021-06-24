@@ -80,7 +80,7 @@ public class Decoder extends InstanceFactory {
           Boolean.TRUE
         });
     setKeyConfigurator(new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0));
-    setIcon(new PlexerIcon(true,false));
+    setIcon(new PlexerIcon(true, false));
     setFacingAttribute(StdAttr.FACING);
   }
 
@@ -296,7 +296,7 @@ public class Decoder extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = (int)sel.toLongValue();
+        outIndex = (int) sel.toLongValue();
         out = Value.TRUE;
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

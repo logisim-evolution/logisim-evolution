@@ -86,9 +86,9 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
     ArrayList<String> Contents = new ArrayList<>();
     String Inv = Inverted ? HDL.notOperator() : "";
     String Func = andgate ? HDL.andOperator() : HDL.orOperator();
-    Contents.add("   "+HDL.assignPreamble()+"Y0"+HDL.assignOperator()+ Inv + " (A0 " + Func + " B0 " + Func + " C0);");
-    Contents.add("   "+HDL.assignPreamble()+"Y1"+HDL.assignOperator()+ Inv + " (A1 " + Func + " B1 " + Func + " C1);");
-    Contents.add("   "+HDL.assignPreamble()+"Y2"+HDL.assignOperator()+ Inv + " (A2 " + Func + " B2 " + Func + " C2);");
+    Contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
+    Contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv + " (A1 " + Func + " B1 " + Func + " C1);");
+    Contents.add("   " + HDL.assignPreamble() + "Y2" + HDL.assignOperator() + Inv + " (A2 " + Func + " B2 " + Func + " C2);");
     return Contents;
   }
 

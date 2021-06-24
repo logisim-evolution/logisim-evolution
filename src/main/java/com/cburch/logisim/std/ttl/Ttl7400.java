@@ -57,15 +57,15 @@ public class Ttl7400 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
-          HDL.notOperator()+"(gate_"+index+"_A"+HDL.andOperator()+"gate_"+index+"B);");
+      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+              + HDL.notOperator() + "(gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B);");
       Contents.add("");
       return Contents;
     }
   }
 
-  private final static byte pinCount = 14;
-  private final static byte[] outPins = {3, 6, 8, 11};
+  private static final byte pinCount = 14;
+  private static final byte[] outPins = {3, 6, 8, 11};
 
   public Ttl7400() {
     super(_ID, pinCount, outPins, true);

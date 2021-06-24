@@ -126,7 +126,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer( 0, 3, 0, null, GetLabels(), null )
+          new ComponentMapInformationContainer(0, 3, 0, null, GetLabels(), null)
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(true));

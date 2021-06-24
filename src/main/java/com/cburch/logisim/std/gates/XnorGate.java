@@ -103,7 +103,7 @@ class XnorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    XorGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    XorGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

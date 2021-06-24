@@ -79,9 +79,9 @@ public class Ttl74139 extends AbstractTtlGate {
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
     final int label_len_max = 4;
     ArrayList<String> names = new ArrayList<>();
-    for (String name: portnames) {
+    for (String name : portnames) {
       String[] tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0,label_len_max));
+      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0, label_len_max));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -90,7 +90,7 @@ public class Ttl74139 extends AbstractTtlGate {
   // Port consts are datasheet based (1-indexed), but in code we have them 0-indexed
   // with GND, VCC omitted (thus indices are shifted comparing to datasheet numbers).
   protected byte mapPort(byte dsIdx) {
-    return (byte)((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
+    return (byte) ((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
   }
 
   protected void computeState(InstanceState state, byte inEn, byte inA, byte inB, byte[] outPorts) {

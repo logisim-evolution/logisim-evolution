@@ -266,10 +266,10 @@ class Buffer extends InstanceFactory {
 
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D)painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
-      AbstractGate.paintIconIEC(g, "1", false,true);
+      AbstractGate.paintIconIEC(g, "1", false, true);
     else
-      AbstractGate.paintIconBufferANSI(g, false,false);
+      AbstractGate.paintIconBufferANSI(g, false, false);
   }
 }

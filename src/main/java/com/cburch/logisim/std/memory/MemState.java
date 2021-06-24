@@ -150,13 +150,13 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     return Bounds.create(
         bds.getX() + xOffset, bds.getY() + yOffset, AddrBlockSize, CharHeight + 2);
   }
-  
+
   public Bounds getDataBounds(long addr, Bounds bds) {
     int curAddr = (int) curScroll;
-    for (int row = 0 ; row < NrOfLines ; row++) {
-      for (int column = 0 ; column < NrDataSymbolsEachLine ; column++) {
-        if ((curAddr+column) == addr && isValidAddr(curAddr+column)) 
-          return getDataBound(bds.getX(),bds.getY(),row,column);
+    for (int row = 0; row < NrOfLines; row++) {
+      for (int column = 0; column < NrDataSymbolsEachLine; column++) {
+        if ((curAddr + column) == addr && isValidAddr(curAddr + column))
+          return getDataBound(bds.getX(), bds.getY(), row, column);
       }
       curAddr += NrDataSymbolsEachLine;
     }
@@ -212,8 +212,10 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   }
 
   private boolean windowChanged(int offsetX, int offsetY, int DisplayWidth, int DisplayHeight) {
-    return displayWindow.getX() != offsetX || displayWindow.getY() != offsetY ||
-           displayWindow.getWidth() != DisplayWidth || displayWindow.getHeight() != DisplayHeight;
+    return displayWindow.getX() != offsetX
+        || displayWindow.getY() != offsetY
+        || displayWindow.getWidth() != DisplayWidth
+        || displayWindow.getHeight() != DisplayHeight;
   }
 
   public void paint(
@@ -225,7 +227,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       int DisplayWidth,
       int DisplayHeight,
       int nrItemsToHighlight) {
-    if (RecalculateParameters || windowChanged(offsetX,offsetY,DisplayWidth,DisplayHeight))
+    if (RecalculateParameters || windowChanged(offsetX, offsetY, DisplayWidth, DisplayHeight))
       CalculateDisplayParameters(g, offsetX, offsetY, DisplayWidth, DisplayHeight);
     int BlockHeight = NrOfLines * (CharHeight + 2);
     int TotalNrOfEntries = (1 << getAddrBits());
@@ -258,11 +260,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       for (int j = 0; j < NrDataSymbolsEachLine; j++) {
         long value = contents.get(addr + j);
         if (isValidAddr(addr + j)) {
-          
+
           if (highLight((addr + j), nrItemsToHighlight)) {
-        	Bounds dataBounds = getDataBound(leftX,topY,i,j);
+            Bounds dataBounds = getDataBound(leftX, topY, i, j);
             g.setColor(Color.DARK_GRAY);
-            g.fillRect(dataBounds.getX(),dataBounds.getY(),dataBounds.getWidth(),dataBounds.getHeight());
+            g.fillRect(dataBounds.getX(), dataBounds.getY(), dataBounds.getWidth(), dataBounds.getHeight());
             g.setColor(Color.WHITE);
             GraphicsUtil.drawText(
                 g,
@@ -286,18 +288,19 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       addr += NrDataSymbolsEachLine;
     }
   }
-  
+
   private boolean highLight(int addr, int nrItemsToHighlight) {
-	return (addr >= curAddr)&&(addr < curAddr+nrItemsToHighlight);
+    return (addr >= curAddr) && (addr < curAddr + nrItemsToHighlight);
   }
-  
+
   private Bounds getDataBound(int xoff, int yoff, int line, int column) {
     return Bounds.create(
-        xoff + getFirstXoffset() + column*DataSize - (DataSize / 2) - 1, 
-        yoff + getFirstYoffset() + line*getDataBlockHeight() - (CharHeight / 2) - 1, 
-            getDataBlockWidth(), getDataBlockHeight());
+        xoff + getFirstXoffset() + column * DataSize - (DataSize / 2) - 1,
+        yoff + getFirstYoffset() + line * getDataBlockHeight() - (CharHeight / 2) - 1,
+        getDataBlockWidth(),
+        getDataBlockHeight());
   }
-  
+
   private int getFirstXoffset() {
     return xOffset + AddrBlockSize + (SpaceSize / 2) + ((DataSize - SpaceSize) / 2);
   }

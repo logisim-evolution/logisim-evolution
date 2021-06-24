@@ -118,7 +118,7 @@ class NorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    OrGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    OrGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

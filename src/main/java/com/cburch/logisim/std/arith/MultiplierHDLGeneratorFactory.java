@@ -73,10 +73,10 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "-1 DOWNTO "
               + NrOfBitsStr
               + ") <= (OTHERS => '0') WHEN "
-              + UnsignedStr 
+              + UnsignedStr
               + "= 1 ELSE (OTHERS => Cin("
-              +NrOfBitsStr
-              +"-1));");
+              + NrOfBitsStr
+              + "-1));");
       Contents.add("   s_extended_Cin(" + NrOfBitsStr + "-1 DOWNTO 0) <= Cin;");
       Contents.add(
           "   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))");
@@ -87,32 +87,32 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   Mult_hi       <= s_new_result(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ");");
       Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
     } else {
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_Cin;");
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_mult_unsigned;");
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_interm_result;");
-      Contents.add("   reg signed["+CalcBitsStr+"-1:0] s_mult_signed;");
+      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_Cin;");
+      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_mult_unsigned;");
+      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_interm_result;");
+      Contents.add("   reg signed[" + CalcBitsStr + "-1:0] s_mult_signed;");
       Contents.add("   always @(*)");
       Contents.add("   begin");
-      Contents.add("      s_Cin["+NrOfBitsStr+"-1:0] = Cin;");
-      Contents.add("      if ("+UnsignedStr+"== 1)");
+      Contents.add("      s_Cin[" + NrOfBitsStr + "-1:0] = Cin;");
+      Contents.add("      if (" + UnsignedStr + "== 1)");
       Contents.add("         begin");
-      Contents.add("            s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = 0;");
+      Contents.add("            s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = 0;");
       Contents.add("            s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);");
       Contents.add("            s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);");
       Contents.add("          end");
       Contents.add("       else");
       Contents.add("         begin");
-      Contents.add("            if (Cin["+NrOfBitsStr+"-1] == 1)");
-      Contents.add("               s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = -1;");
+      Contents.add("            if (Cin[" + NrOfBitsStr + "-1] == 1)");
+      Contents.add("               s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = -1;");
       Contents.add("            else");
-      Contents.add("               s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = 0;");
+      Contents.add("               s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = 0;");
       Contents.add("            s_mult_signed = $signed(INP_A) * $signed(INP_B);");
       Contents.add("            s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);");
       Contents.add("          end");
       Contents.add("   end");
       Contents.add("   ");
-      Contents.add("   assign Mult_hi = s_interm_result["+CalcBitsStr + "-1:"+NrOfBitsStr+"];");
-      Contents.add("   assign Mult_lo = s_interm_result["+NrOfBitsStr + "-1:0];");
+      Contents.add("   assign Mult_hi = s_interm_result[" + CalcBitsStr + "-1:" + NrOfBitsStr + "];");
+      Contents.add("   assign Mult_lo = s_interm_result[" + NrOfBitsStr + "-1:0];");
     }
     return Contents;
   }
@@ -152,8 +152,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
     PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
     PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));

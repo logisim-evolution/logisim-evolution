@@ -182,13 +182,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         if (i == termloop) {
           oneLine.append("s_real_input_").append(i + 1).append(IndexString);
         } else {
-          oneLine
-              .append(HDL.notOperator())
-              .append("(s_real_input_")
-              .append(i + 1)
-              .append(IndexString)
-              .append(")");
-          }
+          oneLine.append(HDL.notOperator()).append("(s_real_input_").append(i + 1).append(IndexString).append(")");
+        }
         if (i < (nr_of_inputs - 1)) {
           oneLine.append(" ").append(HDL.andOperator()).append(" ");
         }

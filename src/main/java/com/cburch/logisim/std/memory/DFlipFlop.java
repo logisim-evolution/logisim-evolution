@@ -72,7 +72,7 @@ public class DFlipFlop extends AbstractFlipFlop {
     @Override
     public ArrayList<String> GetUpdateLogic() {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+"D;");
+      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator() + "D;");
       return Contents;
     }
   }

@@ -149,8 +149,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   static final Color DEFAULT_OFF = new Color(220, 220, 220);
 
-  public static final Attribute<Boolean> ATTR_DP =
-    Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
+  public static final Attribute<Boolean> ATTR_DP = Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
     super(_ID, S.getter("sevenSegmentComponent"));
@@ -177,7 +176,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
-          new ComponentMapInformationContainer( 0, 8, 0, null, GetLabels(), null )
+          new ComponentMapInformationContainer(0, 8, 0, null, GetLabels(), null)
         });
     setOffsetBounds(Bounds.create(-5, 0, 40, 60));
     setIcon(new SevenSegmentIcon(false));
@@ -185,7 +184,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   private void updatePorts(Instance instance) {
-	boolean hasDp = instance.getAttributeValue(ATTR_DP);
+    boolean hasDp = instance.getAttributeValue(ATTR_DP);
     Port[] ps = new Port[hasDp ? 8 : 7];
     ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);
     ps[Segment_B] = new Port(30, 0, Port.INPUT, 1);
@@ -251,7 +250,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   protected void configureNewInstance(Instance instance) {
-	instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 8, 0, null, GetLabels(), null ));
+    instance
+        .getAttributeSet()
+        .setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, 8, 0, null, GetLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     computeTextField(instance);

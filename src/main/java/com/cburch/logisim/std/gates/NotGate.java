@@ -72,7 +72,7 @@ class NotGate extends InstanceFactory {
     @Override
     public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"Result"+HDL.assignOperator()+HDL.notOperator()+"Input_1;");
+      Contents.add("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "Input_1;");
       Contents.add("");
       return Contents;
     }
@@ -112,7 +112,7 @@ class NotGate extends InstanceFactory {
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
   private static final String RECT_LABEL = "1";
 
-  //	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
+  // private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
   public static final InstanceFactory FACTORY = new NotGate();
 
@@ -244,10 +244,11 @@ class NotGate extends InstanceFactory {
     Object shape = painter.getGateShape();
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       paintRectangularBase(g, painter);
-      //		} else if (shape == AppPreferences.SHAPE_DIN40700) {
-      //			int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20
-      //					: 30;
-      //			PainterDin.paintAnd(painter, width, 18, true);
+
+    //    } else if (shape == AppPreferences.SHAPE_DIN40700) {
+    //      int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20 : 30;
+    //      PainterDin.paintAnd(painter, width, 18, true);
+
     } else {
       PainterShaped.paintNot(painter);
     }
@@ -268,11 +269,11 @@ class NotGate extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D)painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
-      AbstractGate.paintIconIEC(g, RECT_LABEL, true,true);
+      AbstractGate.paintIconIEC(g, RECT_LABEL, true, true);
     else
-      AbstractGate.paintIconBufferANSI(g, true,false);
+      AbstractGate.paintIconBufferANSI(g, true, false);
   }
 
   @Override
