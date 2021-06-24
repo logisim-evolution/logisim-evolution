@@ -58,13 +58,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 
 public class PokeTool extends Tool {
-    /**
-     * Unique identifier of the tool, used as reference in project files.
-     * Do NOT change as it will prevent project files from loading.
-     *
-     * Identifier value must MUST be unique string among all tools.
-     */
-    public static final String _ID = "Poke Tool";
+  /**
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
+   *
+   * <p>Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Poke Tool";
 
   private class Listener implements CircuitListener {
     public void circuitChanged(CircuitEvent event) {
@@ -308,7 +308,7 @@ public class PokeTool extends Tool {
     p.lineTo(scale(12), scale(9));
     p.quadTo(scale(13), scale(4), scale(14), scale(9));
     p.quadTo(scale(12), scale(11), scale(13), scale(15));
-    g2.setColor(new Color(240,184,160));
+    g2.setColor(new Color(240, 184, 160));
     g2.fill(p);
     g2.setColor(Color.BLACK);
     g2.draw(p);
