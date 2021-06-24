@@ -27,5 +27,10 @@
     <suppress checks="OverloadMethodsDeclarationOrder"/>
     <suppress checks="CustomImportOrder"/>
     <suppress checks="LineLength"/>
+    <suppress checks="SingleLineJavadoc"/>
+    <suppress checks="FallThrough"/>
+
+    <!-- Auto-generated file. https://github.com/logisim-evolution/logisim-evolution/issues/563-->
+	<suppress id="VhdlSyntax" files="src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.java"/>
 </suppressions>
 
