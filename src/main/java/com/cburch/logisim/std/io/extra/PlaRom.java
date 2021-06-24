@@ -273,7 +273,7 @@ public class PlaRom extends InstanceFactory {
 
   public PlaRom() {
     super(_ID, S.getter("PlaRomComponent"));
-    setIcon(new ArithmeticIcon("PLA",3));
+    setIcon(new ArithmeticIcon("PLA", 3));
     setAttributes(
         new Attribute[] {
           ATTR_INPUTS,

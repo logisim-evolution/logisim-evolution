@@ -62,7 +62,7 @@ public class Ttl74157 extends AbstractTtlGate {
   // Needed for 74x158 implementation which is 74x157 with inverted output.
   protected final boolean invertOutput;
 
-  protected final static String[] pinNames = {
+  protected static final String[] pinNames = {
     "SELECT", "1A", "1B", "1Y", "2A", "2B", "2Y",
     "3Y", "3B", "3A", "4Y", "4B", "4A", "nSTROBE (active LOW)"
   };
@@ -86,9 +86,9 @@ public class Ttl74157 extends AbstractTtlGate {
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
     final int maxLabelLength = 4;
     ArrayList<String> names = new ArrayList<>();
-    for (String name: portnames) {
+    for (String name : portnames) {
       String[] tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0,maxLabelLength));
+      names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0, maxLabelLength));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -97,7 +97,7 @@ public class Ttl74157 extends AbstractTtlGate {
   // Port consts are datasheet based (1-indexed), but in code we have them 0-indexed
   // with GND, VCC omitted (thus indices are shifted comparing to datasheet numbers).
   protected byte mapPort(byte dsIdx) {
-    return (byte)((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
+    return (byte) ((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
   }
 
   protected Value computeState(InstanceState state, byte inA, byte inB) {
@@ -106,7 +106,7 @@ public class Ttl74157 extends AbstractTtlGate {
     final boolean A = state.getPortValue(mapPort(inA)) == Value.TRUE;
     final boolean B = state.getPortValue(mapPort(inB)) == Value.TRUE;
 
-    boolean Y = strobe ? false : ( select ? B : A );
+    boolean Y = strobe ? false : (select ? B : A);
     if (this.invertOutput) Y = !Y;
 
     return Y ? Value.TRUE : Value.FALSE;

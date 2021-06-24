@@ -119,7 +119,7 @@ public class Ram extends Mem {
 
   public Ram() {
     super(_ID, S.getter("ramComponent"), 3);
-    setIcon(new ArithmeticIcon("RAM",3));
+    setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
 
@@ -213,7 +213,7 @@ public class Ram extends Mem {
 
   @Override
   MemState getState(Instance instance, CircuitState state) {
-	   return getState(state.getInstanceState(instance));
+    return getState(state.getInstanceState(instance));
   }
 
   @Override
@@ -241,7 +241,7 @@ public class Ram extends Mem {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     super.instanceAttributeChanged(instance, attr);
     if ((attr == Mem.DATA_ATTR)
-    	|| (attr == Mem.ADDR_ATTR)
+        || (attr == Mem.ADDR_ATTR)
         || (attr == RamAttributes.ATTR_DBUS)
         || (attr == StdAttr.TRIGGER)
         || (attr == RamAttributes.ATTR_ByteEnables)
@@ -275,10 +275,10 @@ public class Ram extends Mem {
         myState.getContents().clear();
         BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
         if (isSeparate(attrs)) {
-          for (int i = 0 ; i < RamAppearance.getNrDataOutPorts(attrs) ; i++)
-            state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createKnown(dataBits,0), DELAY);
+          for (int i = 0; i < RamAppearance.getNrDataOutPorts(attrs); i++)
+            state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createKnown(dataBits, 0), DELAY);
         } else {
-          for (int i = 0 ; i < RamAppearance.getNrDataOutPorts(attrs) ; i++)
+          for (int i = 0; i < RamAppearance.getNrDataOutPorts(attrs); i++)
             state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(dataBits), DELAY);
         }
         return;
@@ -288,7 +288,7 @@ public class Ram extends Mem {
     // next we get the address and the mem value currently stored
     Value addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
     long addr = addrValue.toLongValue();
-    boolean goodAddr = addrValue.isFullyDefined() && addr >= 0 ;
+    boolean goodAddr = addrValue.isFullyDefined() && addr >= 0;
     if (goodAddr && addr != myState.getCurrent()) {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);
@@ -296,9 +296,9 @@ public class Ram extends Mem {
 
     // now we handle the two different behaviors, line-enables or byte-enables
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
-      propagateLineEnables(state,addr,goodAddr,addrValue.isErrorValue());
+      propagateLineEnables(state, addr, goodAddr, addrValue.isErrorValue());
     } else {
-      propagateByteEnables(state,addr,goodAddr,addrValue.isErrorValue());
+      propagateByteEnables(state, addr, goodAddr, addrValue.isErrorValue());
     }
   }
 
@@ -323,7 +323,7 @@ public class Ram extends Mem {
             continue;
         }
         long dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toLongValue();
-        myState.getContents().set(addr+i, dataValue);
+        myState.getContents().set(addr + i, dataValue);
       }
     }
 
@@ -332,7 +332,7 @@ public class Ram extends Mem {
     boolean outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && !misalignError) {
       for (int i = 0; i < dataLines; i++) {
-        long val = myState.getContents().get(addr+i);
+        long val = myState.getContents().get(addr + i);
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createKnown(width, val), DELAY);
       }
     } else if (outputEnabled && (errorValue || (goodAddr && misalignError))) {
@@ -357,16 +357,17 @@ public class Ram extends Mem {
     boolean edge =
         !async && myState
             .setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
-    boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) ||
-                      (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
+    boolean weAsync =
+        (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE))
+            || (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
     if (goodAddr && weTriggered) {
       long dataInValue = state.getPortValue(RamAppearance.getDataInIndex(0, attrs)).toLongValue();
       if (RamAppearance.getNrBEPorts(attrs) == 0) {
         newMemValue = dataInValue;
       } else {
-        for (int i = 0 ; i < RamAppearance.getNrBEPorts(attrs) ; i++) {
-          long mask = 0xFF << (i*8);
+        for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          long mask = 0xFF << (i * 8);
           long andMask = ~mask;
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
@@ -410,8 +411,8 @@ public class Ram extends Mem {
   }
 
   @Override
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {
-    if (state != null) closeHexFrame((RamState)state.getData(c));
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {
+    if (state != null) closeHexFrame((RamState) state.getData(c));
   }
 
   public static boolean isSeparate(AttributeSet attrs) {

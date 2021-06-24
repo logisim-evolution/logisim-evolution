@@ -258,8 +258,7 @@ public class Slider extends InstanceFactory {
     if (facing == Direction.EAST) return Bounds.create(-width, -height / 2, width, height);
     else if (facing == Direction.WEST) return Bounds.create(0, -height / 2, width, height);
     else if (facing == Direction.NORTH) return Bounds.create(-width / 2, 0, width, height);
-    else // Direction SUD
-    return Bounds.create(-width / 2, -height, width, height);
+    else return Bounds.create(-width / 2, -height, width, height); // Direction SUD
   }
 
   @Override

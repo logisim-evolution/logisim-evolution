@@ -198,7 +198,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   int addr(CircuitState s, int pin) {
-    return (int)val(s, pin).toLongValue();
+    return (int) val(s, pin).toLongValue();
   }
 
   public void propagate(CircuitState circuitState) {
@@ -246,7 +246,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     g.setColor(Color.WHITE);
     g.fillRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
     g.setColor(Color.BLACK);
-    g.drawRoundRect(scale(2),scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
+    g.drawRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
     int five = scale(5);
     int ten = scale(10);
     g.setColor(Color.RED);

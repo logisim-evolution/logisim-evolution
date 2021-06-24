@@ -103,12 +103,18 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       ps[DP].setToolTip(S.getter("hexDigitDPTip"));
     }
     instance.setPorts(ps);
-    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(6+nrPorts, SevenSegment.GetLabels());
+    instance
+        .getAttributeValue(StdAttr.MAPINFO)
+        .setNrOfOutports(6 + nrPorts, SevenSegment.GetLabels());
   }
 
   @Override
   protected void configureNewInstance(Instance instance) {
-	instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 8, 0, null, SevenSegment.GetLabels(), null ));
+    instance
+        .getAttributeSet()
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     SevenSegment.computeTextField(instance);
@@ -181,7 +187,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         segs = 0x1111000;
         break;
       case -1:
-        segs = SEG_B_MASK|SEG_C_MASK|SEG_E_MASK|SEG_F_MASK|SEG_G_MASK;
+        segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_G_MASK;
         break; // a H for static icon
       default:
         segs = 0x0001000;
@@ -203,7 +209,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     int summary = 0;
     Value baseVal = state.getPortValue(HEX);
     if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
-    int segs = getSegs((int)baseVal.toLongValue());
+    int segs = getSegs((int) baseVal.toLongValue());
     if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
     if ((segs & SEG_B_MASK) != 0) summary |= 2; // vertical seg in top right
     if ((segs & SEG_D_MASK) != 0) summary |= 8; // horizontal seg at bottom
@@ -214,7 +220,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
 
     if (state.getAttributeValue(SevenSegment.ATTR_DP)) {
       Value dpVal = state.getPortValue(DP);
-      if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
+      if (dpVal != null && (int) dpVal.toLongValue() == 1)
+        summary |= 128; // decimal point
     }
 
     Object value = summary;

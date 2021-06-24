@@ -155,7 +155,7 @@ public class Clock extends InstanceFactory {
     ClockState state = (ClockState) circState.getData(comp);
     boolean dirty = false;
     if (state == null) {
-      state = new ClockState(ticks,attrs);
+      state = new ClockState(ticks, attrs);
       circState.setData(comp, state);
       dirty = true;
     } else {

@@ -446,10 +446,8 @@ public class ShiftRegister extends InstanceFactory {
     DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
     ShiftRegisterData data = (ShiftRegisterData) painter.getData();
 
-    /**
-     * In the case data is null we assume that the different value are null. This allow the user to
-     * instantiate the shift register without simulation mode
-     */
+    // In the case data is null we assume that the different value are null. This allow the user to
+    // instantiate the shift register without simulation mode
     if (data == null) {
       for (int stage = 0; stage < len; stage++) {
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);

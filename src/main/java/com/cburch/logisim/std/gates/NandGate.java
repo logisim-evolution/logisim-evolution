@@ -120,7 +120,7 @@ class NandGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    AndGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    AndGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

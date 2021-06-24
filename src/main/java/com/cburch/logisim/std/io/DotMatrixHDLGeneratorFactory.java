@@ -59,39 +59,33 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     contents.add("  ");
     if (colBased) {
-      for (int r = 0 ; r < rows ; r++)
-        for (int c = 0 ; c < cols ; c++) {
+      for (int r = 0; r < rows; r++)
+        for (int c = 0; c < cols; c++) {
           String colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
                                        : GetBusName(componentInfo, c, netlist);
           int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
           if (colName.isEmpty())
-            contents.add("   "+HDL.assignPreamble()+
-                HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
-                idx+HDL.BracketClose()+HDL.assignOperator()+HDL.zeroBit()+";");
+            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
           else {
-            String Wire = (rows == 1) ? colName : colName+HDL.BracketOpen()+r+HDL.BracketClose();
-            contents.add("   "+HDL.assignPreamble()+
-                         HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
-                         idx+HDL.BracketClose()+HDL.assignOperator()+
-                         Wire+";");
+            String Wire = (rows == 1) ? colName : colName + HDL.BracketOpen() + r + HDL.BracketClose();
+            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + Wire + ";");
           }
         }
     } else if (rowBased) {
-      for (int r = 0 ; r < rows ; r++) {
+      for (int r = 0; r < rows; r++) {
         String rowName = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
                                      : GetBusName(componentInfo, r, netlist);
-        for (int c = 0 ; c < cols ; c++) {
+        for (int c = 0; c < cols; c++) {
           int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
           if (rowName.isEmpty())
-            contents.add("   "+HDL.assignPreamble()+
-                HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
-                idx+HDL.BracketClose()+HDL.assignOperator()+HDL.zeroBit()+";");
+            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
           else {
-            String Wire = (cols == 1) ? rowName : rowName+HDL.BracketOpen()+c+HDL.BracketClose();
-            contents.add("   "+HDL.assignPreamble()+
-                         HDLGeneratorFactory.LocalOutputBubbleBusname+HDL.BracketOpen()+
-                         idx+HDL.BracketClose()+HDL.assignOperator()+
-                         Wire+";");
+            String Wire = (cols == 1) ? rowName : rowName + HDL.BracketOpen() + c + HDL.BracketClose();
+            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + Wire + ";");
           }
         }
       }
@@ -105,23 +99,23 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (HDL.isVHDL()) {
         String indent = "   ";
         if (!oneRow) {
-          contents.add(indent+label+"_0 : FOR r IN "+(rows-1)+" DOWNTO 0 GENERATE");
-          indent += "   ";
-          rowName += "(r)";
+          contents.add(indent + label + "_0 : FOR r IN " + (rows - 1) + " DOWNTO 0 GENERATE");
+          indent  += "   ";
+          rowName  += "(r)";
         }
         if (!oneCol) {
-          contents.add(indent+label+"_1 : FOR c IN "+(cols-1)+" DOWNTO 0 GENERATE");
+          contents.add(indent + label + "_1 : FOR c IN " + (cols - 1) + " DOWNTO 0 GENERATE");
           indent += "   ";
           colName += "(c)";
         }
 
-        String content = indent+HDLGeneratorFactory.LocalOutputBubbleBusname+"(";
+        String content = indent + HDLGeneratorFactory.LocalOutputBubbleBusname + "(";
 
-        content +=  ((oneRow) ? "" : "r"+((oneCol) ? "" : "*"+cols+"+"))+
-                    ((oneCol) ? "" : "c") +
-                    ((oneRow && oneCol) ? "" : "+");
+        content += ((oneRow) ? "" : "r" + ((oneCol) ? "" : "*" + cols + "+"))
+                    + ((oneCol) ? "" : "c")
+                    + ((oneRow && oneCol) ? "" : "+");
 
-        content += componentInfo.GetLocalBubbleOutputStartId()+") <= "+rowName+" AND "+colName+";";
+        content += componentInfo.GetLocalBubbleOutputStartId() + ") <= " + rowName + " AND " + colName + ";";
         contents.add(content);
 
         if (!oneCol) {
@@ -136,16 +130,15 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         String indent = "   ";
         if (!oneRow || !oneCol) {
-          contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) +
-                  ((oneCol) ? "" : label + "_c") + ";");
+          contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) + ((oneCol) ? "" : label + "_c") + ";");
           contents.add(indent + "generate");
           indent += "   ";
         }
         if (!oneRow) {
           contents.add(indent + "for (" + label + "_r = 0 ; " + label + "_r < " + rows + "; " + label + "_r=" + label + "_r+1)");
-        contents.add(indent + "begin:" + label + "_0");
+          contents.add(indent + "begin:" + label + "_0");
           indent += "   ";
-          rowName += "["+label+"_r]";
+          rowName += "[" + label + "_r]";
         }
         if (!oneCol) {
           contents.add(indent + "for (" + label + "_c = 0 ; " + label + "_c < " + cols + "; " + label + "_c=" + label + "_c+1)");
@@ -156,25 +149,25 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
         var content = indent + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname + "[";
 
-        content +=  ((oneRow) ? "" : label+"_r"+((oneCol) ? "" : "*"+cols+"+"))+
-                    ((oneCol) ? "" : label+"_c") +
-                    ((oneRow && oneCol) ? "" : "+");
+        content += ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : "*" + cols + "+"))
+                    + ((oneCol) ? "" : label + "_c")
+                    + ((oneRow && oneCol) ? "" : "+");
 
-        content += componentInfo.GetLocalBubbleOutputStartId()+"] = "+rowName+" & "+colName+";";
+        content += componentInfo.GetLocalBubbleOutputStartId() + "] = " + rowName + " & " + colName + ";";
         contents.add(content);
 
         if (!oneCol) {
-          indent = indent.substring(0,indent.length()-3);
-          contents.add(indent+"end");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "end");
         }
         if (!oneRow) {
-          indent = indent.substring(0,indent.length()-3);
-          contents.add(indent+"end");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "end");
         }
 
         if (!oneRow || !oneCol) {
-          indent = indent.substring(0,indent.length()-3);
-          contents.add(indent+"endgenerate");
+          indent = indent.substring(0, indent.length() - 3);
+          contents.add(indent + "endgenerate");
         }
       }
     }

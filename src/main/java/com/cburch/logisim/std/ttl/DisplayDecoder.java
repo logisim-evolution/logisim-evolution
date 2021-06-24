@@ -394,12 +394,9 @@ public class DisplayDecoder extends InstanceFactory {
         cout++;
       }
       ps[out] = new Port(-40, y / 2, Port.INPUT, 1); // enable input
-      ps[ps.length - 3] =
-          new Port(40, y + (dir == Direction.NORTH ? -10 : 10), Port.INPUT, 1); // Lamp Test
-      ps[ps.length - 2] =
-          new Port(40, y + (dir == Direction.NORTH ? -20 : 20), Port.INPUT, 1); // Blanking Input
-      ps[ps.length - 1] =
-          new Port(40, y + (dir == Direction.NORTH ? -30 : 30), Port.INPUT, 1); // Ripple Blanking
+      ps[ps.length - 3] = new Port(40, y + (dir == Direction.NORTH ? -10 : 10), Port.INPUT, 1); // Lamp Test
+      ps[ps.length - 2] = new Port(40, y + (dir == Direction.NORTH ? -20 : 20), Port.INPUT, 1); // Blanking Input
+      ps[ps.length - 1] = new Port(40, y + (dir == Direction.NORTH ? -30 : 30), Port.INPUT, 1); // Ripple Blanking
       // Input
     } else { // vertical
       int x = dir == Direction.EAST ? -40 : 40;
@@ -419,12 +416,9 @@ public class DisplayDecoder extends InstanceFactory {
         cout++;
       }
       ps[out] = new Port(x / 2, -40, Port.INPUT, 1); // enable input
-      ps[ps.length - 3] =
-          new Port(x + (dir == Direction.EAST ? 10 : -10), 40, Port.INPUT, 1); // Lamp Test
-      ps[ps.length - 2] =
-          new Port(x + (dir == Direction.EAST ? 20 : -20), 40, Port.INPUT, 1); // Blanking Input
-      ps[ps.length - 1] =
-          new Port(x + (dir == Direction.EAST ? 30 : -30), 40, Port.INPUT, 1); // Ripple Blanking
+      ps[ps.length - 3] = new Port(x + (dir == Direction.EAST ? 10 : -10), 40, Port.INPUT, 1); // Lamp Test
+      ps[ps.length - 2] = new Port(x + (dir == Direction.EAST ? 20 : -20), 40, Port.INPUT, 1); // Blanking Input
+      ps[ps.length - 1] = new Port(x + (dir == Direction.EAST ? 30 : -30), 40, Port.INPUT, 1); // Ripple Blanking
       // Input
     }
     ps[out].setToolTip(S.getter("priorityEncoderEnableInTip"));

@@ -24,7 +24,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 /**
@@ -53,15 +53,15 @@ public class Ttl7434 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
-          "(gate_"+index+"_A);");
+      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+                  + "(gate_" + index + "_A);");
       Contents.add("");
       return Contents;
     }
   }
 
-  private final static byte pinCount = 14;
-  private final static byte[] outPins = {2, 4, 6, 8, 10, 12};
+  private static final byte pinCount = 14;
+  private static final byte[] outPins = {2, 4, 6, 8, 10, 12};
 
   public Ttl7434() {
     super(_ID, pinCount, outPins, true);

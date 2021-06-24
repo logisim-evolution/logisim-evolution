@@ -124,29 +124,29 @@ class XorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    paintIconANSI(g, iconSize, borderSize, negateSize,false);
+    paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
-	  
+
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int xoff = negateSize >>1;
-    int ystart = negateSize >>1;
-    int yend = iconSize-ystart;
+    int xoff = negateSize >> 1;
+    int ystart = negateSize >> 1;
+    int yend = iconSize - ystart;
     int xstart = 0;
-    int xend = iconSize-negateSize;
+    int xend = iconSize - negateSize;
     GeneralPath shape = new GeneralPath();
-    shape.moveTo(xend, iconSize>>1);
-    shape.quadTo((2*xend)/3, ystart, xstart+xoff, ystart);
-    shape.quadTo(xoff+xend/3, iconSize>>1, xstart+xoff, yend);
-    shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
+    shape.moveTo(xend, iconSize >> 1);
+    shape.quadTo((2 * xend) / 3, ystart, xstart + xoff, ystart);
+    shape.quadTo(xoff + xend / 3, iconSize >> 1, xstart + xoff, yend);
+    shape.quadTo((2 * xend) / 3, yend, xend, iconSize >> 1);
     shape.closePath();
     shape.moveTo(xstart, ystart);
-    shape.quadTo(xend/3, iconSize>>1, xstart, yend);
+    shape.quadTo(xend / 3, iconSize >> 1, xstart, yend);
     shape.moveTo(xstart, ystart);
     shape.closePath();
     AffineTransform af = g.getTransform();
     g.translate(borderSize, borderSize);
     g.draw(shape);
-    paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    paintIconPins(g, iconSize, borderSize, negateSize, inverted, false);
     g.setTransform(af);
   }
 

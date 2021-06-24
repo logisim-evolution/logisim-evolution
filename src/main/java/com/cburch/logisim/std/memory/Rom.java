@@ -152,7 +152,7 @@ public class Rom extends Mem {
 
   public Rom() {
     super(_ID, S.getter("romComponent"), 0);
-    setIcon(new ArithmeticIcon("ROM",3));
+    setIcon(new ArithmeticIcon("ROM", 3));
     memListeners = new WeakHashMap<>();
   }
 
@@ -206,7 +206,7 @@ public class Rom extends Mem {
 
   public static void closeHexFrame(Component c) {
     if (!(c instanceof InstanceComponent)) return;
-    Instance inst =((InstanceComponent)c).getInstance();
+    Instance inst = ((InstanceComponent) c).getInstance();
     RomAttributes.closeHexFrame(getMemContents(inst));
   }
 
@@ -259,9 +259,9 @@ public class Rom extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-    	RamAppearance.DrawRamClassic(painter);
+      RamAppearance.DrawRamClassic(painter);
     } else {
-    	RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.DrawRamEvolution(painter);
     }
   }
 
@@ -276,12 +276,12 @@ public class Rom extends Mem {
 
     long addr = addrValue.toLongValue();
     if (addrValue.isErrorValue() || (addrValue.isFullyDefined() && addr < 0)) {
-      for (int i = 0 ; i < nrDataLines ; i++)
+      for (int i = 0; i < nrDataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createError(dataBits), DELAY);
       return;
     }
     if (!addrValue.isFullyDefined()) {
-      for (int i = 0 ; i < nrDataLines ; i++)
+      for (int i = 0; i < nrDataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(dataBits), DELAY);
       return;
     }
@@ -290,18 +290,20 @@ public class Rom extends Mem {
       myState.scrollToShow(addr);
     }
 
-    boolean misaligned = addr%nrDataLines != 0;
+    boolean misaligned = addr % nrDataLines != 0;
     boolean misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
-    for (int i = 0 ; i < nrDataLines ; i++) {
-      long val = myState.getContents().get(addr+i);
-      state.setPort(RamAppearance.getDataOutIndex(i, attrs),
-              misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
+    for (int i = 0; i < nrDataLines; i++) {
+      long val = myState.getContents().get(addr + i);
+      state.setPort(
+          RamAppearance.getDataOutIndex(i, attrs),
+          misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val),
+          DELAY);
     }
   }
 
   @Override
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {
     closeHexFrame(c);
   }
 

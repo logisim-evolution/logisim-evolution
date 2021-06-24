@@ -118,22 +118,22 @@ class AndGate extends AbstractGate {
 
   @Override
   protected void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    paintIconANSI(g, iconSize, borderSize, negateSize,false);
+    paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
 
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int ystart = negateSize >>1;
-    int yend = iconSize-ystart;
-    int rad = (yend-ystart)>>1;
+    int ystart = negateSize >> 1;
+    int yend = iconSize - ystart;
+    int rad = (yend - ystart) >> 1;
     int xstart = 0;
-    int xend = iconSize-negateSize-rad;
+    int xend = iconSize - negateSize - rad;
     int[] xp = new int[] {xend, xstart, xstart, xend};
     int[] yp = new int[] {ystart, ystart, yend, yend};
     AffineTransform af = g.getTransform();
     g.translate(borderSize, borderSize);
     g.drawPolyline(xp, yp, 4);
-    GraphicsUtil.drawCenteredArc(g, xend, iconSize>>1 , rad, -90, 180);
-    paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    GraphicsUtil.drawCenteredArc(g, xend, iconSize >> 1, rad, -90, 180);
+    paintIconPins(g, iconSize, borderSize, negateSize, inverted, false);
     g.setTransform(af);
   }
 
