@@ -108,21 +108,21 @@ class MenuHelp extends JMenu implements ActionListener {
   }
 
   private void loadBroker() {
-    String helpUrl = S.get("helpsetUrl");
+    var helpUrl = S.get("helpsetUrl");
     if (helpUrl == null) {
       helpUrl = "doc/doc_en.hs";
     }
     if (helpSet == null || helpFrame == null || !helpUrl.equals(helpSetUrl)) {
-      ClassLoader loader = MenuHelp.class.getClassLoader();
+      var loader = MenuHelp.class.getClassLoader();
       try {
-        URL hsURL = HelpSet.findHelpSet(loader, helpUrl);
-        if (hsURL == null) {
+        var hsUrl = HelpSet.findHelpSet(loader, helpUrl);
+        if (hsUrl == null) {
           disableHelp();
           OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpNotFoundError"));
           return;
         }
         helpSetUrl = helpUrl;
-        helpSet = new HelpSet(null, hsURL);
+        helpSet = new HelpSet(null, hsUrl);
         helpComponent = new JHelp(helpSet);
         if (helpFrame == null) {
           helpFrame = new LFrame.Dialog(null);

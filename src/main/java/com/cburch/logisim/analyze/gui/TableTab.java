@@ -104,14 +104,14 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   private static final long serialVersionUID = 1L;
 
-  private final Font HEAD_FONT;
-  private final Font BODY_FONT;
-  private final int HEADER_PADDING;
-  private final int HEADER_VSEP;
-  private final int COLUMNS_HSEP;
-  private final int DEFAULT_CELL_PADDING;
-  private final int DEFAULT_CELL_WIDTH;
-  private final int DEFAULT_CELL_HEIGHT;
+  private final Font headFont;
+  private final Font bodyFont;
+  private final int headerPadding;
+  private final int headerVertSep;
+  private final int headerHorizSep;
+  private final int defaultCellPadding;
+  private final int defaultCellWidth;
+  private final int defaultCellHeight;
 
   private final MyListener myListener = new MyListener();
   private final TruthTable table;
@@ -120,16 +120,22 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final JScrollPane bodyPane;
   private final JScrollPane headerPane;
   private int cellHeight;
-  private int tableWidth, headerHeight, bodyHeight;
+  private int tableWidth;
+  private int headerHeight;
+  private int bodyHeight;
   private final ColumnGroupDimensions inDim;
   private final ColumnGroupDimensions outDim;
   private final TableTabCaret caret;
   private final TableTabClip clip;
 
-  List<Var> inputVars, outputVars;
+  List<Var> inputVars;
+  List<Var> outputVars;
 
   private class ColumnGroupDimensions {
-    int cellWidth, cellPadding, leftPadding, rightPadding;
+    int cellWidth;
+    int cellPadding;
+    int leftPadding;
+    int rightPadding;
     int width;
     List<Var> vars;
 
@@ -139,10 +145,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
     void reset(List<Var> vars) {
       this.vars = vars;
-      leftPadding = DEFAULT_CELL_PADDING / 2;
-      rightPadding = DEFAULT_CELL_PADDING / 2;
-      cellPadding = DEFAULT_CELL_PADDING;
-      cellWidth = DEFAULT_CELL_WIDTH;
+      leftPadding = defaultCellPadding / 2;
+      rightPadding = defaultCellPadding / 2;
+      cellPadding = defaultCellPadding;
+      cellWidth = defaultCellWidth;
     }
 
     void calculate(FontMetrics fm) {
@@ -151,7 +157,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
         Var v2 = vars.get(i);
         int hw1 = fm.stringWidth(v1.toString());
         int hw2 = fm.stringWidth(v2.toString());
-        int hw = (hw1 - hw1 / 2) + HEADER_PADDING + (hw2 / 2);
+        int hw = (hw1 - hw1 / 2) + headerPadding + (hw2 / 2);
         int cw1 = v1.width * cellWidth;
         int cw2 = v2.width * cellWidth;
         int cw = (cw1 - cw1 / 2) + cellPadding + (cw2 / 2);
@@ -161,12 +167,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       int w;
       v = vars.get(0);
       w = fm.stringWidth(v.toString());
-      leftPadding = Math.max(DEFAULT_CELL_PADDING / 2, (w / 2) - (cellWidth * v.width / 2));
+      leftPadding = Math.max(defaultCellPadding / 2, (w / 2) - (cellWidth * v.width / 2));
       v = vars.get(vars.size() - 1);
       w = fm.stringWidth(v.toString());
       rightPadding =
           Math.max(
-              DEFAULT_CELL_PADDING / 2,
+              defaultCellPadding / 2,
               (w - w / 2) - (cellWidth * v.width - cellWidth * v.width / 2));
       calculateWidth();
     }
@@ -244,7 +250,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             g.fillRect(x, y, cellWidth, cellHeight);
             g.setColor(Color.BLACK);
           }
-          g.setColor( entry == Entry.BUS_ERROR ? Value.ERROR_COLOR : Color.BLACK);
+          g.setColor(entry == Entry.BUS_ERROR ? Value.ERROR_COLOR : Color.BLACK);
           String label = entry.getDescription();
           int width = fm.stringWidth(label);
           g.drawString(label, x + (cellWidth - width) / 2, cy);
@@ -263,7 +269,6 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private static class TightButton extends JButton {
-    /** */
     private static final long serialVersionUID = 1L;
 
     TightButton(String s) {
@@ -273,9 +278,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   private static class SquareButton extends TightButton implements Entry.EntryChangedListener {
-    /** */
     private static final long serialVersionUID = 1L;
-    
+
     final Entry myEntry;
 
     SquareButton(Entry e) {
@@ -290,24 +294,24 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       return new Dimension(s, s);
     }
 
-	@Override
-	public void EntryDesriptionChanged() {
-	  setText(myEntry.getDescription());
-	  repaint();
-	}
+    @Override
+    public void entryDesriptionChanged() {
+      setText(myEntry.getDescription());
+      repaint();
+    }
   }
 
   public TableTab(TruthTable table) {
     this.table = table;
-    Font MyFont = new Font("Serif", Font.PLAIN, 14);
-    HEAD_FONT = AppPreferences.getScaledFont(MyFont).deriveFont(Font.BOLD);
-    BODY_FONT = AppPreferences.getScaledFont(MyFont);
-    HEADER_PADDING = AppPreferences.getScaled(10);
-    HEADER_VSEP = AppPreferences.getScaled(4);
-    COLUMNS_HSEP = AppPreferences.getScaled(4);
-    DEFAULT_CELL_PADDING = AppPreferences.getScaled(12);
-    DEFAULT_CELL_WIDTH = AppPreferences.getScaled(12);
-    DEFAULT_CELL_HEIGHT = AppPreferences.getScaled(16);
+    final var myFont = new Font("Serif", Font.PLAIN, 14);
+    headFont = AppPreferences.getScaledFont(myFont).deriveFont(Font.BOLD);
+    bodyFont = AppPreferences.getScaledFont(myFont);
+    headerPadding = AppPreferences.getScaled(10);
+    headerVertSep = AppPreferences.getScaled(4);
+    headerHorizSep = AppPreferences.getScaled(4);
+    defaultCellPadding = AppPreferences.getScaled(12);
+    defaultCellWidth = AppPreferences.getScaled(12);
+    defaultCellHeight = AppPreferences.getScaled(16);
     header = new TableHeader();
     body = new TableBody();
     bodyPane =
@@ -327,8 +331,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             header,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    headerPane.addComponentListener(new ComponentAdapter() {
-    	public void componentResized(ComponentEvent event) {
+    headerPane.addComponentListener(
+        new ComponentAdapter() {
+          public void componentResized(ComponentEvent event) {
             int width = headerPane.getViewport().getWidth();
             header.setSize(new Dimension(width, header.getHeight()));
           }
@@ -339,7 +344,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     headerPane.setBorder(null);
     header.setBorder(null);
 
-    JPanel toolbar = new JPanel();
+    var toolbar = new JPanel();
     toolbar.setLayout(new FlowLayout());
     Entry.DONT_CARE.addListener(dontcare);
     Entry.ZERO.addListener(zero);
@@ -361,9 +366,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.setEnabled(getRowCount() < table.getRowCount());
     count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
 
-    GridBagLayout layout = new GridBagLayout();
+    var layout = new GridBagLayout();
     setLayout(layout);
-    GridBagConstraints gc = new GridBagConstraints();
+    var gc = new GridBagConstraints();
     gc.fill = GridBagConstraints.HORIZONTAL;
     gc.gridx = 0;
     gc.gridy = 0;
@@ -433,24 +438,24 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       outputVars.add(new Var(S.get("tableNoOutputs"), 0));
     }
 
-    cellHeight = DEFAULT_CELL_HEIGHT;
+    cellHeight = defaultCellHeight;
     inDim.reset(inputVars);
     outDim.reset(outputVars);
     Graphics g = getGraphics();
-    FontMetrics fm = (g != null ? g.getFontMetrics(HEAD_FONT) : canvas.getFontMetrics(HEAD_FONT));
+    FontMetrics fm = (g != null ? g.getFontMetrics(headFont) : canvas.getFontMetrics(headFont));
     cellHeight = fm.getHeight();
     inDim.calculate(fm);
     outDim.calculate(fm);
 
-    tableWidth = inDim.width + COLUMNS_HSEP + outDim.width;
+    tableWidth = inDim.width + headerHorizSep + outDim.width;
 
     computePreferredHeight();
   }
 
   private void computePreferredHeight() {
     bodyHeight = cellHeight * getRowCount();
-    headerHeight = HEADER_VSEP + cellHeight + HEADER_VSEP;
-    int tableHeight = cellHeight + headerHeight;
+    headerHeight = headerVertSep + cellHeight + headerVertSep;
+    final int tableHeight = cellHeight + headerHeight;
 
     header.setPreferredSize(new Dimension(tableWidth, headerHeight));
     headerPane.setMinimumSize(new Dimension(tableWidth, headerHeight));
@@ -459,7 +464,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     body.setPreferredSize(new Dimension(tableWidth, bodyHeight));
     bodyPane.setPreferredSize(new Dimension(tableWidth, 1));
 
-    setPreferredSize(new Dimension(tableWidth+40, tableHeight));
+    setPreferredSize(new Dimension(tableWidth + 40, tableHeight));
     revalidate();
     repaint();
   }
@@ -474,7 +479,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   public int getColumn(MouseEvent event) {
     int left = (body.getWidth() - tableWidth) / 2;
-    int mid = left + inDim.width + COLUMNS_HSEP;
+    int mid = left + inDim.width + headerHorizSep;
     int x = event.getX();
     if (x < mid) {
       return inDim.getColumn(x - left);
@@ -489,11 +494,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     int outputs = table.getOutputColumnCount();
     if (inputs + outputs == 0) return -1;
     int left = (body.getWidth() - tableWidth) / 2;
-    int mid = left + inDim.width + COLUMNS_HSEP;
+    int mid = left + inDim.width + headerHorizSep;
     int x = event.getX();
     if (x < left) return 0;
     else if (x >= mid + outDim.width) return inputs + outputs - 1;
-    else if (x < mid - COLUMNS_HSEP / 2 && inputs > 0) return inDim.getNearestColumn(x - left);
+    else if (x < mid - headerHorizSep / 2 && inputs > 0) return inDim.getNearestColumn(x - left);
     else return inputs + outDim.getNearestColumn(x - mid);
   }
 
@@ -562,11 +567,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
         int numCells = curHeight / cellHeight - 1;
         if (numCells <= 0) numCells = 1;
         if (direction > 0) {
-          return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_VSEP;
+          return curY > 0 ? numCells * cellHeight : numCells * cellHeight + headerVertSep;
         } else {
-          return curY > cellHeight + HEADER_VSEP
+          return curY > cellHeight + headerVertSep
               ? numCells * cellHeight
-              : numCells * cellHeight + HEADER_VSEP;
+              : numCells * cellHeight + headerVertSep;
         }
       }
 
@@ -574,9 +579,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       public int getUnitIncrement(int direction) {
         int curY = getValue();
         if (direction > 0) {
-          return curY > 0 ? cellHeight : cellHeight + HEADER_VSEP;
+          return curY > 0 ? cellHeight : cellHeight + headerVertSep;
         } else {
-          return curY > cellHeight + HEADER_VSEP ? cellHeight : cellHeight + HEADER_VSEP;
+          return curY > cellHeight + headerVertSep ? cellHeight : cellHeight + headerVertSep;
         }
       }
     };
@@ -584,7 +589,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   int getXLeft(int col) {
     int left = Math.max(0, (body.getWidth() - tableWidth) / 2);
-    int mid = left + inDim.width + COLUMNS_HSEP;
+    int mid = left + inDim.width + headerHorizSep;
     int inputs = table.getInputColumnCount();
     if (col < inputs) return left + inDim.getX(col);
     else return mid + outDim.getX(col - inputs);
@@ -592,7 +597,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   int getXRight(int col) {
     int left = Math.max(0, (body.getWidth() - tableWidth) / 2);
-    int mid = left + inDim.width + COLUMNS_HSEP;
+    int mid = left + inDim.width + headerHorizSep;
     int inputs = table.getInputColumnCount();
     if (col < inputs) return left + inDim.getX(col) + inDim.cellWidth;
     else return mid + outDim.getX(col - inputs) + outDim.cellWidth;
@@ -613,23 +618,21 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   void updateTab() {
-	    editHandler.computeEnabled();
+    editHandler.computeEnabled();
   }
 
-
   private class TableBody extends JPanel {
-    /** */
     private static final long serialVersionUID = 1L;
 
     @Override
     public void paintComponent(Graphics g) {
       try {
-          paintComponent(g, false, getWidth(), getHeight());
+        paintComponent(g, false, getWidth(), getHeight());
       } catch (Exception e) {
-            // this can happen during transitions between circuits
-          }
+        // this can happen during transitions between circuits
+      }
     }
-    
+
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
       Graphics2D g2 = (Graphics2D) g;
@@ -643,13 +646,13 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
       int top = 0;
       int left = Math.max(0, (canvasWidth - tableWidth) / 2);
-      int mid = left + inDim.width + COLUMNS_HSEP;
+      int mid = left + inDim.width + headerHorizSep;
 
       g.setColor(Color.GRAY);
-      int lineX = left + inDim.width + COLUMNS_HSEP / 2;
+      int lineX = left + inDim.width + headerHorizSep / 2;
       g.drawLine(lineX, top, lineX, top + bodyHeight);
 
-      g.setFont(BODY_FONT);
+      g.setFont(bodyFont);
       FontMetrics fm = g.getFontMetrics();
       int y = top;
 
@@ -669,14 +672,13 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   private class TableHeader extends JPanel {
-    /** */
     private static final long serialVersionUID = 1L;
 
     @Override
     public void paintComponent(Graphics g) {
-    	paintComponent(g, false, getWidth(), getHeight());
+      paintComponent(g, false, getWidth(), getHeight());
     }
-    
+
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
       Graphics2D g2 = (Graphics2D) g;
@@ -687,19 +689,19 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       if (!printView)
         super.paintComponent(g);
 
-      int top = canvasHeight - cellHeight - HEADER_VSEP;
+      int top = canvasHeight - cellHeight - headerVertSep;
       int left = Math.max(0, (canvasWidth - tableWidth) / 2);
 
       g.setColor(Color.GRAY);
-      int lineX = left + inDim.width + COLUMNS_HSEP / 2;
-      int lineY = top + cellHeight + HEADER_VSEP / 2;
+      int lineX = left + inDim.width + headerHorizSep / 2;
+      int lineY = top + cellHeight + headerVertSep / 2;
       g.drawLine(left, lineY, left + tableWidth, lineY);
       g.drawLine(lineX, top, lineX, cellHeight);
 
       g.setColor(Color.BLACK);
-      g.setFont(HEAD_FONT);
+      g.setFont(headFont);
       inDim.paintHeaders(g, left, top);
-      outDim.paintHeaders(g, left + inDim.width + COLUMNS_HSEP, top);
+      outDim.paintHeaders(g, left + inDim.width + headerHorizSep, top);
     }
   }
 
@@ -757,67 +759,72 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       }
     }
   };
-  
+
   @Override
   PrintHandler getPrintHandler() {
     return printHandler;
   }
 
-  final PrintHandler printHandler = new PrintHandler() {
-    @Override
-    public Dimension getExportImageSize() {
-      int width = tableWidth;
-      int height = headerHeight + bodyHeight;
-      return new Dimension(width, height);
-    }
-    
-    @Override
-    public void paintExportImage(BufferedImage img, Graphics2D g) {
-      int width = img.getWidth();
-      int height = img.getHeight();
-      g.setClip(0, 0, width, height);
-      header.paintComponent(g, true, width, headerHeight);
-      g.translate(0, headerHeight);
-      body.paintComponent(g, true, width, bodyHeight);
-    }
-    
-    @Override
-    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
-      FontMetrics fm = g.getFontMetrics();
+  final PrintHandler printHandler =
+      new PrintHandler() {
+        @Override
+        public Dimension getExportImageSize() {
+          int width = tableWidth;
+          int height = headerHeight + bodyHeight;
+          return new Dimension(width, height);
+        }
 
-      // shrink horizontally to fit
-      double scale = 1.0;
-      if (tableWidth > w)
-        scale = w / tableWidth;
+        @Override
+        public void paintExportImage(BufferedImage img, Graphics2D g) {
+          int width = img.getWidth();
+          int height = img.getHeight();
+          g.setClip(0, 0, width, height);
+          header.paintComponent(g, true, width, headerHeight);
+          g.translate(0, headerHeight);
+          body.paintComponent(g, true, width, bodyHeight);
+        }
 
-      // figure out how many pages we will need
-      int n = getRowCount();
-      double headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
-      int rowsPerPage = (int)((h - headHeight) / (cellHeight * scale));
-      int numPages = (n + rowsPerPage - 1) / rowsPerPage;
-      if (pageNum >= numPages)
-        return Printable.NO_SUCH_PAGE;
+        @Override
+        public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+          FontMetrics fm = g.getFontMetrics();
 
-      // g.drawRect(0, 0, (int)w-1, (int)h-1); // bage border
-      GraphicsUtil.drawText(g,
-          String.format("Combinational Analysis (page %d of %d)", pageNum+1, numPages),
-          (int)(w/2), 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+          // shrink horizontally to fit
+          double scale = 1.0;
+          if (tableWidth > w) scale = w / tableWidth;
 
-      g.translate(0, fm.getHeight() * 1.5);
-      g.scale(scale, scale);
-      header.paintComponent(g, true, (int)(w/scale), headerHeight);
-      g.translate(0, headerHeight);
+          // figure out how many pages we will need
+          int n = getRowCount();
+          double headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
+          int rowsPerPage = (int) ((h - headHeight) / (cellHeight * scale));
+          int numPages = (n + rowsPerPage - 1) / rowsPerPage;
+          if (pageNum >= numPages) return Printable.NO_SUCH_PAGE;
 
-      int yHeight = cellHeight * rowsPerPage;
-      int yTop = pageNum * yHeight;
-      g.translate(0, -yTop);
-      g.setClip(0, yTop, (int)(w/scale), yHeight);
-      body.paintComponent(g, true, (int)(w/scale), bodyHeight);
+          // g.drawRect(0, 0, (int)w-1, (int)h-1); // bage border
+          GraphicsUtil.drawText(
+              g,
+              String.format("Combinational Analysis (page %d of %d)", pageNum + 1, numPages),
+              (int) (w / 2),
+              0,
+              GraphicsUtil.H_CENTER,
+              GraphicsUtil.V_TOP);
 
-      return Printable.PAGE_EXISTS;
-    }
-  };
+          g.translate(0, fm.getHeight() * 1.5);
+          g.scale(scale, scale);
+          header.paintComponent(g, true, (int) (w / scale), headerHeight);
+          g.translate(0, headerHeight);
+
+          int heightY = cellHeight * rowsPerPage;
+          int topY = pageNum * heightY;
+          g.translate(0, -topY);
+          g.setClip(0, topY, (int) (w / scale), heightY);
+          body.paintComponent(g, true, (int) (w / scale), bodyHeight);
+
+          return Printable.PAGE_EXISTS;
+        }
+      };
 
   @Override
-  public void EntryDesriptionChanged() { this.repaint(); }
+  public void entryDesriptionChanged() {
+    this.repaint();
+  }
 }

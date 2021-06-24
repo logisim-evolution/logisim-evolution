@@ -153,7 +153,7 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar") && !name.equals("appear")) {
       Node[] a = new Node[n];
       for (int i = 0; i < n; i++) a[i] = children.item(i);
       Arrays.sort(a, nodeComparator);
@@ -203,7 +203,7 @@ class XmlWriter {
   private final LogisimFile file;
   private final Document doc;
   /**
-   * Path of the file which is being written on disk -- used to relativize components stored in it
+   * Path of the file which is being written on disk -- used to relativize components stored in it.
    */
   private final String outFilepath;
 
@@ -297,7 +297,7 @@ class XmlWriter {
       if (elt != null) ret.appendChild(elt);
     }
     for (String board : circuit.getBoardMapNamestoSave()) {
-      Element elt = fromMap(circuit,board);
+      Element elt = fromMap(circuit, board);
       if (elt != null) ret.appendChild(elt);
     }
     return ret;

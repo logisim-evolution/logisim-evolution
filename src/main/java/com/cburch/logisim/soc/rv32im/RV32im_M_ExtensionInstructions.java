@@ -42,7 +42,7 @@ import java.util.Arrays;
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
   private static final int OP = 0x33;
-  
+
   private static final int INSTR_MUL = 0;
   private static final int INSTR_MULH = 1;
   private static final int INSTR_MULHSU = 2;
@@ -51,8 +51,9 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private static final int INSTR_DIVU = 5;
   private static final int INSTR_REM = 6;
   private static final int INSTR_REMU = 7;
-  
-  private final static String[] AsmOpcodes = {"MUL","MULH","MULHSU","MULHU","DIV","DIVU","REM","REMU"};
+
+  private static final String[] AsmOpcodes = {
+      "MUL", "MULH", "MULHSU", "MULHU", "DIV", "DIVU", "REM", "REMU"};
 
   private int instruction;
   private boolean valid;
@@ -60,7 +61,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int destination;
   private int source1;
   private int source2;
-  
+
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
@@ -71,15 +72,17 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     int val1 = cpuState.getRegisterValue(source1);
     int val2 = cpuState.getRegisterValue(source2);
-    BigInteger opp1,opp2,res;
+    BigInteger opp1, opp2, res;
     BigInteger mask = BigInteger.valueOf(1).shiftLeft(32).subtract(BigInteger.valueOf(1));
     int result = 0;
     switch (operation) {
-      case INSTR_MULH   : 
-      case INSTR_MUL    : opp1 = BigInteger.valueOf(val1); 
+      case INSTR_MULH   :
+      case INSTR_MUL    : opp1 = BigInteger.valueOf(val1);
                           opp2 = BigInteger.valueOf(val2);
                           res = opp1.multiply(opp2);
-                          result = (operation == INSTR_MUL) ? res.and(mask).intValue() : res.shiftRight(32).and(mask).intValue();
+                          result = (operation == INSTR_MUL)
+                                  ? res.and(mask).intValue()
+                                  : res.shiftRight(32).and(mask).intValue();
                           break;
       case INSTR_MULHSU : opp1 = BigInteger.valueOf(val1);
                           opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
@@ -100,7 +103,9 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
       case INSTR_DIVU   :
       case INSTR_REMU   : opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
                           opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
-                          res = (operation == INSTR_REMU) ? opp1.remainder(opp2) : opp1.divide(opp2);
+                          res = (operation == INSTR_REMU)
+                                  ? opp1.remainder(opp2)
+                                  : opp1.divide(opp2);
                           result = res.and(mask).intValue();
                           break;
     }
@@ -112,7 +117,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
-    while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
+    while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     s.append(RV32im_state.registerABINames[destination]).append(",")
         .append(RV32im_state.registerABINames[source1]).append(",")
@@ -130,12 +135,16 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return valid;
   }
 
-  public boolean performedJump() { return false; }
+  public boolean performedJump() {
+    return false;
+  }
 
-  public boolean isValid() { return valid; }
-  
+  public boolean isValid() {
+    return valid;
+  }
+
   private boolean decodeBin() {
-    if (RV32imSupport.getOpcode(instruction)==OP) {
+    if (RV32imSupport.getOpcode(instruction) == OP) {
       if (RV32imSupport.getFunct7(instruction) != 1)
         return false;
       operation = RV32imSupport.getFunct3(instruction);
@@ -147,7 +156,9 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return false;
   }
 
-  public String getErrorMessage() { return null; }
+  public String getErrorMessage() {
+    return null;
+  }
 
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
@@ -157,7 +168,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     valid = true;
-    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+    for (int i = 0; i < AsmOpcodes.length; i++)
       if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
     if (operation < 0) {
       valid = false;
@@ -201,7 +212,8 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     }
     valid = !errors;
     if (valid) {
-      instruction = RV32imSupport.getRTypeInstruction(OP, destination, operation, source1, source2, 1);
+      instruction =
+          RV32imSupport.getRTypeInstruction(OP, destination, operation, source1, source2, 1);
       instr.setInstructionByteCode(instruction, 4);
     }
     return true;

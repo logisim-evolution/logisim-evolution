@@ -169,8 +169,10 @@ public class Circuit {
       String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-      if (!IsCorrectLabel(getName(),newLabel, comps, attre.getSource(), e.getSource().getFactory(), true)) {
-        if (IsCorrectLabel(getName(),oldLabel, comps, attre.getSource(), e.getSource().getFactory(), false))
+      if (!IsCorrectLabel(
+          getName(), newLabel, comps, attre.getSource(), e.getSource().getFactory(), true)) {
+        if (IsCorrectLabel(
+            getName(), oldLabel, comps, attre.getSource(), e.getSource().getFactory(), false))
           attre.getSource().setValue(lattr, oldLabel);
         else attre.getSource().setValue(lattr, "");
       }
@@ -185,8 +187,10 @@ public class Circuit {
       ComponentFactory myFactory,
       Boolean ShowDialog) {
     if (myFactory instanceof Tunnel) return true;
-    if (CircuitName != null && !CircuitName.isEmpty() && CircuitName.equalsIgnoreCase(Name)&&
-        myFactory instanceof Pin) {
+    if (CircuitName != null
+        && !CircuitName.isEmpty()
+        && CircuitName.equalsIgnoreCase(Name)
+        && myFactory instanceof Pin) {
       if (ShowDialog) {
         String msg = S.get("ComponentLabelEqualCircuitName");
         OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
@@ -208,7 +212,8 @@ public class Circuit {
         return true;
       }
     }
-    /* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+    // we do not have to check the wires as (1) Wire is a reserved keyword,
+    // and (2) they cannot have a label
     return false;
   }
 
@@ -230,7 +235,8 @@ public class Circuit {
         }
       }
     }
-    /* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+    // we do not have to check the wires as (1) Wire is a reserved keyword,
+    // and (2) they cannot have a label
     return false;
   }
 
@@ -259,8 +265,8 @@ public class Circuit {
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
   private final Netlist MyNetList;
-  private final HashMap<String,MappableResourcesContainer> MyMappableResources;
-  private final HashMap<String,HashMap<String,CircuitMapInfo>> LoadedMaps;
+  private final HashMap<String, MappableResourcesContainer> MyMappableResources;
+  private final HashMap<String, HashMap<String, CircuitMapInfo>> LoadedMaps;
   private boolean Annotated;
   private Project proj;
   private final SocSimulationManager socSim = new SocSimulationManager();
@@ -335,7 +341,7 @@ public class Circuit {
 
   public void Annotate(Project proj, boolean ClearExistingLabels, boolean InsideLibrary) {
     if (this.proj == null) this.proj = proj;
-    this.Annotate(ClearExistingLabels,InsideLibrary);
+    this.Annotate(ClearExistingLabels, InsideLibrary);
   }
 
   public void Annotate(boolean ClearExistingLabels, boolean InsideLibrary) {
@@ -360,7 +366,8 @@ public class Circuit {
                 new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
-            Reporter.Report.AddSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
+            Reporter.Report.AddSevereWarning(
+                "Removed duplicated label " + this.getName() + "/" + label);
           } else {
             LabelNames.add(label.toUpperCase());
           }
@@ -428,7 +435,7 @@ public class Circuit {
     for (String subs : Subcircuits) {
       Circuit circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
       boolean inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(proj,ClearExistingLabels, inLibrary);
+      circ.Annotate(proj, ClearExistingLabels, inLibrary);
     }
   }
 
@@ -722,7 +729,7 @@ public class Circuit {
     return MyNetList;
   }
 
-  public void addLoadedMap(String BoardName, HashMap<String,CircuitMapInfo> map) {
+  public void addLoadedMap(String BoardName, HashMap<String, CircuitMapInfo> map) {
     LoadedMaps.put(BoardName, map);
   }
 
@@ -733,7 +740,7 @@ public class Circuit {
     return ret;
   }
 
-  public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
+  public Map<String, CircuitMapInfo> getMapInfo(String BoardName) {
     if (MyMappableResources.containsKey(BoardName))
       return MyMappableResources.get(BoardName).getCircuitMap();
     if (LoadedMaps.containsKey(BoardName))
@@ -742,14 +749,14 @@ public class Circuit {
   }
 
   public void setBoardMap(String BoardName, MappableResourcesContainer map) {
-	if (LoadedMaps.containsKey(BoardName)) {
+    if (LoadedMaps.containsKey(BoardName)) {
       for (String key : LoadedMaps.get(BoardName).keySet()) {
-    	CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
+        CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
         map.tryMap(key, cmap);
       }
       LoadedMaps.remove(BoardName);
-	}
-    MyMappableResources.put(BoardName,map);
+    }
+    MyMappableResources.put(BoardName, map);
   }
 
   public MappableResourcesContainer getBoardMap(String BoardName) {
@@ -841,18 +848,16 @@ public class Circuit {
       boolean added = comps.add(c);
       if (!added) return;
       socSim.registerComponent(c);
-      /* Here we check for duplicated labels and clear the label if it already exists in
-       * the circuit
-       */
-      if (c.getAttributeSet().containsAttribute(StdAttr.LABEL) && !(c.getFactory() instanceof Tunnel)) {
+      // Here we check for duplicated labels and clear the label
+      // if it already exists in the circuit
+      if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)
+          && !(c.getFactory() instanceof Tunnel)) {
         HashSet<String> labels = new HashSet<>();
         for (Component comp : comps) {
-          if (comp.equals(c) || comp.getFactory() instanceof Tunnel)
-            continue;
+          if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (label != null && !label.isEmpty())
-        	    labels.add(label.toUpperCase());
+            if (label != null && !label.isEmpty()) labels.add(label.toUpperCase());
           }
         }
         /* we also have to check for the entity name */
@@ -934,7 +939,8 @@ public class Circuit {
         }
       }
     }
-    /* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+    // we do not have to check the wires as (1) Wire is a reserved keyword,
+    // and (2) they cannot have a label
     if (HaveAChange)
       OptionPane.showMessageDialog(
           null, "\"" + Label + "\" : " + S.get("ComponentLabelCollisionError"));

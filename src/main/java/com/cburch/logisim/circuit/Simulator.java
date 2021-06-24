@@ -54,21 +54,37 @@ public class Simulator {
       didPropagate = p;
     }
 
-    public Simulator getSource() { return source; }
-    public boolean didTick() { return didTick; }
-    public boolean didSingleStep() { return didSingleStep; }
-    public boolean didPropagate() { return didPropagate; }
+    public Simulator getSource() {
+      return source;
+    }
+
+    public boolean didTick() {
+      return didTick;
+    }
+
+    public boolean didSingleStep() {
+      return didSingleStep;
+    }
+
+    public boolean didPropagate() {
+      return didPropagate;
+    }
   }
 
   public interface Listener {
     void simulatorReset(Event e);
-    default boolean wantProgressEvents() { return false; }
-    default void propagationInProgress(Event e) { }
+
+    default boolean wantProgressEvents() {
+      return false;
+    }
+
+    default void propagationInProgress(Event e) {}
 
     void propagationCompleted(Event e);
+
     void simulatorStateChanged(Event e);
   }
-  
+
   // This thread keeps track of the current stepPoints (when running in step
   // mode), and it invokes various Propagator methods:
   //
@@ -109,7 +125,7 @@ public class Simulator {
     private boolean _autoPropagating = true;
     private boolean _autoTicking = false;
     private double _autoTickFreq = 1.0; // Hz
-    private long _autoTickNanos = Math.round(1e9 / (2*_autoTickFreq));
+    private long _autoTickNanos = Math.round(1e9 / (2 * _autoTickFreq));
     private int _manualTicksRequested = 0;
     private int _manualStepsRequested = 0;
     private boolean _nudgeRequested = false;
@@ -119,21 +135,35 @@ public class Simulator {
 
     // This last one should be made thread-safe, but it isn't for now.
     private final PropagationPoints stepPoints = new PropagationPoints();
+
     SimThread(Simulator s) {
       super("SimThread");
       sim = s;
     }
 
-    synchronized Propagator getPropagator() { return _propagator; }
-    synchronized boolean isExceptionEncountered() { return _oops; }
-    synchronized boolean isAutoTicking() { return _autoTicking; }
-    synchronized boolean isAutoPropagating() { return _autoPropagating; }
-    synchronized double getTickFrequency() { return _autoTickFreq; }
+    synchronized Propagator getPropagator() {
+      return _propagator;
+    }
+
+    synchronized boolean isExceptionEncountered() {
+      return _oops;
+    }
+
+    synchronized boolean isAutoTicking() {
+      return _autoTicking;
+    }
+
+    synchronized boolean isAutoPropagating() {
+      return _autoPropagating;
+    }
+
+    synchronized double getTickFrequency() {
+      return _autoTickFreq;
+    }
 
     synchronized void drawStepPoints(ComponentDrawContext context) {
-      if (!_autoPropagating)
-        stepPoints.draw(context);
-      }
+      if (!_autoPropagating) stepPoints.draw(context);
+    }
 
     synchronized void drawPendingInputs(ComponentDrawContext context) {
       if (!_autoPropagating)
@@ -182,7 +212,7 @@ public class Simulator {
       if (_autoTickFreq == freq)
         return false;
       _autoTickFreq = freq;
-      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / (2*_autoTickFreq));
+      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / (2 * _autoTickFreq));
       notifyAll();
       return true;
     }
@@ -220,166 +250,161 @@ public class Simulator {
 
     private boolean loop() {
 
-    Propagator prop = null;
-    boolean doReset = false;
-    boolean doNudge = false;
-    boolean doTick = false;
-    boolean doTickIfStable = false;
-    boolean doStep = false;
-    boolean doProp = false;
-    long now = 0;
+      Propagator prop = null;
+      boolean doReset = false;
+      boolean doNudge = false;
+      boolean doTick = false;
+      boolean doTickIfStable = false;
+      boolean doStep = false;
+      boolean doProp = false;
+      long now = 0;
 
-    synchronized (this) {
+      synchronized (this) {
+        boolean ready = false;
+        do {
+          if (_complete) return false;
 
-      boolean ready = false;
-      do {
-        if (_complete)
-          return false;
+          prop = _propagator;
+          now = System.nanoTime();
 
-        prop = _propagator;
-        now = System.nanoTime();
-
-        if (_resetRequested) {
-          _resetRequested = false;
-          doReset = true;
-          doProp = _autoPropagating;
-          ready = true;
-        }
-        if (_nudgeRequested) {
-          _nudgeRequested = false;
-          doNudge = true;
-          ready = true;
-        }
-        if (_manualStepsRequested > 0) {
-          _manualStepsRequested--;
-          doTickIfStable = _autoTicking;
-          doStep = true;
-          ready = true;
-        }
-
-        if (_manualTicksRequested > 0) {
-          // variable is decremented below
-          doTick = true;
-          doProp = _autoPropagating;
-          doStep = !_autoPropagating;
-          ready = true;
-        }
-
-        long delta = 0;
-        if (_autoTicking && _autoPropagating && _autoTickNanos > 0) {
-          // see if it is time to do an auto-tick
-          long deadline = lastTick + _autoTickNanos;
-          delta = deadline - now;
-          if (delta <= 0) {
-            doTick = true;
-            doProp = true;
+          if (_resetRequested) {
+            _resetRequested = false;
+            doReset = true;
+            doProp = _autoPropagating;
             ready = true;
           }
-        }
-
-        if (!ready) {
-          // LockSupport.parkNanos(delta);
-          try {
-            if (delta > 0)
-              wait(delta/1000000, (int)(delta%1000000));
-            else
-              wait();
+          if (_nudgeRequested) {
+            _nudgeRequested = false;
+            doNudge = true;
+            ready = true;
           }
-          catch (InterruptedException ignored) { } // yes, we swallow the interrupt
+          if (_manualStepsRequested > 0) {
+            _manualStepsRequested--;
+            doTickIfStable = _autoTicking;
+            doStep = true;
+            ready = true;
+          }
+
+          if (_manualTicksRequested > 0) {
+            // variable is decremented below
+            doTick = true;
+            doProp = _autoPropagating;
+            doStep = !_autoPropagating;
+            ready = true;
+          }
+
+          long delta = 0;
+          if (_autoTicking && _autoPropagating && _autoTickNanos > 0) {
+            // see if it is time to do an auto-tick
+            long deadline = lastTick + _autoTickNanos;
+            delta = deadline - now;
+            if (delta <= 0) {
+              doTick = true;
+              doProp = true;
+              ready = true;
+            }
+          }
+
+          if (!ready) {
+            // LockSupport.parkNanos(delta);
+            try {
+              if (delta > 0) wait(delta / 1000000, (int) (delta % 1000000));
+              else wait();
+            } catch (InterruptedException ignored) {
+            } // yes, we swallow the interrupt
+          }
+        } while (!ready);
+
+        _oops = false;
+      }
+      // DEBUGGING
+      // System.out.printf("%d nudge %s tick %s prop %s step %s\n", cnt++, doNudge, doTick, doProp,
+      // doStep);
+
+      boolean oops = false;
+      boolean osc = false;
+      boolean ticked = false;
+      boolean stepped = false;
+      boolean propagated = false;
+      boolean hasClocks = true;
+
+      if (doReset)
+        try {
+          stepPoints.clear();
+          if (prop != null) prop.reset();
+          sim._fireSimulatorReset(); // todo: fixme: ack, wrong thread!
+        } catch (Exception err) {
+          oops = true;
+          err.printStackTrace();
         }
-      } while (!ready);
 
-      _oops = false;
-    }
-    // DEBUGGING
-    // System.out.printf("%d nudge %s tick %s prop %s step %s\n", cnt++, doNudge, doTick, doProp, doStep);
-
-    boolean oops = false;
-    boolean osc = false;
-    boolean ticked = false;
-    boolean stepped = false;
-    boolean propagated = false;
-    boolean hasClocks = true;
-
-    if (doReset) try {
-      stepPoints.clear();
-      if (prop != null)
-        prop.reset();
-      sim._fireSimulatorReset(); // todo: fixme: ack, wrong thread!
-    } catch (Exception err) {
-      oops = true;
-      err.printStackTrace();
-    }
-
-    if (doTick || (doTickIfStable && prop != null && !prop.isPending())) {
-      lastTick = now;
-      ticked = true;
-      if (prop != null)
-        hasClocks = prop.toggleClocks();
-    }
-
-    if (doProp || doNudge) try {
-      propagated = doProp;
-     // todo: need to fire events in here for chrono fine grained
-      Listener p = sim.getPropagationListener();
-      Event evt = p == null ? null : new Event(sim, false, false, false);
-      stepPoints.clear();
-      if (prop != null)
-        propagated |= prop.propagate(p, evt); // todo: need to fire events in here for chrono fine grained
-    } catch (Exception err) {
-      oops = true;
-      err.printStackTrace();
-    }
-
-    if (doStep) try {
-      stepped = true;
-      stepPoints.clear();
-      if (prop != null)
-        prop.step(stepPoints);
-      if (prop == null || !prop.isPending())
-        propagated = true;
-    } catch (Exception err) {
-      oops = true;
-      err.printStackTrace();
-    }
-
-    osc = prop != null && prop.isOscillating();
-
-    boolean clockDied = false;
-    synchronized (this) {
-      _oops = oops;
-      if (osc) {
-        _autoPropagating = false;
-        _nudgeRequested = false;
+      if (doTick || (doTickIfStable && prop != null && !prop.isPending())) {
+        lastTick = now;
+        ticked = true;
+        if (prop != null) hasClocks = prop.toggleClocks();
       }
-      if (ticked && _manualTicksRequested > 0)
-        _manualTicksRequested--;
-      if (_autoTicking && !hasClocks) {
-        _autoTicking = false;
-        clockDied = true;
+
+      if (doProp || doNudge)
+        try {
+          propagated = doProp;
+          // todo: need to fire events in here for chrono fine grained
+          Listener p = sim.getPropagationListener();
+          Event evt = p == null ? null : new Event(sim, false, false, false);
+          stepPoints.clear();
+          if (prop != null)
+            propagated |=
+                prop.propagate(p, evt); // todo: need to fire events in here for chrono fine grained
+        } catch (Exception err) {
+          oops = true;
+          err.printStackTrace();
+        }
+
+      if (doStep)
+        try {
+          stepped = true;
+          stepPoints.clear();
+          if (prop != null) prop.step(stepPoints);
+          if (prop == null || !prop.isPending()) propagated = true;
+        } catch (Exception err) {
+          oops = true;
+          err.printStackTrace();
+        }
+
+      osc = prop != null && prop.isOscillating();
+
+      boolean clockDied = false;
+      synchronized (this) {
+        _oops = oops;
+        if (osc) {
+          _autoPropagating = false;
+          _nudgeRequested = false;
+        }
+        if (ticked && _manualTicksRequested > 0) _manualTicksRequested--;
+        if (_autoTicking && !hasClocks) {
+          _autoTicking = false;
+          clockDied = true;
+        }
       }
+
+      // We report nudges, but we report them as no-ops, unless they were
+      // accompanied by a tick, step, or propagate. That allows for a repaint in
+      // some components.
+      if (ticked || stepped || propagated || doNudge)
+        sim._firePropagationCompleted(
+            ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
+      if (clockDied) sim.fireSimulatorStateChanged(); // todo: fixme: ack, wrong thread!
+
+      return true;
     }
 
-    // We report nudges, but we report them as no-ops, unless they were
-    // accompanied by a tick, step, or propagate. That allows for a repaint in
-    // some components.
-    if (ticked || stepped || propagated || doNudge)
-      sim._firePropagationCompleted(ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
-    if (clockDied)
-      sim.fireSimulatorStateChanged(); // todo: fixme: ack, wrong thread!
-
-    return true;
-  }
-
-  @Override
-  public void run() {
-    for (;;) {
-      try {
-        if (!loop())
-          return;
-      } catch (Throwable e) {
+    @Override
+    public void run() {
+      for (; ; ) {
+        try {
+          if (!loop()) return;
+        } catch (Throwable e) {
           e.printStackTrace();
-          synchronized(this) {
+          synchronized (this) {
             _oops = true;
             _autoPropagating = false;
             _autoTicking = false;
@@ -387,12 +412,13 @@ public class Simulator {
             _manualStepsRequested = 0;
             _nudgeRequested = false;
           }
-          SwingUtilities.invokeLater(() -> OptionPane.showMessageDialog(
-              null, "The simulator has crashed. Save your work and restart Logisim."));
+          SwingUtilities.invokeLater(
+              () ->
+                  OptionPane.showMessageDialog(
+                      null, "The simulator has crashed. Save your work and restart Logisim."));
         }
       }
     }
-
   }
 
   //
@@ -407,7 +433,7 @@ public class Simulator {
   // suspect.
   private final ArrayList<Listener> listeners = new ArrayList<>();
   private final Object lock = new Object();
-  
+
   public Simulator() {
     simThread = new SimThread(this);
 
@@ -421,17 +447,17 @@ public class Simulator {
   }
 
   public void addSimulatorListener(Listener l) {
-    synchronized(lock) {
+    synchronized (lock) {
       listeners.add(l);
     }
   }
 
   public void removeSimulatorListener(Listener l) {
-    synchronized(lock) {
+    synchronized (lock) {
       listeners.remove(l);
     }
   }
-  
+
   public void drawStepPoints(ComponentDrawContext context) {
     simThread.drawStepPoints(context);
   }
@@ -569,7 +595,7 @@ public class Simulator {
   public void shutDown() {
     simThread.requestShutDown();
   }
-  
+
   private boolean ensureClocks() {
     CircuitState cs = getCircuitState();
     if (cs == null)

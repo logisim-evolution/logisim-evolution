@@ -147,8 +147,7 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  private static int parseTtyFormat(String fmt)
-  {
+  private static int parseTtyFormat(String fmt) {
     switch (fmt) {
       case "table":
         return TtyInterface.FORMAT_TABLE;
@@ -497,29 +496,29 @@ public class Startup implements AWTEventListener {
     System.err.println();
     System.err.println(S.get("argOptionHeader"));
     String[] opts = {
-            "argGeometryOption",
-            "argAccentsOption",
-            "argClearOption",
-            "argEmptyOption",
-            "argAnalyzeOption",
-            "argTestOption",
-            "argGatesOption",
-            "argHelpOption",
-            "argLoadOption",
-            "argLocaleOption",
-            "argNoSplashOption",
-            "argPlainOption",
-            "argSubOption",
-            "argTemplateOption",
-            "argTtyOption",
-            "argQuestaOption",
-            "argVersionOption",
-            "argTestCircGen",
-            "argTestCircuit",
-            "argTestImplement",
-            "argCircuitOption",
+      "argGeometryOption",
+      "argAccentsOption",
+      "argClearOption",
+      "argEmptyOption",
+      "argAnalyzeOption",
+      "argTestOption",
+      "argGatesOption",
+      "argHelpOption",
+      "argLoadOption",
+      "argLocaleOption",
+      "argNoSplashOption",
+      "argPlainOption",
+      "argSubOption",
+      "argTemplateOption",
+      "argTtyOption",
+      "argQuestaOption",
+      "argVersionOption",
+      "argTestCircGen",
+      "argTestCircuit",
+      "argTestImplement",
+      "argCircuitOption",
     };
-    for(String opt: opts) {
+    for (String opt : opts) {
       System.err.println("   " + S.get(opt));
     }
 
@@ -596,7 +595,7 @@ public class Startup implements AWTEventListener {
             proj,
             testCircuitImpName,
             testTickFrequency,
-            new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard))
+            new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,
             false,

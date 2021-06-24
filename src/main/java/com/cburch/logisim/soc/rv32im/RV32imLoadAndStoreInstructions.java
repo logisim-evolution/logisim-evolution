@@ -49,7 +49,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private static final int LW = 2;
   private static final int LBU = 4;
   private static final int LHU = 5;
-  
+
   private static final int INSTR_LB = 0;
   private static final int INSTR_LH = 1;
   private static final int INSTR_LW = 2;
@@ -58,8 +58,8 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private static final int INSTR_SB = 5;
   private static final int INSTR_SH = 6;
   private static final int INSTR_SW = 7;
-  
-  private final static String[] AsmOpcodes = {"LB","LH","LW","LBU","LHU","SB","SH","SW"};
+
+  private static final String[] AsmOpcodes = {"LB", "LH", "LW", "LBU", "LHU", "SB", "SH", "SW"};
 
   private int instruction = 0;
   private boolean valid = false;
@@ -68,7 +68,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private int immediate;
   private int base;
   private String errorMessage;
-  
+
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
@@ -100,7 +100,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
                       // fall through
       case INSTR_LH :
-      case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
+      case INSTR_LHU: if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
                       // fall through
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
@@ -125,7 +125,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     }
     return false;
   }
-  
+
   private boolean transactionHasError(SocBusTransaction trans) {
     if (trans.hasError()) {
       StringBuilder s = new StringBuilder();
@@ -162,17 +162,21 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return valid;
   }
 
-  public boolean performedJump() { return false; }
+  public boolean performedJump() {
+    return false;
+  }
 
-  public boolean isValid() { return valid; }
-  
+  public boolean isValid() {
+    return valid;
+  }
+
   private boolean decodeBin() {
     int opcode = RV32imSupport.getOpcode(instruction);
     if (opcode == LOAD) {
       destination = RV32imSupport.getDestinationRegisterIndex(instruction);
       immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.I_TYPE);
       base = RV32imSupport.getSourceRegister1Index(instruction);
-      int funct3 = RV32imSupport.getFunct3(instruction); 
+      int funct3 = RV32imSupport.getFunct3(instruction);
       switch (funct3) {
         case LB  :
         case LH  :
@@ -206,7 +210,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
-    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
       if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
     if (operation < 0) {
       valid = false;

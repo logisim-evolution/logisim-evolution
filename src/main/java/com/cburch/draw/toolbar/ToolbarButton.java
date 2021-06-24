@@ -103,14 +103,14 @@ class ToolbarButton extends JComponent implements MouseListener {
   public void paintComponent(Graphics g) {
     if (toolbar.getPressed() == this) {
       if (item instanceof ToolbarClickableItem) {
-        Graphics g2 = g.create();
+        final var g2 = g.create();
         g2.translate(BORDER, BORDER);
         ((ToolbarClickableItem) item).paintPressedIcon(ToolbarButton.this, g2);
         g2.dispose();
         return;
       }
-      Dimension dim = item.getDimension(toolbar.getOrientation());
-      Color defaultColor = g.getColor();
+      final var dim = item.getDimension(toolbar.getOrientation());
+      final var defaultColor = g.getColor();
       GraphicsUtil.switchToWidth(g, 2);
       g.setColor(Color.GRAY);
       g.fillRect(BORDER, BORDER, dim.width, dim.height);
@@ -118,14 +118,14 @@ class ToolbarButton extends JComponent implements MouseListener {
       g.setColor(defaultColor);
     }
 
-    Graphics g2 = g.create();
+    final var g2 = g.create();
     g2.translate(BORDER, BORDER);
     item.paintIcon(ToolbarButton.this, g2);
     g2.dispose();
 
     // draw selection indicator
     if (toolbar.getToolbarModel().isSelected(item)) {
-      Dimension dim = item.getDimension(toolbar.getOrientation());
+      final var dim = item.getDimension(toolbar.getOrientation());
       GraphicsUtil.switchToWidth(g, 2);
       g.setColor(Color.BLACK);
       g.drawRect(BORDER, BORDER, dim.width, dim.height);

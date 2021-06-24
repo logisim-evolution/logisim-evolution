@@ -110,11 +110,11 @@ public class SelectTool extends AbstractTool {
 
   @Override
   public void draw(Canvas canvas, Graphics g) {
-    Selection selection = canvas.getSelection();
+    final var selection = canvas.getSelection();
     int action = curAction;
 
-    Location start = dragStart;
-    Location end = dragEnd;
+    var start = dragStart;
+    var end = dragEnd;
     HandleGesture gesture = null;
     boolean drawHandles;
     switch (action) {
@@ -130,19 +130,21 @@ public class SelectTool extends AbstractTool {
     }
 
     CanvasObject moveHandleObj = null;
-    if (gesture != null) moveHandleObj = gesture.getHandle().getObject();
+    if (gesture != null) {
+      moveHandleObj = gesture.getHandle().getObject();
+    }
     if (drawHandles) {
       // unscale the coordinate system so that the stroke width isn't
       // scaled
       double zoom = 1.0;
-      Graphics gCopy = g.create();
-      if (gCopy instanceof Graphics2D) {
+      var gfxCopy = g.create();
+      if (gfxCopy instanceof Graphics2D) {
         zoom = canvas.getZoomFactor();
         if (zoom != 1.0) {
-          ((Graphics2D) gCopy).scale(1.0 / zoom, 1.0 / zoom);
+          ((Graphics2D) gfxCopy).scale(1.0 / zoom, 1.0 / zoom);
         }
       }
-      GraphicsUtil.switchToWidth(gCopy, 1);
+      GraphicsUtil.switchToWidth(gfxCopy, 1);
 
       int size = (int) Math.ceil(HANDLE_SIZE * Math.sqrt(zoom));
       int offs = size / 2;
@@ -163,8 +165,8 @@ public class SelectTool extends AbstractTool {
           }
           x = (int) Math.round(zoom * x);
           y = (int) Math.round(zoom * y);
-          gCopy.clearRect(x - offs, y - offs, size, size);
-          gCopy.drawRect(x - offs, y - offs, size, size);
+          gfxCopy.clearRect(x - offs, y - offs, size, size);
+          gfxCopy.drawRect(x - offs, y - offs, size, size);
         }
       }
       Handle selHandle = selection.getSelectedHandle();
@@ -180,10 +182,10 @@ public class SelectTool extends AbstractTool {
         y = (int) Math.round(zoom * y);
         int[] xs = {x - offs, x, x + offs, x};
         int[] ys = {y, y - offs, y, y + offs};
-        gCopy.setColor(Color.WHITE);
-        gCopy.fillPolygon(xs, ys, 4);
-        gCopy.setColor(Color.BLACK);
-        gCopy.drawPolygon(xs, ys, 4);
+        gfxCopy.setColor(Color.WHITE);
+        gfxCopy.fillPolygon(xs, ys, 4);
+        gfxCopy.setColor(Color.BLACK);
+        gfxCopy.drawPolygon(xs, ys, 4);
       }
     }
 

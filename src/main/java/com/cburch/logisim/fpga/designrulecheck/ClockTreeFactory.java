@@ -40,8 +40,8 @@ public class ClockTreeFactory {
     sourcetrees = new ArrayList<>();
   }
 
-  public void AddClockNet( ArrayList<String> HierarchyNames, int clocksourceid, 
-                           ConnectionPoint connection, boolean isPinClock ) {
+  public void AddClockNet(ArrayList<String> HierarchyNames, int clocksourceid,
+                           ConnectionPoint connection, boolean isPinClock) {
     ClockTreeContainer destination = null;
     for (ClockTreeContainer search : sourcetrees) {
       if (search.equals(HierarchyNames, clocksourceid)) {
@@ -64,7 +64,7 @@ public class ClockTreeFactory {
       }
     }
     if (destination == null) {
-      destination = new ClockTreeContainer(HierarchyNames, clocksourceid,false);
+      destination = new ClockTreeContainer(HierarchyNames, clocksourceid, false);
       sourcetrees.add(destination);
     }
     destination.addSource(connection);

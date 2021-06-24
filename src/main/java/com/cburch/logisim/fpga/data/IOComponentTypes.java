@@ -66,51 +66,51 @@ public enum IOComponentTypes {
 
   public static IOComponentTypes getEnumFromString(String str) {
     for (IOComponentTypes elem : KnownComponentSet) {
-    if (elem.name().equalsIgnoreCase(str)) {
-      return elem;
-    }
+      if (elem.name().equalsIgnoreCase(str)) {
+        return elem;
+      }
     }
     return IOComponentTypes.Unknown;
   }
 
   public static int GetFPGAInOutRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case PortIO:
-      return 8;
-    case LocalBus:
-      return 16;
-    default:
-      return 0;
+      case PortIO:
+        return 8;
+      case LocalBus:
+        return 16;
+      default:
+        return 0;
     }
   }
 
   public static int GetFPGAInputRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case Button:
-      return 1;
-    case DIPSwitch:
-      return 8;
-    case LocalBus:
-      return 13;
-    default:
-      return 0;
+      case Button:
+        return 1;
+      case DIPSwitch:
+        return 8;
+      case LocalBus:
+        return 13;
+      default:
+        return 0;
     }
   }
 
   public static int GetFPGAOutputRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case LED:
-      return 1;
-    case SevenSegment:
-      return 8;
-    case SevenSegmentNoDp:
-      return 7;
-    case RGBLED:
-      return 3;
-    case LocalBus:
-      return 2;
-    default:
-      return 0;
+      case LED:
+        return 1;
+      case SevenSegment:
+        return 8;
+      case SevenSegmentNoDp:
+        return 7;
+      case RGBLED:
+        return 3;
+      case LocalBus:
+        return 2;
+      default:
+        return 0;
     }
   }
 
@@ -136,11 +136,15 @@ public enum IOComponentTypes {
 
   public static String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
-      case SevenSegmentNoDp :
-      case SevenSegment     : return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
-      case RGBLED           : return RGBLed.getLabel(id);
-      case LocalBus         : return ReptarLocalBus.getOutputLabel(id);
-      default               : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+      case SevenSegmentNoDp:
+      case SevenSegment:
+        return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
+      case RGBLED:
+        return RGBLed.getLabel(id);
+      case LocalBus:
+        return ReptarLocalBus.getOutputLabel(id);
+      default:
+        return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
 
@@ -152,28 +156,29 @@ public enum IOComponentTypes {
   }
 
   public static int GetNrOfFPGAPins(IOComponentTypes comp) {
-    return  GetFPGAInOutRequirement(comp)+ GetFPGAInputRequirement(comp)+GetFPGAOutputRequirement(comp);
+    return GetFPGAInOutRequirement(comp)
+        + GetFPGAInputRequirement(comp)
+        + GetFPGAOutputRequirement(comp);
   }
 
   public static final EnumSet<IOComponentTypes> KnownComponentSet =
-    EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
 
   public static final EnumSet<IOComponentTypes> SimpleInputSet =
-    EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
 
   public static final EnumSet<IOComponentTypes> InputComponentSet =
-    EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
+      EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
 
   public static final EnumSet<IOComponentTypes> OutputComponentSet =
-    EnumSet.of(
-      IOComponentTypes.LED,
-      IOComponentTypes.Pin,
-      IOComponentTypes.RGBLED,
-      IOComponentTypes.SevenSegment,
-      IOComponentTypes.SevenSegmentNoDp,
-      IOComponentTypes.LedBar);
+      EnumSet.of(
+          IOComponentTypes.LED,
+          IOComponentTypes.Pin,
+          IOComponentTypes.RGBLED,
+          IOComponentTypes.SevenSegment,
+          IOComponentTypes.SevenSegmentNoDp,
+          IOComponentTypes.LedBar);
 
   public static final EnumSet<IOComponentTypes> InOutComponentSet =
-    EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
-
+      EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
 }

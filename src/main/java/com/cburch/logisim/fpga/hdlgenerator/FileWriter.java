@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-
 import com.cburch.logisim.fpga.gui.Reporter;
 
 public class FileWriter {
@@ -217,7 +216,8 @@ public class FileWriter {
       output.close();
       return true;
     } catch (Exception e) {
-      Reporter.Report.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
+      Reporter.Report.AddFatalError(
+          "Could not write to file \"" + outfile.getAbsolutePath() + "\"");
       return false;
     }
   }

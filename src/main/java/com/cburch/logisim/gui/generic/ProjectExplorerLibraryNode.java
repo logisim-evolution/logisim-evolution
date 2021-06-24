@@ -28,10 +28,6 @@
 
 package com.cburch.logisim.gui.generic;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
-
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
@@ -45,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JTree;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
     implements LibraryListener {
 
@@ -53,7 +52,8 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private JTree guiElement = null;
   private final boolean showMouseTools;
 
-  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
+  ProjectExplorerLibraryNode(
+      ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);
     guiElement = gui;
     if (lib instanceof LogisimFile) {
@@ -71,8 +71,9 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
       if (showLib) {
         buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
         buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null, guiElement, showMouseTools),
-            lib.getLibraries(), lib.getTools().size());
+            new ProjectExplorerLibraryNode(getModel(), null, guiElement, showMouseTools),
+            lib.getLibraries(),
+            lib.getTools().size());
       }
     }
   }

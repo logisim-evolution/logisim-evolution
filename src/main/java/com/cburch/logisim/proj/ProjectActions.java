@@ -103,24 +103,24 @@ public class ProjectActions {
    * and underscores.
    */
   private static boolean checkValidFilename(
-      String filename, Project proj, HashMap<String, String> Errors) {
-    boolean IsOk = true;
-    HashMap<String, Library> TempSet = new HashMap<>();
-    HashSet<String> ForbiddenNames = new HashSet<>();
-    LibraryTools.BuildLibraryList(proj.getLogisimFile(), TempSet);
-    LibraryTools.BuildToolList(proj.getLogisimFile(), ForbiddenNames);
-    ForbiddenNames.addAll(TempSet.keySet());
-    Pattern p = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
-    Matcher m = p.matcher(filename);
-    if (m.find()) {
-      IsOk = false;
-      Errors.put(FILE_NAME_FORMAT_ERROR, S.get("InvalidFileFormatError"));
+      String filename, Project proj, HashMap<String, String> errors) {
+    var isOk = true;
+    var tempSet = new HashMap<String, Library>();
+    var forbiddenNames = new HashSet<String>();
+    LibraryTools.BuildLibraryList(proj.getLogisimFile(), tempSet);
+    LibraryTools.BuildToolList(proj.getLogisimFile(), forbiddenNames);
+    forbiddenNames.addAll(tempSet.keySet());
+    var pattern = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
+    var matcher = pattern.matcher(filename);
+    if (matcher.find()) {
+      isOk = false;
+      errors.put(FILE_NAME_FORMAT_ERROR, S.get("InvalidFileFormatError"));
     }
-    if (ForbiddenNames.contains(filename.toUpperCase())) {
-      IsOk = false;
-      Errors.put(FILE_NAME_KEYWORD_ERROR, S.get("UsedLibraryToolnameError"));
+    if (forbiddenNames.contains(filename.toUpperCase())) {
+      isOk = false;
+      errors.put(FILE_NAME_KEYWORD_ERROR, S.get("UsedLibraryToolnameError"));
     }
-    return IsOk;
+    return isOk;
   }
 
   private static Project completeProject(
@@ -223,7 +223,6 @@ public class ProjectActions {
   public static void doMerge(Component parent, Project baseProject) {
     JFileChooser chooser;
     LogisimFile mergelib;
-    Loader loader = null;
     if (baseProject != null) {
       Loader oldLoader = baseProject.getLogisimFile().getLoader();
       chooser = oldLoader.createChooser();
@@ -239,7 +238,7 @@ public class ProjectActions {
     int returnVal = chooser.showOpenDialog(parent);
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     File selected = chooser.getSelectedFile();
-    loader = new Loader(baseProject == null ? parent : baseProject.getFrame());
+    Loader loader = new Loader(baseProject == null ? parent : baseProject.getFrame());
     try {
       mergelib = loader.openLogisimFile(selected);
       if (mergelib == null) return;
@@ -315,7 +314,7 @@ public class ProjectActions {
                 null,
                 options,
                 options[2]);
-        if (result == 0) {// keep proj as is, so that load happens into the window
+        if (result == 0) { // keep proj as is, so that load happens into the window
         } else if (result == 1) {
           proj = null; // we'll create a new project
         } else {
@@ -424,67 +423,65 @@ public class ProjectActions {
    * @return true if success, false otherwise
    */
   public static boolean doSaveAs(Project proj) {
-    Loader loader = proj.getLogisimFile().getLoader();
-    JFileChooser chooser = loader.createChooser();
+    var loader = proj.getLogisimFile().getLoader();
+    var chooser = loader.createChooser();
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
     if (loader.getMainFile() != null) {
       chooser.setSelectedFile(loader.getMainFile());
     }
 
     int returnVal;
-    boolean validFilename = false;
-    HashMap<String, String> Error = new HashMap<>();
+    var validFilename = false;
+    var errors = new HashMap<String, String>();
     do {
-      Error.clear();
+      errors.clear();
       returnVal = chooser.showSaveDialog(proj.getFrame());
       if (returnVal != JFileChooser.APPROVE_OPTION) {
         return false;
       }
-      validFilename = checkValidFilename(chooser.getSelectedFile().getName(), proj, Error);
+      validFilename = checkValidFilename(chooser.getSelectedFile().getName(), proj, errors);
       if (!validFilename) {
-        String Message = "\"" + chooser.getSelectedFile() + "\":\n";
-        for (String key : Error.keySet()) {
-          String error = S.get(Error.get(key));
-          Message = Message.concat("=> " + error + "\n");
+        var message = "\"" + chooser.getSelectedFile() + "\":\n";
+        for (String key : errors.keySet()) {
+          message = message.concat("=> " + S.get(errors.get(key)) + "\n");
         }
         OptionPane.showMessageDialog(
-            chooser, Message, S.get("FileSaveAsItem"), OptionPane.ERROR_MESSAGE);
+            chooser, message, S.get("FileSaveAsItem"), OptionPane.ERROR_MESSAGE);
       }
     } while (!validFilename);
 
-    File f = chooser.getSelectedFile();
-    String circExt = Loader.LOGISIM_EXTENSION;
-    if (!f.getName().endsWith(circExt)) {
-      String old = f.getName();
+    var selectedFile = chooser.getSelectedFile();
+    if (!selectedFile.getName().endsWith(Loader.LOGISIM_EXTENSION)) {
+      var old = selectedFile.getName();
       int ext0 = old.lastIndexOf('.');
       if (ext0 < 0 || !Pattern.matches("\\.\\p{L}{2,}[0-9]?", old.substring(ext0))) {
-        f = new File(f.getParentFile(), old + circExt);
+        selectedFile = new File(selectedFile.getParentFile(), old + Loader.LOGISIM_EXTENSION);
       } else {
-        String ext = old.substring(ext0);
-        String ttl = S.get("replaceExtensionTitle");
-        String msg = S.fmt("replaceExtensionMessage", ext);
+        var ext = old.substring(ext0);
+        var ttl = S.get("replaceExtensionTitle");
+        var msg = S.fmt("replaceExtensionMessage", ext);
         Object[] options = {
           S.fmt("replaceExtensionReplaceOpt", ext),
-          S.fmt("replaceExtensionAddOpt", circExt),
+          S.fmt("replaceExtensionAddOpt", Loader.LOGISIM_EXTENSION),
           S.get("replaceExtensionKeepOpt")
         };
-        JOptionPane dlog = new JOptionPane(msg);
+        var dlog = new JOptionPane(msg);
         dlog.setMessageType(OptionPane.QUESTION_MESSAGE);
         dlog.setOptions(options);
         dlog.createDialog(proj.getFrame(), ttl).setVisible(true);
 
         Object result = dlog.getValue();
         if (result == options[0]) {
-          String name = old.substring(0, ext0) + circExt;
-          f = new File(f.getParentFile(), name);
+          var name = old.substring(0, ext0) + Loader.LOGISIM_EXTENSION;
+          selectedFile = new File(selectedFile.getParentFile(), name);
         } else if (result == options[1]) {
-          f = new File(f.getParentFile(), old + circExt);
+          selectedFile = new File(selectedFile.getParentFile(), old + Loader.LOGISIM_EXTENSION);
         }
       }
     }
 
-    if (f.exists()) {
-      int confirm =
+    if (selectedFile.exists()) {
+      var confirm =
           OptionPane.showConfirmDialog(
               proj.getFrame(),
               S.get("confirmOverwriteMessage"),
@@ -492,7 +489,7 @@ public class ProjectActions {
               OptionPane.YES_NO_OPTION);
       if (confirm != OptionPane.YES_OPTION) return false;
     }
-    return doSave(proj, f);
+    return doSave(proj, selectedFile);
   }
 
   private ProjectActions() {}

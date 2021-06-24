@@ -66,10 +66,12 @@ public class ProcessorReadElf {
   private ElfHeader elfHeader;
   private ElfProgramHeader programHeader;
   private ElfSectionHeader sectionHeader;
-  private long start,end;
+  private long start, end;
 
-  public ProcessorReadElf(File elfFile , Instance instance, int architecture, boolean littleEndian) {
-	cpu = ((SocInstanceFactory)instance.getFactory()).getProcessorInterface(instance.getAttributeSet());
+  public ProcessorReadElf(File elfFile, Instance instance, int architecture, boolean littleEndian) {
+    cpu =
+        ((SocInstanceFactory) instance.getFactory())
+            .getProcessorInterface(instance.getAttributeSet());
     this.architecture = architecture;
     this.elfFile = elfFile;
     status = SUCCESS;
@@ -90,19 +92,19 @@ public class ProcessorReadElf {
       status = NO_EXECUTABLE_ERROR;
       return;
     }
-    if (elfHeader.isLittleEndian()!=littleEndian) {
+    if (elfHeader.isLittleEndian() != littleEndian) {
       status = ENDIAN_MISMATCH_ERROR;
       return;
     }
     if (!open()) return;
-    programHeader = new ElfProgramHeader(elfFileStream,elfHeader);
+    programHeader = new ElfProgramHeader(elfFileStream, elfHeader);
     close();
     if (!programHeader.isValid()) {
       status = PROGRAM_HEADER_INVALID;
       return;
     }
     if (!open()) return;
-    sectionHeader = new ElfSectionHeader(elfFileStream,elfHeader);
+    sectionHeader = new ElfSectionHeader(elfFileStream, elfHeader);
     close();
     if (!sectionHeader.isValid()) {
       status = SECTION_HEADER_INVALID;
@@ -127,36 +129,44 @@ public class ProcessorReadElf {
       return;
     }
   }
-  
+
   public boolean canExecute() {
     return status == SUCCESS;
   }
-  
+
   public String getErrorMessage() {
-	switch (status) {
-	  case SUCCESS : return S.get("ProcReadElfSuccess");
-	  case FILE_OPEN_ERROR : return S.get("ProcReadElfErrorOpeningFile");
-	  case ELF_HEADER_ERROR : return elfHeader.getErrorString();
-	  case ARCHITECTURE_ERROR : return S.fmt("ProcReadElfArchError",
-			  elfHeader.getArchitectureString(ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE))),
-			  elfHeader.getArchitectureString(architecture));
-	  case NO_EXECUTABLE_ERROR : return S.get("ProcReadElfNotExecutable");
-	  case ENDIAN_MISMATCH_ERROR : return S.fmt("ProcReadElfEndianMismatch", elfHeader.isLittleEndian() ? "little endian" : "big endian",
-              elfHeader.isLittleEndian() ? "big endian" : "little endian");
-	  case PROGRAM_HEADER_INVALID : return programHeader.getErrorString();
-	  case SECTION_HEADER_INVALID : return sectionHeader.getErrorString();
-	  case LOADABLE_SECTION_NOT_FOUND : return S.get("ProcReadElfLoadableSectionNotFound");
-	  case LOADABLE_SECTION_TOO_BIG : return S.get("ProcReadElfLoadableSectionTooBig");
-	  case LOADABLE_SECTION_READ_ERROR : return S.get("ProcReadElfLoadableSectionReadError");
-	  case LOADABLE_SECTION_SIZE_ERROR : return S.get("ProcReadElfLoadableSectionSizeError");
-	  case NOT_SUPPORTED_YET_ERROR : return S.get("ProcReadElf64BitNotSupportedYet");
-	  case MEM_LOAD_ERROR : return S.fmt("ProcReadElfMemoryError", String.format("0x%08X", start), String.format("0x%08X", end));
-	}
+    switch (status) {
+      case SUCCESS : return S.get("ProcReadElfSuccess");
+      case FILE_OPEN_ERROR : return S.get("ProcReadElfErrorOpeningFile");
+      case ELF_HEADER_ERROR : return elfHeader.getErrorString();
+      case ARCHITECTURE_ERROR:
+        return S.fmt(
+            "ProcReadElfArchError",
+            elfHeader.getArchitectureString(
+                ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE))),
+            elfHeader.getArchitectureString(architecture));
+      case NO_EXECUTABLE_ERROR : return S.get("ProcReadElfNotExecutable");
+      case ENDIAN_MISMATCH_ERROR:
+        return S.fmt(
+            "ProcReadElfEndianMismatch",
+            elfHeader.isLittleEndian() ? "little endian" : "big endian",
+            elfHeader.isLittleEndian() ? "big endian" : "little endian");
+      case PROGRAM_HEADER_INVALID : return programHeader.getErrorString();
+      case SECTION_HEADER_INVALID : return sectionHeader.getErrorString();
+      case LOADABLE_SECTION_NOT_FOUND : return S.get("ProcReadElfLoadableSectionNotFound");
+      case LOADABLE_SECTION_TOO_BIG : return S.get("ProcReadElfLoadableSectionTooBig");
+      case LOADABLE_SECTION_READ_ERROR : return S.get("ProcReadElfLoadableSectionReadError");
+      case LOADABLE_SECTION_SIZE_ERROR : return S.get("ProcReadElfLoadableSectionSizeError");
+      case NOT_SUPPORTED_YET_ERROR : return S.get("ProcReadElf64BitNotSupportedYet");
+      case MEM_LOAD_ERROR:
+        return S.fmt(
+            "ProcReadElfMemoryError", String.format("0x%08X", start), String.format("0x%08X", end));
+    }
     return "BUG: Should not happen";
   }
-  
+
   public boolean execute(CircuitState cState) {
-    for (int i = 0 ; i < programHeader.getNrOfHeaders() ; i++) {
+    for (int i = 0; i < programHeader.getNrOfHeaders(); i++) {
       ProgramHeader h = programHeader.getHeader(i);
       if (ElfHeader.getIntValue(h.getValue(ElfProgramHeader.P_TYPE)) != ElfProgramHeader.PT_LOAD)
         continue;
@@ -164,17 +174,16 @@ public class ProcessorReadElf {
       try {
         elfFileStream.skip(ElfHeader.getLongValue(h.getValue(ElfProgramHeader.P_OFFSET)));
       } catch (IOException e) {
-    	status = LOADABLE_SECTION_NOT_FOUND;
-    	return false;
+        status = LOADABLE_SECTION_NOT_FOUND;
+        return false;
       }
       long sectionSize = ElfHeader.getLongValue(h.getValue(ElfProgramHeader.P_FILESZ));
       long memSize = ElfHeader.getLongValue(h.getValue(ElfProgramHeader.P_MEMSZ));
-      if ((sectionSize > (long)Integer.MAX_VALUE)||
-    	  (memSize > (long)Integer.MAX_VALUE)){
+      if ((sectionSize > (long) Integer.MAX_VALUE) || (memSize > (long) Integer.MAX_VALUE)) {
         status = LOADABLE_SECTION_TOO_BIG;
         return false;
       }
-      byte[] buffer = new byte[(int)sectionSize];
+      byte[] buffer = new byte[(int) sectionSize];
       int nrRead = 0;
       try {
         nrRead = elfFileStream.read(buffer);
@@ -187,24 +196,33 @@ public class ProcessorReadElf {
         return false;
       }
       long startAddr = ElfHeader.getLongValue(h.getValue(ElfProgramHeader.P_PADDR));
-      for (int j = 0 ; j < memSize ; j++) {
-        int data = (j<buffer.length) ? buffer[j] : 0;
-        int addr = ElfHeader.getIntValue(ElfHeader.returnCorrectValue(startAddr+(long)j,true));
-        SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,addr,data,SocBusTransaction.ByteAccess,"elf"); 
-        cpu.insertTransaction(trans,true,cState);
+      for (int j = 0; j < memSize; j++) {
+        int data = (j < buffer.length) ? buffer[j] : 0;
+        int addr = ElfHeader.getIntValue(ElfHeader.returnCorrectValue(startAddr + (long) j, true));
+        SocBusTransaction trans =
+            new SocBusTransaction(
+                SocBusTransaction.WRITETransaction,
+                addr,
+                data,
+                SocBusTransaction.ByteAccess,
+                "elf");
+        cpu.insertTransaction(trans, true, cState);
         if (trans.hasError()) {
-           start = startAddr;
-           end = startAddr+memSize-1;
-           status = MEM_LOAD_ERROR;
-           return false;
+          start = startAddr;
+          end = startAddr + memSize - 1;
+          status = MEM_LOAD_ERROR;
+          return false;
         }
       }
     }
-    cpu.setEntryPointandReset(cState,ElfHeader.getLongValue(elfHeader.getValue(ElfHeader.E_ENTRY)), 
-    		programHeader, sectionHeader);
+    cpu.setEntryPointandReset(
+        cState,
+        ElfHeader.getLongValue(elfHeader.getValue(ElfHeader.E_ENTRY)),
+        programHeader,
+        sectionHeader);
     return true;
   }
-  
+
   private boolean open() {
     try {
       elfFileStream = new FileInputStream(elfFile);
@@ -214,10 +232,11 @@ public class ProcessorReadElf {
     }
     return true;
   }
-  
+
   private void close() {
     try {
       elfFileStream.close();
-    } catch (IOException ignored) {}
+    } catch (IOException ignored) {
+    }
   }
 }
