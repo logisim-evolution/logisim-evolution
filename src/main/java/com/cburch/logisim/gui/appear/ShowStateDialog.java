@@ -78,11 +78,11 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     final var circuit = canvas.getCircuit();
-    setTitle(S.fmt("showStateDialogTitle", circuit.getName()));
+    setTitle(S.get("showStateDialogTitle", circuit.getName()));
 
     root = enumerate(circuit, null);
     if (root == null) {
-      root = new DefaultMutableTreeNode(S.fmt("showStateDialogEmptyNode", circuit.getName()));
+      root = new DefaultMutableTreeNode(S.get("showStateDialogEmptyNode", circuit.getName()));
     }
     tree = new CheckboxTree(root);
     tree.getCheckingModel()
@@ -306,8 +306,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     }
 
     public String toString() {
-      if (ic == null) return S.fmt("showStateDialogNodeTitle", circuit.getName());
-      else return super.toString();
+      return (ic == null) ? S.get("showStateDialogNodeTitle", circuit.getName()) : super.toString();
     }
   }
 }

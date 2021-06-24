@@ -360,15 +360,12 @@ class XmlReader {
         try {
           AbstractCanvasObject m = AppearanceSvgReader.createShape(sub, pins, null);
           if (m == null) {
-            addError(
-                S.fmt("fileAppearanceNotFound", sub.getTagName()),
-                context + "." + sub.getTagName());
+            addError(S.get("fileAppearanceNotFound", sub.getTagName()), context + "." + sub.getTagName());
           } else {
             shapes.add(m);
           }
         } catch (RuntimeException e) {
-          addError(
-              S.fmt("fileAppearanceError", sub.getTagName()), context + "." + sub.getTagName());
+          addError(S.get("fileAppearanceError", sub.getTagName()), context + "." + sub.getTagName());
         }
       }
       if (!shapes.isEmpty()) {

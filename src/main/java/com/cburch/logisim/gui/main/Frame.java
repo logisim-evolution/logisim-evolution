@@ -340,9 +340,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     var circuit = project.getCurrentCircuit();
     var name = project.getLogisimFile().getName();
     if (circuit != null) {
-      title = S.fmt("titleCircFileKnown", circuit.getName(), name);
+      title = S.get("titleCircFileKnown", circuit.getName(), name);
     } else {
-      title = S.fmt("titleFileKnown", name);
+      title = S.get("titleFileKnown", name);
     }
     this.setTitle(StringUtil.format("%s · %s", title, Main.APP_DISPLAY_NAME));
     myProjectListener.enableSave();

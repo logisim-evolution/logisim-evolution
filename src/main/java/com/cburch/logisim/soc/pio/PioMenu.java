@@ -116,20 +116,20 @@ public class PioMenu implements ActionListener, MenuExtender {
       String functName;
       if (myState.getPortDirection() != PioAttributes.PORT_INPUT) {
         functName = "OutputValue";
-        headerWriter.println(S.fmt("PioMenuOutputDataFunctionRemark", Integer.toString(nrBits)));
+        headerWriter.println(S.get("PioMenuOutputDataFunctionRemark", Integer.toString(nrBits)));
         SocSupport.addSetterFunction(headerWriter, compName, functName, base, 0, true);
         headerWriter.println();
         SocSupport.addSetterFunction(cWriter, compName, functName, base, 0, false);
       }
       if (myState.getPortDirection() != PioAttributes.PORT_OUTPUT) {
         functName = "InputValue";
-        headerWriter.println(S.fmt("PioMenuInputDataFunctionRemark", Integer.toString(nrBits)));
+        headerWriter.println(S.get("PioMenuInputDataFunctionRemark", Integer.toString(nrBits)));
         SocSupport.addGetterFunction(headerWriter, compName, functName, base, 0, true);
         headerWriter.println();
         SocSupport.addGetterFunction(cWriter, compName, functName, base, 0, false);
         if (myState.getPortDirection() == PioAttributes.PORT_BIDIR) {
           functName = "DirectionReg";
-          headerWriter.println(S.fmt("PioMenuBidirFunctionsRemark", Integer.toString(nrBits)));
+          headerWriter.println(S.get("PioMenuBidirFunctionsRemark", Integer.toString(nrBits)));
           SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 2);
         }
         if (myState.inputGeneratesIrq()) {
@@ -139,7 +139,7 @@ public class PioMenu implements ActionListener, MenuExtender {
                   ? S.get("PioMenuIrqEdge")
                   : S.get("PioMenuIrqLevel");
           headerWriter.println(
-              S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));
+              S.get("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));
           SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 2);
         }
         if (myState.inputIsCapturedSynchronisely()) {
@@ -154,17 +154,17 @@ public class PioMenu implements ActionListener, MenuExtender {
                   ? S.get("PioMenuCaptureBit")
                   : S.get("PioMenuCaptureAll");
           headerWriter.println(
-              S.fmt("PioMenuEdgeCaptureRemark", EdgeName, ClearName, Integer.toString(nrBits)));
+              S.get("PioMenuEdgeCaptureRemark", EdgeName, ClearName, Integer.toString(nrBits)));
           SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 3);
         }
         if (myState.outputSupportsBitManipulations()) {
           functName = "OutsetReg";
-          headerWriter.println(S.fmt("PioMenuOutSetRemark", Integer.toString(nrBits)));
+          headerWriter.println(S.get("PioMenuOutSetRemark", Integer.toString(nrBits)));
           SocSupport.addSetterFunction(headerWriter, compName, functName, base, 4, true);
           headerWriter.println();
           SocSupport.addSetterFunction(cWriter, compName, functName, base, 4, false);
           functName = "OutclearReg";
-          headerWriter.println(S.fmt("PioMenuOutClearRemark", Integer.toString(nrBits)));
+          headerWriter.println(S.get("PioMenuOutClearRemark", Integer.toString(nrBits)));
           SocSupport.addSetterFunction(headerWriter, compName, functName, base, 5, true);
           headerWriter.println();
           SocSupport.addSetterFunction(cWriter, compName, functName, base, 5, false);
@@ -174,7 +174,7 @@ public class PioMenu implements ActionListener, MenuExtender {
       headerWriter.close();
       cWriter.close();
       OptionPane.showMessageDialog(
-          frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
+          frame, S.get("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
 

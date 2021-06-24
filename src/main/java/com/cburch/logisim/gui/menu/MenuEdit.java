@@ -181,7 +181,7 @@ class MenuEdit extends Menu {
 
       Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
       if (next != null) {
-        redo.setText(S.fmt("editRedoItem", next.getName()));
+        redo.setText(S.get("editRedoItem", next.getName()));
         redo.setEnabled(true);
       } else {
         redo.setText(S.get("editCantRedoItem"));

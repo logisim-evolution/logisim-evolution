@@ -178,7 +178,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       }
     } else {
       a = S.get("registerLabel");
-      b = S.fmt("registerWidthLabel", "" + widthVal.getWidth());
+      b = S.get("registerWidthLabel", "" + widthVal.getWidth());
     }
 
     // draw boundary, label

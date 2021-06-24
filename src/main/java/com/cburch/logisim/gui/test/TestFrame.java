@@ -278,7 +278,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     }
 
     public void testResultsChanged(int numPass, int numFail) {
-      pass.setText((S.get("passMessage", Integer.toString(numPass)));
+      pass.setText(S.get("passMessage", Integer.toString(numPass)));
       fail.setText(S.get("failMessage", Integer.toString(numFail)));
       finished = numPass + numFail;
     }

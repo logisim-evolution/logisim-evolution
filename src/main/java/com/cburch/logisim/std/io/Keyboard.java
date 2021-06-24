@@ -356,10 +356,10 @@ public class Keyboard extends InstanceFactory {
         drawBuffer(g, fm, str, dispStart, dispEnd, specials, bds);
       }
     } else {
-      Bounds bds = painter.getBounds();
+      var bds = painter.getBounds();
       int len = getBufferLength(painter.getAttributeValue(ATTR_BUFFER));
-      String str = S.fmt("keybDesc", "" + len);
-      FontMetrics fm = g.getFontMetrics();
+      var str = S.get("keybDesc", "" + len);
+      var fm = g.getFontMetrics();
       int x = bds.getX() + (WIDTH - fm.stringWidth(str)) / 2;
       int y = bds.getY() + (HEIGHT + fm.getAscent()) / 2;
       g.drawString(str, x, y);

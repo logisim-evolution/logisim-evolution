@@ -96,7 +96,7 @@ public class OptionsFrame extends LFrame.Dialog {
   private void computeTitle() {
     LogisimFile file = project.getLogisimFile();
     String name = file == null ? "???" : file.getName();
-    String title = S.fmt("optionsFrameTitle", name);
+    String title = S.get("optionsFrameTitle", name);
     setTitle(title);
   }
 

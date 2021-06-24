@@ -288,7 +288,7 @@ public class TtyInterface {
     try {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
-      logger.error("{}", S.fmt("ttyLoadError", fileToOpen.getName()));
+      logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
       System.exit(-1);
       return;
     }

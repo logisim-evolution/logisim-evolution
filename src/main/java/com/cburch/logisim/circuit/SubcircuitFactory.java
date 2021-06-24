@@ -90,13 +90,12 @@ public class SubcircuitFactory extends InstanceFactory {
 
     public void configureMenu(JPopupMenu menu, Project proj) {
       this.proj = proj;
-      String name = instance.getFactory().getDisplayName();
-      String text = S.fmt("subcircuitViewItem", name);
-      JMenuItem item = new JMenuItem(text);
+      var name = instance.getFactory().getDisplayName();
+      var text = S.get("subcircuitViewItem", name);
+      var item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
-      CircuitStateHolder.HierarchyInfo hi =
-          new CircuitStateHolder.HierarchyInfo(proj.getCurrentCircuit());
+      var hi = new CircuitStateHolder.HierarchyInfo(proj.getCurrentCircuit());
       hi.addComponent(instance.getComponent());
       getSubMenuItems(menu, proj, (CircuitState) instance.getData(proj.getCircuitState()), hi);
     }

@@ -72,7 +72,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
           int ret =
               OptionPane.showOptionDialog(
                   null,
-                  S.fmt("OptionConvertAllPinsProbes", e.getValue().getDisplayGetter().toString()),
+                  S.get("OptionConvertAllPinsProbes", e.getValue().getDisplayGetter().toString()),
                   S.get("OptionConvertAll"),
                   OptionPane.YES_NO_OPTION,
                   OptionPane.QUESTION_MESSAGE,

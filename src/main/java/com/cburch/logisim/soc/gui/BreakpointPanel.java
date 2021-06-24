@@ -152,7 +152,7 @@ public class BreakpointPanel extends JPanel
 
   @Override
   public void localeChanged() {
-    lineIndicator.setText(S.fmt("RV32imAsmLineIndicator", currentLine, maxLines));
+    lineIndicator.setText(S.get("RV32imAsmLineIndicator", currentLine, maxLines));
     addBreakPoint.setText(S.get("RV32imSetBreakpoint"));
     removeBreakPoint.setText(S.get("RV32imRemoveBreakPoint"));
   }

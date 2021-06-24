@@ -297,7 +297,8 @@ public class LocaleManager {
   }
 
   /**
-   * @deprecated Use get(key, ...)
+   * @Deprecated Use get(key, ...)
+   *
    */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);

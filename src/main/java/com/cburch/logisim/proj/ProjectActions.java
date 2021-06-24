@@ -458,10 +458,10 @@ public class ProjectActions {
       } else {
         var ext = old.substring(ext0);
         var ttl = S.get("replaceExtensionTitle");
-        var msg = S.fmt("replaceExtensionMessage", ext);
+        var msg = S.get("replaceExtensionMessage", ext);
         Object[] options = {
-          S.fmt("replaceExtensionReplaceOpt", ext),
-          S.fmt("replaceExtensionAddOpt", Loader.LOGISIM_EXTENSION),
+          S.get("replaceExtensionReplaceOpt", ext),
+          S.get("replaceExtensionAddOpt", Loader.LOGISIM_EXTENSION),
           S.get("replaceExtensionKeepOpt")
         };
         var dlog = new JOptionPane(msg);

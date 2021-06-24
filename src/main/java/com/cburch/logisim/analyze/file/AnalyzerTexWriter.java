@@ -415,7 +415,7 @@ public class AnalyzerTexWriter {
        * Here we create the headers and footers
        */
       out.println("\\fancyhead{}");
-      out.println("\\fancyhead[C] {" + S.fmt("latexHeader", new Date()) + "}");
+      out.println("\\fancyhead[C] {" + S.get("latexHeader", new Date()) + "}");
       out.println("\\fancyfoot[C] {\\thepage}");
       out.println("\\renewcommand{\\headrulewidth}{0.4pt}");
       out.println("\\renewcommand{\\footrulewidth}{0.4pt}");
@@ -444,7 +444,7 @@ public class AnalyzerTexWriter {
         out.println(S.get("latexTruthTableText"));
         final TruthTable tt = model.getTruthTable();
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
-          out.println(S.fmt("latexTruthTableToBig", MAX_TRUTH_TABLE_ROWS));
+          out.println(S.get("latexTruthTableToBig", MAX_TRUTH_TABLE_ROWS));
         } else {
           tt.compactVisibleRows();
           out.println(SUB_SECTION_SEP);
@@ -466,7 +466,7 @@ public class AnalyzerTexWriter {
         out.println(SECTION_SEP);
         out.println("\\section{" + S.get("latexKarnaugh") + "}");
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
-          out.println(S.fmt("latexKarnaughToBig",
+          out.println(S.get("latexKarnaughToBig",
               (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
         } else {
           out.println(S.get("latexKarnaughText"));

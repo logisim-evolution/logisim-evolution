@@ -79,7 +79,7 @@ public class ImportTableButton extends JButton {
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("notFileMessage", file.getName()),
+            S.get("notFileMessage", file.getName()),
             S.get("openErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -87,7 +87,7 @@ public class ImportTableButton extends JButton {
       if (!file.exists() || !file.canRead()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("cantReadMessage", file.getName()),
+            S.get("cantReadMessage", file.getName()),
             S.get("openErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -101,7 +101,7 @@ public class ImportTableButton extends JButton {
         else {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("DoNotKnowHowto", fileName),
+              S.get("DoNotKnowHowto", fileName),
               S.get("openErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return;
