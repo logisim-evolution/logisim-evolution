@@ -174,8 +174,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         int row,
         boolean hasFocus) {
       java.awt.Component ret;
-      ret =
-          super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+      ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
       Font plainFont = AppPreferences.getScaledFont(ret.getFont());
       Font boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
       ret.setFont(plainFont);
