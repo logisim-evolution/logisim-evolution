@@ -345,9 +345,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       title = StringUtil.format(S.get("titleFileKnown"), name);
     }
 
-    final var dirtyNarker = project.isFileDirty() ? "*" : "";
-    this.setTitle(
-        StringUtil.format("%s %s · %s", dirtyNarker, title, Main.APP_DISPLAY_NAME).trim());
+    final var dirtyMarker = project.isFileDirty() ? "*" : "";
+    this.setTitle(StringUtil.format("%s %s · %s", dirtyMarker, title, Main.APP_DISPLAY_NAME).trim());
     myProjectListener.enableSave();
   }
 
