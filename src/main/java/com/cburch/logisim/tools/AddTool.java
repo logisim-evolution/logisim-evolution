@@ -78,7 +78,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.Icon;
 
-public class AddTool extends Tool implements Transferable,PropertyChangeListener {
+public class AddTool extends Tool implements Transferable, PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
     public void attributeListChanged(AttributeEvent e) {
       bounds = null;
@@ -751,7 +751,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
 
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-    if(!isDataFlavorSupported(flavor))
+    if (!isDataFlavorSupported(flavor))
       throw new UnsupportedFlavorException(flavor);
     return this;
   }
