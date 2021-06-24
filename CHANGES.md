@@ -15,6 +15,7 @@
   * Replace DarkLaf with FlatLaf for better compatibility.
   * Adds "Rotate Left" context menu action.
   * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
+  * Project "Dirty" state is now also refrected in window title with "*" marker.
   * Tons of code cleanup and internal improvements.
 
 * v3.5.0 (2021-05-25)
