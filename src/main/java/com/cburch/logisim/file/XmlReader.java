@@ -303,9 +303,9 @@ class XmlReader {
     }
 
     void loadMap(Element board, String boardName, Circuit circ) {
-      HashMap<String,CircuitMapInfo> map = new HashMap<>();
+      HashMap<String, CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
-        int x,y,w,h;
+        int x, y, w, h;
         String key = cmap.getAttribute("key");
         if (key == null || key.isEmpty()) continue;
         if (cmap.hasAttribute("open")) {
@@ -318,8 +318,10 @@ class XmlReader {
             continue;
           }
           map.put(key, new CircuitMapInfo(v));
-        } else if (cmap.hasAttribute("valx") && cmap.hasAttribute("valy") &&
-              cmap.hasAttribute("valw") && cmap.hasAttribute("valh")) {
+        } else if (cmap.hasAttribute("valx")
+            && cmap.hasAttribute("valy")
+            && cmap.hasAttribute("valw")
+            && cmap.hasAttribute("valh")) {
           /* Backward compatibility: */
           try {
             x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
@@ -329,7 +331,7 @@ class XmlReader {
           } catch (NumberFormatException e) {
             continue;
           }
-          BoardRectangle br = new BoardRectangle(x,y,w,h);
+          BoardRectangle br = new BoardRectangle(x, y, w, h);
           map.put(key, new CircuitMapInfo(br));
         } else {
           CircuitMapInfo cmapi = MapComponent.getMapInfo(cmap);
@@ -477,7 +479,7 @@ class XmlReader {
             for (Element boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
               String BoardName = boardMap.getAttribute("boardname");
               if (BoardName == null || BoardName.isEmpty()) continue;
-              loadMap(boardMap,BoardName,circData.circuit);
+              loadMap(boardMap, BoardName, circData.circuit);
             }
             circuitsData.add(circData);
             break;
@@ -550,7 +552,7 @@ class XmlReader {
   }
 
   /**
-   * Change label names in an XML tree according to a list of suggested labels
+   * Change label names in an XML tree according to a list of suggested labels.
    *
    * @param root root element of the XML tree
    * @param nodeType type of nodes to consider
@@ -860,7 +862,7 @@ class XmlReader {
   }
 
   /**
-   * Check if a given label could be a valid VHDL variable name
+   * Check if a given label could be a valid VHDL variable name.
    *
    * @param label candidate VHDL variable name
    * @return true if the label is NOT a valid name, false otherwise

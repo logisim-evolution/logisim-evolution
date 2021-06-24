@@ -45,7 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListener {
+public class FPGAClockPanel extends JPanel implements ActionListener, LocaleListener {
 
   private static final long serialVersionUID = 1L;
   private final Project MyProject;
@@ -69,7 +69,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     frequenciesList.addActionListener(this);
     frequenciesList.setActionCommand("frequency");
     frequenciesList.setEditable(true);
-    add(pan1,BorderLayout.WEST);
+    add(pan1, BorderLayout.WEST);
     pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(divLabel, BorderLayout.NORTH);
@@ -79,14 +79,14 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     add(pan1, BorderLayout.CENTER);
     localeChanged();
   }
-  
-  public void setEnabled( boolean enabled ) {
+
+  public void setEnabled(boolean enabled) {
     freqLabel.setEnabled(enabled);
     divLabel.setEnabled(enabled);
     frequenciesList.setEnabled(enabled);
     divider.setEnabled(enabled);
   }
-  
+
   private void updateFrequencyList() {
     frequenciesList.removeAllItems();
     for (String freq : MenuSimulate.getTickFrequencyStrings()) {
@@ -101,7 +101,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
       }
     }
   }
-  
+
   public void setSelectedFrequency() {
     for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
       if (MenuSimulate.SupportedTickFrequencies[i].equals(
@@ -114,20 +114,45 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
       }
     }
   }
-  
+
+  private void setSelectedFrequency(double freq) {
+    for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
+      if (MenuSimulate.SupportedTickFrequencies[i] == freq) {
+        frequenciesList.setSelectedIndex(i);
+        return;
+      }
+    }
+    StringBuilder extention = new StringBuilder();
+    extention.append(" ");
+    double work = freq;
+    if (work > 1000000.0) {
+      extention.append("M");
+      work /= 1000000.0;
+    }
+    if (work > 1000.0) {
+      extention.append("k");
+      work /= 1000.0;
+    }
+    extention.append("Hz");
+    DecimalFormat df = new DecimalFormat("#.#####");
+    df.setRoundingMode(RoundingMode.HALF_UP);
+    String tick = df.format(work) + extention;
+    frequenciesList.setSelectedItem(tick);
+  }
+
   public void setFpgaClockFrequency(long frequency) {
     FPGAClockFrequency = frequency;
     recalculateFrequency();
   }
-  
+
   public double GetTickfrequency() {
     double ret = 0.0;
     String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase();
     int i = 0;
     /* first pass, find the number */
     StringBuilder number = new StringBuilder();
-    while (i<TickIndex.length() && 
-       (TickIndex.charAt(i)=='.' || Character.isDigit(TickIndex.charAt(i)))) 
+    while (i < TickIndex.length()
+        && (TickIndex.charAt(i) == '.' || Character.isDigit(TickIndex.charAt(i))))
       number.append(TickIndex.charAt(i++));
     /*second pass, get the Hz, etc */
     char extention = 0;
@@ -145,43 +170,18 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     }
     return ret;
   }
-  
-  private void setSelectedFrequency(double freq) {
-     for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
-       if (MenuSimulate.SupportedTickFrequencies[i] == freq) {
-         frequenciesList.setSelectedIndex(i);
-         return;
-       }
-     }
-     StringBuilder extention = new StringBuilder();
-     extention.append(" ");
-     double work = freq;
-     if (work > 1000000.0) {
-      extention.append("M");
-      work /= 1000000.0;
-     }
-     if (work > 1000.0) {
-       extention.append("k");
-       work /= 1000.0;
-     }
-     extention.append("Hz");
-     DecimalFormat df = new DecimalFormat("#.#####");
-     df.setRoundingMode(RoundingMode.HALF_UP);
-     String tick = df.format(work)+ extention;
-     frequenciesList.setSelectedItem(tick);
-  }
-  
+
   private void recalculateFrequency() {
     double freq = GetTickfrequency();
-    double divider = FPGAClockFrequency/freq;
+    double divider = FPGAClockFrequency / freq;
     long longDivider = (long) divider;
     if (longDivider <= 1) longDivider = 2;
-    if ((longDivider&1) != 0) longDivider++;
-    double corfreq = FPGAClockFrequency/longDivider;
-    this.divider.setText(Long.toString((longDivider)>>1));
+    if ((longDivider & 1) != 0) longDivider++;
+    double corfreq = FPGAClockFrequency / longDivider;
+    this.divider.setText(Long.toString((longDivider) >> 1));
     setSelectedFrequency(corfreq);
   }
-  
+
   private void recalculateDivider() {
     long divider = 0;
     try {
@@ -192,7 +192,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     }
     divider <<= 1;
     if (divider <= 1) divider = 2;
-    double corfreq = FPGAClockFrequency/divider;
+    double corfreq = FPGAClockFrequency / divider;
     if (corfreq < 0.00001) {
       recalculateFrequency();
       return;

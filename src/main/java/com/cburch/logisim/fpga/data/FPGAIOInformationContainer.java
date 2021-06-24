@@ -56,26 +56,26 @@ public class FPGAIOInformationContainer implements Cloneable {
   private static class mapType {
     private MapComponent map;
     private final int pin;
-    
-    public mapType(MapComponent map , int pin) {
+
+    public mapType(MapComponent map, int pin) {
       this.map = map;
       this.pin = pin;
     }
-    
+
     public void unmap() {
       map.unmap(pin);
     }
-    
+
     public void update(MapComponent map) {
       this.map = map;
     }
   }
-  
+
   public static class MapResultClass {
     public boolean mapResult;
     public int pinId;
   }
-  
+
   public static LinkedList<String> GetComponentTypes() {
     LinkedList<String> result = new LinkedList<>();
     for (IOComponentTypes comp : IOComponentTypes.KnownComponentSet) {
@@ -117,8 +117,8 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyDriveStrength = DriveStrength.Unknown;
     MyLabel = null;
   }
-  
-  public FPGAIOInformationContainer(IOComponentTypes Type, BoardRectangle rect, 
+
+  public FPGAIOInformationContainer(IOComponentTypes Type, BoardRectangle rect,
                                     IOComponentsInformation iocomps) {
     MyType = Type;
     MyRectangle = rect;
@@ -131,7 +131,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyLabel = null;
     if (rect != null) rect.SetLabel(null);
     if (IOComponentTypes.SimpleInputSet.contains(Type)) {
-      FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false,iocomps,this);
+      FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false, iocomps, this);
       return;
     }
     MyType = IOComponentTypes.Unknown;
@@ -197,7 +197,7 @@ public class FPGAIOInformationContainer implements Cloneable {
             width = Integer.parseUnsignedInt(vals[2]);
             height = Integer.parseUnsignedInt(vals[3]);
           } catch (NumberFormatException e) {
-            x=y=width=height=-1;
+            x = y = width = height = -1;
           }
         }
       }
@@ -209,7 +209,8 @@ public class FPGAIOInformationContainer implements Cloneable {
         setNrOfPins(Integer.parseInt(ThisAttr.getNodeValue()));
       }
       if (ThisAttr.getNodeName().startsWith(BoardWriterClass.MultiPinPrefixString)) {
-        String Id = ThisAttr.getNodeName().substring(BoardWriterClass.MultiPinPrefixString.length());
+        String Id =
+            ThisAttr.getNodeName().substring(BoardWriterClass.MultiPinPrefixString.length());
         MyPinLocations.put(Integer.parseInt(Id), ThisAttr.getNodeValue());
       }
       if (ThisAttr.getNodeName().equals(BoardWriterClass.LabelString)) {
@@ -273,11 +274,11 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyInputPins == null && MyOutputPins == null && MyIOPins == null) {
       int NrInpPins = IOComponentTypes.GetFPGAInputRequirement(MyType);
       int NrOutpPins = IOComponentTypes.GetFPGAOutputRequirement(MyType);
-      for (int i = 0 ; i < NrOfPins; i++) {
+      for (int i = 0; i < NrOfPins; i++) {
         if (i < NrInpPins) {
           if (MyInputPins == null) MyInputPins = new HashSet<>();
           MyInputPins.add(i);
-        } else if (i < (NrInpPins+NrOutpPins)) {
+        } else if (i < (NrInpPins + NrOutpPins)) {
           if (MyOutputPins == null) MyOutputPins = new HashSet<>();
           MyOutputPins.add(i);
         } else {
@@ -291,84 +292,96 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyRectangle = new BoardRectangle(x, y, width, height);
     if (MyLabel != null) MyRectangle.SetLabel(MyLabel);
   }
-  
+
   public int getNrOfInputPins() {
     if (MyInputPins == null) return 0;
     return MyInputPins.size();
   }
-  
+
   public int getNrOfOutputPins() {
     if (MyOutputPins == null) return 0;
     return MyOutputPins.size();
   }
-  
+
   public int getNrOfIOPins() {
     if (MyIOPins == null) return 0;
     return MyIOPins.size();
   }
-  
+
   public void edit(Boolean deleteButton, IOComponentsInformation IOcomps) {
-    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton,IOcomps,this);
+    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton, IOcomps, this);
   }
-  
-  public void setMapMode() { 
+
+  public void setMapMode() {
     mapMode = true;
     paintColor = BoardManipulator.TRANSPARENT_ID;
   }
-  
-  public void setToBeDeleted() { toBeDeleted = true; }
-  public boolean isToBeDeleted() { return toBeDeleted; }
+
+  public void setToBeDeleted() {
+    toBeDeleted = true;
+  }
+
+  public boolean isToBeDeleted() {
+    return toBeDeleted;
+  }
 
   public char GetActivityLevel() {
     return MyActivityLevel;
   }
-  
-  public void setActivityLevel(char activity ) {
+
+  public void setActivityLevel(char activity) {
     MyActivityLevel = activity;
   }
-  
+
   public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
-  
+
   public String getPinLocation(int index) {
     if (MyPinLocations.containsKey(index))
       return MyPinLocations.get(index);
     return "";
   }
-  
-  public void setInputPinLocation(int index , String value) {
+
+  public void setInputPinLocation(int index, String value) {
     if (MyOutputPins != null) MyOutputPins.remove(index);
     if (MyIOPins != null) MyIOPins.remove(index);
     if (MyInputPins == null) MyInputPins = new HashSet<>();
     MyInputPins.add(index);
     MyPinLocations.put(index, value);
   }
-  
-  public void setOutputPinLocation(int index , String value) {
+
+  public void setOutputPinLocation(int index, String value) {
     if (MyInputPins != null) MyInputPins.remove(index);
     if (MyIOPins != null) MyIOPins.remove(index);
     if (MyOutputPins == null) MyOutputPins = new HashSet<>();
     MyOutputPins.add(index);
     MyPinLocations.put(index, value);
   }
-  
-  public void setIOPinLocation(int index , String value) {
+
+  public void setIOPinLocation(int index, String value) {
     if (MyInputPins != null) MyInputPins.remove(index);
     if (MyOutputPins != null) MyOutputPins.remove(index);
     if (MyIOPins == null) MyIOPins = new HashSet<>();
     MyIOPins.add(index);
     MyPinLocations.put(index, value);
   }
-  
+
   public Element GetDocumentElement(Document doc) {
     if (MyType.equals(IOComponentTypes.Unknown)) {
       return null;
     }
     try {
       Element result = doc.createElement(MyType.toString());
-      result.setAttribute(BoardWriterClass.RectSetString, MyRectangle.getXpos()+","+MyRectangle.getYpos()+
-          ","+MyRectangle.getWidth()+","+MyRectangle.getHeight());
+      result.setAttribute(
+          BoardWriterClass.RectSetString,
+          MyRectangle.getXpos()
+              + ","
+              + MyRectangle.getYpos()
+              + ","
+              + MyRectangle.getWidth()
+              + ","
+              + MyRectangle.getHeight());
       if (MyLabel != null) {
         Attr label = doc.createAttribute(BoardWriterClass.LabelString);
         label.setValue(MyLabel);
@@ -378,7 +391,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         Attr Set = doc.createAttribute(BoardWriterClass.InputSetString);
         StringBuilder s = new StringBuilder();
         boolean first = true;
-        for (int i = 0 ; i < NrOfPins ; i++)
+        for (int i = 0; i < NrOfPins; i++)
           if (MyInputPins.contains(i)) {
             if (first) first = false;
             else s.append(",");
@@ -391,7 +404,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         Attr Set = doc.createAttribute(BoardWriterClass.OutputSetString);
         StringBuilder s = new StringBuilder();
         boolean first = true;
-        for (int i = 0 ; i < NrOfPins; i++)
+        for (int i = 0; i < NrOfPins; i++)
           if (MyOutputPins.contains(i)) {
             if (first) first = false;
             else s.append(",");
@@ -404,7 +417,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         Attr Set = doc.createAttribute(BoardWriterClass.IOSetString);
         StringBuilder s = new StringBuilder();
         boolean first = true;
-        for (int i = 0 ; i < NrOfPins; i++)
+        for (int i = 0; i < NrOfPins; i++)
           if (MyIOPins.contains(i)) {
             if (first) first = false;
             else s.append(",");
@@ -413,7 +426,8 @@ public class FPGAIOInformationContainer implements Cloneable {
         Set.setValue(s.toString());
         result.setAttributeNode(Set);
       }
-      if (MyDriveStrength != DriveStrength.Unknown && MyDriveStrength != DriveStrength.DefaulStength) {
+      if (MyDriveStrength != DriveStrength.Unknown
+          && MyDriveStrength != DriveStrength.DefaulStength) {
         Attr drive = doc.createAttribute(DriveStrength.DriveAttributeString);
         drive.setValue(DriveStrength.Behavior_strings[MyDriveStrength]);
         result.setAttributeNode(drive);
@@ -446,11 +460,11 @@ public class FPGAIOInformationContainer implements Cloneable {
   public String GetLabel() {
     return MyLabel;
   }
-  
+
   public String GetDisplayString() {
     return MyLabel == null ? MyType.name() : MyLabel;
   }
-  
+
   public void setLabel(String label) {
     MyLabel = label;
   }
@@ -458,7 +472,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public char GetDrive() {
     return MyDriveStrength;
   }
-  
+
   public void setDrive(char drive) {
     MyDriveStrength = drive;
   }
@@ -466,7 +480,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public char GetIOStandard() {
     return MyIOStandard;
   }
-  
+
   public void setIOStandard(char IOStandard) {
     MyIOStandard = IOStandard;
   }
@@ -478,19 +492,19 @@ public class FPGAIOInformationContainer implements Cloneable {
   public char GetPullBehavior() {
     return MyPullBehavior;
   }
-  
-  public void setPullBehavior( char pull ) {
+
+  public void setPullBehavior(char pull) {
     MyPullBehavior = pull;
   }
 
   public BoardRectangle GetRectangle() {
     return MyRectangle;
   }
-  
+
   public IOComponentTypes GetType() {
     return MyType;
   }
-  
+
   public void setType(IOComponentTypes type) {
     MyType = type;
   }
@@ -510,7 +524,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public boolean IsOutput() {
     return IOComponentTypes.OutputComponentSet.contains(MyType);
   }
-  
+
   public boolean pinIsMapped(int index) {
     if (index < 0 || index >= NrOfPins) return true;
     return pinIsMapped.get(index) != null;
@@ -542,25 +556,25 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (pinIsMapped == null) pinIsMapped = new ArrayList<>();
     NrOfPins = count;
     if (count > pinIsMapped.size()) {
-      for (int i = pinIsMapped.size(); i < count ; i++)
+      for (int i = pinIsMapped.size(); i < count; i++)
         pinIsMapped.add(null);
     } else if (count < pinIsMapped.size()) {
-      for (int i = pinIsMapped.size()-1 ; i >= count ; i--) {
-    	mapType map = pinIsMapped.get(i); 
-    	if (map != null) map.unmap();
+      for (int i = pinIsMapped.size() - 1; i >= count; i--) {
+        mapType map = pinIsMapped.get(i);
+        if (map != null) map.unmap();
         pinIsMapped.remove(i);
       }
     }
   }
-  
+
   public void unmap(int pin) {
     if (pin < 0 || pin >= pinIsMapped.size()) return;
     mapType map = pinIsMapped.get(pin);
-    pinIsMapped.set(pin,null);
+    pinIsMapped.set(pin, null);
     if (map != null) map.unmap();
   }
-  
-  public MapResultClass tryInputMap(MapComponent comp,int compPin,int inpPin) {
+
+  public MapResultClass tryInputMap(MapComponent comp, int compPin, int inpPin) {
     MapResultClass result = new MapResultClass();
     result.mapResult = false;
     result.pinId = inpPin;
@@ -572,25 +586,27 @@ public class FPGAIOInformationContainer implements Cloneable {
     result.mapResult = true;
     return result;
   }
-  
-  public MapResultClass tryOutputMap(MapComponent comp,int compPin,int outpPin) {
+
+  public MapResultClass tryOutputMap(MapComponent comp, int compPin, int outpPin) {
     MapResultClass result = new MapResultClass();
     result.mapResult = false;
-    result.pinId = outpPin+(MyInputPins == null ? 0 : MyInputPins.size());
-    if (MyOutputPins == null || !MyOutputPins.contains(result.pinId)) 
-      return this.tryIOMap(comp, compPin, outpPin); 
+    result.pinId = outpPin + (MyInputPins == null ? 0 : MyInputPins.size());
+    if (MyOutputPins == null || !MyOutputPins.contains(result.pinId))
+      return this.tryIOMap(comp, compPin, outpPin);
     unmap(result.pinId);
     mapType map = new mapType(comp, compPin);
     pinIsMapped.set(result.pinId, map);
     result.mapResult = true;
     return result;
   }
-	  
-  public MapResultClass tryIOMap(MapComponent comp,int compPin,int ioPin) {
+
+  public MapResultClass tryIOMap(MapComponent comp, int compPin, int ioPin) {
     MapResultClass result = new MapResultClass();
     result.mapResult = false;
-    result.pinId = ioPin+(MyInputPins == null ? 0 : MyInputPins.size())+
-        (MyOutputPins == null ? 0 : MyOutputPins.size());
+    result.pinId =
+        ioPin
+            + (MyInputPins == null ? 0 : MyInputPins.size())
+            + (MyOutputPins == null ? 0 : MyOutputPins.size());
     if (MyIOPins == null || !MyIOPins.contains(result.pinId)) return result;
     unmap(result.pinId);
     mapType map = new mapType(comp, compPin);
@@ -598,58 +614,85 @@ public class FPGAIOInformationContainer implements Cloneable {
     result.mapResult = true;
     return result;
   }
-  
+
   public boolean tryMap(MapComponent comp, int compPin, int myPin) {
-    if (myPin < 0 || myPin >=NrOfPins) return false;
+    if (myPin < 0 || myPin >= NrOfPins) return false;
     unmap(myPin);
     mapType map = new mapType(comp, compPin);
     pinIsMapped.set(myPin, map);
     return true;
   }
-		  
-  public boolean updateMap(int pin , MapComponent comp) {
+
+  public boolean updateMap(int pin, MapComponent comp) {
     if (pin < 0 || pin >= pinIsMapped.size()) return false;
     mapType map = pinIsMapped.get(pin);
     if (map == null) return false;
     map.update(comp);
     return true;
   }
-  
+
   public boolean isCompletelyMappedBy(MapComponent comp) {
-    for (int i = 0 ; i < NrOfPins ; i++)
+    for (int i = 0; i < NrOfPins; i++)
       if (pinIsMapped.get(i) != null) {
         if (!pinIsMapped.get(i).map.equals(comp)) return false;
       } else return false;
     return true;
   }
-  
+
   private int nrOfMaps() {
     int res = 0;
-    for (int i = 0 ; i < NrOfPins ; i++)
+    for (int i = 0; i < NrOfPins; i++)
       if (pinIsMapped.get(i) != null)
         res++;
     return res;
   }
-  
+
   public void setHighlighted() {
     if (!mapMode) paintColor = BoardManipulator.HIGHLIGHT_COLOR_ID;
     highlighted = true;
   }
-  
+
   public void unsetHighlighted() {
     if (!mapMode) paintColor = BoardManipulator.DEFINE_COLOR_ID;
     highlighted = false;
   }
-  
-  public boolean hasInputs() { return MyInputPins != null && (MyInputPins.size() > 0); } 
-  public boolean hasOutputs() { return MyOutputPins != null && (MyOutputPins.size() > 0); }
-  public boolean hasIOs() { return MyIOPins != null && (MyIOPins.size() > 0); }
-  public int nrInputs() { return MyInputPins == null ? 0 : MyInputPins.size(); }
-  public int nrOutputs() { return MyOutputPins == null ? 0 : MyOutputPins.size(); }
-  public int nrIOs() { return MyIOPins == null ? 0 : MyIOPins.size(); }
-  public HashSet<Integer> getInputs() { return MyInputPins; }
-  public HashSet<Integer> getOutputs() { return MyOutputPins; }
-  public HashSet<Integer> getIOs() { return MyIOPins; }
+
+  public boolean hasInputs() {
+    return MyInputPins != null && (MyInputPins.size() > 0);
+  }
+
+  public boolean hasOutputs() {
+    return MyOutputPins != null && (MyOutputPins.size() > 0);
+  }
+
+  public boolean hasIOs() {
+    return MyIOPins != null && (MyIOPins.size() > 0);
+  }
+
+  public int nrInputs() {
+    return MyInputPins == null ? 0 : MyInputPins.size();
+  }
+
+  public int nrOutputs() {
+    return MyOutputPins == null ? 0 : MyOutputPins.size();
+  }
+
+  public int nrIOs() {
+    return MyIOPins == null ? 0 : MyIOPins.size();
+  }
+
+  public HashSet<Integer> getInputs() {
+    return MyInputPins;
+  }
+
+  public HashSet<Integer> getOutputs() {
+    return MyOutputPins;
+  }
+
+  public HashSet<Integer> getIOs() {
+    return MyIOPins;
+  }
+
   public String getPinName(int index) {
     if (MyInputPins != null && MyInputPins.contains(index)) {
       return IOComponentTypes.getInputLabel(NrOfPins, index, MyType);
@@ -660,10 +703,9 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyIOPins != null && MyIOPins.contains(index)) {
       return IOComponentTypes.getIOLabel(NrOfPins, index, MyType);
     }
-    return ""+index;
+    return "" + index;
   }
 
-  
   public boolean setSelectable(MapListModel.MapInfo comp) {
     selComp = comp;
     MapComponent map = comp.getMap();
@@ -679,91 +721,100 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
     return selectable;
   }
-  
+
   public boolean removeSelectable() {
     boolean ret = selectable;
     selComp = null;
     selectable = false;
     return ret;
   }
-  
-  public void paint(Graphics2D g , float scale) {
-	if (mapMode) {
-	  mappaint(g,scale);
-	  return;
-	}
+
+  public void paint(Graphics2D g, float scale) {
+    if (mapMode) {
+      mappaint(g, scale);
+      return;
+    }
     Color PaintColor = BoardManipulator.getColor(paintColor);
     if (PaintColor == null) return;
     Color c = g.getColor();
     g.setColor(PaintColor);
-    g.fillRect(AppPreferences.getScaled(MyRectangle.getXpos(),scale), 
-               AppPreferences.getScaled(MyRectangle.getYpos(),scale), 
-               AppPreferences.getScaled(MyRectangle.getWidth(),scale), 
-               AppPreferences.getScaled(MyRectangle.getHeight(),scale));
+    g.fillRect(
+        AppPreferences.getScaled(MyRectangle.getXpos(), scale),
+        AppPreferences.getScaled(MyRectangle.getYpos(), scale),
+        AppPreferences.getScaled(MyRectangle.getWidth(), scale),
+        AppPreferences.getScaled(MyRectangle.getHeight(), scale));
     g.setColor(c);
   }
-  
+
   private void mappaint(Graphics2D g, float scale) {
-	Color c = g.getColor();
+    Color c = g.getColor();
     int i = nrOfMaps();
-    if (i > 0) paintmapped(g,scale,i);
-    else paintselected(g,scale);
-    if (highlighted && (i>0 || selectable)) paintinfo(g,scale);
+    if (i > 0) paintmapped(g, scale, i);
+    else paintselected(g, scale);
+    if (highlighted && (i > 0 || selectable)) paintinfo(g, scale);
     g.setColor(c);
   }
-  
+
   private boolean containsMap() {
     if (selComp == null) return false;
     MapComponent com = selComp.getMap();
-    for (int i = 0 ; i < NrOfPins ; i++) {
+    for (int i = 0; i < NrOfPins; i++) {
       if (pinIsMapped.get(i) != null && pinIsMapped.get(i).map.equals(com)) return true;
     }
     return false;
   }
-  
+
   public boolean tryMap(JPanel parent) {
-	   if (!selectable) return false;
-  	 if (selComp == null) return false;
-  	 MapComponent map = selComp.getMap();
-  	 if (selComp.getPin() >= 0 && NrOfPins == 1) {
+    if (!selectable) return false;
+    if (selComp == null) return false;
+    MapComponent map = selComp.getMap();
+    if (selComp.getPin() >= 0 && NrOfPins == 1) {
       /* single pin only */
-  	   map.unmap(selComp.getPin());
+      map.unmap(selComp.getPin());
       return map.tryMap(selComp.getPin(), this, 0);
-	   } 
-  	 if (map.nrInputs() == nrInputs() && 
-        map.nrOutputs() == nrOutputs() &&
-        map.nrIOs() == nrIOs()&&
-        selComp.getPin() < 0) {
-	     /* complete map */
-  	   map.unmap();
-	     return map.tryMap(this);
-	   }
-	   if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
-        map.nrInputs() == nrIOs() && map.nrOutputs() == 0 && selComp.getPin() < 0) {
-	     map.unmap();
-	     return map.tryMap(this);
-	   }
-	   if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
-        map.nrOutputs() == nrIOs() && map.nrInputs() == 0 && selComp.getPin() < 0) {
-	     map.unmap();
-	     return map.tryMap(this);
-	   }
-	   PartialMapDialog diag = new PartialMapDialog(selComp,this,parent);
+    }
+    if (map.nrInputs() == nrInputs()
+        && map.nrOutputs() == nrOutputs()
+        && map.nrIOs() == nrIOs()
+        && selComp.getPin() < 0) {
+      /* complete map */
+      map.unmap();
+      return map.tryMap(this);
+    }
+    if (nrInputs() == 0
+        && nrOutputs() == 0
+        && map.nrIOs() == 0
+        && map.nrInputs() == nrIOs()
+        && map.nrOutputs() == 0
+        && selComp.getPin() < 0) {
+      map.unmap();
+      return map.tryMap(this);
+    }
+    if (nrInputs() == 0
+        && nrOutputs() == 0
+        && map.nrIOs() == 0
+        && map.nrOutputs() == nrIOs()
+        && map.nrInputs() == 0
+        && selComp.getPin() < 0) {
+      map.unmap();
+      return map.tryMap(this);
+    }
+    PartialMapDialog diag = new PartialMapDialog(selComp, this, parent);
     return diag.doit();
   }
-  
+
   private void paintmapped(Graphics2D g, float scale, int nrOfMaps) {
-    int x = AppPreferences.getScaled(MyRectangle.getXpos(),scale);
-    int y = AppPreferences.getScaled(MyRectangle.getYpos(),scale);
-    int width = AppPreferences.getScaled(MyRectangle.getWidth(),scale);
-    int height = AppPreferences.getScaled(MyRectangle.getHeight(),scale);
-    int alpha = highlighted&&selectable ? 200 : 100;
+    int x = AppPreferences.getScaled(MyRectangle.getXpos(), scale);
+    int y = AppPreferences.getScaled(MyRectangle.getYpos(), scale);
+    int width = AppPreferences.getScaled(MyRectangle.getWidth(), scale);
+    int height = AppPreferences.getScaled(MyRectangle.getHeight(), scale);
+    int alpha = highlighted && selectable ? 200 : 100;
     int color = containsMap() ? BoardManipulator.SELECTED_MAPPED_COLOR_ID :
         selectable ? BoardManipulator.SELECTABLE_MAPPED_COLOR_ID :
         BoardManipulator.MAPPED_COLOR_ID;
     Color col = BoardManipulator.getColor(color);
     if (col == null) return;
-    g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),alpha));
+    g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
     if (nrOfMaps == NrOfPins) {
       g.fillRect(x, y, width, height);
     } else {
@@ -771,29 +822,29 @@ public class FPGAIOInformationContainer implements Cloneable {
       g.drawRect(x, y, width, height);
       g.setStroke(new BasicStroke(1));
       if (height > width) {
-        int y1 = y+((height*nrOfMaps)/NrOfPins);
-        int y2 = y+((height*(nrOfMaps-1))/NrOfPins);
-        int[] xpoints = {x,x+width,x+width,x};
-        int[] ypoints = {y,y,y1,y2};
+        int y1 = y + ((height * nrOfMaps) / NrOfPins);
+        int y2 = y + ((height * (nrOfMaps - 1)) / NrOfPins);
+        int[] xpoints = {x, x + width, x + width, x};
+        int[] ypoints = {y, y, y1, y2};
         g.fillPolygon(xpoints, ypoints, 4);
         if (selectable) {
           col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
           if (col == null) return;
-          g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),alpha));
+          g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
           ypoints[0] += height;
           ypoints[1] += height;
           g.fillPolygon(xpoints, ypoints, 4);
         }
       } else {
-    	int x1 = x+((width*nrOfMaps)/NrOfPins);
-    	int x2 = x+((width*(nrOfMaps-1))/NrOfPins);
-    	int[] xpoints = {x,x1,x2,x};
-    	int[] ypoints = {y,y,y+height,y+height};
+        int x1 = x + ((width * nrOfMaps) / NrOfPins);
+        int x2 = x + ((width * (nrOfMaps - 1)) / NrOfPins);
+        int[] xpoints = {x, x1, x2, x};
+        int[] ypoints = {y, y, y + height, y + height};
         g.fillPolygon(xpoints, ypoints, 4);
         if (selectable) {
           col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
           if (col == null) return;
-          g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),alpha));
+          g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
           xpoints[0] += width;
           xpoints[3] += width;
           g.fillPolygon(xpoints, ypoints, 4);
@@ -801,20 +852,20 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
     }
   }
-  
+
   protected void paintselected(Graphics2D g, float scale) {
-	if (!selectable) return;
-    int x = AppPreferences.getScaled(MyRectangle.getXpos(),scale);
-    int y = AppPreferences.getScaled(MyRectangle.getYpos(),scale);
-    int width = AppPreferences.getScaled(MyRectangle.getWidth(),scale);
-    int height = AppPreferences.getScaled(MyRectangle.getHeight(),scale);
+    if (!selectable) return;
+    int x = AppPreferences.getScaled(MyRectangle.getXpos(), scale);
+    int y = AppPreferences.getScaled(MyRectangle.getYpos(), scale);
+    int width = AppPreferences.getScaled(MyRectangle.getWidth(), scale);
+    int height = AppPreferences.getScaled(MyRectangle.getHeight(), scale);
     int alpha = highlighted ? 200 : 100;
     Color col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
     if (col == null) return;
-    g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),alpha));
+    g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
     g.fillRect(x, y, width, height);
   }
-  
+
   private void paintinfo(Graphics2D g, float scale) {
 
   }

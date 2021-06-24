@@ -37,9 +37,9 @@ import java.util.LinkedList;
 public interface DynamicElementProvider {
 
   DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
-  
-  static void removeDynamicElements(Circuit circuit, Component c){
-	if (!(c instanceof InstanceComponent)) return;
+
+  static void removeDynamicElements(Circuit circuit, Component c) {
+    if (!(c instanceof InstanceComponent)) return;
     HashSet<Circuit> allAffected = new HashSet<>();
     LinkedList<Circuit> todo = new LinkedList<>();
     todo.add(circuit);

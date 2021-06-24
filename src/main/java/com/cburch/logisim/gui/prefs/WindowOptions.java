@@ -267,7 +267,7 @@ class WindowOptions extends OptionsPanel {
           proj.getFrame().repaint();
         }
       } else if (e.getActionCommand().equals(cmdResetGridColors)) {
-//        AppPreferences.resetWindow();
+        //        AppPreferences.resetWindow();
         List<Project> nowOpen = Projects.getOpenProjects();
         AppPreferences.setDefaultGridColors();
         for (Project proj : nowOpen) {

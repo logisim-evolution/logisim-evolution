@@ -39,16 +39,15 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class SocUpSimulationState {
-	
   public static final int SimulationRunning = 0;
   public static final int SimulationHaltedByError = 1;
   public static final int SimulationHaltedByBreakpoint = 2;
   public static final int SimulationHaltedByStop = 3;
-  
+
   private int simulationState = SimulationRunning;
   private final ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<>();
   private boolean canContinueAfterBreak = false;
-  
+
   public String getStateString() {
     switch (simulationState) {
       case SimulationRunning : return S.get("SocUpSimRunning");
@@ -58,38 +57,38 @@ public class SocUpSimulationState {
     }
     return S.get("SocUpUnknown");
   }
-  
+
   public void registerListener(SocUpSimulationStateListener l) {
     listeners.add(l);
   }
-  
-  public void reset() { 
-    canContinueAfterBreak = false; 
+
+  public void reset() {
+    canContinueAfterBreak = false;
     simulationState = SimulationHaltedByStop;
     fireChange();
   }
-  
+
   public boolean canExecute() {
     return simulationState == SimulationRunning;
   }
-  
+
   public void errorInExecution() {
     simulationState = SimulationHaltedByError;
     fireChange();
   }
-  
+
   public boolean breakPointReached() {
-	if (canContinueAfterBreak) {
+    if (canContinueAfterBreak) {
       canContinueAfterBreak = false;
-	  return false;
-	}
+      return false;
+    }
     simulationState = SimulationHaltedByBreakpoint;
     fireChange();
     return true;
   }
-  
+
   public void buttonPressed() {
-    if (simulationState == SimulationRunning) 
+    if (simulationState == SimulationRunning)
       simulationState = SimulationHaltedByStop;
     else {
       if (simulationState == SimulationHaltedByBreakpoint) canContinueAfterBreak = true;
@@ -97,42 +96,45 @@ public class SocUpSimulationState {
     }
     fireChange();
   }
-  
-  public static Bounds getButtonLocation(int xoff , int yoff, Bounds b) {
-    int width = b.getWidth()/3;
-    int xpos = xoff+b.getX()+2*width;
-    return Bounds.create(xpos, yoff+b.getY(), width, b.getHeight());
+
+  public static Bounds getButtonLocation(int xoff, int yoff, Bounds b) {
+    int width = b.getWidth() / 3;
+    int xpos = xoff + b.getX() + 2 * width;
+    return Bounds.create(xpos, yoff + b.getY(), width, b.getHeight());
   }
-  
-  public static Bounds getStateLocation(int xoff , int yoff, Bounds b) {
-    int width = b.getWidth()/3;
-    int xpos = xoff+b.getX()+width;
-    return Bounds.create(xpos, yoff+b.getY(), width, b.getHeight());
+
+  public static Bounds getStateLocation(int xoff, int yoff, Bounds b) {
+    int width = b.getWidth() / 3;
+    int xpos = xoff + b.getX() + width;
+    return Bounds.create(xpos, yoff + b.getY(), width, b.getHeight());
   }
-  
-  public static Bounds getLabelLocation(int xoff , int yoff, Bounds b) {
-    int width = b.getWidth()/3;
-    int xpos = xoff+b.getX();
-    return Bounds.create(xpos, yoff+b.getY(), width, b.getHeight());
+
+  public static Bounds getLabelLocation(int xoff, int yoff, Bounds b) {
+    int width = b.getWidth() / 3;
+    int xpos = xoff + b.getX();
+    return Bounds.create(xpos, yoff + b.getY(), width, b.getHeight());
   }
-	  
-  private void paintState(Graphics g , int x , int y, Bounds b) {
-    Bounds state = getStateLocation(x,y,b);
+
+  private void paintState(Graphics g, int x, int y, Bounds b) {
+    Bounds state = getStateLocation(x, y, b);
     g.setColor(Color.BLACK);
     g.drawRect(state.getX(), state.getY(), state.getWidth(), state.getHeight());
     switch (simulationState) {
-      case SimulationRunning : g.setColor(Color.GREEN);
-                               break;
-      case SimulationHaltedByError : g.setColor(Color.RED);
-                                     break;
-      case SimulationHaltedByBreakpoint : g.setColor(Color.MAGENTA);
-                                          break;
+      case SimulationRunning:
+        g.setColor(Color.GREEN);
+        break;
+      case SimulationHaltedByError:
+        g.setColor(Color.RED);
+        break;
+      case SimulationHaltedByBreakpoint:
+        g.setColor(Color.MAGENTA);
+        break;
     }
     GraphicsUtil.drawCenteredText(g, getStateString(), state.getCenterX(), state.getCenterY());
   }
-  
-  public void paint(Graphics g , int x , int y, Bounds b) {
-    Bounds button = getButtonLocation(x,y,b);
+
+  public void paint(Graphics g, int x, int y, Bounds b) {
+    Bounds button = getButtonLocation(x, y, b);
     g.setColor(Color.LIGHT_GRAY);
     g.fillRect(button.getX(), button.getY(), button.getWidth(), button.getHeight());
     g.setColor(Color.BLUE);
@@ -140,13 +142,13 @@ public class SocUpSimulationState {
     g.setFont(StdAttr.DEFAULT_LABEL_FONT);
     String bname = simulationState == SimulationRunning ? S.get("SocUpSimstateStop") : S.get("SocUpSimstateStart");
     GraphicsUtil.drawCenteredText(g, bname, button.getCenterX(), button.getCenterY());
-    Bounds labloc = getLabelLocation(x,y,b);
+    Bounds labloc = getLabelLocation(x, y, b);
     g.setColor(Color.black);
     GraphicsUtil.drawCenteredText(g, S.get("SocUpSimStateLabel"), labloc.getCenterX(), labloc.getCenterY());
     g.setFont(f);
-    paintState(g,x,y,b);
+    paintState(g, x, y, b);
   }
-  
+
   private void fireChange() {
     for (SocUpSimulationStateListener l : listeners)
       l.SimulationStateChanged();

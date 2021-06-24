@@ -40,46 +40,45 @@ import javax.swing.JMenuItem;
 
 public class SocSupport {
 
-
-  private static final long LongMask = (1L<<32)-1L;
+  private static final long LongMask = (1L << 32) - 1L;
 
   public static long convUnsignedInt(int value) {
-    return ((long)value)&LongMask;
-  }
-  
-  public static int convUnsignedLong(long value) {
-    return (int)(value&LongMask);
+    return ((long) value) & LongMask;
   }
 
-  public static void addAllFunctions(PrintWriter h , PrintWriter c , String compName, String functName, int base, int index) {
-    addSetterFunction(h,compName,functName,base,index,true);
-    addGetterFunction(h,compName,functName,base,index,true);
-    h.println();
-    addSetterFunction(c,compName,functName,base,index,false);
-    addGetterFunction(c,compName,functName,base,index,false);
+  public static int convUnsignedLong(long value) {
+    return (int) (value & LongMask);
   }
-  
-  public static void addGetterFunction(PrintWriter w , String compName, String functName, int base, int index, boolean header) {
-    w.print("unsigned int get"+compName+functName+"()");
+
+  public static void addAllFunctions(PrintWriter h, PrintWriter c, String compName, String functName, int base, int index) {
+    addSetterFunction(h, compName, functName, base, index, true);
+    addGetterFunction(h, compName, functName, base, index, true);
+    h.println();
+    addSetterFunction(c, compName, functName, base, index, false);
+    addGetterFunction(c, compName, functName, base, index, false);
+  }
+
+  public static void addGetterFunction(PrintWriter w, String compName, String functName, int base, int index, boolean header) {
+    w.print("unsigned int get" + compName + functName + "()");
     if (header) {
       w.println(";");
       return;
     } else w.println(" {");
     w.println("  volatile unsigned int* base;");
-    w.println("  base = (unsigned int *) "+String.format("0x%X", base)+";");
-    w.println("  return base["+index+"];");
+    w.println("  base = (unsigned int *) " + String.format("0x%X", base) + ";");
+    w.println("  return base[" + index + "];");
     w.println("}\n");
   }
-  
-  public static void addSetterFunction(PrintWriter w , String compName, String functName, int base, int index, boolean header) {
-    w.print("void set"+compName+functName+"(unsigned int value)");
+
+  public static void addSetterFunction(PrintWriter w, String compName, String functName, int base, int index, boolean header) {
+    w.print("void set" + compName + functName + "(unsigned int value)");
     if (header) {
       w.println(";");
       return;
     } else w.println(" {");
     w.println("  volatile unsigned int* base;");
-    w.println("  base = (unsigned int *) "+String.format("0x%X", base)+";");
-    w.println("  base["+index+"] = value;");
+    w.println("  base = (unsigned int *) " + String.format("0x%X", base) + ";");
+    w.println("  base[" + index + "] = value;");
     w.println("}\n");
   }
 
@@ -89,16 +88,16 @@ public class SocSupport {
     ret.addActionListener(l);
     return ret;
   }
-  
+
   public static String getComponentName(Component comp) {
     String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
     if (name == null || name.isEmpty()) {
       Location loc = comp.getLocation();
-      name = comp.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = comp.getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;
   }
-  
+
   private static String getMasterHierName(CircuitState state) {
     ArrayList<CircuitState> states = new ArrayList<>();
     CircuitState s = state;
@@ -108,10 +107,10 @@ public class SocSupport {
     }
     StringBuilder name = new StringBuilder();
     name.append(s.getCircuit().getName()).append(":");
-    for (int i = states.size()-1 ; i >= 0 ; i--) {
+    for (int i = states.size() - 1; i >= 0; i--) {
       for (Component c : s.getCircuit().getNonWires()) {
         if (c.getFactory() instanceof SubcircuitFactory) {
-          CircuitState tmp = (CircuitState)s.getData(c);
+          CircuitState tmp = (CircuitState) s.getData(c);
           if (tmp.equals(states.get(i)))
             name.append(getComponentName(c)).append(":");
         }
@@ -120,17 +119,17 @@ public class SocSupport {
     }
     return name.toString();
   }
-  
+
   public static String getMasterName(CircuitState state, Component comp) {
     if (!state.isSubstate())
       return getComponentName(comp);
-    return getMasterHierName(state)+getComponentName(comp);
+    return getMasterHierName(state) + getComponentName(comp);
   }
-  
+
   public static String getMasterName(CircuitState state, String compName) {
     if (!state.isSubstate())
       return compName;
-    return getMasterHierName(state)+compName;
+    return getMasterHierName(state) + compName;
   }
-  
+
 }

@@ -46,18 +46,18 @@ import org.w3c.dom.Element;
 
 public class SocVgaShape extends DynamicElement {
 
-  public SocVgaShape(int x , int y , DynamicElement.Path p) {
-    super(p,Bounds.create(x, y, 160, 120));
+  public SocVgaShape(int x, int y, DynamicElement.Path p) {
+    super(p, Bounds.create(x, y, 160, 120));
   }
-  
-  public void setBounds(int width , int height) {
+
+  public void setBounds(int width, int height) {
     bounds = Bounds.create(bounds.getX(), bounds.getY(), width, height);
   }
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-	  VgaState.VgaDisplayState data = (state == null) ? null : (VgaState.VgaDisplayState) getData(state);
-	  if (state == null || data == null) {
+    VgaState.VgaDisplayState data = (state == null) ? null : (VgaState.VgaDisplayState) getData(state);
+    if (state == null || data == null) {
       Color c = g.getColor();
       g.setColor(Color.BLUE);
       g.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
@@ -66,24 +66,23 @@ public class SocVgaShape extends DynamicElement {
       g.setColor(c);
     } else {
       BufferedImage image = data.getImage(state);
-      g.drawImage(image,bounds.getX(),bounds.getY(),null);
+      g.drawImage(image, bounds.getX(), bounds.getY(), null);
     }
   }
 
   @Override
   public List<Attribute<?>> getAttributes() {
-	return UnmodifiableList.create(
-          new Attribute<?>[] { ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR });
+    return UnmodifiableList.create(
+        new Attribute<?>[] {ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR});
   }
 
   @Override
   public String getDisplayName() {
-	return S.get("SocVgaComponent");
+    return S.get("SocVgaComponent");
   }
 
   @Override
   public Element toSvgElement(Document doc) {
-	return toSvgElement(doc.createElement("visible-vga"));
+    return toSvgElement(doc.createElement("visible-vga"));
   }
-
 }

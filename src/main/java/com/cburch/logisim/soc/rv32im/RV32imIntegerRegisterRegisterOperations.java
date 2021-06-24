@@ -59,7 +59,8 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   /* Pseudo instructions:
    * SNEZ rd,rs -> SLTU rd,x0,rs
    */
-  private final static String[] AsmOpcodes = {"ADD","SLL","SLT","SLTU","XOR","SRL","OR","AND","SUB","SRA","SNEZ"};
+  private static final String[] AsmOpcodes = {
+      "ADD", "SLL", "SLT", "SLTU", "XOR", "SRL", "OR", "AND", "SUB", "SRA", "SNEZ"};
 
   private int instruction = 0;
   private int destination;
@@ -67,7 +68,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   private int source2;
   private int operation;
   private boolean valid = false;
-      
+
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
@@ -133,10 +134,14 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     return valid;
   }
 
-  public boolean performedJump() { return false; }
+  public boolean performedJump() {
+    return false;
+  }
 
-  public boolean isValid() { return valid; }
-  
+  public boolean isValid() {
+    return valid;
+  }
+
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction)!= OP)
       return false;
@@ -174,7 +179,9 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     return true;
   }
 
-  public String getErrorMessage() { return null; }
+  public String getErrorMessage() {
+    return null;
+  }
 
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
@@ -183,14 +190,14 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
-    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+    for (int i = 0; i < AsmOpcodes.length; i++)
       if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
     if (operation < 0) {
       valid = false;
       return false;
     }
     boolean errors = false;
-    AssemblerToken[] param1,param2,param3;
+    AssemblerToken[] param1, param2, param3;
     if (instr.getNrOfParameters() != (operation == INSTR_SNEZ ? 2 : 3)) {
       instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
       valid = false;
@@ -210,7 +217,8 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       errors = true;
       instr.setError(param2[0], S.getter("AssemblerExpectedRegister"));
     }
-    if (param3 != param2 && (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER)) {
+    if (param3 != param2
+        && (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER)) {
       errors = true;
       instr.setError(param3[0], S.getter("AssemblerExpectedRegister"));
     }
@@ -237,7 +245,8 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     if (valid) {
       int funct7 = (operation == INSTR_SUB || operation == INSTR_SRA) ? 0x20 : 0;
       int funct3 = operation == INSTR_SUB ? ADD_SUB : operation == INSTR_SRA ? SRL_SRA : operation;
-      instruction = RV32imSupport.getRTypeInstruction(OP, destination, funct3, source1, source2, funct7);
+      instruction =
+          RV32imSupport.getRTypeInstruction(OP, destination, funct3, source1, source2, funct7);
       instr.setInstructionByteCode(instruction, 4);
       // DEBUG : System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter(), instruction));
     }

@@ -48,7 +48,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   private static final Color SEVERE = Color.yellow;
   private static final Color NORMAL = Color.LIGHT_GRAY;
   private static final Color ADDENDUM = Color.GRAY;
-  
+
   private static final DrcIcon NoDRC = new DrcIcon(false);
   private static final DrcIcon DRCError = new DrcIcon(true);
 
@@ -67,7 +67,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     if (value instanceof SimpleDRCContainer) {
       msg = (SimpleDRCContainer) value;
     }
-    setIcon((msg != null && msg.DRCInfoPresent())?DRCError : NoDRC);
+    setIcon((msg != null && msg.DRCInfoPresent()) ? DRCError : NoDRC);
     if (msg != null) {
       switch (msg.Severity()) {
         case SimpleDRCContainer.LEVEL_SEVERE:

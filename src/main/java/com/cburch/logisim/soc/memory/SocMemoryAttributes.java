@@ -46,22 +46,25 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   private static class SocMemoryStateAttribute extends Attribute<SocMemoryState> {
 
     @Override
-    public SocMemoryState parse(String value) { return null; }
-    
-    @Override
-    public boolean isHidden() {return true;}
+    public SocMemoryState parse(String value) {
+      return null;
+    }
 
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
   }
 
   public static final Attribute<SocMemoryState> SOCMEM_STATE = new SocMemoryStateAttribute();
   public static final Attribute<Integer> START_ADDRESS = Attributes.forHexInteger("StartAddress", S.getter("SocMemStartAddress"));
   public static final Attribute<BitWidth> MEM_SIZE = Attributes.forBitWidth("MemSize", S.getter("SocMemSize"), 10, 26);
-  
+
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
   private SocMemoryState memState = new SocMemoryState();
   private BitWidth memSize = BitWidth.create(10);
-  
+
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
           START_ADDRESS,
@@ -93,21 +96,21 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-	if (attr == START_ADDRESS) return (V) memState.getStartAddress();
-	if (attr == MEM_SIZE) return (V) memSize;
-	if (attr == StdAttr.LABEL) return (V) memState.getLabel();
-	if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
-	if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
-	if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V) memState.getSocBusInfo();
-	if (attr == SOCMEM_STATE) return (V) memState;
+    if (attr == START_ADDRESS) return (V) memState.getStartAddress();
+    if (attr == MEM_SIZE) return (V) memSize;
+    if (attr == StdAttr.LABEL) return (V) memState.getLabel();
+    if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
+    if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V) memState.getSocBusInfo();
+    if (attr == SOCMEM_STATE) return (V) memState;
     return null;
   }
-  
+
   @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return attr == SOCMEM_STATE;
   }
-  
+
   @Override
   public boolean isToSave(Attribute<?> attr) {
     return attr != SOCMEM_STATE;
@@ -115,10 +118,10 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-	V oldValue = getValue(attr);
+    V oldValue = getValue(attr);
     if (attr == START_ADDRESS) {
       if (memState.setStartAddress((Integer) value))
-    	fireAttributeValueChanged(attr, value, oldValue);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == MEM_SIZE) {
@@ -158,5 +161,4 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
       return;
     }
   }
-
 }

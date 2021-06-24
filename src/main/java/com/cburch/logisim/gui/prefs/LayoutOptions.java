@@ -107,16 +107,20 @@ class LayoutOptions extends OptionsPanel {
             });
 
     // How connection pins should be drawn like
-    PrefPinAppearance = new PrefOptionList(
-      AppPreferences.PinAppearance,
-        S.getter("layoutPinAppearance"),
+    PrefPinAppearance =
+        new PrefOptionList(
+            AppPreferences.PinAppearance,
+            S.getter("layoutPinAppearance"),
             new PrefOption[] {
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
             });
-
 
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(DefaultAppear.getJLabel());

@@ -66,8 +66,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public AttributeSet createAttributeSet() {
     return AttributeSets.EMPTY;
   }
-  
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {}
+
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {}
 
   public abstract Component createComponent(Location loc, AttributeSet attrs);
 
@@ -161,7 +161,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public boolean RequiresGlobalClock() {
     return false;
   }
-  
+
   public boolean isSocComponent() {
     return false;
   }
