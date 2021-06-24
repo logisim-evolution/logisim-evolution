@@ -168,8 +168,8 @@ public class TruthtableTextFile {
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
       throws IOException {
-    String[] s = line.split("\\s+");
-    VariableList cur = inputs;
+    var s = line.split("\\s+");
+    var cur = inputs;
     for (String value : s) {
       if (value.equals("|")) {
         if (cur == inputs)
@@ -182,12 +182,13 @@ public class TruthtableTextFile {
       if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(value, 1));
       } else {
-        Matcher m = NAME_FORMAT.matcher(value);
+        var m = NAME_FORMAT.matcher(value);
         if (!m.matches())
           throw new IOException(
               String.format("Line %d: Invalid variable name '%s'.", lineno, value));
-        String n = m.group(1);
-        int a, b;
+        var n = m.group(1);
+        int a;
+        int b;
         try {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));

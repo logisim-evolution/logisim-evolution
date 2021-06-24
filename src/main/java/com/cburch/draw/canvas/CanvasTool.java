@@ -34,7 +34,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public abstract class CanvasTool {
-  /** This is because a popup menu may result from the subsequent mouse release */
+  /** This is because a popup menu may result from the subsequent mouse release. */
   public void cancelMousePress(Canvas canvas) {}
 
   public void draw(Canvas canvas, Graphics g) {}

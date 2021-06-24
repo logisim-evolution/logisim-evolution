@@ -52,51 +52,48 @@ public class TruthtableCsvFile {
   public static final char DEFAULT_QUOTE = '"';
 
   public static void doSave(File file, AnalyzerModel model) throws IOException {
-    VariableList inputs = model.getInputs();
-    VariableList outputs = model.getOutputs();
+    var inputs = model.getInputs();
+    var outputs = model.getOutputs();
     if (inputs.vars.isEmpty() || outputs.vars.isEmpty()) return;
     try (PrintStream out = new PrintStream(file)) {
-      TruthTable tt = model.getTruthTable();
+      var tt = model.getTruthTable();
       tt.compactVisibleRows();
       for (int i = 0; i < inputs.vars.size(); i++) {
-        Var cur = inputs.vars.get(i);
-        String Name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
-        out.print(DEFAULT_QUOTE + Name + DEFAULT_QUOTE + DEFAULT_SEPARATOR);
-        for (int j = 1; j < cur.width; j++)
-          out.print(DEFAULT_SEPARATOR);
+        var cur = inputs.vars.get(i);
+        var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
+        out.print(DEFAULT_QUOTE + name + DEFAULT_QUOTE + DEFAULT_SEPARATOR);
+        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
       }
       out.print(DEFAULT_QUOTE + "|" + DEFAULT_QUOTE);
       for (int i = 0; i < outputs.vars.size(); i++) {
         out.print(DEFAULT_SEPARATOR);
         Var cur = outputs.vars.get(i);
-        String Name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
-        out.print(DEFAULT_QUOTE + Name + DEFAULT_QUOTE);
-        for (int j = 1; j < cur.width; j++)
-          out.print(DEFAULT_SEPARATOR);
+        var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
+        out.print(DEFAULT_QUOTE + name + DEFAULT_QUOTE);
+        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
       }
       out.println();
       for (int row = 0; row < tt.getVisibleRowCount(); row++) {
         for (int i = 0; i < inputs.bits.size(); i++) {
-          Entry e = tt.getVisibleInputEntry(row, i);
-          out.print(e.getDescription() + DEFAULT_SEPARATOR);
+          var entry = tt.getVisibleInputEntry(row, i);
+          out.print(entry.getDescription() + DEFAULT_SEPARATOR);
         }
         out.print(DEFAULT_QUOTE + "|" + DEFAULT_QUOTE);
         for (int i = 0; i < outputs.bits.size(); i++) {
           out.print(DEFAULT_SEPARATOR);
-          Entry e = tt.getVisibleOutputEntry(row, i);
-          out.print(e.getDescription());
+          var entry = tt.getVisibleOutputEntry(row, i);
+          out.print(entry.getDescription());
         }
         out.println();
       }
     }
   }
 
-  public static void doLoad(File file, AnalyzerModel model, JFrame parentFrame)
-      throws IOException {
-    CsvParameter param = new CsvParameter();
+  public static void doLoad(File file, AnalyzerModel model, JFrame parentFrame) throws IOException {
+    final var param = new CsvParameter();
     new CsvReadParameterDialog(param, file, parentFrame);
     if (!param.isValid()) return;
-    CsvInterpretor cin = new CsvInterpretor(file, param, parentFrame);
+    var cin = new CsvInterpretor(file, param, parentFrame);
     cin.getTruthTable(model);
   }
 }

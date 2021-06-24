@@ -153,8 +153,8 @@ abstract class RectangularTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    Location loc = Location.create(e.getX(), e.getY());
-    Bounds bds = Bounds.create(loc);
+    final var loc = Location.create(e.getX(), e.getY());
+    final var bds = Bounds.create(loc);
     dragStart = loc;
     lastMouseX = loc.getX();
     lastMouseY = loc.getY();

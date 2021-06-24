@@ -91,7 +91,7 @@ public class KMapGroups {
       return false;
     }
 
-    public boolean Merge(int col, int row) {
+    public boolean merge(int col, int row) {
       if (!canMerge(col, row)) return false;
       // let's look where to merge:
       if (col >= startCol && col < (startCol + width)) {
@@ -109,14 +109,14 @@ public class KMapGroups {
   }
 
   public class KMapGroupInfo {
-    private final ArrayList<CoverInfo> Areas;
+    private final ArrayList<CoverInfo> areas;
     private final Color color;
     private final ArrayList<Implicant> singleCoveredImplicants;
     private final Expression expression;
 
     public KMapGroupInfo(Implicant imp, Color col) {
       this.color = col;
-      Areas = new ArrayList<>();
+      areas = new ArrayList<>();
       singleCoveredImplicants = new ArrayList<>();
       List<Implicant> one = new ArrayList<>();
       one.add(imp);
@@ -125,7 +125,7 @@ public class KMapGroups {
     }
 
     public ArrayList<CoverInfo> getAreas() {
-      return Areas;
+      return areas;
     }
 
     public Color getColor() {
@@ -155,7 +155,7 @@ public class KMapGroups {
       else if (colored)
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
       else g.setColor(new Color(128, 128, 128, 128));
-      for (CoverInfo cover : Areas) {
+      for (CoverInfo cover : areas) {
         g.fillRoundRect(
             x + cover.getCol() * cellWidth + IMP_INSET,
             y + cover.getRow() * cellHeight + IMP_INSET,
@@ -219,15 +219,15 @@ public class KMapGroups {
           if (imps[row][col]) {
             // we have a candidate
             if (current != null) {
-              if (current.Merge(col, row)) {
+              if (current.merge(col, row)) {
                 continue;
               }
-              if (!Areas.contains(current)) Areas.add(current);
+              if (!areas.contains(current)) areas.add(current);
             }
             // can we merge with an existing ?
             boolean found = false;
-            for (CoverInfo area : Areas) {
-              if (!found && area.Merge(col, row)) {
+            for (CoverInfo area : areas) {
+              if (!found && area.merge(col, row)) {
                 current = area;
                 found = true;
               }
@@ -237,11 +237,11 @@ public class KMapGroups {
             }
           } else {
             // no candidate
-            if (current != null && !Areas.contains(current)) Areas.add(current);
+            if (current != null && !areas.contains(current)) areas.add(current);
             current = null;
           }
         }
-      if (current != null && !Areas.contains(current)) Areas.add(current);
+      if (current != null && !areas.contains(current)) areas.add(current);
     }
   }
 
@@ -262,7 +262,7 @@ public class KMapGroups {
     this.format = format;
     update();
   }
-  
+
   public ArrayList<KMapGroupInfo> getCovers() {
     return covers;
   }
@@ -287,12 +287,12 @@ public class KMapGroups {
     return ret;
   }
 
-  public Expression GetHighlightedExpression() {
+  public Expression getHighlightedExpression() {
     if (highlighted < 0 || highlighted >= covers.size()) return null;
     return covers.get(highlighted).expression;
   }
 
-  public Color GetBackgroundColor() {
+  public Color getBackgroundColor() {
     if (highlighted < 0 || highlighted >= covers.size()) return null;
     Color col = covers.get(highlighted).color;
     return new Color(col.getRed(), col.getGreen(), col.getBlue(), 60);
