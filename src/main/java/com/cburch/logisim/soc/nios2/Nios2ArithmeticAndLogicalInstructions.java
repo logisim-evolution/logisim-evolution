@@ -128,66 +128,87 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       operation = INSTR_ADDI;
     }
     switch (operation) {
-      case INSTR_MOVIA    : result = immediate;
-                            break;
-      case INSTR_ANDHI    : result = valueA & imm;
-                            break;
-      case INSTR_ANDI     : valueB = immediate;
-                            // fall through
-      case INSTR_AND      : result = valueA & valueB;
-                            break;
-      case INSTR_MOVHI    :
-      case INSTR_ORHI     : result = valueA | imm;
-                            break;
-      case INSTR_MOVUI    :
-      case INSTR_ORI      : valueB = immediate;
-                            // fall through
-      case INSTR_OR       : result = valueA | valueB;
-                            break;
-      case INSTR_NOR      : result = valueA | valueB;
-                            result ^= -1;
-                            break;
-      case INSTR_XORHI    : result = valueA ^ imm;
-                            break;
-      case INSTR_XORI     : valueB = immediate;
-                            // fall through
-      case INSTR_XOR      : result = valueA ^ valueB;
-                            break;
-      case INSTR_MOVI     :
-      case INSTR_ADDI     : valueB = imm >> 16;
-                            // fall through
-      case INSTR_MOV      :
-      case INSTR_NOP      :
-      case INSTR_ADD      : result = valueA + valueB;
-                            break;
-      case INSTR_SUB      : result = valueA - valueB;
-                            break;
-      case INSTR_MULI     : valueB = imm >> 16;
-                            // fall through
-      case INSTR_MULXSS   :
-      case INSTR_MUL      : long oppA = valueA;
-                            long oppB = valueB;
-                            long res = oppA * oppB;
-                            result = SocSupport.convUnsignedLong(operation == INSTR_MUL ? res : res >> 32);
-                            break;
-      case INSTR_DIV      : result = valueA / valueB;
-                            break;
-      case INSTR_DIVU     : long opA = SocSupport.convUnsignedInt(valueA);
-                            long opB = SocSupport.convUnsignedInt(valueB);
-                            long div = opA / opB;
-                            result = SocSupport.convUnsignedLong(div);
-                            break;
-      case INSTR_MULXUU   : oppA = SocSupport.convUnsignedInt(valueA);
-                            oppB = SocSupport.convUnsignedInt(valueB);
-                            res = oppA * oppB;
-                            result = SocSupport.convUnsignedLong(res >> 32);
-                            break;
-      case INSTR_MULXSU   : oppA = valueA;
-                            oppB = SocSupport.convUnsignedInt(valueB);
-                            res = oppA * oppB;
-                            result = SocSupport.convUnsignedLong(res >> 32);
-                            break;
-      default             : return false;
+      case INSTR_MOVIA:
+        result = immediate;
+        break;
+      case INSTR_ANDHI:
+        result = valueA & imm;
+        break;
+      case INSTR_ANDI:
+        valueB = immediate;
+        // fall through
+      case INSTR_AND:
+        result = valueA & valueB;
+        break;
+      case INSTR_MOVHI:
+      case INSTR_ORHI:
+        result = valueA | imm;
+        break;
+      case INSTR_MOVUI:
+      case INSTR_ORI:
+        valueB = immediate;
+        // fall through
+      case INSTR_OR:
+        result = valueA | valueB;
+        break;
+      case INSTR_NOR:
+        result = valueA | valueB;
+        result ^= -1;
+        break;
+      case INSTR_XORHI:
+        result = valueA ^ imm;
+        break;
+      case INSTR_XORI:
+        valueB = immediate;
+        // fall through
+      case INSTR_XOR:
+        result = valueA ^ valueB;
+        break;
+      case INSTR_MOVI:
+      case INSTR_ADDI:
+        valueB = imm >> 16;
+        // fall through
+      case INSTR_MOV:
+      case INSTR_NOP:
+      case INSTR_ADD:
+        result = valueA + valueB;
+        break;
+      case INSTR_SUB:
+        result = valueA - valueB;
+        break;
+      case INSTR_MULI:
+        valueB = imm >> 16;
+        // fall through
+      case INSTR_MULXSS:
+      case INSTR_MUL:
+        long oppA = valueA;
+        long oppB = valueB;
+        long res = oppA * oppB;
+        result = SocSupport.convUnsignedLong(operation == INSTR_MUL ? res : res >> 32);
+        break;
+      case INSTR_DIV:
+        result = valueA / valueB;
+        break;
+      case INSTR_DIVU:
+        long opA = SocSupport.convUnsignedInt(valueA);
+        long opB = SocSupport.convUnsignedInt(valueB);
+        long div = opA / opB;
+        result = SocSupport.convUnsignedLong(div);
+        break;
+      case INSTR_MULXUU:
+        oppA = SocSupport.convUnsignedInt(valueA);
+        oppB = SocSupport.convUnsignedInt(valueB);
+        res = oppA * oppB;
+        result = SocSupport.convUnsignedLong(res >> 32);
+        break;
+      case INSTR_MULXSU:
+        oppA = valueA;
+        oppB = SocSupport.convUnsignedInt(valueB);
+        res = oppA * oppB;
+        result = SocSupport.convUnsignedLong(res >> 32);
+        break;
+      default:
+        return false;
     }
     state.writeRegister(destination, result);
     return true;
@@ -309,21 +330,24 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       immediate = param2[0].getNumberValue();
       sourceA = sourceB = 0;
       switch (operation) {
-        case INSTR_MOVUI :
-        case INSTR_MOVHI : if (immediate >= (1 << 16) || immediate < 0) {
-                         valid = false;
-                         instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
-                           }
-                           operation = operation == INSTR_MOVHI ? INSTR_ORHI : INSTR_ORI;
-                           break;
-        case INSTR_MOVI  : if (immediate >= (1 << 15) || immediate < -(1 << 15)) {
-                             valid = false;
-                             instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
-                           }
-                           operation = INSTR_ADDI;
-                           break;
-        default          : valid = false;
-                           return false;
+        case INSTR_MOVUI:
+        case INSTR_MOVHI:
+          if (immediate >= (1 << 16) || immediate < 0) {
+            valid = false;
+            instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
+          }
+          operation = operation == INSTR_MOVHI ? INSTR_ORHI : INSTR_ORI;
+          break;
+        case INSTR_MOVI:
+          if (immediate >= (1 << 15) || immediate < -(1 << 15)) {
+            valid = false;
+            instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
+          }
+          operation = INSTR_ADDI;
+          break;
+        default:
+          valid = false;
+          return false;
       }
       if (valid) {
         instruction =

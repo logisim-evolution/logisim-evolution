@@ -95,65 +95,75 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     int toBeStored = cpuState.getRegisterValue(destination);
     int transType = -1;
     switch (operation) {
-      case INSTR_STBIO  :
-      case INSTR_STB    : toBeStored &= 0xFF;
-                          transType = SocBusTransaction.ByteAccess;
-                          // fall through
-      case INSTR_STHIO  :
-      case INSTR_STH    : toBeStored &= 0xFFFF;
-                          if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
-                          // fall through
-      case INSTR_STWIO  :
-      case INSTR_STW    : if (transType < 0) transType = SocBusTransaction.WordAccess;
-                          SocBusTransaction trans =
-                              new SocBusTransaction(
-                                  SocBusTransaction.WRITETransaction,
-                                  SocSupport.convUnsignedLong(address),
-                                  toBeStored,
-                                  transType,
-                                  cpuState.getMasterComponent());
-                          cpuState.insertTransaction(trans, false, circuitState);
-                          return !transactionHasError(trans);
-      case INSTR_LDB    :
-      case INSTR_LDBIO  :
-      case INSTR_LDBU   :
-      case INSTR_LDBUIO : transType = SocBusTransaction.ByteAccess;
-                          // fall through
-      case INSTR_LDH    :
-      case INSTR_LDHIO  :
-      case INSTR_LDHU   :
-      case INSTR_LDHUIO : if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
-                          // fall through
-      case INSTR_LDW    :
-      case INSTR_LDWIO  : if (transType < 0) transType = SocBusTransaction.WordAccess;
-                          trans =
-                              new SocBusTransaction(
-                                  SocBusTransaction.READTransaction,
-                                  SocSupport.convUnsignedLong(address),
-                                  0,
-                                  transType,
-                                  cpuState.getMasterComponent());
-                          cpuState.insertTransaction(trans, false, circuitState);
-                          if (transactionHasError(trans)) return false;
-                          int toBeLoaded = trans.getReadData();
-                          switch (operation) {
-                            case INSTR_LDBU    :
-                            case INSTR_LDBUIO  : toBeLoaded &= 0xFF;
-                                                 break;
-                            case INSTR_LDB     :
-                            case INSTR_LDBIO   : toBeLoaded <<= 24;
-                                                 toBeLoaded >>= 24;
-                                                 break;
-                            case INSTR_LDHU    :
-                            case INSTR_LDHUIO  : toBeLoaded &= 0xFFFF;
-                                                 break;
-                            case INSTR_LDH     :
-                            case INSTR_LDHIO   : toBeLoaded <<= 16;
-                                                 toBeLoaded >>= 16;
-                                                 break;
-                          }
-                          cpuState.writeRegister(destination, toBeLoaded);
-                          return true;
+      case INSTR_STBIO:
+      case INSTR_STB:
+        toBeStored &= 0xFF;
+        transType = SocBusTransaction.ByteAccess;
+        // fall through
+      case INSTR_STHIO:
+      case INSTR_STH:
+        toBeStored &= 0xFFFF;
+        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        // fall through
+      case INSTR_STWIO:
+      case INSTR_STW:
+        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        SocBusTransaction trans =
+            new SocBusTransaction(
+                SocBusTransaction.WRITETransaction,
+                SocSupport.convUnsignedLong(address),
+                toBeStored,
+                transType,
+                cpuState.getMasterComponent());
+        cpuState.insertTransaction(trans, false, circuitState);
+        return !transactionHasError(trans);
+      case INSTR_LDB:
+      case INSTR_LDBIO:
+      case INSTR_LDBU:
+      case INSTR_LDBUIO:
+        transType = SocBusTransaction.ByteAccess;
+        // fall through
+      case INSTR_LDH:
+      case INSTR_LDHIO:
+      case INSTR_LDHU:
+      case INSTR_LDHUIO:
+        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        // fall through
+      case INSTR_LDW:
+      case INSTR_LDWIO:
+        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        trans =
+            new SocBusTransaction(
+                SocBusTransaction.READTransaction,
+                SocSupport.convUnsignedLong(address),
+                0,
+                transType,
+                cpuState.getMasterComponent());
+        cpuState.insertTransaction(trans, false, circuitState);
+        if (transactionHasError(trans)) return false;
+        int toBeLoaded = trans.getReadData();
+        switch (operation) {
+          case INSTR_LDBU:
+          case INSTR_LDBUIO:
+            toBeLoaded &= 0xFF;
+            break;
+          case INSTR_LDB:
+          case INSTR_LDBIO:
+            toBeLoaded <<= 24;
+            toBeLoaded >>= 24;
+            break;
+          case INSTR_LDHU:
+          case INSTR_LDHUIO:
+            toBeLoaded &= 0xFFFF;
+            break;
+          case INSTR_LDH:
+          case INSTR_LDHIO:
+            toBeLoaded <<= 16;
+            toBeLoaded >>= 16;
+            break;
+        }
+        cpuState.writeRegister(destination, toBeLoaded);
+        return true;
     }
     return false;
   }

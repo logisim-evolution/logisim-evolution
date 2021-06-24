@@ -82,30 +82,41 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     int opp2 = cpuState.getRegisterValue(source2);
     int result = 0;
     switch (operation) {
-      case INSTR_ADD  : result = opp1 + opp2;
-                        break;
-      case INSTR_SUB  : result = opp1 - opp2;
-                        break;
-      case INSTR_SLL  : result = opp1 << (opp2&0x1F);
-                        break;
-      case INSTR_SLT  : result = (opp1 < opp2) ? 1 : 0;
-                        break;
-      case INSTR_SNEZ :
-      case INSTR_SLTU : result = (ElfHeader.getLongValue(opp1)<ElfHeader.getLongValue(opp2)) ? 1 : 0;
-                        break;
-      case INSTR_XOR  : result = opp1 ^ opp2;
-                        break;
-      case INSTR_SRL  : long val1 = ElfHeader.getLongValue(opp1);
-                        val1 >>= (opp2&0x1F);
-                        result = ElfHeader.getIntValue(val1);
-                        break;
-      case INSTR_OR   : result = opp1 | opp2;
-                        break;
-      case INSTR_AND  : result = opp1 & opp2;
-                        break;
-      case INSTR_SRA  : result = opp1 >> (opp2&0x1F);
-                        break;
-      default         : return false;
+      case INSTR_ADD:
+        result = opp1 + opp2;
+        break;
+      case INSTR_SUB:
+        result = opp1 - opp2;
+        break;
+      case INSTR_SLL:
+        result = opp1 << (opp2 & 0x1F);
+        break;
+      case INSTR_SLT:
+        result = (opp1 < opp2) ? 1 : 0;
+        break;
+      case INSTR_SNEZ:
+      case INSTR_SLTU:
+        result = (ElfHeader.getLongValue(opp1) < ElfHeader.getLongValue(opp2)) ? 1 : 0;
+        break;
+      case INSTR_XOR:
+        result = opp1 ^ opp2;
+        break;
+      case INSTR_SRL:
+        long val1 = ElfHeader.getLongValue(opp1);
+        val1 >>= (opp2 & 0x1F);
+        result = ElfHeader.getIntValue(val1);
+        break;
+      case INSTR_OR:
+        result = opp1 | opp2;
+        break;
+      case INSTR_AND:
+        result = opp1 & opp2;
+        break;
+      case INSTR_SRA:
+        result = opp1 >> (opp2 & 0x1F);
+        break;
+      default:
+        return false;
     }
     cpuState.writeRegister(destination, result);
     return true;
@@ -116,7 +127,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       return "Unknown";
     StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
-    while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
+    while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     s.append(RV32im_state.registerABINames[destination]).append(",")
         .append((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1] + ",")
@@ -143,36 +154,39 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   }
 
   private boolean decodeBin() {
-    if (RV32imSupport.getOpcode(instruction)!= OP)
+    if (RV32imSupport.getOpcode(instruction) != OP)
       return false;
+
     int funct7 = RV32imSupport.getFunct7(instruction);
     int funct3 = RV32imSupport.getFunct3(instruction);
     destination = RV32imSupport.getDestinationRegisterIndex(instruction);
     source1 = RV32imSupport.getSourceRegister1Index(instruction);
     source2 = RV32imSupport.getSourceRegister2Index(instruction);
     switch (funct3) {
-       case ADD_SUB : if (funct7 == 0) {
-                        operation = INSTR_ADD;
-                        break;
-                      }
-                      if (funct7 == 0x20) {
-                        operation = INSTR_SUB;
-                        break;
-                      }
-                      return false;
-       case SRL_SRA : if (funct7 == 0) {
-                        operation = INSTR_SRL;
-                        break;
-                      }
-                      if (funct7 == 0x20) {
-                        operation = INSTR_SRA;
-                        break;
-                      }
-                      return false;
-       default      : if (funct7 != 0)
-                        return false;
-                      operation = funct3;
-                      break;
+      case ADD_SUB:
+        if (funct7 == 0) {
+          operation = INSTR_ADD;
+          break;
+        }
+        if (funct7 == 0x20) {
+          operation = INSTR_SUB;
+          break;
+        }
+        return false;
+      case SRL_SRA:
+        if (funct7 == 0) {
+          operation = INSTR_SRL;
+          break;
+        }
+        if (funct7 == 0x20) {
+          operation = INSTR_SRA;
+          break;
+        }
+        return false;
+      default:
+        if (funct7 != 0) return false;
+        operation = funct3;
+        break;
     }
     if (operation == INSTR_SLTU && source1 == 0)
       operation = INSTR_SNEZ;

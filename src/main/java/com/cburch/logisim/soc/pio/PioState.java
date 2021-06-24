@@ -414,23 +414,28 @@ public class PioState implements SocBusSlaveInterface {
       return;
     }
     switch (index) {
-      case DATA_REG_INDEX  : if (trans.isWriteTransaction())
-                               handleOutputWriteTransaction(trans);
-                             if (trans.isReadTransaction())
-                               handleInputReadTransaction(trans);
-                             break;
-      case DIR_REG_INDEX   : handleDirectionRegister(trans);
-                             break;
-      case IRQ_MASK_INDEX  : handleIrqMaskRegister(trans);
-                             break;
-      case EDGE_CAPT_INDEX : handleCaptureRegister(trans);
-                             break;
-      case OUT_SET_INDEX   : handleOutputBitOperation(trans,false);
-                             break;
-      case OUT_CLEAR_INDEX : handleOutputBitOperation(trans,true);
-                             break;
-      default              : trans.setError(SocBusTransaction.MisalignedAddressError);
-                             break;
+      case DATA_REG_INDEX:
+        if (trans.isWriteTransaction()) handleOutputWriteTransaction(trans);
+        if (trans.isReadTransaction()) handleInputReadTransaction(trans);
+        break;
+      case DIR_REG_INDEX:
+        handleDirectionRegister(trans);
+        break;
+      case IRQ_MASK_INDEX:
+        handleIrqMaskRegister(trans);
+        break;
+      case EDGE_CAPT_INDEX:
+        handleCaptureRegister(trans);
+        break;
+      case OUT_SET_INDEX:
+        handleOutputBitOperation(trans, false);
+        break;
+      case OUT_CLEAR_INDEX:
+        handleOutputBitOperation(trans, true);
+        break;
+      default:
+        trans.setError(SocBusTransaction.MisalignedAddressError);
+        break;
     }
   }
 
@@ -451,7 +456,8 @@ public class PioState implements SocBusSlaveInterface {
     String name = label;
     if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = attachedBus.getComponent().getFactory().getDisplayName()
+              + "@" + loc.getX() + "," + loc.getY();
     }
     return name;
   }

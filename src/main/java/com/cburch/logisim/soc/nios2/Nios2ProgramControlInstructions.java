@@ -110,55 +110,68 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     int imm = ((immediate << 16) >> 16);
     long target = nextpc + imm;
     switch (operation) {
-      case INSTR_CALLR  : jumped = true;
-                          cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
-                          cpuState.setProgramCounter(valueA);
-                          break;
-      case INSTR_RET    : jumped = true;
-                          cpuState.setProgramCounter(cpuState.getRegisterValue(31));
-                          break;
-      case INSTR_JMP    : jumped = true;
-                          cpuState.setProgramCounter(valueA);
-                          break;
-      case INSTR_CALL   : cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
-                          // fall through
-      case INSTR_JMPI   : jumped = true;
-                          cpuState.setProgramCounter(immediate << 2);
-                          break;
-      case INSTR_BR     : jumped = true;
-                          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          break;
-      case INSTR_BGE    : if (valueA >= valueB) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      case INSTR_BGEU   : if (valueAu >= valueBu) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      case INSTR_BLT    : if (valueA < valueB) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      case INSTR_BLTU   : if (valueAu < valueBu) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      case INSTR_BEQ    : if (valueA == valueB) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      case INSTR_BNE    : if (valueA != valueB) {
-                            jumped = true;
-                            cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
-                          }
-                          break;
-      default           : return false;
+      case INSTR_CALLR:
+        jumped = true;
+        cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
+        cpuState.setProgramCounter(valueA);
+        break;
+      case INSTR_RET:
+        jumped = true;
+        cpuState.setProgramCounter(cpuState.getRegisterValue(31));
+        break;
+      case INSTR_JMP:
+        jumped = true;
+        cpuState.setProgramCounter(valueA);
+        break;
+      case INSTR_CALL:
+        cpuState.writeRegister(31, SocSupport.convUnsignedLong(nextpc));
+        // fall through
+      case INSTR_JMPI:
+        jumped = true;
+        cpuState.setProgramCounter(immediate << 2);
+        break;
+      case INSTR_BR:
+        jumped = true;
+        cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        break;
+      case INSTR_BGE:
+        if (valueA >= valueB) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      case INSTR_BGEU:
+        if (valueAu >= valueBu) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      case INSTR_BLT:
+        if (valueA < valueB) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      case INSTR_BLTU:
+        if (valueAu < valueBu) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      case INSTR_BEQ:
+        if (valueA == valueB) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      case INSTR_BNE:
+        if (valueA != valueB) {
+          jumped = true;
+          cpuState.setProgramCounter(SocSupport.convUnsignedLong(target));
+        }
+        break;
+      default:
+        return false;
     }
     return true;
   }
@@ -170,19 +183,24 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     int imm = ((immediate << 16) >> 16) + 4;
     switch (operation) {
-      case INSTR_RET     : break;
-      case INSTR_CALLR   :
-      case INSTR_JMP     : s.append(Nios2State.registerABINames[sourceA]);
-                           break;
-      case INSTR_JMPI    :
-      case INSTR_CALL    : s.append((immediate << 2));
-                           break;
-      case INSTR_BR      : s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
-                           break;
-      default            : s.append(Nios2State.registerABINames[sourceA]).append(",");
-                           s.append(Nios2State.registerABINames[sourceB]).append(",");
-                           s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
-                           break;
+      case INSTR_RET:
+        break;
+      case INSTR_CALLR:
+      case INSTR_JMP:
+        s.append(Nios2State.registerABINames[sourceA]);
+        break;
+      case INSTR_JMPI:
+      case INSTR_CALL:
+        s.append((immediate << 2));
+        break;
+      case INSTR_BR:
+        s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
+        break;
+      default:
+        s.append(Nios2State.registerABINames[sourceA]).append(",");
+        s.append(Nios2State.registerABINames[sourceB]).append(",");
+        s.append("pc").append(imm >= 0 ? "+" : "").append(imm);
+        break;
     }
     return s.toString();
   }
@@ -198,99 +216,108 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     valid = true;
     long pc = instr.getProgramCounter();
     switch (operation) {
-      case INSTR_JMP   :
-      case INSTR_CALLR : if (instr.getNrOfParameters() != 1) {
-                           valid = false;
-                           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
-                           return true;
-                         }
-                         valid &= Nios2Support.isCorrectRegister(instr, 0);
-                         sourceA = sourceB = Nios2Support.getRegisterIndex(instr, 0);
-                         immediate = 0;
-                         break;
-      case INSTR_RET   : if (instr.getNrOfParameters() != 0) {
-                           valid = false;
-                           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
-                           return true;
-                         }
-                         break;
-      case INSTR_CALL  :
-      case INSTR_JMPI  : if (instr.getNrOfParameters() != 1) {
-                           valid = false;
-                           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
-                           return true;
-                         }
-                         AssemblerToken[] imm = instr.getParameter(0);
-                         if (imm.length != 1 || !imm[0].isNumber()) {
-                           valid = false;
-                           instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
-                         } else {
-                           sourceA = sourceB = 0;
-                           immediate = imm[0].getNumberValue() >> 2;
-                           if (immediate >= (1 << 26) || immediate < 0) {
-                             valid = false;
-                             instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
-                           }
-                         }
-                         break;
-      case INSTR_BR    : if (instr.getNrOfParameters() != 1) {
-                           valid = false;
-                           instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
-                           return true;
-                         }
-                         imm = instr.getParameter(0);
-                         if (imm.length != 1 || !imm[0].isNumber()) {
-                           valid = false;
-                           instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
-                         } else {
-                           sourceA = sourceB = 0;
-                           long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-                           long imml = pc-target-4L;
-                           if (imml >= (1L << 15) || imml < -(1L << 15)) {
-                             valid = false;
-                             instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
-                           }
-                           immediate = (int)imml;
-                         }
-                         break;
-      default          : if (instr.getNrOfParameters() != 3) {
-    	                   valid = false;
-    	                   instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
-    	                   return true;
-                         }
-                         valid &= Nios2Support.isCorrectRegister(instr, 0);
-                         valid &= Nios2Support.isCorrectRegister(instr, 1);
-                         sourceA = Nios2Support.getRegisterIndex(instr, 0);
-                         sourceB = Nios2Support.getRegisterIndex(instr, 1);
-                         imm = instr.getParameter(2);
-                         if (imm.length != 1 || !imm[0].isNumber()) {
-                           valid = false;
-                           instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
-                         }
-                         long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
-                         long imml = pc - target - 4L;
-                         if (imml >= (1L << 15) || imml < -(1L << 15)) {
-                           valid = false;
-                           instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
-                         }
-                         immediate = (int) imml;
-                         break;
+      case INSTR_JMP:
+      case INSTR_CALLR:
+        if (instr.getNrOfParameters() != 1) {
+          valid = false;
+          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
+          return true;
+        }
+        valid &= Nios2Support.isCorrectRegister(instr, 0);
+        sourceA = sourceB = Nios2Support.getRegisterIndex(instr, 0);
+        immediate = 0;
+        break;
+      case INSTR_RET:
+        if (instr.getNrOfParameters() != 0) {
+          valid = false;
+          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
+          return true;
+        }
+        break;
+      case INSTR_CALL:
+      case INSTR_JMPI:
+        if (instr.getNrOfParameters() != 1) {
+          valid = false;
+          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
+          return true;
+        }
+        AssemblerToken[] imm = instr.getParameter(0);
+        if (imm.length != 1 || !imm[0].isNumber()) {
+          valid = false;
+          instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
+        } else {
+          sourceA = sourceB = 0;
+          immediate = imm[0].getNumberValue() >> 2;
+          if (immediate >= (1 << 26) || immediate < 0) {
+            valid = false;
+            instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
+          }
+        }
+        break;
+      case INSTR_BR:
+        if (instr.getNrOfParameters() != 1) {
+          valid = false;
+          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
+          return true;
+        }
+        imm = instr.getParameter(0);
+        if (imm.length != 1 || !imm[0].isNumber()) {
+          valid = false;
+          instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
+        } else {
+          sourceA = sourceB = 0;
+          long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
+          long imml = pc - target - 4L;
+          if (imml >= (1L << 15) || imml < -(1L << 15)) {
+            valid = false;
+            instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
+          }
+          immediate = (int) imml;
+        }
+        break;
+      default:
+        if (instr.getNrOfParameters() != 3) {
+          valid = false;
+          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
+          return true;
+        }
+        valid &= Nios2Support.isCorrectRegister(instr, 0);
+        valid &= Nios2Support.isCorrectRegister(instr, 1);
+        sourceA = Nios2Support.getRegisterIndex(instr, 0);
+        sourceB = Nios2Support.getRegisterIndex(instr, 1);
+        imm = instr.getParameter(2);
+        if (imm.length != 1 || !imm[0].isNumber()) {
+          valid = false;
+          instr.setError(imm[0], S.getter("AssemblerExpextedImmediateOrLabel"));
+        }
+        long target = SocSupport.convUnsignedInt(imm[0].getNumberValue());
+        long imml = pc - target - 4L;
+        if (imml >= (1L << 15) || imml < -(1L << 15)) {
+          valid = false;
+          instr.setError(imm[0], S.getter("AssemblerImmediateOutOfRange"));
+        }
+        immediate = (int) imml;
+        break;
     }
     /* transform the pseudo instructions */
     boolean switchab = false;
     switch (operation) {
-      case INSTR_BGT  : operation = INSTR_BLT;
-                        switchab = true;
-                        break;
-      case INSTR_BGTU : operation = INSTR_BLTU;
-                        switchab = true;
-                        break;
-      case INSTR_BLE  : operation = INSTR_BGE;
-                        switchab = true;
-                        break;
-      case INSTR_BLEU : operation = INSTR_BGEU;
-                        switchab = true;
-                        break;
+      case INSTR_BGT:
+        operation = INSTR_BLT;
+        switchab = true;
+        break;
+      case INSTR_BGTU:
+        operation = INSTR_BLTU;
+        switchab = true;
+        break;
+      case INSTR_BLE:
+        operation = INSTR_BGE;
+        switchab = true;
+        break;
+      case INSTR_BLEU:
+        operation = INSTR_BGEU;
+        switchab = true;
+        break;
     }
     if (switchab) {
       int tmp = sourceA;
