@@ -38,13 +38,13 @@ public class LogMenuListener extends MenuListener {
 
   protected class FileListener implements ActionListener {
     public void actionPerformed(ActionEvent event) {
-      if (printer != null)
-        printer.actionPerformed(event);
+      if (printer != null) printer.actionPerformed(event);
     }
+
     boolean registered;
+
     public void register(boolean en) {
-      if (registered == en)
-        return;
+      if (registered == en) return;
       registered = en;
       if (en) {
         menubar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
@@ -69,5 +69,4 @@ public class LogMenuListener extends MenuListener {
     this.printer = printer;
     fileListener.register(printer != null);
   }
-
 }

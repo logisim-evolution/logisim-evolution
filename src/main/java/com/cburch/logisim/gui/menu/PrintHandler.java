@@ -72,8 +72,8 @@ public abstract class PrintHandler implements Printable {
   }
 
   public void print() {
-    PageFormat format = new PageFormat();
-    PrinterJob job = PrinterJob.getPrinterJob();
+    var format = new PageFormat();
+    var job = PrinterJob.getPrinterJob();
     job.setPrintable(this, format);
     if (!job.printDialog()) return;
     try {
@@ -87,6 +87,17 @@ public abstract class PrintHandler implements Printable {
     }
   }
 
+  @Override
+  public int print(Graphics pg, PageFormat pf, int pageNum) {
+    double imWidth = pf.getImageableWidth();
+    double imHeight = pf.getImageableHeight();
+    Graphics2D g = (Graphics2D) pg;
+    g.translate(pf.getImageableX(), pf.getImageableY());
+    return print(g, pf, pageNum, imWidth, imHeight);
+  }
+
+  public abstract int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h);
+
   public void exportImage() {
     ImageFileFilter[] filters = {
       ExportImage.getFilter(ExportImage.FORMAT_PNG),
@@ -95,7 +106,7 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
       ExportImage.getFilter(ExportImage.FORMAT_SVG)
     };
-    JFileChooser chooser = JFileChoosers.createSelected(getLastExported());
+    var chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
     for (ImageFileFilter ff : filters) chooser.addChoosableFileFilter(ff);
     chooser.setFileFilter(filters[0]);
@@ -106,7 +117,7 @@ public abstract class PrintHandler implements Printable {
             KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
             S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
-    File dest = chooser.getSelectedFile();
+    var dest = chooser.getSelectedFile();
     FileFilter ff = null;
     for (ImageFileFilter filter : filters) {
       if (filter.accept(dest)) ff = filter;
@@ -140,30 +151,8 @@ public abstract class PrintHandler implements Printable {
     exportImage(dest, fmt);
   }
 
-  @Override
-  public int print(Graphics pg, PageFormat pf, int pageNum) {
-    double imWidth = pf.getImageableWidth();
-    double imHeight = pf.getImageableHeight();
-    Graphics2D g = (Graphics2D) pg;
-    g.translate(pf.getImageableX(), pf.getImageableY());
-    return print(g, pf, pageNum, imWidth, imHeight);
-  }
-
-  public abstract int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h);
-
-  public abstract Dimension getExportImageSize();
-
-  public abstract void paintExportImage(BufferedImage img, Graphics2D g);
-
-  private boolean showErr(String key) {
-    Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-    String msg = S.get("couldNotCreateImage");
-    OptionPane.showMessageDialog(parent, msg);
-    return true;
-  }
-
   public void exportImage(File dest, int fmt) {
-    Dimension d = getExportImageSize();
+    var d = getExportImageSize();
     if (d == null && showErr("couldNotCreateImage")) return;
 
     Graphics base;
@@ -211,5 +200,15 @@ public abstract class PrintHandler implements Printable {
     } finally {
       gr.dispose();
     }
+  }
+
+  public abstract Dimension getExportImageSize();
+
+  public abstract void paintExportImage(BufferedImage img, Graphics2D g);
+
+  private boolean showErr(String key) {
+    Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+    OptionPane.showMessageDialog(parent, S.get("couldNotCreateImage"));
+    return true;
   }
 }

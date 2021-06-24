@@ -75,6 +75,11 @@ class SelectionSave {
     }
   }
 
+  public boolean isSame(Selection sel) {
+    return isSame(floating, sel.getFloatingComponents())
+        && isSame(anchored, sel.getAnchoredComponents());
+  }
+
   private static HashSet<Component> toSet(Component[] comps) {
     HashSet<Component> ret = new HashSet<>(comps.length);
     ret.addAll(Arrays.asList(comps));
@@ -109,10 +114,5 @@ class SelectionSave {
       for (Component c : anchored) ret += c.hashCode();
     }
     return ret;
-  }
-
-  public boolean isSame(Selection sel) {
-    return isSame(floating, sel.getFloatingComponents())
-        && isSame(anchored, sel.getAnchoredComponents());
   }
 }

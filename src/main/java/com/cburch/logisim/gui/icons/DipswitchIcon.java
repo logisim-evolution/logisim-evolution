@@ -51,8 +51,8 @@ public class DipswitchIcon extends AnimatedIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLUE);
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
-    int w = scale(8);
-    int h = scale(5);
+    final int w = scale(8);
+    final int h = scale(5);
     g2.setColor(Color.WHITE);
     Font f = g2.getFont().deriveFont((float) (getIconWidth() / 2.5));
     TextLayout t = new TextLayout("1", f, g2.getFontRenderContext());
@@ -68,7 +68,8 @@ public class DipswitchIcon extends AnimatedIcon {
     g2.fillRect(scale(2), scale(2), w, h);
     g2.fillRect(scale(2), scale(9), w, h);
     g2.setColor(Color.gray);
-    int x1, x2;
+    int x1;
+    int x2;
     switch (state) {
       case 0:
         x1 = x2 = scale(2);

@@ -155,7 +155,7 @@ public class FPGAOptions extends OptionsPanel {
     c.gridx = 0;
     c.gridy = 3;
     c.gridwidth = 3;
-    add(AppPreferences.Boards.AddRemovePanel(), c);
+    add(AppPreferences.Boards.addRemovePanel(), c);
     c.gridy++;
     add(getReporterOptions(),c);
     c.gridy++;
@@ -164,7 +164,7 @@ public class FPGAOptions extends OptionsPanel {
     add(getMapCols(),c);
     localeChanged();
   }
-  
+
   private JPanel getReporterOptions() {
     ReportPan = new JPanel();
     ReportPan.setLayout(new GridBagLayout());
@@ -179,7 +179,7 @@ public class FPGAOptions extends OptionsPanel {
     ReportPan.add(SupressOpen, c);
     return ReportPan;
   }
-  
+
   private JPanel getEditCols() {
     editPan = new JPanel();
     editPan.setLayout(new GridBagLayout());
@@ -209,7 +209,7 @@ public class FPGAOptions extends OptionsPanel {
     editPan.add(EditResizeColor,c);
     return editPan;
   }
-  
+
   private JPanel getMapCols() {
     mapPan = new JPanel();
     mapPan.setLayout(new GridBagLayout());
@@ -239,7 +239,7 @@ public class FPGAOptions extends OptionsPanel {
     mapPan.add(SelectColor,c);
     return mapPan;
   }
-  
+
   @Override
   public String getHelpText() {
     return S.get("FPGAHelp");
@@ -268,7 +268,7 @@ public class FPGAOptions extends OptionsPanel {
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
     ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
   }
-  
+
   private void selectWorkSpace(Component parentComponent) {
     JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

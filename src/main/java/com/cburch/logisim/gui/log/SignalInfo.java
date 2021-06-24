@@ -54,30 +54,30 @@ import java.util.Collection;
 import java.util.Objects;
 import javax.swing.Icon;
 
-//SignalInfo identifies a component within a top-level circuit or one of the
-//nested sub-circuits within that top-level circuit. The path[] identifies how
-//to get from the top-level circuit to the identified component.
+// SignalInfo identifies a component within a top-level circuit or one of the
+// nested sub-circuits within that top-level circuit. The path[] identifies how
+// to get from the top-level circuit to the identified component.
 //
-//The path[] must not be empty. If it contains one component (e.g. a Pin or
-//Led), then that component is one that appears in the top-level circuit.
-//Otherwise, path[0] is a subcircuit component within the top level circuit,
-//path[1] is a subcircuit component within path[0]'s circuit, etc., and
-//path[n] is the actual component (e.g. a Pin or Led) within path[n-1]'s
-//circuit.
+// The path[] must not be empty. If it contains one component (e.g. a Pin or
+// Led), then that component is one that appears in the top-level circuit.
+// Otherwise, path[0] is a subcircuit component within the top level circuit,
+// path[1] is a subcircuit component within path[0]'s circuit, etc., and
+// path[n] is the actual component (e.g. a Pin or Led) within path[n-1]'s
+// circuit.
 //
-//Internally, all the relevant circuits are also kept as well, such that
-//circ[0] is the top-level circuit, and each other circ[i] is the circuit for
-//path[i-1] in which path[i] appears.
+// Internally, all the relevant circuits are also kept as well, such that
+// circ[0] is the top-level circuit, and each other circ[i] is the circuit for
+// path[i-1] in which path[i] appears.
 //
-//To summarize:
+// To summarize:
 //
 // (top)              (A)              (B)              (C)
-//circ[0]       .-> circ[1]      .-> circ[2]      .-> circ[3]     
-// |holds      /     |holds     /     |holds     /     |holds     
-// |        is/      |       is/      |       is/      |           
-// v     ____/       v     ___/       v     ___/       v           
-//path[0]           path[1]          path[2]          path[3]
-//(subcirc A)       (subcirc B)      (subcirc C)         (Pin)
+// circ[0]       .-> circ[1]      .-> circ[2]      .-> circ[3]
+// |holds      /     |holds     /     |holds     /     |holds
+// |        is/      |       is/      |       is/      |
+// v     ____/       v     ___/       v     ___/       v
+// path[0]           path[1]          path[2]          path[3]
+// (subcirc A)       (subcirc B)      (subcirc C)         (Pin)
 //
 
 public class SignalInfo implements AttributeListener, CircuitListener, Location.At {
@@ -95,6 +95,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
   public interface Listener {
     void signalInfoNameChanged(SignalInfo s);
+
     void signalInfoObsoleted(SignalInfo s); // e.g. component was removed from circuit
   }
 
@@ -106,7 +107,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
     circ[0] = root;
     for (int i = 1; i < n; i++) {
-      SubcircuitFactory f = (SubcircuitFactory)path[i-1].getFactory();
+      SubcircuitFactory f = (SubcircuitFactory) path[i - 1].getFactory();
       circ[i] = f.getSubcircuit();
     }
     computeName();
@@ -124,15 +125,15 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     // via changes to the location coordinates and/or labels.
     for (Component c : path) c.getAttributeSet().addAttributeListener(this);
   }
-  
+
   public void setListener(Listener l) {
     if (listener != null && l != null && l != listener)
       throw new IllegalStateException("already have a different listener");
     listener = l;
   }
 
-  public void attributeListChanged(AttributeEvent e) { }
-  
+  public void attributeListChanged(AttributeEvent e) {}
+
   public void attributeValueChanged(AttributeEvent e) {
     recomputeName();
   }
@@ -146,91 +147,83 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
       // This happens only when analyzer is replacing an entire circuit. Can we
       // match up pin names perhaps? todo later
       remove();
-    }
-
-    else if (action == CircuitEvent.TRANSACTION_DONE) {
+    } else if (action == CircuitEvent.TRANSACTION_DONE) {
       // This happens after a set of add/remove or other changes to a circuit.
       // This could remove a component that is on our path, or alter our name.
 
       // Walk through each level of circuit to see if we got removed or
       boolean changed = false;
       for (int i = 0; i < n; i++) {
-        Circuit t = circ[i];
-        Component c = path[i];
+        var t = circ[i];
+        var c = path[i];
 
-        ReplacementMap repl = event.getResult().getReplacementMap(t);
-        if (repl.isEmpty())
-          continue; // no changes at all to circuit at this level
+        var repl = event.getResult().getReplacementMap(t);
+        if (repl.isEmpty()) continue; // no changes at all to circuit at this level
 
         if (!repl.getRemovals().contains(c))
           continue; // changes at this level don't affect our path
 
-        Component cNew = null;
+        Component componentNew = null;
         Collection<Component> newComps = repl.getReplacementsFor(c);
         for (Component c2 : newComps) {
           if (c2 == c || c2.getFactory() == c.getFactory()) {
-            cNew = c2;
-            break;          
+            componentNew = c2;
+            break;
           }
         }
-      if (cNew == c) {
-        // component replaced by itself (strange...?)
-        continue;
-      } else if (cNew != null) {
-        // component replaced by alternate version (e.g. moved location)
-        changed = true;
-        path[i].getAttributeSet().removeAttributeListener(this);
-        path[i] = cNew;
-        path[i].getAttributeSet().addAttributeListener(this);
-        if (i < n-1) {
-          // sanity check, path[i] should still lead to circ[i+1]
-          SubcircuitFactory f = (SubcircuitFactory)path[i].getFactory();
-          if (circ[i+1] != f.getSubcircuit()) {
-            System.out.println("**** failure: subcircuit changed!");
-            remove();
-            return;
+        if (componentNew == c) {
+          // component replaced by itself (strange...?)
+          continue;
+        } else if (componentNew != null) {
+          // component replaced by alternate version (e.g. moved location)
+          changed = true;
+          path[i].getAttributeSet().removeAttributeListener(this);
+          path[i] = componentNew;
+          path[i].getAttributeSet().addAttributeListener(this);
+          if (i < n - 1) {
+            // sanity check, path[i] should still lead to circ[i+1]
+            SubcircuitFactory f = (SubcircuitFactory) path[i].getFactory();
+            if (circ[i + 1] != f.getSubcircuit()) {
+              System.out.println("**** failure: subcircuit changed!");
+              remove();
+              return;
+            }
           }
+        } else {
+          // component replaced by something completely different (???)
+          // System.out.printf("circuit %s replaced %s with something else\n", t, c);
+          remove();
+          return;
         }
-      } else {
-        // component replaced by something completely different (???)
-        // System.out.printf("circuit %s replaced %s with something else\n", t, c);
-        remove();
-        return;
       }
-    }
-    if (changed) {
-      computeName();
-      if (listener != null)
-        listener.signalInfoNameChanged(this);
-    }
-  } else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      if (changed) {
+        computeName();
+        if (listener != null) listener.signalInfoNameChanged(this);
+      }
+    } else if (action == CircuitEvent.ACTION_INVALIDATE) {
       // This happens for seemingly many kinds of changes to component, e.g.,
       // when a Pin's width or type changes. We could be that pin.
-      recomputeName();   
+      recomputeName();
     }
   }
 
   private static String normalize(String s, Object o) {
-    return (s == null || s.equals("")) ? null
-        : o == null ? s : (s + "." + o);
+    return (s == null || s.equals("")) ? null : o == null ? s : (s + "." + o);
   }
+
   private static String logName(Component c, Object option) {
     String s = null;
-    Loggable log = (Loggable)c.getFeature(Loggable.class);
-    if (log != null)
-      s = normalize(log.getLogName(option), null);
-    if (s == null)
-      s = normalize(c.getAttributeSet().getValue(StdAttr.LABEL), option);
-    if (s == null)
-      s = normalize(c.getFactory().getDisplayName() + c.getLocation(), option);
+    Loggable log = (Loggable) c.getFeature(Loggable.class);
+    if (log != null) s = normalize(log.getLogName(option), null);
+    if (s == null) s = normalize(c.getAttributeSet().getValue(StdAttr.LABEL), option);
+    if (s == null) s = normalize(c.getFactory().getDisplayName() + c.getLocation(), option);
     return s;
   }
 
   private boolean recomputeName() {
     if (computeName()) {
       // System.out.println(">>>>> new name is " + fullname);
-      if (listener != null)
-        listener.signalInfoNameChanged(this);
+      if (listener != null) listener.signalInfoNameChanged(this);
       return true;
     }
     return false;
@@ -239,29 +232,25 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private boolean computeName() {
     boolean changed = false;
 
-    Loggable log = (Loggable)path[n-1].getFeature(Loggable.class);
+    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
     BitWidth bw = null;
-    if (log != null)
-      bw = log.getBitWidth(option);
-    if (bw == null)
-      bw = path[n-1].getAttributeSet().getValue(StdAttr.WIDTH);
+    if (log != null) bw = log.getBitWidth(option);
+    if (bw == null) bw = path[n - 1].getAttributeSet().getValue(StdAttr.WIDTH);
     int w = bw.getWidth();
     if (w != width) {
       changed = true;
       width = w;
     }
-    String s = logName(path[n-1], option);
+    String s = logName(path[n - 1], option);
     if (!s.equals(nickname)) {
       changed = true;
       nickname = s;
     }
 
     StringBuilder buf = new StringBuilder();
-    for (int i = 0; i < n-1; i++)
-      buf.append(logName(path[i], null)).append("/");
+    for (int i = 0; i < n - 1; i++) buf.append(logName(path[i], null)).append("/");
     buf.append(nickname);
-    if (width > 1)
-      buf.append("[").append(width - 1).append("..0]");
+    if (width > 1) buf.append("[").append(width - 1).append("..0]");
     String f = buf.toString();
     if (!f.equals(fullname)) {
       changed = true;
@@ -272,35 +261,34 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public Value fetchValue(CircuitState root) {
-    Loggable log = (Loggable)path[n-1].getFeature(Loggable.class);
+    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
     if (log == null) return Value.NIL;
     CircuitState cur = root;
-    for (int i = 0; i < n-1; i++)
-      cur = circ[i].getSubcircuitFactory().getSubstate(cur, path[i]);
+    for (int i = 0; i < n - 1; i++) cur = circ[i].getSubcircuitFactory().getSubstate(cur, path[i]);
     return log.getLogValue(cur, option);
   }
 
   public Component getComponent() {
-    return path[n-1];
+    return path[n - 1];
   }
 
   public Circuit getTopLevelCircuit() {
     return circ[0];
   }
-  
+
   public int getDepth() {
     return n;
   }
 
   public boolean isInput(Object option) {
-    Loggable log = (Loggable)path[n-1].getFeature(Loggable.class);
+    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
     return log != null && log.isInput(option);
   }
 
   public RadixOption getRadix() {
     return radix;
   }
-  
+
   public String format(Value v) {
     return radix.toString(v);
   }
@@ -323,38 +311,44 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public String getDisplayName() {
     return fullname;
   }
- 
+
   public Location getLocation() {
-    return path[n-1].getLocation();
+    return path[n - 1].getLocation();
   }
 
   public int getWidth() {
     return width;
   }
-  
+
   public Object getOption() {
     return option;
   }
-  
-  public final Icon icon = new Icon() {
-    @Override
-    public int getIconHeight() { return 20; }
-    @Override
-    public int getIconWidth() { return 20; }
-    @Override
-    public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
-      SignalInfo.paintIcon(path[n-1], option, c, g, x, y);
-    }
-  };
 
-  public static void paintIcon(Component comp, Object opt,
-      java.awt.Component c, Graphics g, int x, int y) {
-    if (comp == null)
-      return;
+  public final Icon icon =
+      new Icon() {
+        @Override
+        public int getIconHeight() {
+          return 20;
+        }
+
+        @Override
+        public int getIconWidth() {
+          return 20;
+        }
+
+        @Override
+        public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
+          SignalInfo.paintIcon(path[n - 1], option, c, g, x, y);
+        }
+      };
+
+  public static void paintIcon(
+      Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
+    if (comp == null) return;
     if (opt != null) {
       // todo
       g.setColor(Color.MAGENTA);
-      g.fillRect(x+3, x+3, 15, 15);
+      g.fillRect(x + 3, x + 3, 15, 15);
     } else {
       Graphics g2 = g.create();
       ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g2);
@@ -365,11 +359,9 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (!(other instanceof SignalInfo))
-      return false;
-    SignalInfo o = (SignalInfo)other;
+    if (other == this) return true;
+    if (!(other instanceof SignalInfo)) return false;
+    SignalInfo o = (SignalInfo) other;
     return Arrays.equals(path, o.path) && Objects.equals(option, o.option);
   }
 
@@ -379,38 +371,35 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   private void remove() {
-    if (obsoleted)
-      return;
+    if (obsoleted) return;
     obsoleted = true;
-    for (Circuit t : circ)
-      t.removeCircuitListener(this);
-    for (Component c : path)
-      c.getAttributeSet().removeAttributeListener(this);
-    if (listener != null)
-      listener.signalInfoObsoleted(this);
+    for (Circuit t : circ) t.removeCircuitListener(this);
+    for (Component c : path) c.getAttributeSet().removeAttributeListener(this);
+    if (listener != null) listener.signalInfoObsoleted(this);
   }
 
-  public static class List extends ArrayList<SignalInfo> implements Transferable
-  {
+  public static class List extends ArrayList<SignalInfo> implements Transferable {
     public static final DataFlavor dataFlavor;
+
     static {
       DataFlavor f = null;
       try {
-        f = new DataFlavor(
-            String.format("%s;class=\"%s\"",
-              DataFlavor.javaJVMLocalObjectMimeType,
-              SignalInfo.List.class.getName()));
+        f =
+            new DataFlavor(
+                String.format(
+                    "%s;class=\"%s\"",
+                    DataFlavor.javaJVMLocalObjectMimeType, SignalInfo.List.class.getName()));
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
       dataFlavor = f;
     }
-    public static final DataFlavor[] dataFlavors = new DataFlavor[] { dataFlavor };
+
+    public static final DataFlavor[] dataFlavors = new DataFlavor[] {dataFlavor};
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-      if(!isDataFlavorSupported(flavor))
-        throw new UnsupportedFlavorException(flavor);
+      if (!isDataFlavorSupported(flavor)) throw new UnsupportedFlavorException(flavor);
       return this;
     }
 
@@ -424,5 +413,4 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
       return dataFlavor.equals(flavor);
     }
   }
-
 }
