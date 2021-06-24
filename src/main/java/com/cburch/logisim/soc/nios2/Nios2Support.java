@@ -47,25 +47,32 @@ public class Nios2Support {
 
   public static int getImmediate(int instruction, int type) {
     switch (type) {
-      case I_TYPE : return (instruction >> 6) & 0xFFFF;
-      case J_TYPE : return (instruction >> 6) & 0x3FFFFFF;
-      default     : return 0;
+      case I_TYPE:
+        return (instruction >> 6) & 0xFFFF;
+      case J_TYPE:
+        return (instruction >> 6) & 0x3FFFFFF;
+      default:
+        return 0;
     }
   }
 
   public static int getRegAIndex(int instruction, int type) {
     switch (type) {
-      case I_TYPE :
-      case R_TYPE : return (instruction >> 27) & 0x1F;
-      default     : return 0;
+      case I_TYPE:
+      case R_TYPE:
+        return (instruction >> 27) & 0x1F;
+      default:
+        return 0;
     }
   }
 
   public static int getRegBIndex(int instruction, int type) {
     switch (type) {
-      case I_TYPE :
-      case R_TYPE : return (instruction >> 22) & 0x1F;
-      default     : return 0;
+      case I_TYPE:
+      case R_TYPE:
+        return (instruction >> 22) & 0x1F;
+      default:
+        return 0;
     }
   }
 

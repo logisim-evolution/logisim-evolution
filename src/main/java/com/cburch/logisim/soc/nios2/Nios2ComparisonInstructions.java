@@ -120,35 +120,48 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
         OpxCodes.get(operation) != SIGN_EXTEND ? immediate & 0xFFFF : ((immediate << 16) >> 16);
     int result = 0;
     switch (operation) {
-      case INSTR_CMPEQI  : valueB = imm;
-                           // fall through
-      case INSTR_CMPEQ   : result = (valueA == valueB) ? 1 : 0;
-                           break;
-      case INSTR_CMPNEI  : valueB = imm;
-                           // fall through
-      case INSTR_CMPNE   : result = (valueA != valueB) ? 1 : 0;
-                           break;
-      case INSTR_CMPGEI  : valueB = imm;
-                           // fall through
-      case INSTR_CMPGE   : result = (valueA >= valueB) ? 1 : 0;
-                           break;
-      case INSTR_CMPGEUI : valueB = imm;
-                           // fall through
-      case INSTR_CMPGEU  : long opA = SocSupport.convUnsignedInt(valueA);
-                           long opB = SocSupport.convUnsignedInt(valueB);
-                           result = (opA >= opB) ? 1 : 0;
-                           break;
-      case INSTR_CMPLTI  : valueB = imm;
-                           // fall through
-      case INSTR_CMPLT   : result = (valueA < valueB) ? 1 : 0;
-                           break;
-      case INSTR_CMPLTUI : valueB = imm;
-                           // fall through
-      case INSTR_CMPLTU  : opA = SocSupport.convUnsignedInt(valueA);
-                           opB = SocSupport.convUnsignedInt(valueB);
-                           result = (opA < opB) ? 1 : 0;
-                           break;
-      default            : return false;
+      case INSTR_CMPEQI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPEQ:
+        result = (valueA == valueB) ? 1 : 0;
+        break;
+      case INSTR_CMPNEI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPNE:
+        result = (valueA != valueB) ? 1 : 0;
+        break;
+      case INSTR_CMPGEI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPGE:
+        result = (valueA >= valueB) ? 1 : 0;
+        break;
+      case INSTR_CMPGEUI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPGEU:
+        long opA = SocSupport.convUnsignedInt(valueA);
+        long opB = SocSupport.convUnsignedInt(valueB);
+        result = (opA >= opB) ? 1 : 0;
+        break;
+      case INSTR_CMPLTI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPLT:
+        result = (valueA < valueB) ? 1 : 0;
+        break;
+      case INSTR_CMPLTUI:
+        valueB = imm;
+        // fall through
+      case INSTR_CMPLTU:
+        opA = SocSupport.convUnsignedInt(valueA);
+        opB = SocSupport.convUnsignedInt(valueB);
+        result = (opA < opB) ? 1 : 0;
+        break;
+      default:
+        return false;
     }
     cpuState.writeRegister(destination, result);
     return true;
@@ -205,40 +218,49 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     if (!valid) return true;
     if (OpcCodes.get(operation) == PSEUDO_INSTR) {
       switch (operation) {
-        case INSTR_CMPGT   : operation = INSTR_CMPLT;
-                             int tmp = sourceA;
-                             sourceA = sourceB;
-                             sourceB = tmp;
-                             break;
-        case INSTR_CMPGTI  : operation = INSTR_CMPGEI;
-                             immediate++;
-                             break;
-        case INSTR_CMPGTU  : operation = INSTR_CMPLTU;
-                             tmp = sourceA;
-                             sourceA = sourceB;
-                             sourceB = tmp;
-                             break;
-        case INSTR_CMPGTUI : operation = INSTR_CMPGEUI;
-                             immediate++;
-                             break;
-        case INSTR_CMPLE   : operation = INSTR_CMPGE;
-                             tmp = sourceA;
-                             sourceA = sourceB;
-                             sourceB = tmp;
-                             break;
-        case INSTR_CMPLEI  : operation = INSTR_CMPLTI;
-                             immediate++;
-                             break;
-        case INSTR_CMPLEU  : operation = INSTR_CMPGEU;
-                             tmp = sourceA;
-                             sourceA = sourceB;
-                             sourceB = tmp;
-                             break;
-        case INSTR_CMPLEUI : operation = INSTR_CMPLTUI;
-                             immediate++;
-                             break;
-        default            : valid = false;
-                             return false;
+        case INSTR_CMPGT:
+          operation = INSTR_CMPLT;
+          int tmp = sourceA;
+          sourceA = sourceB;
+          sourceB = tmp;
+          break;
+        case INSTR_CMPGTI:
+          operation = INSTR_CMPGEI;
+          immediate++;
+          break;
+        case INSTR_CMPGTU:
+          operation = INSTR_CMPLTU;
+          tmp = sourceA;
+          sourceA = sourceB;
+          sourceB = tmp;
+          break;
+        case INSTR_CMPGTUI:
+          operation = INSTR_CMPGEUI;
+          immediate++;
+          break;
+        case INSTR_CMPLE:
+          operation = INSTR_CMPGE;
+          tmp = sourceA;
+          sourceA = sourceB;
+          sourceB = tmp;
+          break;
+        case INSTR_CMPLEI:
+          operation = INSTR_CMPLTI;
+          immediate++;
+          break;
+        case INSTR_CMPLEU:
+          operation = INSTR_CMPGEU;
+          tmp = sourceA;
+          sourceA = sourceB;
+          sourceB = tmp;
+          break;
+        case INSTR_CMPLEUI:
+          operation = INSTR_CMPLTUI;
+          immediate++;
+          break;
+        default:
+          valid = false;
+          return false;
       }
     }
     if (OpxCodes.get(operation) == SIGN_EXTEND) {

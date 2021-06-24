@@ -81,47 +81,66 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     errorMessage = null;
     int toBeStored = cpuState.getRegisterValue(destination);
-    long address = ElfHeader.getLongValue(cpuState.getRegisterValue(base))+immediate;
+    long address = ElfHeader.getLongValue(cpuState.getRegisterValue(base)) + immediate;
     int transType = -1;
     switch (operation) {
-      case INSTR_SB : toBeStored &= 0xFF;
-                      transType = SocBusTransaction.ByteAccess;
-                      // fall through
-      case INSTR_SH : toBeStored &= 0xFFFF;
-                      if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
-                      // fall through
-      case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
-                      SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
-                          ElfHeader.getIntValue(address),toBeStored,transType,
-                          cpuState.getMasterComponent());
-                      cpuState.insertTransaction(trans, false, cState);
-                      return !transactionHasError(trans);
-      case INSTR_LB :
-      case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
-                      // fall through
-      case INSTR_LH :
-      case INSTR_LHU: if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
-                      // fall through
-      case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
-                      trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                          ElfHeader.getIntValue(address),0,transType,cpuState.getMasterComponent());
-                      cpuState.insertTransaction(trans, false, cState);
-                      if (transactionHasError(trans)) return false;
-                      int toBeLoaded = trans.getReadData();
-                      switch (operation) {
-                        case INSTR_LBU : toBeLoaded &= 0xFF;
-                                         break;
-                        case INSTR_LB  : toBeLoaded <<= 24;
-                                         toBeLoaded >>= 24;
-                                         break;
-                        case INSTR_LHU : toBeLoaded &= 0xFFFF;
-                                         break;
-                        case INSTR_LH  : toBeLoaded <<= 16;
-                                         toBeLoaded >>= 16;
-                                         break;
-                      }
-                      cpuState.writeRegister(destination, toBeLoaded);
-                      return true;
+      case INSTR_SB:
+        toBeStored &= 0xFF;
+        transType = SocBusTransaction.ByteAccess;
+        // fall through
+      case INSTR_SH:
+        toBeStored &= 0xFFFF;
+        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        // fall through
+      case INSTR_SW:
+        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        SocBusTransaction trans =
+            new SocBusTransaction(
+                SocBusTransaction.WRITETransaction,
+                ElfHeader.getIntValue(address),
+                toBeStored,
+                transType,
+                cpuState.getMasterComponent());
+        cpuState.insertTransaction(trans, false, cState);
+        return !transactionHasError(trans);
+      case INSTR_LB:
+      case INSTR_LBU:
+        transType = SocBusTransaction.ByteAccess;
+        // fall through
+      case INSTR_LH:
+      case INSTR_LHU:
+        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        // fall through
+      case INSTR_LW:
+        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        trans =
+            new SocBusTransaction(
+                SocBusTransaction.READTransaction,
+                ElfHeader.getIntValue(address),
+                0,
+                transType,
+                cpuState.getMasterComponent());
+        cpuState.insertTransaction(trans, false, cState);
+        if (transactionHasError(trans)) return false;
+        int toBeLoaded = trans.getReadData();
+        switch (operation) {
+          case INSTR_LBU:
+            toBeLoaded &= 0xFF;
+            break;
+          case INSTR_LB:
+            toBeLoaded <<= 24;
+            toBeLoaded >>= 24;
+            break;
+          case INSTR_LHU:
+            toBeLoaded &= 0xFFFF;
+            break;
+          case INSTR_LH:
+            toBeLoaded <<= 16;
+            toBeLoaded >>= 16;
+            break;
+        }
+        cpuState.writeRegister(destination, toBeLoaded);
+        return true;
     }
     return false;
   }
@@ -144,7 +163,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       return null;
     StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
-    while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
+    while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     s.append(RV32im_state.registerABINames[destination]).append(",");
     s.append(immediate);
@@ -178,21 +197,24 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       base = RV32imSupport.getSourceRegister1Index(instruction);
       int funct3 = RV32imSupport.getFunct3(instruction);
       switch (funct3) {
-        case LB  :
-        case LH  :
-        case LW  : operation = funct3;
-                   return true;
-        case LBU :
-        case LHU : operation = funct3-1;
-                   return true;
-        default  : return false;
+        case LB:
+        case LH:
+        case LW:
+          operation = funct3;
+          return true;
+        case LBU:
+        case LHU:
+          operation = funct3 - 1;
+          return true;
+        default:
+          return false;
       }
     }
     if (opcode == STORE) {
       int funct3 = RV32imSupport.getFunct3(instruction);
       if (funct3 > 2)
         return false;
-      operation = funct3+5;
+      operation = funct3 + 5;
       immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.S_TYPE);
       base = RV32imSupport.getSourceRegister1Index(instruction);
       destination = RV32imSupport.getSourceRegister2Index(instruction);
@@ -201,7 +223,9 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return false;
   }
 
-  public String getErrorMessage() { return errorMessage; }
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
@@ -210,7 +234,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+    for (int i = 0; i < AsmOpcodes.length; i++)
       if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
     if (operation < 0) {
       valid = false;
@@ -221,7 +245,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       valid = false;
       return true;
     }
-    AssemblerToken[] param1,param2;
+    AssemblerToken[] param1, param2;
     valid = true;
     param1 = instr.getParameter(0);
     if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
@@ -254,27 +278,31 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       valid = false;
     }
     immediate = param2[0].getNumberValue();
-    if (immediate >= (1<<11) || immediate < -(1<<11)) {
+    if (immediate >= (1 << 11) || immediate < -(1 << 11)) {
       instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
       valid = false;
     }
     if (!valid) return true;
     switch (operation) {
-      case INSTR_SB :
-      case INSTR_SH :
-      case INSTR_SW : int funct3 = operation-INSTR_SB;
-                      instruction = RV32imSupport.getSTypeInstruction(STORE, base, destination, funct3, immediate);
-                      break;
-      case INSTR_LB :
+      case INSTR_SB:
+      case INSTR_SH:
+      case INSTR_SW:
+        int funct3 = operation - INSTR_SB;
+        instruction =
+            RV32imSupport.getSTypeInstruction(STORE, base, destination, funct3, immediate);
+        break;
+      case INSTR_LB:
       case INSTR_LBU:
-      case INSTR_LH :
+      case INSTR_LH:
       case INSTR_LHU:
-      case INSTR_LW : funct3 = (operation == INSTR_LBU || operation == INSTR_LHU) ? operation+1 : operation;
-    	              instruction = RV32imSupport.getITypeInstruction(LOAD, destination, funct3, base, immediate);
-    	              break;
-      default       : valid = false;
-                      OptionPane.showMessageDialog(null, "Severe Bug in RV32imLoadAndStoreInstructions.java");
-                      break;
+      case INSTR_LW:
+        funct3 = (operation == INSTR_LBU || operation == INSTR_LHU) ? operation + 1 : operation;
+        instruction = RV32imSupport.getITypeInstruction(LOAD, destination, funct3, base, immediate);
+        break;
+      default:
+        valid = false;
+        OptionPane.showMessageDialog(null, "Severe Bug in RV32imLoadAndStoreInstructions.java");
+        break;
     }
     if (valid) {
       instr.setInstructionByteCode(instruction, 4);

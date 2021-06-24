@@ -82,31 +82,41 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
     int valueA = cpuState.getRegisterValue(sourceA);
     int result = 0;
     switch (operation) {
-      case INSTR_ROLI : imm = immediate & 0x1F;
-                        // fall through
-      case INSTR_ROL  : long opp = SocSupport.convUnsignedInt(valueA) << imm;
-                        opp |= (opp >> 32);
-                        result = SocSupport.convUnsignedLong(opp);
-                        break;
-      case INSTR_ROR  : opp = SocSupport.convUnsignedInt(valueA) << (32 - imm);
-                        opp |= (opp >> 32);
-                        result = SocSupport.convUnsignedLong(opp);
-                        break;
-      case INSTR_SLLI : imm = immediate & 0x1F;
-                        // fall through
-      case INSTR_SLL  : result = valueA << imm;
-                        break;
-      case INSTR_SRAI : imm = immediate & 0x1F;
-                        // fall through
-      case INSTR_SRA  : result = valueA >> imm;
-                        break;
-      case INSTR_SRLI : imm = immediate & 0x1F;
-                        // fall through
-      case INSTR_SRL  : long opA = SocSupport.convUnsignedInt(valueA);
-                        opA >>= imm;
-                        result = SocSupport.convUnsignedLong(opA);
-                        break;
-      default         : return false;
+      case INSTR_ROLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_ROL:
+        long opp = SocSupport.convUnsignedInt(valueA) << imm;
+        opp |= (opp >> 32);
+        result = SocSupport.convUnsignedLong(opp);
+        break;
+      case INSTR_ROR:
+        opp = SocSupport.convUnsignedInt(valueA) << (32 - imm);
+        opp |= (opp >> 32);
+        result = SocSupport.convUnsignedLong(opp);
+        break;
+      case INSTR_SLLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SLL:
+        result = valueA << imm;
+        break;
+      case INSTR_SRAI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SRA:
+        result = valueA >> imm;
+        break;
+      case INSTR_SRLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SRL:
+        long opA = SocSupport.convUnsignedInt(valueA);
+        opA >>= imm;
+        result = SocSupport.convUnsignedLong(opA);
+        break;
+      default:
+        return false;
     }
     cpuState.writeRegister(sourceC, result);
     return true;
