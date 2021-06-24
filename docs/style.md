@@ -1,7 +1,7 @@
-# Coding style #
+# Logisim-evolution code style #
 
 Logisim-evolution uses `Google Java Style` code style as provided with the `CodeStyle`
-static anaylyzer too, with a few checks disabled as specified in `suppressions.xml`
+static anaylyzer tool, with a few checks disabled as specified in `suppressions.xml`
 config file.
 
 # Using Logisim style with InteliJ Idea #
