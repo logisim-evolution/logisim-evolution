@@ -37,7 +37,6 @@ import java.util.ArrayList;
 
 public class Signal {
 
-
   private static final int CHUNK = 512;
 
   // Signal position in list, name, etc.
@@ -45,7 +44,7 @@ public class Signal {
   public final SignalInfo info;
 
   // Signal data
-  private long tStart;
+  private long timeStart;
   private Value[][] val; // values, in blocks no larger than CHUNK
   private Value last;
   private long[][] dur; // duration of each value
@@ -53,10 +52,11 @@ public class Signal {
   private int maxSize; // limit, or zero for unlimited
   private short firstIndex; // for wrapping, only when limited
 
-  public Signal(int idx, SignalInfo info, Value initialValue, long duration, long tStart, int maxSize) {
+  public Signal(
+      int idx, SignalInfo info, Value initialValue, long duration, long timeStart, int maxSize) {
     this.idx = idx;
     this.info = info;
-    this.tStart = tStart;
+    this.timeStart = timeStart;
     this.maxSize = maxSize;
     this.val = new Value[1][maxSize == 0 || maxSize > CHUNK ? CHUNK : maxSize];
     this.dur = new long[1][maxSize == 0 || maxSize > CHUNK ? CHUNK : maxSize];
@@ -66,102 +66,107 @@ public class Signal {
   }
 
   public long omittedDataTime() {
-    return curSize == maxSize ? tStart : 0;
+    return curSize == maxSize ? timeStart : 0;
   }
 
   public long getEndTime() {
-    long t = tStart;
+    long t = timeStart;
     for (int p = 0; p < curSize; p++) {
       int i = (firstIndex + p) % curSize;
-      t += dur[i/CHUNK][i%CHUNK];
+      t += dur[i / CHUNK][i % CHUNK];
     }
     return t;
   }
 
   public void extend(long duration) {
     if (last == null) {
-      tStart += duration;
+      timeStart += duration;
     } else {
       int i = (firstIndex + curSize - 1) % curSize;
-      dur[i/CHUNK][i%CHUNK] += duration;
+      dur[i / CHUNK][i % CHUNK] += duration;
     }
   }
 
   public void extend(Value v, long duration) {
     if (v.getWidth() != info.getWidth())
-      System.out.printf("*** notice: value width mismatch for %s: width=%d bits, newVal=%s (%d bits)\n",
+      System.out.printf(
+          "*** notice: value width mismatch for %s: width=%d bits, newVal=%s (%d bits)\n",
           info, info.getWidth(), v, v.getWidth());
     if (last != null && last.equals(v)) {
       int i = (firstIndex + curSize - 1) % curSize;
-      dur[i/CHUNK][i%CHUNK] += duration;
+      dur[i / CHUNK][i % CHUNK] += duration;
       return;
     }
     last = v;
     int c = val.length;
-    int cap = CHUNK*(c-1) + val[c-1].length;
+    int cap = CHUNK * (c - 1) + val[c - 1].length;
     if (curSize < cap) {
       // fits in an existing chunk
-      val[curSize/CHUNK][curSize%CHUNK] = v;
-      dur[curSize/CHUNK][curSize%CHUNK] = duration;
+      val[curSize / CHUNK][curSize % CHUNK] = v;
+      dur[curSize / CHUNK][curSize % CHUNK] = duration;
       curSize++;
     } else if (curSize < maxSize || maxSize <= 0) {
       // allocate another chunk
-      Value[][] val2 = new Value[c+1][];
-      long[][] dur2 = new long[c+1][];
+      Value[][] val2 = new Value[c + 1][];
+      long[][] dur2 = new long[c + 1][];
       System.arraycopy(val, 0, val2, 0, c);
       System.arraycopy(dur, 0, dur2, 0, c);
-      val2[c+1] = new Value[maxSize == 0 || (maxSize-cap) > CHUNK ? CHUNK : (maxSize-cap)];
-      dur2[c+1] = new long[maxSize == 0 || (maxSize-cap) > CHUNK ? CHUNK : (maxSize-cap)];
+      val2[c + 1] = new Value[maxSize == 0 || (maxSize - cap) > CHUNK ? CHUNK : (maxSize - cap)];
+      dur2[c + 1] = new long[maxSize == 0 || (maxSize - cap) > CHUNK ? CHUNK : (maxSize - cap)];
       val = val2;
       dur = dur2;
-      val[curSize/CHUNK][curSize%CHUNK] = v;
-      dur[curSize/CHUNK][curSize%CHUNK] = duration;
+      val[curSize / CHUNK][curSize % CHUNK] = v;
+      dur[curSize / CHUNK][curSize % CHUNK] = duration;
       curSize++;
     } else {
-   // limited size is filled, wrap around, and adjust start offset
-      tStart += dur[firstIndex/CHUNK][firstIndex%CHUNK];
-      val[firstIndex/CHUNK][firstIndex%CHUNK] = v;
-      dur[firstIndex/CHUNK][firstIndex%CHUNK] = duration;
+      // limited size is filled, wrap around, and adjust start offset
+      timeStart += dur[firstIndex / CHUNK][firstIndex % CHUNK];
+      val[firstIndex / CHUNK][firstIndex % CHUNK] = v;
+      dur[firstIndex / CHUNK][firstIndex % CHUNK] = duration;
       firstIndex++;
-      if (firstIndex >= maxSize)
-        firstIndex = 0;
+      if (firstIndex >= maxSize) firstIndex = 0;
     }
   }
 
   public void replaceRecent(Value v, long duration) {
     if (last == null || curSize == 0)
-      throw new IllegalStateException("signal should have at least "+duration+" ns of data");
+      throw new IllegalStateException("signal should have at least " + duration + " ns of data");
     int i = (firstIndex + curSize - 1) % curSize;
     boolean checkMerge = true;
-    if (dur[i/CHUNK][i%CHUNK] == duration) {
-      val[i/CHUNK][i%CHUNK] = v;
+    if (dur[i / CHUNK][i % CHUNK] == duration) {
+      val[i / CHUNK][i % CHUNK] = v;
       last = v;
       int j = (i + curSize - 1) % curSize;
-      if (curSize > 1 && val[j/CHUNK][j%CHUNK].equals(v)) {
-        dur[j/CHUNK][j%CHUNK] += duration;
+      if (curSize > 1 && val[j / CHUNK][j % CHUNK].equals(v)) {
+        dur[j / CHUNK][j % CHUNK] += duration;
         curSize--;
         // special case: last chunk is now entirely empty, must be removed
-        if (i%CHUNK == 0) {
+        if (i % CHUNK == 0) {
           int c = val.length - 1;
-          Value[][] vNew = new Value[c][];
-          long[][] dNew = new long[c][];
-          System.arraycopy(val, 0, vNew, 0, c);
-          System.arraycopy(dur, 0, dNew, 0, c);
-          val = vNew;
-          dur = dNew;
+          Value[][] valueNew = new Value[c][];
+          long[][] durNew = new long[c][];
+          System.arraycopy(val, 0, valueNew, 0, c);
+          System.arraycopy(dur, 0, durNew, 0, c);
+          val = valueNew;
+          dur = durNew;
         }
       }
-    } else if (dur[i/CHUNK][i%CHUNK] > duration) {
-      dur[i/CHUNK][i%CHUNK] -= duration;
+    } else if (dur[i / CHUNK][i % CHUNK] > duration) {
+      dur[i / CHUNK][i % CHUNK] -= duration;
       extend(v, duration);
-    } else if (curSize == 1 && dur[i/CHUNK][i%CHUNK] + tStart >= duration) {
-      tStart -= (duration - dur[i/CHUNK][i%CHUNK]);
-      val[i/CHUNK][i%CHUNK] = v;
-      dur[i/CHUNK][i%CHUNK] = duration;
+    } else if (curSize == 1 && dur[i / CHUNK][i % CHUNK] + timeStart >= duration) {
+      timeStart -= (duration - dur[i / CHUNK][i % CHUNK]);
+      val[i / CHUNK][i % CHUNK] = v;
+      dur[i / CHUNK][i % CHUNK] = duration;
       last = v;
     } else {
-      throw new IllegalStateException("signal data should be at least "+duration+" ns in duration,"
-          + " but only " + dur[i/CHUNK][i%CHUNK] + " in last signal");
+      throw new IllegalStateException(
+          "signal data should be at least "
+              + duration
+              + " ns in duration,"
+              + " but only "
+              + dur[i / CHUNK][i % CHUNK]
+              + " in last signal");
     }
   }
 
@@ -169,17 +174,17 @@ public class Signal {
     // shift all values [from offset to offset+amt] left into new arrays
     // of size appropriate for eventual capacity cap
     int c = (amt + CHUNK - 1) / CHUNK;
-    int last = cap == 0 ? CHUNK : Math.min(CHUNK, cap - (c-1) * CHUNK);
+    int last = cap == 0 ? CHUNK : Math.min(CHUNK, cap - (c - 1) * CHUNK);
     Value[][] v = new Value[c][];
     long[][] d = new long[c][];
     for (int i = 0; i < c; i++) {
-      v[i] = new Value[i < c-1 ? CHUNK : last];
-      d[i] = new long[i < c-1 ? CHUNK : last];
+      v[i] = new Value[i < c - 1 ? CHUNK : last];
+      d[i] = new long[i < c - 1 ? CHUNK : last];
     }
     for (int p = 0; p < amt; p++) {
       int i = (firstIndex + offset + p) % curSize;
-      v[p/CHUNK][p%CHUNK] = val[i/CHUNK][i%CHUNK];
-      d[p/CHUNK][p%CHUNK] = dur[i/CHUNK][i%CHUNK];
+      v[p / CHUNK][p % CHUNK] = val[i / CHUNK][i % CHUNK];
+      d[p / CHUNK][p % CHUNK] = dur[i / CHUNK][i % CHUNK];
     }
     val = v;
     dur = d;
@@ -188,12 +193,10 @@ public class Signal {
   }
 
   public void resize(int newMaxSize) {
-    if (newMaxSize == maxSize)
-      return;
+    if (newMaxSize == maxSize) return;
     if (newMaxSize == 0 || newMaxSize > maxSize) {
       // growing
-      if (firstIndex != 0)
-        retainOnly(0, curSize, newMaxSize); // keeps all data, but shifts it left
+      if (firstIndex != 0) retainOnly(0, curSize, newMaxSize); // keeps all data, but shifts it left
     } else {
       // shrinking: newMaxSize < maxSize
       if (curSize <= newMaxSize) {
@@ -216,23 +219,23 @@ public class Signal {
         // In the nearly full case, cap > newMaxSize and we need to shrink the
         // last allocated chunk.
         int c = val.length;
-        int cap = CHUNK*(c-1) + val[c-1].length;
+        int cap = CHUNK * (c - 1) + val[c - 1].length;
         if (cap > newMaxSize) {
           // Note: # of existing chunks (c) must be equal to # of new chunks
-          int last = Math.min(CHUNK, newMaxSize - (c-1) * CHUNK);
+          int last = Math.min(CHUNK, newMaxSize - (c - 1) * CHUNK);
           Value[] v = new Value[last];
           long[] d = new long[last];
-          System.arraycopy(val[c-1], 0, v, 0, last);
-          System.arraycopy(dur[c-1], 0, d, 0, last);
-          val[c-1] = v;
-          dur[c-1] = d;
+          System.arraycopy(val[c - 1], 0, v, 0, last);
+          System.arraycopy(dur[c - 1], 0, d, 0, last);
+          val[c - 1] = v;
+          dur[c - 1] = d;
         }
       } else { // curSize > newMaxSize
         // too much data, keep only most recent data and shift it left
         int discard = (maxSize - newMaxSize);
         for (int p = 0; p < discard; p++) {
           int i = (firstIndex + p) % curSize;
-          tStart += dur[i/CHUNK][i%CHUNK];
+          timeStart += dur[i / CHUNK][i % CHUNK];
         }
         retainOnly(discard, newMaxSize, newMaxSize);
       }
@@ -264,17 +267,16 @@ public class Signal {
 
     public Iterator() {
       position = 0;
-      time = tStart;
+      time = timeStart;
       int i = firstIndex;
       int width = info.getWidth();
-      value = val[i/CHUNK][i%CHUNK].extendWidth(width, Value.FALSE);
-      duration = dur[i/CHUNK][i%CHUNK];
+      value = val[i / CHUNK][i % CHUNK].extendWidth(width, Value.FALSE);
+      duration = dur[i / CHUNK][i % CHUNK];
     }
 
     public Iterator(long t) {
       this();
-      if (t > time)
-        advance(t-time);
+      if (t > time) advance(t - time);
     }
 
     public String getFormattedValue() {
@@ -282,7 +284,7 @@ public class Signal {
     }
 
     public boolean advance() {
-      if (position == curSize-1) {
+      if (position == curSize - 1) {
         value = null;
         duration = 0;
         return false;
@@ -291,20 +293,17 @@ public class Signal {
       time += duration;
       int i = (firstIndex + position) % curSize;
       int width = info.getWidth();
-      value = val[i/CHUNK][i%CHUNK].extendWidth(width, Value.FALSE);
-      duration = dur[i/CHUNK][i%CHUNK];
+      value = val[i / CHUNK][i % CHUNK].extendWidth(width, Value.FALSE);
+      duration = dur[i / CHUNK][i % CHUNK];
       return true;
     }
 
-    public boolean advance(long tFwd) {
-      if (value == null)
-        return false;
-      if (tFwd <= 0)
-        return true;
-      long t = time + tFwd;
+    public boolean advance(long timeFwd) {
+      if (value == null) return false;
+      if (timeFwd <= 0) return true;
+      long t = time + timeFwd;
       while (t >= time + duration) {
-        if (!advance())
-          return false;
+        if (!advance()) return false;
       }
       // postcondition: t < time + duration
       //                t - time < duration
@@ -312,20 +311,17 @@ public class Signal {
       time = t;
       return true;
     }
-
   }
 
   // todo: easily optimized
   public Value getValue(long t) { // always current width, even when width changes
-    if (t < tStart)
-      return null;
+    if (t < timeStart) return null;
     int width = info.getWidth();
-    long tt = tStart;
+    long tt = timeStart;
     for (int p = 0; p < curSize; p++) {
       int i = (firstIndex + p) % curSize;
-      long d = dur[i/CHUNK][i%CHUNK];
-      if (t < tt + d)
-        return val[i/CHUNK][i%CHUNK].extendWidth(width, Value.FALSE);
+      long d = dur[i / CHUNK][i % CHUNK];
+      if (t < tt + d) return val[i / CHUNK][i % CHUNK].extendWidth(width, Value.FALSE);
       tt += d;
     }
     return null;
@@ -361,27 +357,29 @@ public class Signal {
   }
 
   // This class is mostly needed because drag-and-drop DataFlavor works easiest
-  //with a non-generic non-anonymous class
+  // with a non-generic non-anonymous class
   public static class List extends ArrayList<Signal> implements Transferable {
     public static final DataFlavor dataFlavor;
+
     static {
       DataFlavor f = null;
       try {
-        f = new DataFlavor(
-            String.format("%s;class=\"%s\"",
-              DataFlavor.javaJVMLocalObjectMimeType,
-              List.class.getName()));
+        f =
+            new DataFlavor(
+                String.format(
+                    "%s;class=\"%s\"",
+                    DataFlavor.javaJVMLocalObjectMimeType, List.class.getName()));
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
       dataFlavor = f;
     }
-    public static final DataFlavor[] dataFlavors = new DataFlavor[] { dataFlavor };
+
+    public static final DataFlavor[] dataFlavors = new DataFlavor[] {dataFlavor};
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-      if(!isDataFlavorSupported(flavor))
-        throw new UnsupportedFlavorException(flavor);
+      if (!isDataFlavorSupported(flavor)) throw new UnsupportedFlavorException(flavor);
       return this;
     }
 
@@ -394,7 +392,5 @@ public class Signal {
     public boolean isDataFlavorSupported(DataFlavor flavor) {
       return dataFlavor.equals(flavor);
     }
-
   }
-
 }

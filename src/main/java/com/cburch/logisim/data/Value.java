@@ -94,6 +94,10 @@ public class Value {
     return Value.create(bits.getWidth(), -1, 0, 0);
   }
 
+  public static Value createUnknown(BitWidth bits) {
+    return Value.create(bits.getWidth(), 0, -1, 0);
+  }
+
   public static Value createKnown(BitWidth bits, long value) {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
@@ -104,10 +108,6 @@ public class Value {
 
   public static Value createKnown(double value) {
     return Value.create(64, 0, 0, Double.doubleToLongBits(value));
-  }
-
-  public static Value createUnknown(BitWidth bits) {
-    return Value.create(bits.getWidth(), 0, -1, 0);
   }
 
   /* Added to test */
@@ -217,10 +217,12 @@ public class Value {
   public static Color STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
   public static Color MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
   public static Color WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
-  public static Color WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
-
+  public static Color WIDTH_ERROR_CAPTION_COLOR =
+      new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+  public static Color WIDTH_ERROR_HIGHLIGHT_COLOR =
+      new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+  public static Color WIDTH_ERROR_CAPTION_BGCOLOR =
+      new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
 
   private static final Cache cache = new Cache();
 

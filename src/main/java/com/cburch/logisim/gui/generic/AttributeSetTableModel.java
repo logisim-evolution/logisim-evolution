@@ -48,7 +48,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   private final HashMap<Attribute<?>, AttrRow> rowMap;
   private AttributeSet attrs;
   private ArrayList<AttrRow> rows;
-  private ComponentFactory CompInst = null;
+  private ComponentFactory compInst = null;
+
   public AttributeSetTableModel(AttributeSet attrs) {
     this.attrs = attrs;
     this.listeners = new ArrayList<>();
@@ -68,11 +69,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  public void SetInstance(ComponentFactory fact) {
-    CompInst = fact;
+  public void setInstance(ComponentFactory fact) {
+    compInst = fact;
   }
 
-  public void SetIsTool() {
+  public void setIsTool() {
     /* We remove the label attribute for a tool */
     for (Attribute<?> attr : attrs.getAttributes()) {
       if (attr.getName().equals("label")) {
@@ -231,12 +232,12 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
         }
       } else {
         try {
-          String Str = attr.toDisplayString(value);
-          if (Str.isEmpty()
+          var str = attr.toDisplayString(value);
+          if (str.isEmpty()
               && attr.getName().equals("label")
-              && CompInst != null
-              && CompInst.RequiresNonZeroLabel()) return HDLColorRenderer.RequiredFieldString;
-          return Str;
+              && compInst != null
+              && compInst.RequiresNonZeroLabel()) return HDLColorRenderer.RequiredFieldString;
+          return str;
         } catch (Exception e) {
           return "???";
         }
@@ -292,8 +293,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public String getValue() {
-      if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(attrs))
+      if (compInst == null) return HDLColorRenderer.UnKnownString;
+      if (compInst.HDLSupportedComponent(attrs))
         return HDLColorRenderer.SupportString;
       return HDLColorRenderer.NoSupportString;
     }

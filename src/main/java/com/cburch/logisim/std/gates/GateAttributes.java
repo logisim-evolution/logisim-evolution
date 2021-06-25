@@ -111,7 +111,7 @@ class GateAttributes extends AbstractAttributeSet {
     if (attr == ATTR_XOR) return (V) xorBehave;
     if (attr instanceof NegateAttribute) {
       int index = ((NegateAttribute) attr).index;
-      int bit = (int)(negated >> index) & 1;
+      int bit = (int) (negated >> index) & 1;
       return (V) Boolean.valueOf(bit == 1);
     }
     return null;

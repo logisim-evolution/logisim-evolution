@@ -141,7 +141,6 @@ public class Popups {
   }
 
   private static class VhdlPopup extends JPopupMenu implements ActionListener {
-    /** */
     private static final long serialVersionUID = 1L;
 
     final Project proj;
@@ -179,7 +178,7 @@ public class Popups {
     final JMenuItem unload = new JMenuItem(S.get("projectUnloadLibraryItem"));
     final JMenuItem reload = new JMenuItem(S.get("projectReloadLibraryItem"));
 
-    LibraryPopup(Project proj, Library lib, boolean is_top) {
+    LibraryPopup(Project proj, Library lib, boolean isTop) {
       super(S.get("libMenu"));
       this.proj = proj;
       this.lib = lib;
@@ -188,8 +187,8 @@ public class Popups {
       unload.addActionListener(this);
       add(reload);
       reload.addActionListener(this);
-      unload.setEnabled(is_top);
-      reload.setEnabled(is_top && lib instanceof LoadedLibrary);
+      unload.setEnabled(isTop);
+      reload.setEnabled(isTop && lib instanceof LoadedLibrary);
     }
 
     public void actionPerformed(ActionEvent e) {

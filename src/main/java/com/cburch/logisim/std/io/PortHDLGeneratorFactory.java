@@ -44,12 +44,12 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public boolean IsOnlyInlined() {
     return true;
   }
-  
+
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
-  
+
   @Override
   public ArrayList<String> GetInlinedCode(
       Netlist Nets,
@@ -61,65 +61,78 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     int size = ComponentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
     int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     if (dir == PortIO.INPUT) {
-      for (int i = 0 ; i < nBus ; i++) {
-        int start = ComponentInfo.GetLocalBubbleInputStartId()+i*BitWidth.MAXWIDTH;
-        int end = start-1;
+      for (int i = 0; i < nBus; i++) {
+        int start = ComponentInfo.GetLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
+        int end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
-        Contents.add("   "+HDL.assignPreamble()+GetBusName(ComponentInfo, i, Nets)+
-                     HDL.assignOperator()+HDLGeneratorFactory.LocalInputBubbleBusname+
-                     HDL.BracketOpen()+end+HDL.vectorLoopId()+"0"+HDL.BracketClose()+";");
+        Contents.add(
+            "   "
+                + HDL.assignPreamble()
+                + GetBusName(ComponentInfo, i, Nets)
+                + HDL.assignOperator()
+                + HDLGeneratorFactory.LocalInputBubbleBusname
+                + HDL.BracketOpen()
+                + end
+                + HDL.vectorLoopId()
+                + "0"
+                + HDL.BracketClose()
+                + ";");
       }
     } else if (dir == PortIO.OUTPUT) {
-      for (int i = 0 ; i < nBus ; i++) {
-        int start = ComponentInfo.GetLocalBubbleOutputStartId()+i*BitWidth.MAXWIDTH;
-        int end = start-1;
+      for (int i = 0; i < nBus; i++) {
+        int start = ComponentInfo.GetLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
+        int end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
-        Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalOutputBubbleBusname+
-                     HDL.assignOperator()+GetBusName(ComponentInfo, i, Nets)+
-                     HDL.BracketOpen()+end+HDL.vectorLoopId()+"0"+HDL.BracketClose()+";");
+        Contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                + HDL.assignOperator() + GetBusName(ComponentInfo, i, Nets) + HDL.BracketOpen()
+                + end + HDL.vectorLoopId() + "0" + HDL.BracketClose() + ";");
       }
     } else {
-      for (int i = 0 ; i < nBus ; i++) {
-        int start = ComponentInfo.GetLocalBubbleInOutStartId()+i*BitWidth.MAXWIDTH;
+      for (int i = 0; i < nBus; i++) {
+        int start = ComponentInfo.GetLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
         int nbits = Math.min(size, BitWidth.MAXWIDTH);
-        int end = start-1+nbits;
+        int end = start - 1 + nbits;
         size -= nbits;
-        int enableIndex = (dir == PortIO.INOUTSE) ? 0 : i*2;
-        int inputIndex = (dir == PortIO.INOUTSE) ? i+1 : i*2+1;
-        int outputIndex = (dir == PortIO.INOUTSE) ? 1+nBus+i : 2*nBus+i;
+        int enableIndex = (dir == PortIO.INOUTSE) ? 0 : i * 2;
+        int inputIndex = (dir == PortIO.INOUTSE) ? i + 1 : i * 2 + 1;
+        int outputIndex = (dir == PortIO.INOUTSE) ? 1 + nBus + i : 2 * nBus + i;
         String InputName = GetBusName(ComponentInfo, inputIndex, Nets);
         String OutputName = GetBusName(ComponentInfo, outputIndex, Nets);
-        String EnableName = (dir == PortIO.INOUTSE) ? GetNetName(ComponentInfo, enableIndex, true, Nets) :
-                                                      GetBusName(ComponentInfo, enableIndex, Nets);
-        Contents.add("   "+HDL.assignPreamble()+OutputName+HDL.assignOperator()+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                     HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+";");
+        String EnableName = (dir == PortIO.INOUTSE)
+                              ? GetNetName(ComponentInfo, enableIndex, true, Nets)
+                              : GetBusName(ComponentInfo, enableIndex, Nets);
+        Contents.add(
+            "   " + HDL.assignPreamble() + OutputName + HDL.assignOperator()
+                + HDLGeneratorFactory.LocalInOutBubbleBusname + HDL.BracketOpen()
+                + end + HDL.vectorLoopId() + start + HDL.BracketClose() + ";");
         if (dir == PortIO.INOUTSE) {
           if (HDL.isVHDL()) {
-            Contents.add("   "+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                         HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+" <= "+
-            		     InputName+" WHEN "+EnableName+" = '1' ELSE (OTHERS => 'Z');"); 
+            Contents.add("   " + HDLGeneratorFactory.LocalInOutBubbleBusname + HDL.BracketOpen()
+                    + end + HDL.vectorLoopId() + start + HDL.BracketClose() + " <= "
+                    + InputName + " WHEN " + EnableName + " = '1' ELSE (OTHERS => 'Z');");
           } else {
-            Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                         HDL.BracketOpen()+end+HDL.vectorLoopId()+start+HDL.BracketClose()+" = ("+EnableName+
-                         ") ? "+InputName+" : "+nbits+"'bZ;");
+            Contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalInOutBubbleBusname
+                    + HDL.BracketOpen() + end + HDL.vectorLoopId() + start
+                    + HDL.BracketClose() + " = (" + EnableName + ") ? " + InputName + " : "
+                    + nbits + "'bZ;");
           }
         } else {
-          for (int bit = 0 ; bit < nbits ; bit++) {
+          for (int bit = 0; bit < nbits; bit++) {
             if (HDL.isVHDL()) {
-              Contents.add("   "+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                           HDL.BracketOpen()+(start+bit)+HDL.BracketClose()+" <= "+
-              		       InputName+"("+bit+") WHEN "+EnableName+"("+bit+") = '1' ELSE 'Z';"); 
+              Contents.add("   " + HDLGeneratorFactory.LocalInOutBubbleBusname
+                      + HDL.BracketOpen() + (start + bit) + HDL.BracketClose() + " <= " + InputName
+                      + "(" + bit + ") WHEN " + EnableName + "(" + bit + ") = '1' ELSE 'Z';");
             } else {
-              Contents.add("   "+HDL.assignPreamble()+HDLGeneratorFactory.LocalInOutBubbleBusname+
-                           HDL.BracketOpen()+(start+bit)+HDL.BracketClose()+" = ("+EnableName+
-                           "["+bit+"]) ? "+InputName+"["+bit+"] : 1'bZ;");
+              Contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalInOutBubbleBusname
+                      + HDL.BracketOpen() + (start + bit) + HDL.BracketClose() + " = ("
+                      + EnableName + "[" + bit + "]) ? " + InputName + "[" + bit + "] : 1'bZ;");
             }
           }
         }
       }
     }
     return Contents;
-  }  
+  }
 }

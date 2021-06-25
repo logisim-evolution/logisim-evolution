@@ -78,8 +78,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private boolean attrListenRequested;
   private InstanceTextField textField;
   private InstanceStateImpl instanceState;
-  private boolean MarkInstance;
-  private boolean MarkLabel;
+  private boolean doMarkInstance;
+  private boolean doMarkLabel;
 
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
@@ -93,8 +93,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
     this.attrs = attrs;
     this.attrListenRequested = false;
     this.textField = null;
-    MarkInstance = false;
-    MarkLabel = false;
+    doMarkInstance = false;
+    doMarkLabel = false;
 
     computeEnds();
   }
@@ -110,20 +110,20 @@ public final class InstanceComponent implements Component, AttributeListener, To
   // DRC mark functions
   //
   public boolean isMarked() {
-    return MarkInstance || MarkLabel;
+    return doMarkInstance || doMarkLabel;
   }
 
   public void clearMarks() {
-    MarkInstance = false;
-    MarkLabel = false;
+    doMarkInstance = false;
+    doMarkLabel = false;
   }
 
-  public void MarkInstance() {
-    MarkInstance = true;
+  public void markInstance() {
+    doMarkInstance = true;
   }
 
-  public void MarkLabel() {
-    MarkLabel = true;
+  public void markLabel() {
+    doMarkLabel = true;
   }
 
   //
@@ -150,17 +150,17 @@ public final class InstanceComponent implements Component, AttributeListener, To
     if (e.getAttribute().equals(StdAttr.LABEL)) {
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) e.getAttribute();
-      String value = (String) e.getSource().getValue(e.getAttribute());
-      String Oldvalue = e.getOldValue() != null ? (String) e.getOldValue() : "";
-      if (!Oldvalue.equals(value)) {
+      var value = (String) e.getSource().getValue(e.getAttribute());
+      var oldValue = e.getOldValue() != null ? (String) e.getOldValue() : "";
+      if (!oldValue.equals(value)) {
         if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
-          e.getSource().setValue(lattr, Oldvalue);
+          e.getSource().setValue(lattr, oldValue);
         } else if (getFactory().getName().equalsIgnoreCase(value)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
-          e.getSource().setValue(lattr, Oldvalue);
+          e.getSource().setValue(lattr, oldValue);
         } else if (CorrectLabel.IsKeyword(value, false)) {
           OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
-          e.getSource().setValue(lattr, Oldvalue);
+          e.getSource().setValue(lattr, oldValue);
         } else {
           fireLabelChanged(e);
         }
@@ -253,10 +253,10 @@ public final class InstanceComponent implements Component, AttributeListener, To
     InstancePainter painter = context.getInstancePainter();
     painter.setInstance(this);
     factory.paintInstance(painter);
-    if (MarkInstance) {
-      Graphics g = painter.getGraphics();
-      Bounds bds = painter.getBounds();
-      Color current = g.getColor();
+    if (doMarkInstance) {
+      final Graphics g = painter.getGraphics();
+      final Bounds bds = painter.getBounds();
+      final Color current = g.getColor();
       g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
       GraphicsUtil.switchToWidth(g, 2);
       g.drawRoundRect(
@@ -273,10 +273,10 @@ public final class InstanceComponent implements Component, AttributeListener, To
     InstanceTextField field = textField;
     if (field != null) {
       field.draw(this, context);
-      if (MarkLabel) {
-        Graphics g = context.getGraphics();
-        Bounds bds = field.getBounds(g);
-        Color current = g.getColor();
+      if (doMarkLabel) {
+        final Graphics g = context.getGraphics();
+        final Bounds bds = field.getBounds(g);
+        final Color current = g.getColor();
         g.setColor(Netlist.DRC_LABEL_MARK_COLOR);
         GraphicsUtil.switchToWidth(g, 2);
         g.drawRoundRect(
@@ -290,8 +290,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   public boolean endsAt(Location pt) {
     EndData[] ends = endArray;
     for (EndData end : ends) {
-      if (end.getLocation().equals(pt))
-        return true;
+      if (end.getLocation().equals(pt)) return true;
     }
     return false;
   }
@@ -366,9 +365,9 @@ public final class InstanceComponent implements Component, AttributeListener, To
   public ComponentFactory getFactory() {
     return factory;
   }
-  
+
   public void setFactory(ComponentFactory fact) {
-    factory = (InstanceFactory)fact;
+    factory = (InstanceFactory) fact;
   }
 
   public Object getFeature(Object key) {
@@ -461,7 +460,13 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   public String toString() {
     String label = attrs.getValue(StdAttr.LABEL);
-    return "InstanceComponent{factory="+factory.getName()
-        +",loc=("+loc+"),label="+label+"}@"+super.toString();
+    return "InstanceComponent{factory="
+        + factory.getName()
+        + ",loc=("
+        + loc
+        + "),label="
+        + label
+        + "}@"
+        + super.toString();
   }
 }

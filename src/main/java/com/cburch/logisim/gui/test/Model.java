@@ -34,6 +34,7 @@ import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.ArrayList;
+import javax.swing.Spring;
 import javax.swing.SwingUtilities;
 
 class Model {
@@ -45,9 +46,11 @@ class Model {
   private final ArrayList<Integer> failed = new ArrayList<>();
   private final ArrayList<Integer> passed = new ArrayList<>();
   private boolean selected = false;
-  private boolean running, paused;
+  private boolean running;
+  private boolean paused;
   private TestThread tester;
-  private int numPass = 0, numFail = 0;
+  private int numPass = 0;
+  private int numFail = 0;
   private TestVector vec = null;
   private TestException[] results;
 

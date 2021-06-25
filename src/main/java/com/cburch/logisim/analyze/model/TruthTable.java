@@ -355,33 +355,33 @@ public class TruthTable {
   }
 
   private boolean setDontCare(Row r, int dc, boolean force, boolean[] changed) {
-    Row rNew = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
-    int base = rNew.baseIndex();
+    var newRow = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
+    int base = newRow.baseIndex();
     if (!force) {
-      for (Integer idx : rNew) {
+      for (Integer idx : newRow) {
         if (!identicalOutputs(base, idx)) return false;
       }
     }
     for (int i = 0; i < rows.size(); i++) {
-      Row s = rows.get(i);
-      if (!rNew.intersects(s)) continue;
-      if (rNew.contains(s)) {
-        for (Integer idx : s) mergeOutputs(base, idx, changed);
+      var row = rows.get(i);
+      if (!newRow.intersects(row)) continue;
+      if (newRow.contains(row)) {
+        for (Integer idx : row) mergeOutputs(base, idx, changed);
         rows.remove(i);
       } else {
         // find a bit we can flip in s so it doesn't conflict
         int pos;
-        for (pos = s.inputs.length - 1; pos >= 0; pos--) {
-          if (s.inputs[pos] == Entry.DONT_CARE && rNew.inputs[pos] != Entry.DONT_CARE) break;
+        for (pos = row.inputs.length - 1; pos >= 0; pos--) {
+          if (row.inputs[pos] == Entry.DONT_CARE && newRow.inputs[pos] != Entry.DONT_CARE) break;
         }
         if (pos < 0) throw new IllegalStateException("failed row merge");
-        int bit = (1 << (s.inputs.length - 1 - pos));
-        splitRow(s, s.baseIndex() ^ bit);
+        int bit = (1 << (row.inputs.length - 1 - pos));
+        splitRow(row, row.baseIndex() ^ bit);
       }
       i--; // back up, may need a second split
     }
-    int pos = Collections.binarySearch(rows, rNew, sortByInputs);
-    if (pos < 0) rows.add(-pos - 1, rNew);
+    int pos = Collections.binarySearch(rows, newRow, sortByInputs);
+    if (pos < 0) rows.add(-pos - 1, newRow);
     else throw new IllegalStateException("failed row merge");
     return true;
   }

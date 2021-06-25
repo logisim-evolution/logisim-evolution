@@ -62,7 +62,7 @@ public class CircuitLocker {
           circuitLocks.put(circ, lock);
         } else if (access == CircuitTransaction.READ_WRITE) {
           Thread curThread = Thread.currentThread();
-          if (locker.mutatingThread == curThread) {// nothing to do - thread already has lock
+          if (locker.mutatingThread == curThread) { // nothing to do - thread already has lock
           } else {
             Lock lock = locker.circuitLock.writeLock();
             lock.lock();

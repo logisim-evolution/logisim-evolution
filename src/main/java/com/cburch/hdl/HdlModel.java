@@ -42,7 +42,7 @@ public interface HdlModel {
   /** Gets the content of the HDL-IP component. */
   String getContent();
 
-  /** Get the component's name */
+  /** Get the component's name. */
   String getName();
 
   /** Unregisters a listener for changes to the values. */

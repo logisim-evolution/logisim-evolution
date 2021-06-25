@@ -29,5 +29,5 @@
 package com.cburch.logisim.prefs;
 
 public interface ConvertEventListener {
-  void AttributeValueChanged(ConvertEvent e);
+  void attributeValueChanged(ConvertEvent e);
 }

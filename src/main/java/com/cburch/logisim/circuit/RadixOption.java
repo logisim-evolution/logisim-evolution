@@ -132,7 +132,7 @@ public abstract class RadixOption extends AttributeOption {
         case 64:
           return 20; // 1E..4E
         default:
-          throw new AssertionError("unexpected bit width: "+ width);
+          throw new AssertionError("unexpected bit width: " + width);
       }
     }
 
@@ -241,7 +241,7 @@ public abstract class RadixOption extends AttributeOption {
         case 64:
           return 20; // 8E..16E-1
         default:
-          throw new AssertionError("unexpected bit width: "+ width);
+          throw new AssertionError("unexpected bit width: " + width);
       }
     }
 
@@ -408,13 +408,13 @@ public abstract class RadixOption extends AttributeOption {
     return displayGetter.toString();
   }
 
+  public String GetIndexChar() {
+    return "";
+  }
+
   @Override
   public String toString() {
     return saveName;
-  }
-
-  public String GetIndexChar() {
-    return "";
   }
 
   public abstract String toString(Value value);

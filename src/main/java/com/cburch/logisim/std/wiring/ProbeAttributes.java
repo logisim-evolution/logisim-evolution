@@ -138,7 +138,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
   }
 
   @Override
-  public void AttributeValueChanged(ConvertEvent e) {
-    setValue(PROBEAPPEARANCE, e.GetValue());
+  public void attributeValueChanged(ConvertEvent e) {
+    setValue(PROBEAPPEARANCE, e.getValue());
   }
 }

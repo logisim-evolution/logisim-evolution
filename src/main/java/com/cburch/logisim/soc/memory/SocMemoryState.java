@@ -43,34 +43,34 @@ import java.util.Random;
 
 public class SocMemoryState implements SocBusSlaveInterface {
 
-  public class SocMemoryInfo implements InstanceData,Cloneable {
+  public class SocMemoryInfo implements InstanceData, Cloneable {
     private class SocMemoryInfoBlock {
       private final LinkedList<Integer> contents = new LinkedList<>();
       private int startAddress;
       private final Random rand = new Random();
-    
+
       public SocMemoryInfoBlock(int address, int data) {
-        startAddress = (address>>2)<<2;
+        startAddress = (address >> 2) << 2;
         contents.add(data);
       }
-    
-      public boolean canAddBefore( int address ) {
-        int previousAddress = getStartAddress()-4;
+
+      public boolean canAddBefore(int address) {
+        int previousAddress = getStartAddress() - 4;
         return (address >= previousAddress) && (address < getStartAddress());
       }
-    
-      public boolean canAddAfter( int address ) {
-        return (address >= getEndAddress())&&(address < getEndAddress()+4);
+
+      public boolean canAddAfter(int address) {
+        return (address >= getEndAddress()) && (address < getEndAddress() + 4);
       }
-    
-      public boolean contains( int address ) {
+
+      public boolean contains(int address) {
         return (address >= getStartAddress()) && (address < getEndAddress());
       }
-    
+
       public boolean canAdd(int address) {
         return canAddBefore(address) || canAddAfter(address);
       }
-    
+
       public boolean addInfo(int address, int data) {
         if (canAddBefore(address)) {
           contents.addFirst(data);
@@ -82,32 +82,32 @@ public class SocMemoryState implements SocBusSlaveInterface {
           return true;
         }
         if (contains(address)) {
-          int index = (address-startAddress)>>2;
+          int index = (address - startAddress) >> 2;
           contents.set(index, data);
           return true;
         }
         return false;
       }
-    
+
       public int getValue(int address) {
-        int index = (address-startAddress)>>2;
+        int index = (address - startAddress) >> 2;
         if (index >= contents.size()) {
           return rand.nextInt();
         }
         return contents.get(index);
       }
-    
+
       public int getStartAddress() {
         return startAddress;
       }
-    
+
       public int getEndAddress() {
-        return startAddress+contents.size()*4;
+        return startAddress + contents.size() * 4;
       }
     }
 
     private final ArrayList<SocMemoryInfoBlock> memInfo;
-    
+
     public SocMemoryInfo() {
       memInfo = new ArrayList<>();
     }
@@ -119,7 +119,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
         return null;
       }
     }
-      
+
     public int getWord(int address) {
       for (SocMemoryInfoBlock info : memInfo)
         if (info.contains(address))
@@ -139,7 +139,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
       }
       if (adders.isEmpty()) {
         /* we have to create a new set */
-        memInfo.add(new SocMemoryInfoBlock(address,wdata));
+        memInfo.add(new SocMemoryInfoBlock(address, wdata));
         return;
       }
       if (adders.size() == 1) {
@@ -160,20 +160,20 @@ public class SocMemoryState implements SocBusSlaveInterface {
         return;
       }
       addAfter.addInfo(address, wdata);
-      for (int i = addbefore.getStartAddress() ; i < addbefore.getEndAddress() ; i += 4) {
+      for (int i = addbefore.getStartAddress(); i < addbefore.getEndAddress(); i += 4) {
         addAfter.addInfo(i, addbefore.getValue(i));
       }
       memInfo.remove(addbefore);
     }
   }
-  
+
   private int startAddress;
   private int sizeInBytes;
   private final Random rand = new Random();
   private final SocBusInfo attachedBus;
   private String label;
   private final ArrayList<SocBusSlaveListener> listeners;
-  
+
   public SocMemoryState() {
     startAddress = 0;
     sizeInBytes = 1024;
@@ -181,24 +181,24 @@ public class SocMemoryState implements SocBusSlaveInterface {
     label = "";
     listeners = new ArrayList<>();
   }
-  
+
   public Integer getStartAddress() {
     return startAddress;
   }
-  
+
   public Integer getMemorySize() {
     return sizeInBytes;
   }
-  
+
   public boolean setStartAddress(int address) {
-    int addr = (address >> 2)<<2;
+    int addr = (address >> 2) << 2;
     if (addr == startAddress)
       return false;
     startAddress = addr;
     firememMapChanged();
     return true;
   }
-  
+
   public boolean setSize(BitWidth i) {
     int size = (int) Math.pow(2, i.getWidth());
     if (sizeInBytes == size)
@@ -207,22 +207,22 @@ public class SocMemoryState implements SocBusSlaveInterface {
     firememMapChanged();
     return true;
   }
-  
+
   public SocBusInfo getSocBusInfo() {
     return attachedBus;
   }
-  
+
   public boolean setSocBusInfo(SocBusInfo i) {
     if (attachedBus.getBusId().equals(i.getBusId()))
       return false;
     attachedBus.setBusId(i.getBusId());
     return true;
   }
-  
+
   public String getLabel() {
     return label;
   }
-  
+
   public boolean setLabel(String l) {
     if (label.equals(l))
       return false;
@@ -230,18 +230,18 @@ public class SocMemoryState implements SocBusSlaveInterface {
     fireNameChanged();
     return true;
   }
-  
+
   public String getName() {
     if (attachedBus == null || attachedBus.getComponent() == null)
       return "BUG: Unknown";
     String name = label;
     if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = attachedBus.getComponent().getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;
   }
-  
+
   public InstanceComponent getComponent() {
     if (attachedBus == null || attachedBus.getComponent() == null)
       return null;
@@ -252,100 +252,104 @@ public class SocMemoryState implements SocBusSlaveInterface {
     if (!listeners.contains(l))
       listeners.add(l);
   }
-  
+
   public void removeListener(SocBusSlaveListener l) {
     listeners.remove(l);
   }
-  
+
   public SocMemoryInfo getNewState() {
     return new SocMemoryInfo();
   }
 
   @Override
   public boolean canHandleTransaction(SocBusTransaction trans) {
-	long addr = SocSupport.convUnsignedInt(trans.getAddress());
-	long start = SocSupport.convUnsignedInt(startAddress);
-	long end = start+sizeInBytes;
-    return (addr >= start)&&(addr < end);
+    long addr = SocSupport.convUnsignedInt(trans.getAddress());
+    long start = SocSupport.convUnsignedInt(startAddress);
+    long end = start + sizeInBytes;
+    return (addr >= start) && (addr < end);
   }
-  
+
   @Override
   public void handleTransaction(SocBusTransaction trans) {
-	if (!canHandleTransaction(trans)) /* this should never happen */
-	  return;
-	if (trans.isReadTransaction()) {
-	  trans.setReadData(performReadAction(trans.getAddress(),trans.getAccessType()));
-	}
-	if (trans.isWriteTransaction()) {
-	  performWriteAction(trans.getAddress(),trans.getWriteData(),trans.getAccessType());
-	}
-	trans.setTransactionResponder(attachedBus.getComponent());
+    if (!canHandleTransaction(trans)) /* this should never happen */ return;
+    if (trans.isReadTransaction()) {
+      trans.setReadData(performReadAction(trans.getAddress(), trans.getAccessType()));
+    }
+    if (trans.isWriteTransaction()) {
+      performWriteAction(trans.getAddress(), trans.getWriteData(), trans.getAccessType());
+    }
+    trans.setTransactionResponder(attachedBus.getComponent());
   }
-  
+
   private SocMemoryInfo getRegPropagateState() {
     return (SocMemoryInfo) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
   }
-  
+
   private int performReadAction(int address, int type) {
     SocMemoryInfo data = getRegPropagateState();
-    int value = (data == null) ? rand.nextInt() : data.getWord((address>>2)<<2);
-    int adbit1 = (address >> 1)&1;
+    int value = (data == null) ? rand.nextInt() : data.getWord((address >> 2) << 2);
+    int adbit1 = (address >> 1) & 1;
     switch (type) {
       case SocBusTransaction.WordAccess : return value;
-      case SocBusTransaction.HalfWordAccess : if (adbit1 == 1)
-    	                                        return (value>>16)&0xFFFF;
-                                              else
-                                            	return value&0xFFFF;
+      case SocBusTransaction.HalfWordAccess:
+        if (adbit1 == 1)
+          return (value >> 16) & 0xFFFF;
+        else
+          return value & 0xFFFF;
     }
-    int adbit1_0 = address&3;
+    int adbit1_0 = address & 3;
     switch (adbit1_0) {
-      case 0 : return value&0xFF;
-      case 1 : return (value>>8)&0xFF;
-      case 2 : return (value>>16)&0xFF;
-      default: return (value >>24)&0xFF;
+      case 0 : return value & 0xFF;
+      case 1 : return (value >> 8) & 0xFF;
+      case 2 : return (value >> 16) & 0xFF;
+      default: return (value >> 24) & 0xFF;
     }
   }
-  
+
   private void performWriteAction(int address, int data, int type) {
-	int wdata = data;
-	if (type != SocBusTransaction.WordAccess) {
-	  int oldData = performReadAction(address,SocBusTransaction.WordAccess);
-	  if (type == SocBusTransaction.HalfWordAccess) {
-	    int bit1 = (address >> 1)&1;
-	    int mdata = data&0xFFFF;
-	    if (bit1 == 1) {
-	      oldData &= 0xFFFF;
-	      mdata <<= 16;
+    int wdata = data;
+    if (type != SocBusTransaction.WordAccess) {
+      int oldData = performReadAction(address, SocBusTransaction.WordAccess);
+      if (type == SocBusTransaction.HalfWordAccess) {
+        int bit1 = (address >> 1) & 1;
+        int mdata = data & 0xFFFF;
+        if (bit1 == 1) {
+          oldData &= 0xFFFF;
+          mdata <<= 16;
+        } else {
+          oldData = ((oldData >> 16) & 0xFFFF) << 16;
+        }
+        wdata = oldData | mdata;
       } else {
-	      oldData = ((oldData >>16)&0xFFFF)<<16;
+        int byte0 = oldData & 0xFF;
+        int byte1 = ((oldData >> 8) & 0xFF) << 8;
+        int byte2 = ((oldData >> 16) & 0xFF) << 16;
+        int byte3 = ((oldData >> 24) & 0xFF) << 24;
+        int mdata = data & 0xFF;
+        int bit10 = address & 3;
+        switch (bit10) {
+          case 0:
+            wdata = byte3 | byte2 | byte1 | mdata;
+            break;
+          case 1:
+            wdata = byte3 | byte2 | byte0 | (mdata << 8);
+            break;
+          case 2:
+            wdata = byte3 | byte1 | byte0 | (mdata << 16);
+            break;
+          default:
+            wdata = byte2 | byte1 | byte0 | (mdata << 24);
+        }
       }
-      wdata = oldData|mdata;
-    } else {
-	    int byte0 = oldData&0xFF;
-	    int byte1 = ((oldData>>8)&0xFF)<<8;
-	    int byte2 = ((oldData>>16)&0xFF)<<16;
-	    int byte3 = ((oldData>>24)&0xFF)<<24;
-	    int mdata = data&0xFF;
-	    int bit10 = address&3;
-	    switch (bit10) {
-	      case 0 : wdata = byte3|byte2|byte1|mdata;
-	               break;
-	      case 1 : wdata = byte3|byte2|byte0|(mdata<<8);
-                   break;
-	      case 2 : wdata = byte3|byte1|byte0|(mdata<<16);
-                   break;
-	      default : wdata = byte2|byte1|byte0|(mdata<<24);
-	    }
-	  }
-	}
-	getRegPropagateState().writeWord(address, wdata);
+    }
+    getRegPropagateState().writeWord(address, wdata);
   }
-  
+
   private void fireNameChanged() {
     for (SocBusSlaveListener l : listeners)
       l.labelChanged();
   }
-  
+
   private void firememMapChanged() {
     for (SocBusSlaveListener l : listeners)
       l.memoryMapChanged();

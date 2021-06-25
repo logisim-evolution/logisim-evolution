@@ -75,24 +75,31 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private final Object lock = new Object();
   private JFrame parent;
 
-  
+
   private final ArrayList<ActionListener> Listeners = new ArrayList<>();
 
   public Download(
-	      Project MyProject,
-	      String TopLevelSheet,
-	      double TickFrequency,
-	      BoardInformation MyBoardInformation,
-	      String MapFileName,
-	      boolean writeToFlash,
-	      boolean DownloadOnly,
-	      boolean gegerateHdlOnly,
-	      JProgressBar Progress,
-	      JFrame myParent) {
+      Project MyProject,
+      String TopLevelSheet,
+      double TickFrequency,
+      BoardInformation MyBoardInformation,
+      String MapFileName,
+      boolean writeToFlash,
+      boolean DownloadOnly,
+      boolean gegerateHdlOnly,
+      JProgressBar Progress,
+      JFrame myParent) {
     MyProgress = Progress;
     parent = myParent;
-    SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
-       MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
+    SetUpDownload(
+        MyProject,
+        TopLevelSheet,
+        TickFrequency,
+        MyBoardInformation,
+        MapFileName,
+        writeToFlash,
+        DownloadOnly,
+        gegerateHdlOnly);
   }
 
   public Download(
@@ -104,10 +111,17 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       boolean writeToFlash,
       boolean DownloadOnly,
       boolean gegerateHdlOnly) {
-    SetUpDownload(MyProject, TopLevelSheet, TickFrequency,
-        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
+    SetUpDownload(
+        MyProject,
+        TopLevelSheet,
+        TickFrequency,
+        MyBoardInformation,
+        MapFileName,
+        writeToFlash,
+        DownloadOnly,
+        gegerateHdlOnly);
   }
-  
+
   private void SetUpDownload(
       Project MyProject,
       String TopLevelSheet,
@@ -177,11 +191,11 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       MyProgress.setString(S.get("FpgaDownloadInfo"));
     }
   }
-  
+
   public void DoDownload() {
     new Thread(this).start();
   }
-  
+
   public void stop() {
     StopRequested = true;
     MyProgress.setString(S.get("FpgaGuiCanceling"));
@@ -216,7 +230,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         Reporter.Report.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
         e.printStackTrace();
       } catch (InterruptedException e) {
-        Reporter.Report.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+        Reporter.Report.AddError(
+            S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       }
     }
     fireEvent(new ActionEvent(this, 1, "DownloadDone"));
@@ -225,9 +240,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   public boolean runtty() {
     Circuit root = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
     if (root != null) {
-      root.Annotate(MyProject,false, false);
+      root.Annotate(MyProject, false, false);
     } else {
-      Reporter.Report.AddFatalError("Toplevel sheet \""+TopLevelSheet+"\" not found in project!");
+      Reporter.Report.AddFatalError(
+          "Toplevel sheet \"" + TopLevelSheet + "\" not found in project!");
       return false;
     }
     if (!PrepareDownLoad()) return false;
@@ -244,7 +260,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       e.printStackTrace();
       return false;
     } catch (InterruptedException e) {
-      Reporter.Report.AddError(S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+      Reporter.Report.AddError(
+          S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       return false;
     }
     return true;
@@ -357,11 +374,11 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       MyProgress.setString(S.get("FPGAState3"));
       ComponentMapDialog MapPannel;
       if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-        MapPannel = new ComponentMapDialog( parent, 
+        MapPannel = new ComponentMapDialog(parent,
                 MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
                 MyBoardInformation, MyMappableResources);
       } else {
-        MapPannel = new ComponentMapDialog( parent , "", MyBoardInformation, MyMappableResources);
+        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, MyMappableResources);
       }
       if (!MapPannel.run()) {
         Reporter.Report.AddError(S.get("FPGADownloadAborted"));
@@ -371,7 +388,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       if (MapFileName != null) {
         File MapFile = new File(MapFileName);
         if (!MapFile.exists()) return false;
-        ComponentMapParser cmp = new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
+        ComponentMapParser cmp =
+            new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
         cmp.parseFile();
       }
     }
@@ -407,7 +425,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
 
   @Override
   public void windowClosing(WindowEvent e) {
-	MyProgress.setString(S.get("FPGACancelWait"));
+    MyProgress.setString(S.get("FPGACancelWait"));
     StopRequested = true;
     synchronized (lock) {
       if (Executable != null) {

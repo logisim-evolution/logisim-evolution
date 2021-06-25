@@ -38,10 +38,10 @@ public class Nios2Assembler extends AbstractAssembler {
   public static final int CONTROL_REGISTER = 257;
 
   public Nios2Assembler() {
-	super();
+    super();
     super.AddAcceptedParameterType(CUSTOM_REGISTER);
     super.AddAcceptedParameterType(CONTROL_REGISTER);
-	/* Add the custom instructions */
+    /* Add the custom instructions */
     super.addAssemblerExecutionUnit(new Nios2CustomInstructions());
     /* Add all other instructions */
     super.addAssemblerExecutionUnit(new Nios2DataTransferInstructions());
@@ -52,18 +52,22 @@ public class Nios2Assembler extends AbstractAssembler {
     super.addAssemblerExecutionUnit(new Nios2OtherControlInstructions());
   }
 
-  public boolean usesRoundedBrackets() { return true; }
-  public String getHighlightStringIdentifier() { return "asm/nios2"; }
+  public boolean usesRoundedBrackets() {
+    return true;
+  }
+
+  public String getHighlightStringIdentifier() {
+    return "asm/nios2";
+  }
 
   public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.REGISTER) {
-    	if (token.getValue().toLowerCase().startsWith("ctl"))
-    	  token.setType(CONTROL_REGISTER);
-    	else if (token.getValue().toLowerCase().startsWith("c"))
-          token.setType(CUSTOM_REGISTER);
+        if (token.getValue().toLowerCase().startsWith("ctl"))
+          token.setType(CONTROL_REGISTER);
+        else if (token.getValue().toLowerCase().startsWith("c"))
+            token.setType(CUSTOM_REGISTER);
       }
     }
   }
-
 }

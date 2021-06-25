@@ -191,7 +191,7 @@ public class TtyInterface {
       if ((format & FORMAT_TABLE_TABBED) != 0) sep = "\t";
       else if ((format & FORMAT_TABLE_CSV) != 0) sep = ",";
       else // if ((format & FORMAT_TABLE_PRETTY) != 0)
-      sep = " ";
+        sep = " ";
       if (showHeader) {
         for (int i = 0; i < headers.size(); i++) {
           if ((format & FORMAT_TABLE_TABBED) != 0) formats.add("%s");

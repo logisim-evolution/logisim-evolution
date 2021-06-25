@@ -139,7 +139,7 @@ public class PlaRomData implements InstanceData {
         OptionPane.showOptionDialog(
             null,
             panel,
-            S.fmt("PlaEditWindowTitel",getSizeString()),
+            S.fmt("PlaEditWindowTitel", getSizeString()),
             OptionPane.OK_CANCEL_OPTION,
             OptionPane.PLAIN_MESSAGE,
             null,
@@ -184,7 +184,7 @@ public class PlaRomData implements InstanceData {
   public Value[] getOutputValues() {
     Value[] OutputValuecopy = new Value[getOutputs()];
     for (byte i = (byte) (getOutputs() - 1); i >= 0; i--) // reverse array
-    OutputValuecopy[i] = OutputValue[OutputValue.length - i - 1];
+      OutputValuecopy[i] = OutputValue[OutputValue.length - i - 1];
     return OutputValuecopy;
   }
 
@@ -385,8 +385,8 @@ public class PlaRomData implements InstanceData {
           System.err.println("PlaRom: Error in saved data ");
           return;
       }
-    } // second matrix
-    else if (node < getInputs() * getAnd() + getOutputs() * getAnd()) {
+    } else if (node < getInputs() * getAnd() + getOutputs() * getAnd()) {
+      // second matrix
       node -= getInputs() * getAnd();
       row = node / getOutputs();
       column = node - row * getOutputs();

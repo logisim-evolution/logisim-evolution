@@ -48,9 +48,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String FPGAClock = "FPGA_GlobalClock";
   public static final String FPGATick = "s_FPGA_Tick";
 
-  public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency /*
-								 * , boolean useFPGAClock
-								 */) {
+  public TickComponentHDLGeneratorFactory(
+      long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
     FpgaClockFrequency = fpga_clock_frequency;
     TickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;
@@ -76,7 +75,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (TheNetlist.RequiresGlobalClockConnection()) {
       Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
-      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
+      Contents.add(
+          "   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
     }
     Contents.add("");
     Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3));

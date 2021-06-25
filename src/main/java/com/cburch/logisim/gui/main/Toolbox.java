@@ -48,7 +48,7 @@ class Toolbox extends JPanel {
     Toolbar toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
-    toolbox = new ProjectExplorer(proj,false);
+    toolbox = new ProjectExplorer(proj, false);
     toolbox.setListener(new ToolboxManip(proj, toolbox));
     add(new JScrollPane(toolbox), BorderLayout.CENTER);
 

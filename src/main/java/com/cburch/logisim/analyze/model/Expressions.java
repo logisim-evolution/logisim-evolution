@@ -33,35 +33,35 @@ public class Expressions {
     And(Expression a, Expression b) {
       super(a, b);
     }
-    
+
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.AND.Id];
+      return notation.opLvl[Op.AND.id];
     }
 
     @Override
     public Op getOp() {
-    	return Expression.Op.AND;
+      return Expression.Op.AND;
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitAnd(a, b);
+      return visitor.visitAnd(exprA, exprB);
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitAnd(a, b);
+      return visitor.visitAnd(exprA, exprB);
     }
   }
 
   private abstract static class Binary extends Expression {
-    protected final Expression a;
-    protected final Expression b;
+    protected final Expression exprA;
+    protected final Expression exprB;
 
     Binary(Expression a, Expression b) {
-      this.a = a;
-      this.b = b;
+      this.exprA = a;
+      this.exprB = b;
     }
 
     @Override
@@ -69,12 +69,12 @@ public class Expressions {
       if (other == null) return false;
       if (this.getClass() != other.getClass()) return false;
       Binary o = (Binary) other;
-      return this.a.equals(o.a) && this.b.equals(o.b);
+      return this.exprA.equals(o.exprA) && this.exprB.equals(o.exprB);
     }
 
     @Override
     public int hashCode() {
-      return 31 * (31 * getClass().hashCode() + a.hashCode()) + b.hashCode();
+      return 31 * (31 * getClass().hashCode() + exprA.hashCode()) + exprB.hashCode();
     }
   }
 
@@ -96,7 +96,7 @@ public class Expressions {
     public int getPrecedence(Notation notation) {
       return Integer.MAX_VALUE;
     }
-    
+
     @Override
     public Op getOp() {
       return null;
@@ -119,42 +119,42 @@ public class Expressions {
   }
 
   private static class Not extends Expression {
-    private final Expression a;
+    private final Expression expr;
 
     Not(Expression a) {
-      this.a = a;
+      this.expr = a;
     }
 
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof Not)) return false;
       Not o = (Not) other;
-      return this.a.equals(o.a);
+      return this.expr.equals(o.expr);
     }
 
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.NOT.Id];
+      return notation.opLvl[Op.NOT.id];
     }
-    
+
     @Override
     public Op getOp() {
-    	return Expression.Op.NOT;
+      return Expression.Op.NOT;
     }
 
     @Override
     public int hashCode() {
-      return 31 * a.hashCode();
+      return 31 * expr.hashCode();
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitNot(a);
+      return visitor.visitNot(expr);
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitNot(a);
+      return visitor.visitNot(expr);
     }
   }
 
@@ -165,22 +165,22 @@ public class Expressions {
 
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.OR.Id];
+      return notation.opLvl[Op.OR.id];
     }
-    
+
     @Override
     public Op getOp() {
-    	return Expression.Op.OR;
+      return Expression.Op.OR;
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitOr(a, b);
+      return visitor.visitOr(exprA, exprB);
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitOr(a, b);
+      return visitor.visitOr(exprA, exprB);
     }
   }
 
@@ -207,10 +207,10 @@ public class Expressions {
     public int hashCode() {
       return name.hashCode();
     }
-    
+
     @Override
     public Op getOp() {
-    	return null;
+      return null;
     }
 
     @Override
@@ -231,22 +231,22 @@ public class Expressions {
 
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.XOR.Id];
+      return notation.opLvl[Op.XOR.id];
     }
-    
+
     @Override
     public Op getOp() {
-    	return Expression.Op.XOR;
+      return Expression.Op.XOR;
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitXor(a, b);
+      return visitor.visitXor(exprA, exprB);
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitXor(a, b);
+      return visitor.visitXor(exprA, exprB);
     }
   }
 
@@ -257,22 +257,22 @@ public class Expressions {
 
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.XNOR.Id];
+      return notation.opLvl[Op.XNOR.id];
     }
-	    
+
     @Override
     public Op getOp() {
-    	return Expression.Op.XNOR;
+      return Expression.Op.XNOR;
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitXnor(a, b);
+      return visitor.visitXnor(exprA, exprB);
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitXnor(a, b);
+      return visitor.visitXnor(exprA, exprB);
     }
   }
 
@@ -283,25 +283,25 @@ public class Expressions {
 
     @Override
     public int getPrecedence(Notation notation) {
-      return notation.opLvl[Op.EQ.Id];
+      return notation.opLvl[Op.EQ.id];
     }
-    
+
     @Override
     public Op getOp() {
-    	return Expression.Op.EQ;
+      return Expression.Op.EQ;
     }
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-      return visitor.visitEq(a, b);
+      return visitor.visitEq(exprA, exprB);
     }
 
     @Override
     int visit(IntVisitor visitor) {
-      return visitor.visitEq(a, b);
+      return visitor.visitEq(exprA, exprB);
     }
   }
-  
+
   public static Expression and(Expression a, Expression b) {
     if (a == null) return b;
     if (b == null) return a;
@@ -328,13 +328,13 @@ public class Expressions {
     if (b == null) return a;
     return new Xor(a, b);
   }
-  
+
   public static Expression xnor(Expression a, Expression b) {
     if (a == null) return b;
     if (b == null) return a;
     return new Xnor(a, b);
   }
-	  
+
   public static Expression eq(Expression a, Expression b) {
     if (a == null)
       return b;

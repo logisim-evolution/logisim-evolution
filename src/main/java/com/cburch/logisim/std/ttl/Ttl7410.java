@@ -50,8 +50,8 @@ public class Ttl7410 extends AbstractTtlGate {
   private boolean inverted = true;
   private boolean isAND = true;
 
-  private final static byte pinCount = 14;
-  private final static byte[] outPorts = {6, 8, 12};
+  private static final byte pinCount = 14;
+  private static final byte[] outPorts = {6, 8, 12};
 
   public Ttl7410() {
     super(_ID, pinCount, outPorts);

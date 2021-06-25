@@ -302,7 +302,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     if (DRCTraceActive) {
       ActiveDRCContainer.ClearMarks();
       DRCTraceActive = false;
-      if (MyProject!=null) MyProject.repaintCanvas();
+      if (MyProject != null) MyProject.repaintCanvas();
     }
   }
 
@@ -363,7 +363,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     DRCTraceActive = true;
     ActiveDRCContainer = dc;
     if (dc.HasCircuit())
-      if (MyProject!= null && !MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
+      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
         MyProject.setCurrentCircuit(dc.GetCircuit());
     dc.MarkComponents();
     if (MyProject != null) MyProject.repaintCanvas();

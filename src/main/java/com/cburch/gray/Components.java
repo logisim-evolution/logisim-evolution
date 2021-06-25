@@ -75,7 +75,8 @@ public class Components extends Library {
     return tools;
   }
 
-  public boolean removeLibrary(String Name) {
+  @Override
+  public boolean removeLibrary(String name) {
     return false;
   }
 }

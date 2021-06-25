@@ -58,7 +58,7 @@ public class AssemblerToken {
   /* all numbers below 256 are reserved for internal usage, the numbers starting from 256 can
    * be used for custom purposes.
    */
-  
+
   public static final HashSet<Integer> MATH_OPERATORS = new HashSet<>() {
     private static final long serialVersionUID = 1L;
 
@@ -72,14 +72,14 @@ public class AssemblerToken {
       add(MATH_SHIFT_RIGHT);
     }
   };
-  
+
   private int type;
   private String value;
   private final int offset;
   private Boolean valid;
   private Boolean isLabel;
-   
-  public AssemblerToken(int type , String value, int offset) {
+
+  public AssemblerToken(int type, String value, int offset) {
     this.type = type;
     this.value = value;
     this.offset = offset;
@@ -96,29 +96,54 @@ public class AssemblerToken {
       int start = 0;
       int end = value.length();
       if (value.startsWith("\"")) start = 1;
-      if (value.length()>1 && value.charAt(value.length()-1) == '"' && value.charAt(value.length()-2) != '\\') end --;
-      if (start >= end) this.value ="";
+      if (value.length() > 1
+          && value.charAt(value.length() - 1) == '"'
+          && value.charAt(value.length() - 2) != '\\') end--;
+      if (start >= end) this.value = "";
       else this.value = value.substring(start, end);
     }
     isLabel = type == LABEL;
   }
-  
-  public boolean isValid() { return valid; }
-  public boolean isNumber() { return type == DEC_NUMBER || type == HEX_NUMBER; }
-  public int getoffset() { return offset; }
-  public int getType() { return type; }
-  
-  public void setType(int type) { 
-    this.type = type; 
+
+  public boolean isValid() {
+    return valid;
+  }
+
+  public boolean isNumber() {
+    return type == DEC_NUMBER || type == HEX_NUMBER;
+  }
+
+  public int getoffset() {
+    return offset;
+  }
+
+  public int getType() {
+    return type;
+  }
+
+  public void setType(int type) {
+    this.type = type;
     if (type == LABEL || type == LABEL_IDENTIFIER || type == PARAMETER_LABEL)
       isLabel = true;
   }
-  
-  public String getValue() { return value; }
-  public void setValue(int val) { value = Integer.toString(val); type = DEC_NUMBER; }
-  public void setValue(String str) { value = str; }
-  public boolean isLabel() { return isLabel; }
-  
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(int val) {
+    value = Integer.toString(val);
+    type = DEC_NUMBER;
+  }
+
+  public void setValue(String str) {
+    value = str;
+  }
+
+  public boolean isLabel() {
+    return isLabel;
+  }
+
   public int getNumberValue() {
     if (type == DEC_NUMBER) return Integer.parseInt(value);
     else if (type == HEX_NUMBER) {
@@ -135,13 +160,14 @@ public class AssemblerToken {
       if (value.length() > 0)
         return Integer.parseUnsignedInt(value.substring(1));
       else
-    	return 0;
-    }
-    else return 0;
+        return 0;
+    } else
+        return 0;
   }
 
   public long getLongValue() {
-    if (type == DEC_NUMBER) return Long.parseLong(value);
+    if (type == DEC_NUMBER)
+      return Long.parseLong(value);
     else if (type == HEX_NUMBER) {
       if (value.toUpperCase().contains("X")) {
         String[] split = value.toUpperCase().split("X");
@@ -152,7 +178,6 @@ public class AssemblerToken {
         value = split[1];
       }
       return Long.parseUnsignedLong(value, 16);
-    }
-    else return 0;
+    } else return 0;
   }
 }

@@ -72,6 +72,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
   private LayoutPopupManager popupManager;
+
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
     this.grid = new GridPainter(this);
@@ -238,12 +239,12 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   protected void paintForeground(Graphics g) {
     double zoom = grid.getZoomFactor();
-    Graphics gScaled = g.create();
-    if (zoom != 1.0 && zoom != 0.0 && gScaled instanceof Graphics2D) {
-      ((Graphics2D) gScaled).scale(zoom, zoom);
+    var gfxScaled = g.create();
+    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D) {
+      ((Graphics2D) gfxScaled).scale(zoom, zoom);
     }
-    super.paintForeground(gScaled);
-    gScaled.dispose();
+    super.paintForeground(gfxScaled);
+    gfxScaled.dispose();
   }
 
   @Override

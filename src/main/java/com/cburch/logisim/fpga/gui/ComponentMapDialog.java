@@ -57,7 +57,7 @@ import javax.swing.JScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComponentMapDialog implements ActionListener, WindowListener, 
+public class ComponentMapDialog implements ActionListener, WindowListener,
         LocaleListener, ComponentListener {
 
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
@@ -89,10 +89,10 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
     if (OldDirectory == null) OldDirectory = "";
     else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
       OldDirectory += File.separator;
-    
+
     parent = parentFrame;
     if (parent != null) parent.addWindowListener(this);
-    
+
     BoardInfo = Board;
     MappableComponents = mappable;
 
@@ -107,24 +107,27 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
     panel.setLayout(thisLayout);
 
     /* Add the board Picture */
-    BoardPic = new BoardManipulator(panel,parentFrame, mappable);
+    BoardPic = new BoardManipulator(panel, parentFrame, mappable);
     BoardPic.addComponentListener(this);
     c.gridx = 0;
 
     /* Add some text */
     UnmappedText.setHorizontalAlignment(JLabel.CENTER);
-    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    UnmappedText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = 1;
     panel.add(UnmappedText, c);
     MappedText.setHorizontalAlignment(JLabel.CENTER);
-    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 1;
     panel.add(MappedText, c);
     CommandText.setHorizontalAlignment(JLabel.CENTER);
-    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 2;
     panel.add(CommandText, c);
 
@@ -200,7 +203,7 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
     ScreenHeight -= (ImageYBorder + (ImageYBorder >> 2));
     int zoomX = (ScreenWidth * 100) / ImageWidth;
     int zoomY = (ScreenHeight * 100) / ImageHeight;
-    BoardPic.setMaxZoom( Math.min( zoomX, zoomY ) );
+    BoardPic.setMaxZoom(Math.min(zoomX, zoomY));
   }
 
   public boolean run() {
@@ -264,23 +267,25 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
       String FileName = file.getName();
       String AbsoluteFileName = file.getPath();
       OldDirectory = AbsoluteFileName.substring(0, AbsoluteFileName.length() - FileName.length());
-      ComponentMapParser parse = new ComponentMapParser(file,MappableComponents,BoardInfo);
+      ComponentMapParser parse = new ComponentMapParser(file, MappableComponents, BoardInfo);
       int result = parse.parseFile();
       if (result == 0) {
         panel.setVisible(true);
         BoardPic.update();
       } else {
-    	 OptionPane.showMessageDialog(null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
-         panel.setVisible(true);
+        OptionPane.showMessageDialog(
+            null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
+        panel.setVisible(true);
       }
     }
   }
 
   private void Save() {
-	panel.setVisible(false);
+    panel.setVisible(false);
     MappableComponents.save();
-    OptionPane.showMessageDialog(null, S.get("BoarMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
-	panel.setVisible(true);
+    OptionPane.showMessageDialog(
+        null, S.get("BoarMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
+    panel.setVisible(true);
   }
 
   @Override
@@ -324,9 +329,12 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   @Override
   public void componentResized(ComponentEvent e) {
-    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    UnmappedText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setPreferredSize(
+        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     panel.pack();
   }
 

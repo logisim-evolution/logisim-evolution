@@ -258,7 +258,6 @@ public class VhdlEntityComponent extends InstanceFactory {
     painter.drawPorts();
   }
 
-  @Override
   /**
    * Propagate signals through the VHDL component. Logisim doesn't have a VHDL simulation tool. So
    * we need to use an external tool. We send signals to Questasim/Modelsim through a socket and a
@@ -268,6 +267,7 @@ public class VhdlEntityComponent extends InstanceFactory {
    * <p>This can be done only if Logisim could connect to the tcl server (socket). This is done in
    * Simulation.java.
    */
+  @Override
   public void propagate(InstanceState state) {
 
     if (state.getProject().getVhdlSimulator().isEnabled()

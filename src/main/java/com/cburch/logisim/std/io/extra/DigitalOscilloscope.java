@@ -243,9 +243,9 @@ public class DigitalOscilloscope extends InstanceFactory {
           },
           3);
       if (showclock == 1 && i == 0) // clock diagram color
-      g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
-      else // input diagrams color
-      g.setColor(Color.BLACK);
+        g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+      else
+        g.setColor(Color.BLACK);  // input diagrams color
       // draw diagram
       for (byte j = 0; j < length; j++) {
         // vertical line
@@ -289,9 +289,8 @@ public class DigitalOscilloscope extends InstanceFactory {
               g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
             else g.setColor(Color.BLACK);
           }
-        }
-        // 0 line
-        else if (diagramstate.getState(i + (showclock == 0 ? 1 : 0), j) == Boolean.FALSE)
+        } else if (diagramstate.getState(i + (showclock == 0 ? 1 : 0), j) == Boolean.FALSE)
+          // 0 line
           g.drawLine(
               x + border + 15 * j,
               y + border + 30 * (i + 1) + showclock * 2,
@@ -358,9 +357,7 @@ public class DigitalOscilloscope extends InstanceFactory {
                     : (state.getPortValue(i) == Value.FALSE) ? Boolean.FALSE : null);
         }
       }
-    }
-    // clear
-    else if (clear == Value.TRUE) {
+    } else if (clear == Value.TRUE) {
       diagramstate.clear();
       diagramstate.setusedcell((byte) -1);
       diagramstate.setLastClock(Value.UNKNOWN);

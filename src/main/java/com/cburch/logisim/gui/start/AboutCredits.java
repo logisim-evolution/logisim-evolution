@@ -46,7 +46,7 @@ import javax.swing.JComponent;
 
 class AboutCredits extends JComponent {
   private static final long serialVersionUID = 1L;
-  /** Speed of how quickly the scrolling occurs */
+  /** Speed of how quickly the scrolling occurs. */
   private static final int MILLIS_PER_RASTER = 20;
 
   /**
@@ -250,7 +250,7 @@ class AboutCredits extends JComponent {
 
     /**
      * As some internals depend on Graphics context which can not be available at creation time this
-     * method must be called before using Line to ensure all internals are initialized
+     * method must be called before using Line to ensure all internals are initialized.
      *
      * @param g Graphics context to use
      */

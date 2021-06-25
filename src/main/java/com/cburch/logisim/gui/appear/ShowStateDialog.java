@@ -45,8 +45,8 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel;
+import com.cburch.logisim.gui.appear.CheckBoxTree;
+import org.scijava.swing.checkboxtree.CheckBoxNodeData;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -68,8 +68,8 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
   final JButton ok;
   final JButton cancel;
-  DefaultMutableTreeNode root;
-  final CheckboxTree tree;
+  RefTreeNode root;
+  final CheckBoxTree tree;
   final AppearanceCanvas canvas;
 
   public ShowStateDialog(JFrame parent, AppearanceCanvas canvas) {
@@ -77,18 +77,16 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     this.canvas = canvas;
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-    Circuit circuit = canvas.getCircuit();
+    final var circuit = canvas.getCircuit();
     setTitle(S.fmt("showStateDialogTitle", circuit.getName()));
 
     root = enumerate(circuit, null);
     if (root == null) {
-      root = new DefaultMutableTreeNode(S.fmt("showStateDialogEmptyNode", circuit.getName()));
+      root = new RefTreeNode(S.fmt("showStateDialogEmptyNode", circuit.getName()));
     }
-    tree = new CheckboxTree(root);
-    tree.getCheckingModel()
-        .setCheckingMode(TreeCheckingModel.CheckingMode.PROPAGATE_PRESERVING_CHECK);
+    tree = new CheckBoxTree(root);
     tree.setCheckingPaths(getPaths());
-    JScrollPane infoPane = new JScrollPane(tree);
+    final var infoPane = new JScrollPane(tree);
 
     ok = new JButton(S.get("showStateDialogOkButton"));
     cancel = new JButton(S.get("showStateDialogCancelButton"));
@@ -137,27 +135,26 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     Object[] o = p.getPath();
     InstanceComponent[] elt = new InstanceComponent[o.length - 1];
     for (int i = 1; i < o.length; i++) {
-      Ref r = (Ref) ((DefaultMutableTreeNode) o[i]).getUserObject();
+      Ref r = ((RefTreeNode) o[i]).refData;
       elt[i - 1] = r.ic;
     }
     return new DynamicElement.Path(elt);
   }
 
-  private static TreePath toTreePath(DefaultMutableTreeNode root, DynamicElement.Path path) {
+  private static TreePath toTreePath(RefTreeNode root, DynamicElement.Path path) {
     Object[] o = new Object[path.elt.length + 1];
     o[0] = root;
     for (int i = 1; i < o.length; i++) {
-      o[i] = findChild((DefaultMutableTreeNode) o[i - 1], path.elt[i - 1]);
+      o[i] = findChild((RefTreeNode) o[i - 1], path.elt[i - 1]);
       if (o[i] == null) return null;
     }
     return new TreePath(o);
   }
 
-  private static DefaultMutableTreeNode findChild(
-      DefaultMutableTreeNode node, InstanceComponent ic) {
+  private static RefTreeNode findChild(RefTreeNode node, InstanceComponent ic) {
     for (int i = 0; i < node.getChildCount(); i++) {
-      DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
-      Ref r = (Ref) child.getUserObject();
+      RefTreeNode child = (RefTreeNode) node.getChildAt(i);
+      Ref r = child.refData;
       if (r.ic.getLocation().equals(ic.getLocation())
           && r.ic.getFactory().getName().equals(ic.getFactory().getName())) return child;
     }
@@ -165,7 +162,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private TreePath[] getPaths() {
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+    RefTreeNode root = (RefTreeNode) tree.getModel().getRoot();
     ArrayList<TreePath> paths = new ArrayList<>();
     for (CanvasObject shape : canvas.getModel().getObjectsFromBottom()) {
       if (!(shape instanceof DynamicElement)) continue;
@@ -177,7 +174,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
 
   private void apply() {
     CanvasModel model = canvas.getModel();
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+    RefTreeNode root = (RefTreeNode) tree.getModel().getRoot();
 
     Bounds bbox = Bounds.EMPTY_BOUNDS;
     for (CanvasObject shape : model.getObjectsFromBottom()) {
@@ -217,8 +214,8 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     ArrayList<CanvasObject> newShapes = new ArrayList<>();
 
     for (TreePath path : toAdd) {
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-      Ref r = (Ref) node.getUserObject();
+      RefTreeNode node = (RefTreeNode) path.getLastPathComponent();
+      Ref r = node.refData;
       if (r instanceof CircuitRef) continue;
       ComponentFactory factory = r.ic.getFactory();
       if (factory instanceof DynamicElementProvider) {
@@ -247,16 +244,16 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     this.dispose();
   }
 
-  private DefaultMutableTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CircuitRef(circuit, ic));
+  private RefTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
+    RefTreeNode root = new RefTreeNode(new CircuitRef(circuit, ic));
     for (Component c : circuit.getNonWires()) {
       if (c instanceof InstanceComponent) {
         InstanceComponent child = (InstanceComponent) c;
         ComponentFactory f = child.getFactory();
         if (f instanceof DynamicElementProvider) {
-          root.add(new DefaultMutableTreeNode(new Ref(child)));
+          root.add(new RefTreeNode(new Ref(child)));
         } else if (f instanceof SubcircuitFactory) {
-          DefaultMutableTreeNode node = enumerate(((SubcircuitFactory) f).getSubcircuit(), child);
+          RefTreeNode node = enumerate(((SubcircuitFactory) f).getSubcircuit(), child);
           if (node != null) root.add(node);
         }
       }
@@ -270,8 +267,8 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       Object[] aa = a.getPath();
       Object[] bb = b.getPath();
       for (int i = 1; i < aa.length && i < bb.length; i++) {
-        Ref ra = (Ref) ((DefaultMutableTreeNode) aa[i]).getUserObject();
-        Ref rb = (Ref) ((DefaultMutableTreeNode) bb[i]).getUserObject();
+        Ref ra = ((RefTreeNode) aa[i]).refData;
+        Ref rb = ((RefTreeNode) bb[i]).refData;
         Location la = ra.ic.getLocation();
         Location lb = rb.ic.getLocation();
         int diff = la.compareTo(lb);
@@ -298,16 +295,25 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class CircuitRef extends Ref {
-    final Circuit c;
+    final Circuit circuit;
 
     CircuitRef(Circuit c, InstanceComponent ic) {
       super(ic);
-      this.c = c;
+      this.circuit = c;
     }
 
     public String toString() {
-      if (ic == null) return S.fmt("showStateDialogNodeTitle", c.getName());
+      if (ic == null) return S.fmt("showStateDialogNodeTitle", circuit.getName());
       else return super.toString();
+    }
+  }
+
+  private static class RefTreeNode extends DefaultMutableTreeNode {
+    final Ref refData;
+
+    RefTreeNode (Object data) {
+      super(new CheckBoxNodeData(data.toString(),false));
+      refData = (data instanceof Ref) ? (Ref)data : null;
     }
   }
 }

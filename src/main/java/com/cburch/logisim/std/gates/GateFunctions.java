@@ -48,7 +48,8 @@ class GateFunctions {
         Value v = inputs[j].get(i);
         if (v == Value.TRUE) {
           count++;
-        } else if (v == Value.FALSE) {// do nothing
+        } else if (v == Value.FALSE) {
+          // do nothing
         } else {
           count = -1;
           break;
