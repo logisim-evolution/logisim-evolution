@@ -42,7 +42,7 @@ public class WidthIncompatibilityData {
   }
 
   public void add(Location p, BitWidth w) {
-    for (int i = 0; i < points.size(); i++) {
+    for (var i = 0; i < points.size(); i++) {
       if (p.equals(points.get(i)) && w.equals(widths.get(i))) return;
     }
     points.add(p);
@@ -54,15 +54,15 @@ public class WidthIncompatibilityData {
     if (!(other instanceof WidthIncompatibilityData)) return false;
     if (this == other) return true;
 
-    WidthIncompatibilityData o = (WidthIncompatibilityData) other;
+    final var o = (WidthIncompatibilityData) other;
     if (this.size() != o.size()) return false;
-    for (int i = 0; i < this.size(); i++) {
-      Location p = o.getPoint(i);
-      BitWidth w = o.getBitWidth(i);
-      boolean matched = false;
+    for (var i = 0; i < this.size(); i++) {
+      final var p = o.getPoint(i);
+      final var w = o.getBitWidth(i);
+      var matched = false;
       for (int j = 0; j < o.size(); j++) {
-        Location q = this.getPoint(j);
-        BitWidth x = this.getBitWidth(j);
+        final var q = this.getPoint(j);
+        final var x = this.getBitWidth(j);
         if (p.equals(q) && w.equals(x)) {
           matched = true;
           break;
@@ -82,10 +82,10 @@ public class WidthIncompatibilityData {
   }
 
   public BitWidth getCommonBitWidth() {
-    int[] hist = new int[65];
+    final var hist = new int[65];
     BitWidth maxwidth = null;
-    int maxcount = 0;
-    for (BitWidth bw : widths) {
+    var maxcount = 0;
+    for (final var bw : widths) {
       int w = bw.getWidth();
       int n = ++hist[w];
       if (n > maxcount) {

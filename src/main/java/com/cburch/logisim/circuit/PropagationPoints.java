@@ -32,10 +32,8 @@ import static com.cburch.logisim.circuit.Strings.S;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -52,7 +50,7 @@ class PropagationPoints {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof Entry)) return false;
-      Entry o = (Entry) other;
+      final var o = (Entry) other;
       return state.equals(o.state) && item.equals(o.item);
     }
 
@@ -75,10 +73,9 @@ class PropagationPoints {
     data.add(new Entry<>(state, loc));
   }
 
-  private void addSubstates(
-      HashMap<CircuitState, CircuitState> map, CircuitState source, CircuitState value) {
+  private void addSubstates(HashMap<CircuitState, CircuitState> map, CircuitState source, CircuitState value) {
     map.put(source, value);
-    for (CircuitState s : source.getSubstates()) {
+    for (final var s : source.getSubstates()) {
       addSubstates(map, s, value);
     }
   }
@@ -91,20 +88,20 @@ class PropagationPoints {
   void draw(ComponentDrawContext context) {
     if (data.isEmpty()) return;
 
-    CircuitState state = context.getCircuitState();
-    HashMap<CircuitState, CircuitState> stateMap = new HashMap<>();
-    for (CircuitState s : state.getSubstates()) addSubstates(stateMap, s, s);
+    final var state = context.getCircuitState();
+    final var stateMap = new HashMap<CircuitState, CircuitState>();
+    for (final var s : state.getSubstates()) addSubstates(stateMap, s, s);
 
-    Graphics g = context.getGraphics();
+    final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
-    for (Entry<Location> e : data) {
+    for (final var e : data) {
       if (e.state == state) {
-        Location p = e.item;
+        final var p = e.item;
         g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
       } else if (stateMap.containsKey(e.state)) {
-        CircuitState substate = stateMap.get(e.state);
-        Component subcirc = substate.getSubcircuit();
-        Bounds b = subcirc.getBounds();
+        final var substate = stateMap.get(e.state);
+        final var subcirc = substate.getSubcircuit();
+        final var b = subcirc.getBounds();
         g.drawRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
       }
     }
@@ -115,12 +112,11 @@ class PropagationPoints {
     if (pendingInputs.isEmpty())
       return;
 
-    CircuitState state = context.getCircuitState();
-    HashMap<CircuitState, CircuitState> stateMap = new HashMap<>();
-    for (CircuitState s : state.getSubstates())
-      addSubstates(stateMap, s, s);
+    final var state = context.getCircuitState();
+    final var stateMap = new HashMap<CircuitState, CircuitState>();
+    for (final var s : state.getSubstates()) addSubstates(stateMap, s, s);
 
-    Graphics g = context.getGraphics();
+    final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     for (Entry<Component> e : pendingInputs) {
       Component comp;
@@ -130,7 +126,7 @@ class PropagationPoints {
         comp = stateMap.get(e.state).getSubcircuit();
       else
         continue;
-      Bounds b = comp.getBounds();
+      final var b = comp.getBounds();
       g.drawRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
     }
 
@@ -138,8 +134,8 @@ class PropagationPoints {
   }
 
   String getSingleStepMessage() {
-    String n = data.isEmpty() ? "no" : "" + data.size();
-    String m = pendingInputs.isEmpty() ? "no" : "" + pendingInputs.size();
+    final var n = data.isEmpty() ? "no" : "" + data.size();
+    final var m = pendingInputs.isEmpty() ? "no" : "" + pendingInputs.size();
     return S.fmt("singleStepMessage", n, m);
   }
 }

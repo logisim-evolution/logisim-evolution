@@ -32,10 +32,8 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +41,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
@@ -159,8 +156,7 @@ public class TruthtableTextFile {
 
   static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
 
-  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
-      throws IOException {
+  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno) throws IOException {
     final var s = line.split("\\s+");
     var cur = inputs;
     for (final var value : s) {
@@ -195,10 +191,8 @@ public class TruthtableTextFile {
         }
       }
     }
-    if (inputs.vars.size() == 0)
-      throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-    if (outputs.vars.size() == 0)
-      throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
+    if (inputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
+    if (outputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
   }
 
   static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
@@ -210,8 +204,7 @@ public class TruthtableTextFile {
       return Entry.ONE;
     }
 
-    throw new IOException(
-            String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
+    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
   }
 
   static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
@@ -229,9 +222,7 @@ public class TruthtableTextFile {
     }
 
     if (nbits < 4 && (d >= (1 << nbits))) {
-      throw new IOException(
-          String.format(
-              "Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
+      throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
       }
 
     return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;

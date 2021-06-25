@@ -79,25 +79,15 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public static final int WIDTH_BUS = 4;
   public static final int HIGHLIGHTED_WIDTH = 4;
   public static final int HIGHLIGHTED_WIDTH_BUS = 5;
-  public static final Stroke HIGHLIGHTED_STROKE =
-      new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {7}, 0);
-  public static final double DOT_MULTIPLY_FACTOR =
-      1.35; /* multiply factor for the intersection points */
-  public static final AttributeOption VALUE_HORZ =
-      new AttributeOption("horz", S.getter("wireDirectionHorzOption"));
-  public static final AttributeOption VALUE_VERT =
-      new AttributeOption("vert", S.getter("wireDirectionVertOption"));
+  public static final Stroke HIGHLIGHTED_STROKE = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {7}, 0);
+  public static final double DOT_MULTIPLY_FACTOR = 1.35; // multiply factor for the intersection points
+  public static final AttributeOption VALUE_HORZ = new AttributeOption("horz", S.getter("wireDirectionHorzOption"));
+  public static final AttributeOption VALUE_VERT = new AttributeOption("vert", S.getter("wireDirectionVertOption"));
 
-  public static final Attribute<AttributeOption> dir_attr =
-      Attributes.forOption(
-          "direction",
-          S.getter("wireDirectionAttr"),
-          new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
-  public static final Attribute<Integer> len_attr =
-      Attributes.forInteger("length", S.getter("wireLengthAttr"));
+  public static final Attribute<AttributeOption> dir_attr = Attributes.forOption("direction", S.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
+  public static final Attribute<Integer> len_attr = Attributes.forInteger("length", S.getter("wireLengthAttr"));
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(dir_attr, len_attr);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(dir_attr, len_attr);
 
   private static final Cache cache = new Cache();
 
@@ -168,8 +158,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   public void draw(ComponentDrawContext context) {
-    CircuitState state = context.getCircuitState();
-    Graphics g = context.getGraphics();
+    final var state = context.getCircuitState();
+    final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, WIDTH);
     g.setColor(state.getValue(e0).getColor());
     g.drawLine(e0.getX(), e0.getY(), e1.getX(), e1.getY());
@@ -187,7 +177,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof Wire)) return false;
-    Wire w = (Wire) other;
+    final var w = (Wire) other;
     return w.e0.equals(this.e0) && w.e1.equals(this.e1);
   }
 
@@ -196,8 +186,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   //
   public void expose(ComponentDrawContext context) {
     java.awt.Component dest = context.getDestination();
-    int x0 = e0.getX();
-    int y0 = e0.getY();
+    final var x0 = e0.getX();
+    final var y0 = e0.getY();
     dest.repaint(x0 - 5, y0 - 5, e1.getX() - x0 + 10, e1.getY() - y0 + 10);
   }
 
@@ -217,8 +207,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   public Bounds getBounds() {
-    int x0 = e0.getX();
-    int y0 = e0.getY();
+    final var x0 = e0.getX();
+    final var y0 = e0.getY();
     return Bounds.create(x0 - 2, y0 - 2, e1.getX() - x0 + 5, e1.getY() - y0 + 5);
   }
 
@@ -227,8 +217,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   public EndData getEnd(int index) {
-    Location loc = getEndLocation(index);
-    return new EndData(loc, BitWidth.UNKNOWN, EndData.INPUT_OUTPUT);
+    return new EndData(getEndLocation(index), BitWidth.UNKNOWN, EndData.INPUT_OUTPUT);
   }
 
   public Location getEnd0() {
@@ -253,7 +242,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public ComponentFactory getFactory() {
     return WireFactory.instance;
   }
-  
+
   public void setFactory(ComponentFactory fact) {}
 
   public Object getFeature(Object key) {

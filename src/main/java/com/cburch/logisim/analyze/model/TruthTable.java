@@ -515,6 +515,7 @@ public class TruthTable {
 
   private class MyListener implements VariableListListener {
 
+    @Override
     public void listChanged(VariableListEvent event) {
       if (event.getSource() == model.getInputs()) {
         inputsChanged(event);

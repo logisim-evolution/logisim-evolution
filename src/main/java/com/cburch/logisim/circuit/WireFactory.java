@@ -39,7 +39,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
-import java.awt.Graphics;
 
 class WireFactory extends AbstractComponentFactory {
   public static final WireFactory instance = new WireFactory();
@@ -54,7 +53,7 @@ class WireFactory extends AbstractComponentFactory {
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr);
+    final var len = attrs.getValue(Wire.len_attr);
 
     if (dir == Wire.VALUE_HORZ) {
       return Wire.create(loc, loc.translate(len, 0));
@@ -67,11 +66,10 @@ class WireFactory extends AbstractComponentFactory {
   // user interface methods
   //
   @Override
-  public void drawGhost(
-      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
-    Graphics g = context.getGraphics();
+  public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+    final var g = context.getGraphics();
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr);
+    final var len = attrs.getValue(Wire.len_attr);
 
     g.setColor(color);
     GraphicsUtil.switchToWidth(g, 3);
@@ -95,7 +93,7 @@ class WireFactory extends AbstractComponentFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Object dir = attrs.getValue(Wire.dir_attr);
-    int len = attrs.getValue(Wire.len_attr);
+    final var len = attrs.getValue(Wire.len_attr);
 
     if (dir == Wire.VALUE_HORZ) {
       return Bounds.create(0, -2, len, 5);

@@ -42,17 +42,18 @@ public class CircuitTransactionResult {
   }
 
   public ReplacementMap getReplacementMap(Circuit circuit) {
-    ReplacementMap ret = mutator.getReplacementMap(circuit);
+    final var ret = mutator.getReplacementMap(circuit);
     return ret == null ? new ReplacementMap() : ret;
   }
 
   public CircuitTransaction getReverseTransaction() {
     return mutator.getReverseTransaction();
   }
-  
+
+  @Override
   public String toString() {
-    StringBuilder s = new StringBuilder("CircuitTransactionResult affecting...");
-    for (Circuit c : getModifiedCircuits()) {
+    final var s = new StringBuilder("CircuitTransactionResult affecting...");
+    for (final var c : getModifiedCircuits()) {
       s.append("\n    - circuit ").append(c).append(" with replacements...");
       s.append("\n").append(getReplacementMap(c));
     }
