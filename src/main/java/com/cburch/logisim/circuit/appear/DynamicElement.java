@@ -296,6 +296,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
         case "center":
           labelLoc = LABEL_CENTER;
           break;
+        default:
         case "none":
           labelLoc = LABEL_NONE;
           break;
@@ -338,7 +339,8 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     int h = bounds.getHeight();
     int valign = GraphicsUtil.V_CENTER;
     int halign = GraphicsUtil.H_CENTER;
-    int px = x + w / 2, py = y + h / 2;
+    int px = x + w / 2;
+    int py = y + h / 2;
     if (labelLoc == LABEL_TOP) {
       py = y - 1;
       valign = GraphicsUtil.V_BOTTOM;

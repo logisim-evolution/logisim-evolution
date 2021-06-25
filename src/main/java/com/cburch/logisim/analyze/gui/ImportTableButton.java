@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.file.TruthtableCsvFile;
 import com.cburch.logisim.analyze.file.TruthtableTextFile;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import java.io.File;
@@ -64,7 +63,7 @@ public class ImportTableButton extends JButton {
 
   void doLoad() {
     if (lastFile == null) {
-      Circuit c = model.getCurrentCircuit();
+      final var c = model.getCurrentCircuit();
       if (c != null) lastFile = new File(c.getName() + ".txt");
       else lastFile = new File("truthtable.txt");
     }
@@ -73,9 +72,9 @@ public class ImportTableButton extends JButton {
     chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
     chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
     chooser.setFileFilter(TruthtableTextFile.FILE_FILTER);
-    int choice = chooser.showOpenDialog(parent);
+    final var choice = chooser.showOpenDialog(parent);
     if (choice == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final var file = chooser.getSelectedFile();
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
@@ -94,11 +93,13 @@ public class ImportTableButton extends JButton {
       }
       try {
         final var fileName = file.getName();
-        int idx = fileName.lastIndexOf(".");
+        final var idx = fileName.lastIndexOf(".");
         final var ext = fileName.substring(idx + 1);
-        if (ext.equals("txt")) TruthtableTextFile.doLoad(file, model, parent);
-        else if (ext.equals("csv")) TruthtableCsvFile.doLoad(file, model, parent);
-        else {
+        if (ext.equals("txt")) {
+          TruthtableTextFile.doLoad(file, model, parent);
+        } else if (ext.equals("csv")) {
+          TruthtableCsvFile.doLoad(file, model, parent);
+        } else {
           OptionPane.showMessageDialog(
               parent,
               S.fmt("DoNotKnowHowto", fileName),
@@ -108,8 +109,7 @@ public class ImportTableButton extends JButton {
         }
         lastFile = file;
       } catch (IOException e) {
-        OptionPane.showMessageDialog(
-            parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }
