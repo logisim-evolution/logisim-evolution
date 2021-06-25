@@ -55,16 +55,16 @@ public class DoNotConnect extends InstanceFactory {
   public static final String _ID = "NoConnect";
 
   private static class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-	  @Override
-	  public boolean IsOnlyInlined() {
-	    return true;
-	  }
+    @Override
+    public boolean IsOnlyInlined() {
+      return true;
+    }
   }
 
   public DoNotConnect() {
     super(_ID, S.getter("noConnectionComponent"));
     setIconName("noconnect.gif");
-    setAttributes(new Attribute[] {StdAttr.WIDTH},new Object[] {BitWidth.ONE});
+    setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setPorts(new Port[] {new Port(0, 0, Port.INOUT, StdAttr.WIDTH)});
   }
@@ -73,8 +73,8 @@ public class DoNotConnect extends InstanceFactory {
     Graphics2D g = (Graphics2D) painter.getGraphics().create();
     Location loc = painter.getLocation();
     g.setColor(isGhost ? Color.GRAY : Color.RED);
-    g.drawLine(loc.getX()-5, loc.getY()-5, loc.getX()+5, loc.getY()+5);
-    g.drawLine(loc.getX()-5, loc.getY()+5, loc.getX()+5, loc.getY()-5);
+    g.drawLine(loc.getX() - 5, loc.getY() - 5, loc.getX() + 5, loc.getY() + 5);
+    g.drawLine(loc.getX() - 5, loc.getY() + 5, loc.getX() + 5, loc.getY() - 5);
   }
 
   @Override

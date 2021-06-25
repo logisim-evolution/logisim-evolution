@@ -42,17 +42,21 @@ class PinAttributes extends ProbeAttributes {
    * the holycross branch of logisim (v4.0 up)
    */
   private static class DummyAttr extends Attribute<String> {
-	public DummyAttr(String name) {
-	  super(name,null);
-	}
+    public DummyAttr(String name) {
+      super(name, null);
+    }
+
     @Override
     public String parse(String value) {
       return value;
     }
+
     @Override
-    public boolean isHidden() {return true;}
+    public boolean isHidden() {
+      return true;
+    }
   }
-		  
+
   public static final Attribute<String> ATTR_DUMMY = new DummyAttr("type");
   public static PinAttributes instance = new PinAttributes();
 
@@ -110,15 +114,15 @@ class PinAttributes extends ProbeAttributes {
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-	if (attr == ATTR_DUMMY) {
-	  if (value.equals("output")) {
-	    if (type != EndData.OUTPUT_ONLY) {
-	      type = EndData.OUTPUT_ONLY;
-	      fireAttributeValueChanged((Attribute<V>)Pin.ATTR_TYPE,(V)Boolean.valueOf(type == EndData.OUTPUT_ONLY),null);
-	      return;
-	    }
-	  }
-	} else if (attr == StdAttr.WIDTH) {
+    if (attr == ATTR_DUMMY) {
+      if (value.equals("output")) {
+        if (type != EndData.OUTPUT_ONLY) {
+          type = EndData.OUTPUT_ONLY;
+          fireAttributeValueChanged((Attribute<V>) Pin.ATTR_TYPE, (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY), null);
+          return;
+        }
+      }
+    } else if (attr == StdAttr.WIDTH) {
       BitWidth NewWidth = (BitWidth) value;
       if (width == NewWidth) return;
       width = (BitWidth) value;
@@ -133,7 +137,7 @@ class PinAttributes extends ProbeAttributes {
       if (type == Newtype) return;
       type = Newtype;
     } else if (attr == Pin.ATTR_PULL) {
-    if (pull.equals(value)) return;
+      if (pull.equals(value)) return;
       pull = value;
     } else if (attr == PROBEAPPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;

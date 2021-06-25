@@ -69,9 +69,11 @@ class MenuFile extends Menu implements ActionListener {
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    close.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
-    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    saveAs.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
     print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
@@ -124,8 +126,11 @@ class MenuFile extends Menu implements ActionListener {
     } else if (src == merge) {
       ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      Project newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
-      if (newProj != null && proj != null
+      Project newProj =
+          ProjectActions.doOpen(
+              baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      if (newProj != null
+          && proj != null
           && !proj.isFileDirty()
           && proj.getLogisimFile().getLoader().getMainFile() == null) {
         proj.getFrame().dispose();
@@ -154,14 +159,14 @@ class MenuFile extends Menu implements ActionListener {
         }
       }
 
-      /* If "cancel" pressed do nothing, otherwise dispose the window, opening one if this was the last opened window */
+      // If "cancel" pressed do nothing, otherwise dispose the window,
+      // opening one if this was the last opened window.
       if (result != 2) {
         // Get the list of open projects
         List<Project> pl = Projects.getOpenProjects();
         if (pl.size() == 1) {
           // Since we have a single window open, before closing the
-          // current
-          // project open a new empty one
+          // current project open a new empty one
           ProjectActions.doNew(proj);
         }
 

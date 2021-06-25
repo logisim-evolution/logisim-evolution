@@ -55,7 +55,8 @@ import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
 
-  private final VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+  private final VendorSoftware xilinxVendor =
+      VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
@@ -308,13 +309,13 @@ public class XilinxDownload implements VendorDownload {
     Contents.addAll(GetPinLocStrings());
     return FileWriter.WriteContents(UcfFile, Contents);
   }
-  
+
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> Contents = new ArrayList<>();
     StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
-      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+      for (int i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
           Temp.setLength(0);
           Temp.append("NET \"");
@@ -323,7 +324,8 @@ public class XilinxDownload implements VendorDownload {
           Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           FPGAIOInformationContainer info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetPullBehavior() != PullBehaviors.Unknown && info.GetPullBehavior() != PullBehaviors.Float) {
+            if (info.GetPullBehavior() != PullBehaviors.Unknown
+                && info.GetPullBehavior() != PullBehaviors.Float) {
               Temp.append("| ")
                   .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
                   .append(" ");
@@ -333,9 +335,11 @@ public class XilinxDownload implements VendorDownload {
               Temp.append("| DRIVE = ")
                   .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
-            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.Unknown
+                && info.GetIOStandard() != IoStandards.DefaulStandard) {
               Temp.append("| IOSTANDARD = ")
-                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard())).append(" ");
+                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
+                  .append(" ");
             }
           }
           Temp.append(";");
@@ -493,5 +497,5 @@ public class XilinxDownload implements VendorDownload {
     // should be used
     return true;
   }
-  
+
 }

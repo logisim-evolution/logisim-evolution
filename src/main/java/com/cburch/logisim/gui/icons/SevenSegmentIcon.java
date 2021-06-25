@@ -38,9 +38,9 @@ public class SevenSegmentIcon extends AnimatedIcon {
   private final boolean isHexDisplay;
   private int state;
 
-  public SevenSegmentIcon(boolean HexDisplay) {
-    isHexDisplay = HexDisplay;
-    state = (HexDisplay) ? -1 : 3;
+  public SevenSegmentIcon(boolean isHexDisplay) {
+    this.isHexDisplay = isHexDisplay;
+    state = (isHexDisplay) ? -1 : 3;
   }
 
   @Override

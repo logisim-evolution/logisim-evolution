@@ -110,7 +110,7 @@ public class bcd2sevenseg extends InstanceFactory {
     if (state.getPortValue(BCDin).isFullyDefined()
         & !state.getPortValue(BCDin).isErrorValue()
         & !state.getPortValue(BCDin).isUnknown()) {
-      int value = (int)state.getPortValue(BCDin).toLongValue();
+      int value = (int) state.getPortValue(BCDin).toLongValue();
       switch (value) {
         case 0:
           state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);

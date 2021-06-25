@@ -36,21 +36,22 @@ public interface ZoomModel {
   String SHOW_GRID = "grid";
   String CENTER = "center";
 
-  void addPropertyChangeListener(String prop, PropertyChangeListener l);
-
   boolean getShowGrid();
 
   void setShowGrid(boolean value);
 
   double getZoomFactor();
 
-  void setZoomFactor(double value);
-
   double[] getZoomOptions();
 
-  void removePropertyChangeListener(String prop, PropertyChangeListener l);
+  void setZoomFactor(double value);
+
+  void setZoomFactor(double value, MouseEvent e);
 
   void setZoomFactorCenter(double value);
 
-  void setZoomFactor(double value, MouseEvent e);
+  void addPropertyChangeListener(String prop, PropertyChangeListener l);
+
+  void removePropertyChangeListener(String prop, PropertyChangeListener l);
+
 }

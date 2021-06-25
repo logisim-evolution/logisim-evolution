@@ -36,17 +36,17 @@ import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-public class Entry implements Comparable<Entry>,PreferenceChangeListener {
+public class Entry implements Comparable<Entry>, PreferenceChangeListener {
   public static Entry parse(String description) {
-    if (AppPreferences.FALSE_CHAR.get().charAt(0)==description.charAt(0)) return ZERO;
-    if (AppPreferences.TRUE_CHAR.get().charAt(0)==description.charAt(0)) return ONE;
-    if (AppPreferences.DONTCARE_CHAR.get().charAt(0)==description.charAt(0)) return DONT_CARE;
-    if (AppPreferences.ERROR_CHAR.get().charAt(0)==description.charAt(0)) return BUS_ERROR;
+    if (AppPreferences.FALSE_CHAR.get().charAt(0) == description.charAt(0)) return ZERO;
+    if (AppPreferences.TRUE_CHAR.get().charAt(0) == description.charAt(0)) return ONE;
+    if (AppPreferences.DONTCARE_CHAR.get().charAt(0) == description.charAt(0)) return DONT_CARE;
+    if (AppPreferences.ERROR_CHAR.get().charAt(0) == description.charAt(0)) return BUS_ERROR;
     return null;
   }
-  
+
   public interface EntryChangedListener {
-    void EntryDesriptionChanged();
+    void entryDesriptionChanged();
   }
 
   public static final Entry OSCILLATE_ERROR = new Entry(-2, S.getter("oscillateError"));
@@ -67,24 +67,24 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   }
 
   public String getDescription() {
-	if (this == OSCILLATE_ERROR) return "@";
-	if (this == BUS_ERROR) return Character.toString(AppPreferences.ERROR_CHAR.get().charAt(0));
-	if (this == ZERO) return Character.toString(AppPreferences.FALSE_CHAR.get().charAt(0));
-	if (this == DONT_CARE) return Character.toString(AppPreferences.DONTCARE_CHAR.get().charAt(0));
-	if (this == ONE) return Character.toString(AppPreferences.TRUE_CHAR.get().charAt(0));
-	return Character.toString(AppPreferences.UNKNOWN_CHAR.get().charAt(0));
+    if (this == OSCILLATE_ERROR) return "@";
+    if (this == BUS_ERROR) return Character.toString(AppPreferences.ERROR_CHAR.get().charAt(0));
+    if (this == ZERO) return Character.toString(AppPreferences.FALSE_CHAR.get().charAt(0));
+    if (this == DONT_CARE) return Character.toString(AppPreferences.DONTCARE_CHAR.get().charAt(0));
+    if (this == ONE) return Character.toString(AppPreferences.TRUE_CHAR.get().charAt(0));
+    return Character.toString(AppPreferences.UNKNOWN_CHAR.get().charAt(0));
   }
-  
+
   public void addListener(EntryChangedListener l) {
     if (!listeners.contains(l)) listeners.add(l);
   }
-  
+
   public void removeListener(EntryChangedListener l) {
     listeners.remove(l);
   }
-  
+
   private void fireChange() {
-    for (EntryChangedListener l : listeners) l.EntryDesriptionChanged();
+    for (EntryChangedListener l : listeners) l.entryDesriptionChanged();
   }
 
   public String getErrorMessage() {
@@ -112,14 +112,10 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
 
   @Override
   public void preferenceChange(PreferenceChangeEvent evt) {
-    if ( (evt.getKey().equals(AppPreferences.ERROR_CHAR.getIdentifier()) && 
-          this == BUS_ERROR) ||
-         (evt.getKey().equals(AppPreferences.FALSE_CHAR.getIdentifier()) &&
-          this == ZERO) ||
-         (evt.getKey().equals(AppPreferences.DONTCARE_CHAR.getIdentifier()) &&
-          this == DONT_CARE) ||
-         (evt.getKey().equals(AppPreferences.TRUE_CHAR.getIdentifier()) &&
-          this == ONE)) {
+    if ((evt.getKey().equals(AppPreferences.ERROR_CHAR.getIdentifier()) && this == BUS_ERROR)
+        || (evt.getKey().equals(AppPreferences.FALSE_CHAR.getIdentifier()) && this == ZERO)
+        || (evt.getKey().equals(AppPreferences.DONTCARE_CHAR.getIdentifier()) && this == DONT_CARE)
+        || (evt.getKey().equals(AppPreferences.TRUE_CHAR.getIdentifier()) && this == ONE)) {
       fireChange();
     }
   }

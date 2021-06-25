@@ -54,8 +54,8 @@ public class Ttl7408 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
-          "gate_"+index+"_A"+HDL.andOperator()+"gate_"+index+"B;");
+      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+              + "gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B;");
       Contents.add("");
       return Contents;
     }

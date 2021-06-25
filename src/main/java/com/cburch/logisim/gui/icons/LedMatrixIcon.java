@@ -34,22 +34,22 @@ import java.awt.Graphics2D;
 
 public class LedMatrixIcon extends AnimatedIcon {
 
-  private double xDir = 0.7;
-  private double yDir = 1;
+  private double dirX = 0.7;
+  private double dirY = 1;
   private double x = 2;
   private double y = 1;
 
   @Override
   public void animationUpdate() {
-    x += xDir;
+    x += dirX;
     if (x < 0 || x > 3.5) {
-      xDir = -xDir;
-      x += 2 * xDir;
+      dirX = -dirX;
+      x += 2 * dirX;
     }
-    y += yDir;
+    y += dirY;
     if (y < 0 || y > 3.5) {
-      yDir = -yDir;
-      y += 2 * yDir;
+      dirY = -dirY;
+      y += 2 * dirY;
     }
   }
 

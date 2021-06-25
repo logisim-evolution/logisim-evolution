@@ -122,8 +122,8 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 
 Source code should follow "Google Java" code style (this is still work in progress), therefore Logisim-evolution
 comes with CheckStyle configuration that you can apply to ensure your contributions follows the standard as well.
-Please see [checkstyle/README.md](checkstyle/README.md) for more information how to use CheckStyle with Gradle
-or with InteliJ-IDEA.
+Please see [docs/style.md](docs/style.md) for more information how to use CheckStyle with Gradle
+and with InteliJ-IDEA plugin.
 
 All of Logisim's Java files have been formatted using [`google-java-format`](https://github.com/google/google-java-format). If you are using [Eclipse](https://www.eclipse.org/), there is a [plugin](https://github.com/google/google-java-format#eclipse) available to enforce this formatting. If you are using [InteliJ IDEA](https://www.jetbrains.com/idea/), the corresponding plugin is available via its [Marketplace](https://plugins.jetbrains.com/plugin/8527-google-java-format).
 Code style to use is `Default Google java style`.

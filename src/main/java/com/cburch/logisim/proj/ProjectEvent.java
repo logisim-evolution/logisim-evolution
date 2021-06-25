@@ -50,7 +50,7 @@ public class ProjectEvent {
 
   private final int action;
   private final Project proj;
-  private Object old_data;
+  private Object oldData;
   private final Object data;
 
   ProjectEvent(int action, Project proj) {
@@ -68,7 +68,7 @@ public class ProjectEvent {
   ProjectEvent(int action, Project proj, Object old, Object data) {
     this.action = action;
     this.proj = proj;
-    this.old_data = old;
+    this.oldData = old;
     this.data = data;
   }
 
@@ -91,7 +91,7 @@ public class ProjectEvent {
   }
 
   public Object getOldData() {
-    return old_data;
+    return oldData;
   }
 
   public Project getProject() {

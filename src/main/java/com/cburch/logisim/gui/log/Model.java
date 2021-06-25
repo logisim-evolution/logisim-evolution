@@ -60,22 +60,27 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int CLOCK_LOW = 70;
   public static final int COARSE = 1;
   public static final int FINE = 2;
-  
+
   public static class Event {}
 
-  public interface Listener{
+  public interface Listener {
     void signalsReset(Event event);
+
     void signalsExtended(Event event);
+
     void filePropertyChanged(Event event);
+
     void selectionChanged(Event event);
+
     void modeChanged(Event event);
+
     void historyLimitChanged(Event event);
   }
-  
+
   final CircuitState circuitState;
   private final ArrayList<SignalInfo> info = new ArrayList<>();
   private final ArrayList<Signal> signals = new ArrayList<>();
-  private long tEnd = -1; // signals go from 0 <= t < tEnd
+  private long timeEnd = -1; // signals go from 0 <= t < tEnd
   private Signal spotlight;
   private SignalInfo clockSource;
   private Value curClockVal;
@@ -85,24 +90,25 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   private boolean fileHeader = true;
   private boolean selected = false;
   private LogThread logger = null;
-  private int mode = STEP, granularity = COARSE;
-  private long timeScale = 5000, gateDelay = 200;
+  private int mode = STEP;
+  private int granularity = COARSE;
+  private long timeScale = 5000;
+  private long gateDelay = 200;
   private int historyLimit = 400;
   private long elapsedSinceTrigger;
   private long lastRealtimeUpdate;
-  
+
   public Model(CircuitState root) {
     circuitState = root;
-   // Add top-level pins, clocks, etc.
+    // Add top-level pins, clocks, etc.
     Circuit circ = circuitState.getCircuit();
     for (Component comp : circ.getNonWires()) {
       SignalInfo item = makeIfDefaultComponent(comp);
-      if (item == null)
-        continue;
+      if (item == null) continue;
       info.add(item);
     }
 
-    // sort: inputs before outputs, then by location 
+    // sort: inputs before outputs, then by location
     // inputs are things like Button, Clock, Pin(input), and Random
     Location.sortHorizontal(info);
     int n = info.size();
@@ -129,14 +135,11 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     }
     if (clockSource == null) {
       Component clk = circuitState.getTemporaryClock();
-      if (clk != null)
-        clockSource = new SignalInfo(circ, new Component[] { clk }, null);
+      if (clk != null) clockSource = new SignalInfo(circ, new Component[] {clk}, null);
     }
     if (clockSource != null) {
-      if (!info.contains(clockSource))
-        info.add(0, clockSource); // put it at the top of the list
-      else
-        info.add(0, info.remove(info.indexOf(clockSource)));
+      if (!info.contains(clockSource)) info.add(0, clockSource); // put it at the top of the list
+      else info.add(0, info.remove(info.indexOf(clockSource)));
       mode = CLOCK_DUAL;
       curClockVal = clockSource.fetchValue(circuitState);
     }
@@ -145,20 +148,17 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     long duration = captureContinuous() ? gateDelay : timeScale;
     for (int i = 0; i < info.size(); i++) {
       SignalInfo item = info.get(i);
-      signals.add(new Signal(i, item, item.fetchValue(circuitState),
-            duration, 0, historyLimit));
+      signals.add(new Signal(i, item, item.fetchValue(circuitState), duration, 0, historyLimit));
     }
-    tEnd = duration;
+    timeEnd = duration;
 
     // Listen for new pins, clocks, etc., and changes to Signals
-    for (SignalInfo item : info)
-      item.setListener(this); // includes clock source
+    for (SignalInfo item : info) item.setListener(this); // includes clock source
     circ.addCircuitListener(this);
   }
 
   private void renumberSignals() {
-    for (int i = 0; i < signals.size(); i++)
-      signals.get(i).idx = i;
+    for (int i = 0; i < signals.size(); i++) signals.get(i).idx = i;
   }
 
   public void addOrMove(List<SignalInfo> items, int idx) {
@@ -167,9 +167,9 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       int i = info.indexOf(item);
       if (i < 0) {
         info.add(idx, item); // put new item at idx
-        signals.add(idx,
-            new Signal(idx, item, item.fetchValue(circuitState),
-              1, tEnd - 1, historyLimit));
+        signals.add(
+            idx,
+            new Signal(idx, item, item.fetchValue(circuitState), 1, timeEnd - 1, historyLimit));
         idx++;
       } else if (i > idx) {
         info.add(idx, info.remove(i)); // move later item up
@@ -177,8 +177,8 @@ public class Model implements CircuitListener, SignalInfo.Listener {
         idx++;
         item.setListener(this);
       } else if (i < idx) {
-        info.add(idx-1, info.remove(i)); // move earlier item down
-        signals.add(idx-1, signals.remove(i));
+        info.add(idx - 1, info.remove(i)); // move earlier item down
+        signals.add(idx - 1, signals.remove(i));
       } else {
         changed--;
       }
@@ -191,7 +191,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   public boolean addOrMoveSignals(List<Signal> items, int idx) {
     int changed = items.size();
-    long newEnd = tEnd;
+    long newEnd = timeEnd;
     for (Signal item : items) {
       if (item.info.getTopLevelCircuit() != getCircuit()) {
         changed--; // attempt to paste component from wrong circuit
@@ -206,8 +206,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
         if (d < newEnd) {
           item.extend(newEnd - d);
         } else if (d > newEnd) {
-          for (Signal s : signals)
-            s.extend(d - newEnd);
+          for (Signal s : signals) s.extend(d - newEnd);
           newEnd = d;
         }
         signals.add(idx, item);
@@ -217,16 +216,15 @@ public class Model implements CircuitListener, SignalInfo.Listener {
         info.add(idx, info.remove(i)); // move later item up
         signals.add(idx, signals.remove(i));
         idx++;
-      } else if (i < idx-1) {
-        info.add(idx-1, info.remove(i)); // move earlier item down
-        signals.add(idx-1, signals.remove(i));
+      } else if (i < idx - 1) {
+        info.add(idx - 1, info.remove(i)); // move earlier item down
+        signals.add(idx - 1, signals.remove(i));
       } else {
         changed--; // no change to existing item
       }
     }
-    if (changed == 0 && newEnd == tEnd)
-      return false;
-    tEnd = newEnd;
+    if (changed == 0 && newEnd == timeEnd) return false;
+    timeEnd = newEnd;
     renumberSignals();
     fireSelectionChanged(null);
     return true;
@@ -242,8 +240,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     if (s == clockSource) {
       clockSource.setListener(null); // redundant if info contains s
       clockSource = null;
-      if (mode >= CLOCKED)
-        setStepMode(isFine(), timeScale, gateDelay);
+      if (mode >= CLOCKED) setStepMode(isFine(), timeScale, gateDelay);
     }
     remove(s);
   }
@@ -252,53 +249,22 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     int count = 0;
     for (SignalInfo item : items) {
       int idx = info.indexOf(item);
-      if (idx < 0)
-        continue;
+      if (idx < 0) continue;
       info.remove(idx);
       signals.remove(idx);
       count++;
       item.setListener(null);
     }
     if (count > 0) {
-      if (spotlight != null && items.contains(spotlight))
-        spotlight = null;
+      if (spotlight != null && items.contains(spotlight)) spotlight = null;
       renumberSignals();
       fireSelectionChanged(null);
     }
     return count;
   }
 
-  public void move(int[] fromIndex, int toIndex) {
-    int n = fromIndex.length;
-    if (n == 0)
-      return;
-    Arrays.sort(fromIndex);
-    int a = fromIndex[0];
-    int b = fromIndex[n-1];
-    if (a < 0 || b > info.size())
-      return; // invalid selection
-    if (a <= toIndex && toIndex <= b && b-a+1 == n)
-      return; // no-op
-    ArrayList<SignalInfo> items = new ArrayList<>();
-    ArrayList<Signal> vals = new ArrayList<>();
-    for (int i = n-1; i >= 0; i--) {
-      if (fromIndex[i] < toIndex)
-        toIndex--;
-      items.add(info.remove(fromIndex[i]));
-      vals.add(signals.remove(fromIndex[i]));
-    }
-    for (int i = n-1; i >= 0; i--) {
-      info.add(toIndex, items.get(i));
-      signals.add(toIndex, vals.get(i));
-      toIndex++;
-    }
-    renumberSignals();
-    fireSelectionChanged(null);
-  }
-
   public void remove(int idx) {
-    if (spotlight != null && signals.get(idx) == spotlight)
-      spotlight = null;
+    if (spotlight != null && signals.get(idx) == spotlight) spotlight = null;
     info.remove(idx).setListener(null);
     signals.remove(idx);
     renumberSignals();
@@ -309,6 +275,30 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     remove(info.indexOf(item));
   }
 
+  public void move(int[] fromIndex, int toIndex) {
+    int n = fromIndex.length;
+    if (n == 0) return;
+    Arrays.sort(fromIndex);
+    int a = fromIndex[0];
+    int b = fromIndex[n - 1];
+    if (a < 0 || b > info.size()) return; // invalid selection
+    if (a <= toIndex && toIndex <= b && b - a + 1 == n) return; // no-op
+    ArrayList<SignalInfo> items = new ArrayList<>();
+    ArrayList<Signal> vals = new ArrayList<>();
+    for (int i = n - 1; i >= 0; i--) {
+      if (fromIndex[i] < toIndex) toIndex--;
+      items.add(info.remove(fromIndex[i]));
+      vals.add(signals.remove(fromIndex[i]));
+    }
+    for (int i = n - 1; i >= 0; i--) {
+      info.add(toIndex, items.get(i));
+      signals.add(toIndex, vals.get(i));
+      toIndex++;
+    }
+    renumberSignals();
+    fireSelectionChanged(null);
+  }
+
   public long getTimeScale() {
     return timeScale;
   }
@@ -317,38 +307,53 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     return gateDelay;
   }
 
-  public boolean isStepMode() { return mode == STEP; }
-  public boolean isRealMode() { return mode == REAL; }
-  public boolean isClockMode() { return mode >= CLOCKED; }
-  public int getClockDiscipline() { return mode >= CLOCKED ? mode : 0; }
-  public boolean isFine() { return granularity == FINE; }
-  public boolean isCoarse() { return granularity != FINE; }
+  public boolean isStepMode() {
+    return mode == STEP;
+  }
+
+  public boolean isRealMode() {
+    return mode == REAL;
+  }
+
+  public boolean isClockMode() {
+    return mode >= CLOCKED;
+  }
+
+  public int getClockDiscipline() {
+    return mode >= CLOCKED ? mode : 0;
+  }
+
+  public boolean isFine() {
+    return granularity == FINE;
+  }
+
+  public boolean isCoarse() {
+    return granularity != FINE;
+  }
 
   private static final Value HI = Value.TRUE;
   private static final Value LO = Value.FALSE;
 
   private boolean captureContinuous() {
     return isFine()
-      || (mode == CLOCK_HIGH && curClockVal.equals(HI))
-      || (mode == CLOCK_LOW && curClockVal.equals(LO));
+        || (mode == CLOCK_HIGH && curClockVal.equals(HI))
+        || (mode == CLOCK_LOW && curClockVal.equals(LO));
   }
 
   public int getHistoryLimit() {
     return historyLimit;
   }
+
   public void setHistoryLimit(int limit) {
-    if (historyLimit == limit)
-      return;
+    if (historyLimit == limit) return;
     historyLimit = limit;
-    for (Signal s : signals)
-      s.resize(historyLimit);
+    for (Signal s : signals) s.resize(historyLimit);
     fireHistoryLimitChanged(null);
   }
 
   public void setStepMode(boolean fine, long t, long d) {
     int g = fine ? FINE : COARSE;
-    if (mode == STEP && granularity == g && timeScale == t && gateDelay == d)
-      return;
+    if (mode == STEP && granularity == g && timeScale == t && gateDelay == d) return;
     timeScale = t;
     gateDelay = d;
     setMode(STEP, g);
@@ -356,16 +361,18 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   public void setRealMode(long t, boolean fine) {
     int g = fine ? FINE : COARSE;
-    if (mode == REAL && granularity == g && timeScale == t)
-      return;
+    if (mode == REAL && granularity == g && timeScale == t) return;
     timeScale = t;
     setMode(REAL, g);
   }
 
   public void setClockMode(boolean fine, int discipline, long t, long d) {
     int g = fine ? FINE : COARSE;
-    if (clockSource != null && mode == discipline && granularity == g && timeScale == t && gateDelay == d)
-      return;
+    if (clockSource != null
+        && mode == discipline
+        && granularity == g
+        && timeScale == t
+        && gateDelay == d) return;
     if (clockSource == null) {
       Circuit circ = circuitState.getCircuit();
       Component tmpClk = circuitState.getTemporaryClock();
@@ -379,7 +386,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
         clockSource = ClockSource.doClockMultipleObserverDialog(circ);
       } else if (tmpClk != null) {
         // No clocks, but user already chose a temporary clock.
-        clockSource = new SignalInfo(circ, new Component[] { tmpClk }, null);
+        clockSource = new SignalInfo(circ, new Component[] {tmpClk}, null);
       } else if (clocks != null) {
         // No actual or temporary, but other suitable things, ask user to select
         clockSource = ClockSource.doClockMissingObserverDialog(circ);
@@ -389,15 +396,20 @@ public class Model implements CircuitListener, SignalInfo.Listener {
         setMode(mode, granularity);
         return;
       }
-      if ((clockSource.getComponent().getFactory() instanceof Pin)
-          && (clockSource.getDepth() == 1))
+      if ((clockSource.getComponent().getFactory() instanceof Pin) && (clockSource.getDepth() == 1))
         circuitState.setTemporaryClock(clockSource.getComponent());
       // Add the clock as a courtesy, even though this is not required.
       if (!info.contains(clockSource)) {
         info.add(0, clockSource); // put it at the top of the list
-        signals.add(0,
-            new Signal(0, clockSource, clockSource.fetchValue(circuitState),
-              1, tEnd - 1, historyLimit));
+        signals.add(
+            0,
+            new Signal(
+                0,
+                clockSource,
+                clockSource.fetchValue(circuitState),
+                1,
+                timeEnd - 1,
+                historyLimit));
         clockSource.setListener(this);
         fireSelectionChanged(null);
       }
@@ -424,11 +436,9 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       ReplacementMap repl = event.getResult().getReplacementMap(circ);
       if (repl == null || repl.isEmpty()) return;
       for (Component comp : repl.getAdditions()) {
-        if (!repl.getReplacedBy(comp).isEmpty())
-          continue;
+        if (!repl.getReplacedBy(comp).isEmpty()) continue;
         SignalInfo item = makeIfDefaultComponent(comp);
-        if (item == null)
-          continue;
+        if (item == null) continue;
         addAndInitialize(item, true);
       }
     }
@@ -436,29 +446,26 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   private SignalInfo makeIfDefaultComponent(Component comp) {
     if (comp.getFactory() instanceof SubcircuitFactory) return null;
-    Loggable log = (Loggable)comp.getFeature(Loggable.class);
+    Loggable log = (Loggable) comp.getFeature(Loggable.class);
     if (log == null) return null;
     Object[] opts = log.getLogOptions();
     if (opts != null && opts.length > 0) return null;
-    Component[] path = new Component[] { comp };
+    Component[] path = new Component[] {comp};
     return new SignalInfo(circuitState.getCircuit(), path, null);
   }
 
   private Signal addAndInitialize(SignalInfo item, boolean fireUpdate) {
     int idx = info.indexOf(item);
-    if (idx >= 0)
-      return signals.get(idx);
+    if (idx >= 0) return signals.get(idx);
     idx = info.size();
     info.add(item);
-    Signal s = new Signal(idx, item, item.fetchValue(circuitState),
-        1, tEnd - 1, historyLimit);
+    Signal s = new Signal(idx, item, item.fetchValue(circuitState), 1, timeEnd - 1, historyLimit);
     signals.add(idx, s);
     item.setListener(this);
-    if (fireUpdate)
-      fireSelectionChanged(null);
+    if (fireUpdate) fireSelectionChanged(null);
     return s;
   }
-  
+
   public void addModelListener(Listener l) {
     listeners.add(l);
   }
@@ -466,7 +473,6 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public void removeModelListener(Listener l) {
     listeners.remove(l);
   }
-  
 
   private void fireSignalsReset(Event e) {
     for (Listener l : listeners) l.signalsReset(e);
@@ -477,9 +483,9 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   private void fireFilePropertyChanged(Event e) {
-    for (Listener l : listeners)  l.filePropertyChanged(e);
+    for (Listener l : listeners) l.filePropertyChanged(e);
   }
-  
+
   private void fireModeChanged(Event e) {
     for (Listener l : listeners) l.modeChanged(e);
   }
@@ -520,13 +526,12 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     // if any signals are full (due to history limit), don't show
     // earlier data (it looks funny in histogram and table)
     long t = 0;
-    for (Signal s: signals)
-      t = Math.max(t, s.omittedDataTime());
+    for (Signal s : signals) t = Math.max(t, s.omittedDataTime());
     return t;
   }
 
   public long getEndTime() {
-    return tEnd;
+    return timeEnd;
   }
 
   public SignalInfo getItem(int idx) {
@@ -553,14 +558,13 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     return selected;
   }
 
-
   private void extendWithOldValues(long duration) {
     for (Signal s : signals) {
       Value v = s.info.fetchValue(circuitState);
       s.extend(duration);
-    }    
+    }
     elapsedSinceTrigger += duration;
-    tEnd += duration;
+    timeEnd += duration;
     fireSignalsExtended(null);
   }
 
@@ -570,7 +574,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       s.extend(v, duration);
     }
     elapsedSinceTrigger += duration;
-    tEnd += duration;
+    timeEnd += duration;
     fireSignalsExtended(null);
   }
 
@@ -593,12 +597,9 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       // This is a transient fluctuation that can be entirely ignored.
       return;
     }
-    if (mode == STEP)
-      updateSignalsStepMode(propagated);
-    else if (mode == REAL)
-      updateSignalsRealMode();
-    else if (mode >= CLOCKED)
-      updateSignalsClockMode();
+    if (mode == STEP) updateSignalsStepMode(propagated);
+    else if (mode == REAL) updateSignalsRealMode();
+    else if (mode >= CLOCKED) updateSignalsClockMode();
   }
 
   private void updateSignalsStepMode(boolean stable) {
@@ -608,8 +609,8 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   private void updateSignalsRealMode() {
     long now = System.nanoTime();
-    double duration = (now - lastRealtimeUpdate) * (double)timeScale / 1000000000;
-    extendWithNewValues(Math.max((long)duration, 1));
+    double duration = (now - lastRealtimeUpdate) * (double) timeScale / 1000000000;
+    extendWithNewValues(Math.max((long) duration, 1));
     lastRealtimeUpdate = now;
   }
 
@@ -656,18 +657,15 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       }
     } else {
       // Edge-triggered clock, fine or coarse.
-      int ticks = (mode == CLOCK_DUAL)
-          ? (v.equals(Value.FALSE) ? cc.lo : cc.hi)
-          : cc.ticks;
-      int prevTicks = (mode == CLOCK_DUAL)
-          ? (v.equals(Value.FALSE) ? cc.hi : cc.lo)
-          : cc.ticks;
+      int ticks = (mode == CLOCK_DUAL) ? (v.equals(Value.FALSE) ? cc.lo : cc.hi) : cc.ticks;
+      int prevTicks = (mode == CLOCK_DUAL) ? (v.equals(Value.FALSE) ? cc.hi : cc.lo) : cc.ticks;
       long stableDuration = timeScale * ticks;
       long prevDuration = timeScale * prevTicks;
       long duration = isFine() ? gateDelay : stableDuration;
-      boolean triggered = (mode == CLOCK_DUAL && !v.equals(curClockVal))
-          || (mode == CLOCK_RISING && v.equals(HI) && !curClockVal.equals(HI))
-          || (mode == CLOCK_FALLING && v.equals(LO) && !curClockVal.equals(LO));
+      boolean triggered =
+          (mode == CLOCK_DUAL && !v.equals(curClockVal))
+              || (mode == CLOCK_RISING && v.equals(HI) && !curClockVal.equals(HI))
+              || (mode == CLOCK_FALLING && v.equals(LO) && !curClockVal.equals(LO));
       curClockVal = v;
       if (triggered) {
         // Finish out previous stable period, then start a new one.
@@ -691,15 +689,14 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       curClockVal = clockSource.fetchValue(circuitState);
       ClockSource.CycleInfo cc = ClockSource.getCycleInfo(clockSource);
       if (captureContinuous()) { // fine-grained, or active level-sensitive clock
-          duration = gateDelay;
+        duration = gateDelay;
       } else if (mode == CLOCK_HIGH || mode == CLOCK_LOW) { // inactive level-sensitive
         long activeDuration = (mode == CLOCK_HIGH ? cc.hi : cc.lo) * timeScale;
         long stableDuration = (mode == CLOCK_HIGH ? cc.lo : cc.hi) * timeScale;
         duration = isFine() ? gateDelay : stableDuration;
       } else { // edge-triggered clock, fine or coarse
-        int ticks = (mode == CLOCK_DUAL)
-            ? (curClockVal.equals(Value.FALSE) ? cc.lo : cc.hi)
-            : cc.ticks;
+        int ticks =
+            (mode == CLOCK_DUAL) ? (curClockVal.equals(Value.FALSE) ? cc.lo : cc.hi) : cc.ticks;
         long stableDuration = timeScale * ticks;
         duration = isFine() ? gateDelay : stableDuration;
       }
@@ -708,15 +705,14 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     } else { // mode == REAL
       duration = gateDelay;
     }
-    if (mode == REAL)
-      lastRealtimeUpdate = System.nanoTime();
+    if (mode == REAL) lastRealtimeUpdate = System.nanoTime();
     elapsedSinceTrigger = 0;
-    for (Signal s: signals) {
+    for (Signal s : signals) {
       Value v = s.info.fetchValue(circuitState);
       s.reset(v, duration);
     }
     elapsedSinceTrigger += duration;
-    tEnd = duration;
+    timeEnd = duration;
   }
 
   public void setFile(File value) {
@@ -752,7 +748,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     fireFilePropertyChanged(null);
   }
 
-  //In the ChronoPanel, the (at most one) signal under the mouse is
+  // In the ChronoPanel, the (at most one) signal under the mouse is
   // highlighted. Multiple other rows can be selected by clicking. This
   // code maybe should be put elsewhere.
   public Signal getSpotlight() {
@@ -770,26 +766,22 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   public void setClockSourceInfo(SignalInfo item) {
-    if (clockSource == item)
-      return;
+    if (clockSource == item) return;
     clockSource = item;
     fireModeChanged(null);
   }
 
   public static String formatDuration(long t) {
-    if (t < 1000 || (t % 100) != 0)
-      return S.fmt("nsFormat", String.format("%d", t));
+    if (t < 1000 || (t % 100) != 0) return S.fmt("nsFormat", String.format("%d", t));
     else if (t < 1000000 || (t % 100000) != 0)
-      return S.fmt("usFormat", String.format("%.1f", t/1000.0));
+      return S.fmt("usFormat", String.format("%.1f", t / 1000.0));
     else if (t < 100000000 || (t % 100000000) != 0)
-      return S.fmt("msFormat", String.format("%.1f", t/1000000.0));
-    else
-      return S.fmt("sFormat", String.format("%.1f", t/1000000000.0));
+      return S.fmt("msFormat", String.format("%.1f", t / 1000000.0));
+    else return S.fmt("sFormat", String.format("%.1f", t / 1000000000.0));
   }
 
   public void setRadix(SignalInfo s, RadixOption value) {
-    if (s.setRadix(value))
-      fireSelectionChanged(null);
+    if (s.setRadix(value)) fireSelectionChanged(null);
   }
 
   public void checkForClocks() {
@@ -797,8 +789,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     if (clk != null && (clockSource == null || clockSource.getComponent() != clk)) {
       // User requested manual tick, there were no actual or temporary clocks,
       // so user selected a temporary clock, so we should now use it.
-      if (clockSource != null && !info.contains(clockSource))
-        clockSource.setListener(null);
+      if (clockSource != null && !info.contains(clockSource)) clockSource.setListener(null);
       clockSource = null;
       setStepMode(isFine(), timeScale, gateDelay); // serves as fallback
       setClockMode(isFine(), CLOCK_DUAL, timeScale, gateDelay);

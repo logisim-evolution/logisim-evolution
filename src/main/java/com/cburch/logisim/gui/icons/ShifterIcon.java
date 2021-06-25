@@ -50,6 +50,7 @@ public class ShifterIcon extends AnimatedIcon {
     state = -1;
   }
 
+
   @Override
   protected void paintIcon(Graphics2D g2) {
     StringBuilder s = new StringBuilder();

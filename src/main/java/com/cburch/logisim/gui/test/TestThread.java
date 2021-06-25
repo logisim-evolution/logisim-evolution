@@ -53,7 +53,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   private final TestVector vector;
   private Instance[] pin;
   private Model model;
-  private boolean canceled = false, paused = false;
+  private boolean canceled = false;
+  private boolean paused = false;
 
   public TestThread(Model model) throws TestException {
     super("TestThread-Model");
@@ -99,7 +100,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
     System.out.println(StringUtil.format(S.get("testRunning"), Integer.toString(vec.data.size())));
 
-    int numPass = 0, numFail = 0;
+    int numPass = 0;
+    int numFail = 0;
     for (int i = 0; i < vec.data.size(); i++) {
       try {
         System.out.print((i + 1) + " \r");
@@ -112,8 +114,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         numFail++;
       } catch (TestException e) {
         System.out.println();
-        System.err.println(
-            StringUtil.format(S.get("testFailed"), (i + 1) + " " + e.getMessage()));
+        System.err.println(StringUtil.format(S.get("testFailed"), (i + 1) + " " + e.getMessage()));
         numFail++;
       }
     }

@@ -111,15 +111,15 @@ public class Canvas extends JComponent {
   }
 
   protected void paintForeground(Graphics g) {
-    CanvasModel cModel = this.model;
-    CanvasTool tool = listener.getTool();
-    if (cModel != null) {
-      Graphics dup = g.create();
-      cModel.paint(g, selection);
+    var canvasModel = this.model;
+    var tool = listener.getTool();
+    if (canvasModel != null) {
+      var dup = g.create();
+      canvasModel.paint(g, selection);
       dup.dispose();
     }
     if (tool != null) {
-      Graphics dup = g.create();
+      var dup = g.create();
       tool.draw(this, dup);
       dup.dispose();
     }

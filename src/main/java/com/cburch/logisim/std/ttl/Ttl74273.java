@@ -75,7 +75,7 @@ public class Ttl74273 extends AbstractOctalFlops {
   }
 
   @Override
-  public boolean HDLSupportedComponent( AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74273HDLGenerator();
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }

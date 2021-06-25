@@ -69,26 +69,34 @@ public class LeftPanel extends JTable {
   private static final long serialVersionUID = 1L;
 
   private class SignalTableModel extends AbstractTableModel {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
+
     @Override
     public String getColumnName(int col) {
       return (col == 0 ? S.get("SignalName") : S.get("SignalValue"));
     }
+
     @Override
-    public int getColumnCount() { return 2; }
+    public int getColumnCount() {
+      return 2;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Class getColumnClass(int col) {
-      return col == 0 ? SignalInfo.class : Signal.class; }
+      return col == 0 ? SignalInfo.class : Signal.class;
+    }
+
     @Override
-    public int getRowCount() { return model.getSignalCount(); }
+    public int getRowCount() {
+      return model.getSignalCount();
+    }
+
     @Override
     public Object getValueAt(int row, int col) {
-      return col  == 0 ? model.getSignal(row).info : model.getSignal(row);
+      return col == 0 ? model.getSignal(row).info : model.getSignal(row);
     }
+
     @Override
     public boolean isCellEditable(int row, int col) {
       return false;
@@ -99,22 +107,17 @@ public class LeftPanel extends JTable {
       BorderFactory.createMatteBorder(ChronoPanel.GAP, 0, ChronoPanel.GAP, 0, Color.WHITE);
 
   private class SignalRenderer extends DefaultTableCellRenderer {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-        Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-      if (!(value instanceof SignalInfo))
-        return null;
-      Component ret = super.getTableCellRendererComponent(table,
-          value, false, false, row, col);
+    public Component getTableCellRendererComponent(
+        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+      if (!(value instanceof SignalInfo)) return null;
+      Component ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
       if (ret instanceof JLabel && value instanceof SignalInfo) {
-        JLabel label = (JLabel)ret;
+        JLabel label = (JLabel) ret;
         label.setBorder(rowInsets);
-        SignalInfo item = (SignalInfo)value;
+        SignalInfo item = (SignalInfo) value;
         label.setBackground(chronoPanel.rowColors(item, isSelected)[0]);
         label.setIcon(item.icon);
       }
@@ -123,20 +126,15 @@ public class LeftPanel extends JTable {
   }
 
   private class ValueRenderer extends DefaultTableCellRenderer {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-        Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-      if (!(value instanceof Signal))
-        return null;
-      Signal s = (Signal)value;
+    public Component getTableCellRendererComponent(
+        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+      if (!(value instanceof Signal)) return null;
+      Signal s = (Signal) value;
       String txt = s.getFormattedValue(chronoPanel.getRightPanel().getCurrentTime());
-      Component ret = super.getTableCellRendererComponent(table,
-          txt, false, false, row, col);
+      Component ret = super.getTableCellRendererComponent(table, txt, false, false, row, col);
       if (ret instanceof JLabel) {
         JLabel label = (JLabel) ret;
         label.setBorder(rowInsets);
@@ -152,152 +150,170 @@ public class LeftPanel extends JTable {
   private Model model;
   private final SignalTableModel tableModel;
 
- public LeftPanel(ChronoPanel chronoPanel) {
-  this.chronoPanel = chronoPanel;
-  model = chronoPanel.getModel();
+  public LeftPanel(ChronoPanel chronoPanel) {
+    this.chronoPanel = chronoPanel;
+    model = chronoPanel.getModel();
 
-  setLayout(new BorderLayout());
-  setBackground(Color.WHITE);
+    setLayout(new BorderLayout());
+    setBackground(Color.WHITE);
 
-  tableModel = new SignalTableModel();
-  setModel(tableModel);
-  setShowGrid(false);
-  setDefaultRenderer(SignalInfo.class, new SignalRenderer());
-  setDefaultRenderer(Signal.class, new ValueRenderer());
-  setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    tableModel = new SignalTableModel();
+    setModel(tableModel);
+    setShowGrid(false);
+    setDefaultRenderer(SignalInfo.class, new SignalRenderer());
+    setDefaultRenderer(Signal.class, new ValueRenderer());
+    setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-  setColumnSelectionAllowed(false);
-  setRowSelectionAllowed(true);
+    setColumnSelectionAllowed(false);
+    setRowSelectionAllowed(true);
 
-  // highlight on mouse over
-  addMouseMotionListener(new MouseMotionAdapter() {
-  @Override
-  public void mouseMoved(MouseEvent e) {
-    int row = rowAtPoint(e.getPoint());
-    if (row >= 0 && e.getComponent() instanceof JTable) {
-     chronoPanel.changeSpotlight(model.getSignal(row));
-    } else {
-     chronoPanel.changeSpotlight(null);
-        }
-   }
-  });
-  // popup on right click
-  addMouseListener(new MouseAdapter() {
-  @Override
-   public void mouseClicked(MouseEvent e) {
-     if (!SwingUtilities.isRightMouseButton(e))
-       return;
-     if (!(e.getComponent() instanceof JTable))
-       return;
-     Signal.List signals = getSelectedValuesList();
-     if (signals.size() == 0) {
-       int row = rowAtPoint(e.getPoint());
-       if (row >= 0 && row < model.getSignalCount())
-         signals.add(model.getSignal(row));
-     }
-     PopupMenu m = new PopupMenu(chronoPanel, signals);
-     m.doPop(e);
-   }
-  });
+    // highlight on mouse over
+    addMouseMotionListener(
+        new MouseMotionAdapter() {
+          @Override
+          public void mouseMoved(MouseEvent e) {
+            int row = rowAtPoint(e.getPoint());
+            if (row >= 0 && e.getComponent() instanceof JTable) {
+              chronoPanel.changeSpotlight(model.getSignal(row));
+            } else {
+              chronoPanel.changeSpotlight(null);
+            }
+          }
+        });
+    // popup on right click
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (!SwingUtilities.isRightMouseButton(e)) return;
+            if (!(e.getComponent() instanceof JTable)) return;
+            Signal.List signals = getSelectedValuesList();
+            if (signals.size() == 0) {
+              int row = rowAtPoint(e.getPoint());
+              if (row >= 0 && row < model.getSignalCount()) signals.add(model.getSignal(row));
+            }
+            PopupMenu m = new PopupMenu(chronoPanel, signals);
+            m.doPop(e);
+          }
+        });
 
-  getSelectionModel().addListSelectionListener(
-      e -> {
-        int a = e.getFirstIndex();
-        int b = e.getLastIndex();
-        chronoPanel.getRightPanel().updateSelected(a, b);
-      });
-  setDragEnabled(true);
-  setDropMode(DropMode.INSERT_ROWS);
-  TransferHandler ccp = new SignalTransferHandler();
-  setTransferHandler(ccp);
+    getSelectionModel()
+        .addListSelectionListener(
+            e -> {
+              int a = e.getFirstIndex();
+              int b = e.getLastIndex();
+              chronoPanel.getRightPanel().updateSelected(a, b);
+            });
+    setDragEnabled(true);
+    setDropMode(DropMode.INSERT_ROWS);
+    TransferHandler ccp = new SignalTransferHandler();
+    setTransferHandler(ccp);
 
-  InputMap inputMap = getInputMap();
-  ActionMap actionMap = getActionMap();
-  actionMap.put("ClearSelection", new AbstractAction() {
-    private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      clearSelection();
-    }
-  });
-  actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
-    private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      removeSelected();
-    }
-  });
-  actionMap.put(LogisimMenuBar.SELECT_ALL, new AbstractAction() {
-    private static final long serialVersionUID = 1L;
+    InputMap inputMap = getInputMap();
+    ActionMap actionMap = getActionMap();
+    actionMap.put(
+        "ClearSelection",
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-    public void actionPerformed(ActionEvent e) {
-      selectAll();
-    }
-  });
-  actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
-  actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
-  actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
-  actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
-    public void actionPerformed(ActionEvent e) {
-      raiseOrLower(-1);
-    }
-  });
-  actionMap.put(LogisimMenuBar.LOWER, new AbstractAction() {
-    public void actionPerformed(ActionEvent e) {
-      raiseOrLower(+1);
-    }
-  });
-  actionMap.put(LogisimMenuBar.RAISE_TOP, new AbstractAction() {
-    public void actionPerformed(ActionEvent e) {
-      raiseOrLower(-2);
-    }
-  });
-  actionMap.put(LogisimMenuBar.LOWER_BOTTOM, new AbstractAction() {
-    public void actionPerformed(ActionEvent e) {
-      raiseOrLower(+2);
-    }
-  });
+          public void actionPerformed(ActionEvent e) {
+            clearSelection();
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.DELETE,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-  // calculate default sizes
-  int nameWidth = 0, valueWidth = 0;
-  TableCellRenderer render = getDefaultRenderer(String.class);
-  int n = model.getSignalCount();
-  for (int i = -1; i < n; i++) {
-    String name, val;
-    if (i < 0) {
-      name = tableModel.getColumnName(0);
-      val = tableModel.getColumnName(1);
-    } else {
-      Signal s = model.getSignal(i);
-      name = s.getName();
-      val = s.getFormattedMaxValue();
+          public void actionPerformed(ActionEvent e) {
+            removeSelected();
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.SELECT_ALL,
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
+
+          public void actionPerformed(ActionEvent e) {
+            selectAll();
+          }
+        });
+    actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
+    actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
+    actionMap.put(
+        LogisimMenuBar.RAISE,
+        new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            raiseOrLower(-1);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.LOWER,
+        new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            raiseOrLower(+1);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.RAISE_TOP,
+        new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            raiseOrLower(-2);
+          }
+        });
+    actionMap.put(
+        LogisimMenuBar.LOWER_BOTTOM,
+        new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            raiseOrLower(+2);
+          }
+        });
+
+    // calculate default sizes
+    int nameWidth = 0;
+    int valueWidth = 0;
+    TableCellRenderer render = getDefaultRenderer(String.class);
+    int n = model.getSignalCount();
+    for (int i = -1; i < n; i++) {
+      String name;
+      String val;
+      if (i < 0) {
+        name = tableModel.getColumnName(0);
+        val = tableModel.getColumnName(1);
+      } else {
+        Signal s = model.getSignal(i);
+        name = s.getName();
+        val = s.getFormattedMaxValue();
+      }
+      Component c;
+      c = render.getTableCellRendererComponent(this, name, false, false, i, 0);
+      nameWidth = Math.max(nameWidth, c.getPreferredSize().width);
+      c = render.getTableCellRendererComponent(this, val, false, false, i, 1);
+      valueWidth = Math.max(valueWidth, c.getPreferredSize().width);
     }
-    Component c;
-    c = render.getTableCellRendererComponent(this, name, false, false, i, 0);
-    nameWidth = Math.max(nameWidth, c.getPreferredSize().width);
-    c = render.getTableCellRendererComponent(this, val, false, false, i, 1);
-    valueWidth = Math.max(valueWidth, c.getPreferredSize().width);
+
+    setRowHeight(ChronoPanel.SIGNAL_HEIGHT);
+    // table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    TableColumn col;
+
+    col = getColumnModel().getColumn(0);
+    col.setMinWidth(20);
+    col.setPreferredWidth(nameWidth + 10);
+
+    col = getColumnModel().getColumn(1);
+    col.setMinWidth(20);
+    col.setPreferredWidth(valueWidth + 10);
+
+    setFillsViewportHeight(true);
+    setPreferredScrollableViewportSize(getPreferredSize());
+
+    JTableHeader header = getTableHeader();
+    Dimension d = header.getPreferredSize();
+    d.height = ChronoPanel.HEADER_HEIGHT;
+    header.setPreferredSize(d);
+    requestFocusInWindow();
   }
-
-  setRowHeight(ChronoPanel.SIGNAL_HEIGHT);
-  // table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-  TableColumn col;
-
-  col = getColumnModel().getColumn(0);
-  col.setMinWidth(20);
-  col.setPreferredWidth(nameWidth + 10);
-
-  col = getColumnModel().getColumn(1);
-  col.setMinWidth(20);
-  col.setPreferredWidth(valueWidth + 10);
-
-  setFillsViewportHeight(true);
-  setPreferredScrollableViewportSize(getPreferredSize());
-
-  JTableHeader header = getTableHeader();
-  Dimension d = header.getPreferredSize();
-  d.height = ChronoPanel.HEADER_HEIGHT;
-  header.setPreferredSize(d);
-  requestFocusInWindow();
-}
 
   public void setModel(Model m) {
     model = m;
@@ -305,26 +321,22 @@ public class LeftPanel extends JTable {
   }
 
   public void changeSpotlight(Signal oldSignal, Signal newSignal) {
-    if (oldSignal != null)
-      tableModel.fireTableRowsUpdated(oldSignal.idx, oldSignal.idx);
-    if (newSignal != null)
-      tableModel.fireTableRowsUpdated(newSignal.idx, newSignal.idx);
+    if (oldSignal != null) tableModel.fireTableRowsUpdated(oldSignal.idx, oldSignal.idx);
+    if (newSignal != null) tableModel.fireTableRowsUpdated(newSignal.idx, newSignal.idx);
   }
 
- public void updateSignals() {
+  public void updateSignals() {
     tableModel.fireTableDataChanged();
- }
+  }
 
-   public void updateSignalValues() {
-     for (int row = 0; row < model.getSignalCount(); row++)
-       tableModel.fireTableCellUpdated(row, 1);
-   }
+  public void updateSignalValues() {
+    for (int row = 0; row < model.getSignalCount(); row++) tableModel.fireTableCellUpdated(row, 1);
+  }
 
   Signal.List getSelectedValuesList() {
     Signal.List signals = new Signal.List();
     int[] sel = getSelectedRows();
-    for (int i : sel)
-      signals.add(model.getSignal(i));
+    for (int i : sel) signals.add(model.getSignal(i));
     return signals;
   }
 
@@ -332,28 +344,23 @@ public class LeftPanel extends JTable {
     clearSelection();
     for (Signal s : signals) {
       int i = model.indexOf(s.info);
-      if (i >= 0)
-        addRowSelectionInterval(i, i);
+      if (i >= 0) addRowSelectionInterval(i, i);
     }
   }
 
   void raiseOrLower(int d) {
     Signal.List sel = getSelectedValuesList();
-    int first = Integer.MAX_VALUE, last = -1;
+    int first = Integer.MAX_VALUE;
+    int last = -1;
     for (Signal s : sel) {
       first = Math.min(first, s.idx);
       last = Math.max(last, s.idx);
     }
-    if (last == -1)
-      return;
-    else if (d == -2)
-      model.addOrMoveSignals(sel, 0);
-    else if (d == -1)
-      model.addOrMoveSignals(sel, Math.max(0, first-1));
-    else if (d == +1)
-      model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last+2));
-    else
-      model.addOrMoveSignals(sel, model.getSignalCount());
+    if (last == -1) return;
+    else if (d == -2) model.addOrMoveSignals(sel, 0);
+    else if (d == -1) model.addOrMoveSignals(sel, Math.max(0, first - 1));
+    else if (d == +1) model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last + 2));
+    else model.addOrMoveSignals(sel, model.getSignalCount());
     setSelectedRows(sel);
   }
 
@@ -367,17 +374,15 @@ public class LeftPanel extends JTable {
     }
     int count = model.remove(items);
     if (count > 0 && model.getSignalCount() > 0) {
-      idx = Math.min(idx+1-count, model.getSignalCount() - 1);
+      idx = Math.min(idx + 1 - count, model.getSignalCount() - 1);
       setRowSelectionInterval(idx, idx);
     }
     repaint();
   }
 
   private class SignalTransferHandler extends TransferHandler {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
+
     Signal.List removing = null;
 
     @Override
@@ -388,18 +393,15 @@ public class LeftPanel extends JTable {
     @Override
     public Transferable createTransferable(JComponent comp) {
       removing = getSelectedValuesList();
-      if (removing.size() == 0)
-        removing = null;
+      if (removing.size() == 0) removing = null;
       return removing;
     }
 
     @Override
     public void exportDone(JComponent comp, Transferable trans, int action) {
-      if (removing == null)
-        return;
+      if (removing == null) return;
       ArrayList<SignalInfo> items = new ArrayList<>();
-      for (Signal s : removing)
-        items.add(s.info);
+      for (Signal s : removing) items.add(s.info);
       removing = null;
       model.remove(items);
     }
@@ -414,11 +416,11 @@ public class LeftPanel extends JTable {
       removing = null;
       try {
         Signal.List incoming;
-        incoming = (Signal.List)support.getTransferable().getTransferData(Signal.List.dataFlavor);
+        incoming = (Signal.List) support.getTransferable().getTransferData(Signal.List.dataFlavor);
         int newIdx = model.getSignalCount();
         if (support.isDrop()) {
           try {
-            JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
+            JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
             newIdx = Math.min(newIdx, dl.getRow());
           } catch (ClassCastException ignored) {
           }
@@ -426,13 +428,11 @@ public class LeftPanel extends JTable {
           int[] sel = getSelectedRows();
           if (sel != null && sel.length > 0) {
             newIdx = 0;
-            for (int i : sel)
-              newIdx = Math.max(newIdx, i+1);
+            for (int i : sel) newIdx = Math.max(newIdx, i + 1);
           }
         }
         boolean change = model.addOrMoveSignals(incoming, newIdx);
-        if (change)
-          setSelectedRows(incoming);
+        if (change) setSelectedRows(incoming);
         return change;
       } catch (UnsupportedFlavorException | IOException e) {
         e.printStackTrace();
@@ -440,4 +440,4 @@ public class LeftPanel extends JTable {
       }
     }
   }
- }
+}

@@ -74,9 +74,9 @@ public class JKFlipFlop extends AbstractFlipFlop {
     @Override
     public ArrayList<String> GetUpdateLogic() {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+
-          "("+HDL.notOperator()+"(s_current_state_reg)"+HDL.andOperator()+"J)"+HDL.orOperator());
-      Contents.add("         (s_current_state_reg"+HDL.andOperator()+HDL.notOperator()+"(K));");
+      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator()
+              + "(" + HDL.notOperator() + "(s_current_state_reg)" + HDL.andOperator() + "J)" + HDL.orOperator());
+      Contents.add("         (s_current_state_reg" + HDL.andOperator() + HDL.notOperator() + "(K));");
       return Contents;
     }
   }

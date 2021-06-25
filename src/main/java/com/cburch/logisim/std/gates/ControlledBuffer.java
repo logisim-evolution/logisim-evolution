@@ -112,7 +112,9 @@ class ControlledBuffer extends InstanceFactory {
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
 
-  public boolean isInverter() { return isInverter; }
+  public boolean isInverter() {
+    return isInverter;
+  }
 
   //
   // methods for instances
@@ -190,7 +192,7 @@ class ControlledBuffer extends InstanceFactory {
 
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D)painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "EN1", isInverter, false);
     else

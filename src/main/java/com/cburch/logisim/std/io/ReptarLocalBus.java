@@ -68,10 +68,13 @@ public class ReptarLocalBus extends InstanceFactory {
   }
 
   public static String getOutputLabel(int id) {
-    switch(id) {
-      case 0  : return "SP6_LB_WAIT3_o";
-      case 1  : return "IRQ_o";
-      default : return "Undefined";
+    switch (id) {
+      case 0:
+        return "SP6_LB_WAIT3_o";
+      case 1:
+        return "IRQ_o";
+      default:
+        return "Undefined";
     }
   }
 
@@ -100,15 +103,18 @@ public class ReptarLocalBus extends InstanceFactory {
     ArrayList<String> inpLabels = new ArrayList<>();
     ArrayList<String> outpLabels = new ArrayList<>();
     ArrayList<String> ioLabels = new ArrayList<>();
-    for (int i = 0 ; i < 16 ; i++) {
+    for (int i = 0; i < 16; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));
       ioLabels.add(getIOLabel(i));
     }
 
-    setAttributes(new Attribute[] {StdAttr.LABEL,StdAttr.MAPINFO},
-        new Object[] {defaultLocalBusName,
-          new ComponentMapInformationContainer( 13, 2, 16, inpLabels, outpLabels, ioLabels)});
+    setAttributes(
+        new Attribute[] {StdAttr.LABEL, StdAttr.MAPINFO},
+        new Object[] {
+          defaultLocalBusName,
+          new ComponentMapInformationContainer(13, 2, 16, inpLabels, outpLabels, ioLabels)
+        });
 
     // setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-110, -10, 110, 110));
