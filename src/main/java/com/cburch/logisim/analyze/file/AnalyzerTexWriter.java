@@ -341,8 +341,7 @@ public class AnalyzerTexWriter {
     return content.toString();
   }
 
-  private static String getKarnaughGroups(
-      String output, String name, boolean lined, int outcol, AnalyzerModel model) {
+  private static String getKarnaughGroups(String output, String name, boolean lined, int outcol, AnalyzerModel model) {
     final var content = new StringBuilder();
     content.append("\\begin{center}\n");
     content.append(K_INTRO).append(lined ? "" : K_NUMBERED).append(K_SETUP).append("\n");
