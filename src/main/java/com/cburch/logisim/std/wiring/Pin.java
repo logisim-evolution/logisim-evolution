@@ -354,7 +354,11 @@ public class Pin extends InstanceFactory {
             s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
-          double val = (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) ? Double.POSITIVE_INFINITY : (s.toLowerCase().equals("-inf") ? Double.NEGATIVE_INFINITY : (s.toLowerCase().equals("nan") ? Double.NaN : Double.parseDouble(s)));
+          double val;
+		  if (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) val = Double.POSITIVE_INFINITY;
+		  else if (s.toLowerCase().equals("-inf") val = Double.NEGATIVE_INFINITY;
+		  else if (s.toLowerCase().equals("nan")) val = Double.NaN;
+		  else Double.parseDouble(s);
           newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
         }
         setVisible(false);
@@ -369,7 +373,10 @@ public class Pin extends InstanceFactory {
       if (s.equals("")) return false;
       if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
           s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
-      if (s.toLowerCase().equals("nan") || s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf") || s.toLowerCase().equals("-inf")) return true;
+      if (s.toLowerCase().equals("nan") ||
+	      s.toLowerCase().equals("inf") ||
+		  s.toLowerCase().equals("+inf") ||
+		  s.toLowerCase().equals("-inf")) return true;
       
       try {
         Double.parseDouble(s);
