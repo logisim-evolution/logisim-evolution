@@ -60,6 +60,8 @@ public class Arithmetic extends Library {
     new FactoryDescription(FPDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
     new FactoryDescription(FPNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
     new FactoryDescription(FPComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
+    new FactoryDescription(FPToInt.class, S.getter("fpToIntComponent"), "fptoi.gif"),
+    new FactoryDescription(IntToFP.class, S.getter("intToFPComponent"), "itofp.gif"),
   };
 
   private List<Tool> tools = null;
