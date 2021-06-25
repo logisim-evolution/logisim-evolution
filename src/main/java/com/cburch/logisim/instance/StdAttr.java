@@ -97,5 +97,13 @@ public interface StdAttr {
           S.getter("stdAppearanceAttr"),
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION});
 
+  Attribute<BitWidth> FP_WIDTH =
+      Attributes.forOption(
+          "fpwidth",
+          S.getter("stdFPDataWidthAttr"),
+          new BitWidth[] {
+            BitWidth.create(32), BitWidth.create(64)
+          });
+
   Attribute<String> DUMMY = Attributes.forHidden();
 }
