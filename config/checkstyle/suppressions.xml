@@ -8,4 +8,7 @@
     <suppress checks="MissingJavadocType"/>
     <suppress checks="JavadocParagraph"/>
     <suppress checks="NeedBraces"/>
+
+    <!-- Auto-generated file. https://github.com/logisim-evolution/logisim-evolution/issues/563-->
+	<suppress id="VhdlSyntax" files="src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.java"/>
 </suppressions>
