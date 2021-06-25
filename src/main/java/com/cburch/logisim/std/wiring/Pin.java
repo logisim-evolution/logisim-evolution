@@ -255,9 +255,7 @@ public class Pin extends InstanceFactory {
     public void keyTyped(KeyEvent e) {}
   }
 
-  @SuppressWarnings("serial")
   private static class EditFloat extends JDialog implements KeyListener, LocaleListener {
-
     private final JFormattedTextField text;
     private final int bitWidth;
     final PinState pinState;
