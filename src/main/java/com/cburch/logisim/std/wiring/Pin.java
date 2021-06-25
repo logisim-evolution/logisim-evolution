@@ -253,6 +253,148 @@ public class Pin extends InstanceFactory {
     public void keyTyped(KeyEvent e) {}
   }
 
+  @SuppressWarnings("serial")
+  private static class EditFloat extends JDialog implements KeyListener, LocaleListener {
+
+    private final JFormattedTextField text;
+    private final int bitWidth;
+    final PinState pinState;
+    final InstanceState state;
+    final boolean tristate;
+    private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
+    private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
+    final JButton ok;
+    final JButton cancel;
+
+    public void localeChanged() {
+      setTitle(S.get("PinEnterFloat"));
+      ok.setText(S.get("PinOkay"));
+      cancel.setText(S.get("PinCancel"));
+    }
+
+    public EditFloat(InstanceState state) {
+      super();
+      this.state = state;
+      pinState = getState(state);
+      Value value = pinState.intendedValue;
+      bitWidth = value.getWidth();
+      PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+      tristate = (attrs.threeState && attrs.pull == PULL_NONE);
+
+      setTitle(S.get("PinEnterFloat"));
+      GridBagConstraints gbc = new GridBagConstraints();
+      ok = new JButton(S.get("PinOkay"));
+      cancel = new JButton(S.get("PinCancel"));
+      ok.addActionListener(
+          e -> accept());
+      cancel.addActionListener(
+          e -> EditFloat.this.setVisible(false));
+      addWindowFocusListener(
+          new WindowFocusListener() {
+            public void windowLostFocus(WindowEvent e) {
+              EditFloat.this.setVisible(false);
+            }
+
+            public void windowGainedFocus(WindowEvent e) {}
+          });
+      setLayout(new GridBagLayout());
+
+      text = new JFormattedTextField();
+      text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
+      text.setColumns(11);
+      text.setText(bitWidth == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue()));
+      text.selectAll();
+
+      text.getDocument()
+          .addDocumentListener(
+              new DocumentListener() {
+                public void insertUpdate(DocumentEvent e) {
+                  String s = text.getText();
+                  if (isEditValid(s)) {
+                    text.setBackground(VALID_COLOR);
+                    ok.setEnabled(true);
+                  } else {
+                    text.setBackground(INVALID_COLOR);
+                    ok.setEnabled(false);
+                  }
+                }
+
+                public void removeUpdate(DocumentEvent e) {
+                  insertUpdate(e);
+                }
+
+                public void changedUpdate(DocumentEvent e) {}
+              });
+
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      add(cancel, gbc);
+      gbc.gridx = 1;
+      gbc.gridy = 1;
+      add(ok, gbc);
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.insets = new Insets(8, 4, 8, 4);
+      text.addKeyListener(this);
+      text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+      text.setBackground(VALID_COLOR);
+      add(text, gbc);
+
+      pack();
+    }
+
+    public void accept() {
+      String s = text.getText();
+      if (isEditValid(s)) {
+        Value newVal;
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
+            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) ||
+            s.equals("???")) {
+          newVal = Value.createUnknown(BitWidth.create(bitWidth));
+        } else {
+          double val = (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) ? Double.POSITIVE_INFINITY : (s.toLowerCase().equals("-inf") ? Double.NEGATIVE_INFINITY : (s.toLowerCase().equals("nan") ? Double.NaN : Double.parseDouble(s)));
+          newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
+        }
+        setVisible(false);
+        pinState.intendedValue = newVal;
+        state.fireInvalidated();
+      }
+    }
+
+    boolean isEditValid(String s) {
+      if (s == null) return false;
+      s = s.trim();
+      if (s.equals("")) return false;
+      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
+          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
+      if (s.toLowerCase().equals("nan") || s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf") || s.toLowerCase().equals("-inf")) return true;
+      
+      try {
+        Double.parseDouble(s);
+        return true;
+      } catch (NumberFormatException e) {
+        return false;
+      }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        accept();
+      } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        setVisible(false);
+      }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+  }
+
   public static class PinLogger extends InstanceLogger {
 
     @Override
@@ -435,6 +577,10 @@ public class Pin extends InstanceFactory {
       RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
       if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) {
         EditDecimal dialog = new EditDecimal(state);
+        dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
+        dialog.setVisible(true);
+      } else if (radix == RadixOption.RADIX_FLOAT) {
+        EditFloat dialog = new EditFloat(state);
         dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
         dialog.setVisible(true);
       } else {
