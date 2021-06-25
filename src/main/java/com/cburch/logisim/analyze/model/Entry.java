@@ -84,7 +84,7 @@ public class Entry implements Comparable<Entry>, PreferenceChangeListener {
   }
 
   private void fireChange() {
-    for (EntryChangedListener l : listeners) l.entryDesriptionChanged();
+    for (final var l : listeners) l.entryDesriptionChanged();
   }
 
   public String getErrorMessage() {
@@ -101,8 +101,7 @@ public class Entry implements Comparable<Entry>, PreferenceChangeListener {
   }
 
   public String toBitString() {
-    if (this == DONT_CARE || this == ZERO || this == ONE) return getDescription();
-    else return "?";
+    return (this == DONT_CARE || this == ZERO || this == ONE) ? getDescription() : "?";
   }
 
   @Override

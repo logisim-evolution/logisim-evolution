@@ -34,8 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 
 public class TruthTable {
 
@@ -55,7 +53,7 @@ public class TruthTable {
 
     Row(int idx, int numInputs, int mask) {
       inputs = new Entry[numInputs];
-      for (int i = numInputs - 1; i >= 0; i--) {
+      for (var i = numInputs - 1; i >= 0; i--) {
         inputs[i] = (mask & 1) == 0 ? (idx & 1) == 0 ? Entry.ZERO : Entry.ONE : Entry.DONT_CARE;
         idx = idx >> 1;
         mask = mask >> 1;
@@ -68,16 +66,14 @@ public class TruthTable {
     }
 
     public int baseIndex() {
-      int idx = 0;
-      for (Entry input : inputs)
-        idx = (idx << 1) | (input == Entry.ONE ? 1 : 0);
+      var idx = 0;
+      for (final var input : inputs) idx = (idx << 1) | (input == Entry.ONE ? 1 : 0);
       return idx;
     }
 
     public int dcMask() {
-      int mask = 0;
-      for (Entry input : inputs)
-        mask = (mask << 1) | (input == Entry.DONT_CARE ? 1 : 0);
+      var mask = 0;
+      for (final var input : inputs) mask = (mask << 1) | (input == Entry.DONT_CARE ? 1 : 0);
       return mask;
     }
 
@@ -90,8 +86,8 @@ public class TruthTable {
 
     @Override
     public String toString() {
-      StringBuilder s = new StringBuilder("row[");
-      for (int i = 0; i < inputs.length; i++) {
+      final var s = new StringBuilder("row[");
+      for (var i = 0; i < inputs.length; i++) {
         if (i != 0) s.append(" ");
         s.append(inputs[i].getDescription());
       }
@@ -103,8 +99,8 @@ public class TruthTable {
 
     public String toBitString(List<Var> vars) {
       StringBuilder s = null;
-      int i = 0;
-      for (Var v : vars) {
+      var i = 0;
+      for (final var v : vars) {
         if (s == null) s = new StringBuilder();
         else s.append(" ");
         for (int j = 0; j < v.width; j++) s.append(inputs[i++].toBitString());
@@ -121,10 +117,11 @@ public class TruthTable {
     }
 
     public boolean intersects(Row other) {
-      int dc = dcMask() | other.dcMask();
+      final var dc = dcMask() | other.dcMask();
       return (other.baseIndex() & ~dc) == (baseIndex() & ~dc);
     }
 
+    @Override
     public Iterator<Integer> iterator() {
       return new Iterator<>() {
         final int base = baseIndex();
@@ -140,9 +137,9 @@ public class TruthTable {
 
         @Override
         public Integer next() {
-          int add = iter;
-          int keep = 0;
-          for (int b = 0; b < nbits; b++) {
+          var add = iter;
+          var keep = 0;
+          for (var b = 0; b < nbits; b++) {
             if ((mask & (1 << b)) == 0) {
               add = ((add & ~keep) << 1) | (add & keep);
             }
@@ -161,21 +158,22 @@ public class TruthTable {
   }
 
   public static class CompareInputs implements Comparator<Row> {
+    @Override
     public int compare(Row r1, Row r2) {
       return r1.baseIndex() - r2.baseIndex();
     }
   }
 
   private void initRows() {
-    int inputs = getInputColumnCount();
-    int n = getRowCount();
+    final var inputs = getInputColumnCount();
+    final var n = getRowCount();
     rows.clear();
     rows.ensureCapacity(n);
     for (int i = 0; i < n; i++) rows.add(new Row(i, inputs, 0));
   }
 
   private void initColumns() {
-    int outputs = getOutputColumnCount();
+    final var outputs = getOutputColumnCount();
     columns.clear();
     columns.ensureCapacity(outputs);
     for (int i = 0; i < outputs; i++) columns.add(null /* created lazily */);
@@ -196,19 +194,19 @@ public class TruthTable {
   }
 
   public void compactVisibleRows() {
-    SortedMap<Implicant, String> partition = Implicant.computePartition(model);
+    final var partition = Implicant.computePartition(model);
     rows.clear();
     initColumns();
-    int ni = getInputColumnCount();
-    int no = getOutputColumnCount();
-    for (Map.Entry<Implicant, String> it : partition.entrySet()) {
-      Implicant imp = it.getKey();
-      String val = it.getValue();
-      Row r = new Row(imp.values, ni, imp.unknowns);
+    final var ni = getInputColumnCount();
+    final var no = getOutputColumnCount();
+    for (var it : partition.entrySet()) {
+      final var imp = it.getKey();
+      final var val = it.getValue();
+      final var r = new Row(imp.values, ni, imp.unknowns);
       rows.add(r);
-      for (int col = 0; col < no; col++) {
-        Entry value = Entry.parse("" + val.charAt(col));
-        Entry[] column = columns.get(col);
+      for (var col = 0; col < no; col++) {
+        final var value = Entry.parse("" + val.charAt(col));
+        var column = columns.get(col);
         if (column == null && value == DEFAULT_ENTRY) continue;
         else if (column == null) column = getOutputColumn(col);
         for (Integer idx : r) {
@@ -217,25 +215,25 @@ public class TruthTable {
       }
     }
     fireRowsChanged();
-    for (int col = 0; col < no; col++) {
+    for (var col = 0; col < no; col++) {
       if (columns.get(col) != null) fireCellsChanged(col);
     }
   }
 
   public void setOutputColumn(int col, Entry[] values) {
     if (values.length != getRowCount()) throw new IllegalArgumentException("bad column length");
-    Entry[] oldValues = columns.set(col, values);
+    final var oldValues = columns.set(col, values);
     if (oldValues == values) return;
     // Expand rows as dictated by column inconsistencies
-    boolean rowsChanged = false;
-    for (int i = rows.size() - 1; i >= 0; i--) {
-      Row r = rows.get(i);
-      int base = r.baseIndex();
-      Entry v = values[base];
-      boolean split = true;
+    var rowsChanged = false;
+    for (var i = rows.size() - 1; i >= 0; i--) {
+      final var r = rows.get(i);
+      final var base = r.baseIndex();
+      final var v = values[base];
+      var split = true;
       while (split) {
         split = false;
-        for (Integer idx : r) {
+        for (final var idx : r) {
           if (v != values[idx]) {
             splitRow(r, idx);
             rowsChanged = true;
@@ -250,16 +248,16 @@ public class TruthTable {
   }
 
   void splitRow(Row r, int idx) {
-    int base = r.baseIndex();
+    final var base = r.baseIndex();
     if (idx == base || !r.contains(idx)) throw new IllegalArgumentException("bad row split");
-    int diff = idx ^ base;
-    int n = r.duplicity();
+    final var diff = idx ^ base;
+    final var n = r.duplicity();
     if (n <= 1) throw new IllegalStateException("row duplicity should be at least 2");
-    Row splits = new Row(base, r.inputs.length, diff);
-    int m = 0;
+    final var splits = new Row(base, r.inputs.length, diff);
+    var m = 0;
     rows.remove(r);
-    for (Integer other : splits) {
-      Row s = new Row(other, r.inputs.length, r.dcMask() & ~diff);
+    for (final var other : splits) {
+      final var s = new Row(other, r.inputs.length, r.dcMask() & ~diff);
       m += s.duplicity();
       int pos = Collections.binarySearch(rows, s, sortByInputs);
       if (pos < 0) rows.add(-pos - 1, s);
@@ -269,38 +267,39 @@ public class TruthTable {
   }
 
   public Entry getVisibleOutputEntry(int row, int col) {
-    Row r = rows.get(row);
-    int idx = r.baseIndex();
+    final var r = rows.get(row);
+    final var idx = r.baseIndex();
     return getOutputEntry(idx, col);
   }
 
   public Entry getOutputEntry(int idx, int col) {
     if (idx < 0 || col < 0) return DEFAULT_ENTRY;
-    Entry[] column = columns.get(col);
+    final var column = columns.get(col);
     return (column == null ? DEFAULT_ENTRY : idx < column.length ? column[idx] : DEFAULT_ENTRY);
   }
 
   public String getVisibleOutputs(int row) {
-    Row r = rows.get(row);
-    int idx = r.baseIndex();
-    StringBuilder s = new StringBuilder();
-    for (Entry[] column : columns)
+    final var r = rows.get(row);
+    final var idx = r.baseIndex();
+    final var s = new StringBuilder();
+    for (Entry[] column : columns) {
       s.append((column == null ? DEFAULT_ENTRY : column[idx]).getDescription());
+    }
     return s.toString();
   }
 
   public Entry getVisibleInputEntry(int row, int col) {
-    Row r = rows.get(row);
+    final var r = rows.get(row);
     return r.inputs[col];
   }
 
   public int getVisibleRowDcMask(int row) {
-    Row r = rows.get(row);
+    final var r = rows.get(row);
     return r.dcMask();
   }
 
   public int getVisibleRowIndex(int row) {
-    Row r = rows.get(row);
+    final var r = rows.get(row);
     return r.baseIndex();
   }
 
@@ -310,7 +309,7 @@ public class TruthTable {
 
   public Entry getInputEntry(int idx, int col) {
     if (idx < 0 || idx >= getRowCount()) throw new IndexOutOfBoundsException("bad row index");
-    int inputs = getInputColumnCount();
+    final var inputs = getInputColumnCount();
     if (col < 0 || col >= inputs) throw new IndexOutOfBoundsException("bad input column index");
     return isInputSet(idx, col, inputs) ? Entry.ONE : Entry.ZERO;
   }
@@ -320,7 +319,7 @@ public class TruthTable {
   }
 
   public Entry[] getOutputColumn(int col) {
-    Entry[] column = columns.get(col);
+    var column = columns.get(col);
     if (column == null) {
       if (col < 0 || col >= getOutputColumnCount())
         throw new IndexOutOfBoundsException("bad output column index");
@@ -333,19 +332,17 @@ public class TruthTable {
 
   private boolean identicalOutputs(int idx1, int idx2) {
     if (idx1 == idx2) return true;
-    for (Entry[] column : columns) {
-      if (column == null)
-        continue;
-      if (column[idx1] != column[idx2])
-        return false;
+    for (final var column : columns) {
+      if (column == null) continue;
+      if (column[idx1] != column[idx2]) return false;
     }
     return true;
   }
 
   private void mergeOutputs(int idx1, int idx2, boolean[] changed) {
     if (idx1 == idx2) return;
-    for (int col = 0; col < columns.size(); col++) {
-      Entry[] column = columns.get(col);
+    for (var col = 0; col < columns.size(); col++) {
+      final var column = columns.get(col);
       if (column == null) continue;
       if (column[idx1] != column[idx2]) {
         column[idx2] = column[idx1];
@@ -355,18 +352,18 @@ public class TruthTable {
   }
 
   private boolean setDontCare(Row r, int dc, boolean force, boolean[] changed) {
-    var newRow = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
-    int base = newRow.baseIndex();
+    final var newRow = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
+    final var base = newRow.baseIndex();
     if (!force) {
-      for (Integer idx : newRow) {
+      for (final var idx : newRow) {
         if (!identicalOutputs(base, idx)) return false;
       }
     }
-    for (int i = 0; i < rows.size(); i++) {
-      var row = rows.get(i);
+    for (var i = 0; i < rows.size(); i++) {
+      final var row = rows.get(i);
       if (!newRow.intersects(row)) continue;
       if (newRow.contains(row)) {
-        for (Integer idx : row) mergeOutputs(base, idx, changed);
+        for (final var idx : row) mergeOutputs(base, idx, changed);
         rows.remove(i);
       } else {
         // find a bit we can flip in s so it doesn't conflict
@@ -380,18 +377,18 @@ public class TruthTable {
       }
       i--; // back up, may need a second split
     }
-    int pos = Collections.binarySearch(rows, newRow, sortByInputs);
+    final var pos = Collections.binarySearch(rows, newRow, sortByInputs);
     if (pos < 0) rows.add(-pos - 1, newRow);
     else throw new IllegalStateException("failed row merge");
     return true;
   }
 
   public boolean setVisibleInputEntry(int row, int col, Entry value, boolean force) {
-    Row r = rows.get(row);
+    final var r = rows.get(row);
     if (r.inputs[col] == value) return false;
-    int dc = (1 << (r.inputs.length - 1 - col));
+    final var dc = (1 << (r.inputs.length - 1 - col));
     if (value == Entry.DONT_CARE) {
-      boolean[] changed = new boolean[columns.size()];
+      final var changed = new boolean[columns.size()];
       if (!setDontCare(r, dc, force, changed)) return false;
       fireRowsChanged();
       for (int ocol = 0; ocol < columns.size(); ocol++) {
@@ -409,11 +406,11 @@ public class TruthTable {
   }
 
   public void setVisibleOutputEntry(int row, int col, Entry value) {
-    Row r = rows.get(row);
-    Entry[] column = columns.get(col);
+    final var r = rows.get(row);
+    var column = columns.get(col);
     if (column == null && value == DEFAULT_ENTRY) return;
     else if (column == null) column = getOutputColumn(col);
-    boolean changed = false;
+    var changed = false;
     for (Integer idx : r) {
       if (column[idx] == value) continue;
       changed = true;
@@ -423,35 +420,35 @@ public class TruthTable {
   }
 
   Row findRow(int idx) {
-    for (int i = rows.size() - 1; i >= 0; i--) {
-      Row r = rows.get(i);
+    for (var i = rows.size() - 1; i >= 0; i--) {
+      final var r = rows.get(i);
       if (r.contains(idx)) return r;
     }
     throw new IllegalStateException("missing row");
   }
 
   public int findVisibleRowContaining(int idx) {
-    for (int i = rows.size() - 1; i >= 0; i--) {
-      Row r = rows.get(i);
+    for (var i = rows.size() - 1; i >= 0; i--) {
+      final var r = rows.get(i);
       if (r.contains(idx)) return i;
     }
     throw new IllegalStateException("missing row");
   }
 
   public void setVisibleRows(ArrayList<Entry[]> newEntries, boolean force) {
-    int ni = getInputColumnCount();
-    int no = getOutputColumnCount();
-    ArrayList<Row> newRows = new ArrayList<>(newEntries.size());
-    for (Entry[] values : newEntries) {
+    final var ni = getInputColumnCount();
+    final var no = getOutputColumnCount();
+    final var newRows = new ArrayList<Row>(newEntries.size());
+    for (final var values : newEntries) {
       if (values.length != ni + no) throw new IllegalArgumentException("wrong column count");
       newRows.add(new Row(values, ni));
     }
     // check that newRows has no intersections
-    List<Var> ivars = getInputVariables();
-    int[] taken = new int[getRowCount()];
+    final var ivars = getInputVariables();
+    final var taken = new int[getRowCount()];
     for (int i = 0; i < newRows.size(); i++) {
-      Row r = newRows.get(i);
-      for (Integer idx : r) {
+      final var r = newRows.get(i);
+      for (final var idx : r) {
         if (taken[idx] != 0 && !force) {
           throw new IllegalArgumentException(
               String.format(
@@ -471,11 +468,10 @@ public class TruthTable {
       }
     }
     // check that newRows covers all possible cases
-    for (int i = 0; i < getRowCount(); i++) {
+    for (var i = 0; i < getRowCount(); i++) {
       if (taken[i] == 0 && !force) {
         throw new IllegalArgumentException(
-            String.format(
-                "Some inputs are missing." + " For example, there is no row for input %s.",
+            String.format("Some inputs are missing." + " For example, there is no row for input %s.",
                 new Row(i, ni, 0).toBitString(ivars)));
       } else if (taken[i] == 0) {
         newRows.add(new Row(i, ni, 0));
@@ -488,15 +484,13 @@ public class TruthTable {
     initColumns();
 
     for (Entry[] values : newEntries) {
-      Row r = new Row(values, ni);
-      for (int col = 0; col < no; col++) {
-        Entry value = values[ni + col];
-        Entry[] column = columns.get(col);
+      final var r = new Row(values, ni);
+      for (var col = 0; col < no; col++) {
+        final var value = values[ni + col];
+        var column = columns.get(col);
         if (column == null && value == DEFAULT_ENTRY) continue;
         else if (column == null) column = getOutputColumn(col);
-        for (Integer idx : r) {
-          column[idx] = value;
-        }
+        for (final var idx : r) column[idx] = value;
       }
     }
     fireRowsChanged();
@@ -506,12 +500,12 @@ public class TruthTable {
   }
 
   public void setOutputEntry(int idx, int col, Entry value) {
-    Entry[] column = columns.get(col);
+    var column = columns.get(col);
     if (column == null && value == DEFAULT_ENTRY) return;
     else if (column == null) column = getOutputColumn(col);
     if (column[idx] == value) return;
     column[idx] = value;
-    Row r = findRow(idx);
+    final var r = findRow(idx);
     if (r.duplicity() > 1) {
       splitRow(r, idx);
       fireRowsChanged();
@@ -524,8 +518,8 @@ public class TruthTable {
     public void listChanged(VariableListEvent event) {
       if (event.getSource() == model.getInputs()) {
         inputsChanged(event);
-        for (int col = 0; col < columns.size(); col++) {
-          Entry[] column = columns.get(col);
+        for (var col = 0; col < columns.size(); col++) {
+          var column = columns.get(col);
           if (column == null) continue;
           column = inputsChangedForOutput(column, event);
           columns.set(col, column);
@@ -538,35 +532,35 @@ public class TruthTable {
     }
 
     private void outputsChanged(VariableListEvent event) {
-      Var v = event.getVariable();
-      int action = event.getType();
+      final var v = event.getVariable();
+      final var action = event.getType();
       if (action == VariableListEvent.ALL_REPLACED) {
         initColumns();
       } else if (action == VariableListEvent.ADD) {
-        int bitIndex = event.getBitIndex();
+        final var bitIndex = event.getBitIndex();
         for (int b = v.width - 1; b >= 0; b--) columns.add(bitIndex - b, null /* lazily created */);
       } else if (action == VariableListEvent.MOVE) {
-        int delta = event.getBitIndex();
-        int newIndex = getOutputIndex(v.bitName(0));
+        final var delta = event.getBitIndex();
+        final var newIndex = getOutputIndex(v.bitName(0));
         if (delta > 0) {
-          for (int b = 0; b < v.width; b++) {
-            Entry[] column = columns.remove(newIndex - delta - b);
+          for (var b = 0; b < v.width; b++) {
+            final var column = columns.remove(newIndex - delta - b);
             columns.add(newIndex - b, column);
           }
         } else if (delta < 0) {
-          for (int b = v.width - 1; b >= 0; b--) {
-            Entry[] column = columns.remove(newIndex - delta - b);
+          for (var b = v.width - 1; b >= 0; b--) {
+            final var column = columns.remove(newIndex - delta - b);
             columns.add(newIndex - b, column);
           }
         }
       } else if (action == VariableListEvent.REMOVE) {
-        int bitIndex = event.getBitIndex();
-        for (int b = 0; b < v.width; b++) columns.remove(bitIndex - b);
+        final var bitIndex = event.getBitIndex();
+        for (var b = 0; b < v.width; b++) columns.remove(bitIndex - b);
       } else if (action == VariableListEvent.REPLACE) {
-        int bitIndex = event.getBitIndex();
-        Var newVar = getOutputVariable(event.getIndex());
-        int lost = v.width - newVar.width;
-        int pos = bitIndex + 1 - v.width;
+        final var bitIndex = event.getBitIndex();
+        final var newVar = getOutputVariable(event.getIndex());
+        var lost = v.width - newVar.width;
+        final var pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) columns.remove(pos);
         } else if (lost < 0) {
@@ -576,30 +570,30 @@ public class TruthTable {
     }
 
     private void inputsChanged(VariableListEvent event) {
-      Var v = event.getVariable();
-      int action = event.getType();
+      final var v = event.getVariable();
+      final var action = event.getType();
       if (action == VariableListEvent.ADD) {
-        int bitIndex = event.getBitIndex();
-        int oldCount = getInputColumnCount() - v.width;
-        for (int b = v.width - 1; b >= 0; b--) addInput(bitIndex - b, oldCount++);
+        final var bitIndex = event.getBitIndex();
+        var oldCount = getInputColumnCount() - v.width;
+        for (var b = v.width - 1; b >= 0; b--) addInput(bitIndex - b, oldCount++);
       } else if (action == VariableListEvent.REMOVE) {
-        int bitIndex = event.getBitIndex();
-        int oldCount = getInputColumnCount() + v.width;
-        for (int b = 0; b < v.width; b++) removeInput(bitIndex - b, oldCount--);
+        final var bitIndex = event.getBitIndex();
+        var oldCount = getInputColumnCount() + v.width;
+        for (var b = 0; b < v.width; b++) removeInput(bitIndex - b, oldCount--);
       } else if (action == VariableListEvent.MOVE) {
-        int delta = event.getBitIndex();
-        int newIndex = getInputIndex(v.bitName(0));
+        final var delta = event.getBitIndex();
+        final var newIndex = getInputIndex(v.bitName(0));
         if (delta > 0) {
           for (int b = 0; b < v.width; b++) moveInput(newIndex - delta - b, newIndex - b);
         } else if (delta < 0) {
           for (int b = v.width - 1; b >= 0; b--) moveInput(newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        int bitIndex = event.getBitIndex();
-        Var newVar = getInputVariable(event.getIndex());
-        int lost = v.width - newVar.width;
-        int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - v.width;
+        final var bitIndex = event.getBitIndex();
+        final var newVar = getInputVariable(event.getIndex());
+        var lost = v.width - newVar.width;
+        var oldCount = getInputColumnCount() + lost;
+        final var pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) removeInput(pos, oldCount--);
         } else if (lost < 0) {
@@ -611,22 +605,22 @@ public class TruthTable {
     }
 
     private void moveInput(int oldIndex, int newIndex) {
-      int inputs = getInputColumnCount();
+      final var inputs = getInputColumnCount();
       oldIndex = inputs - 1 - oldIndex;
       newIndex = inputs - 1 - newIndex;
-      int allMask = (1 << inputs) - 1;
-      int sameMask =
+      final var allMask = (1 << inputs) - 1;
+      final var sameMask =
           allMask
               ^ ((1 << (1 + Math.max(oldIndex, newIndex))) - 1)
               ^ ((1 << Math.min(oldIndex, newIndex)) - 1); // bits that don't change
-      int moveMask = 1 << oldIndex; // bit that moves
-      int moveDist = Math.abs(newIndex - oldIndex);
-      boolean moveLeft = newIndex > oldIndex;
-      int blockMask = allMask ^ sameMask ^ moveMask; // bits that move by one
+      final var moveMask = 1 << oldIndex; // bit that moves
+      final var moveDist = Math.abs(newIndex - oldIndex);
+      final var moveLeft = newIndex > oldIndex;
+      final var blockMask = allMask ^ sameMask ^ moveMask; // bits that move by one
       ArrayList<Row> ret = new ArrayList<>(2 * rows.size());
-      for (Row r : rows) {
-        int i = r.baseIndex();
-        int dc = r.dcMask();
+      for (final var r : rows) {
+        final var i = r.baseIndex();
+        final var dc = r.dcMask();
         int idx0;
         int dc0;
         if (moveLeft) {
@@ -644,14 +638,14 @@ public class TruthTable {
 
     private void addInput(int index, int oldCount) {
       // add another Entry column to each row.input
-      ArrayList<Row> ret = new ArrayList<>(2 * rows.size());
-      for (Row r : rows) {
-        int i = r.baseIndex();
-        int dc = r.dcMask();
-        int b = 1 << (oldCount - index); // _0001000
-        int mask = b - 1; // _0000111
-        int idx0 = ((i & ~mask) << 1) | 0 | (i & mask); // xxxx0yyy
-        int dc0 = ((dc & ~mask) << 1) | 0 | (dc & mask); // wwww0zzz
+      final var ret = new ArrayList<Row>(2 * rows.size());
+      for (final var r : rows) {
+        final var i = r.baseIndex();
+        final var dc = r.dcMask();
+        final var b = 1 << (oldCount - index); // _0001000
+        var mask = b - 1; // _0000111
+        final var idx0 = ((i & ~mask) << 1) | 0 | (i & mask); // xxxx0yyy
+        final var dc0 = ((dc & ~mask) << 1) | 0 | (dc & mask); // wwww0zzz
         ret.add(new Row(idx0 | 0, oldCount + 1, dc0)); // xxxx0yyy
         ret.add(new Row(idx0 | b, oldCount + 1, dc0)); // xxxx1yyy
       }
@@ -661,23 +655,22 @@ public class TruthTable {
 
     private void removeInput(int index, int oldCount) {
       // force an Entry column of each row.input to 'x', then remove it
-      int b = (1 << (oldCount - 1 - index)); // _0001000
-      boolean[] changed = new boolean[columns.size()];
+      final var b = (1 << (oldCount - 1 - index)); // _0001000
+      final var changed = new boolean[columns.size()];
       // loop rows by index to avoid java.util.ConcurrentModificationException
       //noinspection ForLoopReplaceableByForEach
-      for (int i = 0; i < rows.size(); ++i) {
-        Row r = rows.get(i);
-        if (r.inputs[index] == Entry.DONT_CARE)
-          continue;
+      for (var i = 0; i < rows.size(); ++i) {
+        final var r = rows.get(i);
+        if (r.inputs[index] == Entry.DONT_CARE) continue;
         setDontCare(r, b, true, changed); // mutates row
       }
-      int mask = b - 1; // _0000111
-      ArrayList<Row> ret = new ArrayList<>(rows.size());
-      for (Row r : rows) {
-        int i = r.baseIndex();
-        int dc = r.dcMask();
-        int idx0 = ((i >> 1) & ~mask) | (i & mask); // __xxxyyy
-        int dc0 = ((dc >> 1) & ~mask) | (dc & mask); // wwww0zzz
+      final var mask = b - 1; // _0000111
+      final var ret = new ArrayList<Row>(rows.size());
+      for (var r : rows) {
+        final var i = r.baseIndex();
+        final var dc = r.dcMask();
+        final var idx0 = ((i >> 1) & ~mask) | (i & mask); // __xxxyyy
+        final var dc0 = ((dc >> 1) & ~mask) | (dc & mask); // wwww0zzz
         ret.add(new Row(idx0, oldCount - 1, dc0));
       }
       ret.sort(sortByInputs);
@@ -685,34 +678,34 @@ public class TruthTable {
     }
 
     private Entry[] inputsChangedForOutput(Entry[] column, VariableListEvent event) {
-      Var v = event.getVariable();
-      int action = event.getType();
+      final var v = event.getVariable();
+      final var action = event.getType();
       if (action == VariableListEvent.ADD) {
-        int bitIndex = event.getBitIndex();
-        int oldCount = getInputColumnCount() - v.width;
+        var bitIndex = event.getBitIndex();
+        var oldCount = getInputColumnCount() - v.width;
         for (int b = v.width - 1; b >= 0; b--)
           column = addInputForOutput(column, bitIndex - b, oldCount++);
       } else if (action == VariableListEvent.REMOVE) {
-        int bitIndex = event.getBitIndex();
-        int oldCount = getInputColumnCount() + v.width;
+        final var bitIndex = event.getBitIndex();
+        var oldCount = getInputColumnCount() + v.width;
         for (int b = 0; b < v.width; b++)
           column = removeInputForOutput(column, bitIndex - b, oldCount--);
       } else if (action == VariableListEvent.MOVE) {
-        int delta = event.getBitIndex();
-        int newIndex = getInputIndex(v.bitName(0));
+        final var delta = event.getBitIndex();
+        final var newIndex = getInputIndex(v.bitName(0));
         if (delta > 0) {
           for (int b = 0; b < v.width; b++)
             column = moveInputForOutput(column, newIndex - delta - b, newIndex - b);
         } else if (delta < 0) {
-          for (int b = v.width - 1; b >= 0; b--)
+          for (var b = v.width - 1; b >= 0; b--)
             column = moveInputForOutput(column, newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        int bitIndex = event.getBitIndex();
-        Var newVar = getInputVariable(event.getIndex());
-        int lost = v.width - newVar.width;
-        int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - v.width;
+        final var bitIndex = event.getBitIndex();
+        final var newVar = getInputVariable(event.getIndex());
+        var lost = v.width - newVar.width;
+        var oldCount = getInputColumnCount() + lost;
+        final var pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) column = removeInputForOutput(column, pos, oldCount--);
         } else if (lost < 0) {
@@ -723,19 +716,19 @@ public class TruthTable {
     }
 
     private Entry[] moveInputForOutput(Entry[] old, int oldIndex, int newIndex) {
-      int inputs = getInputColumnCount();
+      final var inputs = getInputColumnCount();
       oldIndex = inputs - 1 - oldIndex;
       newIndex = inputs - 1 - newIndex;
-      Entry[] ret = new Entry[old.length];
-      int sameMask =
+      final var ret = new Entry[old.length];
+      final var sameMask =
           (old.length - 1)
               ^ ((1 << (1 + Math.max(oldIndex, newIndex))) - 1)
               ^ ((1 << Math.min(oldIndex, newIndex)) - 1); // bits that don't change
-      int moveMask = 1 << oldIndex; // bit that moves
-      int moveDist = Math.abs(newIndex - oldIndex);
-      boolean moveLeft = newIndex > oldIndex;
-      int blockMask = (old.length - 1) ^ sameMask ^ moveMask; // bits that move by one
-      for (int i = 0; i < old.length; i++) {
+      final var moveMask = 1 << oldIndex; // bit that moves
+      final var moveDist = Math.abs(newIndex - oldIndex);
+      final var moveLeft = newIndex > oldIndex;
+      final var blockMask = (old.length - 1) ^ sameMask ^ moveMask; // bits that move by one
+      for (var i = 0; i < old.length; i++) {
         int j; // new index
         if (moveLeft) {
           j = (i & sameMask) | ((i & moveMask) << moveDist) | ((i & blockMask) >> 1);
@@ -748,10 +741,10 @@ public class TruthTable {
     }
 
     private Entry[] removeInputForOutput(Entry[] old, int index, int oldCount) {
-      Entry[] ret = new Entry[old.length / 2];
-      int j = 0;
-      int mask = 1 << (oldCount - 1 - index);
-      for (int i = 0; i < old.length; i++) {
+      var ret = new Entry[old.length / 2];
+      var j = 0;
+      final var mask = 1 << (oldCount - 1 - index);
+      for (var i = 0; i < old.length; i++) {
         if ((i & mask) == 0) {
           Entry e0 = old[i];
           Entry e1 = old[i | mask];
@@ -762,10 +755,10 @@ public class TruthTable {
     }
 
     private Entry[] addInputForOutput(Entry[] old, int index, int oldCount) {
-      Entry[] ret = new Entry[2 * old.length];
-      int b = 1 << (oldCount - index); // _0001000
-      int mask = b - 1; // _0000111
-      for (int i = 0; i < old.length; i++) {
+      final var ret = new Entry[2 * old.length];
+      final var b = 1 << (oldCount - index); // _0001000
+      final var mask = b - 1; // _0000111
+      for (var i = 0; i < old.length; i++) {
         ret[((i & ~mask) << 1) | 0 | (i & mask)] = old[i]; // xxxx0yyy
         ret[((i & ~mask) << 1) | b | (i & mask)] = old[i]; // xxxx1yyy
       }
@@ -782,21 +775,21 @@ public class TruthTable {
   }
 
   private void fireRowsChanged() {
-    TruthTableEvent event = new TruthTableEvent(this, null);
+    final var event = new TruthTableEvent(this, null);
     for (TruthTableListener l : listeners) {
       l.rowsChanged(event);
     }
   }
 
   private void fireCellsChanged(int col) {
-    TruthTableEvent event = new TruthTableEvent(this, col);
+    final var event = new TruthTableEvent(this, col);
     for (TruthTableListener l : listeners) {
       l.cellsChanged(event);
     }
   }
 
   private void fireStructureChanged(VariableListEvent cause) {
-    TruthTableEvent event = new TruthTableEvent(this, cause);
+    final var event = new TruthTableEvent(this, cause);
     for (TruthTableListener l : listeners) {
       l.structureChanged(event);
     }

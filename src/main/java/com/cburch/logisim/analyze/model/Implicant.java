@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -48,18 +47,21 @@ public class Implicant implements Comparable<Implicant> {
       this.source = source;
     }
 
+    @Override
     public boolean hasNext() {
       return currentMask >= 0;
     }
 
+    @Override
     public Iterator<Implicant> iterator() {
       return this;
     }
 
+    @Override
     public Implicant next() {
-      int ret = currentMask | source.values;
-      int diffs = currentMask ^ source.unknowns;
-      int diff = diffs ^ ((diffs - 1) & diffs);
+      final var ret = currentMask | source.values;
+      final var diffs = currentMask ^ source.unknowns;
+      final var diff = diffs ^ ((diffs - 1) & diffs);
       if (diff == 0) {
         currentMask = -1;
       } else {
@@ -68,56 +70,56 @@ public class Implicant implements Comparable<Implicant> {
       return new Implicant(0, ret);
     }
 
+    @Override
     public void remove() {}
   }
 
   static List<Implicant> computeMinimal(int format, AnalyzerModel model, String variable) {
-    TruthTable table = model.getTruthTable();
-    int column = model.getOutputs().bits.indexOf(variable);
+    final var table = model.getTruthTable();
+    final var column = model.getOutputs().bits.indexOf(variable);
     if (column < 0) return Collections.emptyList();
 
-    Entry desired = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;
-    Entry undesired = desired == Entry.ONE ? Entry.ZERO : Entry.ONE;
+    final var desired = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;
+    final var undesired = desired == Entry.ONE ? Entry.ZERO : Entry.ONE;
 
     // determine the first-cut implicants, as well as the rows
     // that we need to cover.
-    HashMap<Implicant, Entry> base = new HashMap<>();
-    HashSet<Implicant> toCover = new HashSet<>();
-    boolean knownFound = false;
-    for (int i = 0; i < table.getRowCount(); i++) {
-      Entry entry = table.getOutputEntry(i, column);
+    final var base = new HashMap<Implicant, Entry>();
+    final var toCover = new HashSet<Implicant>();
+    var knownFound = false;
+    for (var i = 0; i < table.getRowCount(); i++) {
+      final var entry = table.getOutputEntry(i, column);
       if (entry == undesired) {
         knownFound = true;
       } else if (entry == desired) {
         knownFound = true;
-        Implicant imp = new Implicant(0, i);
+        final var imp = new Implicant(0, i);
         base.put(imp, entry);
         toCover.add(imp);
       } else {
-        Implicant imp = new Implicant(0, i);
-        base.put(imp, entry);
+        base.put(new Implicant(0, i), entry);
       }
     }
     if (!knownFound) return null;
 
     // work up to more general implicants, discovering
     // any prime implicants.
-    HashSet<Implicant> primes = new HashSet<>();
-    HashMap<Implicant, Entry> current = base;
+    final var primes = new HashSet<Implicant>();
+    var current = base;
     while (current.size() > 1) {
-      HashSet<Implicant> toRemove = new HashSet<>();
-      HashMap<Implicant, Entry> next = new HashMap<>();
-      for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
-        Implicant imp = curEntry.getKey();
-        Entry detEntry = curEntry.getValue();
-        for (int j = 1; j <= imp.values; j *= 2) {
+      final var toRemove = new HashSet<Implicant>();
+      final var next = new HashMap<Implicant, Entry>();
+      for (final var curEntry : current.entrySet()) {
+        final var imp = curEntry.getKey();
+        final var detEntry = curEntry.getValue();
+        for (var j = 1; j <= imp.values; j *= 2) {
           if ((imp.values & j) != 0) {
-            Implicant opp = new Implicant(imp.unknowns, imp.values ^ j);
-            Entry oppEntry = current.get(opp);
+            final var opp = new Implicant(imp.unknowns, imp.values ^ j);
+            final var oppEntry = current.get(opp);
             if (oppEntry != null) {
               toRemove.add(imp);
               toRemove.add(opp);
-              Implicant i = new Implicant(opp.unknowns | j, opp.values);
+              final var i = new Implicant(opp.unknowns | j, opp.values);
               Entry e;
               if (oppEntry == Entry.DONT_CARE && detEntry == Entry.DONT_CARE) {
                 e = Entry.DONT_CARE;
@@ -130,8 +132,8 @@ public class Implicant implements Comparable<Implicant> {
         }
       }
 
-      for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
-        Implicant det = curEntry.getKey();
+      for (final var curEntry : current.entrySet()) {
+        final var det = curEntry.getKey();
         if (!toRemove.contains(det) && curEntry.getValue() == desired) {
           primes.add(det);
         }
@@ -142,33 +144,29 @@ public class Implicant implements Comparable<Implicant> {
 
     // we won't have more than one implicant left, but it
     // is probably prime.
-    for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
-      Implicant imp = curEntry.getKey();
+    for (final var curEntry : current.entrySet()) {
+      final var imp = curEntry.getKey();
       if (current.get(imp) == desired) {
         primes.add(imp);
       }
     }
 
     // determine the essential prime implicants
-    HashSet<Implicant> retSet = new HashSet<>();
-    HashSet<Implicant> covered = new HashSet<>();
-    for (Implicant required : toCover) {
+    final var retSet = new HashSet<Implicant>();
+    final var covered = new HashSet<Implicant>();
+    for (final var required : toCover) {
       if (covered.contains(required)) continue;
-      int row = required.getRow();
+      final var row = required.getRow();
       Implicant essential = null;
-      for (Implicant imp : primes) {
+      for (final var imp : primes) {
         if ((row & ~imp.unknowns) == imp.values) {
-          if (essential == null) essential = imp;
-          else {
-            essential = null;
-            break;
-          }
+          essential = (essential == null) ? imp : null;
         }
       }
       if (essential != null) {
         retSet.add(essential);
         primes.remove(essential);
-        for (Implicant imp : essential.getTerms()) {
+        for (final var imp : essential.getTerms()) {
           covered.add(imp);
         }
       }
@@ -182,10 +180,10 @@ public class Implicant implements Comparable<Implicant> {
     // BUG: This algorithm does not always find the correct solution
     // Fix: We are first making a set that contains primes without the don't care set
     boolean containsDontCare;
-    HashSet<Implicant> primesNoDontCare = new HashSet<>();
-    for (Implicant implicant : primes) {
+    final var primesNoDontCare = new HashSet<Implicant>();
+    for (final var implicant : primes) {
       containsDontCare = false;
-      for (Implicant term : implicant.getTerms()) {
+      for (final var term : implicant.getTerms()) {
         if (table.getOutputEntry(term.getRow(), column).equals(Entry.DONT_CARE))
           containsDontCare = true;
       }
@@ -195,14 +193,15 @@ public class Implicant implements Comparable<Implicant> {
     }
 
     // Now we determine again the essential primes of this reduced set
-    for (Implicant required : toCover) {
+    for (final var required : toCover) {
       if (covered.contains(required)) continue;
-      int row = required.getRow();
+      final var row = required.getRow();
       Implicant essential = null;
-      for (Implicant imp : primesNoDontCare) {
+      for (final var imp : primesNoDontCare) {
         if ((row & ~imp.unknowns) == imp.values) {
-          if (essential == null) essential = imp;
-          else {
+          if (essential == null) {
+            essential = imp;
+          } else {
             essential = null;
             break;
           }
@@ -212,7 +211,7 @@ public class Implicant implements Comparable<Implicant> {
         retSet.add(essential);
         primesNoDontCare.remove(essential);
         primes.remove(essential);
-        for (Implicant imp : essential.getTerms()) {
+        for (var imp : essential.getTerms()) {
           covered.add(imp);
         }
       }
@@ -223,12 +222,12 @@ public class Implicant implements Comparable<Implicant> {
     while (!toCover.isEmpty()) {
       // find the implicant covering the most rows
       Implicant max = null;
-      int maxCount = 0;
-      int maxUnknowns = Integer.MAX_VALUE;
-      for (Iterator<Implicant> it = primes.iterator(); it.hasNext(); ) {
-        Implicant imp = it.next();
-        int count = 0;
-        for (Implicant term : imp.getTerms()) {
+      var maxCount = 0;
+      var maxUnknowns = Integer.MAX_VALUE;
+      for (final var it = primes.iterator(); it.hasNext(); ) {
+        final var imp = it.next();
+        var count = 0;
+        for (final var term : imp.getTerms()) {
           if (toCover.contains(term)) ++count;
         }
         if (count == 0) {
@@ -238,7 +237,7 @@ public class Implicant implements Comparable<Implicant> {
           maxCount = count;
           maxUnknowns = imp.getUnknownCount();
         } else if (count == maxCount) {
-          int unk = imp.getUnknownCount();
+          final var unk = imp.getUnknownCount();
           if (unk > maxUnknowns) {
             max = imp;
             maxUnknowns = unk;
@@ -250,7 +249,7 @@ public class Implicant implements Comparable<Implicant> {
       if (max != null) {
         retSet.add(max);
         primes.remove(max);
-        for (Implicant term : max.getTerms()) {
+        for (final var term : max.getTerms()) {
           toCover.remove(term);
         }
       }
@@ -258,24 +257,23 @@ public class Implicant implements Comparable<Implicant> {
 
     // Now build up our sum-of-products expression
     // from the remaining terms
-    ArrayList<Implicant> ret = new ArrayList<>(retSet);
+    final var ret = new ArrayList<Implicant>(retSet);
     Collections.sort(ret);
     return ret;
   }
 
-  public static Expression toExpression(
-      int format, AnalyzerModel model, List<Implicant> implicants) {
+  public static Expression toExpression(int format, AnalyzerModel model, List<Implicant> implicants) {
     if (implicants == null) return null;
-    TruthTable table = model.getTruthTable();
+    final var table = model.getTruthTable();
     if (format == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
       Expression product = null;
-      for (Implicant imp : implicants) {
+      for (final var imp : implicants) {
         product = Expressions.and(product, imp.toSum(table));
       }
       return product == null ? Expressions.constant(1) : product;
     } else {
       Expression sum = null;
-      for (Implicant imp : implicants) {
+      for (final var imp : implicants) {
         sum = Expressions.or(sum, imp.toProduct(table));
       }
       return sum == null ? Expressions.constant(0) : sum;
@@ -293,6 +291,7 @@ public class Implicant implements Comparable<Implicant> {
     this.values = values;
   }
 
+  @Override
   public int compareTo(Implicant o) {
     if (this.values < o.values) return -1;
     if (this.values > o.values) return 1;
@@ -302,13 +301,12 @@ public class Implicant implements Comparable<Implicant> {
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof Implicant)) return false;
-    Implicant o = (Implicant) other;
+    final var o = (Implicant) other;
     return this.unknowns == o.unknowns && this.values == o.values;
   }
 
   public int getRow() {
-    if (unknowns != 0) return -1;
-    return values;
+    return (unknowns != 0) ? -1 : values;
   }
 
   public Iterable<Implicant> getTerms() {
@@ -316,8 +314,8 @@ public class Implicant implements Comparable<Implicant> {
   }
 
   public int getUnknownCount() {
-    int ret = 0;
-    int n = unknowns;
+    var ret = 0;
+    var n = unknowns;
     while (n != 0) {
       n &= (n - 1);
       ret++;
@@ -332,10 +330,10 @@ public class Implicant implements Comparable<Implicant> {
 
   public Expression toProduct(TruthTable source) {
     Expression term = null;
-    int cols = source.getInputColumnCount();
-    for (int i = cols - 1; i >= 0; i--) {
+    final var cols = source.getInputColumnCount();
+    for (var i = cols - 1; i >= 0; i--) {
       if ((unknowns & (1 << i)) == 0) {
-        Expression literal = Expressions.variable(source.getInputHeader(cols - 1 - i));
+        var literal = Expressions.variable(source.getInputHeader(cols - 1 - i));
         if ((values & (1 << i)) == 0) literal = Expressions.not(literal);
         term = Expressions.and(term, literal);
       }
@@ -345,10 +343,10 @@ public class Implicant implements Comparable<Implicant> {
 
   public Expression toSum(TruthTable source) {
     Expression term = null;
-    int cols = source.getInputColumnCount();
-    for (int i = cols - 1; i >= 0; i--) {
+    final var cols = source.getInputColumnCount();
+    for (var i = cols - 1; i >= 0; i--) {
       if ((unknowns & (1 << i)) == 0) {
-        Expression literal = Expressions.variable(source.getInputHeader(cols - 1 - i));
+        var literal = Expressions.variable(source.getInputHeader(cols - 1 - i));
         if ((values & (1 << i)) != 0) literal = Expressions.not(literal);
         term = Expressions.or(term, literal);
       }
@@ -367,47 +365,47 @@ public class Implicant implements Comparable<Implicant> {
     // simple greedy algorithm and hope for the best: sort the prime
     // implicants, keep accepting non-overlapping ones until we have covered
     // the region.
-    TruthTable table = model.getTruthTable();
-    int maxval = (1 << table.getInputColumnCount()) - 1;
+    final var table = model.getTruthTable();
+    final var maxval = (1 << table.getInputColumnCount()) - 1;
     // Determine the set of regions and the first-cut implicants for each
     // region.
-    HashMap<String, HashSet<Implicant>> regions = new HashMap<>();
-    for (int i = 0; i < table.getVisibleRowCount(); i++) {
-      String val = table.getVisibleOutputs(i);
-      int idx = table.getVisibleRowIndex(i);
-      int dc = table.getVisibleRowDcMask(i);
-      Implicant imp = new Implicant(dc, idx);
-      HashSet<Implicant> region = regions.computeIfAbsent(val, k -> new HashSet<>());
+    final var regions = new HashMap<String, HashSet<Implicant>>();
+    for (var i = 0; i < table.getVisibleRowCount(); i++) {
+      final var val = table.getVisibleOutputs(i);
+      final var idx = table.getVisibleRowIndex(i);
+      final var dc = table.getVisibleRowDcMask(i);
+      final var imp = new Implicant(dc, idx);
+      final var region = regions.computeIfAbsent(val, k -> new HashSet<Implicant>());
       region.add(imp);
     }
     // For each region...
-    TreeMap<Implicant, String> ret = new TreeMap<>();
-    for (Map.Entry<String, HashSet<Implicant>> it : regions.entrySet()) {
-      String val = it.getKey();
-      HashSet<Implicant> base = it.getValue();
+    final var ret = new TreeMap<Implicant, String>();
+    for (var it : regions.entrySet()) {
+      final var val = it.getKey();
+      final var base = it.getValue();
 
       // Work up to more general implicants.
-      HashSet<Implicant> all = new HashSet<>();
-      HashSet<Implicant> current = base;
+      final var all = new HashSet<Implicant>();
+      var current = base;
       while (current.size() > 0) {
-        HashSet<Implicant> next = new HashSet<>();
-        for (Implicant imp : current) {
+        final var next = new HashSet<Implicant>();
+        for (var imp : current) {
           all.add(imp);
           for (int j = 1; j <= maxval; j *= 2) {
             if ((imp.unknowns & j) != 0) continue;
-            Implicant opp = new Implicant(imp.unknowns, imp.values ^ j);
+            final var opp = new Implicant(imp.unknowns, imp.values ^ j);
             if (!all.contains(opp)) continue;
-            Implicant i = new Implicant(opp.unknowns | j, opp.values);
+            final var i = new Implicant(opp.unknowns | j, opp.values);
             next.add(i);
           }
         }
         current = next;
       }
 
-      ArrayList<Implicant> sorted = new ArrayList<>(all);
+      final var sorted = new ArrayList<Implicant>(all);
       sorted.sort(sortByGenerality);
-      ArrayList<Implicant> chosen = new ArrayList<>();
-      for (Implicant imp : sorted) {
+      final var chosen = new ArrayList<Implicant>();
+      for (final var imp : sorted) {
         if (disjoint(imp, chosen)) {
           chosen.add(imp);
           ret.put(imp, val);
@@ -415,13 +413,13 @@ public class Implicant implements Comparable<Implicant> {
       }
     }
 
-    // todo in caller: convert implicant to Row and val back to Entry[]
+    // TODO in caller: convert implicant to Row and val back to Entry[]
     return ret;
   }
 
   private static boolean disjoint(Implicant imp, ArrayList<Implicant> chosen) {
-    for (Implicant other : chosen) {
-      int dc = imp.unknowns | other.unknowns;
+    for (final var other : chosen) {
+      final var dc = imp.unknowns | other.unknowns;
       if ((imp.values & ~dc) == (other.values & ~dc)) return false;
     }
     return true;
@@ -430,8 +428,9 @@ public class Implicant implements Comparable<Implicant> {
   private static final CompareGenerality sortByGenerality = new CompareGenerality();
 
   private static class CompareGenerality implements Comparator<Implicant> {
+    @Override
     public int compare(Implicant i1, Implicant i2) {
-      int diff = (i2.getUnknownCount() - i1.getUnknownCount());
+      final var diff = (i2.getUnknownCount() - i1.getUnknownCount());
       if (diff != 0) return diff;
       return (i1.values & ~i1.unknowns) - (i2.values & ~i2.unknowns);
     }

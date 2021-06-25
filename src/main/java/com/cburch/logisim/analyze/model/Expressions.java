@@ -68,7 +68,7 @@ public class Expressions {
     public boolean equals(Object other) {
       if (other == null) return false;
       if (this.getClass() != other.getClass()) return false;
-      Binary o = (Binary) other;
+      final var o = (Binary) other;
       return this.exprA.equals(o.exprA) && this.exprB.equals(o.exprB);
     }
 
@@ -88,7 +88,7 @@ public class Expressions {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof Constant)) return false;
-      Constant o = (Constant) other;
+      final var o = (Constant) other;
       return this.value == o.value;
     }
 
@@ -128,7 +128,7 @@ public class Expressions {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof Not)) return false;
-      Not o = (Not) other;
+      final var o = (Not) other;
       return this.expr.equals(o.expr);
     }
 
@@ -194,7 +194,7 @@ public class Expressions {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof Variable)) return false;
-      Variable o = (Variable) other;
+      final var o = (Variable) other;
       return this.name.equals(o.name);
     }
 
@@ -336,10 +336,8 @@ public class Expressions {
   }
 
   public static Expression eq(Expression a, Expression b) {
-    if (a == null)
-      return b;
-    if (b == null)
-      return a;
+    if (a == null) return b;
+    if (b == null) return a;
     return new Eq(a, b);
   }
 
