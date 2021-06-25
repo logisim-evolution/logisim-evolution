@@ -337,14 +337,16 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   private void computeTitle() {
     String title;
-    Circuit circuit = project.getCurrentCircuit();
-    String name = project.getLogisimFile().getName();
+    final var circuit = project.getCurrentCircuit();
+    final var name = project.getLogisimFile().getName();
     if (circuit != null) {
       title = StringUtil.format(S.get("titleCircFileKnown"), circuit.getName(), name);
     } else {
       title = StringUtil.format(S.get("titleFileKnown"), name);
     }
-    this.setTitle(StringUtil.format("%s · %s", title, Main.APP_DISPLAY_NAME));
+
+    final var dirtyMarker = project.isFileDirty() ? "*" : "";
+    this.setTitle(StringUtil.format("%s %s · %s", dirtyMarker, title, Main.APP_DISPLAY_NAME).trim());
     myProjectListener.enableSave();
   }
 
@@ -614,6 +616,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       if (e.getAction() == LibraryEvent.SET_NAME) {
         computeTitle();
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
+        computeTitle();
         enableSave();
       }
     }
