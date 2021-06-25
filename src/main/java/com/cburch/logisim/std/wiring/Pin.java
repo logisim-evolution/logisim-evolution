@@ -357,10 +357,10 @@ public class Pin extends InstanceFactory {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           double val;
-		  if (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) val = Double.POSITIVE_INFINITY;
-		  else if (s.toLowerCase().equals("-inf") val = Double.NEGATIVE_INFINITY;
-		  else if (s.toLowerCase().equals("nan")) val = Double.NaN;
-		  else Double.parseDouble(s);
+          if (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) val = Double.POSITIVE_INFINITY;
+          else if (s.toLowerCase().equals("-inf")) val = Double.NEGATIVE_INFINITY;
+          else if (s.toLowerCase().equals("nan")) val = Double.NaN;
+          else val = Double.parseDouble(s);
           newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
         }
         setVisible(false);
