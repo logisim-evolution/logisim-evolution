@@ -49,9 +49,8 @@ import java.util.TreeSet;
 
 public class AutoLabel {
 
-  static final Integer[] UsedKeyStrokes =
-      new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
-  public static Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
+  static final Integer[] UsedKeyStrokes = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
+  public static final Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
 
   private final HashMap<Circuit, String> labelBase = new HashMap<>();
   private final HashMap<Circuit, Integer> currentIndex = new HashMap<>();
@@ -81,8 +80,7 @@ public class AutoLabel {
   public String getCurrent(Circuit circ, ComponentFactory me) {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
-    if (Circuit.IsCorrectLabel(
-        circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+    if (Circuit.IsCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
       return currentLabel.get(circ);
     else if (hasNext(circ)) {
       return getNext(circ, me);
@@ -92,12 +90,11 @@ public class AutoLabel {
     return "";
   }
 
-  public boolean correctMatrixBaseLabel(
-      Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
+  public boolean correctMatrixBaseLabel(Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
     if ((common == null) || (common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
     if (!SyntaxChecker.isVariableNameAcceptable(common, true)) return false;
-    for (int x = 0; x < maxX; x++)
-      for (int y = 0; y < maxY; y++) {
+    for (var x = 0; x < maxX; x++)
+      for (var y = 0; y < maxY; y++) {
         if (getMatrixLabel(circ, me, common, x, y).isEmpty()) {
           return false;
         }
@@ -122,17 +119,16 @@ public class AutoLabel {
       useLabelBaseOnly.put(circ, false);
       return labelBase.get(circ);
     }
-    String newLabel = "";
-    int curIdx = currentIndex.get(circ);
-    String baseLabel = labelBase.get(circ);
+    var newLabel = "";
+    var curIdx = currentIndex.get(circ);
+    final var baseLabel = labelBase.get(circ);
     boolean undescore = useUnderscore.get(circ);
     do {
       curIdx++;
       newLabel = baseLabel;
       if (undescore) newLabel = newLabel.concat("_");
       newLabel = newLabel.concat(Integer.toString(curIdx));
-    } while (!Circuit.IsCorrectLabel(
-        circ.getName(), newLabel, circ.getNonWires(), null, me, false));
+    } while (!Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
     currentIndex.put(circ, curIdx);
     currentLabel.put(circ, newLabel);
     return newLabel;
@@ -168,7 +164,7 @@ public class AutoLabel {
   }
 
   private int getLabelBaseEndIndex(String label) {
-    int index = label.length();
+    var index = label.length();
     while ((index > 1) && CorrectLabel.Numbers.contains(label.substring(index - 1, index))) index--;
     return (index - 1);
   }
@@ -213,19 +209,12 @@ public class AutoLabel {
       AttributeSet attrs,
       SetAttributeAction act,
       boolean createAction) {
-    boolean correct = false;
-    String newLabel = oldLabel;
+    var correct = false;
+     var newLabel = oldLabel;
     while (!correct) {
-      newLabel =
-          (String)
-              OptionPane.showInputDialog(
-                  null,
-                  S.get("editLabelQuestion") + " " + componentName,
-                  S.get("editLabelDialog"),
-                  OptionPane.QUESTION_MESSAGE,
-                  null,
-                  null,
-                  oldLabel);
+      newLabel = (String)
+              OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
+                  S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
         if (Circuit.IsCorrectLabel(
                 circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
@@ -255,10 +244,8 @@ public class AutoLabel {
     switch (keyCode) {
       case KeyEvent.VK_L:
         if (attrs.containsAttribute(StdAttr.LABEL)) {
-          String oldLabel = attrs.getValue(StdAttr.LABEL);
-          String newLabel =
-              askAndSetLabel(
-                  componentName, oldLabel, circ, comp, compFactory, attrs, act, createAction);
+          final var oldLabel = attrs.getValue(StdAttr.LABEL);
+          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory, attrs, act, createAction);
           if (!newLabel.equals(oldLabel)) {
             if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
               activate(circ);
@@ -292,6 +279,9 @@ public class AutoLabel {
       case KeyEvent.VK_A:
         stop(circ);
         return true;
+      default:
+        // nothing
+        break;
     }
     return false;
   }

@@ -30,7 +30,6 @@ package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,20 +59,20 @@ class CircuitMutatorImpl implements CircuitMutator {
   }
 
   public void clear(Circuit circuit) {
-    HashSet<Component> comps = new HashSet<>(circuit.getNonWires());
+    final var comps = new HashSet<Component>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
     if (!comps.isEmpty()) modified.add(circuit);
     log.add(CircuitChange.clear(circuit, comps));
 
-    ReplacementMap repl = new ReplacementMap();
-    for (Component comp : comps) repl.remove(comp);
+    final var repl = new ReplacementMap();
+    for (final var comp : comps) repl.remove(comp);
     getMap(circuit).append(repl);
 
     circuit.mutatorClear();
   }
 
   private ReplacementMap getMap(Circuit circuit) {
-    ReplacementMap ret = replacements.get(circuit);
+    var ret = replacements.get(circuit);
     if (ret == null) {
       ret = new ReplacementMap();
       replacements.put(circuit, ret);
@@ -90,8 +89,8 @@ class CircuitMutatorImpl implements CircuitMutator {
   }
 
   CircuitTransaction getReverseTransaction() {
-    CircuitMutation ret = new CircuitMutation();
-    ArrayList<CircuitChange> log = this.log;
+    final var ret = new CircuitMutation();
+    final var log = this.log;
     for (int i = log.size() - 1; i >= 0; i--) {
       ret.change(log.get(i).getReverseChange());
     }
@@ -102,12 +101,13 @@ class CircuitMutatorImpl implements CircuitMutator {
     modified.add(circuit);
   }
 
+  @Override
   public void remove(Circuit circuit, Component comp) {
     if (circuit.contains(comp)) {
       modified.add(circuit);
       log.add(CircuitChange.remove(circuit, comp));
 
-      ReplacementMap repl = new ReplacementMap();
+      final var repl = new ReplacementMap();
       repl.remove(comp);
       getMap(circuit).append(repl);
 
@@ -115,10 +115,12 @@ class CircuitMutatorImpl implements CircuitMutator {
     }
   }
 
+  @Override
   public void replace(Circuit circuit, Component prev, Component next) {
     replace(circuit, new ReplacementMap(prev, next));
   }
 
+  @Override
   public void replace(Circuit circuit, ReplacementMap repl) {
     if (!repl.isEmpty()) {
       modified.add(circuit);
@@ -127,32 +129,34 @@ class CircuitMutatorImpl implements CircuitMutator {
       repl.freeze();
       getMap(circuit).append(repl);
 
-      for (Component c : repl.getRemovals()) {
+      for (final var c : repl.getRemovals()) {
         circuit.mutatorRemove(c);
       }
-      for (Component c : repl.getAdditions()) {
+      for (final var c : repl.getAdditions()) {
         circuit.mutatorAdd(c);
       }
     }
   }
 
+  @Override
   public void set(Circuit circuit, Component comp, Attribute<?> attr, Object newValue) {
     if (circuit.contains(comp)) {
       modified.add(circuit);
       @SuppressWarnings("unchecked")
-      Attribute<Object> a = (Attribute<Object>) attr;
-      AttributeSet attrs = comp.getAttributeSet();
-      Object oldValue = attrs.getValue(a);
+      final var a = (Attribute<Object>) attr;
+      final var attrs = comp.getAttributeSet();
+      final var oldValue = attrs.getValue(a);
       log.add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
       attrs.setValue(a, newValue);
     }
   }
 
+  @Override
   public void setForCircuit(Circuit circuit, Attribute<?> attr, Object newValue) {
     @SuppressWarnings("unchecked")
-    Attribute<Object> a = (Attribute<Object>) attr;
-    AttributeSet attrs = circuit.getStaticAttributes();
-    Object oldValue = attrs.getValue(a);
+    final var a = (Attribute<Object>) attr;
+    final var attrs = circuit.getStaticAttributes();
+    final var oldValue = attrs.getValue(a);
     log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
     attrs.setValue(a, newValue);
     if (attr == CircuitAttributes.NAME_ATTR

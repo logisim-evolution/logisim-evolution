@@ -43,8 +43,8 @@ public class SyntaxChecker {
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
-      String hdl = CorrectLabel.HDLCorrectLabel(val);
-      String message = "";
+      final var hdl = CorrectLabel.HDLCorrectLabel(val);
+      var message = "";
       if (!variableMatcher.matches()) {
         message = message.concat(S.get("variableInvalidCharacters"));
       }
@@ -52,23 +52,23 @@ public class SyntaxChecker {
         message = message.concat(S.get("variableDoubleUnderscore"));
       }
       if (hdl != null) {
-        message =
-            message.concat(
-                hdl.equals(HDLGeneratorFactory.VHDL)
-                    ? S.get("variableVHDLKeyword")
-                    : S.get("variableVerilogKeyword"));
+        message = message.concat(hdl.equals(HDLGeneratorFactory.VHDL)
+                                ? S.get("variableVHDLKeyword")
+                                : S.get("variableVerilogKeyword"));
       }
       if (val.endsWith("_")) {
         message = message.concat(S.get("variableEndsWithUndescore"));
       }
-      if (message.length() == 0) return null;
-      else return message;
+      if (message.length() == 0)
+        return null;
+      else
+        return message;
     }
     return null;
   }
 
   public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {
-    String message = getErrorMessage(val);
+    final var message = getErrorMessage(val);
     if (message != null && showDialog) {
       OptionPane.showMessageDialog(null, message.concat("\n" + S.get("variableNameNotAcceptable")));
     }

@@ -34,14 +34,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ArgonXML {
@@ -56,10 +52,10 @@ public class ArgonXML {
 
   private static Element rootElement(InputStream inputStream, String rootName) {
     try {
-      DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = builderFactory.newDocumentBuilder();
-      Document document = builder.parse(inputStream);
-      Element rootElement = document.getDocumentElement();
+      final var builderFactory = DocumentBuilderFactory.newInstance();
+      final var builder = builderFactory.newDocumentBuilder();
+      final var document = builder.parse(inputStream);
+      final var rootElement = document.getDocumentElement();
       if (!rootElement.getNodeName().equals(rootName))
         throw new RuntimeException("Could not find root node: " + rootName);
       return rootElement;
@@ -81,26 +77,25 @@ public class ArgonXML {
 
   private final Map<String, String> nameAttributes = new HashMap<>();
 
-  private final Map<String, ArrayList<ArgonXML>> nameChildren =
-      new HashMap<>();
+  private final Map<String, ArrayList<ArgonXML>> nameChildren = new HashMap<>();
 
   private ArgonXML(Element element) {
     this.name = element.getNodeName();
     this.content = element.getTextContent();
-    NamedNodeMap namedNodeMap = element.getAttributes();
+    final var namedNodeMap = element.getAttributes();
     int n = namedNodeMap.getLength();
-    for (int i = 0; i < n; i++) {
-      Node node = namedNodeMap.item(i);
-      String name = node.getNodeName();
+    for (var i = 0; i < n; i++) {
+      final var node = namedNodeMap.item(i);
+      final var name = node.getNodeName();
       addAttribute(name, node.getNodeValue());
     }
-    NodeList nodes = element.getChildNodes();
+    final var nodes = element.getChildNodes();
     n = nodes.getLength();
-    for (int i = 0; i < n; i++) {
-      Node node = nodes.item(i);
+    for (var i = 0; i < n; i++) {
+      final var node = nodes.item(i);
       int type = node.getNodeType();
       if (type == Node.ELEMENT_NODE) {
-        ArgonXML child = new ArgonXML((Element) node);
+        final var child = new ArgonXML((Element) node);
         addChild(node.getNodeName(), child);
       }
     }
@@ -127,22 +122,22 @@ public class ArgonXML {
   }
 
   private void addChild(String name, ArgonXML child) {
-    ArrayList<ArgonXML> children = nameChildren.computeIfAbsent(name, k -> new ArrayList<>());
+    final var children = nameChildren.computeIfAbsent(name, k -> new ArrayList<>());
     children.add(child);
   }
 
   public void addChildren(ArgonXML... xmls) {
-    for (ArgonXML xml : xmls) addChild(xml.name(), xml);
+    for (final var xml : xmls) addChild(xml.name(), xml);
   }
 
   public ArgonXML child(String name) {
-    ArgonXML child = optChild(name);
+    final var child = optChild(name);
     if (child == null) throw new RuntimeException("Could not find child node: " + name);
     return child;
   }
 
   public ArrayList<ArgonXML> children(String name) {
-    ArrayList<ArgonXML> children = nameChildren.get(name);
+    final var children = nameChildren.get(name);
     return children == null ? new ArrayList<>() : children;
   }
 
@@ -163,19 +158,19 @@ public class ArgonXML {
   }
 
   public ArgonXML optChild(String name) {
-    ArrayList<ArgonXML> children = children(name);
-    int n = children.size();
+    final var children = children(name);
+    final var n = children.size();
     if (n > 1) throw new RuntimeException("Could not find individual child node: " + name);
     return n == 0 ? null : children.get(0);
   }
 
   public Double optDouble(String name) {
-    String string = optString(name);
+    final var string = optString(name);
     return string == null ? null : doubleValue(name);
   }
 
   public Integer optInteger(String name) {
-    String string = optString(name);
+    final var string = optString(name);
     return string == null ? null : integer(name);
   }
 
@@ -192,7 +187,7 @@ public class ArgonXML {
   }
 
   public String string(String name) {
-    String value = optString(name);
+    final var value = optString(name);
     if (value == null) {
       throw new RuntimeException("Could not find attribute: " + name + ", in node: " + this.name);
     }

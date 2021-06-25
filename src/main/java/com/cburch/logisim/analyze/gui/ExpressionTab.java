@@ -505,6 +505,7 @@ class ExpressionTab extends AnalyzerTab {
   private class ExpressionTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public boolean importData(TransferHandler.TransferSupport info) {
       String s;
       try {
@@ -559,6 +560,7 @@ class ExpressionTab extends AnalyzerTab {
       return true;
     }
 
+    @Override
     protected Transferable createTransferable(JComponent c) {
       int idx = table.getSelectedRow();
       if (idx < 0) return null;
@@ -567,12 +569,15 @@ class ExpressionTab extends AnalyzerTab {
       return s == null ? null : new StringSelection(ne.name + " = " + s);
     }
 
+    @Override
     public int getSourceActions(JComponent c) {
       return COPY;
     }
 
+    @Override
     protected void exportDone(JComponent c, Transferable tdata, int action) { }
 
+    @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
       return table.getRowCount() > 0
           && support.isDataFlavorSupported(DataFlavor.stringFlavor);

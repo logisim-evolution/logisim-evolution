@@ -48,11 +48,11 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     this.order = order;
     addActionListener(this);
 
-    SplitterAttributes attrs = (SplitterAttributes) splitter.getAttributeSet();
-    byte[] actual = attrs.bit_end;
-    byte[] desired = SplitterAttributes.computeDistribution(attrs.fanout, actual.length, order);
-    boolean same = actual.length == desired.length;
-    for (int i = 0; same && i < desired.length; i++) {
+    final var attrs = (SplitterAttributes) splitter.getAttributeSet();
+    final var actual = attrs.bit_end;
+    final var desired = SplitterAttributes.computeDistribution(attrs.fanout, actual.length, order);
+    var same = actual.length == desired.length;
+    for (var i = 0; same && i < desired.length; i++) {
       if (actual[i] != desired[i]) {
         same = false;
         break;
@@ -62,11 +62,12 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     setText(toGetter().toString());
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
-    SplitterAttributes attrs = (SplitterAttributes) splitter.getAttributeSet();
+    final var attrs = (SplitterAttributes) splitter.getAttributeSet();
     byte[] actual = attrs.bit_end;
     byte[] desired = SplitterAttributes.computeDistribution(attrs.fanout, actual.length, order);
-    CircuitMutation xn = new CircuitMutation(proj.getCircuitState().getCircuit());
+    final var xn = new CircuitMutation(proj.getCircuitState().getCircuit());
     for (int i = 0, n = Math.min(actual.length, desired.length); i < n; i++) {
       if (actual[i] != desired[i]) {
         xn.set(splitter, attrs.getBitOutAttribute(i), (int) desired[i]);

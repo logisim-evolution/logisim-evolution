@@ -34,8 +34,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EventSourceWeakSupport<L> implements Iterable<L> {
-  private final ConcurrentLinkedQueue<WeakReference<L>> listeners =
-      new ConcurrentLinkedQueue<>();
+  private final ConcurrentLinkedQueue<WeakReference<L>> listeners = new ConcurrentLinkedQueue<>();
 
   public EventSourceWeakSupport() {}
 
@@ -44,8 +43,8 @@ public class EventSourceWeakSupport<L> implements Iterable<L> {
   }
 
   public boolean isEmpty() {
-    for (Iterator<WeakReference<L>> it = listeners.iterator(); it.hasNext(); ) {
-      L l = it.next().get();
+    for (final var it = listeners.iterator(); it.hasNext(); ) {
+      final var l = it.next().get();
       if (l == null) {
         it.remove();
       } else {
@@ -55,12 +54,13 @@ public class EventSourceWeakSupport<L> implements Iterable<L> {
     return true;
   }
 
+  @Override
   public Iterator<L> iterator() {
     // copy elements into another list in case any event handlers
     // want to add a listener
-    ArrayList<L> ret = new ArrayList<>(listeners.size());
-    for (Iterator<WeakReference<L>> it = listeners.iterator(); it.hasNext(); ) {
-      L l = it.next().get();
+    final var ret = new ArrayList<L>(listeners.size());
+    for (final var it = listeners.iterator(); it.hasNext(); ) {
+      final var l = it.next().get();
       if (l == null) {
         it.remove();
       } else {
@@ -71,8 +71,8 @@ public class EventSourceWeakSupport<L> implements Iterable<L> {
   }
 
   public void remove(L listener) {
-    for (Iterator<WeakReference<L>> it = listeners.iterator(); it.hasNext(); ) {
-      L l = it.next().get();
+    for (final var it = listeners.iterator(); it.hasNext(); ) {
+      final var l = it.next().get();
       if (l == null || l == listener) it.remove();
     }
   }

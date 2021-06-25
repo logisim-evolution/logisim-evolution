@@ -53,10 +53,8 @@ import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
 
-  private static final String SECTION_SEP =
-      "%===============================================================================";
-  private static final String SUB_SECTION_SEP =
-      "%-------------------------------------------------------------------------------";
+  private static final String SECTION_SEP = "%===============================================================================";
+  private static final String SUB_SECTION_SEP = "%-------------------------------------------------------------------------------";
 
   public static final int MAX_TRUTH_TABLE_ROWS = 64;
 
@@ -266,15 +264,11 @@ public class AnalyzerTexWriter {
     content.append("\\draw (0,").append(kmapRows).append(") -- (-0.7,")
         .append(df.format((double) kmapRows + 0.7)).append(");\n");
     content.append("\\foreach \\x/\\1 in %\n");
-    content.append(getGrayCode(KarnaughMapPanel.COL_VARS[table.getInputColumnCount()]))
-        .append(" {\n");
-    content.append("   \\node at (\\x+0.5,").append(df.format(kmapRows + 0.2))
-        .append(") {\\1};\n}\n");
+    content.append(getGrayCode(KarnaughMapPanel.COL_VARS[table.getInputColumnCount()])).append(" {\n");
+    content.append("   \\node at (\\x+0.5,").append(df.format(kmapRows + 0.2)).append(") {\\1};\n}\n");
     content.append("\\foreach \\y/\\1 in %\n");
-    content.append(getGrayCode(KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()]))
-        .append(" {\n");
-    content.append("   \\node at (-0.4,-0.5-\\y+").append(df.format(kmapRows))
-        .append(") {\\1};\n}\n");
+    content.append(getGrayCode(KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()])).append(" {\n");
+    content.append("   \\node at (-0.4,-0.5-\\y+").append(df.format(kmapRows)).append(") {\\1};\n}\n");
 
     return content.toString();
   }

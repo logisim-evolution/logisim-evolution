@@ -81,6 +81,7 @@ public class OutputStreamEscaper extends OutputStream {
     out.flush();
   }
 
+  @Override
   public void write(int b) throws IOException {
     if (0x20 <= b && b <= 0x7E && b != '\\') {
       out.write(textWidth > 0 ? linebreak((char) b) : (char) b);

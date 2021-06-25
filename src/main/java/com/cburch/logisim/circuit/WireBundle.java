@@ -54,7 +54,7 @@ class WireBundle {
   }
 
   WireBundle find() {
-    WireBundle ret = this;
+    var ret = this;
     if (ret.parent != ret) {
       do ret = ret.parent;
       while (ret.parent != ret);
@@ -126,8 +126,8 @@ class WireBundle {
   }
 
   void unite(WireBundle other) {
-    WireBundle group = this.find();
-    WireBundle group2 = other.find();
+    final var group = this.find();
+    final var group2 = other.find();
     if (group != group2) group.parent = group2;
   }
 }

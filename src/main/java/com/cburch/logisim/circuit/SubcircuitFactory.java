@@ -33,7 +33,6 @@ import static com.cburch.logisim.circuit.Strings.S;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -58,8 +57,6 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -80,41 +77,41 @@ public class SubcircuitFactory extends InstanceFactory {
     }
 
     public void actionPerformed(ActionEvent e) {
-      CircuitState superState = proj.getCircuitState();
+      final var superState = proj.getCircuitState();
       if (superState == null) return;
 
-      CircuitState subState = getSubstate(superState, instance);
+      final var subState = getSubstate(superState, instance);
       if (subState == null) return;
       proj.setCircuitState(subState);
     }
 
+    @Override
     public void configureMenu(JPopupMenu menu, Project proj) {
       this.proj = proj;
-      String name = instance.getFactory().getDisplayName();
-      String text = S.fmt("subcircuitViewItem", name);
-      JMenuItem item = new JMenuItem(text);
+      final var name = instance.getFactory().getDisplayName();
+      final var text = S.fmt("subcircuitViewItem", name);
+      final var item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
-      CircuitStateHolder.HierarchyInfo hi =
-          new CircuitStateHolder.HierarchyInfo(proj.getCurrentCircuit());
+      final var hi = new CircuitStateHolder.HierarchyInfo(proj.getCurrentCircuit());
       hi.addComponent(instance.getComponent());
       getSubMenuItems(menu, proj, (CircuitState) instance.getData(proj.getCircuitState()), hi);
     }
 
     public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
-      for (Component comp : source.getNonWires()) {
+      for (final var comp : source.getNonWires()) {
         if (comp instanceof InstanceComponent) {
-          InstanceComponent c = (InstanceComponent) comp;
+          final var c = (InstanceComponent) comp;
           if (c.getFactory() instanceof SubcircuitFactory) {
-            CircuitFeature m = (CircuitFeature) c.getFeature(MenuExtender.class);
-            CircuitStateHolder.HierarchyInfo newhi = hi.getCopy();
+            final var m = (CircuitFeature) c.getFeature(MenuExtender.class);
+            final var newhi = hi.getCopy();
             newhi.addComponent(c);
             m.getSubMenuItems(menu, proj, (CircuitState) c.getInstance().getData(state), newhi);
           } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
-            MenuExtender m = (MenuExtender) c.getFeature(MenuExtender.class);
+            final var m = (MenuExtender) c.getFeature(MenuExtender.class);
             if (m instanceof CircuitStateHolder) {
-              CircuitStateHolder csh = (CircuitStateHolder) m;
+              final var csh = (CircuitStateHolder) m;
               csh.setCircuitState(state);
               csh.setHierarchyName(hi);
             }
@@ -140,27 +137,27 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   void computePorts(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    Map<Location, Instance> portLocs = source.getAppearance().getPortOffsets(facing);
-    Port[] ports = new Port[portLocs.size()];
-    Instance[] pins = new Instance[portLocs.size()];
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var portLocs = source.getAppearance().getPortOffsets(facing);
+    final var ports = new Port[portLocs.size()];
+    final var pins = new Instance[portLocs.size()];
     int i = -1;
-    for (Map.Entry<Location, Instance> portLoc : portLocs.entrySet()) {
+    for (final var portLoc : portLocs.entrySet()) {
       i++;
-      Location loc = portLoc.getKey();
-      Instance pin = portLoc.getValue();
-      String type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
-      BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
+      final var loc = portLoc.getKey();
+      final var pin = portLoc.getValue();
+      final var type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
+      final var width = pin.getAttributeValue(StdAttr.WIDTH);
       ports[i] = new Port(loc.getX(), loc.getY(), type, width);
       pins[i] = pin;
 
-      String label = pin.getAttributeValue(StdAttr.LABEL);
+      final var label = pin.getAttributeValue(StdAttr.LABEL);
       if (label != null && label.length() > 0) {
         ports[i].setToolTip(StringUtil.constantGetter(label));
       }
     }
 
-    CircuitAttributes attrs = (CircuitAttributes) instance.getAttributeSet();
+    final var attrs = (CircuitAttributes) instance.getAttributeSet();
     attrs.setPinInstances(pins);
     instance.setPorts(ports);
     instance.recomputeBounds();
@@ -168,13 +165,13 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   private void configureLabel(Instance instance) {
-    Bounds bds = instance.getBounds();
-    Direction loc = instance.getAttributeValue(CircuitAttributes.LABEL_LOCATION_ATTR);
+    final var bds = instance.getBounds();
+    final var loc = instance.getAttributeValue(CircuitAttributes.LABEL_LOCATION_ATTR);
 
-    int x = bds.getX() + bds.getWidth() / 2;
-    int y = bds.getY() + bds.getHeight() / 2;
-    int ha = GraphicsUtil.H_CENTER;
-    int va = GraphicsUtil.V_CENTER;
+    var x = bds.getX() + bds.getWidth() / 2;
+    var y = bds.getY() + bds.getHeight() / 2;
+    var ha = GraphicsUtil.H_CENTER;
+    var va = GraphicsUtil.V_CENTER;
     if (loc == Direction.EAST) {
       x = bds.getX() + bds.getWidth() + 2;
       ha = GraphicsUtil.H_LEFT;
@@ -196,7 +193,7 @@ public class SubcircuitFactory extends InstanceFactory {
   //
   @Override
   public void configureNewInstance(Instance instance) {
-    CircuitAttributes attrs = (CircuitAttributes) instance.getAttributeSet();
+    final var attrs = (CircuitAttributes) instance.getAttributeSet();
     attrs.setSubcircuit(instance);
 
     instance.addAttributeListener();
@@ -210,8 +207,8 @@ public class SubcircuitFactory extends InstanceFactory {
   @Override
   public boolean contains(Location loc, AttributeSet attrs) {
     if (super.contains(loc, attrs)) {
-      Direction facing = attrs.getValue(StdAttr.FACING);
-      Direction defaultFacing = source.getAppearance().getFacing();
+      final var facing = attrs.getValue(StdAttr.FACING);
+      final var defaultFacing = source.getAppearance().getFacing();
       Location query;
 
       if (facing.equals(defaultFacing)) {
@@ -231,47 +228,45 @@ public class SubcircuitFactory extends InstanceFactory {
     return new CircuitAttributes(source);
   }
 
-  private void drawCircuitLabel(
-      InstancePainter painter, Bounds bds, Direction facing, Direction defaultFacing) {
-    AttributeSet staticAttrs = source.getStaticAttributes();
+  private void drawCircuitLabel(InstancePainter painter, Bounds bds, Direction facing, Direction defaultFacing) {
+    final var staticAttrs = source.getStaticAttributes();
 
-    String label = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_ATTR);
+    var label = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_ATTR);
 
     if (label != null && !label.equals("")) {
-      Direction up = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FACING_ATTR);
-      Font font = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FONT_ATTR);
+      final var up = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FACING_ATTR);
+      final var font = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FONT_ATTR);
 
-      int back = label.indexOf('\\');
-      int lines = 1;
-      boolean backs = false;
+      var back = label.indexOf('\\');
+      var lines = 1;
+      var backs = false;
       while (back >= 0 && back <= label.length() - 2) {
-        char c = label.charAt(back + 1);
+        final var c = label.charAt(back + 1);
         if (c == 'n') lines++;
         else if (c == '\\') backs = true;
         back = label.indexOf('\\', back + 2);
       }
 
-      int x = bds.getX() + bds.getWidth() / 2;
-      int y = bds.getY() + bds.getHeight() / 2;
-      Graphics g = painter.getGraphics().create();
-      double angle =
-          Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
+      final var x = bds.getX() + bds.getWidth() / 2;
+      var y = bds.getY() + bds.getHeight() / 2;
+      final var g = painter.getGraphics().create();
+      final var angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
       if (g instanceof Graphics2D && Math.abs(angle) > 0.01) {
-        Graphics2D g2 = (Graphics2D) g;
+        final var g2 = (Graphics2D) g;
         g2.rotate(angle, x, y);
       }
       g.setFont(font);
       if (lines == 1 && !backs) {
         GraphicsUtil.drawCenteredText(g, label, x, y);
       } else {
-        FontMetrics fm = g.getFontMetrics();
-        int height = fm.getHeight();
+        final var fm = g.getFontMetrics();
+        final var height = fm.getHeight();
         y = y - (height * lines - fm.getLeading()) / 2 + fm.getAscent();
         back = label.indexOf('\\');
         while (back >= 0 && back <= label.length() - 2) {
-          char c = label.charAt(back + 1);
+          final var c = label.charAt(back + 1);
           if (c == 'n') {
-            String line = label.substring(0, back);
+            final var line = label.substring(0, back);
             GraphicsUtil.drawText(g, line, x, y, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
             y += height;
             label = label.substring(back + 2);
@@ -307,9 +302,9 @@ public class SubcircuitFactory extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    Direction defaultFacing = source.getAppearance().getFacing();
-    Bounds bds = source.getAppearance().getOffsetBounds();
+    final var facing = attrs.getValue(StdAttr.FACING);
+    final var defaultFacing = source.getAppearance().getFacing();
+    final var bds = source.getAppearance().getOffsetBounds();
     return bds.rotate(defaultFacing, facing, 0, 0);
   }
 
@@ -333,7 +328,7 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   private CircuitState getSubstate(InstanceState instanceState) {
-    CircuitState subState = (CircuitState) instanceState.getData();
+    var subState = (CircuitState) instanceState.getData();
     if (subState == null) {
       subState = new CircuitState(instanceState.getProject(), source);
       instanceState.setData(subState);
@@ -365,8 +360,8 @@ public class SubcircuitFactory extends InstanceFactory {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : source.getCircuitsUsingThis()) {
+      final var accessMap = new HashMap<Circuit, Integer>();
+      for (final var supercirc : source.getCircuitsUsingThis()) {
         accessMap.put(supercirc, READ_WRITE);
       }
       return accessMap;
@@ -379,10 +374,10 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   private void paintBase(InstancePainter painter, Graphics g) {
-    CircuitAttributes attrs = (CircuitAttributes) painter.getAttributeSet();
-    Direction facing = attrs.getFacing();
-    Direction defaultFacing = source.getAppearance().getFacing();
-    Location loc = painter.getLocation();
+    final var attrs = (CircuitAttributes) painter.getAttributeSet();
+    final var facing = attrs.getFacing();
+    final var defaultFacing = source.getAppearance().getFacing();
+    final var loc = painter.getLocation();
     g.translate(loc.getX(), loc.getY());
     source.getAppearance().paintSubcircuit(painter, g, facing);
     drawCircuitLabel(painter, getOffsetBounds(attrs), facing, defaultFacing);
@@ -395,8 +390,8 @@ public class SubcircuitFactory extends InstanceFactory {
   //
   @Override
   public void paintGhost(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Color fg = g.getColor();
+    final var g = painter.getGraphics();
+    final var fg = g.getColor();
     int v = fg.getRed() + fg.getGreen() + fg.getBlue();
     Composite oldComposite = null;
     if (g instanceof Graphics2D && v > 50) {
@@ -418,22 +413,22 @@ public class SubcircuitFactory extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState superState) {
-    CircuitState subState = getSubstate(superState);
+    final var subState = getSubstate(superState);
 
-    CircuitAttributes attrs = (CircuitAttributes) superState.getAttributeSet();
-    Instance[] pins = attrs.getPinInstances();
-    for (int i = 0; i < pins.length; i++) {
-      Instance pin = pins[i];
-      InstanceState pinState = subState.getInstanceState(pin);
+    final var attrs = (CircuitAttributes) superState.getAttributeSet();
+    final var pins = attrs.getPinInstances();
+    for (var i = 0; i < pins.length; i++) {
+      final var pin = pins[i];
+      final var pinState = subState.getInstanceState(pin);
       if (Pin.FACTORY.isInputPin(pin)) {
-        Value newVal = superState.getPortValue(i);
-        Value oldVal = Pin.FACTORY.getValue(pinState);
+        final var newVal = superState.getPortValue(i);
+        final var oldVal = Pin.FACTORY.getValue(pinState);
         if (!newVal.equals(oldVal)) {
           Pin.FACTORY.setValue(pinState, newVal);
           Pin.FACTORY.propagate(pinState);
         }
       } else { // it is output-only
-        Value val = pinState.getPortValue(0);
+        final var val = pinState.getPortValue(0);
         superState.setPort(i, val, 1);
       }
     }
@@ -446,8 +441,8 @@ public class SubcircuitFactory extends InstanceFactory {
 
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
-    CircuitAttributes attrs = (CircuitAttributes) painter.getAttributeSet();
+    final var g2 = (Graphics2D) painter.getGraphics().create();
+    final var attrs = (CircuitAttributes) painter.getAttributeSet();
     if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CLASSIC))
       paintClasicIcon(g2);
     else if (attrs
@@ -473,8 +468,8 @@ public class SubcircuitFactory extends InstanceFactory {
         AppPreferences.getScaled(1),
         AppPreferences.getScaled(12),
         AppPreferences.getScaled(14));
-    int wh = AppPreferences.getScaled(3);
-    for (int y = 0; y < 3; y++) {
+    final var wh = AppPreferences.getScaled(3);
+    for (var y = 0; y < 3; y++) {
       if (y == 1) g2.setColor(Value.TRUE_COLOR);
       else g2.setColor(Value.FALSE_COLOR);
       g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(y * 4 + 3), wh, wh);
@@ -493,13 +488,13 @@ public class SubcircuitFactory extends InstanceFactory {
         AppPreferences.getScaled(1),
         AppPreferences.getScaled(14),
         AppPreferences.getScaled(14));
-    Font f = g2.getFont().deriveFont((float) AppPreferences.getIconSize() / 4);
-    TextLayout l = new TextLayout("main", f, g2.getFontRenderContext());
+    final var f = g2.getFont().deriveFont((float) AppPreferences.getIconSize() / 4);
+    final var l = new TextLayout("main", f, g2.getFontRenderContext());
     l.draw(
         g2,
         (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterX()),
         (float) (AppPreferences.getIconSize() / 4 - l.getBounds().getCenterY()));
-    int wh = AppPreferences.getScaled(3);
+    final var wh = AppPreferences.getScaled(3);
     for (int y = 1; y < 3; y++) {
       if (y == 1) g2.setColor(Value.TRUE_COLOR);
       else g2.setColor(Value.FALSE_COLOR);
@@ -535,12 +530,11 @@ public class SubcircuitFactory extends InstanceFactory {
             AppPreferences.getScaled(y * 4 + 2));
     }
     g2.setColor(Color.WHITE);
-    Font f = g2.getFont().deriveFont((float) AppPreferences.getIconSize() / 4);
-    TextLayout l = new TextLayout("main", f, g2.getFontRenderContext());
-    l.draw(
-        g2,
-        (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterX()),
-        (float) ((7 * AppPreferences.getIconSize()) / 8 - l.getBounds().getCenterY()));
+    final var f = g2.getFont().deriveFont((float) AppPreferences.getIconSize() / 4);
+    final var l = new TextLayout("main", f, g2.getFontRenderContext());
+    l.draw(g2,
+            (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterX()),
+            (float) ((7 * AppPreferences.getIconSize()) / 8 - l.getBounds().getCenterY()));
   }
 
   @Override

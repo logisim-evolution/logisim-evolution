@@ -36,7 +36,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -93,9 +92,8 @@ public class HorizontalSplitPane extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
       if (AppPreferences.AntiAliassing.getBoolean()) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        final var g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       }
       if (dragging) {
@@ -121,7 +119,7 @@ public class HorizontalSplitPane extends JPanel {
 
     @Override
     void setDragValue(int value) {
-      Insets in = HorizontalSplitPane.this.getInsets();
+      final var in = HorizontalSplitPane.this.getInsets();
       setFraction((double) value / (HorizontalSplitPane.this.getHeight() - in.bottom - in.top));
       revalidate();
     }
@@ -131,9 +129,9 @@ public class HorizontalSplitPane extends JPanel {
     public void addLayoutComponent(String name, Component comp) {}
 
     public void layoutContainer(Container parent) {
-      Insets in = parent.getInsets();
-      int maxWidth = parent.getWidth() - (in.left + in.right);
-      int maxHeight = parent.getHeight() - (in.top + in.bottom);
+      final var in = parent.getInsets();
+      final var maxWidth = parent.getWidth() - (in.left + in.right);
+      final var maxHeight = parent.getHeight() - (in.top + in.bottom);
       int split;
       if (fraction <= 0.0) {
         split = 0;
@@ -156,9 +154,9 @@ public class HorizontalSplitPane extends JPanel {
     public Dimension minimumLayoutSize(Container parent) {
       if (fraction <= 0.0) return comp1.getMinimumSize();
       if (fraction >= 1.0) return comp0.getMinimumSize();
-      Insets in = parent.getInsets();
-      Dimension d0 = comp0.getMinimumSize();
-      Dimension d1 = comp1.getMinimumSize();
+      final var in = parent.getInsets();
+      final var d0 = comp0.getMinimumSize();
+      final var d1 = comp1.getMinimumSize();
       return new Dimension(
           in.left + Math.max(d0.width, d1.width) + in.right,
           in.top + d0.height + d1.height + in.bottom);
@@ -167,9 +165,9 @@ public class HorizontalSplitPane extends JPanel {
     public Dimension preferredLayoutSize(Container parent) {
       if (fraction <= 0.0) return comp1.getPreferredSize();
       if (fraction >= 1.0) return comp0.getPreferredSize();
-      Insets in = parent.getInsets();
-      Dimension d0 = comp0.getPreferredSize();
-      Dimension d1 = comp1.getPreferredSize();
+      final var in = parent.getInsets();
+      final var d0 = comp0.getPreferredSize();
+      final var d1 = comp1.getPreferredSize();
       return new Dimension(
           in.left + Math.max(d0.width, d1.width) + in.right,
           in.top + d0.height + d1.height + in.bottom);

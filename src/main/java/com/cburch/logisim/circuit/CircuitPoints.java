@@ -58,11 +58,11 @@ class CircuitPoints {
   //
   void add(Component comp) {
     if (comp instanceof Wire) {
-      Wire w = (Wire) comp;
+      final var w = (Wire) comp;
       addSub(w.getEnd0(), w, null);
       addSub(w.getEnd1(), w, null);
     } else {
-      for (EndData endData : comp.getEnds()) {
+      for (final var endData : comp.getEnds()) {
         if (endData != null) {
           addSub(endData.getLocation(), comp, endData);
         }
@@ -75,7 +75,7 @@ class CircuitPoints {
   }
 
   private void addSub(Location loc, Component comp, EndData endData) {
-    LocationData locData = map.get(loc);
+    var locData = map.get(loc);
     if (locData == null) {
       locData = new LocationData();
       map.put(loc, locData);
@@ -88,10 +88,10 @@ class CircuitPoints {
   private void computeIncompatibilityData(Location loc, LocationData locData) {
     WidthIncompatibilityData error = null;
     if (locData != null) {
-      BitWidth width = BitWidth.UNKNOWN;
-      for (EndData endData : locData.ends) {
+      var width = BitWidth.UNKNOWN;
+      for (final var endData : locData.ends) {
         if (endData != null) {
-          BitWidth endWidth = endData.getWidth();
+          final var endWidth = endData.getWidth();
           if (width == BitWidth.UNKNOWN) {
             width = endWidth;
           } else if (width != endWidth && endWidth != BitWidth.UNKNOWN) {
@@ -114,15 +114,15 @@ class CircuitPoints {
   }
 
   private Collection<? extends Component> find(Location loc, boolean isWire) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     if (locData == null) return Collections.emptySet();
 
     // first see how many elements we have; we can handle some simple
     // cases without creating any new lists
-    ArrayList<Component> list = locData.components;
-    int retSize = 0;
+    final var list = locData.components;
+    var retSize = 0;
     Component retValue = null;
-    for (Component o : list) {
+    for (final var o : list) {
       if ((o instanceof Wire) == isWire) {
         retValue = o;
         retSize++;
@@ -133,9 +133,9 @@ class CircuitPoints {
     if (retSize == 1) return Collections.singleton(retValue);
 
     // otherwise we have to create our own list
-    Component[] ret = new Component[retSize];
+    final var ret = new Component[retSize];
     int retPos = 0;
-    for (Component o : list) {
+    for (final var o : list) {
       if ((o instanceof Wire) == isWire) {
         ret[retPos] = o;
         retPos++;
@@ -145,21 +145,21 @@ class CircuitPoints {
   }
 
   int getComponentCount(Location loc) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     return locData == null ? 0 : locData.components.size();
   }
 
   Collection<? extends Component> getComponents(Location loc) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     if (locData == null) return Collections.emptySet();
     else return locData.components;
   }
 
   Component getExclusive(Location loc) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     if (locData == null) return null;
     int i = -1;
-    for (EndData endData : locData.ends) {
+    for (final var endData : locData.ends) {
       i++;
       if (endData != null && endData.isExclusive()) {
         return locData.components.get(i);
@@ -200,7 +200,7 @@ class CircuitPoints {
 
   boolean hasConflict(Component comp) {
     if (!(comp instanceof Wire)) {
-      for (EndData endData : comp.getEnds()) {
+      for (final var endData : comp.getEnds()) {
         if (endData != null
             && endData.isExclusive()
             && getExclusive(endData.getLocation()) != null) {
@@ -213,7 +213,7 @@ class CircuitPoints {
 
   void remove(Component comp) {
     if (comp instanceof Wire) {
-      Wire w = (Wire) comp;
+      final var w = (Wire) comp;
       removeSub(w.getEnd0(), w);
       removeSub(w.getEnd1(), w);
     } else {
@@ -230,7 +230,7 @@ class CircuitPoints {
   }
 
   private void removeSub(Location loc, Component comp) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     if (locData == null) return;
 
     int index = locData.components.indexOf(comp);

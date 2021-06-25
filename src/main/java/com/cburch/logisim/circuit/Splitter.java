@@ -40,7 +40,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -52,7 +51,6 @@ import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
-import java.awt.Graphics;
 import javax.swing.JPopupMenu;
 
 public class Splitter extends ManagedComponent
@@ -100,24 +98,26 @@ public class Splitter extends ManagedComponent
   //
   // AttributeListener methods
   //
+  @Override
   public void attributeListChanged(AttributeEvent e) {}
 
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     configureComponent();
   }
 
   private synchronized void configureComponent() {
-    SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
-    SplitterParameters parms = attrs.getParameters();
-    int fanout = attrs.fanout;
-    byte[] bit_end = attrs.bit_end;
+    final var attrs = (SplitterAttributes) getAttributeSet();
+    final var parms = attrs.getParameters();
+    final var fanout = attrs.fanout;
+    final var bit_end = attrs.bit_end;
 
     // compute width of each end
     bit_thread = new byte[bit_end.length];
-    byte[] end_width = new byte[fanout + 1];
+    final var end_width = new byte[fanout + 1];
     end_width[0] = (byte) bit_end.length;
-    for (int i = 0; i < bit_end.length; i++) {
-      byte thr = bit_end[i];
+    for (var i = 0; i < bit_end.length; i++) {
+      final var thr = bit_end[i];
       if (thr > 0) {
         bit_thread[i] = end_width[thr];
         end_width[thr]++;
@@ -127,18 +127,16 @@ public class Splitter extends ManagedComponent
     }
 
     // compute end positions
-    Location origin = getLocation();
-    int x = origin.getX() + parms.getEnd0X();
-    int y = origin.getY() + parms.getEnd0Y();
-    int dx = parms.getEndToEndDeltaX();
-    int dy = parms.getEndToEndDeltaY();
+    final var origin = getLocation();
+    var x = origin.getX() + parms.getEnd0X();
+    var y = origin.getY() + parms.getEnd0Y();
+    final var dx = parms.getEndToEndDeltaX();
+    final var dy = parms.getEndToEndDeltaY();
 
-    EndData[] ends = new EndData[fanout + 1];
+    final var ends = new EndData[fanout + 1];
     ends[0] = new EndData(origin, BitWidth.create(bit_end.length), EndData.INPUT_OUTPUT);
     for (int i = 0; i < fanout; i++) {
-      ends[i + 1] =
-          new EndData(
-              Location.create(x, y), BitWidth.create(end_width[i + 1]), EndData.INPUT_OUTPUT);
+      ends[i + 1] = new EndData(Location.create(x, y), BitWidth.create(end_width[i + 1]), EndData.INPUT_OUTPUT);
       x += dx;
       y += dy;
     }
@@ -148,6 +146,7 @@ public class Splitter extends ManagedComponent
     fireComponentInvalidated(new ComponentEvent(this));
   }
 
+  @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     menu.addSeparator();
     menu.add(new SplitterDistributeItem(proj, this, 1));
@@ -157,8 +156,8 @@ public class Splitter extends ManagedComponent
   @Override
   public boolean contains(Location loc) {
     if (super.contains(loc)) {
-      Location myLoc = getLocation();
-      Direction facing = getAttributeSet().getValue(StdAttr.FACING);
+      final var myLoc = getLocation();
+      final var facing = getAttributeSet().getValue(StdAttr.FACING);
       if (facing == Direction.EAST || facing == Direction.WEST) {
         return Math.abs(loc.getX() - myLoc.getX()) > 5 || loc.manhattanDistanceTo(myLoc) <= 5;
       } else {
@@ -172,29 +171,28 @@ public class Splitter extends ManagedComponent
   //
   // user interface methods
   //
+  @Override
   public void draw(ComponentDrawContext context) {
-    SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
+    final var attrs = (SplitterAttributes) getAttributeSet();
     if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
       SplitterPainter.drawLegacy(context, attrs, getLocation());
     } else {
-      Location loc = getLocation();
+      final var loc = getLocation();
       SplitterPainter.drawLines(context, attrs, loc);
       SplitterPainter.drawLabels(context, attrs, loc);
       context.drawPins(this);
     }
     if (isMarked) {
-      Graphics g = context.getGraphics();
-      Bounds bds = this.getBounds();
+      final var g = context.getGraphics();
+      final var bds = this.getBounds();
       g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
       GraphicsUtil.switchToWidth(g, 2);
-      g.drawRoundRect(
-          bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 20, 20);
+      g.drawRoundRect(bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 20, 20);
     }
   }
 
   public byte[] GetEndpoints() {
-    SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
-    return attrs.bit_end;
+    return ((SplitterAttributes) getAttributeSet()).bit_end;
   }
 
   //
@@ -205,6 +203,7 @@ public class Splitter extends ManagedComponent
     return SplitterFactory.instance;
   }
 
+  @Override
   public void setFactory(ComponentFactory fact) {}
 
   @Override
@@ -215,9 +214,10 @@ public class Splitter extends ManagedComponent
     else return super.getFeature(key);
   }
 
+  @Override
   public String getToolTip(ComponentUserEvent e) {
-    int end = -1;
-    for (int i = getEnds().size() - 1; i >= 0; i--) {
+    var end = -1;
+    for (var i = getEnds().size() - 1; i >= 0; i--) {
       if (getEndLocation(i).manhattanDistanceTo(e.getX(), e.getY()) < 10) {
         end = i;
         break;
@@ -227,13 +227,13 @@ public class Splitter extends ManagedComponent
     if (end == 0) {
       return S.get("splitterCombinedTip");
     } else if (end > 0) {
-      int bits = 0;
-      StringBuilder buf = new StringBuilder();
-      SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
-      byte[] bit_end = attrs.bit_end;
-      boolean inString = false;
-      int beginString = 0;
-      for (int i = 0; i < bit_end.length; i++) {
+      var bits = 0;
+      final var buf = new StringBuilder();
+      final var attrs = (SplitterAttributes) getAttributeSet();
+      final var bit_end = attrs.bit_end;
+      var inString = false;
+      var beginString = 0;
+      for (var i = 0; i < bit_end.length; i++) {
         if (bit_end[i] == end) {
           bits++;
           if (!inString) {
@@ -271,6 +271,7 @@ public class Splitter extends ManagedComponent
     // handled by CircuitWires, nothing to do
   }
 
+  @Override
   public boolean shouldRepairWire(WireRepairData data) {
     return true;
   }

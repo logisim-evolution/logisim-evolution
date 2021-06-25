@@ -53,28 +53,31 @@ class WireIterator implements Iterator<Location> {
     else if (curY > destY) deltaY = -10;
     else deltaY = 0;
 
-    int offX = (destX - curX) % 10;
+    final var offX = (destX - curX) % 10;
     if (offX != 0) { // should not happen, but in case it does...
       destX = curX + deltaX * ((destX - curX) / 10);
     }
-    int offY = (destY - curY) % 10;
+    final var offY = (destY - curY) % 10;
     if (offY != 0) { // should not happen, but in case it does...
       destY = curY + deltaY * ((destY - curY) / 10);
     }
   }
 
+  @Override
   public boolean hasNext() {
     return !destReturned;
   }
 
+  @Override
   public Location next() {
-    Location ret = Location.create(curX, curY);
+    final var ret = Location.create(curX, curY);
     destReturned |= curX == destX && curY == destY;
     curX += deltaX;
     curY += deltaY;
     return ret;
   }
 
+  @Override
   public void remove() {
     throw new UnsupportedOperationException();
   }

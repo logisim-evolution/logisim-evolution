@@ -72,8 +72,10 @@ public class Propagator {
       prop = new WeakReference<>(propagator);
     }
 
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       Propagator p = prop.get();
       if (p == null) {
@@ -113,6 +115,7 @@ public class Propagator {
       return ret;
     }
 
+    @Override
     public int compareTo(SetData o) {
       // Yes, these subtractions may overflow. This is intentional, as it
       // avoids potential wraparound problems as the counters increment.
@@ -286,9 +289,9 @@ public class Propagator {
     root.processDirtyPoints();
     root.processDirtyComponents();
 
-    int oscThreshold = simLimit;
-    int logThreshold = 3 * oscThreshold / 4;
-    int iters = 0;
+    final var oscThreshold = simLimit;
+    final var logThreshold = 3 * oscThreshold / 4;
+    var iters = 0;
     while (!toProcess.isEmpty()) {
       if (iters > 0 && propListener != null)
         propListener.propagationInProgress(propEvent);
@@ -312,15 +315,15 @@ public class Propagator {
   }
 
   private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
-    HashMap<Location, SetData> causes = state.causes;
+    final var causes = state.causes;
     if (head == null) {
     } else if (head.cause == cause) {
       head = head.next;
       if (head == null) causes.remove(loc);
       else causes.put(loc, head);
     } else {
-      SetData prev = head;
-      SetData cur = head.next;
+      var prev = head;
+      var cur = head.next;
       while (cur != null) {
         if (cur.cause == cause) {
           prev.next = cur.next;
@@ -348,7 +351,7 @@ public class Propagator {
     if (delay <= 0) {
       delay = 1;
     }
-    int randomShift = simRandomShift;
+    final var randomShift = simRandomShift;
     if (randomShift > 0) { // random noise is turned on
       // multiply the delay by 32 so that the random noise
       // only changes the delay by 3%.
@@ -376,10 +379,9 @@ public class Propagator {
     root.processDirtyPoints();
     root.processDirtyComponents();
 
-    if (toProcess.isEmpty())
-      return false;
+    if (toProcess.isEmpty()) return false;
 
-    PropagationPoints oldOsc = oscPoints;
+    final var oldOsc = oscPoints;
     oscAdding = changedPoints != null;
     oscPoints = changedPoints;
     stepInternal(changedPoints);
@@ -395,16 +397,15 @@ public class Propagator {
     clock = toProcess.peek().time;
 
     // propagate all values for this clock tick
-    HashMap<CircuitState, HashSet<ComponentPoint>> visited =
-        new HashMap<>();
+    final var visited = new HashMap<CircuitState, HashSet<ComponentPoint>>();
     while (true) {
-      SetData data = toProcess.peek();
+      final var data = toProcess.peek();
       if (data == null || data.time != clock) break;
       toProcess.remove();
-      CircuitState state = data.state;
+      final var state = data.state;
 
       // if it's already handled for this clock tick, continue
-      HashSet<ComponentPoint> handled = visited.get(state);
+      var handled = visited.get(state);
       if (handled != null) {
         if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
       } else {
@@ -422,10 +423,10 @@ public class Propagator {
       if (changedPoints != null) changedPoints.add(state, data.loc);
 
       // change the information about value
-      SetData oldHead = state.causes.get(data.loc);
-      Value oldVal = computeValue(oldHead);
-      SetData newHead = addCause(state, oldHead, data);
-      Value newVal = computeValue(newHead);
+      final var oldHead = state.causes.get(data.loc);
+      final var oldVal = computeValue(oldHead);
+      final var newHead = addCause(state, oldHead, data);
+      final var newVal = computeValue(newHead);
 
       // if the value at point has changed, propagate it
       if (!newVal.equals(oldVal)) {
@@ -448,10 +449,10 @@ public class Propagator {
   }
 
   private void updateRandomness() {
-    Options opts = root.getProject().getOptions();
+    final var opts = root.getProject().getOptions();
     Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    int val = (Integer) rand;
-    int logVal = 0;
+    final var val = (Integer) rand;
+    var logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;
   }
