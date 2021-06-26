@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -55,49 +54,49 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("DataIn", InputBitsId);
-    Inputs.put("Sel", SelectBitsId);
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    inputs.put("DataIn", InputBitsId);
+    inputs.put("Sel", SelectBitsId);
+    return inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    int output_bits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add(
+      contents.add(
           "   s_extended_vector(("
               + ExtendedBitsStr
               + "-1) DOWNTO "
               + InputBitsStr
               + ") <= (OTHERS => '0');");
-      Contents.add("   s_extended_vector((" + InputBitsStr + "-1) DOWNTO 0) <= DataIn;");
-      if (output_bits > 1)
-        Contents.add(
+      contents.add("   s_extended_vector((" + InputBitsStr + "-1) DOWNTO 0) <= DataIn;");
+      if (outputBits > 1)
+        contents.add(
             "   DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1)*"
                 + OutputsBitsStr
                 + ")-1 DOWNTO to_integer(unsigned(Sel))*"
                 + OutputsBitsStr
                 + ");");
-      else Contents.add("   DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+      else contents.add("   DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
     } else {
-      Contents.add(
+      contents.add(
           "   assign s_extended_vector[" + ExtendedBitsStr + "-1:" + InputBitsStr + "] = 0;");
-      Contents.add("   assign s_extended_vector[" + InputBitsStr + "-1:0] = DataIn;");
-      if (output_bits > 1) {
-        Contents.add("   wire[513:0] s_select_vector;");
-        Contents.add("   reg[" + OutputsBitsStr + "-1:0] s_selected_slice;");
-        Contents.add("   assign s_select_vector[513:" + ExtendedBitsStr + "] = 0;");
-        Contents.add("   assign s_select_vector[" + ExtendedBitsStr + "-1:0] = s_extended_vector;");
-        Contents.add("   assign DataOut = s_selected_slice;");
-        Contents.add("");
-        Contents.add("   always @(*)");
-        Contents.add("   begin");
-        Contents.add("      case (Sel)");
-        for (int i = 15; i > 0; i--) {
-          Contents.add(
+      contents.add("   assign s_extended_vector[" + InputBitsStr + "-1:0] = DataIn;");
+      if (outputBits > 1) {
+        contents.add("   wire[513:0] s_select_vector;");
+        contents.add("   reg[" + OutputsBitsStr + "-1:0] s_selected_slice;");
+        contents.add("   assign s_select_vector[513:" + ExtendedBitsStr + "] = 0;");
+        contents.add("   assign s_select_vector[" + ExtendedBitsStr + "-1:0] = s_extended_vector;");
+        contents.add("   assign DataOut = s_selected_slice;");
+        contents.add("");
+        contents.add("   always @(*)");
+        contents.add("   begin");
+        contents.add("      case (Sel)");
+        for (var i = 15; i > 0; i--) {
+          contents.add(
               "         "
                   + i
                   + " : s_selected_slice <= s_select_vector[("
@@ -110,60 +109,60 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                   + OutputsBitsStr
                   + "];");
         }
-        Contents.add(
+        contents.add(
             "         default : s_selected_slice <= s_select_vector[" + OutputsBitsStr + "-1:0];");
-        Contents.add("      endcase");
-        Contents.add("   end");
-      } else Contents.add("   assign DataOut = s_extended_vector[Sel];");
+        contents.add("      endcase");
+        contents.add("   end");
+      } else contents.add("   assign DataOut = s_extended_vector[Sel];");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    int output_bits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OutputsBitsId;
-    Outputs.put("DataOut", output_bits);
-    return Outputs;
+  public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    int outputBits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OutputsBitsId;
+    outputs.put("DataOut", outputBits);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    int output_bits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
-    Parameters.put(InputBitsId, InputBitsStr);
-    if (output_bits > 1) Parameters.put(OutputsBitsId, OutputsBitsStr);
-    Parameters.put(SelectBitsId, SelectBitsStr);
-    Parameters.put(ExtendedBitsId, ExtendedBitsStr);
-    return Parameters;
+    SortedMap<Integer, String> parameters = new TreeMap<>();
+    int outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
+    parameters.put(InputBitsId, InputBitsStr);
+    if (outputBits > 1) parameters.put(OutputsBitsId, OutputsBitsStr);
+    parameters.put(SelectBitsId, SelectBitsStr);
+    parameters.put(ExtendedBitsId, ExtendedBitsStr);
+    return parameters;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int sel_bits = ComponentInfo.GetComponent().getEnd(2).getWidth().getWidth();
-    int input_bits = ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth();
-    int output_bits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    ParameterMap.put(InputBitsStr, input_bits);
-    ParameterMap.put(SelectBitsStr, sel_bits);
-    if (output_bits > 1) ParameterMap.put(OutputsBitsStr, output_bits);
-    int nr_of_slices = 1;
-    for (int i = 0; i < sel_bits; i++) {
-      nr_of_slices <<= 1;
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    int selBits = componentInfo.GetComponent().getEnd(2).getWidth().getWidth();
+    int inputBits = componentInfo.GetComponent().getEnd(1).getWidth().getWidth();
+    int outputBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    parameterMap.put(InputBitsStr, inputBits);
+    parameterMap.put(SelectBitsStr, selBits);
+    if (outputBits > 1) parameterMap.put(OutputsBitsStr, outputBits);
+    var nrOfSlices = 1;
+    for (var i = 0; i < selBits; i++) {
+      nrOfSlices <<= 1;
     }
-    ParameterMap.put(ExtendedBitsStr, nr_of_slices * output_bits + 1);
-    return ParameterMap;
+    parameterMap.put(ExtendedBitsStr, nrOfSlices * outputBits + 1);
+    return parameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("Sel", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, 0, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    portMap.putAll(GetNetMap("DataIn", true, componentInfo, 1, nets));
+    portMap.putAll(GetNetMap("Sel", true, componentInfo, 2, nets));
+    portMap.putAll(GetNetMap("DataOut", true, componentInfo, 0, nets));
+    return portMap;
   }
 
   @Override
@@ -172,10 +171,10 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_extended_vector", ExtendedBitsId);
-    return Wires;
+  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    wires.put("s_extended_vector", ExtendedBitsId);
+    return wires;
   }
 
   @Override

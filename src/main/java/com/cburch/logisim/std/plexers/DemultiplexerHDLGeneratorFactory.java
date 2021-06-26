@@ -60,88 +60,87 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    String Space = "  ";
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
-    int num_outputs = (1 << nr_of_select_bits);
-    for (int i = 0; i < num_outputs; i++) {
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    var space = "  ";
+    final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    var numOutputs = (1 << nrOfSelectBits);
+    for (var i = 0; i < numOutputs; i++) {
       if (i == 10) {
-        Space = " ";
+        space = " ";
       }
-      String binValue = IntToBin(i, nr_of_select_bits);
+      final var binValue = IntToBin(i, nrOfSelectBits);
       if (HDL.isVHDL()) {
-        Contents.add("   DemuxOut_" + i + Space + "<= DemuxIn WHEN sel = " + binValue + " AND");
+        contents.add("   DemuxOut_" + i + space + "<= DemuxIn WHEN sel = " + binValue + " AND");
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
-          Contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
+          contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
         } else {
-          Contents.add("                               Enable = '1' ELSE '0';");
+          contents.add("                               Enable = '1' ELSE '0';");
         }
       } else {
-        Contents.add(
+        contents.add(
             "   assign DemuxOut_"
                 + i
-                + Space
+                + space
                 + " = (Enable&(sel == "
                 + binValue
                 + " )) ? DemuxIn : 0;");
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
-    for (int i = 0; i < (1 << nr_of_select_bits); i++) {
-      Outputs.put("DemuxOut_" + i, NrOfBits);
+  public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    for (var i = 0; i < (1 << nrOfSelectBits); i++) {
+      outputs.put("DemuxOut_" + i, nrOfBits);
     }
-    return Outputs;
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (NrOfBits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
-    return Parameters;
+    SortedMap<Integer, String> params = new TreeMap<>();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+    if (nrOfBits > 1) params.put(NrOfBitsId, NrOfBitsStr);
+    return params;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int NrOfBits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (NrOfBits > 1) ParameterMap.put(NrOfBitsStr, NrOfBits);
-    return ParameterMap;
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var nrOfBits =
+        componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    if (nrOfBits > 1) parameterMap.put(NrOfBitsStr, nrOfBits);
+    return parameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int nr_of_select_bits =
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) mapInfo;
+    final var nrOfSelectBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
-    int select_input_index = (1 << nr_of_select_bits);
+    var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all outputs of demultiplexer
-    for (int i = 0; i < select_input_index; i++)
-      PortMap.putAll(GetNetMap("DemuxOut_" + i, true, ComponentInfo, i, Nets));
+    for (var i = 0; i < selectInputIndex; i++)
+      portMap.putAll(GetNetMap("DemuxOut_" + i, true, ComponentInfo, i, nets));
     // now select..
-    PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
+    portMap.putAll(GetNetMap("Sel", true, ComponentInfo, selectInputIndex, nets));
     // now connect enable input...
-    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
-      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Nets));
+    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE)) {
+      portMap.putAll(GetNetMap("Enable", false, ComponentInfo, selectInputIndex + 1, nets));
     } else {
-      PortMap.put("Enable", HDL.oneBit());
-      select_input_index--; // decrement pin index because enable doesn't exist...
+      portMap.put("Enable", HDL.oneBit());
+      selectInputIndex--; // decrement pin index because enable doesn't exist...
     }
     // finally input
-    PortMap.putAll(GetNetMap("DemuxIn", true, ComponentInfo, select_input_index + 2, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DemuxIn", true, ComponentInfo, selectInputIndex + 2, nets));
+    return portMap;
   }
 
   @Override

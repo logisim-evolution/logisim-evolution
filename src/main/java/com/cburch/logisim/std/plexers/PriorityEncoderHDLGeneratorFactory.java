@@ -51,149 +51,148 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("enable", 1);
-    Inputs.put("input_vector", NrOfInputBitsId);
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    inputs.put("enable", 1);
+    inputs.put("input_vector", NrOfInputBitsId);
+    return inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
-      Contents.add("   -- Output Signals");
-      Contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
-      Contents.add("   EnableOut   <= s_in_is_zero AND enable;");
-      Contents.add("   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE");
-      Contents.add("                  s_address(" + NrOfSelectBitsStr + "-1 DOWNTO 0);");
-      Contents.add("");
-      Contents.add("   -- Control Signals ");
-      Contents.add(
+      contents.add("   -- Output Signals");
+      contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
+      contents.add("   EnableOut   <= s_in_is_zero AND enable;");
+      contents.add("   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE");
+      contents.add("                  s_address(" + NrOfSelectBitsStr + "-1 DOWNTO 0);");
+      contents.add("");
+      contents.add("   -- Control Signals ");
+      contents.add(
           "   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,"
               + NrOfInputBitsStr
               + ")) ELSE '0';");
-      Contents.add("");
-      Contents.add("   -- Processes");
-      Contents.add(
+      contents.add("");
+      contents.add("   -- Processes");
+      contents.add(
           "   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )");
-      Contents.add("   BEGIN");
-      Contents.add(
+      contents.add("   BEGIN");
+      contents.add(
           "      v_select_1_vector(32 DOWNTO " + NrOfInputBitsStr + ")  <= (OTHERS => '0');");
-      Contents.add("      v_select_1_vector(" + NrOfInputBitsStr + "-1 DOWNTO 0) <= input_vector;");
-      Contents.add(
+      contents.add("      v_select_1_vector(" + NrOfInputBitsStr + "-1 DOWNTO 0) <= input_vector;");
+      contents.add(
           "      IF (v_select_1_vector(31 DOWNTO 16) = X\"0000\") THEN s_address(4)      <= '0';");
-      Contents.add(
+      contents.add(
           "                                                          v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);");
-      Contents.add(
+      contents.add(
           "                                                     ELSE s_address(4)      <= '1';");
-      Contents.add(
+      contents.add(
           "                                                          v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);");
-      Contents.add("      END IF;");
-      Contents.add(
+      contents.add("      END IF;");
+      contents.add(
           "      IF (v_select_2_vector(15 DOWNTO 8) = X\"00\") THEN s_address(3)      <= '0';");
-      Contents.add(
+      contents.add(
           "                                                       v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);");
-      Contents.add(
+      contents.add(
           "                                                  ELSE s_address(3)      <= '1';");
-      Contents.add(
+      contents.add(
           "                                                       v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);");
-      Contents.add("      END IF;");
-      Contents.add(
+      contents.add("      END IF;");
+      contents.add(
           "      IF (v_select_3_vector(7 DOWNTO 4) = X\"0\") THEN s_address(2)      <= '0';");
-      Contents.add(
+      contents.add(
           "                                                     v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);");
-      Contents.add(
+      contents.add(
           "                                                ELSE s_address(2)      <= '1';");
-      Contents.add(
+      contents.add(
           "                                                     v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);");
-      Contents.add("      END IF;");
-      Contents.add("      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';");
-      Contents.add(
+      contents.add("      END IF;");
+      contents.add("      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';");
+      contents.add(
           "                                                     s_address(0) <= v_select_4_vector(1);");
-      Contents.add("                                                ELSE s_address(1) <= '1';");
-      Contents.add(
+      contents.add("                                                ELSE s_address(1) <= '1';");
+      contents.add(
           "                                                     s_address(0) <= v_select_4_vector(3);");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_addr;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_addr;");
     } else {
-      Contents.add("   assign GroupSelect = ~s_in_is_zero&enable;");
-      Contents.add("   assign EnableOut = s_in_is_zero&enable;");
-      Contents.add("   assign Address = (~enable) ? 0 : s_address[" + NrOfSelectBitsStr + "-1:0];");
-      Contents.add("   assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;");
-      Contents.add("");
-      Contents.add("   assign v_select_1_vector[32:" + NrOfInputBitsStr + "] = 0;");
-      Contents.add("   assign v_select_1_vector[" + NrOfInputBitsStr + "-1:0] = input_vector;");
-      Contents.add("   assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;");
-      Contents.add(
+      contents.add("   assign GroupSelect = ~s_in_is_zero&enable;");
+      contents.add("   assign EnableOut = s_in_is_zero&enable;");
+      contents.add("   assign Address = (~enable) ? 0 : s_address[" + NrOfSelectBitsStr + "-1:0];");
+      contents.add("   assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;");
+      contents.add("");
+      contents.add("   assign v_select_1_vector[32:" + NrOfInputBitsStr + "] = 0;");
+      contents.add("   assign v_select_1_vector[" + NrOfInputBitsStr + "-1:0] = input_vector;");
+      contents.add("   assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;");
+      contents.add(
           "   assign v_select_2_vector = (v_select_1_vector[31:16] == 0) ? v_select_1_vector[15:0] : v_select_1_vector[31:16];");
-      Contents.add("   assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;");
-      Contents.add(
+      contents.add("   assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;");
+      contents.add(
           "   assign v_select_3_vector = (v_select_2_vector[15:8] == 0) ? v_select_2_vector[7:0] : v_select_2_vector[15:8];");
-      Contents.add("   assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;");
-      Contents.add(
+      contents.add("   assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;");
+      contents.add(
           "   assign v_select_4_vector = (v_select_3_vector[7:4] == 0) ? v_select_3_vector[3:0] : v_select_2_vector[7:4];");
-      Contents.add("   assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;");
-      Contents.add(
+      contents.add("   assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;");
+      contents.add(
           "   assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("GroupSelect", 1);
-    Outputs.put("EnableOut", 1);
-    Outputs.put("Address", NrOfSelectBitsId);
-    return Outputs;
+  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    outputs.put("GroupSelect", 1);
+    outputs.put("EnableOut", 1);
+    outputs.put("Address", NrOfSelectBitsId);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(NrOfSelectBitsId, NrOfSelectBitsStr);
-    Parameters.put(NrOfInputBitsId, NrOfInputBitsStr);
-    return Parameters;
+    SortedMap<Integer, String> params = new TreeMap<>();
+    params.put(NrOfSelectBitsId, NrOfSelectBitsStr);
+    params.put(NrOfInputBitsId, NrOfInputBitsStr);
+    return params;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int nr_of_bits = ComponentInfo.NrOfEnds() - 4;
-    int nr_of_select_bits =
-        ComponentInfo.GetComponent().getEnd(nr_of_bits + PriorityEncoder.OUT).getWidth().getWidth();
-    ParameterMap.put(NrOfSelectBitsStr, nr_of_select_bits);
-    ParameterMap.put(NrOfInputBitsStr, 1 << nr_of_select_bits);
+    final var nrOfBits = componentInfo.NrOfEnds() - 4;
+    final var nrOfSelectBits = componentInfo.GetComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
+    ParameterMap.put(NrOfSelectBitsStr, nrOfSelectBits);
+    ParameterMap.put(NrOfInputBitsStr, 1 << nrOfSelectBits);
     return ParameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int nr_of_bits = ComponentInfo.NrOfEnds() - 4;
+    if (!(mapInfo instanceof NetlistComponent)) return PortMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    final var nrOfBits = componentInfo.NrOfEnds() - 4;
     PortMap.putAll(
         GetNetMap(
             "enable",
             false,
-            ComponentInfo,
-            nr_of_bits + PriorityEncoder.EN_IN,
-            Nets));
-    StringBuilder VectorList = new StringBuilder();
-    for (int i = nr_of_bits - 1; i >= 0; i--) {
+            componentInfo,
+            nrOfBits + PriorityEncoder.EN_IN,
+            nets));
+    final var vectorList = new StringBuilder();
+    for (var i = nrOfBits - 1; i >= 0; i--) {
       if (HDL.isVHDL())
-        PortMap.putAll(GetNetMap("input_vector(" + i + ")", true, ComponentInfo, i, Nets));
+        PortMap.putAll(GetNetMap("input_vector(" + i + ")", true, componentInfo, i, nets));
       else {
-        if (VectorList.length() > 0) VectorList.append(",");
-        VectorList.append(GetNetName(ComponentInfo, i, true, Nets));
+        if (vectorList.length() > 0) vectorList.append(",");
+        vectorList.append(GetNetName(componentInfo, i, true, nets));
       }
     }
-    if (HDL.isVerilog()) PortMap.put("input_vector", VectorList.toString());
-    PortMap.putAll(GetNetMap("GroupSelect", true, ComponentInfo, nr_of_bits + PriorityEncoder.GS, Nets));
-    PortMap.putAll(GetNetMap("EnableOut", true, ComponentInfo, nr_of_bits + PriorityEncoder.EN_OUT, Nets));
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, nr_of_bits + PriorityEncoder.OUT, Nets));
+    if (HDL.isVerilog()) PortMap.put("input_vector", vectorList.toString());
+    PortMap.putAll(GetNetMap("GroupSelect", true, componentInfo, nrOfBits + PriorityEncoder.GS, nets));
+    PortMap.putAll(GetNetMap("EnableOut", true, componentInfo, nrOfBits + PriorityEncoder.EN_OUT, nets));
+    PortMap.putAll(GetNetMap("Address", true, componentInfo, nrOfBits + PriorityEncoder.OUT, nets));
     return PortMap;
   }
 
@@ -203,15 +202,15 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_in_is_zero", 1);
-    Wires.put("s_address", 5);
-    Wires.put("v_select_1_vector", 33);
-    Wires.put("v_select_2_vector", 16);
-    Wires.put("v_select_3_vector", 8);
-    Wires.put("v_select_4_vector", 4);
-    return Wires;
+  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    wires.put("s_in_is_zero", 1);
+    wires.put("s_address", 5);
+    wires.put("v_select_1_vector", 33);
+    wires.put("v_select_2_vector", 16);
+    wires.put("v_select_3_vector", 8);
+    wires.put("v_select_4_vector", 4);
+    return wires;
   }
 
   @Override
