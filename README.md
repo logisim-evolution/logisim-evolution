@@ -1,4 +1,8 @@
-![Logisim-evolution](src/main/resources/resources/logisim/img/logisim-evolution-logo.svg)
+<p align="center">
+  <a href="https://github.com/logisim-evolution/logisim-evolution">
+    <img src="src/main/resources/resources/logisim/img/logisim-evolution-logo.svg" alt="Logisim-evolution">
+  </a>
+</p>
 
 # Digital logic designer and simulator #
 
