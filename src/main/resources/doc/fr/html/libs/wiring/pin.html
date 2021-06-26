@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -14,7 +14,8 @@
   <body>
     <div class=maindiv>
       <h1>
-        <img class=iconlibs src="../../../../icons/pinInput.gif" alt="#########"> <img class=iconlibs src="../../../../icons/pinOutput.gif" alt="#########"> <em>Broche</em>
+        <img class=iconlibs src="../../../../icons/6464/pinInput.png" alt="#########" height=32 width=32> 
+		<img class=iconlibs src="../../../../icons/6464/pinOutput.png" alt="#########" height=32 width=32> <em>Broche</em>
       </h1>
       <table>
         <tbody>
@@ -51,7 +52,7 @@
         Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <q>sortie?</q>. Logisim représente les broches de sortie à l'aide d'un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans les deux cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit).
       </p>
       <p>
-        Une broche est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augemente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section `<a href="../../guide/subcirc/index.html">Design hiérarchique</a>' du <em>Guide de l'utilisateur</em>) et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants pin du schéma d'un circuit définissent les broches qui apparaissent sur le symbole du sous-circuit lorsque q'il est utilisée dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schema du sous-circuit.
+        Une broche est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augemente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section <a class=refguide href="../../guide/subcirc/index.html">Design hiérarchique</a> du <a href="../index.html">Guide de l'utilisateur</a> et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants pin du schéma d'un circuit définissent les broches qui apparaissent sur le symbole du sous-circuit lorsque q'il est utilisée dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schema du sous-circuit.
       </p>
       <h2>
         Pins
@@ -76,7 +77,7 @@
           Sortie ?
         </dt>
         <dd>
-          Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. (Notez que si le composant broche est une entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.)
+          Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. <b class=note>Note</b>: Si le composant broche est une entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.)
         </dd>
         <dt>
           Largeur de données
