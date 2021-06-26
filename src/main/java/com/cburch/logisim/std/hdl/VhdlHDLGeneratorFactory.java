@@ -34,7 +34,6 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -66,8 +65,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> inputs = new TreeMap<>();
 
-    Port[] rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
-    for (Port rawInput : rawInputs)
+    final var rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
+    for (final var rawInput : rawInputs)
       inputs.put(rawInput.getToolTip(), rawInput.getFixedBitWidth().getWidth());
 
     return inputs;
@@ -77,8 +76,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> outputs = new TreeMap<>();
 
-    Port[] rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getOutputs();
-    for (Port rawOutput : rawOutputs)
+    final var rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getOutputs();
+    for (final var rawOutput : rawOutputs)
       outputs.put(rawOutput.getToolTip(), rawOutput.getFixedBitWidth().getWidth());
 
     return outputs;
@@ -86,28 +85,28 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) MapInfo;
 
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-    VhdlContentComponent content = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
+    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var content = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
 
-    Port[] inputs = content.getInputs();
-    Port[] outputs = content.getOutputs();
+    final var inputs = content.getInputs();
+    final var outputs = content.getOutputs();
 
-    for (int i = 0; i < inputs.length; i++)
-      PortMap.putAll(GetNetMap(inputs[i].getToolTip(), true, ComponentInfo, i, Nets));
-    for (int i = 0; i < outputs.length; i++)
-      PortMap.putAll(
+    for (var i = 0; i < inputs.length; i++)
+      portMap.putAll(GetNetMap(inputs[i].getToolTip(), true, componentInfo, i, Nets));
+    for (var i = 0; i < outputs.length; i++)
+      portMap.putAll(
           GetNetMap(
               outputs[i].getToolTip(),
               true,
-              ComponentInfo,
+              componentInfo,
               i + inputs.length,
               Nets));
 
-    return PortMap;
+    return portMap;
   }
 
   @Override

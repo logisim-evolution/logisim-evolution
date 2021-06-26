@@ -57,7 +57,7 @@ public abstract class HdlContent implements HdlModel, Cloneable {
 
   @Override
   public HdlContent clone() throws CloneNotSupportedException {
-    HdlContent ret = (HdlContent) super.clone();
+    final var ret = (HdlContent) super.clone();
     ret.listeners = null;
     return ret;
   }
