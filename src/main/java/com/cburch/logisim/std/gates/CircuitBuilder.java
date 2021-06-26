@@ -443,7 +443,7 @@ public class CircuitBuilder {
   // placeComponents
   //
   /**
-   * @param circuit the circuit where to place the components.
+   * @param result the circuit where to place the components.
    * @param layout the layout specifying the gates to place there.
    * @param x the left edge of where the layout should be placed.
    * @param y the top edge of where the layout should be placed.

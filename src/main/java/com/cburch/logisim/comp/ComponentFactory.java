@@ -57,12 +57,13 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   AttributeSet createAttributeSet();
 
   Component createComponent(Location loc, AttributeSet attrs);
-  
+
   void removeComponent(Circuit circ, Component c, CircuitState state);
 
   void drawGhost(
       ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
 
+  @Override
   Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);
 
   StringGetter getDisplayGetter();
@@ -100,6 +101,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   boolean HDLSupportedComponent(AttributeSet attrs);
 
+  @Override
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 
   boolean CheckForGatedClocks(NetlistComponent comp);
@@ -112,7 +114,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   /* Added for HDL generation */
   boolean RequiresNonZeroLabel();
-  
+
   /* Added for Soc simulation core */
   boolean isSocComponent();
 }
