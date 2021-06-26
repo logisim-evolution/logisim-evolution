@@ -54,7 +54,7 @@ class RomAttributes extends AbstractAttributeSet {
       return ret;
     }
   }
-  
+
   static void closeHexFrame(MemContents value) {
     HexFrame ret;
     synchronized (windowRegistry) {
@@ -67,7 +67,7 @@ class RomAttributes extends AbstractAttributeSet {
     if (proj == null || listenerRegistry.containsKey(value)) {
       return;
     }
-    RomContentsListener l = new RomContentsListener(proj);
+    final var l = new RomContentsListener(proj);
     value.addHexModelListener(l);
     listenerRegistry.put(value, l);
   }
@@ -94,10 +94,10 @@ class RomAttributes extends AbstractAttributeSet {
   private MemContents contents;
   private AttributeOption lineSize = Mem.SINGLE;
   private Boolean allowMisaligned = false;
-  private String Label = "";
-  private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisible = false;
-  private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
+  private String label = "";
+  private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
+  private Boolean labelVisible = false;
+  private AttributeOption appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
     contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
@@ -111,9 +111,9 @@ class RomAttributes extends AbstractAttributeSet {
     d.lineSize = lineSize;
     d.allowMisaligned = allowMisaligned;
     d.contents = contents.clone();
-    d.LabelFont = LabelFont;
-    d.LabelVisible = LabelVisible;
-    d.Appearance = Appearance;
+    d.labelFont = labelFont;
+    d.labelVisible = labelVisible;
+    d.appearance = appearance;
   }
 
   @Override
@@ -140,16 +140,16 @@ class RomAttributes extends AbstractAttributeSet {
       return (V) contents;
     }
     if (attr == StdAttr.LABEL) {
-      return (V) Label;
+      return (V) label;
     }
     if (attr == StdAttr.LABEL_FONT) {
-      return (V) LabelFont;
+      return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) LabelVisible;
+      return (V) labelVisible;
     }
     if (attr == StdAttr.APPEARANCE) {
-      return (V) Appearance;
+      return (V) appearance;
     }
     return null;
   }
@@ -161,53 +161,53 @@ class RomAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == Mem.ADDR_ATTR) {
-      BitWidth newAddr = (BitWidth) value;
+      final var newAddr = (BitWidth) value;
       if (newAddr == addrBits) return;
       addrBits = newAddr;
       contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
-      BitWidth newData = (BitWidth) value;
+      final var newData = (BitWidth) value;
       if (newData == dataBits) return;
       dataBits = newData;
       contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.LINE_ATTR) {
-      AttributeOption val = (AttributeOption) value;
+      final var val = (AttributeOption) value;
       if (lineSize.equals(val)) return;
       lineSize = val;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.ALLOW_MISALIGNED) {
-      Boolean val = (Boolean) value;
+      final var val = (Boolean) value;
       if (allowMisaligned.equals(val)) return;
       allowMisaligned = val;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Rom.CONTENTS_ATTR) {
-      MemContents newContents = (MemContents) value;
+      final var newContents = (MemContents) value;
       if (contents.equals(newContents)) return;
       contents = newContents;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL) {
-      String NewLabel = (String) value;
-      if (Label.equals(NewLabel)) return;
+      final var newLabel = (String) value;
+      if (label.equals(newLabel)) return;
       @SuppressWarnings("unchecked")
-      V Oldlabel = (V) Label;
-      Label = NewLabel;
-      fireAttributeValueChanged(attr, value, Oldlabel);
+      V oldLabel = (V) label;
+      label = newLabel;
+      fireAttributeValueChanged(attr, value, oldLabel);
     } else if (attr == StdAttr.LABEL_FONT) {
-      Font NewFont = (Font) value;
-      if (LabelFont.equals(NewFont)) return;
-      LabelFont = NewFont;
+      final var newFont = (Font) value;
+      if (labelFont.equals(newFont)) return;
+      labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean newVis = (Boolean) value;
-      if (LabelVisible.equals(newVis)) return;
-      LabelVisible = newVis;
+      final var newVis = (Boolean) value;
+      if (labelVisible.equals(newVis)) return;
+      labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.APPEARANCE) {
-      AttributeOption NewAppearance = (AttributeOption) value;
-      if (Appearance.equals(NewAppearance)) return;
-      Appearance = NewAppearance;
+      final var newAppearance = (AttributeOption) value;
+      if (appearance.equals(newAppearance)) return;
+      appearance = newAppearance;
       fireAttributeValueChanged(attr, value, null);
     }
   }

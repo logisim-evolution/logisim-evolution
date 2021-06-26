@@ -59,13 +59,13 @@ public class RamAttributes extends AbstractAttributeSet {
 
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
-  private String Label = "";
+  private String label = "";
   private AttributeOption Trigger = StdAttr.TRIG_RISING;
   private AttributeOption BusStyle = BUS_SEP;
-  private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisible = false;
+  private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
+  private Boolean labelVisible = false;
   private AttributeOption ByteEnables = BUS_WITHOUT_BYTEENABLES;
-  private Boolean AsynchronousRead = false;
+  private Boolean asynchronousRead = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
   private AttributeOption RWBehavior = Mem.READAFTERWRITE;
   private Boolean ClearPin = false;
@@ -79,8 +79,8 @@ public class RamAttributes extends AbstractAttributeSet {
   }
 
   public boolean updateAttributes() {
-    ArrayList<Attribute<?>> newList = new ArrayList<>();
-    boolean changes = false;
+    final var newList = new ArrayList<Attribute<?>>();
+    var changes = false;
     newList.add(Mem.ADDR_ATTR);
     newList.add(Mem.DATA_ATTR);
     newList.add(Mem.ENABLES_ATTR);
@@ -91,7 +91,7 @@ public class RamAttributes extends AbstractAttributeSet {
       if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
         changes |= !myAttributes.contains(Mem.ASYNC_READ);
         newList.add(Mem.ASYNC_READ);
-        if (!AsynchronousRead) {
+        if (!asynchronousRead) {
           changes |= !myAttributes.contains(Mem.READ_ATTR);
           newList.add(Mem.READ_ATTR);
         } else changes |= myAttributes.contains(Mem.READ_ATTR);
@@ -124,15 +124,15 @@ public class RamAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    RamAttributes d = (RamAttributes) dest;
+    final var d = (RamAttributes) dest;
     d.addrBits = addrBits;
     d.dataBits = dataBits;
     d.Trigger = Trigger;
     d.BusStyle = BusStyle;
-    d.LabelFont = LabelFont;
+    d.labelFont = labelFont;
     d.Appearance = Appearance;
     d.ByteEnables = ByteEnables;
-    d.AsynchronousRead = AsynchronousRead;
+    d.asynchronousRead = asynchronousRead;
     d.RWBehavior = RWBehavior;
     d.ClearPin = ClearPin;
     d.lineSize = lineSize;
@@ -159,13 +159,13 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) ramType;
     }
     if (attr == StdAttr.LABEL) {
-      return (V) Label;
+      return (V) label;
     }
     if (attr == StdAttr.TRIGGER) {
       return (V) Trigger;
     }
     if (attr == Mem.ASYNC_READ) {
-      return (V) AsynchronousRead;
+      return (V) asynchronousRead;
     }
     if (attr == Mem.READ_ATTR) {
       return (V) RWBehavior;
@@ -174,10 +174,10 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) BusStyle;
     }
     if (attr == StdAttr.LABEL_FONT) {
-      return (V) LabelFont;
+      return (V) labelFont;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      return (V) LabelVisible;
+      return (V) labelVisible;
     }
     if (attr == ATTR_ByteEnables) {
       return (V) ByteEnables;
@@ -203,14 +203,14 @@ public class RamAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == Mem.ADDR_ATTR) {
-      BitWidth newAddr = (BitWidth) value;
+      final var newAddr = (BitWidth) value;
       if (addrBits == newAddr) {
         return;
       }
       addrBits = newAddr;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
-      BitWidth newData = (BitWidth) value;
+      final var newData = (BitWidth) value;
       if (dataBits == newData) {
         return;
       }
@@ -219,29 +219,29 @@ public class RamAttributes extends AbstractAttributeSet {
         fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.ENABLES_ATTR) {
-      AttributeOption val = (AttributeOption) value;
+      final var val = (AttributeOption) value;
       if (!typeOfEnables.equals(val)) {
         typeOfEnables = val;
         if (updateAttributes()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == ATTR_TYPE) {
-      AttributeOption val = (AttributeOption) value;
+      final var val = (AttributeOption) value;
       if (!ramType.equals(val)) {
         ramType = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == StdAttr.LABEL) {
-      String NewLabel = (String) value;
-      if (Label.equals(NewLabel)) {
+      final var newLabel = (String) value;
+      if (label.equals(newLabel)) {
         return;
       }
       @SuppressWarnings("unchecked")
-      V Oldlabel = (V) Label;
-      Label = NewLabel;
+      V Oldlabel = (V) label;
+      label = newLabel;
       fireAttributeValueChanged(attr, value, Oldlabel);
     } else if (attr == StdAttr.TRIGGER) {
-      AttributeOption newTrigger = (AttributeOption) value;
+      final var newTrigger = (AttributeOption) value;
       if (Trigger.equals(newTrigger)) {
         return;
       }
@@ -250,46 +250,46 @@ public class RamAttributes extends AbstractAttributeSet {
         fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.ASYNC_READ) {
-      Boolean val = (Boolean) value;
-      if (AsynchronousRead != val) {
-        AsynchronousRead = val;
+      final var val = (Boolean) value;
+      if (asynchronousRead != val) {
+        asynchronousRead = val;
         if (updateAttributes()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == Mem.READ_ATTR) {
-      AttributeOption val = (AttributeOption) value;
+      final var val = (AttributeOption) value;
       if (!RWBehavior.equals(val)) {
         RWBehavior = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == ATTR_DBUS) {
-      AttributeOption NewStyle = (AttributeOption) value;
+      final var NewStyle = (AttributeOption) value;
       if (BusStyle.equals(NewStyle)) {
         return;
       }
       BusStyle = NewStyle;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_FONT) {
-      Font NewFont = (Font) value;
-      if (LabelFont.equals(NewFont)) {
+      final var newFont = (Font) value;
+      if (labelFont.equals(newFont)) {
         return;
       }
-      LabelFont = NewFont;
+      labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean newVis = (Boolean) value;
-      if (LabelVisible.equals(newVis)) return;
-      LabelVisible = newVis;
+      final var newVis = (Boolean) value;
+      if (labelVisible.equals(newVis)) return;
+      labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == ATTR_ByteEnables) {
-      AttributeOption NewBE = (AttributeOption) value;
-      if (ByteEnables.equals(NewBE)) {
+      var newBE = (AttributeOption) value;
+      if (ByteEnables.equals(newBE)) {
         return;
       }
       if (dataBits.getWidth() < 9) {
-        NewBE = BUS_WITHOUT_BYTEENABLES;
+        newBE = BUS_WITHOUT_BYTEENABLES;
       }
-      ByteEnables = NewBE;
+      ByteEnables = newBE;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == CLEAR_PIN) {
       Boolean val = (Boolean) value;
@@ -298,19 +298,19 @@ public class RamAttributes extends AbstractAttributeSet {
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == Mem.LINE_ATTR) {
-      AttributeOption val = (AttributeOption) value;
+      final var val = (AttributeOption) value;
       if (!lineSize.equals(val)) {
         lineSize = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == Mem.ALLOW_MISALIGNED) {
-      Boolean val = (Boolean) value;
+      final var val = (Boolean) value;
       if (allowMisaligned != val) {
         allowMisaligned = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == StdAttr.APPEARANCE) {
-      AttributeOption NewAppearance = (AttributeOption) value;
+      final var NewAppearance = (AttributeOption) value;
       if (Appearance.equals(NewAppearance)) return;
       Appearance = NewAppearance;
       fireAttributeValueChanged(attr, value, null);

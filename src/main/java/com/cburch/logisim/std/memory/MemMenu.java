@@ -33,7 +33,6 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.hex.HexFile;
-import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.MenuExtender;
@@ -77,7 +76,7 @@ class MemMenu implements ActionListener, MenuExtender {
       ((RomAttributes) attrs).setProject(proj);
     }
 
-    boolean enabled = circState != null;
+    var enabled = circState != null;
     edit = createItem(enabled, S.get("ramEditMenuItem"));
     clear = createItem(enabled, S.get("ramClearMenuItem"));
     load = createItem(enabled, S.get("ramLoadMenuItem"));
@@ -91,15 +90,15 @@ class MemMenu implements ActionListener, MenuExtender {
   }
 
   private JMenuItem createItem(boolean enabled, String label) {
-    JMenuItem ret = new JMenuItem(label);
+    final var ret = new JMenuItem(label);
     ret.setEnabled(enabled);
     ret.addActionListener(this);
     return ret;
   }
 
   private void doClear() {
-    MemState s = factory.getState(instance, circState);
-    boolean isAllZero = s.getContents().isClear();
+    final var s = factory.getState(instance, circState);
+    final var isAllZero = s.getContents().isClear();
     if (isAllZero) return;
 
     int choice =
@@ -115,18 +114,18 @@ class MemMenu implements ActionListener, MenuExtender {
 
   private void doEdit() {
     if (factory.getState(instance, circState) == null) return;
-    HexFrame frame = factory.getHexFrame(proj, instance, circState);
+    final var frame = factory.getHexFrame(proj, instance, circState);
     frame.setVisible(true);
     frame.toFront();
   }
 
   private void doLoad() {
-    MemContents m = factory.getState(instance, circState).getContents();
+    final var m = factory.getState(instance, circState).getContents();
     HexFile.open(m, frame, proj, instance);
   }
 
   private void doSave() {
-    MemContents m = factory.getState(instance, circState).getContents();
+    final var m = factory.getState(instance, circState).getContents();
     HexFile.save(m, frame, proj, instance);
   }
 }

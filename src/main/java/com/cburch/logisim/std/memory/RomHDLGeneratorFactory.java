@@ -33,27 +33,26 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private String GetBin(long value, int nr_of_bits) {
-    StringBuilder Bits = new StringBuilder();
-    long mask = (1L << (nr_of_bits - 1));
+  private String getBin(long value, int nrOfBits) {
+    final var bits = new StringBuilder();
+    var mask = (1L << (nrOfBits - 1));
     int count;
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    for (count = 0; count < nr_of_bits; count++) {
-      if ((value & mask) != 0) Bits.append("1");
-      else Bits.append("0");
+    if (nrOfBits == 1) bits.append("'");
+    else bits.append("\"");
+    for (count = 0; count < nrOfBits; count++) {
+      if ((value & mask) != 0) bits.append("1");
+      else bits.append("0");
       mask >>= 1;
     }
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    return Bits.toString();
+    if (nrOfBits == 1) bits.append("'");
+    else bits.append("\"");
+    return bits.toString();
   }
 
   @Override
@@ -62,71 +61,71 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
+    return inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
     long addr;
-    MemContents rom = attrs.getValue(Rom.CONTENTS_ATTR);
+    final var rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDL.isVHDL()) {
-      Contents.add("   MakeRom : PROCESS( Address )");
-      Contents.add("      BEGIN");
-      Contents.add("         CASE (Address) IS");
+      contents.add("   MakeRom : PROCESS( Address )");
+      contents.add("      BEGIN");
+      contents.add("         CASE (Address) IS");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          Contents.add(
+          contents.add(
               "            WHEN "
-                  + GetBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth())
+                  + getBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth())
                   + " => Data <= "
-                  + GetBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth())
+                  + getBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth())
                   + ";");
         }
       }
       if (attrs.getValue(Mem.DATA_ATTR).getWidth() == 1)
-        Contents.add("            WHEN OTHERS => Data <= '0';");
-      else Contents.add("            WHEN OTHERS => Data <= (OTHERS => '0');");
-      Contents.add("         END CASE;");
-      Contents.add("      END PROCESS MakeRom;");
+        contents.add("            WHEN OTHERS => Data <= '0';");
+      else
+        contents.add("            WHEN OTHERS => Data <= (OTHERS => '0');");
+      contents.add("         END CASE;");
+      contents.add("      END PROCESS MakeRom;");
     } else {
-      Contents.add(
-          "   reg[" + (attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
-      Contents.add("");
-      Contents.add("   always @ (Address)");
-      Contents.add("   begin");
-      Contents.add("      case(Address)");
+      contents.add("   reg[" + (attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
+      contents.add("");
+      contents.add("   always @ (Address)");
+      contents.add("   begin");
+      contents.add("      case(Address)");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          Contents.add("         " + addr + " : Data = " + rom.get(addr) + ";");
+          contents.add("         " + addr + " : Data = " + rom.get(addr) + ";");
         }
       }
-      Contents.add("         default : Data = 0;");
-      Contents.add("      endcase");
-      Contents.add("   end");
+      contents.add("         default : Data = 0;");
+      contents.add("      endcase");
+      contents.add("   end");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
-    return Outputs;
+  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    outputs.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
+    return outputs;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Nets));
-    PortMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) mapInfo;
+    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
+    portMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), nets));
+    portMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), nets));
+    return portMap;
   }
 
   @Override

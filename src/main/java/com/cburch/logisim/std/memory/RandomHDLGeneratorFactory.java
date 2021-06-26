@@ -53,214 +53,214 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("GlobalClock", 1);
-    Inputs.put("ClockEnable", 1);
-    Inputs.put("clear", 1);
-    Inputs.put("enable", 1);
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    inputs.put("GlobalClock", 1);
+    inputs.put("ClockEnable", 1);
+    inputs.put("clear", 1);
+    inputs.put("enable", 1);
+    return inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(
+  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    contents.addAll(
         MakeRemarkBlock("This is a multicycle implementation of the Random Component", 3));
-    Contents.add("");
+    contents.add("");
     if (HDL.isVHDL()) {
-      Contents.add("   Q            <= s_output_reg;");
-      Contents.add("   s_InitSeed   <= X\"0005DEECE66D\" WHEN " + SeedStr + " = 0 ELSE");
-      Contents.add(
+      contents.add("   Q            <= s_output_reg;");
+      contents.add("   s_InitSeed   <= X\"0005DEECE66D\" WHEN " + SeedStr + " = 0 ELSE");
+      contents.add(
           "                   X\"0000\"&std_logic_vector(to_unsigned(" + SeedStr + ",32));");
-      Contents.add("   s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';");
-      Contents.add("   s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR");
-      Contents.add("                               s_reset_reg = \"010\") AND");
-      Contents.add("                               clear = '0' ELSE");
-      Contents.add("                   \"101\" WHEN s_reset_reg = \"001\" ELSE");
-      Contents.add("                   \"001\";");
-      Contents.add("   s_start      <= '1' WHEN (ClockEnable = '1' AND enable = '1') OR");
-      Contents.add("                            (s_reset_reg = \"101\" AND clear = '0') ELSE '0';");
-      Contents.add("   s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
-      Contents.add("                        X\"5DEECE66D\" WHEN s_start_reg = '1' ELSE");
-      Contents.add("                        '0'&s_mult_shift_reg(35 DOWNTO 1);");
-      Contents.add("   s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
-      Contents.add("                        s_current_seed WHEN s_start_reg = '1' ELSE");
-      Contents.add("                        s_seed_shift_reg(46 DOWNTO 0)&'0';");
-      Contents.add("   s_mult_busy       <= '0' WHEN s_mult_shift_reg = X\"000000000\" ELSE '1';");
-      Contents.add("");
-      Contents.add("   s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR");
-      Contents.add("                                             s_reset = '1' ELSE");
-      Contents.add("                        '0'&s_mac_lo_reg(23 DOWNTO 0);");
-      Contents.add("   s_mac_lo_in_2     <= '0'&X\"00000B\"");
-      Contents.add("                           WHEN s_start_reg = '1' ELSE");
-      Contents.add("                        '0'&s_seed_shift_reg(23 DOWNTO 0) ");
-      Contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
-      Contents.add("                        (OTHERS => '0');");
-      Contents.add("   s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE");
-      Contents.add("                        s_mac_hi_reg;");
-      Contents.add("   s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) ");
-      Contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
-      Contents.add("                        (OTHERS => '0');");
-      Contents.add("   s_busy_pipe_next  <= \"00\" WHEN s_reset = '1' ELSE");
-      Contents.add("                        s_busy_pipe_reg(0)&s_mult_busy;");
-      Contents.add("");
-      Contents.add("   make_current_seed : PROCESS( GlobalClock , s_busy_pipe_reg , s_reset )");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add("         IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;");
-      Contents.add("         ELSIF (s_busy_pipe_reg = \"10\") THEN");
-      Contents.add("            s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0 );");
-      Contents.add("         END IF;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_current_seed;");
-      Contents.add("   ");
-      Contents.add("   make_shift_regs : PROCESS(GlobalClock,s_mult_shift_next,s_seed_shift_next,");
-      Contents.add("                             s_mac_lo_in_1,s_mac_lo_in_2)");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
-      Contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
-      Contents.add(
+      contents.add("   s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';");
+      contents.add("   s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR");
+      contents.add("                               s_reset_reg = \"010\") AND");
+      contents.add("                               clear = '0' ELSE");
+      contents.add("                   \"101\" WHEN s_reset_reg = \"001\" ELSE");
+      contents.add("                   \"001\";");
+      contents.add("   s_start      <= '1' WHEN (ClockEnable = '1' AND enable = '1') OR");
+      contents.add("                            (s_reset_reg = \"101\" AND clear = '0') ELSE '0';");
+      contents.add("   s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
+      contents.add("                        X\"5DEECE66D\" WHEN s_start_reg = '1' ELSE");
+      contents.add("                        '0'&s_mult_shift_reg(35 DOWNTO 1);");
+      contents.add("   s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
+      contents.add("                        s_current_seed WHEN s_start_reg = '1' ELSE");
+      contents.add("                        s_seed_shift_reg(46 DOWNTO 0)&'0';");
+      contents.add("   s_mult_busy       <= '0' WHEN s_mult_shift_reg = X\"000000000\" ELSE '1';");
+      contents.add("");
+      contents.add("   s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR");
+      contents.add("                                             s_reset = '1' ELSE");
+      contents.add("                        '0'&s_mac_lo_reg(23 DOWNTO 0);");
+      contents.add("   s_mac_lo_in_2     <= '0'&X\"00000B\"");
+      contents.add("                           WHEN s_start_reg = '1' ELSE");
+      contents.add("                        '0'&s_seed_shift_reg(23 DOWNTO 0) ");
+      contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
+      contents.add("                        (OTHERS => '0');");
+      contents.add("   s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE");
+      contents.add("                        s_mac_hi_reg;");
+      contents.add("   s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) ");
+      contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
+      contents.add("                        (OTHERS => '0');");
+      contents.add("   s_busy_pipe_next  <= \"00\" WHEN s_reset = '1' ELSE");
+      contents.add("                        s_busy_pipe_reg(0)&s_mult_busy;");
+      contents.add("");
+      contents.add("   make_current_seed : PROCESS( GlobalClock , s_busy_pipe_reg , s_reset )");
+      contents.add("   BEGIN");
+      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
+      contents.add("         IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;");
+      contents.add("         ELSIF (s_busy_pipe_reg = \"10\") THEN");
+      contents.add("            s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0 );");
+      contents.add("         END IF;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_current_seed;");
+      contents.add("   ");
+      contents.add("   make_shift_regs : PROCESS(GlobalClock,s_mult_shift_next,s_seed_shift_next,");
+      contents.add("                             s_mac_lo_in_1,s_mac_lo_in_2)");
+      contents.add("   BEGIN");
+      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
+      contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
+      contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
+      contents.add(
           "         s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2));");
-      Contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
-      Contents.add(
+      contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
+      contents.add(
           "         s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+");
-      Contents.add("                             unsigned(s_mac_lo_reg(24 DOWNTO 24)));");
-      Contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_shift_regs;");
-      Contents.add("");
-      Contents.add("   make_start_reg : PROCESS(GlobalClock,s_start)");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add("         s_start_reg <= s_start;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_start_reg;");
-      Contents.add("");
-      Contents.add("   make_reset_reg : PROCESS(GlobalClock,s_reset_next)");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add("         s_reset_reg <= s_reset_next;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_reset_reg;");
-      Contents.add("");
-      Contents.add("   make_output : PROCESS( GlobalClock , s_reset , s_InitSeed )");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add(
+      contents.add("                             unsigned(s_mac_lo_reg(24 DOWNTO 24)));");
+      contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_shift_regs;");
+      contents.add("");
+      contents.add("   make_start_reg : PROCESS(GlobalClock,s_start)");
+      contents.add("   BEGIN");
+      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
+      contents.add("         s_start_reg <= s_start;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_start_reg;");
+      contents.add("");
+      contents.add("   make_reset_reg : PROCESS(GlobalClock,s_reset_next)");
+      contents.add("   BEGIN");
+      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
+      contents.add("         s_reset_reg <= s_reset_next;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_reset_reg;");
+      contents.add("");
+      contents.add("   make_output : PROCESS( GlobalClock , s_reset , s_InitSeed )");
+      contents.add("   BEGIN");
+      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
+      contents.add(
           "         IF (s_reset = '1') THEN s_output_reg <= s_InitSeed( ("
               + NrOfBitsStr
               + "-1) DOWNTO 0 );");
-      Contents.add("         ELSIF (ClockEnable = '1' AND enable = '1') THEN");
-      Contents.add(
+      contents.add("         ELSIF (ClockEnable = '1' AND enable = '1') THEN");
+      contents.add(
           "            s_output_reg <= s_current_seed((" + NrOfBitsStr + "+11) DOWNTO 12);");
-      Contents.add("         END IF;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_output;");
+      contents.add("         END IF;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_output;");
     } else {
-      Contents.add("   assign Q = s_output_reg;");
-      Contents.add("   assign s_InitSeed = (" + SeedStr + ") ? " + SeedStr + " : 48'h5DEECE66D;");
-      Contents.add("   assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;");
-      Contents.add("   assign s_reset_next = (((s_reset_reg == 3'b101)|");
-      Contents.add("                           (s_reset_reg == 3'b010))&clear) ? 3'b010 :");
-      Contents.add("                         (s_reset_reg==3'b001) ? 3'b101 : 3'b001;");
-      Contents.add(
+      contents.add("   assign Q = s_output_reg;");
+      contents.add("   assign s_InitSeed = (" + SeedStr + ") ? " + SeedStr + " : 48'h5DEECE66D;");
+      contents.add("   assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;");
+      contents.add("   assign s_reset_next = (((s_reset_reg == 3'b101)|");
+      contents.add("                           (s_reset_reg == 3'b010))&clear) ? 3'b010 :");
+      contents.add("                         (s_reset_reg==3'b001) ? 3'b101 : 3'b001;");
+      contents.add(
           "   assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;");
-      Contents.add("   assign s_mult_shift_next = (s_reset) ? 36'd0 :");
-      Contents.add(
+      contents.add("   assign s_mult_shift_next = (s_reset) ? 36'd0 :");
+      contents.add(
           "                              (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};");
-      Contents.add("   assign s_seed_shift_next = (s_reset) ? 48'd0 :");
-      Contents.add(
+      contents.add("   assign s_seed_shift_next = (s_reset) ? 48'd0 :");
+      contents.add(
           "                              (s_start_reg) ? s_current_seed : {s_seed_shift_reg[46:0],1'b0};");
-      Contents.add("   assign s_mult_busy = (s_mult_shift_reg == 0) ? 1'b0 : 1'b1;");
-      Contents.add(
+      contents.add("   assign s_mult_busy = (s_mult_shift_reg == 0) ? 1'b0 : 1'b1;");
+      contents.add(
           "   assign s_mac_lo_in_1 = (s_start_reg|s_reset) ? 25'd0 : {1'b0,s_mac_lo_reg[23:0]};");
-      Contents.add("   assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB :");
-      Contents.add(
+      contents.add("   assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB :");
+      contents.add(
           "                          (s_mult_shift_reg[0]) ? {1'b0,s_seed_shift_reg[23:0]} : 25'd0;");
-      Contents.add("   assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;");
-      Contents.add(
+      contents.add("   assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;");
+      contents.add(
           "   assign s_mac_hi_1_next = (s_mult_shift_reg[0]) ? s_seed_shift_reg[47:24] : 0;");
-      Contents.add(
+      contents.add(
           "   assign s_busy_pipe_next = (s_reset) ? 2'd0 : {s_busy_pipe_reg[0],s_mult_busy};");
-      Contents.add("");
-      Contents.add("   always @(posedge GlobalClock)");
-      Contents.add("   begin");
-      Contents.add("      if (s_reset) s_current_seed <= s_InitSeed;");
-      Contents.add(
+      contents.add("");
+      contents.add("   always @(posedge GlobalClock)");
+      contents.add("   begin");
+      contents.add("      if (s_reset) s_current_seed <= s_InitSeed;");
+      contents.add(
           "      else if (s_busy_pipe_reg == 2'b10) s_current_seed <= {s_mac_hi_reg,s_mac_lo_reg[23:0]};");
-      Contents.add("   end");
-      Contents.add("");
-      Contents.add("   always @(posedge GlobalClock)");
-      Contents.add("   begin");
-      Contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
-      Contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
-      Contents.add("         s_mac_lo_reg     <= s_mac_lo_in_1+s_mac_lo_in_2;");
-      Contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
-      Contents.add("         s_mac_hi_reg     <= s_mac_hi_1_reg+s_mac_hi_in_2+s_mac_lo_reg[24];");
-      Contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
-      Contents.add("         s_start_reg      <= s_start;");
-      Contents.add("         s_reset_reg      <= s_reset_next;");
-      Contents.add("   end");
-      Contents.add("");
-      Contents.add("   always @(posedge GlobalClock)");
-      Contents.add("   begin");
-      Contents.add("      if (s_reset) s_output_reg <= s_InitSeed[(" + NrOfBitsStr + "-1):0];");
-      Contents.add(
+      contents.add("   end");
+      contents.add("");
+      contents.add("   always @(posedge GlobalClock)");
+      contents.add("   begin");
+      contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
+      contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
+      contents.add("         s_mac_lo_reg     <= s_mac_lo_in_1+s_mac_lo_in_2;");
+      contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
+      contents.add("         s_mac_hi_reg     <= s_mac_hi_1_reg+s_mac_hi_in_2+s_mac_lo_reg[24];");
+      contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
+      contents.add("         s_start_reg      <= s_start;");
+      contents.add("         s_reset_reg      <= s_reset_next;");
+      contents.add("   end");
+      contents.add("");
+      contents.add("   always @(posedge GlobalClock)");
+      contents.add("   begin");
+      contents.add("      if (s_reset) s_output_reg <= s_InitSeed[(" + NrOfBitsStr + "-1):0];");
+      contents.add(
           "      else if (ClockEnable&enable) s_output_reg <= s_current_seed[("
               + NrOfBitsStr
               + "+11):12];");
-      Contents.add("   end");
+      contents.add("   end");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Q", NrOfBitsId);
-    return Outputs;
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    outputs.put("Q", NrOfBitsId);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(NrOfBitsId, NrOfBitsStr);
-    Parameters.put(SeedId, SeedStr);
-    return Parameters;
+    SortedMap<Integer, String> params = new TreeMap<>();
+    params.put(NrOfBitsId, NrOfBitsStr);
+    params.put(SeedId, SeedStr);
+    return params;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
+    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    var seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
-    ParameterMap.put(
+    parameterMap.put(
         NrOfBitsStr,
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-    ParameterMap.put(SeedStr, seed);
-    return ParameterMap;
+    parameterMap.put(SeedStr, seed);
+    return parameterMap;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    boolean GatedClock = false;
-    boolean HasClock = true;
-    boolean ActiveLow = false;
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) MapInfo;
+    var gatedClock = false;
+    var hasClock = true;
+    var activeLow = false;
     if (!ComponentInfo.EndIsConnected(Random.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
-      HasClock = false;
+      hasClock = false;
     }
-    String ClockNetName = GetClockNetName(ComponentInfo, Random.CK, Nets);
-    if (ClockNetName.isEmpty()) {
-      GatedClock = true;
+    final var clockNetName = GetClockNetName(ComponentInfo, Random.CK, Nets);
+    if (clockNetName.isEmpty()) {
+      gatedClock = true;
       Reporter.Report.AddError(
           "Found a gated clock for component \"Random\" in circuit \""
               + Nets.getCircuitName()
@@ -268,68 +268,68 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Reporter.Report.AddError("This RNG will not work!");
     }
     if (ComponentInfo.GetComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
-      ActiveLow =
+      activeLow =
           ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
               == StdAttr.TRIG_FALLING;
     }
-    if (!HasClock || GatedClock) {
-      PortMap.put("GlobalClock", HDL.zeroBit());
-      PortMap.put("ClockEnable", HDL.zeroBit());
+    if (!hasClock || gatedClock) {
+      portMap.put("GlobalClock", HDL.zeroBit());
+      portMap.put("ClockEnable", HDL.zeroBit());
     } else {
-      PortMap.put(
+      portMap.put(
           "GlobalClock",
-          ClockNetName
+          clockNetName
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GlobalClockIndex
               + HDL.BracketClose());
       if (Nets.RequiresGlobalClockConnection()) {
-        PortMap.put(
+        portMap.put(
             "ClockEnable",
-            ClockNetName
+            clockNetName
                 + HDL.BracketOpen()
                 + ClockHDLGeneratorFactory.GlobalClockIndex
                 + HDL.BracketClose());
       } else {
-        if (ActiveLow)
-          PortMap.put(
+        if (activeLow)
+          portMap.put(
               "ClockEnable",
-              ClockNetName
+              clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + HDL.BracketClose());
         else
-          PortMap.put(
+          portMap.put(
               "ClockEnable",
-              ClockNetName
+              clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + HDL.BracketClose());
       }
     }
-    PortMap.putAll(GetNetMap("clear", true, ComponentInfo, Random.RST, Nets));
-    PortMap.putAll(GetNetMap("enable", false, ComponentInfo, Random.NXT, Nets));
-    String output = "Q";
+    portMap.putAll(GetNetMap("clear", true, ComponentInfo, Random.RST, Nets));
+    portMap.putAll(GetNetMap("enable", false, ComponentInfo, Random.NXT, Nets));
+    var output = "Q";
     if (HDL.isVHDL()
         & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
-    PortMap.putAll(GetNetMap(output, true, ComponentInfo, Random.OUT, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap(output, true, ComponentInfo, Random.OUT, Nets));
+    return portMap;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
-    Regs.put("s_current_seed", 48);
-    Regs.put("s_reset_reg", 3);
-    Regs.put("s_mult_shift_reg", 36);
-    Regs.put("s_seed_shift_reg", 48);
-    Regs.put("s_start_reg", 1);
-    Regs.put("s_mac_lo_reg", 25);
-    Regs.put("s_mac_hi_reg", 24);
-    Regs.put("s_mac_hi_1_reg", 24);
-    Regs.put("s_busy_pipe_reg", 2);
-    Regs.put("s_output_reg", NrOfBitsId);
-    return Regs;
+    SortedMap<String, Integer> regs = new TreeMap<>();
+    regs.put("s_current_seed", 48);
+    regs.put("s_reset_reg", 3);
+    regs.put("s_mult_shift_reg", 36);
+    regs.put("s_seed_shift_reg", 48);
+    regs.put("s_start_reg", 1);
+    regs.put("s_mac_lo_reg", 25);
+    regs.put("s_mac_hi_reg", 24);
+    regs.put("s_mac_hi_1_reg", 24);
+    regs.put("s_busy_pipe_reg", 2);
+    regs.put("s_output_reg", NrOfBitsId);
+    return regs;
   }
 
   @Override
@@ -339,20 +339,20 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_InitSeed", 48);
-    Wires.put("s_reset", 1);
-    Wires.put("s_reset_next", 3);
-    Wires.put("s_mult_shift_next", 36);
-    Wires.put("s_seed_shift_next", 48);
-    Wires.put("s_mult_busy", 1);
-    Wires.put("s_start", 1);
-    Wires.put("s_mac_lo_in_1", 25);
-    Wires.put("s_mac_lo_in_2", 25);
-    Wires.put("s_mac_hi_1_next", 24);
-    Wires.put("s_mac_hi_in_2", 24);
-    Wires.put("s_busy_pipe_next", 2);
-    return Wires;
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    wires.put("s_InitSeed", 48);
+    wires.put("s_reset", 1);
+    wires.put("s_reset_next", 3);
+    wires.put("s_mult_shift_next", 36);
+    wires.put("s_seed_shift_next", 48);
+    wires.put("s_mult_busy", 1);
+    wires.put("s_start", 1);
+    wires.put("s_mac_lo_in_1", 25);
+    wires.put("s_mac_lo_in_2", 25);
+    wires.put("s_mac_hi_1_next", 24);
+    wires.put("s_mac_hi_in_2", 24);
+    wires.put("s_busy_pipe_next", 2);
+    return wires;
   }
 
   @Override

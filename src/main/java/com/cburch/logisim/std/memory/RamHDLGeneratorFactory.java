@@ -57,70 +57,70 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    Inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
-    Inputs.put("DataIn", NrOfBits);
-    Inputs.put("WE", 1);
-    Inputs.put("OE", 1);
+  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
+    inputs.put("DataIn", nrOfBits);
+    inputs.put("WE", 1);
+    inputs.put("OE", 1);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
-    boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
+    final var asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     if (!asynch) {
-      Inputs.put("Clock", 1);
-      Inputs.put("Tick", 1);
+      inputs.put("Clock", 1);
+      inputs.put("Tick", 1);
     }
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (byteEnables) {
-      int NrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
-      for (int i = 0; i < NrOfByteEnables; i++) {
-        Inputs.put("ByteEnable" + i, 1);
+      final var nrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
+      for (var i = 0; i < nrOfByteEnables; i++) {
+        inputs.put("ByteEnable" + i, 1);
       }
     }
-    return Inputs;
+    return inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {
-    SortedMap<String, Integer> Mems = new TreeMap<>();
+    SortedMap<String, Integer> mems = new TreeMap<>();
     if (HDL.isVHDL()) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-      int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+      final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+      int nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
       if (byteEnables) {
-        boolean truncated = (NrOfBits % 8) != 0;
-        int NrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
+        final var truncated = (nrOfBits % 8) != 0;
+        var nrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
         if (truncated) {
-          NrOfByteEnables--;
-          Mems.put("s_trunc_mem_contents", RestArrayId);
+          nrOfByteEnables--;
+          mems.put("s_trunc_mem_contents", RestArrayId);
         }
-        for (int i = 0; i < NrOfByteEnables; i++) {
-          Mems.put("s_byte_mem_" + i + "_contents", ByteArrayId);
+        for (int i = 0; i < nrOfByteEnables; i++) {
+          mems.put("s_byte_mem_" + i + "_contents", ByteArrayId);
         }
       } else {
-        Mems.put("s_mem_contents", MemArrayId);
+        mems.put("s_mem_contents", MemArrayId);
       }
     }
-    return Mems;
+    return mems;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var contents = new ArrayList<String>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDL.isVHDL()) {
-      Contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3));
+      contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3));
       if (byteEnables) {
-        for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          Contents.add(
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents.add(
               "   s_byte_enable_"
                   + i
                   + " <= s_ByteEnableReg("
                   + i
                   + ") AND s_TickDelayLine(2) AND s_OEReg;");
-          Contents.add(
+          contents.add(
               "   s_we_"
                   + i
                   + "          <= s_ByteEnableReg("
@@ -128,22 +128,22 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ") AND s_TickDelayLine(0) AND s_WEReg;");
         }
       } else {
-        Contents.add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;");
-        Contents.add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
+        contents.add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;");
+        contents.add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
       }
-      Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the input registers are defined", 3));
-      Contents.add("   InputRegs : PROCESS (Clock , Tick , Address , DataIn , WE , OE )");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-      Contents.add("         IF (Tick = '1') THEN");
-      Contents.add("             s_DataInReg        <= DataIn;");
-      Contents.add("             s_Address_reg      <= Address;");
-      Contents.add("             s_WEReg            <= WE;");
-      Contents.add("             s_OEReg            <= OE;");
+      contents.add("");
+      contents.addAll(MakeRemarkBlock("Here the input registers are defined", 3));
+      contents.add("   InputRegs : PROCESS (Clock , Tick , Address , DataIn , WE , OE )");
+      contents.add("   BEGIN");
+      contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+      contents.add("         IF (Tick = '1') THEN");
+      contents.add("             s_DataInReg        <= DataIn;");
+      contents.add("             s_Address_reg      <= Address;");
+      contents.add("             s_WEReg            <= WE;");
+      contents.add("             s_OEReg            <= OE;");
       if (byteEnables) {
-        for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          Contents.add(
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents.add(
               "             s_ByteEnableReg("
                   + i
                   + ") <= ByteEnable"
@@ -151,93 +151,93 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ";");
         }
       }
-      Contents.add("         END IF;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS InputRegs;");
-      Contents.add("");
-      Contents.add("   TickPipeReg : PROCESS(Clock)");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-      Contents.add("          s_TickDelayLine(0)          <= Tick;");
-      Contents.add("          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS TickPipeReg;");
-      Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the actual memorie(s) is(are) defined", 3));
+      contents.add("         END IF;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS InputRegs;");
+      contents.add("");
+      contents.add("   TickPipeReg : PROCESS(Clock)");
+      contents.add("   BEGIN");
+      contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+      contents.add("          s_TickDelayLine(0)          <= Tick;");
+      contents.add("          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS TickPipeReg;");
+      contents.add("");
+      contents.addAll(MakeRemarkBlock("Here the actual memorie(s) is(are) defined", 3));
       if (byteEnables) {
-        boolean truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
-        for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          Contents.add(
+        final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents.add(
               "   Mem"
                   + i
                   + " : PROCESS( Clock , s_we_"
                   + i
                   + ", s_DataInReg, s_Address_reg)");
-          Contents.add("   BEGIN");
-          Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          Contents.add("            IF (s_we_" + i + " = '1') THEN");
-          int startIndex = i * 8;
-          int endIndex =
+          contents.add("   BEGIN");
+          contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+          contents.add("            IF (s_we_" + i + " = '1') THEN");
+          final var startIndex = i * 8;
+          final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
-          String Memname =
+          final var memName =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1) && truncated)
                   ? "s_trunc_mem_contents"
                   : "s_byte_mem_" + i + "_contents";
-          Contents.add(
+          contents.add(
               "               "
-                  + Memname
+                  + memName
                   + "(to_integer(unsigned(s_Address_reg))) <= s_DataInReg("
                   + endIndex
                   + " DOWNTO "
                   + startIndex
                   + ");");
-          Contents.add("            END IF;");
-          Contents.add(
+          contents.add("            END IF;");
+          contents.add(
               "            s_ram_data_out("
                   + endIndex
                   + " DOWNTO "
                   + startIndex
                   + ") <= "
-                  + Memname
+                  + memName
                   + "(to_integer(unsigned(s_Address_reg)));");
-          Contents.add("      END IF;");
-          Contents.add("   END PROCESS Mem" + i + ";");
-          Contents.add("");
+          contents.add("      END IF;");
+          contents.add("   END PROCESS Mem" + i + ";");
+          contents.add("");
         }
       } else {
-        Contents.add("   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)");
-        Contents.add("   BEGIN");
-        Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-        Contents.add("            IF (s_we = '1') THEN");
-        Contents.add(
+        contents.add("   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)");
+        contents.add("   BEGIN");
+        contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+        contents.add("            IF (s_we = '1') THEN");
+        contents.add(
             "               s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;");
-        Contents.add("            END IF;");
-        Contents.add(
+        contents.add("            END IF;");
+        contents.add(
             "            s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));");
-        Contents.add("      END IF;");
-        Contents.add("   END PROCESS Mem;");
-        Contents.add("");
+        contents.add("      END IF;");
+        contents.add("   END PROCESS Mem;");
+        contents.add("");
       }
-      Contents.addAll(MakeRemarkBlock("Here the output register is defined", 3));
+      contents.addAll(MakeRemarkBlock("Here the output register is defined", 3));
       if (byteEnables) {
-        for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          Contents.add(
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+          contents.add(
               "   Res"
                   + i
                   + " : PROCESS( Clock , s_byte_enable_"
                   + i
                   + ", s_ram_data_out)");
-          Contents.add("   BEGIN");
-          Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          Contents.add("         IF (s_byte_enable_" + i + " = '1') THEN");
-          int startIndex = i * 8;
-          int endIndex =
+          contents.add("   BEGIN");
+          contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+          contents.add("         IF (s_byte_enable_" + i + " = '1') THEN");
+          final var startIndex = i * 8;
+          final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
-          Contents.add(
+          contents.add(
               "           DataOut("
                   + endIndex
                   + " DOWNTO "
@@ -247,125 +247,124 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + " DOWNTO "
                   + startIndex
                   + ");");
-          Contents.add("         END IF;");
-          Contents.add("      END IF;");
-          Contents.add("   END PROCESS Res" + i + ";");
-          Contents.add("");
+          contents.add("         END IF;");
+          contents.add("      END IF;");
+          contents.add("   END PROCESS Res" + i + ";");
+          contents.add("");
         }
       } else {
-        Contents.add("   Res : PROCESS( Clock , s_oe, s_ram_data_out)");
-        Contents.add("   BEGIN");
-        Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-        Contents.add("         IF (s_oe = '1') THEN");
-        Contents.add("           DataOut <= s_ram_data_out;");
-        Contents.add("         END IF;");
-        Contents.add("      END IF;");
-        Contents.add("   END PROCESS Res;");
-        Contents.add("");
+        contents.add("   Res : PROCESS( Clock , s_oe, s_ram_data_out)");
+        contents.add("   BEGIN");
+        contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
+        contents.add("         IF (s_oe = '1') THEN");
+        contents.add("           DataOut <= s_ram_data_out;");
+        contents.add("         END IF;");
+        contents.add("      END IF;");
+        contents.add("   END PROCESS Res;");
+        contents.add("");
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public int GetNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
+  public int GetNrOfTypes(Netlist nets, AttributeSet attrs) {
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    return (byteEnables) ? ((NrOfBits % 8) == 0) ? 1 : 2 : 1;
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    return (byteEnables) ? ((nrOfBits % 8) == 0) ? 1 : 2 : 1;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("DataOut", attrs.getValue(Mem.DATA_ATTR).getWidth());
-    return Outputs;
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    outputs.put("DataOut", attrs.getValue(Mem.DATA_ATTR).getWidth());
+    return outputs;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    final var attrs = componentInfo.GetComponent().getAttributeSet();
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
-    boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
+    final var asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Nets));
-    int DinPin = RamAppearance.getDataInIndex(0, attrs);
-    PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, DinPin, Nets));
-    PortMap.putAll(GetNetMap("WE", true, ComponentInfo, RamAppearance.getWEIndex(0, attrs), Nets));
-    PortMap.putAll(GetNetMap("OE", true, ComponentInfo, RamAppearance.getOEIndex(0, attrs), Nets));
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    portMap.putAll(GetNetMap("Address", true, componentInfo, RamAppearance.getAddrIndex(0, attrs), nets));
+    final var dinPin = RamAppearance.getDataInIndex(0, attrs);
+    portMap.putAll(GetNetMap("DataIn", true, componentInfo, dinPin, nets));
+    portMap.putAll(GetNetMap("WE", true, componentInfo, RamAppearance.getWEIndex(0, attrs), nets));
+    portMap.putAll(GetNetMap("OE", true, componentInfo, RamAppearance.getOEIndex(0, attrs), nets));
     if (!asynch) {
-      if (!ComponentInfo.EndIsConnected(RamAppearance.getClkIndex(0, attrs))) {
+      if (!componentInfo.EndIsConnected(RamAppearance.getClkIndex(0, attrs))) {
         Reporter.Report.AddError(
             "Component \"RAM\" in circuit \""
-                + Nets.getCircuitName()
+                + nets.getCircuitName()
                 + "\" has no clock connection!");
-        PortMap.put("Clock", HDL.zeroBit());
-        PortMap.put("Tick", HDL.zeroBit());
+        portMap.put("Clock", HDL.zeroBit());
+        portMap.put("Tick", HDL.zeroBit());
       } else {
-        String ClockNetName = GetClockNetName(ComponentInfo, RamAppearance.getClkIndex(0, attrs), Nets);
-        if (ClockNetName.isEmpty()) {
-          PortMap.putAll(GetNetMap("Clock", true, ComponentInfo, RamAppearance.getClkIndex(0, attrs), Nets));
-          PortMap.put("Tick", HDL.oneBit());
+        final var clockNetName = GetClockNetName(componentInfo, RamAppearance.getClkIndex(0, attrs), nets);
+        if (clockNetName.isEmpty()) {
+          portMap.putAll(GetNetMap("Clock", true, componentInfo, RamAppearance.getClkIndex(0, attrs), nets));
+          portMap.put("Tick", HDL.oneBit());
         } else {
-          int ClockBusIndex;
-          if (Nets.RequiresGlobalClockConnection()) {
-            ClockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
+          int clockBusIndex;
+          if (nets.RequiresGlobalClockConnection()) {
+            clockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
           } else {
-            ClockBusIndex =
+            clockBusIndex =
                 (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)
                     ? ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                     : ClockHDLGeneratorFactory.NegativeEdgeTickIndex;
           }
 
-          PortMap.put(
+          portMap.put(
               "Clock",
-              ClockNetName
+              clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.GlobalClockIndex
                   + HDL.BracketClose());
-          PortMap.put("Tick", ClockNetName + HDL.BracketOpen() + ClockBusIndex + HDL.BracketClose());
+          portMap.put("Tick", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
         }
       }
     }
     if (byteEnables) {
-      int NrOfByteEnables = RamAppearance.getNrBEPorts(ComponentInfo.GetComponent().getAttributeSet());
-      int ByteEnableOffset = RamAppearance.getBEIndex(0, ComponentInfo.GetComponent().getAttributeSet());
-      for (int i = 0; i < NrOfByteEnables; i++) {
-        PortMap.putAll(
+      final var nrOfByteEnables = RamAppearance.getNrBEPorts(componentInfo.GetComponent().getAttributeSet());
+      final var byteEnableOffset = RamAppearance.getBEIndex(0, componentInfo.GetComponent().getAttributeSet());
+      for (var i = 0; i < nrOfByteEnables; i++) {
+        portMap.putAll(
             GetNetMap(
                 "ByteEnable" + i,
                 false,
-                ComponentInfo,
-                ByteEnableOffset + NrOfByteEnables - i - 1,
-                Nets));
+                componentInfo,
+                byteEnableOffset + nrOfByteEnables - i - 1,
+                nets));
       }
     }
-    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DataOut", true, componentInfo, RamAppearance.getDataOutIndex(0, attrs), nets));
+    return portMap;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
+    SortedMap<String, Integer> regs = new TreeMap<>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    int NrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-    Regs.put("s_TickDelayLine", 3);
-    Regs.put("s_DataInReg", NrOfBits);
-    Regs.put("s_Address_reg", NrOfAddressLines);
-    Regs.put("s_WEReg", 1);
-    Regs.put("s_OEReg", 1);
-    Regs.put("s_DataOutReg", NrOfBits);
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
+    regs.put("s_TickDelayLine", 3);
+    regs.put("s_DataInReg", nrOfBits);
+    regs.put("s_Address_reg", nrOfAddressLines);
+    regs.put("s_WEReg", 1);
+    regs.put("s_OEReg", 1);
+    regs.put("s_DataOutReg", nrOfBits);
     if (byteEnables) {
-      int NrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
-      Regs.put("s_ByteEnableReg", NrOfByteEnables);
+      regs.put("s_ByteEnableReg", RamAppearance.getNrBEPorts(attrs));
     }
-    return Regs;
+    return regs;
   }
 
   @Override
@@ -388,74 +387,74 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedSet<String> GetTypeDefinitions(Netlist TheNetlist, AttributeSet attrs) {
-    SortedSet<String> MyTypes = new TreeSet<>();
+    SortedSet<String> myTypes = new TreeSet<>();
     if (HDL.isVHDL()) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-      int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-      int NrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-      int RamEntries = (1 << NrOfAddressLines);
+      final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+      final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+      final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
+      final var ramEntries = (1 << nrOfAddressLines);
       if (byteEnables) {
-        MyTypes.add(
+        myTypes.add(
             "TYPE "
                 + ByteArrayStr
                 + " IS ARRAY ("
-                + (RamEntries - 1)
+                + (ramEntries - 1)
                 + " DOWNTO 0) OF std_logic_vector(7 DOWNTO 0)");
-        if ((NrOfBits % 8) != 0) {
-          MyTypes.add(
+        if ((nrOfBits % 8) != 0) {
+          myTypes.add(
               "TYPE "
                   + RestArrayStr
                   + " IS ARRAY ("
-                  + (RamEntries - 1)
+                  + (ramEntries - 1)
                   + " DOWNTO 0) OF std_logic_vector("
-                  + ((NrOfBits % 8) - 1)
+                  + ((nrOfBits % 8) - 1)
                   + " DOWNTO 0)");
         }
       } else {
-        MyTypes.add(
+        myTypes.add(
             "TYPE "
                 + MemArrayStr
                 + " IS ARRAY ("
-                + (RamEntries - 1)
+                + (ramEntries - 1)
                 + " DOWNTO 0) OF std_logic_vector("
-                + (NrOfBits - 1)
+                + (nrOfBits - 1)
                 + " DOWNTO 0)");
       }
     }
-    return MyTypes;
+    return myTypes;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    Wires.put("s_ram_data_out", NrOfBits);
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    wires.put("s_ram_data_out", nrOfBits);
     if (byteEnables) {
-      for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-        Wires.put("s_byte_enable_" + i, 1);
-        Wires.put("s_we_" + i, 1);
+      for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
+        wires.put("s_byte_enable_" + i, 1);
+        wires.put("s_we_" + i, 1);
       }
     } else {
-      Wires.put("s_we", 1);
-      Wires.put("s_oe", 1);
+      wires.put("s_we", 1);
+      wires.put("s_oe", 1);
     }
-    return Wires;
+    return wires;
   }
 
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
-    boolean separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
+    final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
-    boolean asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    boolean byteEnabled = RamAppearance.getNrLEPorts(attrs) == 0;
-    boolean syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
-    boolean clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
-    boolean ReadAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
-    return HDL.isVHDL() && separate && !asynch && byteEnabled && syncRead && !clearPin && ReadAfterWrite;
+    final var asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
+    final var byteEnabled = RamAppearance.getNrLEPorts(attrs) == 0;
+    final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
+    final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
+    final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
+    return HDL.isVHDL() && separate && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
   }
 }
