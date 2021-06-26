@@ -44,7 +44,7 @@ public class ExtraIoLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "ExtraIO-Library";
+  public static final String _ID = "Input/Output-Extra";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),

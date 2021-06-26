@@ -42,7 +42,7 @@ public class ArithmeticLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "ArithmeticLibrary";
+  public static final String _ID = "Arithmetic";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Adder.class, S.getter("adderComponent"), "adder.gif"),

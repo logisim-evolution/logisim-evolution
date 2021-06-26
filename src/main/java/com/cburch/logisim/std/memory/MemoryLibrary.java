@@ -42,7 +42,7 @@ public class MemoryLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "MemoryLibrary";
+  public static final String _ID = "Memory";
 
   protected static final int DELAY = 5;
 

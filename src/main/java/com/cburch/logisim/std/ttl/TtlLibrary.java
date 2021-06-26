@@ -44,7 +44,7 @@ public class TtlLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "TTL-Library";
+  public static final String _ID = "TTL";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
       new FactoryDescription(Ttl7400.class, S.getter("TTL7400"), "ttl.gif"),

@@ -51,7 +51,7 @@ public class PlexersLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "PlexersLibrary";
+  public static final String _ID = "Plexers";
 
   static boolean contains(Location loc, Bounds bds, Direction facing) {
     if (bds.contains(loc, 1)) {

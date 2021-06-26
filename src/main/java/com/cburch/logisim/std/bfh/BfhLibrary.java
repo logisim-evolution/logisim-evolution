@@ -42,7 +42,7 @@ public class BfhLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "BFH-Library";
+  public static final String _ID = "BFH";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(bin2bcd.class, S.getter("Bin2BCD")),

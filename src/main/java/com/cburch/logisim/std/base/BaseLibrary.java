@@ -50,7 +50,7 @@ public class BaseLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "BaseLibrary";
+  public static final String _ID = "Base";
 
   private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);

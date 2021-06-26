@@ -44,7 +44,7 @@ public class GatesLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "GatesLibrary";
+  public static final String _ID = "Gates";
 
   private List<Tool> tools = null;
 

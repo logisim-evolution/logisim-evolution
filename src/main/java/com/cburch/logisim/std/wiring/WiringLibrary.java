@@ -50,7 +50,7 @@ public class WiringLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "WiringLibrary";
+  public static final String _ID = "Wiring";
 
   static final AttributeOption GATE_TOP_LEFT =
       new AttributeOption("tl", S.getter("wiringGateTopLeftOption"));

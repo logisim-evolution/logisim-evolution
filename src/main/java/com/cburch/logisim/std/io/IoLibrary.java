@@ -47,7 +47,7 @@ public class IoLibrary extends Library {
    *
    * <p>Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "I/O-Library";
+  public static final String _ID = "I/O";
 
   public static final Attribute<Color> ATTR_COLOR =
       Attributes.forColor("color", S.getter("ioColorAttr"));

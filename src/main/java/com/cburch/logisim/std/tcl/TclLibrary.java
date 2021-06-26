@@ -43,7 +43,7 @@ public class TclLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "TCL-Library";
+  public static final String _ID = "TCL";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
