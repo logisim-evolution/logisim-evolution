@@ -137,7 +137,7 @@ public class Ttl74161 extends AbstractTtlGate {
                 System.out.print(index);
                 System.out.println(index);
 
-                TTLRegisterData data = (TTLRegisterData) state.getData();
+                TtlRegisterData data = (TtlRegisterData) state.getData();
                 if (data == null) return;
                 long current = data.getValue().toLongValue();
                 long bitValue = 1 << index;
@@ -149,10 +149,10 @@ public class Ttl74161 extends AbstractTtlGate {
         }
     }
 
-    private TTLRegisterData getData(InstanceState state) {
-        TTLRegisterData data = (TTLRegisterData) state.getData();
+    private TtlRegisterData getData(InstanceState state) {
+        TtlRegisterData data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
         return data;
@@ -170,11 +170,11 @@ public class Ttl74161 extends AbstractTtlGate {
                 new String[]{
                         "nClr", "Clk", "A", "B", "C", "D", "EnP", "nLD", "EnT", "Qd", "Qc", "Qb", "Qa", "RC0"
                 });
-        TTLRegisterData data = (TTLRegisterData) painter.getData();
+        TtlRegisterData data = (TtlRegisterData) painter.getData();
         drawState(g, x, y, height, data);
     }
 
-    private void drawState(Graphics2D g, int x, int y, int height, TTLRegisterData state) {
+    private void drawState(Graphics2D g, int x, int y, int height, TtlRegisterData state) {
         if (state != null) {
             long value = state.getValue().toLongValue();
             for (int i = 0; i < 4; i++) {
@@ -192,9 +192,9 @@ public class Ttl74161 extends AbstractTtlGate {
     @Override
     public void ttlpropagate(InstanceState state) {
 
-        TTLRegisterData data = (TTLRegisterData) state.getData();
+        TtlRegisterData data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
 

@@ -64,10 +64,10 @@ public class Ttl74175 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    TTLRegisterData data = (TTLRegisterData) state.getData();
+    TtlRegisterData data = (TtlRegisterData) state.getData();
     if (data == null) {
       // changed = true;
-      data = new TTLRegisterData(BitWidth.create(4));
+      data = new TtlRegisterData(BitWidth.create(4));
       state.setData(data);
     }
     boolean triggered = data.updateClock(state.getPortValue(7));

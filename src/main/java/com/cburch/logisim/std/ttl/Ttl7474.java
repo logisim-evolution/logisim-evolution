@@ -94,7 +94,7 @@ public class Ttl7474 extends AbstractTtlGate {
       if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         int index = getIndex(state, e);
-        TTLRegisterData myState = (TTLRegisterData) state.getData();
+        TtlRegisterData myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
         Value[] values = myState.getValue().getAll();
         if (values[index].isFullyDefined()) values[index] = values[index].not();
@@ -109,7 +109,7 @@ public class Ttl7474 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     Graphics g = painter.getGraphics();
-    TTLRegisterData state = (TTLRegisterData) painter.getData();
+    TtlRegisterData state = (TtlRegisterData) painter.getData();
     super.paintBase(painter, false, false);
     drawflop(g, x, y + 1);
     drawflop(g, x + 70, y - 2);
@@ -121,9 +121,9 @@ public class Ttl7474 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    TTLRegisterData data = (TTLRegisterData) state.getData();
+    TtlRegisterData data = (TtlRegisterData) state.getData();
     if (data == null) {
-      data = new TTLRegisterData(BitWidth.create(2));
+      data = new TtlRegisterData(BitWidth.create(2));
       state.setData(data);
     }
     boolean triggered1 = data.updateClock(state.getPortValue(2), 0);
@@ -155,7 +155,7 @@ public class Ttl7474 extends AbstractTtlGate {
     state.setPort(7, data.getValue().get(1), 8);
   }
 
-  private void drawState(Graphics g, int x, int y, int ID, TTLRegisterData state) {
+  private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
     if (state != null) {
       g.setColor(state.getValue().get(ID).getColor());
       g.fillOval(x + 33, y + 30, 8, 8);

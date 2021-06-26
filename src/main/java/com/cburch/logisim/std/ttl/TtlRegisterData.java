@@ -33,12 +33,12 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class TTLRegisterData extends ClockState implements InstanceData {
+public class TtlRegisterData extends ClockState implements InstanceData {
 
   private Value value;
   private final BitWidth bits;
 
-  public TTLRegisterData(BitWidth width) {
+  public TtlRegisterData(BitWidth width) {
     value =
         (AppPreferences.Memory_Startup_Unknown.get())
             ? Value.createUnknown(width)
