@@ -54,13 +54,13 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("Reset", 1);
-    inputs.put("ClockEnable", 1);
-    inputs.put("Tick", 1);
-    inputs.put("Clock", 1);
-    inputs.put("D", NrOfBitsId);
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Reset", 1);
+    map.put("ClockEnable", 1);
+    map.put("Tick", 1);
+    map.put("Clock", 1);
+    map.put("D", NrOfBitsId);
+    return map;
   }
 
   @Override
@@ -142,22 +142,22 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Q", NrOfBitsId);
-    return Outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Q", NrOfBitsId);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(ActiveLevelId, ActiveLevelStr);
-    Parameters.put(NrOfBitsId, NrOfBitsStr);
-    return Parameters;
+    final var map = new TreeMap<Integer, String>();
+    map.put(ActiveLevelId, ActiveLevelStr);
+    map.put(NrOfBitsId, NrOfBitsStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     var activeLevel = 1;
     var gatedclock = false;
     var activeLow = false;
@@ -177,103 +177,103 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (gatedclock && activeLow) {
       activeLevel = 0;
     }
-    ParameterMap.put(ActiveLevelStr, activeLevel);
-    ParameterMap.put(
+    map.put(ActiveLevelStr, activeLevel);
+    map.put(
         NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
-    return ParameterMap;
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) MapInfo;
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    if (!ComponentInfo.EndIsConnected(Register.CK)) {
+    final var attrs = comp.GetComponent().getAttributeSet();
+    if (!comp.EndIsConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(ComponentInfo, Register.CK, Nets);
+    final var clockNetName = GetClockNetName(comp, Register.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
     if (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING
         || attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_LOW) activeLow = true;
-    portMap.putAll(GetNetMap("Reset", true, ComponentInfo, Register.CLR, Nets));
-    portMap.putAll(
-        GetNetMap("ClockEnable", false, ComponentInfo, Register.EN, Nets));
+    map.putAll(GetNetMap("Reset", true, comp, Register.CLR, Nets));
+    map.putAll(
+        GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
     if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
-        portMap.put("Tick", HDL.oneBit());
+        map.put("Tick", HDL.oneBit());
       } else {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + HDL.BracketClose());
       }
-      portMap.put(
+      map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GlobalClockIndex
               + HDL.BracketClose());
     } else if (!hasClock) {
-      portMap.put("Tick", HDL.zeroBit());
-      portMap.put("Clock", HDL.zeroBit());
+      map.put("Tick", HDL.zeroBit());
+      map.put("Clock", HDL.zeroBit());
     } else {
-      portMap.put("Tick", HDL.oneBit());
+      map.put("Tick", HDL.oneBit());
       if (!gatedClock) {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.DerivedClockIndex
                   + HDL.BracketClose());
       } else {
-        portMap.put("Clock", GetNetName(ComponentInfo, Register.CK, true, Nets));
+        map.put("Clock", GetNetName(comp, Register.CK, true, Nets));
       }
     }
     var input = "D";
     var output = "Q";
     if (HDL.isVHDL()
-        & (ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
+        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       input += "(0)";
       output += "(0)";
     }
-    portMap.putAll(GetNetMap(input, true, ComponentInfo, Register.IN, Nets));
-    portMap.putAll(GetNetMap(output, true, ComponentInfo, Register.OUT, Nets));
-    return portMap;
+    map.putAll(GetNetMap(input, true, comp, Register.IN, Nets));
+    map.putAll(GetNetMap(output, true, comp, Register.OUT, Nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> regs = new TreeMap<>();
+    final var regs = new TreeMap<String, Integer>();
     regs.put("s_state_reg", NrOfBitsId);
     if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);

@@ -55,10 +55,10 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("DataIn", InputBitsId);
-    inputs.put("Sel", SelectBitsId);
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("DataIn", InputBitsId);
+    map.put("Sel", SelectBitsId);
+    return map;
   }
 
   @Override
@@ -120,49 +120,49 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     int outputBits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OutputsBitsId;
-    outputs.put("DataOut", outputBits);
-    return outputs;
+    map.put("DataOut", outputBits);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> parameters = new TreeMap<>();
+    final var map = new TreeMap<Integer, String>();
     int outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
-    parameters.put(InputBitsId, InputBitsStr);
-    if (outputBits > 1) parameters.put(OutputsBitsId, OutputsBitsStr);
-    parameters.put(SelectBitsId, SelectBitsStr);
-    parameters.put(ExtendedBitsId, ExtendedBitsStr);
-    return parameters;
+    map.put(InputBitsId, InputBitsStr);
+    if (outputBits > 1) map.put(OutputsBitsId, OutputsBitsStr);
+    map.put(SelectBitsId, SelectBitsStr);
+    map.put(ExtendedBitsId, ExtendedBitsStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     int selBits = componentInfo.GetComponent().getEnd(2).getWidth().getWidth();
     int inputBits = componentInfo.GetComponent().getEnd(1).getWidth().getWidth();
     int outputBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    parameterMap.put(InputBitsStr, inputBits);
-    parameterMap.put(SelectBitsStr, selBits);
-    if (outputBits > 1) parameterMap.put(OutputsBitsStr, outputBits);
+    map.put(InputBitsStr, inputBits);
+    map.put(SelectBitsStr, selBits);
+    if (outputBits > 1) map.put(OutputsBitsStr, outputBits);
     var nrOfSlices = 1;
     for (var i = 0; i < selBits; i++) {
       nrOfSlices <<= 1;
     }
-    parameterMap.put(ExtendedBitsStr, nrOfSlices * outputBits + 1);
-    return parameterMap;
+    map.put(ExtendedBitsStr, nrOfSlices * outputBits + 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    portMap.putAll(GetNetMap("DataIn", true, componentInfo, 1, nets));
-    portMap.putAll(GetNetMap("Sel", true, componentInfo, 2, nets));
-    portMap.putAll(GetNetMap("DataOut", true, componentInfo, 0, nets));
-    return portMap;
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("DataIn", true, comp, 1, nets));
+    map.putAll(GetNetMap("Sel", true, comp, 2, nets));
+    map.putAll(GetNetMap("DataOut", true, comp, 0, nets));
+    return map;
   }
 
   @Override
@@ -172,9 +172,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
-    wires.put("s_extended_vector", ExtendedBitsId);
-    return wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_extended_vector", ExtendedBitsId);
+    return map;
   }
 
   @Override

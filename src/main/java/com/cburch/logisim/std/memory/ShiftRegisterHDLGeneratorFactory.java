@@ -221,15 +221,15 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("Reset", 1);
-    inputs.put("Tick", 1);
-    inputs.put("Clock", 1);
-    inputs.put("ShiftEnable", 1);
-    inputs.put("ParLoad", 1);
-    inputs.put("ShiftIn", NrOfBitsId);
-    inputs.put("D", NrOfParBitsId);
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Reset", 1);
+    map.put("Tick", 1);
+    map.put("Clock", 1);
+    map.put("ShiftEnable", 1);
+    map.put("ParLoad", 1);
+    map.put("ShiftIn", NrOfBitsId);
+    map.put("D", NrOfParBitsId);
+    return map;
   }
 
   @Override
@@ -286,25 +286,25 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outs = new TreeMap<>();
-    outs.put("ShiftOut", NrOfBitsId);
-    outs.put("Q", NrOfParBitsId);
-    return outs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("ShiftOut", NrOfBitsId);
+    map.put("Q", NrOfParBitsId);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> params = new TreeMap<>();
-    params.put(ActiveLevelId, ActiveLevelStr);
-    params.put(NrOfBitsId, NrOfBitsStr);
-    params.put(NrOfStagesId, NrOfStagesStr);
-    params.put(NrOfParBitsId, NrOfParBitsStr);
-    return params;
+    final var map = new TreeMap<Integer, String>();
+    map.put(ActiveLevelId, ActiveLevelStr);
+    map.put(NrOfBitsId, NrOfBitsStr);
+    map.put(NrOfStagesId, NrOfStagesStr);
+    map.put(NrOfParBitsId, NrOfParBitsStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var attrs = componentInfo.GetComponent().getAttributeSet();
     var activeLevel = 1;
     var gatedClock = false;
@@ -319,39 +319,39 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     }
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     int nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    parameterMap.put(ActiveLevelStr, activeLevel);
-    parameterMap.put(NrOfBitsStr, nrOfBits);
-    parameterMap.put(NrOfStagesStr, nrOfStages);
-    parameterMap.put(NrOfParBitsStr, nrOfBits * nrOfStages);
-    return parameterMap;
+    map.put(ActiveLevelStr, activeLevel);
+    map.put(NrOfBitsStr, nrOfBits);
+    map.put(NrOfStagesStr, nrOfStages);
+    map.put(NrOfParBitsStr, nrOfBits * nrOfStages);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = comp.GetComponent().getAttributeSet();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    if (!componentInfo.EndIsConnected(ShiftRegister.CK)) {
+    if (!comp.EndIsConnected(ShiftRegister.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Shift Register\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(componentInfo, ShiftRegister.CK, nets);
+    final var clockNetName = GetClockNetName(comp, ShiftRegister.CK, nets);
     gatedClock = clockNetName.isEmpty();
     activeLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
-    portMap.putAll(GetNetMap("Reset", true, componentInfo, ShiftRegister.CLR, nets));
+    map.putAll(GetNetMap("Reset", true, comp, ShiftRegister.CLR, nets));
     if (hasClock && !gatedClock) {
       if (nets.RequiresGlobalClockConnection()) {
-        portMap.put(
+        map.put(
             "Tick",
             clockNetName
                 + HDL.BracketOpen()
@@ -359,69 +359,69 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                 + HDL.BracketClose());
       } else {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + HDL.BracketClose());
       }
-      portMap.put(
+      map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GlobalClockIndex
               + HDL.BracketClose());
     } else if (!hasClock) {
-      portMap.put("Tick", HDL.zeroBit());
-      portMap.put("Clock", HDL.zeroBit());
+      map.put("Tick", HDL.zeroBit());
+      map.put("Clock", HDL.zeroBit());
     } else {
-      portMap.put("Tick", HDL.oneBit());
+      map.put("Tick", HDL.oneBit());
       if (!gatedClock) {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.DerivedClockIndex
                   + HDL.BracketClose());
       } else {
-        portMap.put("Clock", GetNetName(componentInfo, ShiftRegister.CK, true, nets));
+        map.put("Clock", GetNetName(comp, ShiftRegister.CK, true, nets));
       }
     }
-    portMap.putAll(GetNetMap("ShiftEnable", false, componentInfo, ShiftRegister.SH, nets));
+    map.putAll(GetNetMap("ShiftEnable", false, comp, ShiftRegister.SH, nets));
     if (hasParallelLoad) {
-      portMap.putAll(GetNetMap("ParLoad", true, componentInfo, ShiftRegister.LD, nets));
+      map.putAll(GetNetMap("ParLoad", true, comp, ShiftRegister.LD, nets));
     } else {
-      portMap.put("ParLoad", HDL.zeroBit());
+      map.put("ParLoad", HDL.zeroBit());
     }
     var shiftName = "ShiftIn";
     if (HDL.isVHDL() & (nrOfBits == 1)) shiftName += "(0)";
-    portMap.putAll(GetNetMap(shiftName, true, componentInfo, ShiftRegister.IN, nets));
+    map.putAll(GetNetMap(shiftName, true, comp, ShiftRegister.IN, nets));
     if (hasParallelLoad) {
       final var vector = new StringBuilder();
       if (nrOfBits == 1) {
         if (HDL.isVHDL()) {
           for (var i = 0; i < nrOfStages; i++) {
-            portMap.putAll(
+            map.putAll(
                 GetNetMap(
                     "D" + HDL.BracketOpen() + i + HDL.BracketClose(),
                     true,
-                    componentInfo,
+                    comp,
                     6 + 2 * i,
                     nets));
           }
@@ -429,45 +429,45 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
             nrOfOutStages = nrOfStages;
           for (var i = 0; i < nrOfOutStages; i++) {
-            portMap.putAll(
+            map.putAll(
                 GetNetMap(
                     "Q" + HDL.BracketOpen() + i + HDL.BracketClose(),
                     true,
-                    componentInfo,
+                    comp,
                     7 + 2 * i,
                     nets));
-            portMap.put("Q" + HDL.BracketOpen() + (nrOfStages - 1) + HDL.BracketClose(), "OPEN");
+            map.put("Q" + HDL.BracketOpen() + (nrOfStages - 1) + HDL.BracketClose(), "OPEN");
           }
         } else {
           for (var i = nrOfStages - 1; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(componentInfo, 6 + 2 * i, true, nets));
+            vector.append(GetNetName(comp, 6 + 2 * i, true, nets));
           }
-          portMap.put("D", vector.toString());
+          map.put("D", vector.toString());
           vector.setLength(0);
           vector.append("open");
           for (var i = nrOfStages - 2; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(componentInfo, 7 + 2 * i, true, nets));
+            vector.append(GetNetName(comp, 7 + 2 * i, true, nets));
           }
-          portMap.put("Q", vector.toString());
+          map.put("Q", vector.toString());
         }
       } else {
         if (HDL.isVHDL()) {
           for (var bit = 0; bit < nrOfBits; bit++) {
             for (var i = 0; i < nrOfStages; i++) {
-              portMap.put(
+              map.put(
                   "D" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(componentInfo, 6 + 2 * i, true, bit, nets));
+                  GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           for (var bit = 0; bit < nrOfBits; bit++) {
             for (var i = 0; i < nrOfStages - 1; i++) {
-              portMap.put(
+              map.put(
                   "Q" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(componentInfo, 7 + 2 * i, true, bit, nets));
+                  GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
-            portMap.put(
+            map.put(
                 "Q" + HDL.BracketOpen() + ((bit + 1) * nrOfStages - 1) + HDL.BracketClose(),
                 "OPEN");
           }
@@ -476,24 +476,24 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           for (var bit = nrOfBits - 1; bit >= 0; bit--) {
             for (var i = nrOfStages - 1; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(componentInfo, 6 + 2 * i, true, bit, nets));
+              vector.append(GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
-          portMap.put("D", vector.toString());
+          map.put("D", vector.toString());
           vector.setLength(0);
           for (var bit = nrOfBits - 1; bit >= 0; bit--) {
             if (vector.length() != 0) vector.append(",");
             vector.append("open");
             for (var i = nrOfStages - 2; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(componentInfo, 7 + 2 * i, true, bit, nets));
+              vector.append(GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
           }
-          portMap.put("Q", vector.toString());
+          map.put("Q", vector.toString());
         }
       }
     } else {
-      portMap.put("Q", HDL.unconnected(true));
+      map.put("Q", HDL.unconnected(true));
       final var temp = new StringBuilder();
       if (HDL.isVerilog()) {
         temp.append("0");
@@ -502,12 +502,12 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         temp.append("0".repeat(nrOfBits * nrOfStages));
         temp.append("\"");
       }
-      portMap.put("D", temp.toString());
+      map.put("D", temp.toString());
     }
     var shiftOut = "ShiftOut";
     if (HDL.isVHDL() & (nrOfBits == 1)) shiftOut += "(0)";
-    portMap.putAll(GetNetMap(shiftOut, true, componentInfo, ShiftRegister.OUT, nets));
-    return portMap;
+    map.putAll(GetNetMap(shiftOut, true, comp, ShiftRegister.OUT, nets));
+    return map;
   }
 
   @Override

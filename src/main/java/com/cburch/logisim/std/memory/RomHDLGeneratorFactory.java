@@ -62,9 +62,9 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
+    return map;
   }
 
   @Override
@@ -112,20 +112,20 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
-    outputs.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
-    return outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) mapInfo;
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    portMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), nets));
-    portMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), nets));
-    return portMap;
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    final var attrs = comp.GetComponent().getAttributeSet();
+    map.putAll(GetNetMap("Address", true, comp, RamAppearance.getAddrIndex(0, attrs), nets));
+    map.putAll(GetNetMap("Data", true, comp, RamAppearance.getDataOutIndex(0, attrs), nets));
+    return map;
   }
 
   @Override

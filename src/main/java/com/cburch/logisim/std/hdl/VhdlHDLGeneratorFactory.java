@@ -63,7 +63,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
+    final var inputs = new TreeMap<String, Integer>();
 
     final var rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
     for (final var rawInput : rawInputs)
@@ -74,7 +74,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
 
     final var rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getOutputs();
     for (final var rawOutput : rawOutputs)
@@ -85,7 +85,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
+    final var portMap = new TreeMap<String, String>();
     if (!(MapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) MapInfo;
 

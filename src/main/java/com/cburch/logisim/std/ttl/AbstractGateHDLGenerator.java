@@ -49,23 +49,23 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var NrOfGates = (IsInverter()) ? 6 : 4;
     for (var i = 0; i < NrOfGates; i++) {
-      MyInputs.put("gate_" + i + "_A", 1);
-      if (!IsInverter()) MyInputs.put("gate_" + i + "_B", 1);
+      map.put("gate_" + i + "_A", 1);
+      if (!IsInverter()) map.put("gate_" + i + "_B", 1);
     }
-    return MyInputs;
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var NrOfGates = (IsInverter()) ? 6 : 4;
     for (var i = 0; i < NrOfGates; i++) {
-      MyOutputs.put("gate_" + i + "_O", 1);
+      map.put("gate_" + i + "_O", 1);
     }
-    return MyOutputs;
+    return map;
   }
 
   public ArrayList<String> GetLogicFunction(int index) {
@@ -84,27 +84,27 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
-    final var NrOfGates = (IsInverter()) ? 6 : 4;
-    for (var i = 0; i < NrOfGates; i++) {
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    final var nrOfGates = (IsInverter()) ? 6 : 4;
+    for (var i = 0; i < nrOfGates; i++) {
       if (IsInverter()) {
         final var inindex = (i < 3) ? i * 2 : i * 2 + 1;
         final var outindex = (i < 3) ? i * 2 + 1 : i * 2;
-        PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex, Nets));
-        PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));
+        map.putAll(GetNetMap("gate_" + i + "_A", true, comp, inindex, nets));
+        map.putAll(GetNetMap("gate_" + i + "_O", true, comp, outindex, nets));
       } else {
         final var inindex1 = (i < 2) ? i * 3 : i * 3 + 1;
         final var inindex2 = inindex1 + 1;
         final var outindex = (i < 2) ? i * 3 + 2 : i * 3;
-        PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex1, Nets));
-        PortMap.putAll(GetNetMap("gate_" + i + "_B", true, ComponentInfo, inindex2, Nets));
-        PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));
+        map.putAll(GetNetMap("gate_" + i + "_A", true, comp, inindex1, nets));
+        map.putAll(GetNetMap("gate_" + i + "_B", true, comp, inindex2, nets));
+        map.putAll(GetNetMap("gate_" + i + "_O", true, comp, outindex, nets));
       }
     }
-    return PortMap;
+    return map;
   }
 
   @Override

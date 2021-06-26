@@ -46,10 +46,10 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("Enable", 1);
-    inputs.put("Sel", attrs.getValue(Plexers.ATTR_SELECT).getWidth());
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Enable", 1);
+    map.put("Sel", attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    return map;
   }
 
   @Override
@@ -79,34 +79,34 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     for (var i = 0; i < (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()); i++) {
-      outputs.put("DecoderOut_" + i, 1);
+      map.put("DecoderOut_" + i, 1);
     }
-    return outputs;
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return PortMap;
-    final var ComponentInfo = (NetlistComponent) mapInfo;
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
     final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
     for (var i = 0; i < selectInputIndex; i++)
-      PortMap.putAll(GetNetMap("DecoderOut_" + i, true, ComponentInfo, i, nets));
+      map.putAll(GetNetMap("DecoderOut_" + i, true, comp, i, nets));
     // select..
-    PortMap.putAll(GetNetMap("Sel", true, ComponentInfo, selectInputIndex, nets));
+    map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
-      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, selectInputIndex + 1, nets));
+    if (comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+      map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
-      PortMap.put("Enable", HDL.oneBit());
+      map.put("Enable", HDL.oneBit());
     }
-    return PortMap;
+    return map;
   }
 
   @Override

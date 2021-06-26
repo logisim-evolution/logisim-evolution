@@ -141,17 +141,17 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
     outputs.put("Addr_Data_LB_io", 16);
     return outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("SP6_LB_WAIT3_i", 1);
-    inputs.put("IRQ_i", 1);
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("SP6_LB_WAIT3_i", 1);
+    map.put("IRQ_i", 1);
+    return map;
   }
 
   @Override
@@ -167,22 +167,22 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("SP6_LB_nCS3_o", 1);
-    Outputs.put("SP6_LB_nADV_ALE_o", 1);
-    Outputs.put("SP6_LB_RE_nOE_o", 1);
-    Outputs.put("SP6_LB_nWE_o", 1);
-    Outputs.put("Addr_LB_o", 9);
-    return Outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("SP6_LB_nCS3_o", 1);
+    map.put("SP6_LB_nADV_ALE_o", 1);
+    map.put("SP6_LB_RE_nOE_o", 1);
+    map.put("SP6_LB_nWE_o", 1);
+    map.put("Addr_LB_o", 9);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
     final var ComponentInfo = (NetlistComponent) MapInfo;
 
-    portMap.put(
+    map.put(
         "Addr_Data_LB_io",
         LocalInOutBubbleBusname
             + "("
@@ -190,7 +190,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             + " DOWNTO "
             + ComponentInfo.GetLocalBubbleInOutStartId()
             + ")");
-    portMap.put(
+    map.put(
         "FPGA_in",
         LocalInputBubbleBusname
           + "("
@@ -198,7 +198,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
           + " DOWNTO "
           + ComponentInfo.GetLocalBubbleInputStartId()
           + ")");
-    portMap.put(
+    map.put(
         "FPGA_out",
         LocalOutputBubbleBusname
           + "("
@@ -206,68 +206,68 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
           + " DOWNTO "
           + ComponentInfo.GetLocalBubbleOutputStartId()
           + ")");
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "SP6_LB_nCS3_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nCS3_o,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "SP6_LB_nADV_ALE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nADV_ALE_o,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "SP6_LB_RE_nOE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_RE_nOE_o,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "SP6_LB_nWE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nWE_o,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "SP6_LB_WAIT3_i",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_WAIT3_i,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "Addr_Data_LB_o",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_o,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "Addr_Data_LB_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_i,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "Addr_Data_LB_tris_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_tris_i,
             Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap(
             "Addr_LB_o", true, ComponentInfo, ReptarLocalBus.Addr_LB_o, Nets));
-    portMap.putAll(
+    map.putAll(
         GetNetMap("IRQ_i", true, ComponentInfo, ReptarLocalBus.IRQ_i, Nets));
-    return portMap;
+    return map;
   }
 
   @Override

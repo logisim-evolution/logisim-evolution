@@ -282,7 +282,7 @@ public class Analyze {
    * order, with ties broken left-right).
    */
   public static SortedMap<Instance, String> getPinLabels(Circuit circuit) {
-    SortedMap<Instance, String> ret = new TreeMap<>(Location.CompareVertical);
+    final var ret = new TreeMap<Instance, String>(Location.CompareVertical);
 
     // Put the pins into the TreeMap, with null labels
     for (final var pin : circuit.getAppearance().getPortOffsets(Direction.EAST).values()) {

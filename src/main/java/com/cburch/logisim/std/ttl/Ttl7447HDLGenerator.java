@@ -46,36 +46,36 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("BCD0", 1);
-    MyInputs.put("BCD1", 1);
-    MyInputs.put("BCD2", 1);
-    MyInputs.put("BCD3", 1);
-    MyInputs.put("LT", 1);
-    MyInputs.put("BI", 1);
-    MyInputs.put("RBI", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("BCD0", 1);
+    map.put("BCD1", 1);
+    map.put("BCD2", 1);
+    map.put("BCD3", 1);
+    map.put("LT", 1);
+    map.put("BI", 1);
+    map.put("RBI", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Sega", 1);
-    MyOutputs.put("Segb", 1);
-    MyOutputs.put("Segc", 1);
-    MyOutputs.put("Segd", 1);
-    MyOutputs.put("Sege", 1);
-    MyOutputs.put("Segf", 1);
-    MyOutputs.put("Segg", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Sega", 1);
+    map.put("Segb", 1);
+    map.put("Segc", 1);
+    map.put("Segd", 1);
+    map.put("Sege", 1);
+    map.put("Segf", 1);
+    map.put("Segg", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
-    wires.put("segments", 7);
-    wires.put("bcd", 4);
-    return wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("segments", 7);
+    map.put("bcd", 4);
+    return map;
   }
 
   @Override
@@ -120,25 +120,25 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("BCD0", true, ComponentInfo, 6, Nets));
-    portMap.putAll(GetNetMap("BCD1", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("BCD2", true, ComponentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("BCD3", true, ComponentInfo, 5, Nets));
-    portMap.putAll(GetNetMap("LT", false, ComponentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("BI", false, ComponentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("RBI", false, ComponentInfo, 4, Nets));
-    portMap.putAll(GetNetMap("Sega", true, ComponentInfo, 11, Nets));
-    portMap.putAll(GetNetMap("Segb", true, ComponentInfo, 10, Nets));
-    portMap.putAll(GetNetMap("Segc", true, ComponentInfo, 9, Nets));
-    portMap.putAll(GetNetMap("Segd", true, ComponentInfo, 8, Nets));
-    portMap.putAll(GetNetMap("Sege", true, ComponentInfo, 7, Nets));
-    portMap.putAll(GetNetMap("Segf", true, ComponentInfo, 13, Nets));
-    portMap.putAll(GetNetMap("Segg", true, ComponentInfo, 12, Nets));
-    return portMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("BCD0", true, comp, 6, nets));
+    map.putAll(GetNetMap("BCD1", true, comp, 0, nets));
+    map.putAll(GetNetMap("BCD2", true, comp, 1, nets));
+    map.putAll(GetNetMap("BCD3", true, comp, 5, nets));
+    map.putAll(GetNetMap("LT", false, comp, 2, nets));
+    map.putAll(GetNetMap("BI", false, comp, 3, nets));
+    map.putAll(GetNetMap("RBI", false, comp, 4, nets));
+    map.putAll(GetNetMap("Sega", true, comp, 11, nets));
+    map.putAll(GetNetMap("Segb", true, comp, 10, nets));
+    map.putAll(GetNetMap("Segc", true, comp, 9, nets));
+    map.putAll(GetNetMap("Segd", true, comp, 8, nets));
+    map.putAll(GetNetMap("Sege", true, comp, 7, nets));
+    map.putAll(GetNetMap("Segf", true, comp, 13, nets));
+    map.putAll(GetNetMap("Segg", true, comp, 12, nets));
+    return map;
   }
 
   @Override

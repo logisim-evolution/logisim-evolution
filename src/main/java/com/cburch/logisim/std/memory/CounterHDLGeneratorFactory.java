@@ -58,15 +58,15 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("GlobalClock", 1);
-    inputs.put("ClockEnable", 1);
-    inputs.put("LoadData", NrOfBitsId);
-    inputs.put("clear", 1);
-    inputs.put("load", 1);
-    inputs.put("Up_n_Down", 1);
-    inputs.put("Enable", 1);
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("GlobalClock", 1);
+    map.put("ClockEnable", 1);
+    map.put("LoadData", NrOfBitsId);
+    map.put("clear", 1);
+    map.put("load", 1);
+    map.put("Up_n_Down", 1);
+    map.put("Enable", 1);
+    return map;
   }
 
   @Override
@@ -229,25 +229,25 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
-    outputs.put("CountValue", NrOfBitsId);
-    outputs.put("CompareOut", 1);
-    return outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("CountValue", NrOfBitsId);
+    map.put("CompareOut", 1);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> parameters = new TreeMap<>();
-    parameters.put(NrOfBitsId, NrOfBitsStr);
-    parameters.put(MaxValId, MaxValStr);
-    parameters.put(ActiveEdgeId, activeEdgeStr);
-    parameters.put(ModeId, modeStr);
-    return parameters;
+    final var map = new TreeMap<Integer, String>();
+    map.put(NrOfBitsId, NrOfBitsStr);
+    map.put(MaxValId, MaxValStr);
+    map.put(ActiveEdgeId, activeEdgeStr);
+    map.put(ModeId, modeStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var attrs = componentInfo.GetComponent().getAttributeSet();
     var mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
@@ -257,20 +257,20 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       mode = 1;
     }
-    parameterMap.put(NrOfBitsStr, attrs.getValue(StdAttr.WIDTH).getWidth());
-    parameterMap.put(MaxValStr, attrs.getValue(Counter.ATTR_MAX).intValue());
+    map.put(NrOfBitsStr, attrs.getValue(StdAttr.WIDTH).getWidth());
+    map.put(MaxValStr, attrs.getValue(Counter.ATTR_MAX).intValue());
     var clkEdge = 1;
     if (GetClockNetName(componentInfo, Counter.CK, nets).isEmpty()
         && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
-    parameterMap.put(activeEdgeStr, clkEdge);
-    parameterMap.put(modeStr, mode);
-    return parameterMap;
+    map.put(activeEdgeStr, clkEdge);
+    map.put(modeStr, mode);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
     final var componentInfo = (NetlistComponent) mapInfo;
     final var attrs = componentInfo.GetComponent().getAttributeSet();
     if (!componentInfo.EndIsConnected(Counter.CK)) {
@@ -278,13 +278,13 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "Component \"Counter\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");
-      portMap.put("GlobalClock", HDL.zeroBit());
-      portMap.put("ClockEnable", HDL.zeroBit());
+      map.put("GlobalClock", HDL.zeroBit());
+      map.put("ClockEnable", HDL.zeroBit());
     } else {
       final var clockNetName = GetClockNetName(componentInfo, Counter.CK, nets);
       if (clockNetName.isEmpty()) {
-        portMap.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
-        portMap.put("ClockEnable", HDL.oneBit());
+        map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
+        map.put("ClockEnable", HDL.oneBit());
       } else {
         var clockBusIndex = ClockHDLGeneratorFactory.DerivedClockIndex;
         if (nets.RequiresGlobalClockConnection()) {
@@ -297,13 +297,13 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
             clockBusIndex = ClockHDLGeneratorFactory.InvertedDerivedClockIndex;
         }
-        portMap.put(
+        map.put(
             "GlobalClock",
             clockNetName
                 + HDL.BracketOpen()
                 + ClockHDLGeneratorFactory.GlobalClockIndex
                 + HDL.BracketClose());
-        portMap.put(
+        map.put(
             "ClockEnable",
             clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
       }
@@ -311,29 +311,29 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var input = "LoadData";
     if (HDL.isVHDL() & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       input += "(0)";
-    portMap.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
-    portMap.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
-    portMap.putAll(GetNetMap("load", true, componentInfo, Counter.LD, nets));
-    portMap.putAll(GetNetMap("Enable", false, componentInfo, Counter.EN, nets));
-    portMap.putAll(
+    map.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
+    map.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
+    map.putAll(GetNetMap("load", true, componentInfo, Counter.LD, nets));
+    map.putAll(GetNetMap("Enable", false, componentInfo, Counter.EN, nets));
+    map.putAll(
         GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
     var output = "CountValue";
     if (HDL.isVHDL() & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
-    portMap.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
-    portMap.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));
-    return portMap;
+    map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
+    map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> regs = new TreeMap<>();
-    regs.put("s_next_counter_value", NrOfBitsId); // for verilog generation
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_next_counter_value", NrOfBitsId); // for verilog generation
     // in explicite process
-    regs.put("s_carry", 1); // for verilog generation in explicite process
-    regs.put("s_counter_value", NrOfBitsId);
-    if (HDL.isVerilog()) regs.put("s_counter_value_neg_edge", NrOfBitsId);
-    return regs;
+    map.put("s_carry", 1); // for verilog generation in explicite process
+    map.put("s_counter_value", NrOfBitsId);
+    if (HDL.isVerilog()) map.put("s_counter_value_neg_edge", NrOfBitsId);
+    return map;
   }
 
   @Override
@@ -347,9 +347,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
-    wires.put("s_real_enable", 1);
-    return wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_real_enable", 1);
+    return map;
   }
 
   @Override

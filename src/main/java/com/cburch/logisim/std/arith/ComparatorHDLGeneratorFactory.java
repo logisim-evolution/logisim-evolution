@@ -52,11 +52,11 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Inputs.put("DataA", inputbits);
-    Inputs.put("DataB", inputbits);
-    return Inputs;
+    final var map = new TreeMap<String, Integer>();
+    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    map.put("DataA", inputbits);
+    map.put("DataB", inputbits);
+    return map;
   }
 
   @Override
@@ -115,51 +115,52 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("A_GT_B", 1);
-    Outputs.put("A_EQ_B", 1);
-    Outputs.put("A_LT_B", 1);
-    return Outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A_GT_B", 1);
+    map.put("A_EQ_B", 1);
+    map.put("A_LT_B", 1);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
+    final var map = new TreeMap<Integer, String>();
+    final var inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (inputbits > 1) {
-      Parameters.put(NrOfBitsId, NrOfBitsStr);
+      map.put(NrOfBitsId, NrOfBitsStr);
     }
-    Parameters.put(TwosComplementId, TwosComplementStr);
-    return Parameters;
+    map.put(TwosComplementId, TwosComplementStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    int IsSigned = 0;
+    final var map = new TreeMap<String, Integer>();
+    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    var isSigned = 0;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     if (attrs.containsAttribute(Comparator.MODE_ATTRIBUTE)) {
-      if (attrs.getValue(Comparator.MODE_ATTRIBUTE).equals(Comparator.SIGNED_OPTION)) IsSigned = 1;
+      if (attrs.getValue(Comparator.MODE_ATTRIBUTE).equals(Comparator.SIGNED_OPTION))
+        isSigned = 1;
     }
     if (nrOfBits > 1) {
-      ParameterMap.put(NrOfBitsStr, nrOfBits);
+      map.put(NrOfBitsStr, nrOfBits);
     }
-    ParameterMap.put(TwosComplementStr, IsSigned);
-    return ParameterMap;
+    map.put(TwosComplementStr, isSigned);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
+    portMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Nets));
+    portMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Nets));
+    portMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Nets));
+    return portMap;
   }
 
   @Override
@@ -169,15 +170,15 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var wires = new TreeMap<String, Integer>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (inputbits > 1) {
-      Wires.put("s_signed_less", 1);
-      Wires.put("s_unsigned_less", 1);
-      Wires.put("s_signed_greater", 1);
-      Wires.put("s_unsigned_greater", 1);
+      wires.put("s_signed_less", 1);
+      wires.put("s_unsigned_less", 1);
+      wires.put("s_signed_greater", 1);
+      wires.put("s_unsigned_greater", 1);
     }
-    return Wires;
+    return wires;
   }
 
   @Override

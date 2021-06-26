@@ -59,26 +59,26 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A0", 1);
-    MyInputs.put("B0", 1);
-    MyInputs.put("C0", 1);
-    MyInputs.put("A1", 1);
-    MyInputs.put("B1", 1);
-    MyInputs.put("C1", 1);
-    MyInputs.put("A2", 1);
-    MyInputs.put("B2", 1);
-    MyInputs.put("C2", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A0", 1);
+    map.put("B0", 1);
+    map.put("C0", 1);
+    map.put("A1", 1);
+    map.put("B1", 1);
+    map.put("C1", 1);
+    map.put("A2", 1);
+    map.put("B2", 1);
+    map.put("C2", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Y0", 1);
-    MyOutputs.put("Y1", 1);
-    MyOutputs.put("Y2", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Y0", 1);
+    map.put("Y1", 1);
+    map.put("Y2", 1);
+    return map;
   }
 
   @Override
@@ -93,23 +93,23 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("A0", true, componentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("B0", true, componentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("C0", true, componentInfo, 11, Nets));
-    portMap.putAll(GetNetMap("Y0", true, componentInfo, 10, Nets));
-    portMap.putAll(GetNetMap("A1", true, componentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("B1", true, componentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("C1", true, componentInfo, 4, Nets));
-    portMap.putAll(GetNetMap("Y1", true, componentInfo, 5, Nets));
-    portMap.putAll(GetNetMap("A2", true, componentInfo, 9, Nets));
-    portMap.putAll(GetNetMap("B2", true, componentInfo, 8, Nets));
-    portMap.putAll(GetNetMap("C2", true, componentInfo, 7, Nets));
-    portMap.putAll(GetNetMap("Y2", true, componentInfo, 6, Nets));
-    return portMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("A0", true, componentInfo, 0, nets));
+    map.putAll(GetNetMap("B0", true, componentInfo, 1, nets));
+    map.putAll(GetNetMap("C0", true, componentInfo, 11, nets));
+    map.putAll(GetNetMap("Y0", true, componentInfo, 10, nets));
+    map.putAll(GetNetMap("A1", true, componentInfo, 2, nets));
+    map.putAll(GetNetMap("B1", true, componentInfo, 3, nets));
+    map.putAll(GetNetMap("C1", true, componentInfo, 4, nets));
+    map.putAll(GetNetMap("Y1", true, componentInfo, 5, nets));
+    map.putAll(GetNetMap("A2", true, componentInfo, 9, nets));
+    map.putAll(GetNetMap("B2", true, componentInfo, 8, nets));
+    map.putAll(GetNetMap("C2", true, componentInfo, 7, nets));
+    map.putAll(GetNetMap("Y2", true, componentInfo, 6, nets));
+    return map;
   }
 
   @Override

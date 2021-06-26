@@ -50,7 +50,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer> ();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Inputs.put("DataX", inputbits);
     return Inputs;
@@ -71,7 +71,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var Outputs = new TreeMap<String, Integer>();
     int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Outputs.put("MinDataX", outputbits);
     return Outputs;
@@ -79,7 +79,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
+    final var Parameters = new TreeMap<Integer, String>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (outputbits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
     return Parameters;
@@ -87,7 +87,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
+    final var ParameterMap = new TreeMap<String, Integer>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
     return ParameterMap;
@@ -95,12 +95,12 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
+    return portMap;
   }
 
   @Override

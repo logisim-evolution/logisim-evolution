@@ -48,38 +48,38 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> myInputs = new TreeMap<>();
-    myInputs.put("nCLR1", 1);
-    myInputs.put("D1", 1);
-    myInputs.put("CLK1", 1);
-    myInputs.put("tick1", 1);
-    myInputs.put("nPRE1", 1);
-    myInputs.put("nCLR2", 1);
-    myInputs.put("D2", 1);
-    myInputs.put("CLK2", 1);
-    myInputs.put("tick2", 1);
-    myInputs.put("nPRE2", 1);
-    return myInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("nCLR1", 1);
+    map.put("D1", 1);
+    map.put("CLK1", 1);
+    map.put("tick1", 1);
+    map.put("nPRE1", 1);
+    map.put("nCLR2", 1);
+    map.put("D2", 1);
+    map.put("CLK2", 1);
+    map.put("tick2", 1);
+    map.put("nPRE2", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> myOutputs = new TreeMap<>();
-    myOutputs.put("Q1", 1);
-    myOutputs.put("nQ1", 1);
-    myOutputs.put("Q2", 1);
-    myOutputs.put("nQ2", 1);
-    return myOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Q1", 1);
+    map.put("nQ1", 1);
+    map.put("Q2", 1);
+    map.put("nQ2", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("state1", 1);
-    Wires.put("state2", 1);
-    Wires.put("next1", 1);
-    Wires.put("next2", 1);
-    return Wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("state1", 1);
+    map.put("state2", 1);
+    map.put("next1", 1);
+    map.put("next2", 1);
+    return map;
   }
 
   @Override
@@ -113,8 +113,8 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
     final var componentinfo = (NetlistComponent) MapInfo;
     for (var i = 0; i < 2; i++) {
       var gatedClock = false;
@@ -133,40 +133,40 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
         gatedClock = true;
       }
       if (!hasClock) {
-        PortMap.put("CLK" + (i + 1), "'0'");
-        PortMap.put("tick" + (i + 1), "'0'");
+        map.put("CLK" + (i + 1), "'0'");
+        map.put("tick" + (i + 1), "'0'");
       } else if (gatedClock) {
-        PortMap.put("tick" + (i + 1), "'1'");
-        PortMap.put(
+        map.put("tick" + (i + 1), "'1'");
+        map.put(
             "CLK" + (i + 1),
             GetNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
         if (Nets.RequiresGlobalClockConnection()) {
-          PortMap.put("tick" + (i + 1), "'1'");
+          map.put("tick" + (i + 1), "'1'");
         } else {
-          PortMap.put(
+          map.put(
               "tick" + (i + 1),
               clockNetName
                   + "("
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + ")");
         }
-        PortMap.put(
+        map.put(
             "CLK" + (i + 1),
             clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
       }
     }
-    PortMap.putAll(GetNetMap("nCLR1", false, componentinfo, 0, Nets));
-    PortMap.putAll(GetNetMap("D1", true, componentinfo, 1, Nets));
-    PortMap.putAll(GetNetMap("nPRE1", false, componentinfo, 3, Nets));
-    PortMap.putAll(GetNetMap("Q1", true, componentinfo, 4, Nets));
-    PortMap.putAll(GetNetMap("nQ1", true, componentinfo, 5, Nets));
-    PortMap.putAll(GetNetMap("nCLR2", false, componentinfo, 11, Nets));
-    PortMap.putAll(GetNetMap("D2", true, componentinfo, 10, Nets));
-    PortMap.putAll(GetNetMap("nPRE2", false, componentinfo, 8, Nets));
-    PortMap.putAll(GetNetMap("Q2", true, componentinfo, 7, Nets));
-    PortMap.putAll(GetNetMap("nQ2", true, componentinfo, 6, Nets));
-    return PortMap;
+    map.putAll(GetNetMap("nCLR1", false, componentinfo, 0, Nets));
+    map.putAll(GetNetMap("D1", true, componentinfo, 1, Nets));
+    map.putAll(GetNetMap("nPRE1", false, componentinfo, 3, Nets));
+    map.putAll(GetNetMap("Q1", true, componentinfo, 4, Nets));
+    map.putAll(GetNetMap("nQ1", true, componentinfo, 5, Nets));
+    map.putAll(GetNetMap("nCLR2", false, componentinfo, 11, Nets));
+    map.putAll(GetNetMap("D2", true, componentinfo, 10, Nets));
+    map.putAll(GetNetMap("nPRE2", false, componentinfo, 8, Nets));
+    map.putAll(GetNetMap("Q2", true, componentinfo, 7, Nets));
+    map.putAll(GetNetMap("nQ2", true, componentinfo, 6, Nets));
+    return map;
   }
 
   @Override

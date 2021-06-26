@@ -50,14 +50,14 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     for (var i = 0; i < (1 << nrOfSelectBits); i++)
-      inputs.put("MuxIn_" + i, nrOfBits);
-    inputs.put("Enable", 1);
-    inputs.put("Sel", nrOfSelectBits);
-    return inputs;
+      map.put("MuxIn_" + i, nrOfBits);
+    map.put("Enable", 1);
+    map.put("Sel", nrOfSelectBits);
+    return map;
   }
 
   @Override
@@ -114,63 +114,63 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    outputs.put("MuxOut", NrOfBits);
-    return outputs;
+    map.put("MuxOut", NrOfBits);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> params = new TreeMap<>();
+    final var map = new TreeMap<Integer, String>();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) params.put(NrOfBitsId, NrOfBitsStr);
-    return params;
+    if (nrOfBits > 1) map.put(NrOfBitsId, NrOfBitsStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
         componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) parameterMap.put(NrOfBitsStr, nrOfBits);
-    return parameterMap;
+    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    final var nrOfSelectBits = componentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    final var nrOfSelectBits = comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
     var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all inputs of multiplexer
     for (var i = 0; i < selectInputIndex; i++)
-      portMap.putAll(GetNetMap("MuxIn_" + i, true, componentInfo, i, nets));
+      map.putAll(GetNetMap("MuxIn_" + i, true, comp, i, nets));
     // now select..
-    portMap.putAll(GetNetMap("Sel", true, componentInfo, selectInputIndex, nets));
+    map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (componentInfo.GetComponent()
+    if (comp.GetComponent()
         .getAttributeSet()
         .getValue(Plexers.ATTR_ENABLE)) {
-      portMap.putAll(
+      map.putAll(
           GetNetMap(
-              "Enable", false, componentInfo, selectInputIndex + 1, nets));
+              "Enable", false, comp, selectInputIndex + 1, nets));
     } else {
-      portMap.put("Enable", HDL.oneBit());
+      map.put("Enable", HDL.oneBit());
       selectInputIndex--; // decrement pin index because enable doesn't exist...
     }
     // finally output
-    portMap.putAll(GetNetMap("MuxOut", true, componentInfo, selectInputIndex + 2, nets));
-    return portMap;
+    map.putAll(GetNetMap("MuxOut", true, comp, selectInputIndex + 2, nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> regs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    if (HDL.isVerilog()) regs.put("s_selected_vector", nrOfBits);
-    return regs;
+    if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
+    return map;
   }
 
   @Override

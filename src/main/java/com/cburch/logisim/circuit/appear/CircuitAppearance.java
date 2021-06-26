@@ -247,9 +247,9 @@ public class CircuitAppearance extends Drawing {
       }
     }
 
-    SortedMap<Location, Instance> ret = new TreeMap<>();
-    for (AppearancePort port : ports) {
-      Location loc = port.getLocation();
+    final var ret = new TreeMap<Location, Instance>();
+    for (final var port : ports) {
+      var loc = port.getLocation();
       if (anchor != null) {
         loc = loc.translate(-anchor.getX(), -anchor.getY());
       }

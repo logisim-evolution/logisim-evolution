@@ -56,7 +56,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
+    final var inputs = new TreeMap<String, Integer>();
     final var Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
     final var NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
@@ -210,7 +210,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
     final var bitWidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
     outputs.put("Result", bitWidth);
     return outputs;
@@ -218,7 +218,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> params = new TreeMap<>();
+    final var params = new TreeMap<Integer, String>();
     int nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
@@ -234,7 +234,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var parameterMap = new TreeMap<String, Integer>();
     final var isBus = is_bus(componentInfo.GetComponent().getAttributeSet());
     final var myAttrs = componentInfo.GetComponent().getAttributeSet();
     int nrOfInputs =
@@ -309,7 +309,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
+    final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
     final var attrs = componentInfo.GetComponent().getAttributeSet();
@@ -351,7 +351,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
+    final var wires = new TreeMap<String, Integer>();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)

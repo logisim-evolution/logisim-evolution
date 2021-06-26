@@ -57,13 +57,13 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-    inputs.put("Reset", 1);
-    inputs.put("Preset", 1);
-    inputs.put("Tick", 1);
-    inputs.put("Clock", 1);
-    inputs.putAll(GetInputPorts());
-    return inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Reset", 1);
+    map.put("Preset", 1);
+    map.put("Tick", 1);
+    map.put("Clock", 1);
+    map.putAll(GetInputPorts());
+    return map;
   }
 
   public Map<String, String> GetInputMaps(NetlistComponent componentInfo, Netlist nets) {
@@ -159,22 +159,22 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
-    outputs.put("Q", 1);
-    outputs.put("Q_bar", 1);
-    return outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Q", 1);
+    map.put("Q_bar", 1);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> parameters = new TreeMap<>();
-    parameters.put(-1, ActivityLevelStr);
-    return parameters;
+    final var map = new TreeMap<Integer, String>();
+    map.put(-1, ActivityLevelStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> parameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     var activityLevel = 1;
     var gatedClock = false;
     var activeLow = false;
@@ -194,21 +194,21 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     if (gatedClock && activeLow) {
       activityLevel = 0;
     }
-    parameterMap.put(ActivityLevelStr, activityLevel);
-    return parameterMap;
+    map.put(ActivityLevelStr, activityLevel);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) MapInfo;
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var nrOfPins = ComponentInfo.NrOfEnds();
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    if (!ComponentInfo.EndIsConnected(ComponentInfo.NrOfEnds() - 5)) {
+    final var nrOfPins = comp.NrOfEnds();
+    final var attrs = comp.GetComponent().getAttributeSet();
+    if (!comp.EndIsConnected(comp.NrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
@@ -217,7 +217,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(comp, comp.NrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -229,11 +229,11 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             || attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_LOW) activeLow = true;
       }
     }
-    portMap.putAll(GetNetMap("Reset", true, ComponentInfo, nrOfPins - 2, Nets));
-    portMap.putAll(GetNetMap("Preset", true, ComponentInfo, nrOfPins - 1, Nets));
+    map.putAll(GetNetMap("Reset", true, comp, nrOfPins - 2, Nets));
+    map.putAll(GetNetMap("Preset", true, comp, nrOfPins - 1, Nets));
     if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
       if (Nets.RequiresGlobalClockConnection()) {
-        portMap.put(
+        map.put(
             "Tick",
             clockNetName
                 + HDL.BracketOpen()
@@ -241,61 +241,61 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                 + HDL.BracketClose());
       } else {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + HDL.BracketClose());
       }
-      portMap.put(
+      map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GlobalClockIndex
               + HDL.BracketClose());
     } else if (!hasClock) {
-      portMap.put("Tick", HDL.zeroBit());
-      portMap.put("Clock", HDL.zeroBit());
+      map.put("Tick", HDL.zeroBit());
+      map.put("Clock", HDL.zeroBit());
     } else {
-      portMap.put("Tick", HDL.oneBit());
+      map.put("Tick", HDL.oneBit());
       if (!gatedClock) {
         if (activeLow)
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
                   + HDL.BracketClose());
         else
-          portMap.put(
+          map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
                   + ClockHDLGeneratorFactory.DerivedClockIndex
                   + HDL.BracketClose());
       } else {
-        portMap.put("Clock", GetNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, true, Nets));
+        map.put("Clock", GetNetName(comp, comp.NrOfEnds() - 5, true, Nets));
       }
     }
-    portMap.putAll(GetInputMaps(ComponentInfo, Nets));
-    portMap.putAll(GetNetMap("Q", true, ComponentInfo, nrOfPins - 4, Nets));
-    portMap.putAll(GetNetMap("Q_bar", true, ComponentInfo, nrOfPins - 3, Nets));
-    return portMap;
+    map.putAll(GetInputMaps(comp, Nets));
+    map.putAll(GetNetMap("Q", true, comp, nrOfPins - 4, Nets));
+    map.putAll(GetNetMap("Q_bar", true, comp, nrOfPins - 3, Nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> regs = new TreeMap<>();
-    regs.put("s_current_state_reg", (HDL.isVHDL()) ? 1 : 2);
-    return regs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_current_state_reg", (HDL.isVHDL()) ? 1 : 2);
+    return map;
   }
 
   @Override
@@ -309,9 +309,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
-    wires.put("s_next_state", 1);
-    return wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_next_state", 1);
+    return map;
   }
 
   @Override

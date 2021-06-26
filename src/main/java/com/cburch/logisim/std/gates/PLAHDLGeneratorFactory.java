@@ -46,7 +46,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
+    final var inputs = new TreeMap<String, Integer>();
     inputs.put("Index", attrs.getValue(PLA.ATTR_IN_WIDTH).getWidth());
     return inputs;
   }
@@ -91,14 +91,14 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
     outputs.put("Result", attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth());
     return outputs;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    SortedMap<String, String> portMap = new TreeMap<>();
+    final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
     portMap.putAll(GetNetMap("Index", true, componentInfo, PLA.IN_PORT, nets));

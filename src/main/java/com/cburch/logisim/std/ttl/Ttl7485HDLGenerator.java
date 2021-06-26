@@ -46,41 +46,41 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> myInputs = new TreeMap<>();
-    myInputs.put("A0", 1);
-    myInputs.put("A1", 1);
-    myInputs.put("A2", 1);
-    myInputs.put("A3", 1);
-    myInputs.put("B0", 1);
-    myInputs.put("B1", 1);
-    myInputs.put("B2", 1);
-    myInputs.put("B3", 1);
-    myInputs.put("AltBin", 1);
-    myInputs.put("AeqBin", 1);
-    myInputs.put("AgtBin", 1);
-    return myInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A0", 1);
+    map.put("A1", 1);
+    map.put("A2", 1);
+    map.put("A3", 1);
+    map.put("B0", 1);
+    map.put("B1", 1);
+    map.put("B2", 1);
+    map.put("B3", 1);
+    map.put("AltBin", 1);
+    map.put("AeqBin", 1);
+    map.put("AgtBin", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> myOutputs = new TreeMap<>();
-    myOutputs.put("AltBout", 1);
-    myOutputs.put("AeqBout", 1);
-    myOutputs.put("AgtBout", 1);
-    return myOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("AltBout", 1);
+    map.put("AeqBout", 1);
+    map.put("AgtBout", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> wires = new TreeMap<>();
-    wires.put("oppA", 4);
-    wires.put("oppB", 4);
-    wires.put("gt", 1);
-    wires.put("eq", 1);
-    wires.put("lt", 1);
-    wires.put("CompIn", 3);
-    wires.put("CompOut", 3);
-    return wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("oppA", 4);
+    map.put("oppB", 4);
+    map.put("gt", 1);
+    map.put("eq", 1);
+    map.put("lt", 1);
+    map.put("CompIn", 3);
+    map.put("CompOut", 3);
+    return map;
   }
 
   @Override
@@ -108,24 +108,24 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
     final var ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A0", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("A3", true, ComponentInfo, 13, Nets));
-    PortMap.putAll(GetNetMap("B0", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 12, Nets));
-    PortMap.putAll(GetNetMap("B3", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("AltBin", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("AeqBin", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("AgtBin", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("AltBout", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("AeqBout", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("AgtBout", true, ComponentInfo, 4, Nets));
-    return PortMap;
+    map.putAll(GetNetMap("A0", true, ComponentInfo, 8, Nets));
+    map.putAll(GetNetMap("A1", true, ComponentInfo, 10, Nets));
+    map.putAll(GetNetMap("A2", true, ComponentInfo, 11, Nets));
+    map.putAll(GetNetMap("A3", true, ComponentInfo, 13, Nets));
+    map.putAll(GetNetMap("B0", true, ComponentInfo, 7, Nets));
+    map.putAll(GetNetMap("B1", true, ComponentInfo, 9, Nets));
+    map.putAll(GetNetMap("B2", true, ComponentInfo, 12, Nets));
+    map.putAll(GetNetMap("B3", true, ComponentInfo, 0, Nets));
+    map.putAll(GetNetMap("AltBin", true, ComponentInfo, 1, Nets));
+    map.putAll(GetNetMap("AeqBin", true, ComponentInfo, 2, Nets));
+    map.putAll(GetNetMap("AgtBin", true, ComponentInfo, 3, Nets));
+    map.putAll(GetNetMap("AltBout", true, ComponentInfo, 6, Nets));
+    map.putAll(GetNetMap("AeqBout", true, ComponentInfo, 5, Nets));
+    map.putAll(GetNetMap("AgtBout", true, ComponentInfo, 4, Nets));
+    return map;
   }
 
   @Override
