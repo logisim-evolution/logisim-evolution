@@ -37,6 +37,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -66,11 +67,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       VhdlEntityAttributes.VhdlGenericAttribute va = (VhdlEntityAttributes.VhdlGenericAttribute) a;
       VhdlContent.Generic g = va.getGeneric();
       Integer v = attrs.getValue(a);
-      if (v != null) {
-        ParameterMap.put(g.getName(), v);
-      } else {
-        ParameterMap.put(g.getName(), g.getDefaultValue());
-      }
+      ParameterMap.put(g.getName(), Objects.requireNonNullElseGet(v, g::getDefaultValue));
     }
     return ParameterMap;
   }

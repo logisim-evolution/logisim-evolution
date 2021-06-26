@@ -118,7 +118,7 @@ public class ProjectCircuitActions {
         error = new JLabel("\"" + name + "\": " + S.get("circuitNameKeyword"));
       } else if (!SyntaxChecker.isVariableNameAcceptable(name, false)) {
         error = new JLabel("\"" + name + "\": " + S.get("circuitNameInvalidName"));
-      } else if (NameIsInUse(proj, name)) {
+      } else if (nameIsInUse(proj, name)) {
         error = new JLabel("\"" + name + "\": " + S.get("circuitNameExists"));
       }
       if (error != null) {
@@ -132,22 +132,22 @@ public class ProjectCircuitActions {
     }
   }
 
-  private static boolean NameIsInUse(Project proj, String Name) {
+  private static boolean nameIsInUse(Project proj, String name) {
     for (Library mylib : proj.getLogisimFile().getLibraries()) {
-      if (NameIsInLibraries(mylib, Name)) return true;
+      if (nameIsInLibraries(mylib, name)) return true;
     }
     for (AddTool mytool : proj.getLogisimFile().getTools()) {
-      if (Name.equalsIgnoreCase(mytool.getName())) return true;
+      if (name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
 
-  private static boolean NameIsInLibraries(Library lib, String Name) {
+  private static boolean nameIsInLibraries(Library lib, String name) {
     for (Library mylib : lib.getLibraries()) {
-      if (NameIsInLibraries(mylib, Name)) return true;
+      if (nameIsInLibraries(mylib, name)) return true;
     }
     for (Tool mytool : lib.getTools()) {
-      if (Name.equalsIgnoreCase(mytool.getName())) return true;
+      if (name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -176,9 +176,10 @@ public class ProjectCircuitActions {
 
   public static void doAnalyze(Project proj, Circuit circuit) {
     Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-    ArrayList<Var> inputVars = new ArrayList<>();
-    ArrayList<Var> outputVars = new ArrayList<>();
-    int numInputs = 0, numOutputs = 0;
+    var inputVars = new ArrayList<Var>();
+    var outputVars = new ArrayList<Var>();
+    int numInputs = 0;
+    int numOutputs = 0;
     for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
       Instance pin = entry.getKey();
       boolean isInput = Pin.FACTORY.isInputPin(pin);
@@ -205,7 +206,7 @@ public class ProjectCircuitActions {
       return;
     }
 
-    Analyzer analyzer = AnalyzerManager.getAnalyzer(proj.getFrame());
+    var analyzer = AnalyzerManager.getAnalyzer(proj.getFrame());
     analyzer.getModel().setCurrentCircuit(proj, circuit);
     configureAnalyzer(proj, circuit, analyzer, pinNames, inputVars, outputVars);
     if (!analyzer.isVisible()) {
@@ -283,7 +284,8 @@ public class ProjectCircuitActions {
 
   private static String promptForNewName(
       JFrame frame, Library lib, String initialValue, boolean vhdl) {
-    String title, prompt;
+    String title;
+    String prompt;
     if (vhdl) {
       title = S.get("vhdlNameDialogTitle");
       prompt = S.get("vhdlNamePrompt");
@@ -291,32 +293,32 @@ public class ProjectCircuitActions {
       title = S.get("circuitNameDialogTitle");
       prompt = S.get("circuitNamePrompt");
     }
-    JLabel label = new JLabel(prompt);
-    final JTextField field = new JTextField(15);
+    final var field = new JTextField(15);
     field.setText(initialValue);
-    JLabel error = new JLabel(" ");
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
-    JPanel strut = new JPanel(null);
+    final var gb = new GridBagLayout();
+    final var gc = new GridBagConstraints();
+    final var strut = new JPanel(null);
     strut.setPreferredSize(new Dimension(3 * field.getPreferredSize().width / 2, 0));
-    JPanel panel = new JPanel(gb);
     gc.gridx = 0;
     gc.gridy = GridBagConstraints.RELATIVE;
     gc.weightx = 1.0;
     gc.fill = GridBagConstraints.NONE;
     gc.anchor = GridBagConstraints.LINE_START;
+    final var label = new JLabel(prompt);
     gb.setConstraints(label, gc);
+    final var panel = new JPanel(gb);
     panel.add(label);
     gb.setConstraints(field, gc);
     panel.add(field);
+    final var error = new JLabel(" ");
     gb.setConstraints(error, gc);
     panel.add(error);
     gb.setConstraints(strut, gc);
     panel.add(strut);
-    JOptionPane pane =
+    final var pane =
         new JOptionPane(panel, OptionPane.QUESTION_MESSAGE, OptionPane.OK_CANCEL_OPTION);
     pane.setInitialValue(field);
-    JDialog dlog = pane.createDialog(frame, title);
+    final var dlog = pane.createDialog(frame, title);
     dlog.addWindowFocusListener(
         new WindowFocusListener() {
           public void windowGainedFocus(WindowEvent arg0) {

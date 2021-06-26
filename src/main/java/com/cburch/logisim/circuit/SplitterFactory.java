@@ -52,6 +52,7 @@ import java.awt.event.InputEvent;
 import javax.swing.Icon;
 
 public class SplitterFactory extends AbstractComponentFactory {
+
   public static final SplitterFactory instance = new SplitterFactory();
 
   private static final Icon toolIcon = Icons.getIcon("splitter.gif");
@@ -87,7 +88,7 @@ public class SplitterFactory extends AbstractComponentFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == SplitterAttributes.ATTR_APPEARANCE) {
-      if (ver.compareTo(LogisimVersion.get(2, 6, 4)) < 0) {
+      if (ver.compareTo(new LogisimVersion(2, 6, 4)) < 0) {
         return SplitterAttributes.APPEAR_LEGACY;
       } else {
         return SplitterAttributes.APPEAR_LEFT;
@@ -124,7 +125,7 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   @Override
   public String getName() {
-    return "Splitter";
+    return Splitter._ID;
   }
 
   @Override

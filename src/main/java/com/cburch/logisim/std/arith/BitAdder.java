@@ -51,11 +51,19 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
 
 public class BitAdder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "BitAdder";
+
   static final Attribute<Integer> NUM_INPUTS =
       Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 64);
 
   public BitAdder() {
-    super("BitAdder", S.getter("bitAdderComponent"));
+    super(_ID, S.getter("bitAdderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, NUM_INPUTS},
         new Object[] {BitWidth.create(8), 1});

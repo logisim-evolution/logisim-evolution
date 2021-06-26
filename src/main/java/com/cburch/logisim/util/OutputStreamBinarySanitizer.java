@@ -34,17 +34,22 @@ import java.io.Writer;
 
 public class OutputStreamBinarySanitizer extends OutputStream {
   protected final Writer out;
-  
-  public OutputStreamBinarySanitizer(Writer out) { this.out = out; }
-  
-  public void close() throws IOException { out.close(); }
-  public void flush() throws IOException { out.flush(); }
-  
-  public void write(int c) throws IOException {
-    if ((0x20 <= c && c <= 0x7E) || c == '\t' || c == '\n' || c == '\r')
-      out.write((char)c);
-    else
-      out.write('\uFFFD');
+
+  public OutputStreamBinarySanitizer(Writer out) {
+    this.out = out;
   }
 
+  public void close() throws IOException {
+    out.close();
+  }
+
+  public void flush() throws IOException {
+    out.flush();
+  }
+
+  @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+  public void write(int c) throws IOException {
+    if ((0x20 <= c && c <= 0x7E) || c == '\t' || c == '\n' || c == '\r') out.write((char) c);
+    else out.write('\uFFFD');
+  }
 }

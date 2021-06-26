@@ -71,7 +71,7 @@ public class OptionsFrame extends LFrame.Dialog {
       }
     });
     panels =
-          new OptionsPanel[] {
+        new OptionsPanel[] {
           new SimulateOptions(this),
           new ToolbarOptions(this),
           new MouseOptions(this),

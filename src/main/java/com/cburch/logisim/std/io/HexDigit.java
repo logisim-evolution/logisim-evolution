@@ -52,12 +52,19 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class HexDigit extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Hex Digit Display";
 
   protected static final int HEX = 0;
   protected static final int DP = 1;
 
   public HexDigit() {
-    super("Hex Digit Display", S.getter("hexDigitComponent"));
+    super(_ID, S.getter("hexDigitComponent"));
     setAttributes(
         new Attribute[] {
           Io.ATTR_ON_COLOR,
@@ -79,13 +86,13 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
-          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null) 
+          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null)
         });
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
     setIcon(new SevenSegmentIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
   }
-  
+
   private void updatePorts(Instance instance) {
     int nrPorts = instance.getAttributeValue(SevenSegment.ATTR_DP) ? 2 : 1;
     Port[] ps = new Port[nrPorts];
@@ -96,17 +103,23 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       ps[DP].setToolTip(S.getter("hexDigitDPTip"));
     }
     instance.setPorts(ps);
-    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(6+nrPorts, SevenSegment.GetLabels());
+    instance
+        .getAttributeValue(StdAttr.MAPINFO)
+        .setNrOfOutports(6 + nrPorts, SevenSegment.GetLabels());
   }
 
   @Override
   protected void configureNewInstance(Instance instance) {
-	instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 8, 0, null, SevenSegment.GetLabels(), null ));
+    instance
+        .getAttributeSet()
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     SevenSegment.computeTextField(instance);
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
@@ -115,12 +128,12 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       updatePorts(instance);
     }
   }
-  
+
   @Override
   public void paintInstance(InstancePainter painter) {
     SevenSegment.drawBase(painter, painter.getAttributeValue(SevenSegment.ATTR_DP));
   }
-  
+
   public static int getSegs(int value) {
     int segs; // each nibble is one segment, in top-down, left-to-right
     // order: middle three nibbles are the three horizontal segments
@@ -174,7 +187,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         segs = 0x1111000;
         break;
       case -1:
-        segs = SEG_B_MASK|SEG_C_MASK|SEG_E_MASK|SEG_F_MASK|SEG_G_MASK;
+        segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_G_MASK;
         break; // a H for static icon
       default:
         segs = 0x0001000;
@@ -182,7 +195,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     }
     return segs;
   }
-  
+
   public static final int SEG_A_MASK = 0x10000;
   public static final int SEG_B_MASK = 0x10;
   public static final int SEG_C_MASK = 0x1;
@@ -196,7 +209,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     int summary = 0;
     Value baseVal = state.getPortValue(HEX);
     if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
-    int segs = getSegs((int)baseVal.toLongValue());
+    int segs = getSegs((int) baseVal.toLongValue());
     if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
     if ((segs & SEG_B_MASK) != 0) summary |= 2; // vertical seg in top right
     if ((segs & SEG_D_MASK) != 0) summary |= 8; // horizontal seg at bottom
@@ -207,7 +220,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
 
     if (state.getAttributeValue(SevenSegment.ATTR_DP)) {
       Value dpVal = state.getPortValue(DP);
-      if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
+      if (dpVal != null && (int) dpVal.toLongValue() == 1)
+        summary |= 128; // decimal point
     }
 
     Object value = summary;

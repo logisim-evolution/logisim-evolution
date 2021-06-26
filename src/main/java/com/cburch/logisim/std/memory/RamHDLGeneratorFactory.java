@@ -333,7 +333,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     if (byteEnables) {
       int NrOfByteEnables = RamAppearance.getNrBEPorts(ComponentInfo.GetComponent().getAttributeSet());
-      int ByteEnableOffset = RamAppearance.getBEIndex(0,ComponentInfo.GetComponent().getAttributeSet());
+      int ByteEnableOffset = RamAppearance.getBEIndex(0, ComponentInfo.GetComponent().getAttributeSet());
       for (int i = 0; i < NrOfByteEnables; i++) {
         PortMap.putAll(
             GetNetMap(
@@ -452,11 +452,10 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     boolean separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     boolean asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    boolean byteEnabled = RamAppearance.getNrLEPorts(attrs)==0;
+    boolean byteEnabled = RamAppearance.getNrLEPorts(attrs) == 0;
     boolean syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     boolean clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
-    boolean ReadAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) ||
-    		                 attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
+    boolean ReadAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
     return HDL.isVHDL() && separate && !asynch && byteEnabled && syncRead && !clearPin && ReadAfterWrite;
   }
 }

@@ -39,12 +39,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
-public class IOComponentSelector implements ActionListener{
-	
+public class IOComponentSelector implements ActionListener {
+
   private String action_id;
   private final JDialog diag;
   private static final String CancelStr = "cancel";
-  
+
   public IOComponentSelector(Frame parent) {
     action_id = CancelStr;
     diag = new JDialog(parent, S.get("FpgaBoardIOResources"));
@@ -71,7 +71,7 @@ public class IOComponentSelector implements ActionListener{
     diag.setResizable(false);
     diag.setAlwaysOnTop(true);
   }
-  
+
   public String run() {
     diag.setVisible(true);
     diag.dispose();

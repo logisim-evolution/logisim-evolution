@@ -50,7 +50,7 @@ public class TtyShape extends DynamicElement {
     super(p, Bounds.create(x, y, 240, 130));
   }
 
-  public void setBounds(int width , int height) {
+  public void setBounds(int width, int height) {
     bounds = Bounds.create(bounds.getX(), bounds.getY(), width, height);
   }
 
@@ -64,20 +64,18 @@ public class TtyShape extends DynamicElement {
       int height = 2 * Tty.BORDER + rows * Tty.ROW_HEIGHT;
       if (width < 30) width = 30;
       if (height < 30) height = 30;
-      setBounds(width,height);
+      setBounds(width, height);
     }
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.YELLOW);
-    g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
-    		2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
     g.setColor(Color.BLACK);
-    g.drawRoundRect( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 
-                     2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.drawRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
     if (data != null) {
       int rows = data.getNrRows();
       String[] rowData = new String[rows];
       synchronized (data) {
-        for (int i = 0 ; i < rows; i++)
+        for (int i = 0; i < rows; i++)
           rowData[i] = data.getRowString(i);
       }
       g.setFont(Tty.DEFAULT_FONT);

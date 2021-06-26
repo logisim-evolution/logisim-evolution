@@ -40,40 +40,40 @@ public class SocBusInfo {
   private String busId;
   private SocSimulationManager socManager;
   private Component myComp;
-    
-  public SocBusInfo( String id) {
+
+  public SocBusInfo(String id) {
     busId = id;
     socManager = null;
   }
-    
+
   public void setBusId(String value) {
     busId = value;
   }
-    
+
   public String getBusId() {
     return busId;
   }
-    
-  public void setSocSimulationManager( SocSimulationManager man , Component comp ) {
+
+  public void setSocSimulationManager(SocSimulationManager man, Component comp) {
     socManager = man;
     myComp = comp;
   }
-    
+
   public SocSimulationManager getSocSimulationManager() {
     return socManager;
   }
-  
+
   public Component getComponent() {
     return myComp;
   }
 
   public void paint(Graphics g, Bounds b) {
     String Ident = socManager == null ? null : socManager.getSocBusDisplayString(busId);
-	Color c = Ident == null ? Color.RED : Color.GREEN;
+    Color c = Ident == null ? Color.RED : Color.GREEN;
     g.setColor(c);
     g.fillRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
     g.setColor(Color.BLACK);
-    GraphicsUtil.drawCenteredText(g, Ident == null ? S.get("SocBusNotConnected") : Ident, b.getCenterX(), b.getCenterY());
+    GraphicsUtil.drawCenteredText(
+        g, Ident == null ? S.get("SocBusNotConnected") : Ident, b.getCenterX(), b.getCenterY());
   }
-
 }

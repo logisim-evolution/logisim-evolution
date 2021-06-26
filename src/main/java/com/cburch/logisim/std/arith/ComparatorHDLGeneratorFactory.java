@@ -152,8 +152,8 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
     PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
     PortMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Nets));

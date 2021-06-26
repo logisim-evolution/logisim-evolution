@@ -48,7 +48,7 @@ public class SocBusTransaction {
   public static final int READTransaction = 1;
   public static final int WRITETransaction = 2;
   public static final int ATOMICTransaction = 4;
-  
+
   public static final int NoError = 0;
   public static final int NoResponsError = 1;
   public static final int NoSlavesError = 2;
@@ -60,12 +60,12 @@ public class SocBusTransaction {
   public static final int ReadOnlyAccessError = 8;
   public static final int WriteOnlyAccessError = 9;
   public static final int RegisterDoesNotExistError = 10;
-  
-  
+
+
   public static final int ByteAccess = 1;
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
-   
+
   private final int address;
   private final int writeData;
   private int readData;
@@ -75,31 +75,31 @@ public class SocBusTransaction {
   private Component slave;
   private int Error;
   private boolean hidden;
-   
-  public SocBusTransaction(int type , int addr , int value, int access, Object master) {
-     this.type = type;
-     this.address = addr;
-     this.writeData = value;
-     this.access = access;
-     this.master = master;
-     slave = null;
-     readData = 0;
-     Error = NoError;
-     hidden = false;
+
+  public SocBusTransaction(int type, int addr, int value, int access, Object master) {
+    this.type = type;
+    this.address = addr;
+    this.writeData = value;
+    this.access = access;
+    this.master = master;
+    slave = null;
+    readData = 0;
+    Error = NoError;
+    hidden = false;
   }
-  
+
   public void setAsHiddenTransaction() {
     hidden = true;
   }
-  
+
   public boolean isHidden() {
     return hidden;
   }
-  
+
   public int getAccessType() {
     return access;
   }
-  
+
   public String getErrorMessage() {
     switch (Error) {
       case NoError : return S.get("SocTransactionSuccessfull");
@@ -109,7 +109,7 @@ public class SocBusTransaction {
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRW");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnected");
       case MisalignedAddressError: return S.get("SocTransactionMisalignedAddress");
-      case AccessTypeNotSupportedError : 
+      case AccessTypeNotSupportedError :
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupport");
           case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupport");
@@ -121,7 +121,7 @@ public class SocBusTransaction {
     }
     return S.get("SocTransactionUnknownError");
   }
-  
+
   public String getShortErrorMessage() {
     switch (Error) {
       case NoError : return S.get("SocTransactionSuccessfullShort");
@@ -131,7 +131,7 @@ public class SocBusTransaction {
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRWShort");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnectedShort");
       case MisalignedAddressError: return S.get("SocTransactionMisalignedAddressShort");
-      case AccessTypeNotSupportedError : 
+      case AccessTypeNotSupportedError :
         switch (access) {
           case ByteAccess     : return S.get("SocTransactionByteAccesNoSupportShort");
           case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupportShort");
@@ -143,224 +143,238 @@ public class SocBusTransaction {
     }
     return S.get("SocTransactionUnknownErrorShort");
   }
-  
+
   public int getType() {
     return type;
   }
-  
+
   public void setError(int value) {
     Error = value;
   }
-  
+
   public boolean hasError() {
     return Error != NoError;
   }
-  
+
   public boolean isReadTransaction() {
-    return (type&READTransaction) != 0;
+    return (type & READTransaction) != 0;
   }
-  
+
   public boolean isWriteTransaction() {
-    return (type&WRITETransaction) != 0;
+    return (type & WRITETransaction) != 0;
   }
-  
+
   public boolean isAtomicTransaction() {
-    return (type&ATOMICTransaction) != 0;
+    return (type & ATOMICTransaction) != 0;
   }
-  
+
   public int getAddress() {
     return address;
   }
-  
+
   public int getReadData() {
     return readData;
   }
-  
+
   public int getWriteData() {
     return writeData;
   }
-	  
+
   public void setReadData(int value) {
     readData = value;
   }
-  
+
   private String getTransactionInitiatorName() {
     if (master instanceof String)
-      return (String)master;
+      return (String) master;
     if (master instanceof Component)
       return SocSupport.getComponentName((Component) master);
     return "BUG";
   }
-  
-  public Object getTransactionInitiator() { return master; }
-  
-  private String getTransactionResponderName() { return SocSupport.getComponentName(slave); }
-  public Component getTransactionResponder() { return slave; }
-  
-  public void setTransactionResponder( Component comp ) { slave = comp; }
-  
-  private void paintTraceInfo(Graphics2D g2, BoxInfo bi, boolean isRequest,boolean scale) {
-	Graphics2D g = (Graphics2D)g2.create();
+
+  public Object getTransactionInitiator() {
+    return master;
+  }
+
+  private String getTransactionResponderName() {
+    return SocSupport.getComponentName(slave);
+  }
+
+  public Component getTransactionResponder() {
+    return slave;
+  }
+
+  public void setTransactionResponder(Component comp) {
+    slave = comp;
+  }
+
+  private void paintTraceInfo(Graphics2D g2, BoxInfo bi, boolean isRequest, boolean scale) {
+    Graphics2D g = (Graphics2D) g2.create();
     Bounds bds;
-	if (!scale) {
+    if (!scale) {
       g.setColor(Color.BLACK);
-      g.drawLine(0, 0, 0, SocBusStateInfo.TraceHeight-2);
-	}
-    if (hasError()&&!isRequest) {
+      g.drawLine(0, 0, 0, SocBusStateInfo.TraceHeight - 2);
+    }
+    if (hasError() && !isRequest) {
       g.setColor(Color.RED);
       g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-      bds = getScaled(bi.blockWidth/2,(SocBusStateInfo.TraceHeight-2)>>1,0,0,scale);
+      bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TraceHeight - 2) >> 1, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, getShortErrorMessage(), bds.getX(), bds.getY());
       g.dispose();
       return;
     }
-    String title = isRequest ? S.get("SocBusStateMaster")+getTransactionInitiatorName() : 
-            S.get("SocBusStateSlave")+getTransactionResponderName();
-    bds = getScaled(bi.blockWidth/2,(SocBusStateInfo.TraceHeight-2)>>2,0,0,scale);
+    String title =
+        isRequest
+            ? S.get("SocBusStateMaster") + getTransactionInitiatorName()
+            : S.get("SocBusStateSlave") + getTransactionResponderName();
+    bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TraceHeight - 2) >> 2, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, title, bds.getX(), bds.getY());
-    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight-2)>>1)+1, bi.mark+bi.hex, 
-    		(SocBusStateInfo.TraceHeight-2)>>1,scale);
-    g.drawRect(bds.getX(),bds.getY(),bds.getWidth(),bds.getHeight());
-    bds = getScaled(bi.skip+bi.mark, ((SocBusStateInfo.TraceHeight-2)>>1)+1,0,SocBusStateInfo.TraceHeight-2,scale);
-    g.drawLine(bds.getX(),bds.getY(),bds.getX(),bds.getHeight());
-    bds = getScaled(bi.skip+bi.mark/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
-    GraphicsUtil.drawCenteredText(g, "A", bds.getX(),bds.getY());
+    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1,
+            bi.mark + bi.hex, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+    g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1,
+            0, SocBusStateInfo.TraceHeight - 2, scale);
+    g.drawLine(bds.getX(), bds.getY(), bds.getX(), bds.getHeight());
+    bds =
+        getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+    GraphicsUtil.drawCenteredText(g, "A", bds.getX(), bds.getY());
     String Str = String.format("0x%08X", getAddress());
-    bds = getScaled(bi.skip+bi.mark+bi.hex/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
+    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, Str, bds.getX(), bds.getY());
-    bds = getScaled(bi.skip+bi.mark+bi.hex,0,0,0,scale);
+    bds = getScaled(bi.skip + bi.mark + bi.hex, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
-    
-    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight-2)>>1)+1, bi.mark+bi.hex, (SocBusStateInfo.TraceHeight-2)>>1,scale);
-    g.drawRect(bds.getX(),bds.getY(),bds.getWidth(),bds.getHeight());
-    bds = getScaled(bi.skip+bi.mark, ((SocBusStateInfo.TraceHeight-2)>>1)+1, 0, (SocBusStateInfo.TraceHeight-2),scale);
-    g.drawLine(bds.getX(),bds.getY(),bds.getX(),bds.getHeight());
-    bds = getScaled(bi.skip+bi.mark/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
+    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark + bi.hex,
+            (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+    g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, 0,
+            (SocBusStateInfo.TraceHeight - 2), scale);
+    g.drawLine(bds.getX(), bds.getY(), bds.getX(), bds.getHeight());
+    bds = getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, "D", bds.getX(), bds.getY());
-    if ((isRequest && isWriteTransaction())||
-        (!isRequest && isReadTransaction())) {
+    if ((isRequest && isWriteTransaction()) || (!isRequest && isReadTransaction())) {
       String format = "0x%08X";
-      if (getAccessType() == SocBusTransaction.HalfWordAccess)
-        format = "0x%04X";
-      if (getAccessType() == SocBusTransaction.ByteAccess)
-        format = "0x%02X";
+      if (getAccessType() == SocBusTransaction.HalfWordAccess) format = "0x%04X";
+      if (getAccessType() == SocBusTransaction.ByteAccess) format = "0x%02X";
       Str = String.format(format, isRequest ? getWriteData() : getReadData());
-    }
-    else
+    } else
       Str = S.get("SocBusStateNoDataMax10chars");
-    bds = getScaled(bi.skip+bi.mark+bi.hex/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
+    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, Str, bds.getX(), bds.getY());
-    if (!isRequest) { g.dispose(); return; }
-    bds = getScaled(bi.skip+bi.mark+bi.hex,0,0,0,scale);
+    if (!isRequest) {
+      g.dispose();
+      return;
+    }
+    bds = getScaled(bi.skip + bi.mark + bi.hex, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
     if (isAtomicTransaction()) {
       g.setColor(Color.yellow);
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight-2)>>1)+1 , bi.mark, (SocBusStateInfo.TraceHeight-2)>>1,scale);
-      g.fillRect(bds.getX(),bds.getY(),bds.getWidth(),bds.getHeight());
+      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+      g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLUE);
-      bds = getScaled(bi.mark/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, "A", bds.getX(), bds.getY());
       g.setColor(Color.BLACK);
     }
-    bds = getScaled(bi.skip+bi.mark,0,0,0,scale);
+    bds = getScaled(bi.skip + bi.mark, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
     if (isWriteTransaction()) {
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight-2)>>1)+1 , bi.mark, (SocBusStateInfo.TraceHeight-2)>>1,scale);
+      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
       g.setColor(Color.MAGENTA);
-      g.fillRect(bds.getX(),bds.getY(),bds.getWidth(),bds.getHeight());
+      g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLACK);
-      bds = getScaled(bi.mark/2, (3*(SocBusStateInfo.TraceHeight-2))/4,0,0,scale);
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, "W", bds.getX(), bds.getY());
     }
-    bds = getScaled(bi.skip+bi.mark,0,0,0,scale);
+    bds = getScaled(bi.skip + bi.mark, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
     if (isReadTransaction()) {
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight-2)>>1)+1 , bi.mark, (SocBusStateInfo.TraceHeight-2)>>1,scale);
+      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
       g.setColor(Color.CYAN);
-      g.fillRect(bds.getX(),bds.getY(),bds.getWidth(),bds.getHeight());
-      bds = getScaled(bi.mark/2, (3*(SocBusStateInfo.TraceHeight-2))/4, 0, 0, scale);
+      g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
       g.setColor(Color.BLACK);
       GraphicsUtil.drawCenteredText(g, "R", bds.getX(), bds.getY());
     }
     g.dispose();
   }
-    
-  public void paint(int x , int y, Graphics2D g2, Long index) {
-	BoxInfo realWidth = getRealBlockWidth(g2,false);
-    Graphics2D g = (Graphics2D)g2.create();
+
+  public void paint(int x, int y, Graphics2D g2, Long index) {
+    BoxInfo realWidth = getRealBlockWidth(g2, false);
+    Graphics2D g = (Graphics2D) g2.create();
     g.translate(x, y);
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, SocBusStateInfo.TraceWidth-2, SocBusStateInfo.TraceHeight-1);
+    g.fillRect(0, 0, SocBusStateInfo.TraceWidth - 2, SocBusStateInfo.TraceHeight - 1);
     g.setColor(Color.BLACK);
-    g.drawRect(0, 0, SocBusStateInfo.TraceWidth-2, SocBusStateInfo.TraceHeight-1);
-    GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (SocBusStateInfo.TraceHeight-2)/4);
-    GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3*(SocBusStateInfo.TraceHeight-2)/4));
+    g.drawRect(0, 0, SocBusStateInfo.TraceWidth - 2, SocBusStateInfo.TraceHeight - 1);
+    GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (SocBusStateInfo.TraceHeight - 2) / 4);
+    GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3 * (SocBusStateInfo.TraceHeight - 2) / 4));
     g.translate(158, 0);
-    paintTraceInfo(g,realWidth,true,false);
+    paintTraceInfo(g, realWidth, true, false);
     g.translate(235, 0);
-    paintTraceInfo(g,realWidth,false,false);
+    paintTraceInfo(g, realWidth, false, false);
     g.dispose();
   }
-  
+
   private BoxInfo getRealBlockWidth(Graphics2D g, boolean scale) {
-	BoxInfo i = new BoxInfo();
-	if (scale) {
-	  i.skip = AppPreferences.getScaled(BLOCK_SKIP);
+    BoxInfo i = new BoxInfo();
+    if (scale) {
+      i.skip = AppPreferences.getScaled(BLOCK_SKIP);
       double prefferedMark = AppPreferences.getScaled(BLOCK_MARKER);
       double prefferedHex = AppPreferences.getScaled(BLOCK_HEX);
       FontMetrics t = g.getFontMetrics();
       double realHex = t.getStringBounds("0x00000000", g).getWidth();
-      double corFactor = realHex <= prefferedHex ? 1.0 : realHex/prefferedHex;
-      i.mark = AppPreferences.getDownScaled((int) Math.round(corFactor*prefferedMark));
-      i.hex = AppPreferences.getDownScaled((int) Math.round(corFactor*prefferedHex));
-      i.blockWidth = 6*i.skip+5*i.mark+2*i.hex;
-	} else {
-	  i.skip = BLOCK_SKIP;
-	  i.mark = BLOCK_MARKER;
-	  i.hex = BLOCK_HEX;
-	  i.blockWidth = SocBusStateInfo.BlockWidth;
-	}
-	return i;
+      double corFactor = realHex <= prefferedHex ? 1.0 : realHex / prefferedHex;
+      i.mark = AppPreferences.getDownScaled((int) Math.round(corFactor * prefferedMark));
+      i.hex = AppPreferences.getDownScaled((int) Math.round(corFactor * prefferedHex));
+      i.blockWidth = 6 * i.skip + 5 * i.mark + 2 * i.hex;
+    } else {
+      i.skip = BLOCK_SKIP;
+      i.mark = BLOCK_MARKER;
+      i.hex = BLOCK_HEX;
+      i.blockWidth = SocBusStateInfo.BlockWidth;
+    }
+    return i;
   }
-  
+
   private static class BoxInfo {
     private int skip;
     private int mark;
     private int hex;
     private int blockWidth;
   }
-  
-  private Bounds getScaled(int x , int y , int width, int height, boolean scale) {
-	if (scale)
-      return Bounds.create(AppPreferences.getScaled(x), AppPreferences.getScaled(y), 
-            AppPreferences.getScaled(width), AppPreferences.getScaled(height));
-	return Bounds.create(x, y, width, height);
+
+  private Bounds getScaled(int x, int y, int width, int height, boolean scale) {
+    if (scale)
+      return Bounds.create(AppPreferences.getScaled(x), AppPreferences.getScaled(y),
+                            AppPreferences.getScaled(width), AppPreferences.getScaled(height));
+    return Bounds.create(x, y, width, height);
   }
-  
+
   public int paint(Graphics2D g2, Long index, int width) {
-	BoxInfo realWidth = getRealBlockWidth(g2,true);
-	int usedWidth = Math.max(realWidth.blockWidth, width);
-    Bounds bds = getScaled(usedWidth/2,(SocBusStateInfo.TraceHeight-2)/4,usedWidth,SocBusStateInfo.TraceHeight>>1,true);
+    BoxInfo realWidth = getRealBlockWidth(g2, true);
+    int usedWidth = Math.max(realWidth.blockWidth, width);
+    Bounds bds = getScaled(usedWidth / 2, (SocBusStateInfo.TraceHeight - 2) / 4, usedWidth, SocBusStateInfo.TraceHeight >> 1, true);
     g2.setColor(Color.LIGHT_GRAY);
-    g2.fillRect(0, 0, bds.getWidth(), bds.getHeight()-1);
+    g2.fillRect(0, 0, bds.getWidth(), bds.getHeight() - 1);
     g2.setColor(Color.black);
-    g2.drawRect(0, 0, bds.getWidth(), bds.getHeight()-1);
-    GraphicsUtil.drawCenteredText(g2, S.get("SocBusStateTraceIndex")+" "+index.toString(), bds.getX(), bds.getY());
+    g2.drawRect(0, 0, bds.getWidth(), bds.getHeight() - 1);
+    GraphicsUtil.drawCenteredText(
+        g2, S.get("SocBusStateTraceIndex") + " " + index.toString(), bds.getX(), bds.getY());
     g2.translate(0, bds.getHeight());
-    bds = getScaled(0,0,usedWidth,SocBusStateInfo.TraceHeight,true);
+    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TraceHeight, true);
     g2.drawLine(0, -1, bds.getWidth(), -1);
     g2.setColor(Color.WHITE);
-    g2.fillRect(0, 1, bds.getWidth()-2, bds.getHeight()-1);
+    g2.fillRect(0, 1, bds.getWidth() - 2, bds.getHeight() - 1);
     g2.setColor(Color.BLACK);
-    g2.drawRect(0, 1, bds.getWidth()-2, bds.getHeight()-1);
-    paintTraceInfo(g2,realWidth,true,true);
-    bds = getScaled(0,0,usedWidth,SocBusStateInfo.TraceHeight,true);
+    g2.drawRect(0, 1, bds.getWidth() - 2, bds.getHeight() - 1);
+    paintTraceInfo(g2, realWidth, true, true);
+    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TraceHeight, true);
     g2.translate(0, bds.getHeight());
     g2.setColor(Color.YELLOW);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight());
     g2.setColor(Color.BLACK);
     g2.drawLine(0, 0, bds.getWidth(), 0);
-    paintTraceInfo(g2,realWidth,false,true);
+    paintTraceInfo(g2, realWidth, false, true);
     return usedWidth;
   }
 

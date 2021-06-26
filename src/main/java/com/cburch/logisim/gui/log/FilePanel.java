@@ -213,17 +213,20 @@ class FilePanel extends LogPanel {
       }
     }
 
+    @Override
+    public void modeChanged(Model.Event event) {}
 
     @Override
-    public void modeChanged(Model.Event event) { }
+    public void historyLimitChanged(Model.Event event) {}
+
     @Override
-    public void historyLimitChanged(Model.Event event) { }
+    public void signalsExtended(Model.Event event) {}
+
     @Override
-    public void signalsExtended(Model.Event event) { }
+    public void signalsReset(Model.Event event) {}
+
     @Override
-    public void signalsReset(Model.Event event) { }
-    @Override
-    public void selectionChanged(Model.Event event) { }
+    public void selectionChanged(Model.Event event) {}
 
     @Override
     public void filePropertyChanged(Model.Event event) {

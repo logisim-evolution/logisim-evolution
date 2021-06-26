@@ -57,6 +57,15 @@ import javax.swing.JPopupMenu;
 
 public class Splitter extends ManagedComponent
     implements WireRepair, ToolTipMaker, MenuExtender, AttributeListener {
+
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Splitter";
+
   private static void appendBuf(StringBuilder buf, int start, int end) {
     if (buf.length() > 0) buf.append(",");
     if (start == end) {
@@ -195,7 +204,7 @@ public class Splitter extends ManagedComponent
   public ComponentFactory getFactory() {
     return SplitterFactory.instance;
   }
-  
+
   public void setFactory(ComponentFactory fact) {}
 
   @Override

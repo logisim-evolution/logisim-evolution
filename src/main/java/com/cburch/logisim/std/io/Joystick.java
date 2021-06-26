@@ -50,6 +50,14 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 public class Joystick extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Joystick";
+
   public static class Poker extends InstancePoker {
     @Override
     public void mouseDragged(InstanceState state, MouseEvent e) {
@@ -148,7 +156,7 @@ public class Joystick extends InstanceFactory {
       Attributes.forBitWidth("bits", S.getter("ioBitWidthAttr"), 2, 5);
 
   public Joystick() {
-    super("Joystick", S.getter("joystickComponent"));
+    super(_ID, S.getter("joystickComponent"));
     setAttributes(
         new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));

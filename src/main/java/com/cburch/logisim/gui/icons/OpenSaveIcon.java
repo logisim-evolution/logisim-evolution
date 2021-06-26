@@ -56,9 +56,9 @@ public class OpenSaveIcon extends AbstractIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    Color DiscCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
+    var discCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
     Bounds bds = getScaled(2, 2, 12, 12);
-    g2.setColor(DiscCol);
+    g2.setColor(discCol);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.YELLOW);
     bds = getScaled(4, 2, 8, 7);
@@ -70,7 +70,8 @@ public class OpenSaveIcon extends AbstractIcon {
     bds = getScaled(8, 11, 1, 2);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.MAGENTA);
-    int[] xpoints, ypoints;
+    int[] xpoints;
+    int[] ypoints;
     switch (myType) {
       case FILE_OPEN:
         xpoints = new int[7];

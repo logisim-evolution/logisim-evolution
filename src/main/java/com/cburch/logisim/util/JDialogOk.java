@@ -75,18 +75,19 @@ public abstract class JDialogOk extends JDialog {
   protected final JButton ok = new JButton(S.get("dlogOkButton"));
   protected final JButton cancel = new JButton(S.get("dlogCancelButton"));
   protected Window parent;
-  
+
   public JDialogOk(String title) {
-    this(title,true);
+    this(title, true);
   }
+
   public JDialogOk(String title, boolean withCancel) {
-    super(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-        title, Dialog.ModalityType.APPLICATION_MODAL);
+    super(
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+        title,
+        Dialog.ModalityType.APPLICATION_MODAL);
     parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
     configure(withCancel);
   }
-  
-  
 
   public void cancelClicked() {}
 
@@ -109,15 +110,24 @@ public abstract class JDialogOk extends JDialog {
     Container pane = super.getContentPane();
     pane.add(contents, BorderLayout.CENTER);
     pane.add(buttons, BorderLayout.SOUTH);
-    
-    getRootPane().registerKeyboardAction(e -> { setVisible(false); cancelClicked(); dispose(); }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    addWindowListener(new WindowAdapter() {
-      public void windowOpened(WindowEvent e) {
-        ok.requestFocus();
-        e.getWindow().removeWindowListener(this);
-      }
-    });
+    getRootPane()
+        .registerKeyboardAction(
+            e -> {
+              setVisible(false);
+              cancelClicked();
+              dispose();
+            },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    addWindowListener(
+        new WindowAdapter() {
+          public void windowOpened(WindowEvent e) {
+            ok.requestFocus();
+            e.getWindow().removeWindowListener(this);
+          }
+        });
   }
 
   @Override
@@ -127,8 +137,7 @@ public abstract class JDialogOk extends JDialog {
 
   public void pack() {
     super.pack();
-    while (parent != null && !parent.isShowing())
-      parent = parent.getOwner();
+    while (parent != null && !parent.isShowing()) parent = parent.getOwner();
     setLocationRelativeTo(parent);
     parent = null;
   }

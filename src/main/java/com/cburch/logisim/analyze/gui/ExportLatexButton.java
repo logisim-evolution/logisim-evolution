@@ -42,8 +42,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 public class ExportLatexButton extends JButton {
-
-  /** */
   private static final long serialVersionUID = 1L;
 
   private final JFrame parent;

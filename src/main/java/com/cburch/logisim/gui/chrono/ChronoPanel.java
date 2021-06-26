@@ -43,7 +43,6 @@ import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -58,10 +57,7 @@ import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.Box;
-import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -71,158 +67,163 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
-
 public class ChronoPanel extends LogPanel implements Model.Listener {
+  private static final long serialVersionUID = 1L;
+  public static final int HEADER_HEIGHT = 20;
+  public static final int SIGNAL_HEIGHT = 30;
+  public static final int GAP = 2;
+  public static final int INITIAL_SPLIT = 150;
+  private Model model;
+  private RightPanel rightPanel;
+  private LeftPanel leftPanel;
+  private JScrollPane leftScroll;
+  private JScrollPane rightScroll;
+  private JSplitPane splitPane;
+  // listeners
 
-private static final long serialVersionUID = 1L;
-public static final int HEADER_HEIGHT = 20;
-public static final int SIGNAL_HEIGHT = 30;
-public static final int GAP = 2;
-public static final int INITIAL_SPLIT = 150;
-private Model model;
-private RightPanel rightPanel;
-private LeftPanel leftPanel;
-private JScrollPane leftScroll, rightScroll;
-private JSplitPane splitPane;
-// listeners
+  public ChronoPanel(LogFrame logFrame) {
+    super(logFrame);
+    selectBg = UIManager.getDefaults().getColor("List.selectionBackground");
+    selectHi = darker(selectBg);
+    selectColors =
+        new Color[] {
+          selectBg, selectHi, SELECT_LINE, SELECT_ERR, SELECT_ERRLINE, SELECT_UNK, SELECT_UNKLINE
+        };
+    setModel(logFrame.getModel());
+    configure();
+    resplit();
+    editHandler.computeEnabled();
+  }
 
-public ChronoPanel(LogFrame logFrame) {
-  super(logFrame);
-  SELECT_BG = UIManager.getDefaults().getColor("List.selectionBackground");
-  SELECT_HI = darker(SELECT_BG);
-  SELECT = new Color[] { SELECT_BG, SELECT_HI, SELECT_LINE, SELECT_ERR, SELECT_ERRLINE, SELECT_UNK, SELECT_UNKLINE };
-  setModel(logFrame.getModel());
-  configure();
-  resplit();
-  editHandler.computeEnabled();
-}
+  private void configure() {
+    setLayout(new BorderLayout());
+    var logFrame = getLogFrame();
+    SimulationToolbarModel simTools;
+    simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
+    final var toolbar = new Toolbar(simTools);
+    final var toolpanel = new JPanel();
+    final var gb = new GridBagLayout();
+    final var gc = new GridBagConstraints();
+    toolpanel.setLayout(gb);
+    gc.fill = GridBagConstraints.NONE;
+    gc.weightx = gc.weighty = 0.0;
+    gc.gridx = gc.gridy = 0;
+    gb.setConstraints(toolbar, gc);
+    toolpanel.add(toolbar);
 
- 
-private void configure() {
-  setLayout(new BorderLayout());
-  LogFrame logFrame = getLogFrame();
-  SimulationToolbarModel simTools;
-  simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
-  Toolbar toolbar = new Toolbar(simTools);
-  JPanel toolpanel = new JPanel();
-  GridBagLayout gb = new GridBagLayout();
-  GridBagConstraints gc = new GridBagConstraints();
-  toolpanel.setLayout(gb);
-  gc.fill = GridBagConstraints.NONE;
-  gc.weightx = gc.weighty = 0.0;
-  gc.gridx = gc.gridy = 0;
-  gb.setConstraints(toolbar, gc);
-  toolpanel.add(toolbar);
+    var b = logFrame.makeSelectionButton();
+    b.setFont(b.getFont().deriveFont(10.0f));
+    Insets insets = gc.insets;
+    gc.insets = new Insets(2, 0, 2, 0);
+    gc.gridx = 1;
+    gb.setConstraints(b, gc);
+    toolpanel.add(b);
+    gc.insets = insets;
 
-  JButton b = logFrame.makeSelectionButton();
-  b.setFont(b.getFont().deriveFont(10.0f));
-  Insets insets = gc.insets;
-  gc.insets = new Insets(2, 0, 2, 0);
-  gc.gridx = 1;
-  gb.setConstraints(b, gc);
-  toolpanel.add(b);
-  gc.insets = insets;
+    final var filler = Box.createHorizontalGlue();
+    gc.fill = GridBagConstraints.HORIZONTAL;
+    gc.weightx = 1.0;
+    gc.gridx = 2;
+    gb.setConstraints(filler, gc);
+    toolpanel.add(filler);
+    add(toolpanel, BorderLayout.NORTH);
 
-  Component filler = Box.createHorizontalGlue();
-  gc.fill = GridBagConstraints.HORIZONTAL;
-  gc.weightx = 1.0;
-  gc.gridx = 2;
-  gb.setConstraints(filler, gc);
-  toolpanel.add(filler);
-  add(toolpanel, BorderLayout.NORTH);
+    // panels
+    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    splitPane.setDividerSize(5);
+    splitPane.setResizeWeight(0.0);
+    add(BorderLayout.CENTER, splitPane);
+    var inputMap = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    var actionMap = getActionMap();
+    inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ClearSelection");
+    actionMap.put(
+        "ClearSelection",
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
 
-  // panels
-  splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-  splitPane.setDividerSize(5);
-  splitPane.setResizeWeight(0.0);
-  add(BorderLayout.CENTER, splitPane);
-  InputMap inputMap = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-  ActionMap actionMap = getActionMap();
-  inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ClearSelection");
-  actionMap.put("ClearSelection", new AbstractAction() {
-    private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      System.out.println("chrono clear");
-      leftPanel.clearSelection();
-    }
-  });
-}
+          public void actionPerformed(ActionEvent e) {
+            System.out.println("chrono clear");
+            leftPanel.clearSelection();
+          }
+        });
+  }
 
-private void resplit() {
-  leftPanel = new LeftPanel(this);
-  leftScroll = new JScrollPane(leftPanel,
-      ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+  private void resplit() {
+    leftPanel = new LeftPanel(this);
+    leftScroll =
+        new JScrollPane(
+            leftPanel,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-  int p = rightScroll == null ? 0 : rightScroll.getHorizontalScrollBar().getValue();
-  if (rightPanel == null)
-    rightPanel = new RightPanel(this, leftPanel.getSelectionModel());
-  rightScroll = new JScrollPane(rightPanel,
-      ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    final int p = rightScroll == null ? 0 : rightScroll.getHorizontalScrollBar().getValue();
+    if (rightPanel == null) rightPanel = new RightPanel(this, leftPanel.getSelectionModel());
+    rightScroll =
+        new JScrollPane(
+            rightPanel,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-  // Synchronize the two scrollbars
-  leftScroll.getVerticalScrollBar().setUI(null);
-  leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
+    // Synchronize the two scrollbars
+    leftScroll.getVerticalScrollBar().setUI(null);
+    leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
 
-  // zoom on control+scrollwheel
-  MouseAdapter zoomer = new MouseAdapter() {
-    public void mouseWheelMoved(MouseWheelEvent e) {
-      if (e.isControlDown()) {
-        e.consume();
-        rightPanel.zoom(e.getWheelRotation() > 0 ? -1 : +1, e.getPoint().x);
-      }
-      else
-        e.getComponent().getParent().dispatchEvent(e);
-    }
-  };
-  // We can't put it on the scroll pane, because ordering of listeners isn's
-  // specified and we need to be first to prevent default scroll behavior
-  // when control is down.
-  // leftScroll.addMouseWheelListener(zoomer);
-  // rightScroll.addMouseWheelListener(zoomer);
-  leftPanel.addMouseWheelListener(zoomer);
-  rightPanel.addMouseWheelListener(zoomer);
-  leftPanel.getTableHeader().addMouseWheelListener(zoomer);
-  rightPanel.getTimelineHeader().addMouseWheelListener(zoomer);
+    // zoom on control+scrollwheel
+    var zoomer =
+        new MouseAdapter() {
+          public void mouseWheelMoved(MouseWheelEvent e) {
+            if (e.isControlDown()) {
+              e.consume();
+              rightPanel.zoom(e.getWheelRotation() > 0 ? -1 : +1, e.getPoint().x);
+            } else e.getComponent().getParent().dispatchEvent(e);
+          }
+        };
+    // We can't put it on the scroll pane, because ordering of listeners isn's
+    // specified and we need to be first to prevent default scroll behavior
+    // when control is down.
+    // leftScroll.addMouseWheelListener(zoomer);
+    // rightScroll.addMouseWheelListener(zoomer);
+    leftPanel.addMouseWheelListener(zoomer);
+    rightPanel.addMouseWheelListener(zoomer);
+    leftPanel.getTableHeader().addMouseWheelListener(zoomer);
+    rightPanel.getTimelineHeader().addMouseWheelListener(zoomer);
 
-  splitPane.setLeftComponent(leftScroll);
-  splitPane.setRightComponent(rightScroll);
+    splitPane.setLeftComponent(leftScroll);
+    splitPane.setRightComponent(rightScroll);
 
-  leftScroll.setWheelScrollingEnabled(true);
-  rightScroll.setWheelScrollingEnabled(true);
+    leftScroll.setWheelScrollingEnabled(true);
+    rightScroll.setWheelScrollingEnabled(true);
 
-  setSignalCursorX(Integer.MAX_VALUE);
-  // put right scrollbar into same position
-  rightScroll.getHorizontalScrollBar().setValue(p);
-  
-  leftPanel.getSelectionModel().addListSelectionListener(
-      e -> editHandler.computeEnabled());
-}
+    setSignalCursorX(Integer.MAX_VALUE);
+    // put right scrollbar into same position
+    rightScroll.getHorizontalScrollBar().setValue(p);
 
-public LeftPanel getLeftPanel() {
-  return leftPanel;
-}
+    leftPanel.getSelectionModel().addListSelectionListener(e -> editHandler.computeEnabled());
+  }
 
-public RightPanel getRightPanel() {
-  return rightPanel;
-}
+  public LeftPanel getLeftPanel() {
+    return leftPanel;
+  }
 
-public JScrollBar getVerticalScrollBar() {
-  return rightScroll == null ? null : rightScroll.getVerticalScrollBar();
-}
+  public RightPanel getRightPanel() {
+    return rightPanel;
+  }
 
-public JScrollBar getHorizontalScrollBar() {
-  return rightScroll == null ? null : rightScroll.getHorizontalScrollBar();
-}
+  public JScrollBar getVerticalScrollBar() {
+    return rightScroll == null ? null : rightScroll.getVerticalScrollBar();
+  }
 
-public JViewport getRightViewport() {
-  return rightScroll == null ? null : rightScroll.getViewport();
-}
+  public JScrollBar getHorizontalScrollBar() {
+    return rightScroll == null ? null : rightScroll.getHorizontalScrollBar();
+  }
 
-public int getVisibleSignalsWidth() {
-  return splitPane.getRightComponent().getWidth();
-}
+  public JViewport getRightViewport() {
+    return rightScroll == null ? null : rightScroll.getViewport();
+  }
+
+  public int getVisibleSignalsWidth() {
+    return splitPane.getRightComponent().getWidth();
+  }
 
   @Override
   public String getTitle() {
@@ -231,11 +232,11 @@ public int getVisibleSignalsWidth() {
 
   @Override
   public String getHelpText() {
-    return S.get("ChronoTitle");  
+    return S.get("ChronoTitle");
   }
 
   @Override
-  public void localeChanged() { }
+  public void localeChanged() {}
 
   @Override
   public void modelChanged(Model oldModel, Model newModel) {
@@ -247,12 +248,10 @@ public int getVisibleSignalsWidth() {
 
   public void changeSpotlight(Signal s) {
     Signal old = model.setSpotlight(s);
-    if (old == s)
-      return;
+    if (old == s) return;
     rightPanel.changeSpotlight(old, s);
     leftPanel.changeSpotlight(old, s);
   }
-
 
   public void setSignalCursorX(int posX) {
     rightPanel.setSignalCursorX(posX);
@@ -260,7 +259,7 @@ public int getVisibleSignalsWidth() {
   }
 
   @Override
-  public void modeChanged(Model.Event event) { }
+  public void modeChanged(Model.Event event) {}
 
   @Override
   public void signalsExtended(Model.Event event) {
@@ -279,10 +278,10 @@ public int getVisibleSignalsWidth() {
 
   @Override
   public void historyLimitChanged(Model.Event event) {
-     setSignalCursorX(Integer.MAX_VALUE);
-     rightPanel.updateWaveforms(false);
+    setSignalCursorX(Integer.MAX_VALUE);
+    rightPanel.updateWaveforms(false);
   }
-  
+
   @Override
   public void selectionChanged(Model.Event event) {
     leftPanel.updateSignals();
@@ -295,11 +294,9 @@ public int getVisibleSignalsWidth() {
   }
 
   public void setModel(Model newModel) {
-    if (model != null)
-      model.removeModelListener(this);
+    if (model != null) model.removeModelListener(this);
     model = newModel;
-    if (model == null)
-      return;
+    if (model == null) return;
     model.addModelListener(this);
   }
 
@@ -317,128 +314,136 @@ public int getVisibleSignalsWidth() {
   private static final Color SPOT_ERRLINE = Color.BLACK;
   private static final Color SPOT_UNK = new Color(0xea, 0x98, 0x49);
   private static final Color SPOT_UNKLINE = Color.BLACK;
-  private final Color SELECT_BG; // set in constructor
-  private final Color SELECT_HI; // set in constructor
+  private final Color selectBg; // set in constructor
+  private final Color selectHi; // set in constructor
   private static final Color SELECT_LINE = Color.BLACK;
   private static final Color SELECT_ERR = new Color(0xe5, 0x80, 0x80);
   private static final Color SELECT_ERRLINE = Color.BLACK;
   private static final Color SELECT_UNK = new Color(0xee, 0x99, 0x44);
   private static final Color SELECT_UNKLINE = Color.BLACK;
-  private static final Color[] SPOT = { SPOT_BG, SPOT_HI, SPOT_LINE, SPOT_ERR, SPOT_ERRLINE, SPOT_UNK, SPOT_UNKLINE };
-  private static final Color[] PLAIN = { PLAIN_BG, PLAIN_HI, PLAIN_LINE, PLAIN_ERR, PLAIN_ERRLINE, PLAIN_UNK, PLAIN_UNKLINE };
-  private final Color[] SELECT; // set in constructor
+  private static final Color[] SPOT = {
+    SPOT_BG, SPOT_HI, SPOT_LINE, SPOT_ERR, SPOT_ERRLINE, SPOT_UNK, SPOT_UNKLINE
+  };
+  private static final Color[] PLAIN = {
+    PLAIN_BG, PLAIN_HI, PLAIN_LINE, PLAIN_ERR, PLAIN_ERRLINE, PLAIN_UNK, PLAIN_UNKLINE
+  };
+  private final Color[] selectColors; // set in constructor
 
   public Color[] rowColors(SignalInfo item, boolean isSelected) {
-    if (isSelected)
-      return SELECT;
+    if (isSelected) return selectColors;
     Signal spotlight = model.getSpotlight();
-    if (spotlight != null && spotlight.info == item)
-      return SPOT;
+    if (spotlight != null && spotlight.info == item) return SPOT;
     return PLAIN;
   }
 
   private static Color darker(Color c) {
-    float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null); 
+    float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
     float s = 0.8f;
-    if (hsb[1] == 0.0)
-      return Color.getHSBColor(hsb[0], hsb[1] + hsb[1], hsb[2]*s);
-    else
-      return Color.getHSBColor(hsb[0], 1.0f - (1.0f - hsb[1])*s, hsb[2]);
+    if (hsb[1] == 0.0) return Color.getHSBColor(hsb[0], hsb[1] + hsb[1], hsb[2] * s);
+    else return Color.getHSBColor(hsb[0], 1.0f - (1.0f - hsb[1]) * s, hsb[2]);
   }
+
   @Override
   public EditHandler getEditHandler() {
     return editHandler;
   }
 
-  final EditHandler editHandler = new EditHandler() {
-    @Override
-    public void computeEnabled() {
-      boolean empty = model.getSignalCount() == 0;
-      boolean sel = !empty && !leftPanel.getSelectionModel().isSelectionEmpty();
-      setEnabled(LogisimMenuBar.CUT, sel);
-      setEnabled(LogisimMenuBar.COPY, sel);
-      setEnabled(LogisimMenuBar.PASTE, true);
-      setEnabled(LogisimMenuBar.DELETE, sel);
-      setEnabled(LogisimMenuBar.DUPLICATE, false);
-      setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
-      // todo: raise/lower handlers
-      setEnabled(LogisimMenuBar.RAISE, sel);
-      setEnabled(LogisimMenuBar.LOWER, sel);
-      setEnabled(LogisimMenuBar.RAISE_TOP, sel);
-      setEnabled(LogisimMenuBar.LOWER_BOTTOM, sel);
-      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
-      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Object action = e.getSource();
-      leftPanel.getActionMap().get(action).actionPerformed(e);
-    }
-  };
-  
+  final EditHandler editHandler =
+      new EditHandler() {
+        @Override
+        public void computeEnabled() {
+          boolean empty = model.getSignalCount() == 0;
+          boolean sel = !empty && !leftPanel.getSelectionModel().isSelectionEmpty();
+          setEnabled(LogisimMenuBar.CUT, sel);
+          setEnabled(LogisimMenuBar.COPY, sel);
+          setEnabled(LogisimMenuBar.PASTE, true);
+          setEnabled(LogisimMenuBar.DELETE, sel);
+          setEnabled(LogisimMenuBar.DUPLICATE, false);
+          setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
+          // todo: raise/lower handlers
+          setEnabled(LogisimMenuBar.RAISE, sel);
+          setEnabled(LogisimMenuBar.LOWER, sel);
+          setEnabled(LogisimMenuBar.RAISE_TOP, sel);
+          setEnabled(LogisimMenuBar.LOWER_BOTTOM, sel);
+          setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+          setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          Object action = e.getSource();
+          leftPanel.getActionMap().get(action).actionPerformed(e);
+        }
+      };
+
   @Override
   public PrintHandler getPrintHandler() {
     return printHandler;
   }
 
-  final PrintHandler printHandler = new PrintHandler() {
-    @Override
-    public Dimension getExportImageSize() {
-      Dimension l = leftPanel.getPreferredSize();
-      Dimension r = rightPanel.getPreferredSize();
-      int width = l.width + 3 + r.width;
-      int height = HEADER_HEIGHT + l.height;
-      return new Dimension(width, height);
-    }
+  final PrintHandler printHandler =
+      new PrintHandler() {
+        @Override
+        public Dimension getExportImageSize() {
+          Dimension l = leftPanel.getPreferredSize();
+          Dimension r = rightPanel.getPreferredSize();
+          int width = l.width + 3 + r.width;
+          int height = HEADER_HEIGHT + l.height;
+          return new Dimension(width, height);
+        }
 
-    @Override
-    public void paintExportImage(BufferedImage img, Graphics2D g) {
-      Dimension l = leftPanel.getPreferredSize();
-      Dimension r = rightPanel.getPreferredSize();
+        @Override
+        public void paintExportImage(BufferedImage img, Graphics2D g) {
+          Dimension l = leftPanel.getPreferredSize();
+          Dimension r = rightPanel.getPreferredSize();
 
-      g.setClip(0, 0, l.width, HEADER_HEIGHT);
-      leftPanel.getTableHeader().print(g); 
+          g.setClip(0, 0, l.width, HEADER_HEIGHT);
+          leftPanel.getTableHeader().print(g);
 
-      g.setClip(l.width + 3, 0, r.width, HEADER_HEIGHT);
-      g.translate(l.width + 3, 0);
-      rightPanel.getTimelineHeader().print(g);
-      g.translate(-(l.width + 3), 0);
+          g.setClip(l.width + 3, 0, r.width, HEADER_HEIGHT);
+          g.translate(l.width + 3, 0);
+          rightPanel.getTimelineHeader().print(g);
+          g.translate(-(l.width + 3), 0);
 
-      g.setClip(0, HEADER_HEIGHT, l.width, l.height);
-      g.translate(0, HEADER_HEIGHT);
-      leftPanel.print(g);
-      g.translate(0, -HEADER_HEIGHT);
+          g.setClip(0, HEADER_HEIGHT, l.width, l.height);
+          g.translate(0, HEADER_HEIGHT);
+          leftPanel.print(g);
+          g.translate(0, -HEADER_HEIGHT);
 
-      g.setClip(l.width + 3, HEADER_HEIGHT, r.width, l.height);
-      g.translate(l.width + 3, HEADER_HEIGHT);
-      rightPanel.print(g);
-      g.translate(-(l.width + 3), -HEADER_HEIGHT);
-    }
+          g.setClip(l.width + 3, HEADER_HEIGHT, r.width, l.height);
+          g.translate(l.width + 3, HEADER_HEIGHT);
+          rightPanel.print(g);
+          g.translate(-(l.width + 3), -HEADER_HEIGHT);
+        }
 
-    @Override
-    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
-      if (pageNum != 0)
-        return Printable.NO_SUCH_PAGE;
+        @Override
+        public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+          if (pageNum != 0) return Printable.NO_SUCH_PAGE;
 
-      // shrink horizontally to fit
-      FontMetrics fm = g.getFontMetrics();
-      Dimension d = getExportImageSize();
-      double headerHeight = fm.getHeight() * 1.5;
-      double scale = 1.0;
-      if (d.width > w || d.height > (h-headerHeight))
-        scale = Math.min(w / d.width, (h-headerHeight) / d.height);
+          // shrink horizontally to fit
+          FontMetrics fm = g.getFontMetrics();
+          Dimension d = getExportImageSize();
+          double headerHeight = fm.getHeight() * 1.5;
+          double scale = 1.0;
+          if (d.width > w || d.height > (h - headerHeight))
+            scale = Math.min(w / d.width, (h - headerHeight) / d.height);
 
-      GraphicsUtil.drawText(g,
-          S.fmt("ChronoPrintTitle",
-              model.getCircuit().getName(),
-              getProject().getLogisimFile().getDisplayName()),
-          (int)(w/2), 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+          GraphicsUtil.drawText(
+              g,
+              S.fmt(
+                  "ChronoPrintTitle",
+                  model.getCircuit().getName(),
+                  getProject().getLogisimFile().getDisplayName()),
+              (int) (w / 2),
+              0,
+              GraphicsUtil.H_CENTER,
+              GraphicsUtil.V_TOP);
 
-      g.translate(0, fm.getHeight() * 1.5);
-      g.scale(scale, scale);
-      paintExportImage(null, g);
+          g.translate(0, fm.getHeight() * 1.5);
+          g.scale(scale, scale);
+          paintExportImage(null, g);
 
-      return Printable.PAGE_EXISTS;
-    }
-  };
+          return Printable.PAGE_EXISTS;
+        }
+      };
 }

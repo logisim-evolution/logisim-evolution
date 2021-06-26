@@ -43,9 +43,9 @@ public class BoardRectangle {
   public BoardRectangle(int x, int y, int w, int h) {
     this.set(x, y, w, h);
   }
-  
+
   public BoardRectangle(Rectangle rect) {
-    set(rect.getX(),rect.getY(),rect.getWidth(),rect.getHeight());
+    set(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
   }
 
   @Override
@@ -81,24 +81,29 @@ public class BoardRectangle {
   public String GetLabel() {
     return Label;
   }
-  
-  public int getNrBits() {return NrBits;}
-  public void setNrBits(int nr) { NrBits = nr; }
-  
+
+  public int getNrBits() {
+    return NrBits;
+  }
+
+  public void setNrBits(int nr) {
+    NrBits = nr;
+  }
+
   public void updateRectangle(BoardRectangle other) {
     xPosition = other.getXpos();
     yPosition = other.getYpos();
     Width = other.getWidth();
     Height = other.getHeight();
   }
-  
+
   public void updateRectangle(Rectangle other) {
     xPosition = other.getX();
     yPosition = other.getY();
     Width = other.getWidth();
     Height = other.getHeight();
   }
-	  
+
   public Boolean Overlap(Rectangle rect) {
     return Overlap(new BoardRectangle(rect));
   }
@@ -205,11 +210,11 @@ public class BoardRectangle {
   public void SetLabel(String Label) {
     this.Label = Label;
   }
-  
+
   public void setValue(Long val) {
     this.value = val;
   }
-  
+
   public Long getValue() {
     return value;
   }

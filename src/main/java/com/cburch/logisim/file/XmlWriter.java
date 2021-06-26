@@ -106,7 +106,7 @@ class XmlWriter {
   }
 
   static int stringCompare(String a, String b) {
-    if (a == b) return 0;
+    if (a.equals(b)) return 0;
     else if (a == null) return -1;
     else if (b == null) return 1;
     else return a.compareTo(b);
@@ -153,7 +153,7 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar") && !name.equals("appear")) {
       Node[] a = new Node[n];
       for (int i = 0; i < n; i++) a[i] = children.item(i);
       Arrays.sort(a, nodeComparator);
@@ -203,7 +203,7 @@ class XmlWriter {
   private final LogisimFile file;
   private final Document doc;
   /**
-   * Path of the file which is being written on disk -- used to relativize components stored in it
+   * Path of the file which is being written on disk -- used to relativize components stored in it.
    */
   private final String outFilepath;
 
@@ -297,7 +297,7 @@ class XmlWriter {
       if (elt != null) ret.appendChild(elt);
     }
     for (String board : circuit.getBoardMapNamestoSave()) {
-      Element elt = fromMap(circuit,board);
+      Element elt = fromMap(circuit, board);
       if (elt != null) ret.appendChild(elt);
     }
     return ret;
@@ -310,7 +310,7 @@ class XmlWriter {
     ret.setTextContent(vhdl.getContent());
     return ret;
   }
-  
+
   Element fromMap(Circuit circ, String boardName) {
     Element ret = doc.createElement("boardmap");
     ret.setAttribute("boardname", boardName);
@@ -408,7 +408,7 @@ class XmlWriter {
             "\nThis file is intended to be "
                 + "loaded by Logisim-evolution (https://github.com/logisim-evolution/logisim-evolution).\n"));
     ret.setAttribute("version", "1.0");
-    ret.setAttribute("source", Main.VERSION_NAME);
+    ret.setAttribute("source", Main.VERSION.toString());
 
     for (Library lib : file.getLibraries()) {
       Element elt = fromLibrary(lib);

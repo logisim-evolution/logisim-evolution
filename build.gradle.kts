@@ -5,11 +5,12 @@ import kotlin.collections.ArrayList
 import kotlin.collections.mapOf
 
 plugins {
+    checkstyle
     id("com.github.ben-manes.versions") version "0.38.0"
     java
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
-} 
+}
 
 repositories {
     mavenCentral()
@@ -20,9 +21,6 @@ application {
 }
 
 dependencies {
-    implementation(fileTree("lib") {
-        include("**/*.jar")
-    })
     implementation("org.hamcrest:hamcrest:2.2")
     implementation("javax.help:javahelp:2.0.05")
     implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
@@ -30,9 +28,11 @@ dependencies {
     implementation("org.drjekyll:colorpicker:1.3")
     implementation("org.drjekyll:fontchooser:2.4")
     implementation("at.swimmesberger:swingx-core:1.6.8")
+    implementation("org.scijava:swing-checkbox-tree:1.0.2")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("com.formdev:flatlaf:1.2")
+    implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
@@ -190,10 +190,10 @@ tasks.register("createApp") {
       if (OperatingSystem.current().isMacOsX) {
          val appDirname = ext.get("appDirname") as String
          delete(appDirname)
-         var appname = ext.get("uppercaseProjectName") as String
+         val appName = ext.get("uppercaseProjectName") as String
          val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
-            "--name", appname,
+            "--name", appName,
             "--file-associations", "$projectDir/support/jpackage/macos/file.jpackage",
             "--icon", "$projectDir/support/jpackage/macos/Logisim-evolution.icns",
             "--type", "app-image"
@@ -204,7 +204,7 @@ tasks.register("createApp") {
          if (process1.waitFor() != 0) {
             throw GradleException("Error while creating app directory")
          }
-         val plistfilename = "$buildDir/dist/" + appname + ".app/Contents/Info.plist"
+         val plistfilename = "$buildDir/dist/" + appName + ".app/Contents/Info.plist"
          val parameters2 = ArrayList<String>(Arrays.asList(
             "awk", "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};{print >\"$buildDir/dist/Info.plist\"};/NSHighResolutionCapable/{print \"  <string>true</string>\" >\"$buildDir/dist/Info.plist\"; print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"$buildDir/dist/Info.plist\"}",
             plistfilename
@@ -245,12 +245,12 @@ tasks.register("createDmg") {
    outputs.file(ext.get("dmgFilename") as String)
    doLast {
       if (OperatingSystem.current().isMacOsX) {
-         var appname = ext.get("uppercaseProjectName") as String
+         val appName = ext.get("uppercaseProjectName") as String
          val parameters1 = ArrayList<String>(Arrays.asList(
             ext.get("jpackagecmd") as String,
             "--type", "dmg",
-            "--app-image", "$buildDir" + File.separator + "dist" + File.separator +  appname + ".app",
-            "--name", appname,
+            "--app-image", "$buildDir" + File.separator + "dist" + File.separator +  appName + ".app",
+            "--name", appName,
             "--app-version", project.version as String,
             "--dest", "$buildDir/dist"
          ))
@@ -296,4 +296,29 @@ tasks {
             include("README.md")
         }
     }
+
+    // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
+    checkstyle {
+        // Checkstyle version to use
+        toolVersion = "8.43"
+
+        // let's use google_checks.xml config provided with Checkstyle.
+        // https://stackoverflow.com/a/67513272/1235698
+        val archive = configurations.checkstyle.get().resolve().filter {
+          it.name.startsWith("checkstyle")
+        }
+        config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
+
+        // FIXME there should be cleaner way of using custom suppression config with built-in style
+        // https://stackoverflow.com/a/64703619/1235698
+        System.setProperty( "org.checkstyle.google.suppressionfilter.config", "$projectDir/config/checkstyle/suppressions.xml")
+    }
+    checkstyleMain {
+        source = fileTree("src/main/java")
+    }
+    checkstyleTest {
+        source = fileTree("src/test/java")
+    }
+
 }
+

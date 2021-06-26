@@ -71,10 +71,10 @@ public class Ttl7464HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   "+HDL.assignPreamble()+"Y"+HDL.assignOperator()+HDL.notOperator()+"((A"+
-                 HDL.andOperator()+"B"+HDL.andOperator()+"C"+HDL.andOperator()+"D)"+HDL.orOperator()+
-                 "(E"+HDL.andOperator()+"F)"+HDL.orOperator()+"(G"+HDL.andOperator()+"H"+HDL.andOperator()+
-                 "I)"+HDL.orOperator()+"(J"+HDL.andOperator()+"K));");
+    Contents.add("   " + HDL.assignPreamble() + "Y" + HDL.assignOperator() + HDL.notOperator() + "((A"
+            + HDL.andOperator() + "B" + HDL.andOperator() + "C" + HDL.andOperator() + "D)" + HDL.orOperator()
+            + "(E" + HDL.andOperator() + "F)" + HDL.orOperator() + "(G" + HDL.andOperator()
+            + "H" + HDL.andOperator() + "I)" + HDL.orOperator() + "(J" + HDL.andOperator() + "K));");
     return Contents;
   }
 

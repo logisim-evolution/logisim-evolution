@@ -71,11 +71,11 @@ public class MemContents implements Cloneable, HexModel {
       }
     }
   }
-  
+
   public void condClear() {
     if (!AppPreferences.Memory_Startup_Unknown.getBoolean()) clear();
     else {
-      for (int i = 0 ; i < pages.length ; i++) {
+      for (int i = 0; i < pages.length; i++) {
         long[] oldValues = pages[i] != null ? pages[i].get(0, pages[i].getLength()) : null;
         pages[i] = MemContentsSub.createPage(PAGE_SIZE, width);
         if (oldValues != null)
@@ -130,10 +130,10 @@ public class MemContents implements Cloneable, HexModel {
   public void fill(long start, long len, long value) {
     if (len == 0) return;
 
-    int pageStart = (int)(start >>> PAGE_SIZE_BITS);
-    int startOffs = (int)(start & PAGE_MASK);
-    int pageEnd = (int)((start + len - 1) >>> PAGE_SIZE_BITS);
-    int endOffs = (int)((start + len - 1) & PAGE_MASK);
+    int pageStart = (int) (start >>> PAGE_SIZE_BITS);
+    int startOffs = (int) (start & PAGE_MASK);
+    int pageEnd = (int) ((start + len - 1) >>> PAGE_SIZE_BITS);
+    int endOffs = (int) ((start + len - 1) & PAGE_MASK);
     value &= mask;
 
     if (pageStart == pageEnd) {
@@ -223,7 +223,7 @@ public class MemContents implements Cloneable, HexModel {
   }
 
   public long get(long addr) {
-    int page = (int)(addr >>> PAGE_SIZE_BITS);
+    int page = (int) (addr >>> PAGE_SIZE_BITS);
     long offs = (addr & PAGE_MASK);
     if (page < 0 || page >= pages.length || pages[page] == null) return 0;
     return pages[page].get(offs) & mask;
@@ -285,10 +285,10 @@ public class MemContents implements Cloneable, HexModel {
   public void set(long start, long[] values) {
     if (values.length == 0) return;
 
-    int pageStart = (int)(start >>> PAGE_SIZE_BITS);
-    int startOffs = (int)(start & PAGE_MASK);
-    int pageEnd = (int)((start + values.length - 1) >>> PAGE_SIZE_BITS);
-    int endOffs = (int)((start + values.length - 1) & PAGE_MASK);
+    int pageStart = (int) (start >>> PAGE_SIZE_BITS);
+    int startOffs = (int) (start & PAGE_MASK);
+    int pageEnd = (int) ((start + values.length - 1) >>> PAGE_SIZE_BITS);
+    int endOffs = (int) ((start + values.length - 1) & PAGE_MASK);
 
     if (pageStart == pageEnd) {
       ensurePage(pageStart);
@@ -360,7 +360,7 @@ public class MemContents implements Cloneable, HexModel {
   }
 
   public void copyFrom(long start, MemContents src, long offs, int count) {
-    count = (int)Math.min(count, getLastOffset() - start + 1);
+    count = (int) Math.min(count, getLastOffset() - start + 1);
     if (count <= 0)
       return;
     if (src.addrBits != addrBits)
@@ -368,9 +368,10 @@ public class MemContents implements Cloneable, HexModel {
               "memory width mismatch: src is %d bits wide, dest is %d bits wide",
               src.addrBits, addrBits));
     if (offs + count - 1 > src.getLastOffset())
-      throw new IllegalArgumentException(String.format(
-    		  "memory offset out of range: offset 0x%x count 0x%x exceeds last valid offset 0x%x",
-    		  offs, count, src.getLastOffset()));
+      throw new IllegalArgumentException(
+          String.format(
+              "memory offset out of range: offset 0x%x count 0x%x exceeds last valid offset 0x%x",
+              offs, count, src.getLastOffset()));
 
     int dp = (int) (start >>> PAGE_SIZE_BITS);
     int di = (int) (start & PAGE_MASK);
@@ -386,10 +387,9 @@ public class MemContents implements Cloneable, HexModel {
         // both already all zeros, so do nothing
       } else if (srcPage == null) {
         // clearing locations di..di+n on this page
-        fill(dp*PAGE_SIZE+di, n, 0);
+        fill(dp * PAGE_SIZE + di, n, 0);
       } else {
-        if (dstPage == null)
-          dstPage = pages[dp] = MemContentsSub.createPage(PAGE_SIZE, width);
+        if (dstPage == null) dstPage = pages[dp] = MemContentsSub.createPage(PAGE_SIZE, width);
         // copy locations di..di+n on this page
         long[] vals = srcPage.get(si, n);
         dstPage.set(di, vals);
@@ -406,7 +406,7 @@ public class MemContents implements Cloneable, HexModel {
         sp++;
       }
     } while (count > 0); // (dp <= dstPageEnd || di <= dstEndOffs)
-    fireBytesChanged(0,1<<addrBits,null); /* update my listeners */
+    fireBytesChanged(0, 1 << addrBits, null); /* update my listeners */
   }
 
   public void setDimensions(int addrBits, int width) {
@@ -444,7 +444,7 @@ public class MemContents implements Cloneable, HexModel {
 
     fireMetainfoChanged();
   }
-  
+
   public void condFillRandom() {
     if (AppPreferences.Memory_Startup_Unknown.get()) {
       int pageLength;
@@ -453,12 +453,12 @@ public class MemContents implements Cloneable, HexModel {
       } else {
         pageLength = PAGE_SIZE;
       }
-      for (int i = 0 ; i < pages.length ; i++)
+      for (int i = 0; i < pages.length; i++)
         if (pages[i] == null) pages[i] = MemContentsSub.createPage(pageLength, width);
     }
   }
-  
-  static abstract class Page implements Cloneable {
+
+  abstract static class Page implements Cloneable {
     @Override
     public Page clone() {
       try {
@@ -504,6 +504,5 @@ public class MemContents implements Cloneable, HexModel {
 
     abstract void set(long addr, long value);
   }
-
 
 }

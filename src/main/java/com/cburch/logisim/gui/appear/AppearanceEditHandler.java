@@ -85,7 +85,7 @@ public class AppearanceEditHandler extends EditHandler
     Selection sel = canvas.getSelection();
     boolean selEmpty = sel.isEmpty();
     boolean canChange = proj.getLogisimFile().contains(circ);
-    boolean clipExists = !Clipboard.isEmpty();
+    final boolean clipExists = !Clipboard.isEmpty();
     boolean selHasRemovable = false;
     for (CanvasObject o : sel.getSelected()) {
       if (!(o instanceof AppearanceElement)) {

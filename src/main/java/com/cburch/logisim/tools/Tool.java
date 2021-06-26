@@ -35,6 +35,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.main.Canvas;
+import com.cburch.logisim.util.LibraryUtil;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -81,11 +82,21 @@ public abstract class Tool implements AttributeDefaultProvider {
 
   public abstract String getDisplayName();
 
+  /**
+   * Returns Tool unique ID as defined in its _ID constant.
+   *
+   * For each tool extending this class, define
+   *    public static final String _ID = "<UNIQUE ID>"
+   *
+   * @return unique ID of the tool
+   */
+  public String getName() {
+    return LibraryUtil.getName(getClass());
+  }
+
   public Set<Component> getHiddenComponents(Canvas canvas) {
     return null;
   }
-
-  public abstract String getName();
 
   public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
     return false;
@@ -110,7 +121,7 @@ public abstract class Tool implements AttributeDefaultProvider {
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {}
 
   public void paintIcon(ComponentDrawContext c, int x, int y) {}
-  
+
   public void registerParent(java.awt.Component parent) {}
 
   public void select(Canvas canvas) {}

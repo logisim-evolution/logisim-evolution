@@ -35,12 +35,12 @@ import java.awt.Graphics2D;
 
 public class LEDIcon extends AnimatedIcon {
 
-  private final boolean isRGB;
+  private final boolean isRgb;
   private int showstate;
 
-  public LEDIcon(boolean RGB) {
+  public LEDIcon(boolean isRgb) {
     super();
-    isRGB = RGB;
+    this.isRgb = isRgb;
     showstate = -1;
   }
 
@@ -54,7 +54,7 @@ public class LEDIcon extends AnimatedIcon {
     Color c = (showstate >= 0) ? new Color(r, g, b) : Color.RED;
     g2.setColor(c);
     g2.fillOval(xy, xy, wh, wh);
-    if (isRGB && showstate < 0) {
+    if (isRgb && showstate < 0) {
       g2.setColor(Color.GREEN);
       g2.fillArc(xy, xy, wh, wh, 0, 120);
       g2.setColor(Color.BLUE);
@@ -68,7 +68,7 @@ public class LEDIcon extends AnimatedIcon {
   @Override
   public void animationUpdate() {
     showstate++;
-    showstate %= isRGB ? 8 : 2;
+    showstate %= isRgb ? 8 : 2;
   }
 
   @Override

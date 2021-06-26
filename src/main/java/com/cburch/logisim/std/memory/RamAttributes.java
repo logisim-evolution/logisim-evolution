@@ -44,18 +44,15 @@ import java.util.List;
 public class RamAttributes extends AbstractAttributeSet {
 
   /* here the rest is defined */
-  static final AttributeOption VOLATILE = new AttributeOption("volatile",S.getter("ramTypeVolatile"));
-  static final AttributeOption NONVOLATILE = new AttributeOption("nonvolatile",S.getter("ramTypeNonVolatile"));
-  static final Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption(
-         "type", S.getter("ramTypeAttr"), new AttributeOption[] {VOLATILE, NONVOLATILE });
+  static final AttributeOption VOLATILE = new AttributeOption("volatile", S.getter("ramTypeVolatile"));
+  static final AttributeOption NONVOLATILE = new AttributeOption("nonvolatile", S.getter("ramTypeNonVolatile"));
+  static final Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption("type", S.getter("ramTypeAttr"), new AttributeOption[] {VOLATILE, NONVOLATILE });
   static final AttributeOption BUS_BIDIR = new AttributeOption("bidir", S.getter("ramBidirDataBus"));
   static final AttributeOption BUS_SEP = new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
-  static final Attribute<AttributeOption> ATTR_DBUS = Attributes.forOption(
-          "databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
+  static final Attribute<AttributeOption> ATTR_DBUS = Attributes.forOption("databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
   static final AttributeOption BUS_WITH_BYTEENABLES = new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
   static final AttributeOption BUS_WITHOUT_BYTEENABLES = new AttributeOption("NobyteEnables", S.getter("ramNoByteEnables"));
-  static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption(
-          "byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
+  static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption("byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
   static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
@@ -77,10 +74,12 @@ public class RamAttributes extends AbstractAttributeSet {
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
 
-  RamAttributes() { updateAttributes(); }
-  
+  RamAttributes() {
+    updateAttributes();
+  }
+
   public boolean updateAttributes() {
-    ArrayList<Attribute<?>>newList = new ArrayList<>();
+    ArrayList<Attribute<?>> newList = new ArrayList<>();
     boolean changes = false;
     newList.add(Mem.ADDR_ATTR);
     newList.add(Mem.DATA_ATTR);
@@ -255,13 +254,13 @@ public class RamAttributes extends AbstractAttributeSet {
       if (AsynchronousRead != val) {
         AsynchronousRead = val;
         if (updateAttributes()) fireAttributeListChanged();
-        fireAttributeValueChanged(attr,value,null);
+        fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == Mem.READ_ATTR) {
       AttributeOption val = (AttributeOption) value;
       if (!RWBehavior.equals(val)) {
         RWBehavior = val;
-        fireAttributeValueChanged(attr,value,null);
+        fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == ATTR_DBUS) {
       AttributeOption NewStyle = (AttributeOption) value;

@@ -28,10 +28,6 @@
 
 package com.cburch.logisim.gui.generic;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -76,8 +72,10 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class ProjectExplorer extends JTree implements LocaleListener {
-
   public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
   private static final long serialVersionUID = 1L;
   private static final String DIRTY_MARKER = "*";
@@ -87,7 +85,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private final DeleteAction deleteAction = new DeleteAction();
   private Listener listener = null;
   private Tool haloedTool = null;
-  
+
   public ProjectExplorer(Project proj, boolean showMouseTools) {
     super();
     this.proj = proj;
@@ -270,6 +268,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         if (node != null) node.fireNodeChanged();
       }
     }
+
     //
     // project/library file/circuit listener methods
     //
@@ -392,9 +391,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
       boolean viewed;
-      if (proj.getFrame().getHdlEditorView() == null)
+      if (proj.getFrame().getHdlEditorView() == null) {
         viewed = (circ != null && circ == proj.getCurrentCircuit());
-      else viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+      } else {
+        viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+      }
       boolean haloed =
           !viewed && (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean());
       // draw halo if appropriate
@@ -411,14 +412,14 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
 
       // draw tool icon
-      Graphics gIcon = g.create();
+      var gfxIcon = g.create();
       ComponentDrawContext context =
-          new ComponentDrawContext(ProjectExplorer.this, null, null, g, gIcon);
+          new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(
           context,
           x + AppPreferences.getScaled(AppPreferences.IconBorder),
           y + AppPreferences.getScaled(AppPreferences.IconBorder));
-      gIcon.dispose();
+      gfxIcon.dispose();
 
       // draw magnifying glass if appropriate
       if (viewed) {
@@ -455,19 +456,29 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   public interface Listener {
     void deleteRequested(Event event);
+
     void doubleClicked(Event event);
+
     JPopupMenu menuRequested(Event event);
+
     void moveRequested(Event event, AddTool dragged, AddTool target);
+
     void selectionChanged(Event event);
   }
 
   public static class Event {
     private final TreePath path;
-    public Event(TreePath p) { path = p; }
-    public TreePath getTreePath() { return path; }
+
+    public Event(TreePath p) {
+      path = p;
+    }
+
+    public TreePath getTreePath() {
+      return path;
+    }
+
     public Object getTarget() {
       return path == null ? null : path.getLastPathComponent();
     }
   }
-
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <suppress checks="MissingJavadocMethod"/>
+    <suppress checks="MissingJavadocType"/>
+    <suppress checks="JavadocParagraph"/>
+    <suppress checks="NeedBraces"/>
+
+    <!-- Auto-generated file. https://github.com/logisim-evolution/logisim-evolution/issues/563-->
+	<suppress id="VhdlSyntax" files="src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.java"/>
+</suppressions>

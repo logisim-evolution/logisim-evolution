@@ -54,6 +54,14 @@ import java.util.Collections;
 import java.util.Set;
 
 public class WiringTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Wiring Tool";
+
   private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private static final int HORIZONTAL = 1;
@@ -178,11 +186,6 @@ public class WiringTool extends Tool {
     } else {
       return null;
     }
-  }
-
-  @Override
-  public String getName() {
-    return "Wiring Tool";
   }
 
   private Wire getShortenResult(Wire shorten, Location drag0, Location drag1) {
@@ -367,12 +370,15 @@ public class WiringTool extends Tool {
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     Graphics2D g2 = (Graphics2D) c.getGraphics().create();
     g2.translate(x, y);
-    int[] points = {3,13,8,13,8,3,13,3};
+    int[] points = {3, 13, 8, 13, 8, 3, 13, 3};
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.BLACK);
-    for (int i = 0 ; i < points.length-2 ; i+=2)
-      g2.drawLine(AppPreferences.getScaled(points[i]), AppPreferences.getScaled(points[i+1]), 
-    		AppPreferences.getScaled(points[i+2]), AppPreferences.getScaled(points[i+3]));
+    for (int i = 0; i < points.length - 2; i += 2)
+      g2.drawLine(
+          AppPreferences.getScaled(points[i]),
+          AppPreferences.getScaled(points[i + 1]),
+          AppPreferences.getScaled(points[i + 2]),
+          AppPreferences.getScaled(points[i + 3]));
     g2.setColor(Value.TRUE_COLOR);
     int wh = AppPreferences.getScaled(5);
     g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(11), wh, wh);

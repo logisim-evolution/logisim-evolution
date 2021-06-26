@@ -75,6 +75,14 @@ import java.util.Set;
 import java.util.SortedSet;
 
 public class SelectTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Select Tool";
+
   private static class ComputingMessage implements StringGetter {
     private final int dx;
     private final int dy;
@@ -305,11 +313,6 @@ public class SelectTool extends Tool {
     }
   }
 
-  @Override
-  public String getName() {
-    return "Select Tool";
-  }
-
   private void handleMoveDrag(Canvas canvas, int dx, int dy, int modsEx) {
     boolean connect = shouldConnect(canvas, modsEx);
     drawConnections = connect;
@@ -355,7 +358,7 @@ public class SelectTool extends Tool {
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else {
       SortedSet<Component> comps =
-          AutoLabel.Sort(canvas.getProject().getSelection().getComponents());
+          AutoLabel.sort(canvas.getProject().getSelection().getComponents());
       int KeybEvent = e.getKeyCode();
       boolean KeyTaken = false;
       for (Component comp : comps) {
@@ -373,7 +376,7 @@ public class SelectTool extends Tool {
               new SetAttributeAction(
                   canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
           KeyTaken |=
-              AutoLabler.LabelKeyboardHandler(
+              AutoLabler.labelKeyboardHandler(
                   KeybEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
@@ -553,7 +556,7 @@ public class SelectTool extends Tool {
             SetAttributeAction act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-            AutoLabler.AskAndSetLabel(
+            AutoLabler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
                 OldLabel,
                 canvas.getCircuit(),

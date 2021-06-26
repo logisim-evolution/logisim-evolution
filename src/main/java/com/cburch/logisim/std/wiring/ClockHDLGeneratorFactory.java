@@ -81,7 +81,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(MakeRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock",3));
+    Contents.addAll(MakeRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock", 3));
 /*    if (TheNetlist.RawFPGAClock()) {
       if (HighTicks != LowTicks) {
         Reporter.AddFatalError("Clock component detected with " +HighTicks+":"+LowTicks+ " hi:lo duty cycle,"
@@ -101,24 +101,24 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("   makeOutputs : PROCESS( GlobalClock )");
       Contents.add("   BEGIN");
       Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      Contents.add("         s_buf_regs(0)     <= s_derived_clock_reg("+PhaseStr+"-1);");
-      Contents.add("         s_buf_regs(1)     <= NOT(s_derived_clock_reg("+PhaseStr+"-1));");
+      Contents.add("         s_buf_regs(0)     <= s_derived_clock_reg(" + PhaseStr + "-1);");
+      Contents.add("         s_buf_regs(1)     <= NOT(s_derived_clock_reg(" + PhaseStr + "-1));");
       Contents.add("         s_output_regs(0)  <= s_buf_regs(0);");
       Contents.add("         s_output_regs(1)  <= s_buf_regs(1);");
-      Contents.add("         s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg("+PhaseStr+"-1);");
-      Contents.add("         s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg("+PhaseStr+"-1));");
+      Contents.add("         s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg(" + PhaseStr + "-1);");
+      Contents.add("         s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg(" + PhaseStr + "-1));");
       Contents.add("      END IF;");
       Contents.add("   END PROCESS makeOutputs;");
     } else {
       Contents.add("   assign ClockBus = {GlobalClock,s_output_regs};");
       Contents.add("   always @(posedge GlobalClock)");
       Contents.add("   begin");
-      Contents.add("      s_buf_regs[0]    <= s_derived_clock_reg["+PhaseStr+"-1];");
-      Contents.add("      s_buf_regs[1]    <= ~s_derived_clock_reg["+PhaseStr+"-1];");
+      Contents.add("      s_buf_regs[0]    <= s_derived_clock_reg[" + PhaseStr + "-1];");
+      Contents.add("      s_buf_regs[1]    <= ~s_derived_clock_reg[" + PhaseStr + "-1];");
       Contents.add("      s_output_regs[0] <= s_buf_regs[0];");
       Contents.add("      s_output_regs[1] <= s_output_regs[1];");
-      Contents.add("      s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg["+PhaseStr+"-1];");
-      Contents.add("      s_output_regs[3] <= ~s_derived_clock_reg["+PhaseStr+"-1] & s_buf_regs[0];");
+      Contents.add("      s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[" + PhaseStr + "-1];");
+      Contents.add("      s_output_regs[3] <= ~s_derived_clock_reg[" + PhaseStr + "-1] & s_buf_regs[0];");
       Contents.add("   end");
     }
     Contents.add("");
@@ -168,7 +168,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("         IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only");
       Contents.add("            s_derived_clock_reg <= (OTHERS => '1');");
       Contents.add("         ELSIF (ClockTick = '1') THEN");
-      Contents.add("            FOR n IN "+PhaseStr+"-1 DOWNTO 1 LOOP");
+      Contents.add("            FOR n IN " + PhaseStr + "-1 DOWNTO 1 LOOP");
       Contents.add("              s_derived_clock_reg(n) <= s_derived_clock_reg(n-1);");
       Contents.add("            END LOOP;");
       Contents.add("            s_derived_clock_reg(0) <= s_derived_clock_reg(0) XOR s_counter_is_zero;");
@@ -194,7 +194,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("      if (ClockTick)");
       Contents.add("      begin");
       Contents.add("         s_derived_clock_reg[0] <= s_derived_clock_reg[0] ^ s_counter_is_zero;");
-      Contents.add("         for (n = 1; n < "+PhaseStr+"; n = n+1) begin");
+      Contents.add("         for (n = 1; n < " + PhaseStr + "; n = n+1) begin");
       Contents.add("            s_derived_clock_reg[n] <= s_derived_clock_reg[n-1];");
       Contents.add("         end");
       Contents.add("      end");
@@ -244,7 +244,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     ParameterMap.put(HighTickStr, HighTicks);
     ParameterMap.put(LowTickStr, LowTicks);
-    ParameterMap.put(PhaseStr, (HighTicks + LowTicks)-Phase);
+    ParameterMap.put(PhaseStr, (HighTicks + LowTicks) - Phase);
     ParameterMap.put(NrOfBitsStr, nr_of_bits);
     return ParameterMap;
   }

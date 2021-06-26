@@ -55,7 +55,8 @@ public class LayoutThumbnail extends JComponent {
   private static final int BORDER = 10;
 
   private CircuitState circuitState;
-  private Collection<Instance> ports, elts;
+  private Collection<Instance> ports;
+  private Collection<Instance> elts;
 
   public LayoutThumbnail(Dimension size) {
     circuitState = null;
@@ -74,31 +75,30 @@ public class LayoutThumbnail extends JComponent {
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     if (circuitState != null) {
-      Circuit circuit = circuitState.getCircuit();
-      Bounds bds = circuit.getBounds(g);
-      Dimension size = getSize();
-      double scaleX = (double) (size.width - 2 * BORDER) / bds.getWidth();
-      double scaleY = (double) (size.height - 2 * BORDER) / bds.getHeight();
+      var circuit = circuitState.getCircuit();
+      var bounds = circuit.getBounds(g);
+      var size = getSize();
+      double scaleX = (double) (size.width - 2 * BORDER) / bounds.getWidth();
+      double scaleY = (double) (size.height - 2 * BORDER) / bounds.getHeight();
       double scale = Math.min(1.0, Math.min(scaleX, scaleY));
 
-      Graphics gCopy = g.create();
-      int borderX = (int) ((size.width - bds.getWidth() * scale) / 2);
-      int borderY = (int) ((size.height - bds.getHeight() * scale) / 2);
-      gCopy.translate(borderX, borderY);
+      var gfxCopy = g.create();
+      int borderX = (int) ((size.width - bounds.getWidth() * scale) / 2);
+      int borderY = (int) ((size.height - bounds.getHeight() * scale) / 2);
+      gfxCopy.translate(borderX, borderY);
       if (scale != 1.0 && g instanceof Graphics2D) {
-        ((Graphics2D) gCopy).scale(scale, scale);
+        ((Graphics2D) gfxCopy).scale(scale, scale);
       }
-      gCopy.translate(-bds.getX(), -bds.getY());
+      gfxCopy.translate(-bounds.getX(), -bounds.getY());
 
-      ComponentDrawContext context =
-          new ComponentDrawContext(this, circuit, circuitState, g, gCopy);
+      var context = new ComponentDrawContext(this, circuit, circuitState, g, gfxCopy);
       context.setShowState(false);
       context.setShowColor(false);
       circuit.draw(context, Collections.emptySet());
       if (ports != null && ports.size() > 0) {
-        gCopy.setColor(AppearancePort.COLOR);
+        gfxCopy.setColor(AppearancePort.COLOR);
         int width = Math.max(4, (int) ((2 / scale) + 0.5));
-        GraphicsUtil.switchToWidth(gCopy, width);
+        GraphicsUtil.switchToWidth(gfxCopy, width);
         for (Instance port : ports) {
           Bounds b = port.getBounds();
           int x = b.getX();
@@ -106,20 +106,20 @@ public class LayoutThumbnail extends JComponent {
           int w = b.getWidth();
           int h = b.getHeight();
           if (Pin.FACTORY.isInputPin(port)) {
-            gCopy.drawRect(x, y, w, h);
+            gfxCopy.drawRect(x, y, w, h);
           } else {
             if (b.getWidth() > 25) {
-              gCopy.drawRoundRect(x, y, w, h, 4, 4);
+              gfxCopy.drawRoundRect(x, y, w, h, 4, 4);
             } else {
-              gCopy.drawOval(x, y, w, h);
+              gfxCopy.drawOval(x, y, w, h);
             }
           }
         }
       }
       if (elts != null && elts.size() > 0) {
-        gCopy.setColor(DynamicElement.COLOR);
+        gfxCopy.setColor(DynamicElement.COLOR);
         int width = Math.max(4, (int) ((2 / scale) + 0.5));
-        GraphicsUtil.switchToWidth(gCopy, width);
+        GraphicsUtil.switchToWidth(gfxCopy, width);
         for (Instance elt : elts) {
           Bounds b = elt.getBounds();
           int x = b.getX();
@@ -127,13 +127,13 @@ public class LayoutThumbnail extends JComponent {
           int w = b.getWidth();
           int h = b.getHeight();
           if (elt.getFactory() instanceof Led || elt.getFactory() instanceof RGBLed) {
-            gCopy.drawOval(x, y, w, h);
+            gfxCopy.drawOval(x, y, w, h);
           } else {
-            gCopy.drawRect(x, y, w, h);
+            gfxCopy.drawRect(x, y, w, h);
           }
         }
       }
-      gCopy.dispose();
+      gfxCopy.dispose();
 
       g.setColor(Color.BLACK);
       GraphicsUtil.switchToWidth(g, 2);

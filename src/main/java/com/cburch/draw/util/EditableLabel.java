@@ -119,7 +119,7 @@ public class EditableLabel implements Cloneable {
     }
 
     w = Math.max(w, dim.width);
-    int h = dim.height;
+    final int h = dim.height;
     switch (horzAlign) {
       case LEFT:
         x0 = x0 - border;

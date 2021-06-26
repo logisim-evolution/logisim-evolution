@@ -163,8 +163,8 @@ public class SimpleDRCContainer {
         }
       } else if (obj instanceof InstanceComponent) {
         InstanceComponent comp = (InstanceComponent) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) comp.MarkInstance();
-        if ((MarkType & MARK_LABEL) != 0) comp.MarkLabel();
+        if ((MarkType & MARK_INSTANCE) != 0) comp.markInstance();
+        if ((MarkType & MARK_LABEL) != 0) comp.markLabel();
       } else {
       }
     }

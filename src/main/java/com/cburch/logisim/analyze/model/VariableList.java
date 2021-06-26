@@ -50,40 +50,41 @@ public class VariableList {
     bits = Collections.unmodifiableList(names);
     others = new ArrayList<>();
   }
-  
+
   public void addCompanion(VariableList var) {
-	  others.add(var);
-  }
-  
-  public ArrayList<String> getNames() { return names; }
-  
-  public boolean containsDuplicate(VariableList data, Var oldVar, String name) {
-	  boolean found = false;
-      for (int i = 0, n = vars.size(); i < n && !found; i++) {
-          Var other = vars.get(i);
-        if (other != oldVar && name.equals(other.name)) {
-          found = true;
-          break;
-        }
-      }
-      for (int i = 0 ; i < others.size() && !found ; i++) {
-        VariableList l = others.get(i);
-        if (l.equals(data)) 
-          continue;
-    	found |= l.containsDuplicate(data, oldVar, name);
-      }
-	  return found;
+    others.add(var);
   }
 
-  public void add(Var V) {
-    if (data.size() + V.width >= maxSize) {
+  public ArrayList<String> getNames() {
+    return names;
+  }
+
+  public boolean containsDuplicate(VariableList data, Var oldVar, String name) {
+    boolean found = false;
+    for (int i = 0, n = vars.size(); i < n && !found; i++) {
+      Var other = vars.get(i);
+      if (other != oldVar && name.equals(other.name)) {
+        found = true;
+        break;
+      }
+    }
+    for (int i = 0; i < others.size() && !found; i++) {
+      VariableList l = others.get(i);
+      if (l.equals(data)) continue;
+      found |= l.containsDuplicate(data, oldVar, name);
+    }
+    return found;
+  }
+
+  public void add(Var variable) {
+    if (data.size() + variable.width >= maxSize) {
       throw new IllegalArgumentException("maximum size is " + maxSize);
     }
     int index = data.size();
-    data.add(V);
-    for (String bit : V) names.add(bit);
+    data.add(variable);
+    for (String bit : variable) names.add(bit);
     int bitIndex = names.size() - 1;
-    fireEvent(VariableListEvent.ADD, V, index, bitIndex);
+    fireEvent(VariableListEvent.ADD, variable, index, bitIndex);
   }
 
   public void addVariableListListener(VariableListListener l) {
@@ -94,9 +95,9 @@ public class VariableList {
     fireEvent(type, null, null, null);
   }
 
-  private void fireEvent(int type, Var variable, Integer Index, Integer bitIndex) {
+  private void fireEvent(int type, Var variable, Integer index, Integer bitIndex) {
     if (listeners.size() == 0) return;
-    VariableListEvent event = new VariableListEvent(this, type, variable, Index, bitIndex);
+    VariableListEvent event = new VariableListEvent(this, type, variable, index, bitIndex);
     for (VariableListListener l : listeners) {
       l.listChanged(event);
     }

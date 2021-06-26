@@ -98,7 +98,7 @@ public class XmlCircuitReader extends CircuitTransaction {
     String loc_str = elt.getAttribute("loc");
     AttributeSet attrs = source.createAttributeSet();
     if (source instanceof Ram && IsHolyCross) {
-      RamAttributes rattrs = (RamAttributes) attrs; 
+      RamAttributes rattrs = (RamAttributes) attrs;
       rattrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
       rattrs.updateAttributes();
       reader.initAttributeSet(elt, attrs, null, IsHolyCross, IsEvolution);
@@ -231,10 +231,12 @@ public class XmlCircuitReader extends CircuitTransaction {
             Bounds bds = comp.getBounds();
             Component conflict = componentsAt.get(bds);
             if (conflict != null) {
-              reader.addError(S.fmt("fileComponentOverlapError", 
-                      conflict.getFactory().getName()+conflict.getLocation(),
-                      comp.getFactory().getName()+conflict.getLocation()),
-                      circData.circuit.getName());
+              reader.addError(
+                  S.fmt(
+                      "fileComponentOverlapError",
+                      conflict.getFactory().getName() + conflict.getLocation(),
+                      comp.getFactory().getName() + conflict.getLocation()),
+                  circData.circuit.getName());
               overlapComponents.add(comp);
             } else {
               mutator.add(dest, comp);
@@ -258,7 +260,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       int d = 0;
       do {
         d += 10;
-      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100000)) ;
+      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100000));
       Location loc = comp.getLocation().translate(d, d);
       AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
       comp = comp.getFactory().createComponent(loc, attrs);

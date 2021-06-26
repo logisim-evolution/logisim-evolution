@@ -51,6 +51,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class JtagUart extends SocInstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "SocJtagUart";
 
   public static final int ClockPin = 0;
   public static final int ResetPin = 1;
@@ -63,10 +70,9 @@ public class JtagUart extends SocInstanceFactory {
   public static final int WritePin = 8;
   public static final int ClearTtyPin = 9;
 
-	
   public JtagUart() {
-    super("SocJtagUart",S.getter("SocJtagUartComponent"),SocSlave);
-    setIcon(new ArithmeticIcon("JtagUart",4));
+    super(_ID, S.getter("SocJtagUartComponent"), SocSlave);
+    setIcon(new ArithmeticIcon("JtagUart", 4));
     setOffsetBounds(Bounds.create(0, 0, 300, 60));
   }
 
@@ -80,32 +86,32 @@ public class JtagUart extends SocInstanceFactory {
     instance.addAttributeListener();
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() + 2,
-            bds.getY() + bds.getHeight()/2,
-            GraphicsUtil.H_LEFT,
-            GraphicsUtil.V_CENTER);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() + 2,
+        bds.getY() + bds.getHeight() / 2,
+        GraphicsUtil.H_LEFT,
+        GraphicsUtil.V_CENTER);
     Port[] ps = new Port[10];
-    ps[ClockPin] = new Port(0,50,Port.INPUT,1);
+    ps[ClockPin] = new Port(0, 50, Port.INPUT, 1);
     ps[ClockPin].setToolTip(S.getter("Rv32imClockInput"));
-    ps[ResetPin] = new Port(0,30,Port.INPUT,1);
+    ps[ResetPin] = new Port(0, 30, Port.INPUT, 1);
     ps[ResetPin].setToolTip(S.getter("Rv32imResetInput"));
-    ps[IRQPin] = new Port(300,50,Port.OUTPUT,1);
+    ps[IRQPin] = new Port(300, 50, Port.OUTPUT, 1);
     ps[IRQPin].setToolTip(S.getter("SocPioIrqOutput"));
-    ps[ReadEnablePin] = new Port(10,0,Port.OUTPUT,1);
+    ps[ReadEnablePin] = new Port(10, 0, Port.OUTPUT, 1);
     ps[ReadEnablePin].setToolTip(S.getter("JtagUartKeybReadEnable"));
-    ps[ClearKeyboardPin] = new Port(20,0,Port.OUTPUT,1);
+    ps[ClearKeyboardPin] = new Port(20, 0, Port.OUTPUT, 1);
     ps[ClearKeyboardPin].setToolTip(S.getter("JtagUartClearKeyb"));
-    ps[AvailablePin] = new Port(130,0,Port.INPUT,1);
+    ps[AvailablePin] = new Port(130, 0, Port.INPUT, 1);
     ps[AvailablePin].setToolTip(S.getter("JtagUartKeybAvailable"));
-    ps[DataInPin] = new Port(140,0,Port.INPUT,7);
+    ps[DataInPin] = new Port(140, 0, Port.INPUT, 7);
     ps[DataInPin].setToolTip(S.getter("JtagUartKeybData"));
-    ps[DataOutPin] = new Port(160,0,Port.OUTPUT,7);
+    ps[DataOutPin] = new Port(160, 0, Port.OUTPUT, 7);
     ps[DataOutPin].setToolTip(S.getter("JtagUartTtyData"));
-    ps[WritePin] = new Port(180,0,Port.OUTPUT,1);
+    ps[WritePin] = new Port(180, 0, Port.OUTPUT, 1);
     ps[WritePin].setToolTip(S.getter("JtagUartTtyWrite"));
-    ps[ClearTtyPin] = new Port(190,0,Port.OUTPUT,1);
+    ps[ClearTtyPin] = new Port(190, 0, Port.OUTPUT, 1);
     ps[ClearTtyPin].setToolTip(S.getter("JtagUartTtyClear"));
     instance.setPorts(ps);
   }
@@ -116,46 +122,50 @@ public class JtagUart extends SocInstanceFactory {
       instance.fireInvalidated();
     } else super.instanceAttributeChanged(instance, attr);
   }
-  
+
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics();
     Location loc = painter.getLocation();
     painter.drawBounds();
     painter.drawLabel();
-    g2.drawLine(loc.getX(), loc.getY()+20, loc.getX()+200, loc.getY()+20);
-    g2.drawLine(loc.getX()+150, loc.getY(), loc.getX()+150, loc.getY()+20);
-    g2.drawLine(loc.getX()+200, loc.getY(), loc.getX()+200, loc.getY()+20);
+    g2.drawLine(loc.getX(), loc.getY() + 20, loc.getX() + 200, loc.getY() + 20);
+    g2.drawLine(loc.getX() + 150, loc.getY(), loc.getX() + 150, loc.getY() + 20);
+    g2.drawLine(loc.getX() + 200, loc.getY(), loc.getX() + 200, loc.getY() + 20);
     painter.drawPort(ResetPin, "Reset", Direction.EAST);
     painter.drawClock(ClockPin, Direction.EAST);
     painter.drawPort(IRQPin, "IRQ", Direction.WEST);
-    for (int i = ReadEnablePin ; i < 10 ; i++) painter.drawPort(i);
-    GraphicsUtil.drawCenteredText(g2, "Keyboard", loc.getX()+75, loc.getY()+10);
-    GraphicsUtil.drawCenteredText(g2, "TTY", loc.getX()+175, loc.getY()+10);
+    for (int i = ReadEnablePin; i < 10; i++) painter.drawPort(i);
+    GraphicsUtil.drawCenteredText(g2, "Keyboard", loc.getX() + 75, loc.getY() + 10);
+    GraphicsUtil.drawCenteredText(g2, "TTY", loc.getX() + 175, loc.getY() + 10);
     Font f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "Jtag Uart", loc.getX()+250, loc.getY()+10);
+    GraphicsUtil.drawCenteredText(g2, "Jtag Uart", loc.getX() + 250, loc.getY() + 10);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
-    		Bounds.create(loc.getX()+40, loc.getY()+41, 220, 18));
+    painter
+        .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
+        .paint(g2, Bounds.create(loc.getX() + 40, loc.getY() + 41, 220, 18));
   }
-  
+
   @Override
   public void propagate(InstanceState state) {
     JtagUartState myState = state.getAttributeValue(JtagUartAttributes.JTAG_STATE);
     myState.handleOperations(state);
   }
-  
+
   @Override
   public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) {
     return attrs.getValue(JtagUartAttributes.JTAG_STATE);
   }
 
   @Override
-  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) { return null; }
+  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) {
+    return null;
+  }
 
   @Override
-  public SocProcessorInterface getProcessorInterface(AttributeSet attrs) { return null; }
-
+  public SocProcessorInterface getProcessorInterface(AttributeSet attrs) {
+    return null;
+  }
 }
