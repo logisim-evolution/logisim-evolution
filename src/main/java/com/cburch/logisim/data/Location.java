@@ -41,7 +41,7 @@ public class Location implements Comparable<Location> {
     int hashCode = 31 * x + y;
     Object ret = cache.get(hashCode);
     if (ret != null) {
-      Location loc = (Location) ret;
+      final var loc = (Location) ret;
       if (loc.x == x && loc.y == y) return loc;
     }
     Location loc = new Location(hashCode, x, y);

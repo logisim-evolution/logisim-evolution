@@ -46,14 +46,12 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
-import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.jar.JarFile;
 
 public class LogisimFileActions {
@@ -112,7 +110,7 @@ public class LogisimFileActions {
       final var libNames = new HashMap<String, Library>();
       final var toolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
-      var cancontinue = true;
+      var canContinue = true;
       for (final var lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, libNames);
       }
@@ -141,7 +139,7 @@ public class LogisimFileActions {
               solStr = solStr.concat(S.fmt("LibMergeFailure6", lib.getName()));
               errors.put(solStr, S.fmt("LibMergeFailure1", lib.getName(), key));
             }
-            cancontinue = false;
+            canContinue = false;
           }
           final var splits = mergelib.getLoader().getDescriptor(lib).split("#");
           final var TheFile = mergelib.getLoader().getFileFor(splits[1], null);
@@ -150,20 +148,20 @@ public class LogisimFileActions {
           else if (splits[0].equals("jar"))
             jarLibs.add(TheFile);
         }
-        if (!cancontinue) {
+        if (!canContinue) {
           LibraryTools.ShowErrors(mergelib.getName(), errors);
           logiLibs.clear();
           jarLibs.clear();
           return;
         }
         /* Okay merged the missing libraries, now add the circuits */
-        for (Circuit circ : mergelib.getCircuits()) {
+        for (final var circ : mergelib.getCircuits()) {
           final var circName = circ.getName().toUpperCase();
           if (toolList.contains(circName)) {
             final var ret = new ArrayList<String>();
             ret.add(circName);
             final var toolNames = LibraryTools.GetToolLocation(source, "", ret);
-            for (String key : toolNames.keySet()) {
+            for (final var key : toolNames.keySet()) {
               final var errLoc = toolNames.get(key);
               final var errParts = errLoc.split("->");
               if (errParts.length > 1) {
@@ -172,10 +170,10 @@ public class LogisimFileActions {
                 solStr = solStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
                 solStr = solStr.concat(S.fmt("LibMergeFailure8", circ.getName()));
                 errors.put(solStr, S.fmt("LibMergeFailure7", key, errParts[1]));
-                cancontinue = false;
+                canContinue = false;
               }
             }
-            if (cancontinue) {
+            if (canContinue) {
               final var circ1 = LibraryTools.getCircuitFromLibs(source, circName);
               if (circ1 == null) {
                 OptionPane.showMessageDialog(
@@ -183,7 +181,7 @@ public class LogisimFileActions {
                     "Fatal internal error: Cannot find a referenced circuit",
                     "LogosimFileAction:",
                     OptionPane.ERROR_MESSAGE);
-                cancontinue = false;
+                canContinue = false;
               } else if (!CircuitsAreEqual(circ1, circ)) {
                 final var Reponse =
                     OptionPane.showConfirmDialog(
@@ -200,7 +198,7 @@ public class LogisimFileActions {
             mergedCircuits.add(circ);
           }
         }
-        if (!cancontinue) {
+        if (!canContinue) {
           LibraryTools.ShowErrors(mergelib.getName(), errors);
           logiLibs.clear();
           jarLibs.clear();
@@ -225,7 +223,7 @@ public class LogisimFileActions {
       for (final var comp : newone.getNonWires()) {
         newComps.put(comp.getLocation(), comp);
       }
-      Iterator<Location> it = newComps.keySet().iterator();
+      final var it = newComps.keySet().iterator();
       while (it.hasNext()) {
         final var loc = it.next();
         if (origComps.containsKey(loc)) {
@@ -286,7 +284,7 @@ public class LogisimFileActions {
       }
       jarLibs.clear();
       /* next we are going to load the logisimfile  libraries */
-      for (File logiLib : logiLibs) {
+      for (final var logiLib : logiLibs) {
         final var put = loader.loadLogisimLibrary(logiLib);
         if (put != null) {
           proj.doAction(LogisimFileActions.loadLibrary(put, proj.getLogisimFile()));
@@ -363,7 +361,7 @@ public class LogisimFileActions {
 
     LoadLibraries(Library[] libs, LogisimFile source) {
       final var libNames = new HashMap<String, Library>();
-      HashSet<String> ToolList = new HashSet<>();
+      final var ToolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
       for (final var lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, libNames);
@@ -568,14 +566,14 @@ public class LogisimFileActions {
     }
 
     private void copyToolAttributes(Library srcLib, Library dstLib) {
-      for (Tool srcTool : srcLib.getTools()) {
+      for (final var srcTool : srcLib.getTools()) {
         final var srcAttrs = srcTool.getAttributeSet();
         final var dstTool = dstLib.getTool(srcTool.getName());
         if (srcAttrs != null && dstTool != null) {
           final var dstAttrs = dstTool.getAttributeSet();
           for (Attribute<?> attrBase : srcAttrs.getAttributes()) {
             @SuppressWarnings("unchecked")
-            Attribute<Object> attr = (Attribute<Object>) attrBase;
+            final var attr = (Attribute<Object>) attrBase;
             final var srcValue = srcAttrs.getValue(attr);
             final var dstValue = dstAttrs.getValue(attr);
             if (!dstValue.equals(srcValue)) {

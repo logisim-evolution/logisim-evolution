@@ -397,8 +397,8 @@ public class Attributes {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public java.awt.Component getCellEditor(Object value) {
-      ComboBox combo = new ComboBox<>(vals);
+    public Component getCellEditor(Object value) {
+      final var combo = new ComboBox<>(vals);
       combo.setRenderer(new OptionComboRenderer<>(this));
       if (value == null) combo.setSelectedIndex(-1);
       else combo.setSelectedItem(value);

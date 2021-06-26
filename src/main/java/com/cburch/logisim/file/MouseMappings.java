@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.file;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.SelectTool;
@@ -149,7 +148,7 @@ public class MouseMappings {
   }
 
   private boolean replaceInMap(Map<Tool, Tool> toolMap, Tool tool, Object searchFor, Integer key) {
-    boolean changed = false;
+    var changed = false;
     if (toolMap.containsKey(searchFor)) {
       changed = true;
       final var newTool = toolMap.get(searchFor);

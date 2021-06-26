@@ -99,7 +99,7 @@ public class FileStatistics {
       count.uniqueCount = count.simpleCount;
       count.recursiveCount = count.simpleCount;
     }
-    for (Circuit sub : include) {
+    for (final var sub : include) {
       final var subFactory = sub.getSubcircuitFactory();
       if (counts.containsKey(subFactory)) {
         final var multiplier = counts.get(subFactory).simpleCount;

@@ -119,7 +119,7 @@ public class AttributeSets {
 
     @Override
     protected void copyInto(AbstractAttributeSet destSet) {
-      SingletonSet dest = (SingletonSet) destSet;
+      final var dest = (SingletonSet) destSet;
       dest.attrs = this.attrs;
       dest.value = this.value;
       dest.readOnly = this.readOnly;

@@ -119,7 +119,7 @@ public class Loader implements LibraryLoader {
     if (name.endsWith(LOGISIM_EXTENSION)) {
       name = name.substring(0, name.length() - LOGISIM_EXTENSION.length());
     }
-    for (int i = 1; i <= 20; i++) {
+    for (var i = 1; i <= 20; i++) {
       final var ext = i == 1 ? ".bak" : (".bak" + i);
       final var candidate = new File(dir, name + ext);
       if (!candidate.exists()) return candidate;
@@ -217,7 +217,7 @@ public class Loader implements LibraryLoader {
   }
 
   private File getSubstitution(File source) {
-    File ret = substitutions.get(source);
+    final var ret = substitutions.get(source);
     return ret == null ? source : ret;
   }
 
@@ -225,7 +225,7 @@ public class Loader implements LibraryLoader {
     final var actual = getSubstitution(request);
 
     // Anyway, here's the line for this new version:
-    ZipClassLoader loader = new ZipClassLoader(actual);
+    final var loader = new ZipClassLoader(actual);
 
     // load library class from loader
     Class<?> retClass;
@@ -265,8 +265,8 @@ public class Loader implements LibraryLoader {
   // methods for LibraryManager
   //
   LogisimFile loadLogisimFile(File request) throws LoadFailedException {
-    File actual = getSubstitution(request);
-    for (File fileOpening : filesOpening) {
+    final var actual = getSubstitution(request);
+    for (final var fileOpening : filesOpening) {
       if (fileOpening.equals(actual)) {
         throw new LoadFailedException(
             StringUtil.format(S.get("logisimCircularError"), toProjectName(actual)));
@@ -335,7 +335,7 @@ public class Loader implements LibraryLoader {
   }
 
   public boolean save(LogisimFile file, File dest) {
-    Library reference = LibraryManager.instance.findReference(file, dest);
+    final var reference = LibraryManager.instance.findReference(file, dest);
     if (reference != null) {
       OptionPane.showMessageDialog(
           parent,
@@ -420,20 +420,20 @@ public class Loader implements LibraryLoader {
     }
 
     if (description.contains("\n") || description.length() > 60) {
-      int lines = 1;
-      for (int pos = description.indexOf('\n');
+      var lines = 1;
+      for (var pos = description.indexOf('\n');
           pos >= 0;
           pos = description.indexOf('\n', pos + 1)) {
         lines++;
       }
       lines = Math.max(4, Math.min(lines, 7));
 
-      JTextArea textArea = new JTextArea(lines, 60);
+      final var textArea = new JTextArea(lines, 60);
       textArea.setEditable(false);
       textArea.setText(description);
       textArea.setCaretPosition(0);
 
-      JScrollPane scrollPane = new JScrollPane(textArea);
+      final var scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(350, 150));
       OptionPane.showMessageDialog(
           parent, scrollPane, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
@@ -445,21 +445,19 @@ public class Loader implements LibraryLoader {
 
   private void showMessages(LogisimFile source) {
     if (source == null) return;
-    String message = source.getMessage();
+    var message = source.getMessage();
     while (message != null) {
-      OptionPane.showMessageDialog(
-          parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
+      OptionPane.showMessageDialog(parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
       message = source.getMessage();
     }
   }
 
   private String toProjectName(File file) {
-    String ret = file.getName();
-    if (ret.endsWith(LOGISIM_EXTENSION)) {
-      return ret.substring(0, ret.length() - LOGISIM_EXTENSION.length());
-    } else {
-      return ret;
-    }
+    final var ret = file.getName();
+
+    return (ret.endsWith(LOGISIM_EXTENSION))
+        ? ret.substring(0, ret.length() - LOGISIM_EXTENSION.length())
+        : ret;
   }
 
   public String vhdlImportChooser(Component window) {

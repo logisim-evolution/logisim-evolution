@@ -226,8 +226,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return ret;
   }
 
-  private final EventSourceWeakSupport<LibraryListener> listeners =
-      new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
   private Loader loader;
   private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
@@ -248,7 +247,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     // Creates the default project name, adding an underscore if needed
     name = S.get("defaultProjectName");
     if (Projects.windowNamed(name)) {
-      for (int i = 2; true; i++) {
+      for (var i = 2; true; i++) {
         if (!Projects.windowNamed(name + "_" + i)) {
           name += "_" + i;
           break;
@@ -447,7 +446,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public int indexOfCircuit(Circuit circ) {
-    for (int i = 0; i < tools.size(); i++) {
+    for (var i = 0; i < tools.size(); i++) {
       final var tool = tools.get(i);
       if (tool.getFactory() instanceof SubcircuitFactory) {
         final var factory = (SubcircuitFactory) tool.getFactory();
@@ -497,8 +496,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public String getMessage() {
-    if (messages.size() == 0) return null;
-    return messages.removeFirst();
+    return (messages.isEmpty()) ? null : messages.removeFirst();
   }
 
   //
@@ -643,8 +641,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     } catch (ParserConfigurationException e) {
       loader.showError("internal error configuring parser");
     } catch (TransformerException e) {
-      String msg = e.getMessage();
-      String err = S.get("xmlConversionError");
+      final var msg = e.getMessage();
+      var err = S.get("xmlConversionError");
       if (msg == null) err += ": " + msg;
       loader.showError(err);
     }

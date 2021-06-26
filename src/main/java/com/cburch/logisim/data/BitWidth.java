@@ -30,6 +30,7 @@ package com.cburch.logisim.data;
 
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
+import java.awt.Component;
 
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
@@ -51,8 +52,8 @@ public class BitWidth implements Comparable<BitWidth> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public java.awt.Component getCellEditor(BitWidth value) {
-      ComboBox combo = new ComboBox<>(choices);
+    public Component getCellEditor(BitWidth value) {
+      final var combo = new ComboBox<>(choices);
       if (value != null) {
         int wid = value.getWidth();
         if (wid <= 0 || wid > prefab.length) {

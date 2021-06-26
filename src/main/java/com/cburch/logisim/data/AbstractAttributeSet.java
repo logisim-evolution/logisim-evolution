@@ -47,15 +47,14 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   @Override
   public Object clone() {
-    AbstractAttributeSet ret;
     try {
-      ret = (AbstractAttributeSet) super.clone();
+      AbstractAttributeSet ret = (AbstractAttributeSet) super.clone();
+      ret.listeners = new ArrayList<>();
+      this.copyInto(ret);
+      return ret;
     } catch (CloneNotSupportedException ex) {
       throw new UnsupportedOperationException();
     }
-    ret.listeners = new ArrayList<>();
-    this.copyInto(ret);
-    return ret;
   }
 
   public boolean containsAttribute(Attribute<?> attr) {

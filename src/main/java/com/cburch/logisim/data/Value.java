@@ -44,12 +44,12 @@ public class Value {
       else if ((value & 1) != 0) return Value.TRUE;
       else return Value.FALSE;
     } else {
-      long mask = (width == 64 ? -1L : ~(-1L << width));
+      final var mask = (width == 64 ? -1L : ~(-1L << width));
       error = error & mask;
       unknown = unknown & mask & ~error;
       value = value & mask & ~unknown & ~error;
 
-      int hashCode = width;
+      var hashCode = width;
       hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
       hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
       hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
@@ -111,7 +111,7 @@ public class Value {
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   public static Value fromLogString(BitWidth width, String t) throws Exception {
-    int radix = radixOfLogString(width, t);
+    final var radix = radixOfLogString(width, t);
     int offset;
 
     if (radix == 16 || radix == 8) offset = 2;
@@ -126,7 +126,7 @@ public class Value {
     long value = 0;
     long unknown = 0;
 
-    for (int i = offset; i < n; i++) {
+    for (var i = offset; i < n; i++) {
       final var c = t.charAt(i);
       int d;
 
@@ -139,8 +139,7 @@ public class Value {
             "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
-        throw new Exception(
-            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+        throw new Exception("unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;
