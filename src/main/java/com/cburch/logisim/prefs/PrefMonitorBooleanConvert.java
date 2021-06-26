@@ -35,7 +35,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.Preferences;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
@@ -55,17 +54,17 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
   @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    Preferences prefs = event.getNode();
-    String prop = event.getKey();
-    String name = getIdentifier();
+    final var prefs = event.getNode();
+    final var prop = event.getKey();
+    final var name = getIdentifier();
     if (prop.equals(name)) {
-      boolean oldValue = value;
-      boolean newValue = prefs.getBoolean(name, dflt);
+      final var oldValue = value;
+      final var newValue = prefs.getBoolean(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
         if (!myListeners.isEmpty()) {
-          ConvertEvent e =
+          final var e =
               new ConvertEvent(
                   newValue ? ProbeAttributes.APPEAR_EVOLUTION_NEW : StdAttr.APPEAR_CLASSIC);
           Object[] options = {S.get("OptionYes"), S.get("OptionNo")};

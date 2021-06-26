@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 public class Template {
 
   public static Template create(InputStream in) {
-    InputStreamReader reader = new InputStreamReader(in);
-    char[] buf = new char[4096];
-    StringBuilder dest = new StringBuilder();
+    final var reader = new InputStreamReader(in);
+    final var buf = new char[4096];
+    final var dest = new StringBuilder();
     while (true) {
       try {
         int nbytes = reader.read(buf);
@@ -58,8 +58,8 @@ public class Template {
   }
 
   public static Template createEmpty() {
-    String circName = S.get("newCircuitName");
-    String buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    final var circName = S.get("newCircuitName");
+    final var buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<project source=\"" + Main.VERSION
         + "\" version=\"1.0\">"
         + " <circuit name=\"" + circName + "\" />"

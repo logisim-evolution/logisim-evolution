@@ -103,16 +103,16 @@ public class AppPreferences {
   //
   private static class MyListener implements PreferenceChangeListener, LocaleListener {
     public void localeChanged() {
-      Locale loc = LocaleManager.getLocale();
-      String lang = loc.getLanguage();
+      final var loc = LocaleManager.getLocale();
+      final var lang = loc.getLanguage();
       if (LOCALE != null) {
         LOCALE.set(lang);
       }
     }
 
     public void preferenceChange(PreferenceChangeEvent event) {
-      Preferences prefs = event.getNode();
-      String prop = event.getKey();
+      final var prefs = event.getNode();
+      final var prop = event.getKey();
       if (ACCENTS_REPLACE.getIdentifier().equals(prop)) {
         getPrefs();
         LocaleManager.setReplaceAccents(ACCENTS_REPLACE.getBoolean());
@@ -125,8 +125,8 @@ public class AppPreferences {
           propertySupport.firePropertyChange(TEMPLATE_TYPE, oldValue, value);
         }
       } else if (prop.equals(TEMPLATE_FILE)) {
-        File oldValue = templateFile;
-        File value = convertFile(prefs.get(TEMPLATE_FILE, null));
+        final var oldValue = templateFile;
+        final var value = convertFile(prefs.get(TEMPLATE_FILE, null));
         if (!Objects.equals(value, oldValue)) {
           templateFile = value;
           if (templateType == TEMPLATE_CUSTOM) {
@@ -152,9 +152,8 @@ public class AppPreferences {
   }
 
   public static void clear() {
-    Preferences p = getPrefs(true);
     try {
-      p.clear();
+      getPrefs(true).clear();
     } catch (BackingStoreException ignored) {
     }
   }
@@ -163,7 +162,7 @@ public class AppPreferences {
     if (fileName == null || fileName.equals("")) {
       return null;
     } else {
-      File file = new File(fileName);
+      final var file = new File(fileName);
       return file.canRead() ? file : null;
     }
   }
@@ -187,7 +186,7 @@ public class AppPreferences {
         customTemplate = null;
         customTemplateFile = null;
       } else {
-        try (FileInputStream reader = new FileInputStream(toRead)) {
+        try (final var reader = new FileInputStream(toRead)) {
           customTemplate = Template.create(reader);
           customTemplateFile = templateFile;
         } catch (Exception t) {
@@ -207,8 +206,8 @@ public class AppPreferences {
 
   private static Template getPlainTemplate() {
     if (plainTemplate == null) {
-      ClassLoader ld = Startup.class.getClassLoader();
-      InputStream in = ld.getResourceAsStream("resources/logisim/default.templ");
+      final var ld = Startup.class.getClassLoader();
+      final var in = ld.getResourceAsStream("resources/logisim/default.templ");
       if (in == null) {
         plainTemplate = getEmptyTemplate();
       } else {
@@ -232,7 +231,7 @@ public class AppPreferences {
     if (prefs == null) {
       synchronized (AppPreferences.class) {
         if (prefs == null) {
-          Preferences p = Preferences.userNodeForPackage(Main.class);
+          final var p = Preferences.userNodeForPackage(Main.class);
           if (shouldClear) {
             try {
               p.clear();
@@ -292,8 +291,8 @@ public class AppPreferences {
   }
 
   public static void handleGraphicsAcceleration() {
-    String accel = GRAPHICS_ACCELERATION.get();
     try {
+      final var accel = GRAPHICS_ACCELERATION.get();
       System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
       System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
     } catch (Exception ignored) {
@@ -338,7 +337,7 @@ public class AppPreferences {
   }
 
   public static void setScaledFonts(Component[] comp) {
-    for (Component component : comp) {
+    for (final var component : comp) {
       if (component instanceof Container) setScaledFonts(((Container) component).getComponents());
       try {
         component.setFont(getScaledFont(component.getFont()));
@@ -416,7 +415,7 @@ public class AppPreferences {
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon, float scale) {
-    Image iconImage = icon.getImage();
+    final var iconImage = icon.getImage();
     return new ImageIcon(
         iconImage.getScaledInstance(
             getScaled(IconSize, scale), getScaled(IconSize, scale), Image.SCALE_SMOOTH));
@@ -622,9 +621,9 @@ public class AppPreferences {
   public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
-    RadixOption[] radixOptions = RadixOption.OPTIONS;
-    String[] radixStrings = new String[radixOptions.length];
-    for (int i = 0; i < radixOptions.length; i++) {
+    final var radixOptions = RadixOption.OPTIONS;
+    final var radixStrings = new String[radixOptions.length];
+    for (var i = 0; i < radixOptions.length; i++) {
       radixStrings[i] = radixOptions[i].getSaveString();
     }
     POKE_WIRE_RADIX1 =
