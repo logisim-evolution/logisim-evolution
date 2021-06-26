@@ -51,7 +51,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     modified.add(circuit);
     log.add(CircuitChange.add(circuit, comp));
 
-    ReplacementMap repl = new ReplacementMap();
+    final var repl = new ReplacementMap();
     repl.add(comp);
     getMap(circuit).append(repl);
 

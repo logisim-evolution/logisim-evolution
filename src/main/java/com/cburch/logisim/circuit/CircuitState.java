@@ -63,7 +63,7 @@ public class CircuitState implements InstanceData {
         /* Component was added */
         final var comp = (Component) event.getData();
         if (comp instanceof Wire) {
-          Wire w = (Wire) comp;
+          final var w = (Wire) comp;
           markPointAsDirty(w.getEnd0());
           markPointAsDirty(w.getEnd1());
         } else {
@@ -89,7 +89,7 @@ public class CircuitState implements InstanceData {
         } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider) getData(comp)).destroy();
         if (comp instanceof Wire) {
-          Wire w = (Wire) comp;
+          final var w = (Wire) comp;
           markPointAsDirty(w.getEnd0());
           markPointAsDirty(w.getEnd1());
         } else {
@@ -127,7 +127,7 @@ public class CircuitState implements InstanceData {
         final var map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
         for (final var comp : map.getRemovals()) {
-          Object compState = componentData.remove(comp);
+          final var compState = componentData.remove(comp);
           if (compState != null) continue;
           Class<?> compFactory = comp.getFactory().getClass();
           boolean found = false;
@@ -221,7 +221,7 @@ public class CircuitState implements InstanceData {
         this.componentData.put(key, newValue);
       }
     }
-    for (Location key : src.causes.keySet()) {
+    for (final var key : src.causes.keySet()) {
       final var oldValue = src.causes.get(key);
       final var newValue = oldValue.cloneFor(this);
       this.causes.put(key, newValue);
@@ -331,7 +331,7 @@ public class CircuitState implements InstanceData {
     try {
       dirtyComponents.add(comp);
     } catch (RuntimeException e) {
-      CopyOnWriteArraySet<Component> set = new CopyOnWriteArraySet<>();
+      final var set = new CopyOnWriteArraySet<Component>();
       set.add(comp);
       dirtyComponents = set;
     }

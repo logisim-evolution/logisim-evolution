@@ -134,7 +134,7 @@ class CircuitPoints {
 
     // otherwise we have to create our own list
     final var ret = new Component[retSize];
-    int retPos = 0;
+    var retPos = 0;
     for (final var o : list) {
       if ((o instanceof Wire) == isWire) {
         ret[retPos] = o;
@@ -184,7 +184,7 @@ class CircuitPoints {
   }
 
   BitWidth getWidth(Location loc) {
-    LocationData locData = map.get(loc);
+    final var locData = map.get(loc);
     return locData == null ? BitWidth.UNKNOWN : locData.width;
   }
 

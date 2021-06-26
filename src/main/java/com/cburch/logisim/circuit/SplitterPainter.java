@@ -105,7 +105,7 @@ class SplitterPainter {
     final var g = context.getGraphics();
     final var state = context.getCircuitState();
     final var facing = attrs.facing;
-    int fanout = attrs.fanout;
+    final var fanout = attrs.fanout;
     final var parms = attrs.getParameters();
 
     g.setColor(Value.MULTI_COLOR);

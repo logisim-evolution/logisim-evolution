@@ -74,7 +74,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -107,16 +106,16 @@ public class Circuit {
 
     @Override
     protected void run(CircuitMutator mutator) {
-      for (Location loc : toRemove.keySet()) {
-        EndData removed = toRemove.get(loc);
-        EndData replaced = toAdd.remove(loc);
+      for (final var loc : toRemove.keySet()) {
+        final var removed = toRemove.get(loc);
+        final var replaced = toAdd.remove(loc);
         if (replaced == null) {
           wires.remove(comp, removed);
         } else if (!replaced.equals(removed)) {
           wires.replace(comp, removed, replaced);
         }
       }
-      for (EndData end : toAdd.values()) {
+      for (final var end : toAdd.values()) {
         wires.add(comp, end);
       }
       ((CircuitMutatorImpl) mutator).markModified(Circuit.this);
@@ -132,28 +131,28 @@ public class Circuit {
     @Override
     public void endChanged(ComponentEvent e) {
       locker.checkForWritePermission("ends changed", Circuit.this);
-      Annotated = false;
-      MyNetList.clear();
-      Component comp = e.getSource();
-      HashMap<Location, EndData> toRemove = toMap(e.getOldData());
-      HashMap<Location, EndData> toAdd = toMap(e.getData());
-      EndChangedTransaction xn = new EndChangedTransaction(comp, toRemove, toAdd);
+      isAnnotated = false;
+      myNetList.clear();
+      final var comp = e.getSource();
+      final var toRemove = toMap(e.getOldData());
+      final var toAdd = toMap(e.getData());
+      final var xn = new EndChangedTransaction(comp, toRemove, toAdd);
       locker.execute(xn);
       fireEvent(CircuitEvent.ACTION_INVALIDATE, comp);
     }
 
     private HashMap<Location, EndData> toMap(Object val) {
-      HashMap<Location, EndData> map = new HashMap<>();
+      final var map = new HashMap<Location, EndData>();
       if (val instanceof List) {
         @SuppressWarnings("unchecked")
-        List<EndData> valList = (List<EndData>) val;
-        for (EndData end : valList) {
+        final var valList = (List<EndData>) val;
+        for (final var end : valList) {
           if (end != null) {
             map.put(end.getLocation(), end);
           }
         }
       } else if (val instanceof EndData) {
-        EndData end = (EndData) val;
+        final var end = (EndData) val;
         map.put(end.getLocation(), end);
       }
       return map;
@@ -161,12 +160,12 @@ public class Circuit {
 
     @Override
     public void LabelChanged(ComponentEvent e) {
-      AttributeEvent attre = (AttributeEvent) e.getData();
+      final var attre = (AttributeEvent) e.getData();
       if (attre.getSource() == null || attre.getValue() == null) {
         return;
       }
-      String newLabel = (String) attre.getValue();
-      String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
+      final var newLabel = (String) attre.getValue();
+      final var oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
       if (!IsCorrectLabel(
@@ -201,13 +200,13 @@ public class Circuit {
         || IsComponentName(Name, components, ShowDialog));
   }
 
-  private static boolean IsComponentName(String Name, Set<Component> comps, Boolean ShowDialog) {
-    if (Name.isEmpty()) return false;
-    for (Component comp : comps) {
-      if (comp.getFactory().getName().equalsIgnoreCase(Name)) {
-        if (ShowDialog) {
-          String msg = S.get("ComponentLabelNameError");
-          OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+  private static boolean IsComponentName(String name, Set<Component> comps, Boolean showDialog) {
+    if (name.isEmpty()) return false;
+    for (final var comp : comps) {
+      if (comp.getFactory().getName().equalsIgnoreCase(name)) {
+        if (showDialog) {
+          final var msg = S.get("ComponentLabelNameError");
+          OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
         }
         return true;
       }
@@ -218,18 +217,18 @@ public class Circuit {
   }
 
   private static boolean IsExistingLabel(
-      String Name, AttributeSet me, Set<Component> comps, Boolean ShowDialog) {
-    if (Name.isEmpty()) return false;
-    for (Component comp : comps) {
+      String name, AttributeSet me, Set<Component> comps, Boolean showDialog) {
+    if (name.isEmpty()) return false;
+    for (final var comp : comps) {
       if (!comp.getAttributeSet().equals(me) && !(comp.getFactory() instanceof Tunnel)) {
-        String Label =
+        final var Label =
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
-        if (Label.equalsIgnoreCase(Name)) {
-          if (ShowDialog) {
-            String msg = S.get("UsedLabelNameError");
-            OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+        if (Label.equalsIgnoreCase(name)) {
+          if (showDialog) {
+            final var msg = S.get("UsedLabelNameError");
+            OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
           }
           return true;
         }
@@ -263,10 +262,10 @@ public class Circuit {
   static final Logger logger = LoggerFactory.getLogger(Circuit.class);
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
-  private final Netlist MyNetList;
-  private final HashMap<String, MappableResourcesContainer> MyMappableResources;
-  private final HashMap<String, HashMap<String, CircuitMapInfo>> LoadedMaps;
-  private boolean Annotated;
+  private final Netlist myNetList;
+  private final HashMap<String, MappableResourcesContainer> myMappableResources;
+  private final HashMap<String, HashMap<String, CircuitMapInfo>> loadedMaps;
+  private boolean isAnnotated;
   private Project proj;
   private final SocSimulationManager socSim = new SocSimulationManager();
 
@@ -278,11 +277,11 @@ public class Circuit {
     subcircuitFactory = new SubcircuitFactory(this);
     locker = new CircuitLocker();
     circuitsUsingThis = new WeakHashMap<>();
-    MyNetList = new Netlist(this);
-    MyMappableResources = new HashMap<>();
-    LoadedMaps = new HashMap<>();
-    addCircuitListener(MyNetList);
-    Annotated = false;
+    myNetList = new Netlist(this);
+    myMappableResources = new HashMap<>();
+    loadedMaps = new HashMap<>();
+    addCircuitListener(myNetList);
+    isAnnotated = false;
     logiFile = file;
     staticAttrs.setValue(
         CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE,
@@ -316,43 +315,43 @@ public class Circuit {
   }
 
   private static String GetAnnotationName(Component comp) {
-    String ComponentName;
+    String componentName;
     /* Pins are treated specially */
     if (comp.getFactory() instanceof Pin) {
       if (comp.getEnd(0).isOutput()) {
         if (comp.getEnd(0).getWidth().getWidth() > 1) {
-          ComponentName = "Input_bus";
+          componentName = "Input_bus";
         } else {
-          ComponentName = "Input";
+          componentName = "Input";
         }
       } else {
         if (comp.getEnd(0).getWidth().getWidth() > 1) {
-          ComponentName = "Output_bus";
+          componentName = "Output_bus";
         } else {
-          ComponentName = "Output";
+          componentName = "Output";
         }
       }
     } else {
-      ComponentName = comp.getFactory().getHDLName(comp.getAttributeSet());
+      componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
     }
-    return ComponentName;
+    return componentName;
   }
 
-  public void Annotate(Project proj, boolean ClearExistingLabels, boolean InsideLibrary) {
+  public void Annotate(Project proj, boolean clearExistingLabels, boolean insideLibrary) {
     if (this.proj == null) this.proj = proj;
-    this.Annotate(ClearExistingLabels, InsideLibrary);
+    this.Annotate(clearExistingLabels, insideLibrary);
   }
 
-  public void Annotate(boolean ClearExistingLabels, boolean InsideLibrary) {
+  public void Annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
-    if (Annotated) {
+    if (isAnnotated) {
       Reporter.Report.AddInfo("Nothing to do !");
       return;
     }
     SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
     final var lablers = new HashMap<String, AutoLabel>();
-    final var LabelNames = new LinkedHashSet<String>();
-    final var Subcircuits = new LinkedHashSet<String>();
+    final var labelNames = new LinkedHashSet<String>();
+    final var subCircuits = new LinkedHashSet<String>();
     for (Component comp : getNonWires()) {
       if (comp.getFactory() instanceof Tunnel) continue;
       /* we are directly going to remove duplicated labels */
@@ -360,20 +359,20 @@ public class Circuit {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
-          if (LabelNames.contains(label.toUpperCase())) {
+          if (labelNames.contains(label.toUpperCase())) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
             Reporter.Report.AddSevereWarning(
                 "Removed duplicated label " + this.getName() + "/" + label);
           } else {
-            LabelNames.add(label.toUpperCase());
+            labelNames.add(label.toUpperCase());
           }
         }
       }
       /* now we only process those that require a label */
       if (comp.getFactory().RequiresNonZeroLabel()) {
-        if (ClearExistingLabels) {
+        if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
           Reporter.Report.AddInfo(
               "Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
@@ -383,63 +382,63 @@ public class Circuit {
         }
         if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
           comps.add(comp);
-          final var ComponentName = GetAnnotationName(comp);
-          if (!lablers.containsKey(ComponentName)) {
-            lablers.put(ComponentName, new AutoLabel(ComponentName + "_0", this));
+          final var componentName = GetAnnotationName(comp);
+          if (!lablers.containsKey(componentName)) {
+            lablers.put(componentName, new AutoLabel(componentName + "_0", this));
           }
         }
       }
       /* if the current component is a sub-circuit, recurse into it */
       if (comp.getFactory() instanceof SubcircuitFactory) {
         final var sub = (SubcircuitFactory) comp.getFactory();
-        Subcircuits.add(sub.getName());
+        subCircuits.add(sub.getName());
       }
     }
     /* Now Annotate */
-    var SizeMightHaveChanged = false;
+    var sizeMightHaveChanged = false;
     for (final var comp : comps) {
-      final var ComponentName = GetAnnotationName(comp);
-      if (!lablers.containsKey(ComponentName) || !lablers.get(ComponentName).hasNext(this)) {
+      final var componentName = GetAnnotationName(comp);
+      if (!lablers.containsKey(componentName) || !lablers.get(componentName).hasNext(this)) {
         /* This should never happen! */
         Reporter.Report.AddFatalError(
             "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
         return;
       } else {
-        final var NewLabel = lablers.get(ComponentName).getNext(this, comp.getFactory());
+        final var newLabel = lablers.get(componentName).getNext(this, comp.getFactory());
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
-        act.set(comp, StdAttr.LABEL, NewLabel);
+        act.set(comp, StdAttr.LABEL, newLabel);
         proj.doAction(act);
-        Reporter.Report.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
+        Reporter.Report.AddInfo("Labeled " + this.getName() + "/" + newLabel);
         if (comp.getFactory() instanceof Pin) {
-          SizeMightHaveChanged = true;
+          sizeMightHaveChanged = true;
         }
       }
     }
-    if (!comps.isEmpty() & InsideLibrary) {
+    if (!comps.isEmpty() & insideLibrary) {
       Reporter.Report.AddSevereWarning(
           "Annotated the circuit \""
               + this.getName()
               + "\" which is inside a library these changes will not be saved!");
     }
-    if (SizeMightHaveChanged)
+    if (sizeMightHaveChanged)
       Reporter.Report.AddSevereWarning(
           "Annotated one ore more pins in circuit \""
               + this.getName()
               + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
-    Annotated = true;
+    isAnnotated = true;
     /* Now annotate all circuits below me */
-    for (final var subs : Subcircuits) {
+    for (final var subs : subCircuits) {
       final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
       final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(proj, ClearExistingLabels, inLibrary);
+      circ.Annotate(proj, clearExistingLabels, inLibrary);
     }
   }
 
   //
   // Annotation module for all components that require a non-zero-length label
   public void ClearAnnotationLevel() {
-    Annotated = false;
-    MyNetList.clear();
+    isAnnotated = false;
+    myNetList.clear();
     for (final var comp : this.getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         final var sub = (SubcircuitFactory) comp.getFactory();
@@ -474,7 +473,7 @@ public class Circuit {
       project.getSimulator().tick(1);
       Thread.yield();
 
-      for (Instance pinstatus : pin) {
+      for (final var pinstatus : pin) {
         pinsState[i] = state.getInstanceState(pinstatus);
         vPins[i] = Pin.FACTORY.getValue(pinsState[i]);
         i++;
@@ -542,26 +541,26 @@ public class Circuit {
   //
   public void draw(ComponentDrawContext context, Collection<Component> hidden) {
     final var g = context.getGraphics();
-    var g_copy = g.create();
-    context.setGraphics(g_copy);
+    var gCopy = g.create();
+    context.setGraphics(gCopy);
     wires.draw(context, hidden);
 
     if (hidden == null || hidden.size() == 0) {
-      for (Component c : comps) {
-        final var g_new = g.create();
-        context.setGraphics(g_new);
-        g_copy.dispose();
-        g_copy = g_new;
+      for (final var c : comps) {
+        final var gNew = g.create();
+        context.setGraphics(gNew);
+        gCopy.dispose();
+        gCopy = gNew;
 
         c.draw(context);
       }
     } else {
       for (Component c : comps) {
         if (!hidden.contains(c)) {
-          final var g_new = g.create();
-          context.setGraphics(g_new);
-          g_copy.dispose();
-          g_copy = g_new;
+          final var gNew = g.create();
+          context.setGraphics(gNew);
+          gCopy.dispose();
+          gCopy = gNew;
 
           try {
             c.draw(context);
@@ -574,7 +573,7 @@ public class Circuit {
       }
     }
     context.setGraphics(g);
-    g_copy.dispose();
+    gCopy.dispose();
   }
 
   private void fireEvent(CircuitEvent event) {
@@ -669,7 +668,7 @@ public class Circuit {
       xMax = Integer.MIN_VALUE;
       yMax = Integer.MIN_VALUE;
     }
-    for (Component c : comps) {
+    for (final var c : comps) {
       final var bds = c.getBounds(g);
       if (bds != null && bds != Bounds.EMPTY_BOUNDS) {
         int x0 = bds.getX();
@@ -722,47 +721,47 @@ public class Circuit {
   }
 
   public Netlist getNetList() {
-    return MyNetList;
+    return myNetList;
   }
 
-  public void addLoadedMap(String BoardName, HashMap<String, CircuitMapInfo> map) {
-    LoadedMaps.put(BoardName, map);
+  public void addLoadedMap(String boardName, HashMap<String, CircuitMapInfo> map) {
+    loadedMaps.put(boardName, map);
   }
 
   public Set<String> getBoardMapNamestoSave() {
     final var ret = new HashSet<String>();
-    ret.addAll(LoadedMaps.keySet());
-    ret.addAll(MyMappableResources.keySet());
+    ret.addAll(loadedMaps.keySet());
+    ret.addAll(myMappableResources.keySet());
     return ret;
   }
 
-  public Map<String, CircuitMapInfo> getMapInfo(String BoardName) {
-    if (MyMappableResources.containsKey(BoardName))
-      return MyMappableResources.get(BoardName).getCircuitMap();
-    if (LoadedMaps.containsKey(BoardName))
-      return LoadedMaps.get(BoardName);
+  public Map<String, CircuitMapInfo> getMapInfo(String boardName) {
+    if (myMappableResources.containsKey(boardName))
+      return myMappableResources.get(boardName).getCircuitMap();
+    if (loadedMaps.containsKey(boardName))
+      return loadedMaps.get(boardName);
     return new HashMap<>();
   }
 
-  public void setBoardMap(String BoardName, MappableResourcesContainer map) {
-    if (LoadedMaps.containsKey(BoardName)) {
-      for (final var key : LoadedMaps.get(BoardName).keySet()) {
-        final var cmap = LoadedMaps.get(BoardName).get(key);
+  public void setBoardMap(String boardName, MappableResourcesContainer map) {
+    if (loadedMaps.containsKey(boardName)) {
+      for (final var key : loadedMaps.get(boardName).keySet()) {
+        final var cmap = loadedMaps.get(boardName).get(key);
         map.tryMap(key, cmap);
       }
-      LoadedMaps.remove(BoardName);
+      loadedMaps.remove(boardName);
     }
-    MyMappableResources.put(BoardName, map);
+    myMappableResources.put(boardName, map);
   }
 
-  public MappableResourcesContainer getBoardMap(String BoardName) {
-    if (MyMappableResources.containsKey(BoardName))
-      return MyMappableResources.get(BoardName);
+  public MappableResourcesContainer getBoardMap(String boardName) {
+    if (myMappableResources.containsKey(boardName))
+      return myMappableResources.get(boardName);
     return null;
   }
 
   public Set<String> getMapableBoards() {
-    return MyMappableResources.keySet();
+    return myMappableResources.keySet();
   }
 
   public Set<Component> getNonWires() {
@@ -832,8 +831,8 @@ public class Circuit {
     // logger.debug("mutatorAdd: {}", c);
     locker.checkForWritePermission("add", this);
 
-    Annotated = false;
-    MyNetList.clear();
+    isAnnotated = false;
+    myNetList.clear();
     if (c instanceof Wire) {
       final var w = (Wire) c;
       if (w.getEnd0().equals(w.getEnd1())) return;
@@ -888,8 +887,8 @@ public class Circuit {
     comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
-    MyNetList.clear();
-    Annotated = false;
+    myNetList.clear();
+    isAnnotated = false;
     for (final var comp : oldComps) {
       socSim.removeComponent(comp);
       final var factory = comp.getFactory();
@@ -903,8 +902,8 @@ public class Circuit {
 
     locker.checkForWritePermission("remove", this);
 
-    Annotated = false;
-    MyNetList.clear();
+    isAnnotated = false;
+    myNetList.clear();
     if (c instanceof Wire) {
       wires.remove(c);
     } else {
@@ -923,23 +922,23 @@ public class Circuit {
     fireEvent(CircuitEvent.ACTION_REMOVE, c);
   }
 
-  private void RemoveWrongLabels(String Label) {
-    var HaveAChange = false;
+  private void RemoveWrongLabels(String label) {
+    var haveAChange = false;
     for (final var comp : comps) {
       final var attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
-        final var CompLabel = attrs.getValue(StdAttr.LABEL);
-        if (Label.equalsIgnoreCase(CompLabel)) {
+        final var compLabel = attrs.getValue(StdAttr.LABEL);
+        if (label.equalsIgnoreCase(compLabel)) {
           attrs.setValue(StdAttr.LABEL, "");
-          HaveAChange = true;
+          haveAChange = true;
         }
       }
     }
     // we do not have to check the wires as (1) Wire is a reserved keyword,
     // and (2) they cannot have a label
-    if (HaveAChange)
+    if (haveAChange)
       OptionPane.showMessageDialog(
-          null, "\"" + Label + "\" : " + S.get("ComponentLabelCollisionError"));
+          null, "\"" + label + "\" : " + S.get("ComponentLabelCollisionError"));
   }
 
   public void removeCircuitListener(CircuitListener what) {

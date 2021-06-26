@@ -397,9 +397,9 @@ class CircuitWires {
         foundLocation = tunnelSet.get(0);
         foundBundle = ret.createBundleAt(foundLocation);
       }
-      for (Location loc : tunnelSet) {
+      for (final var loc : tunnelSet) {
         if (loc != foundLocation) {
-          WireBundle b = ret.getBundleAt(loc);
+          final var b = ret.getBundleAt(loc);
           if (b == null) {
             foundBundle.points.add(loc);
             ret.setBundleAt(loc, foundBundle);
@@ -446,7 +446,7 @@ class CircuitWires {
         final var s = w.e0;
         final var t = w.e1;
         final var wb = bmap.getBundleAt(s);
-        int width = 5;
+        var width = 5;
         if (!wb.isValid()) {
           g.setColor(Value.WIDTH_ERROR_COLOR);
         } else if (showState) {
@@ -623,7 +623,7 @@ class CircuitWires {
     var ret = Value.UNKNOWN;
     var pull = Value.UNKNOWN;
     for (final var tb : t.getBundles()) {
-      for (Location p : tb.b.points) {
+      for (final var p : tb.b.points) {
         final var val = state.getComponentOutputAt(p);
         if (val != null && val != Value.NIL) {
           ret = ret.combine(val.get(tb.loc));
@@ -685,7 +685,7 @@ class CircuitWires {
     final var bundle = getWireBundle(start.e0);
     if (bundle == null) return WireSet.EMPTY;
     final var wires = new HashSet<Wire>();
-    for (Location loc : bundle.points) {
+    for (final var loc : bundle.points) {
       wires.addAll(points.getWires(loc));
     }
     return new WireSet(wires);
@@ -728,7 +728,7 @@ class CircuitWires {
         final var th = pb.threads;
         if (!pb.isValid() || th == null) {
           // immediately propagate NILs across invalid bundles
-          CopyOnWriteArraySet<Location> pbPoints = pb.points;
+          final var pbPoints = pb.points;
           if (pbPoints == null) {
             circState.setValueByWire(p, Value.NIL);
           } else {
@@ -753,7 +753,7 @@ class CircuitWires {
     }
 
     // now propagate values through circuit
-    for (ThreadBundle tb : bundles) {
+    for (final var tb : bundles) {
       final var b = tb.b;
 
       Value bv = null;
@@ -765,7 +765,7 @@ class CircuitWires {
         final var tvs = new Value[b.threads.length];
         var tvs_valid = true;
         for (int i = 0; i < tvs.length; i++) {
-          Value tv = s.thr_values.get(b.threads[i]);
+          final var tv = s.thr_values.get(b.threads[i]);
           if (tv == null) {
             tvs_valid = false;
             break;
@@ -797,13 +797,13 @@ class CircuitWires {
     var ymax = w.e1.getY();
     while (it.hasNext()) {
       w = it.next();
-      int x0 = w.e0.getX();
+      final var x0 = w.e0.getX();
       if (x0 < xmin) xmin = x0;
-      int x1 = w.e1.getX();
+      final var x1 = w.e1.getX();
       if (x1 > xmax) xmax = x1;
-      int y0 = w.e0.getY();
+      final var y0 = w.e0.getY();
       if (y0 < ymin) ymin = y0;
-      int y1 = w.e1.getY();
+      final var y1 = w.e1.getY();
       if (y1 > ymax) ymax = y1;
     }
     bounds = Bounds.create(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);

@@ -30,7 +30,6 @@ package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
@@ -55,7 +54,7 @@ public class Propagator {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof ComponentPoint)) return false;
-      ComponentPoint o = (ComponentPoint) other;
+      final var o = (ComponentPoint) other;
       return this.cause.equals(o.cause) && this.loc.equals(o.loc);
     }
 
@@ -77,7 +76,7 @@ public class Propagator {
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
-      Propagator p = prop.get();
+      final var p = prop.get();
       if (p == null) {
         e.getSource().removeAttributeListener(this);
       } else if (e.getAttribute().equals(Options.ATTR_SIM_RAND)) {
@@ -106,9 +105,9 @@ public class Propagator {
     }
 
     public SetData cloneFor(CircuitState newState) {
-      Propagator newProp = newState.getPropagator();
-      int dtime = newProp.clock - state.getPropagator().clock;
-      SetData ret =
+      final var newProp = newState.getPropagator();
+      final var dtime = newProp.clock - state.getPropagator().clock;
+      final var ret =
           new SetData(time + dtime, newProp.setDataSerialNumber, newState, loc, cause, val);
       newProp.setDataSerialNumber++;
       if (this.next != null) ret.next = this.next.cloneFor(newState);
@@ -135,7 +134,7 @@ public class Propagator {
   //
   static Value computeValue(SetData causes) {
     if (causes == null) return Value.NIL;
-    Value ret = causes.val;
+    var ret = causes.val;
     for (SetData n = causes.next; n != null; n = n.next) {
       ret = ret.combine(n.val);
     }
@@ -170,7 +169,7 @@ public class Propagator {
 
   public Propagator(CircuitState root) {
     this.root = root;
-    Listener l = new Listener(this);
+    final var l = new Listener(this);
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     updateRandomness();
   }
@@ -180,7 +179,7 @@ public class Propagator {
       return removeCause(state, head, data.loc, data.cause);
     }
 
-    HashMap<Location, SetData> causes = state.causes;
+    final var causes = state.causes;
 
     // first check whether this is change of previous info.
     boolean replaced = false;
@@ -210,13 +209,13 @@ public class Propagator {
   // private methods
   //
   void checkComponentEnds(CircuitState state, Component comp) {
-    for (EndData end : comp.getEnds()) {
-      Location loc = end.getLocation();
-      SetData oldHead = state.causes.get(loc);
-      Value oldVal = computeValue(oldHead);
-      SetData newHead = removeCause(state, oldHead, loc, comp);
-      Value newVal = computeValue(newHead);
-      Value wireVal = state.getValueByWire(loc);
+    for (final var end : comp.getEnds()) {
+      final var loc = end.getLocation();
+      final var oldHead = state.causes.get(loc);
+      final var oldVal = computeValue(oldHead);
+      final var newHead = removeCause(state, oldHead, loc, comp);
+      final var newVal = computeValue(newHead);
+      final var wireVal = state.getValueByWire(loc);
 
       if (!newVal.equals(oldVal) || wireVal != null) {
         state.markPointAsDirty(loc);

@@ -60,7 +60,7 @@ public class WidthIncompatibilityData {
       final var p = o.getPoint(i);
       final var w = o.getBitWidth(i);
       var matched = false;
-      for (int j = 0; j < o.size(); j++) {
+      for (var j = 0; j < o.size(); j++) {
         final var q = this.getPoint(j);
         final var x = this.getBitWidth(j);
         if (p.equals(q) && w.equals(x)) {

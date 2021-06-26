@@ -48,17 +48,17 @@ class WireRepair extends CircuitTransaction {
     Collection<ArrayList<Wire>> getMergeSets() {
       IdentityHashMap<ArrayList<Wire>, Boolean> lists;
       lists = new IdentityHashMap<>();
-      for (ArrayList<Wire> list : map.values()) {
+      for (final var list : map.values()) {
         lists.put(list, Boolean.TRUE);
       }
       return lists.keySet();
     }
 
     void merge(Wire a, Wire b) {
-      ArrayList<Wire> set0 = map.get(a);
-      ArrayList<Wire> set1 = map.get(b);
+      var set0 = map.get(a);
+      var set1 = map.get(b);
       if (set0 == null && set1 == null) {
-        set0 = new ArrayList<>(2);
+        set0 = new ArrayList<Wire>(2);
         set0.add(a);
         set0.add(b);
         map.put(a, set0);
@@ -72,7 +72,7 @@ class WireRepair extends CircuitTransaction {
       } else if (set0 != set1) { // neither is null, and they are
         // different
         if (set0.size() > set1.size()) { // ensure set1 is the larger
-          ArrayList<Wire> temp = set0;
+          final var temp = set0;
           set0 = set1;
           set1 = temp;
         }
