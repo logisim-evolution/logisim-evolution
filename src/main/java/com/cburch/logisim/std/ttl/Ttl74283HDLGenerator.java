@@ -46,74 +46,74 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A1", 1);
-    MyInputs.put("A2", 1);
-    MyInputs.put("A3", 1);
-    MyInputs.put("A4", 1);
-    MyInputs.put("B1", 1);
-    MyInputs.put("B2", 1);
-    MyInputs.put("B3", 1);
-    MyInputs.put("B4", 1);
-    MyInputs.put("Cin", 1);
-    return MyInputs;
+    SortedMap<String, Integer> myInputs = new TreeMap<>();
+    myInputs.put("A1", 1);
+    myInputs.put("A2", 1);
+    myInputs.put("A3", 1);
+    myInputs.put("A4", 1);
+    myInputs.put("B1", 1);
+    myInputs.put("B2", 1);
+    myInputs.put("B3", 1);
+    myInputs.put("B4", 1);
+    myInputs.put("Cin", 1);
+    return myInputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("S1", 1);
-    MyOutputs.put("S2", 1);
-    MyOutputs.put("S3", 1);
-    MyOutputs.put("S4", 1);
-    MyOutputs.put("Cout", 1);
-    return MyOutputs;
+    SortedMap<String, Integer> myOutputs = new TreeMap<>();
+    myOutputs.put("S1", 1);
+    myOutputs.put("S2", 1);
+    myOutputs.put("S3", 1);
+    myOutputs.put("S4", 1);
+    myOutputs.put("Cout", 1);
+    return myOutputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("oppA", 5);
-    Wires.put("oppB", 5);
-    Wires.put("oppC", 5);
-    Wires.put("Result", 5);
-    return Wires;
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    wires.put("oppA", 5);
+    wires.put("oppB", 5);
+    wires.put("oppC", 5);
+    wires.put("Result", 5);
+    return wires;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   oppA   <= \"0\"&A4&A3&A2&A1;");
-    Contents.add("   oppB   <= \"0\"&B4&B3&B2&B1;");
-    Contents.add("   oppC   <= \"0000\"&Cin;");
-    Contents.add("   Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));");
-    Contents.add("   S1     <= Result(0);");
-    Contents.add("   S2     <= Result(1);");
-    Contents.add("   S3     <= Result(2);");
-    Contents.add("   S4     <= Result(3);");
-    Contents.add("   Cout   <= Result(4);");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   oppA   <= \"0\"&A4&A3&A2&A1;");
+    contents.add("   oppB   <= \"0\"&B4&B3&B2&B1;");
+    contents.add("   oppC   <= \"0000\"&Cin;");
+    contents.add("   Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));");
+    contents.add("   S1     <= Result(0);");
+    contents.add("   S2     <= Result(1);");
+    contents.add("   S3     <= Result(2);");
+    contents.add("   S4     <= Result(3);");
+    contents.add("   Cout   <= Result(4);");
+    return contents;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("A3", true, ComponentInfo, 12, Nets));
-    PortMap.putAll(GetNetMap("A4", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("B3", true, ComponentInfo, 13, Nets));
-    PortMap.putAll(GetNetMap("B4", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("S1", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("S2", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("S3", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("S4", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("Cout", true, ComponentInfo, 7, Nets));
+    final var componentInfo = (NetlistComponent) MapInfo;
+    PortMap.putAll(GetNetMap("A1", true, componentInfo, 4, Nets));
+    PortMap.putAll(GetNetMap("A2", true, componentInfo, 2, Nets));
+    PortMap.putAll(GetNetMap("A3", true, componentInfo, 12, Nets));
+    PortMap.putAll(GetNetMap("A4", true, componentInfo, 10, Nets));
+    PortMap.putAll(GetNetMap("B1", true, componentInfo, 5, Nets));
+    PortMap.putAll(GetNetMap("B2", true, componentInfo, 1, Nets));
+    PortMap.putAll(GetNetMap("B3", true, componentInfo, 13, Nets));
+    PortMap.putAll(GetNetMap("B4", true, componentInfo, 9, Nets));
+    PortMap.putAll(GetNetMap("Cin", true, componentInfo, 6, Nets));
+    PortMap.putAll(GetNetMap("S1", true, componentInfo, 3, Nets));
+    PortMap.putAll(GetNetMap("S2", true, componentInfo, 0, Nets));
+    PortMap.putAll(GetNetMap("S3", true, componentInfo, 11, Nets));
+    PortMap.putAll(GetNetMap("S4", true, componentInfo, 8, Nets));
+    PortMap.putAll(GetNetMap("Cout", true, componentInfo, 7, Nets));
     return PortMap;
   }
 

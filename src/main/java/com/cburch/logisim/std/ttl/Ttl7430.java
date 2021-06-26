@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl7430 extends AbstractTtlGate {
   /**
@@ -55,7 +54,7 @@ public class Ttl7430 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 123, y + 30, 10, 18, true);
     g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 23);
     g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 25);
@@ -79,7 +78,7 @@ public class Ttl7430 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val1 =
+    var val1 =
         state
             .getPortValue(0)
             .and(state.getPortValue(1).and(state.getPortValue(2).and(state.getPortValue(3))));

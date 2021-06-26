@@ -72,73 +72,73 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("segments", 7);
-    Wires.put("bcd", 4);
-    return Wires;
+    SortedMap<String, Integer> wires = new TreeMap<>();
+    wires.put("segments", 7);
+    wires.put("bcd", 4);
+    return wires;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   Sega  <= segments(0);");
-    Contents.add("   Segb  <= segments(1);");
-    Contents.add("   Segc  <= segments(2);");
-    Contents.add("   Segd  <= segments(3);");
-    Contents.add("   Sege  <= segments(4);");
-    Contents.add("   Segf  <= segments(5);");
-    Contents.add("   Segg  <= segments(6);");
-    Contents.add("\n");
-    Contents.add("   bcd   <= BCD3&BCD2&BCD1&BCD0;");
-    Contents.add("\n");
-    Contents.add("   Decode : PROCESS ( bcd , LT , BI , RBI ) IS");
-    Contents.add("      BEGIN");
-    Contents.add("         CASE bcd IS");
-    Contents.add("            WHEN \"0000\" => segments <= \"0111111\";");
-    Contents.add("            WHEN \"0001\" => segments <= \"0000110\";");
-    Contents.add("            WHEN \"0010\" => segments <= \"1011011\";");
-    Contents.add("            WHEN \"0011\" => segments <= \"1001111\";");
-    Contents.add("            WHEN \"0100\" => segments <= \"1100110\";");
-    Contents.add("            WHEN \"0101\" => segments <= \"1101101\";");
-    Contents.add("            WHEN \"0110\" => segments <= \"1111101\";");
-    Contents.add("            WHEN \"0111\" => segments <= \"0000111\";");
-    Contents.add("            WHEN \"1000\" => segments <= \"1111111\";");
-    Contents.add("            WHEN \"1001\" => segments <= \"1100111\";");
-    Contents.add("            WHEN \"1010\" => segments <= \"1110111\";");
-    Contents.add("            WHEN \"1011\" => segments <= \"1111100\";");
-    Contents.add("            WHEN \"1100\" => segments <= \"0111001\";");
-    Contents.add("            WHEN \"1101\" => segments <= \"1011110\";");
-    Contents.add("            WHEN \"1110\" => segments <= \"1111001\";");
-    Contents.add("            WHEN OTHERS => segments <= \"1110001\";");
-    Contents.add("         END CASE;");
-    Contents.add("         IF (BI = '0') THEN segments <= \"0000000\";");
-    Contents.add("         ELSIF (LT = '0') THEN segments <= \"1111111\";");
-    Contents.add("         ELSIF ((RBI='0') AND (bcd=\"0000\")) THEN segments <= \"0000000\";");
-    Contents.add("         END IF;");
-    Contents.add("      END PROCESS Decode;");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   Sega  <= segments(0);");
+    contents.add("   Segb  <= segments(1);");
+    contents.add("   Segc  <= segments(2);");
+    contents.add("   Segd  <= segments(3);");
+    contents.add("   Sege  <= segments(4);");
+    contents.add("   Segf  <= segments(5);");
+    contents.add("   Segg  <= segments(6);");
+    contents.add("\n");
+    contents.add("   bcd   <= BCD3&BCD2&BCD1&BCD0;");
+    contents.add("\n");
+    contents.add("   Decode : PROCESS ( bcd , LT , BI , RBI ) IS");
+    contents.add("      BEGIN");
+    contents.add("         CASE bcd IS");
+    contents.add("            WHEN \"0000\" => segments <= \"0111111\";");
+    contents.add("            WHEN \"0001\" => segments <= \"0000110\";");
+    contents.add("            WHEN \"0010\" => segments <= \"1011011\";");
+    contents.add("            WHEN \"0011\" => segments <= \"1001111\";");
+    contents.add("            WHEN \"0100\" => segments <= \"1100110\";");
+    contents.add("            WHEN \"0101\" => segments <= \"1101101\";");
+    contents.add("            WHEN \"0110\" => segments <= \"1111101\";");
+    contents.add("            WHEN \"0111\" => segments <= \"0000111\";");
+    contents.add("            WHEN \"1000\" => segments <= \"1111111\";");
+    contents.add("            WHEN \"1001\" => segments <= \"1100111\";");
+    contents.add("            WHEN \"1010\" => segments <= \"1110111\";");
+    contents.add("            WHEN \"1011\" => segments <= \"1111100\";");
+    contents.add("            WHEN \"1100\" => segments <= \"0111001\";");
+    contents.add("            WHEN \"1101\" => segments <= \"1011110\";");
+    contents.add("            WHEN \"1110\" => segments <= \"1111001\";");
+    contents.add("            WHEN OTHERS => segments <= \"1110001\";");
+    contents.add("         END CASE;");
+    contents.add("         IF (BI = '0') THEN segments <= \"0000000\";");
+    contents.add("         ELSIF (LT = '0') THEN segments <= \"1111111\";");
+    contents.add("         ELSIF ((RBI='0') AND (bcd=\"0000\")) THEN segments <= \"0000000\";");
+    contents.add("         END IF;");
+    contents.add("      END PROCESS Decode;");
+    return contents;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("BCD0", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("BCD1", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("BCD2", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("BCD3", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("LT", false, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("BI", false, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("RBI", false, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("Sega", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("Segb", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("Segc", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("Segd", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("Sege", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("Segf", true, ComponentInfo, 13, Nets));
-    PortMap.putAll(GetNetMap("Segg", true, ComponentInfo, 12, Nets));
-    return PortMap;
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) MapInfo;
+    portMap.putAll(GetNetMap("BCD0", true, ComponentInfo, 6, Nets));
+    portMap.putAll(GetNetMap("BCD1", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("BCD2", true, ComponentInfo, 1, Nets));
+    portMap.putAll(GetNetMap("BCD3", true, ComponentInfo, 5, Nets));
+    portMap.putAll(GetNetMap("LT", false, ComponentInfo, 2, Nets));
+    portMap.putAll(GetNetMap("BI", false, ComponentInfo, 3, Nets));
+    portMap.putAll(GetNetMap("RBI", false, ComponentInfo, 4, Nets));
+    portMap.putAll(GetNetMap("Sega", true, ComponentInfo, 11, Nets));
+    portMap.putAll(GetNetMap("Segb", true, ComponentInfo, 10, Nets));
+    portMap.putAll(GetNetMap("Segc", true, ComponentInfo, 9, Nets));
+    portMap.putAll(GetNetMap("Segd", true, ComponentInfo, 8, Nets));
+    portMap.putAll(GetNetMap("Sege", true, ComponentInfo, 7, Nets));
+    portMap.putAll(GetNetMap("Segf", true, ComponentInfo, 13, Nets));
+    portMap.putAll(GetNetMap("Segg", true, ComponentInfo, 12, Nets));
+    return portMap;
   }
 
   @Override

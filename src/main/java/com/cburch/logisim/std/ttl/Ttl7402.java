@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Ttl7402 extends AbstractTtlGate {
@@ -53,11 +52,11 @@ public class Ttl7402 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+      final var contents = new ArrayList<String>();
+      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
               + HDL.notOperator() + "(gate_" + index + "_A" + HDL.orOperator() + "gate_" + index + "B);");
-      Contents.add("");
-      return Contents;
+      contents.add("");
+      return contents;
     }
   }
 
@@ -74,9 +73,10 @@ public class Ttl7402 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
-    int portwidth = 18, portheight = 15;
-    int youtput = y + (up ? 20 : 40);
+    final var g = painter.getGraphics();
+    final var portwidth = 18;
+    final var portheight = 15;
+    final var youtput = y + (up ? 20 : 40);
     Drawgates.paintOr(g, x + 20, youtput, portwidth - 4, portheight, true, true);
     // output line
     Drawgates.paintOutputgate(g, x + 10, y, x + 16, youtput, up, height);

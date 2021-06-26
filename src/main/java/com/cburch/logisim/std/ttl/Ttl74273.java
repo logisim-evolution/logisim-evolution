@@ -54,7 +54,7 @@ public class Ttl74273 extends AbstractOctalFlops {
     public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
       SortedMap<String, String> PortMap = new TreeMap<>();
       if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+      final var ComponentInfo = (NetlistComponent) MapInfo;
       PortMap.putAll(super.GetPortMap(Nets, ComponentInfo));
       PortMap.put("nCLKEN", "'0'");
       PortMap.putAll(GetNetMap("nCLR", false, ComponentInfo, 0, Nets));

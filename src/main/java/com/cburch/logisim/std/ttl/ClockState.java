@@ -49,7 +49,7 @@ class ClockState implements Cloneable {
   }
 
   public boolean updateClock(Value newClock, Object trigger) {
-    Value oldClock = lastClock;
+    final var oldClock = lastClock;
     lastClock = newClock;
     if (trigger == null || trigger == StdAttr.TRIG_RISING) {
       return oldClock == Value.FALSE && newClock == Value.TRUE;
@@ -65,19 +65,19 @@ class ClockState implements Cloneable {
   }
 
   public boolean updateClock(Value newClock) {
-    Value oldClock = lastClock;
+    final var oldClock = lastClock;
     lastClock = newClock;
     return oldClock == Value.FALSE && newClock == Value.TRUE;
   }
 
   public boolean updateClock(Value newClock, int which) {
-    Value[] values = lastClock.getAll();
+    var values = lastClock.getAll();
     if (values.length <= which) {
-      Value[] nvalue = (Value.createKnown(BitWidth.create(which + 1), 0)).getAll();
+      final var nvalue = (Value.createKnown(BitWidth.create(which + 1), 0)).getAll();
       System.arraycopy(values, 0, nvalue, 0, values.length);
       values = nvalue;
     }
-    Value oldClock = values[which];
+    final var oldClock = values[which];
     values[which] = newClock;
     lastClock = Value.create(values);
     return oldClock == Value.FALSE && newClock == Value.TRUE;

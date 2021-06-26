@@ -50,8 +50,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    int NrOfGates = (IsInverter()) ? 6 : 4;
-    for (int i = 0; i < NrOfGates; i++) {
+    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    for (var i = 0; i < NrOfGates; i++) {
       MyInputs.put("gate_" + i + "_A", 1);
       if (!IsInverter()) MyInputs.put("gate_" + i + "_B", 1);
     }
@@ -61,8 +61,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    int NrOfGates = (IsInverter()) ? 6 : 4;
-    for (int i = 0; i < NrOfGates; i++) {
+    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    for (var i = 0; i < NrOfGates; i++) {
       MyOutputs.put("gate_" + i + "_O", 1);
     }
     return MyOutputs;
@@ -74,9 +74,9 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    int NrOfGates = (IsInverter()) ? 6 : 4;
-    for (int i = 0; i < NrOfGates; i++) {
+    final var Contents = new ArrayList<String>();
+    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    for (var i = 0; i < NrOfGates; i++) {
       Contents.addAll(MakeRemarkBlock("Here gate " + i + " is described", 3));
       Contents.addAll(GetLogicFunction(i));
     }
@@ -87,18 +87,18 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int NrOfGates = (IsInverter()) ? 6 : 4;
-    for (int i = 0; i < NrOfGates; i++) {
+    final var ComponentInfo = (NetlistComponent) MapInfo;
+    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    for (var i = 0; i < NrOfGates; i++) {
       if (IsInverter()) {
-        int inindex = (i < 3) ? i * 2 : i * 2 + 1;
-        int outindex = (i < 3) ? i * 2 + 1 : i * 2;
+        final var inindex = (i < 3) ? i * 2 : i * 2 + 1;
+        final var outindex = (i < 3) ? i * 2 + 1 : i * 2;
         PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex, Nets));
         PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));
       } else {
-        int inindex1 = (i < 2) ? i * 3 : i * 3 + 1;
-        int inindex2 = inindex1 + 1;
-        int outindex = (i < 2) ? i * 3 + 2 : i * 3;
+        final var inindex1 = (i < 2) ? i * 3 : i * 3 + 1;
+        final var inindex2 = inindex1 + 1;
+        final var outindex = (i < 2) ? i * 3 + 2 : i * 3;
         PortMap.putAll(GetNetMap("gate_" + i + "_A", true, ComponentInfo, inindex1, Nets));
         PortMap.putAll(GetNetMap("gate_" + i + "_B", true, ComponentInfo, inindex2, Nets));
         PortMap.putAll(GetNetMap("gate_" + i + "_O", true, ComponentInfo, outindex, Nets));

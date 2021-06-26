@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Instance;
@@ -122,8 +121,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     this(name, pins, outputports);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
-    for (byte notUsedPin : NotUsedPins)
-      unusedpins.add(notUsedPin);
+    for (final var notUsedPin : NotUsedPins) unusedpins.add(notUsedPin);
   }
 
   protected AbstractTtlGate(
@@ -137,8 +135,8 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   }
 
   private void computeTextField(Instance instance) {
-    Bounds bds = instance.getBounds();
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
+    final var bds = instance.getBounds();
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
     if (dir == Direction.EAST || dir == Direction.WEST)
       instance.setTextField(
           StdAttr.LABEL,
@@ -166,7 +164,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction dir = attrs.getValue(StdAttr.FACING);
+    final var dir = attrs.getValue(StdAttr.FACING);
     return Bounds.create(0, -30, this.pinnumber * 10, height).rotate(Direction.EAST, dir, 0, 0);
   }
 
@@ -183,10 +181,10 @@ abstract public class AbstractTtlGate extends InstanceFactory {
 
   static Point TTLGetTranslatedXY(InstanceState state, MouseEvent e) {
     int x = 0, y = 0;
-    Location loc = state.getInstance().getLocation();
-    int height = state.getInstance().getBounds().getHeight();
-    int width = state.getInstance().getBounds().getWidth();
-    Direction dir = state.getAttributeValue(StdAttr.FACING);
+    final var loc = state.getInstance().getLocation();
+    final var height = state.getInstance().getBounds().getHeight();
+    final var width = state.getInstance().getBounds().getWidth();
+    final var dir = state.getAttributeValue(StdAttr.FACING);
     if (dir.equals(Direction.EAST)) {
       x = e.getX() - loc.getX();
       y = e.getY() + 30 - loc.getY();
@@ -204,14 +202,15 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   }
 
   protected void paintBase(InstancePainter painter, boolean drawname, boolean ghost) {
-    Direction dir = painter.getAttributeValue(StdAttr.FACING);
-    Graphics2D g = (Graphics2D) painter.getGraphics();
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int xp = x, yp = y;
-    int width = bds.getWidth();
-    int height = bds.getHeight();
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
+    final var g = (Graphics2D) painter.getGraphics();
+    final var bds = painter.getBounds();
+    final var x = bds.getX();
+    final var y = bds.getY();
+    var xp = x;
+    var yp = y;
+    var width = bds.getWidth();
+    var height = bds.getHeight();
     for (byte i = 0; i < this.pinnumber; i++) {
       if (i < this.pinnumber / 2) {
         if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
@@ -278,16 +277,17 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     painter.drawPorts();
-    Graphics2D g = (Graphics2D) painter.getGraphics();
+    final var g = (Graphics2D) painter.getGraphics();
     painter.drawLabel();
     if (!painter.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) {
-      Direction dir = painter.getAttributeValue(StdAttr.FACING);
-      Bounds bds = painter.getBounds();
-      int x = bds.getX();
-      int y = bds.getY();
-      int xp = x, yp = y;
-      int width = bds.getWidth();
-      int height = bds.getHeight();
+      final var dir = painter.getAttributeValue(StdAttr.FACING);
+      final var bds = painter.getBounds();
+      final var x = bds.getX();
+      final var y = bds.getY();
+      var xp = x;
+      var yp = y;
+      final var width = bds.getWidth();
+      final var height = bds.getHeight();
       for (byte i = 0; i < this.pinnumber; i++) {
         if (i == this.pinnumber / 2) {
           xp = x;
@@ -385,12 +385,12 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   public abstract void paintInternal(InstancePainter painter, int x, int y, int height, boolean up);
 
   private void paintInternalBase(InstancePainter painter) {
-    Direction dir = painter.getAttributeValue(StdAttr.FACING);
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int width = bds.getWidth();
-    int height = bds.getHeight();
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
+    final var bds = painter.getBounds();
+    var x = bds.getX();
+    var y = bds.getY();
+    var width = bds.getWidth();
+    var height = bds.getHeight();
     if (dir == Direction.SOUTH || dir == Direction.NORTH) {
       x += (width - height) / 2;
       y += (height - width) / 2;
@@ -398,7 +398,8 @@ abstract public class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
 
-    if (this.ngatestodraw == 0) paintInternal(painter, x, y, height, false);
+    if (this.ngatestodraw == 0)
+      paintInternal(painter, x, y, height, false);
     else {
       paintBase(painter, false, false);
       for (byte i = 0; i < this.ngatestodraw; i++) {
@@ -418,11 +419,11 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   /** Here you have to write the logic of your component */
   @Override
   public void propagate(InstanceState state) {
-    int NrOfUnusedPins = unusedpins.size();
+    final var NrOfUnusedPins = unusedpins.size();
     if (state.getAttributeValue(TTL.VCC_GND)
         && (state.getPortValue(this.pinnumber - 2 - NrOfUnusedPins) != Value.FALSE
             || state.getPortValue(this.pinnumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
-      int port = 0;
+      var port = 0;
       for (byte i = 1; i <= pinnumber; i++) {
         if (!unusedpins.contains(i) && (i != (pinnumber / 2))) {
           if (outputports.contains(i)) state.setPort(port, Value.UNKNOWN, 1);
@@ -435,19 +436,22 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   public abstract void ttlpropagate(InstanceState state);
 
   private void updateports(Instance instance) {
-    Bounds bds = instance.getBounds();
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
-    int dx = 0, dy = 0, width = bds.getWidth(), height = bds.getHeight();
+    final var bds = instance.getBounds();
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
+    var dx = 0;
+    var dy = 0;
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
     byte portindex = 0;
-    boolean isoutput = false, hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
-    boolean skip = false;
-    int NrOfUnusedPins = unusedpins.size();
+    var isoutput = false;
+    var hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
+    var skip = false;
+    final var NrOfUnusedPins = unusedpins.size();
     /*
      * array port is composed in this order: lower ports less GND, upper ports less
      * Vcc, GND, Vcc
      */
-    Port[] ps =
-        new Port[hasvccgnd ? this.pinnumber - NrOfUnusedPins : this.pinnumber - 2 - NrOfUnusedPins];
+    final var ps = new Port[hasvccgnd ? this.pinnumber - NrOfUnusedPins : this.pinnumber - 2 - NrOfUnusedPins];
 
     for (byte i = 0; i < this.pinnumber; i++) {
       isoutput = outputports.contains((byte) (i + 1));
@@ -516,7 +520,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
 
   @Override
   public final void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D) painter.getGraphics().create();
+    final var g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
@@ -524,8 +528,8 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     g.setColor(Color.black);
     g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
     		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
-    int wh1 = AppPreferences.getScaled(3);
-    int wh2 = AppPreferences.getScaled(2);
+    final var wh1 = AppPreferences.getScaled(3);
+    final var wh2 = AppPreferences.getScaled(2);
     for (int y = 0 ; y < 3 ; y++) {
       g.setColor(Color.LIGHT_GRAY);
       g.fillRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);

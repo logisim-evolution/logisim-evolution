@@ -48,28 +48,28 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("nCLR1", 1);
-    MyInputs.put("D1", 1);
-    MyInputs.put("CLK1", 1);
-    MyInputs.put("tick1", 1);
-    MyInputs.put("nPRE1", 1);
-    MyInputs.put("nCLR2", 1);
-    MyInputs.put("D2", 1);
-    MyInputs.put("CLK2", 1);
-    MyInputs.put("tick2", 1);
-    MyInputs.put("nPRE2", 1);
-    return MyInputs;
+    SortedMap<String, Integer> myInputs = new TreeMap<>();
+    myInputs.put("nCLR1", 1);
+    myInputs.put("D1", 1);
+    myInputs.put("CLK1", 1);
+    myInputs.put("tick1", 1);
+    myInputs.put("nPRE1", 1);
+    myInputs.put("nCLR2", 1);
+    myInputs.put("D2", 1);
+    myInputs.put("CLK2", 1);
+    myInputs.put("tick2", 1);
+    myInputs.put("nPRE2", 1);
+    return myInputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Q1", 1);
-    MyOutputs.put("nQ1", 1);
-    MyOutputs.put("Q2", 1);
-    MyOutputs.put("nQ2", 1);
-    return MyOutputs;
+    SortedMap<String, Integer> myOutputs = new TreeMap<>();
+    myOutputs.put("Q1", 1);
+    myOutputs.put("nQ1", 1);
+    myOutputs.put("Q2", 1);
+    myOutputs.put("nQ2", 1);
+    return myOutputs;
   }
 
   @Override
@@ -84,88 +84,88 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   Q1  <= state1;");
-    Contents.add("   nQ1 <= NOT(state1);");
-    Contents.add("   Q2  <= state1;");
-    Contents.add("   nQ2 <= NOT(state1);");
-    Contents.add(" ");
-    Contents.add("   next1 <= D1 WHEN tick1='1' ELSE state1;");
-    Contents.add("   next2 <= D2 WHEN tick2='1' ELSE state2;");
-    Contents.add(" ");
-    Contents.add("   ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS");
-    Contents.add("      BEGIN");
-    Contents.add("         IF (nCLR1 = '0') THEN state1 <= '0';");
-    Contents.add("         ELSIF (nPRE1 = '1') THEN state1 <= '1';");
-    Contents.add("         ELSIF (rising_edge(CLK1)) THEN state1 <= next1;");
-    Contents.add("         END IF;");
-    Contents.add("      END PROCESS ff1;");
-    Contents.add(" ");
-    Contents.add("   ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS");
-    Contents.add("      BEGIN");
-    Contents.add("         IF (nCLR2 = '0') THEN state2 <= '0';");
-    Contents.add("         ELSIF (nPRE2 = '1') THEN state2 <= '1';");
-    Contents.add("         ELSIF (rising_edge(CLK2)) THEN state2 <= next2;");
-    Contents.add("         END IF;");
-    Contents.add("      END PROCESS ff2;");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   Q1  <= state1;");
+    contents.add("   nQ1 <= NOT(state1);");
+    contents.add("   Q2  <= state1;");
+    contents.add("   nQ2 <= NOT(state1);");
+    contents.add(" ");
+    contents.add("   next1 <= D1 WHEN tick1='1' ELSE state1;");
+    contents.add("   next2 <= D2 WHEN tick2='1' ELSE state2;");
+    contents.add(" ");
+    contents.add("   ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS");
+    contents.add("      BEGIN");
+    contents.add("         IF (nCLR1 = '0') THEN state1 <= '0';");
+    contents.add("         ELSIF (nPRE1 = '1') THEN state1 <= '1';");
+    contents.add("         ELSIF (rising_edge(CLK1)) THEN state1 <= next1;");
+    contents.add("         END IF;");
+    contents.add("      END PROCESS ff1;");
+    contents.add(" ");
+    contents.add("   ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS");
+    contents.add("      BEGIN");
+    contents.add("         IF (nCLR2 = '0') THEN state2 <= '0';");
+    contents.add("         ELSIF (nPRE2 = '1') THEN state2 <= '1';");
+    contents.add("         ELSIF (rising_edge(CLK2)) THEN state2 <= next2;");
+    contents.add("         END IF;");
+    contents.add("      END PROCESS ff2;");
+    return contents;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    for (int i = 0; i < 2; i++) {
-      boolean GatedClock = false;
-      boolean HasClock = true;
-      int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[i];
-      if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
+    final var componentinfo = (NetlistComponent) MapInfo;
+    for (var i = 0; i < 2; i++) {
+      var gatedClock = false;
+      var hasClock = true;
+      int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
+      if (!componentinfo.EndIsConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()
                 + "\" has no clock connection for dff"
                 + (i + 1));
-        HasClock = false;
+        hasClock = false;
       }
-      String ClockNetName = GetClockNetName(ComponentInfo, ClockPinIndex, Nets);
-      if (ClockNetName.isEmpty()) {
-        GatedClock = true;
+      final var clockNetName = GetClockNetName(componentinfo, clockPinIndex, Nets);
+      if (clockNetName.isEmpty()) {
+        gatedClock = true;
       }
-      if (!HasClock) {
+      if (!hasClock) {
         PortMap.put("CLK" + (i + 1), "'0'");
         PortMap.put("tick" + (i + 1), "'0'");
-      } else if (GatedClock) {
+      } else if (gatedClock) {
         PortMap.put("tick" + (i + 1), "'1'");
         PortMap.put(
             "CLK" + (i + 1),
-            GetNetName(ComponentInfo, ClockPinIndex, true, Nets));
+            GetNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
         if (Nets.RequiresGlobalClockConnection()) {
           PortMap.put("tick" + (i + 1), "'1'");
         } else {
           PortMap.put(
               "tick" + (i + 1),
-              ClockNetName
+              clockNetName
                   + "("
                   + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + ")");
         }
         PortMap.put(
             "CLK" + (i + 1),
-            ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+            clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
       }
     }
-    PortMap.putAll(GetNetMap("nCLR1", false, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("nPRE1", false, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("nQ1", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("nCLR2", false, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("nPRE2", false, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("nQ2", true, ComponentInfo, 6, Nets));
+    PortMap.putAll(GetNetMap("nCLR1", false, componentinfo, 0, Nets));
+    PortMap.putAll(GetNetMap("D1", true, componentinfo, 1, Nets));
+    PortMap.putAll(GetNetMap("nPRE1", false, componentinfo, 3, Nets));
+    PortMap.putAll(GetNetMap("Q1", true, componentinfo, 4, Nets));
+    PortMap.putAll(GetNetMap("nQ1", true, componentinfo, 5, Nets));
+    PortMap.putAll(GetNetMap("nCLR2", false, componentinfo, 11, Nets));
+    PortMap.putAll(GetNetMap("D2", true, componentinfo, 10, Nets));
+    PortMap.putAll(GetNetMap("nPRE2", false, componentinfo, 8, Nets));
+    PortMap.putAll(GetNetMap("Q2", true, componentinfo, 7, Nets));
+    PortMap.putAll(GetNetMap("nQ2", true, componentinfo, 6, Nets));
     return PortMap;
   }
 
