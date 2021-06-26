@@ -85,7 +85,7 @@ public class ShiftRegisterPoker extends InstancePoker {
     if (loc < 0) return;
     final var c = e.getKeyChar();
     if (c == ' ' || c == '\t') {
-      Integer lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
+      final var lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
       if (loc < lenObj - 1) {
         this.loc = loc + 1;
         state.fireInvalidated();

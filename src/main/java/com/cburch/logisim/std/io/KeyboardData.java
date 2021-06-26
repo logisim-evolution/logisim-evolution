@@ -60,7 +60,7 @@ class KeyboardData implements InstanceData, Cloneable {
   @Override
   public Object clone() {
     try {
-      KeyboardData ret = (KeyboardData) super.clone();
+      final var ret = (KeyboardData) super.clone();
       ret.buffer = this.buffer.clone();
       return ret;
     } catch (CloneNotSupportedException e) {
@@ -69,9 +69,9 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public boolean delete() {
-    char[] buf = buffer;
-    int len = bufferLength;
-    int pos = cursorPos;
+    final var buf = buffer;
+    final var len = bufferLength;
+    final var pos = cursorPos;
     if (pos >= len) return false;
     if (len >= pos + 1)
       System.arraycopy(buf, pos + 1, buf, pos, len - (pos + 1));
@@ -82,14 +82,14 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public char dequeue() {
-    char[] buf = buffer;
-    int len = bufferLength;
+    final var buf = buffer;
+    final var len = bufferLength;
     if (len == 0) return '\0';
-    char ret = buf[0];
+    final var ret = buf[0];
     if (len >= 1)
       System.arraycopy(buf, 1, buf, 0, len - 1);
     bufferLength = len - 1;
-    int pos = cursorPos;
+    final var pos = cursorPos;
     if (pos > 0) cursorPos = pos - 1;
     str = null;
     dispValid = false;
@@ -98,9 +98,9 @@ class KeyboardData implements InstanceData, Cloneable {
 
   private boolean fits(FontMetrics fm, String str, int w0, int w1, int i0, int i1, int max) {
     if (i0 >= i1) return true;
-    int len = str.length();
+    var len = str.length();
     if (i0 < 0 || i1 > len) return false;
-    int w = fm.stringWidth(str.substring(i0, i1));
+    var w = fm.stringWidth(str.substring(i0, i1));
     if (i0 > 0) w += w0;
     if (i1 < str.length()) w += w1;
     return w <= max;
@@ -123,8 +123,8 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public int getNextSpecial(int pos) {
-    char[] buf = buffer;
-    int len = bufferLength;
+    final var buf = buffer;
+    final var len = bufferLength;
     for (int i = pos; i < len; i++) {
       char c = buf[i];
       if (Character.isISOControl(c)) return i;
@@ -133,10 +133,10 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public boolean insert(char value) {
-    char[] buf = buffer;
-    int len = bufferLength;
+    final var buf = buffer;
+    final var len = bufferLength;
     if (len >= buf.length) return false;
-    int pos = cursorPos;
+    final var pos = cursorPos;
     if (len >= pos)
       System.arraycopy(buf, pos, buf, pos + 1, len - pos);
     buf[pos] = value;
@@ -152,9 +152,9 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public boolean moveCursorBy(int delta) {
-    int len = bufferLength;
-    int pos = cursorPos;
-    int newPos = pos + delta;
+    final var len = bufferLength;
+    final var pos = cursorPos;
+    final var newPos = pos + delta;
     if (newPos < 0 || newPos > len) return false;
     cursorPos = newPos;
     dispValid = false;
@@ -162,9 +162,9 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public boolean setCursor(int value) {
-    int len = bufferLength;
+    final var len = bufferLength;
     if (value > len) value = len;
-    int pos = cursorPos;
+    final var pos = cursorPos;
     if (pos == value) return false;
     cursorPos = value;
     dispValid = false;
@@ -172,20 +172,20 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public Value setLastClock(Value newClock) {
-    Value ret = lastClock;
+    final var ret = lastClock;
     lastClock = newClock;
     return ret;
   }
 
   @Override
   public String toString() {
-    String s = str;
+    final var s = str;
     if (s != null) return s;
-    StringBuilder build = new StringBuilder();
-    char[] buf = buffer;
-    int len = bufferLength;
-    for (int i = 0; i < len; i++) {
-      char c = buf[i];
+    final var build = new StringBuilder();
+    final var buf = buffer;
+    final var len = bufferLength;
+    for (var i = 0; i < len; i++) {
+      final var c = buf[i];
       build.append(Character.isISOControl(c) ? ' ' : c);
     }
     str = build.toString();
@@ -194,10 +194,10 @@ class KeyboardData implements InstanceData, Cloneable {
 
   public void updateBufferLength(int len) {
     synchronized (this) {
-      char[] buf = buffer;
-      int oldLen = buf.length;
+      final var buf = buffer;
+      final var oldLen = buf.length;
       if (oldLen != len) {
-        char[] newBuf = new char[len];
+        final var newBuf = new char[len];
         System.arraycopy(buf, 0, newBuf, 0, Math.min(len, oldLen));
         if (len < oldLen) {
           if (bufferLength > len) bufferLength = len;
@@ -212,20 +212,20 @@ class KeyboardData implements InstanceData, Cloneable {
 
   public void updateDisplay(FontMetrics fm) {
     if (dispValid) return;
-    int pos = cursorPos;
-    int i0 = dispStart;
-    int i1 = dispEnd;
-    String str = toString();
-    int len = str.length();
-    int max = Keyboard.WIDTH - 8 - 4;
+    final var pos = cursorPos;
+    var i0 = dispStart;
+    var i1 = dispEnd;
+    final var str = toString();
+    final var len = str.length();
+    final var max = Keyboard.WIDTH - 8 - 4;
     if (str.equals("") || fm.stringWidth(str) <= max) {
       i0 = 0;
       i1 = len;
     } else {
       // grow to include end of string if possible
-      int w0 = fm.stringWidth(str.charAt(0) + "m");
-      int w1 = fm.stringWidth("m");
-      int w = i0 == 0 ? fm.stringWidth(str) : w0 + fm.stringWidth(str.substring(i0));
+      final var w0 = fm.stringWidth(str.charAt(0) + "m");
+      final var w1 = fm.stringWidth("m");
+      final var w = i0 == 0 ? fm.stringWidth(str) : w0 + fm.stringWidth(str.substring(i0));
       if (w <= max) i1 = len;
 
       // rearrange start/end so as to include cursor

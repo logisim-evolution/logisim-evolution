@@ -43,65 +43,65 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetArchitecture(
-      Netlist TheNetlist,
+      Netlist nets,
       AttributeSet attrs,
-      String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
+      String componentName) {
+    final var contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
-      Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
-      Contents.add("");
-      Contents.add("ARCHITECTURE PlatformIndependent OF " + ComponentName + " IS ");
-      Contents.add("");
-      Contents.add("BEGIN");
-      Contents.add("");
-      Contents.add("FPGA_out(0) <= NOT SP6_LB_WAIT3_i;");
-      Contents.add("FPGA_out(1) <= NOT IRQ_i;");
-      Contents.add("SP6_LB_nCS3_o       <= FPGA_in(0);");
-      Contents.add("SP6_LB_nADV_ALE_o   <= FPGA_in(1);");
-      Contents.add("SP6_LB_RE_nOE_o     <= FPGA_in(2);");
-      Contents.add("SP6_LB_nWE_o        <= FPGA_in(3);");
-      Contents.add("Addr_LB_o           <= FPGA_in(11 DOWNTO 4);");
-      Contents.add("");
-      Contents.add("IOBUF_Addresses_Datas : for i in 0 to Addr_Data_LB_io'length-1 generate");
-      Contents.add("  IOBUF_Addresse_Data : IOBUF");
-      Contents.add("  generic map (");
-      Contents.add("    DRIVE => 12,");
-      Contents.add(" IOSTANDARD => \"LVCMOS18\",");
-      Contents.add("    SLEW => \"FAST\"");
-      Contents.add("  )");
-      Contents.add("  port map (");
-      Contents.add("    O => Addr_Data_LB_o(i), -- Buffer output");
-      Contents.add(
+      contents.addAll(FileWriter.getGenerateRemark(componentName, nets.projName()));
+      contents.add("");
+      contents.add("ARCHITECTURE PlatformIndependent OF " + componentName + " IS ");
+      contents.add("");
+      contents.add("BEGIN");
+      contents.add("");
+      contents.add("FPGA_out(0) <= NOT SP6_LB_WAIT3_i;");
+      contents.add("FPGA_out(1) <= NOT IRQ_i;");
+      contents.add("SP6_LB_nCS3_o       <= FPGA_in(0);");
+      contents.add("SP6_LB_nADV_ALE_o   <= FPGA_in(1);");
+      contents.add("SP6_LB_RE_nOE_o     <= FPGA_in(2);");
+      contents.add("SP6_LB_nWE_o        <= FPGA_in(3);");
+      contents.add("Addr_LB_o           <= FPGA_in(11 DOWNTO 4);");
+      contents.add("");
+      contents.add("IOBUF_Addresses_Datas : for i in 0 to Addr_Data_LB_io'length-1 generate");
+      contents.add("  IOBUF_Addresse_Data : IOBUF");
+      contents.add("  generic map (");
+      contents.add("    DRIVE => 12,");
+      contents.add(" IOSTANDARD => \"LVCMOS18\",");
+      contents.add("    SLEW => \"FAST\"");
+      contents.add("  )");
+      contents.add("  port map (");
+      contents.add("    O => Addr_Data_LB_o(i), -- Buffer output");
+      contents.add(
           "    IO => Addr_Data_LB_io(i), -- Buffer inout port (connect directly to top-level port)");
-      Contents.add("    I => Addr_Data_LB_i(i), -- Buffer input");
-      Contents.add("    T => Addr_Data_LB_tris_i -- 3-state enable input, high=input, low=output");
-      Contents.add("  );");
-      Contents.add("end generate;");
-      Contents.add("");
-      Contents.add("END PlatformIndependent;");
+      contents.add("    I => Addr_Data_LB_i(i), -- Buffer input");
+      contents.add("    T => Addr_Data_LB_tris_i -- 3-state enable input, high=input, low=output");
+      contents.add("  );");
+      contents.add("end generate;");
+      contents.add("");
+      contents.add("END PlatformIndependent;");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   COMPONENT LocalBus");
-    Contents.add("      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;");
-    Contents.add("             IRQ_i              : IN  std_logic;");
-    Contents.add("             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );");
-    Contents.add("             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );");
-    Contents.add("             SP6_LB_RE_nOE_o    : OUT std_logic;");
-    Contents.add("             SP6_LB_nADV_ALE_o  : OUT std_logic;");
-    Contents.add("             SP6_LB_nCS3_o      : OUT std_logic;");
-    Contents.add("             SP6_LB_nWE_o       : OUT std_logic;");
-    Contents.add("             FPGA_in            : IN std_logic_vector(12 downto 0);");
-    Contents.add("             FPGA_out           : OUT std_logic_vector(1 downto 0);");
-    Contents.add("            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);");
-    Contents.add("            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
-    Contents.add("            Addr_Data_LB_tris_i : IN std_logic);");
-    Contents.add("   END COMPONENT;");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   COMPONENT LocalBus");
+    contents.add("      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;");
+    contents.add("             IRQ_i              : IN  std_logic;");
+    contents.add("             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );");
+    contents.add("             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );");
+    contents.add("             SP6_LB_RE_nOE_o    : OUT std_logic;");
+    contents.add("             SP6_LB_nADV_ALE_o  : OUT std_logic;");
+    contents.add("             SP6_LB_nCS3_o      : OUT std_logic;");
+    contents.add("             SP6_LB_nWE_o       : OUT std_logic;");
+    contents.add("             FPGA_in            : IN std_logic_vector(12 downto 0);");
+    contents.add("             FPGA_out           : OUT std_logic_vector(1 downto 0);");
+    contents.add("            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);");
+    contents.add("            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
+    contents.add("            Addr_Data_LB_tris_i : IN std_logic);");
+    contents.add("   END COMPONENT;");
+    return contents;
   }
 
   @Override
@@ -111,58 +111,58 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetEntity(
-      Netlist TheNetlist,
+      Netlist nets,
       AttributeSet attrs,
-      String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
-    Contents.addAll(FileWriter.getExtendedLibrary());
-    Contents.add("Library UNISIM;");
-    Contents.add("use UNISIM.vcomponents.all;");
-    Contents.add("");
-    Contents.add("ENTITY " + ComponentName + " IS");
-    Contents.add("   PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);");
-    Contents.add("          SP6_LB_nCS3_o       : OUT std_logic;");
-    Contents.add("          SP6_LB_nADV_ALE_o   : OUT std_logic;");
-    Contents.add("          SP6_LB_RE_nOE_o     : OUT std_logic;");
-    Contents.add("          SP6_LB_nWE_o        : OUT std_logic;");
-    Contents.add("          SP6_LB_WAIT3_i      : IN std_logic;");
-    Contents.add("          IRQ_i               : IN std_logic;");
-    Contents.add("          FPGA_in             : IN std_logic_vector(12 downto 0);");
-    Contents.add("          FPGA_out            : OUT std_logic_vector(1 downto 0);");
-    Contents.add("          Addr_LB_o           : OUT std_logic_vector(8 downto 0);");
-    Contents.add("          Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
-    Contents.add("          Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);");
-    Contents.add("          Addr_Data_LB_tris_i : IN std_logic);");
-    Contents.add("END " + ComponentName + ";");
+      String componentName) {
+    final var contents = new ArrayList<String>();
+    contents.addAll(FileWriter.getGenerateRemark(componentName, nets.projName()));
+    contents.addAll(FileWriter.getExtendedLibrary());
+    contents.add("Library UNISIM;");
+    contents.add("use UNISIM.vcomponents.all;");
+    contents.add("");
+    contents.add("ENTITY " + componentName + " IS");
+    contents.add("   PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);");
+    contents.add("          SP6_LB_nCS3_o       : OUT std_logic;");
+    contents.add("          SP6_LB_nADV_ALE_o   : OUT std_logic;");
+    contents.add("          SP6_LB_RE_nOE_o     : OUT std_logic;");
+    contents.add("          SP6_LB_nWE_o        : OUT std_logic;");
+    contents.add("          SP6_LB_WAIT3_i      : IN std_logic;");
+    contents.add("          IRQ_i               : IN std_logic;");
+    contents.add("          FPGA_in             : IN std_logic_vector(12 downto 0);");
+    contents.add("          FPGA_out            : OUT std_logic_vector(1 downto 0);");
+    contents.add("          Addr_LB_o           : OUT std_logic_vector(8 downto 0);");
+    contents.add("          Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
+    contents.add("          Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);");
+    contents.add("          Addr_Data_LB_tris_i : IN std_logic);");
+    contents.add("END " + componentName + ";");
 
-    return Contents;
+    return contents;
   }
 
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Addr_Data_LB_io", 16);
-    return Outputs;
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    outputs.put("Addr_Data_LB_io", 16);
+    return outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("SP6_LB_WAIT3_i", 1);
-    Inputs.put("IRQ_i", 1);
-    return Inputs;
+    SortedMap<String, Integer> inputs = new TreeMap<>();
+    inputs.put("SP6_LB_WAIT3_i", 1);
+    inputs.put("IRQ_i", 1);
+    return inputs;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
-      Contents.add(" ");
+      contents.add(" ");
     } else {
       throw new UnsupportedOperationException("Reptar Local Bus doesn't support verilog yet.");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
@@ -178,11 +178,11 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    SortedMap<String, String> portMap = new TreeMap<>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) MapInfo;
 
-    PortMap.put(
+    portMap.put(
         "Addr_Data_LB_io",
         LocalInOutBubbleBusname
             + "("
@@ -190,7 +190,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             + " DOWNTO "
             + ComponentInfo.GetLocalBubbleInOutStartId()
             + ")");
-    PortMap.put(
+    portMap.put(
         "FPGA_in",
         LocalInputBubbleBusname
           + "("
@@ -198,7 +198,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
           + " DOWNTO "
           + ComponentInfo.GetLocalBubbleInputStartId()
           + ")");
-    PortMap.put(
+    portMap.put(
         "FPGA_out",
         LocalOutputBubbleBusname
           + "("
@@ -206,68 +206,68 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
           + " DOWNTO "
           + ComponentInfo.GetLocalBubbleOutputStartId()
           + ")");
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "SP6_LB_nCS3_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nCS3_o,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "SP6_LB_nADV_ALE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nADV_ALE_o,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "SP6_LB_RE_nOE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_RE_nOE_o,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "SP6_LB_nWE_o",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_nWE_o,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "SP6_LB_WAIT3_i",
             true,
             ComponentInfo,
             ReptarLocalBus.SP6_LB_WAIT3_i,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "Addr_Data_LB_o",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_o,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "Addr_Data_LB_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_i,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "Addr_Data_LB_tris_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_tris_i,
             Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap(
             "Addr_LB_o", true, ComponentInfo, ReptarLocalBus.Addr_LB_o, Nets));
-    PortMap.putAll(
+    portMap.putAll(
         GetNetMap("IRQ_i", true, ComponentInfo, ReptarLocalBus.IRQ_i, Nets));
-    return PortMap;
+    return portMap;
   }
 
   @Override

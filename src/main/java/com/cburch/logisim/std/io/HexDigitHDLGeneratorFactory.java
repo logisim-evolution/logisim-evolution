@@ -41,83 +41,83 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    String BusName = GetBusName(ComponentInfo, HexDigit.HEX, Nets);
-    String DPName = GetNetName(ComponentInfo, HexDigit.DP, true, Nets);
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      String circuitName) {
+    final var contents = new ArrayList<String>();
+    final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
+    final var busName = GetBusName(componentInfo, HexDigit.HEX, nets);
+    final var dpName = GetNetName(componentInfo, HexDigit.DP, true, nets);
     if (HDL.isVHDL()) {
-      Contents.add(" ");
-      if (ComponentInfo.EndIsConnected(HexDigit.HEX)) {
-        Contents.add("   WITH (" + BusName + ") SELECT " + HDLGeneratorFactory.LocalOutputBubbleBusname
-                + "( " + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
-                + ComponentInfo.GetLocalBubbleOutputStartId() + ") <= ");
-        Contents.add("      \"0111111\" WHEN \"0000\",");
-        Contents.add("      \"0000110\" WHEN \"0001\",");
-        Contents.add("      \"1011011\" WHEN \"0010\",");
-        Contents.add("      \"1001111\" WHEN \"0011\",");
-        Contents.add("      \"1100110\" WHEN \"0100\",");
-        Contents.add("      \"1101101\" WHEN \"0101\",");
-        Contents.add("      \"1111101\" WHEN \"0110\",");
-        Contents.add("      \"0000111\" WHEN \"0111\",");
-        Contents.add("      \"1111111\" WHEN \"1000\",");
-        Contents.add("      \"1100111\" WHEN \"1001\",");
-        Contents.add("      \"1110111\" WHEN \"1010\",");
-        Contents.add("      \"1111100\" WHEN \"1011\",");
-        Contents.add("      \"0111001\" WHEN \"1100\",");
-        Contents.add("      \"1011110\" WHEN \"1101\",");
-        Contents.add("      \"1111001\" WHEN \"1110\",");
-        Contents.add("      \"1110001\" WHEN OTHERS;");
+      contents.add(" ");
+      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+        contents.add("   WITH (" + busName + ") SELECT " + HDLGeneratorFactory.LocalOutputBubbleBusname
+                + "( " + (componentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
+                + componentInfo.GetLocalBubbleOutputStartId() + ") <= ");
+        contents.add("      \"0111111\" WHEN \"0000\",");
+        contents.add("      \"0000110\" WHEN \"0001\",");
+        contents.add("      \"1011011\" WHEN \"0010\",");
+        contents.add("      \"1001111\" WHEN \"0011\",");
+        contents.add("      \"1100110\" WHEN \"0100\",");
+        contents.add("      \"1101101\" WHEN \"0101\",");
+        contents.add("      \"1111101\" WHEN \"0110\",");
+        contents.add("      \"0000111\" WHEN \"0111\",");
+        contents.add("      \"1111111\" WHEN \"1000\",");
+        contents.add("      \"1100111\" WHEN \"1001\",");
+        contents.add("      \"1110111\" WHEN \"1010\",");
+        contents.add("      \"1111100\" WHEN \"1011\",");
+        contents.add("      \"0111001\" WHEN \"1100\",");
+        contents.add("      \"1011110\" WHEN \"1101\",");
+        contents.add("      \"1111001\" WHEN \"1110\",");
+        contents.add("      \"1110001\" WHEN OTHERS;");
       } else {
-        Contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "( "
-                + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
-                + ComponentInfo.GetLocalBubbleOutputStartId() + ") <= " + BusName + ";");
+        contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "( "
+                + (componentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
+                + componentInfo.GetLocalBubbleOutputStartId() + ") <= " + busName + ";");
       }
-      if (ComponentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        Contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "("
-                + (ComponentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= " + DPName + ";");
+      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+        contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "("
+                + (componentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= " + dpName + ";");
       }
     } else {
       String Signame = HDLGeneratorFactory.LocalOutputBubbleBusname + "["
-                        + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + ":"
-                        + ComponentInfo.GetLocalBubbleOutputStartId() + "]";
-      if (ComponentInfo.EndIsConnected(HexDigit.HEX)) {
-        String RegName = "s_" + Label + "_reg";
-        Contents.add(" ");
-        Contents.add("   reg[6:0] " + RegName + ";");
-        Contents.add("   always @(*)");
-        Contents.add("      case (" + BusName + ")");
-        Contents.add("        4'b0000 : " + RegName + " = 7'b0111111;");
-        Contents.add("        4'b0001 : " + RegName + " = 7'b0000110;");
-        Contents.add("        4'b0010 : " + RegName + " = 7'b1011011;");
-        Contents.add("        4'b0011 : " + RegName + " = 7'b1001111;");
-        Contents.add("        4'b0100 : " + RegName + " = 7'b1100110;");
-        Contents.add("        4'b0101 : " + RegName + " = 7'b1101101;");
-        Contents.add("        4'b0110 : " + RegName + " = 7'b1111101;");
-        Contents.add("        4'b0111 : " + RegName + " = 7'b0000111;");
-        Contents.add("        4'b1000 : " + RegName + " = 7'b1111111;");
-        Contents.add("        4'b1001 : " + RegName + " = 7'b1100111;");
-        Contents.add("        4'b1010 : " + RegName + " = 7'b1110111;");
-        Contents.add("        4'b1011 : " + RegName + " = 7'b1111100;");
-        Contents.add("        4'b1100 : " + RegName + " = 7'b0111001;");
-        Contents.add("        4'b1101 : " + RegName + " = 7'b1011110;");
-        Contents.add("        4'b1110 : " + RegName + " = 7'b1111001;");
-        Contents.add("        default : " + RegName + " = 7'b1110001;");
-        Contents.add("      endcase");
-        Contents.add(" ");
-        Contents.add("   assign " + Signame + " = " + RegName + ";");
+                        + (componentInfo.GetLocalBubbleOutputStartId() + 6) + ":"
+                        + componentInfo.GetLocalBubbleOutputStartId() + "]";
+      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+        String RegName = "s_" + label + "_reg";
+        contents.add(" ");
+        contents.add("   reg[6:0] " + RegName + ";");
+        contents.add("   always @(*)");
+        contents.add("      case (" + busName + ")");
+        contents.add("        4'b0000 : " + RegName + " = 7'b0111111;");
+        contents.add("        4'b0001 : " + RegName + " = 7'b0000110;");
+        contents.add("        4'b0010 : " + RegName + " = 7'b1011011;");
+        contents.add("        4'b0011 : " + RegName + " = 7'b1001111;");
+        contents.add("        4'b0100 : " + RegName + " = 7'b1100110;");
+        contents.add("        4'b0101 : " + RegName + " = 7'b1101101;");
+        contents.add("        4'b0110 : " + RegName + " = 7'b1111101;");
+        contents.add("        4'b0111 : " + RegName + " = 7'b0000111;");
+        contents.add("        4'b1000 : " + RegName + " = 7'b1111111;");
+        contents.add("        4'b1001 : " + RegName + " = 7'b1100111;");
+        contents.add("        4'b1010 : " + RegName + " = 7'b1110111;");
+        contents.add("        4'b1011 : " + RegName + " = 7'b1111100;");
+        contents.add("        4'b1100 : " + RegName + " = 7'b0111001;");
+        contents.add("        4'b1101 : " + RegName + " = 7'b1011110;");
+        contents.add("        4'b1110 : " + RegName + " = 7'b1111001;");
+        contents.add("        default : " + RegName + " = 7'b1110001;");
+        contents.add("      endcase");
+        contents.add(" ");
+        contents.add("   assign " + Signame + " = " + RegName + ";");
       } else {
-        Contents.add("   assign " + Signame + " = " + BusName + ";");
+        contents.add("   assign " + Signame + " = " + busName + ";");
       }
-      if (ComponentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        Contents.add("   assign " + HDLGeneratorFactory.LocalOutputBubbleBusname + "["
-                + (ComponentInfo.GetLocalBubbleOutputStartId()  +  7) + "] = " + DPName + ";");
+      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+        contents.add("   assign " + HDLGeneratorFactory.LocalOutputBubbleBusname + "["
+                + (componentInfo.GetLocalBubbleOutputStartId()  +  7) + "] = " + dpName + ";");
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override

@@ -62,7 +62,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.ToolTipMaker;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
@@ -128,14 +127,17 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   private static class Factory extends AbstractComponentFactory {
     private Factory() {}
 
+    @Override
     public String getName() {
       return _ID;
     }
 
+    @Override
     public String getDisplayName() {
       return S.get("rgbVideoComponent");
     }
 
+    @Override
     public AttributeSet createAttributeSet() {
       return AttributeSets.fixedSet(
           ATTRIBUTES,
@@ -149,19 +151,22 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
           });
     }
 
+    @Override
     public Component createComponent(Location loc, AttributeSet attrs) {
       return new Video(loc, attrs);
     }
 
+    @Override
     public Bounds getOffsetBounds(AttributeSet attrs) {
-      int s = attrs.getValue(SCALE_OPTION);
-      int w = attrs.getValue(WIDTH_OPTION);
-      int h = attrs.getValue(HEIGHT_OPTION);
-      int bw = (Math.max(s * w + 14, 100));
-      int bh = (Math.max(s * h + 14, 20));
+      final var s = attrs.getValue(SCALE_OPTION);
+      final var w = attrs.getValue(WIDTH_OPTION);
+      final var h = attrs.getValue(HEIGHT_OPTION);
+      final var bw = (Math.max(s * w + 14, 100));
+      final var bh = (Math.max(s * h + 14, 20));
       return Bounds.create(-30, -bh, bw, bh);
     }
 
+    @Override
     public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
       drawVideoIcon(context, x, y);
     }
@@ -183,10 +188,12 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     attrs.addAttributeListener(this);
   }
 
+  @Override
   public ComponentFactory getFactory() {
     return factory;
   }
 
+  @Override
   public void setFactory(ComponentFactory fact) {}
 
   Location loc(int pin) {
@@ -201,47 +208,49 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return (int) val(s, pin).toLongValue();
   }
 
+  @Override
   public void propagate(CircuitState circuitState) {
-    State state = getState(circuitState);
-    AttributeSet attrs = getAttributeSet();
-    int x = addr(circuitState, P_X);
-    int y = addr(circuitState, P_Y);
-    int color = addr(circuitState, P_DATA);
-    state.last_x = x;
-    state.last_y = y;
+    final var state = getState(circuitState);
+    final var attrs = getAttributeSet();
+    final var x = addr(circuitState, P_X);
+    final var y = addr(circuitState, P_Y);
+    final var color = addr(circuitState, P_DATA);
+    state.lastX = x;
+    state.lastY = y;
     state.color = color;
 
-    Object reset_option = attrs.getValue(RESET_OPTION);
-    if (reset_option == null) reset_option = RESET_OPTIONS[0];
-    ColorModel cm = getColorModel(attrs.getValue(COLOR_OPTION));
-    int w = attrs.getValue(WIDTH_OPTION);
-    int h = attrs.getValue(HEIGHT_OPTION);
+    Object resetOption = attrs.getValue(RESET_OPTION);
+    if (resetOption == null) resetOption = RESET_OPTIONS[0];
+    final var cm = getColorModel(attrs.getValue(COLOR_OPTION));
+    final var w = attrs.getValue(WIDTH_OPTION);
+    final var h = attrs.getValue(HEIGHT_OPTION);
 
     if (state.tick(val(circuitState, P_CLK)) && val(circuitState, P_WE) == Value.TRUE) {
-      Graphics g = state.img.getGraphics();
+      final var g = state.img.getGraphics();
       g.setColor(new Color(cm.getRGB(color)));
       g.fillRect(x, y, 1, 1);
-      if (RESET_SYNC.equals(reset_option) && val(circuitState, P_RST) == Value.TRUE) {
+      if (RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, w, h);
       }
     }
 
-    if (!RESET_SYNC.equals(reset_option) && val(circuitState, P_RST) == Value.TRUE) {
-      Graphics g = state.img.getGraphics();
+    if (!RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
+      final var g = state.img.getGraphics();
       g.setColor(Color.BLACK);
       g.fillRect(0, 0, w, h);
     }
   }
 
+  @Override
   public void draw(ComponentDrawContext context) {
-    Location loc = getLocation();
-    State s = getState(context.getCircuitState());
+    final var loc = getLocation();
+    final var s = getState(context.getCircuitState());
     drawVideo(context, loc.getX(), loc.getY(), s);
   }
 
   static void drawVideoIcon(ComponentDrawContext context, int x, int y) {
-    Graphics g = context.getGraphics().create();
+    final var g = context.getGraphics().create();
     g.translate(x, y);
     g.setColor(Color.WHITE);
     g.fillRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
@@ -375,43 +384,43 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   void drawVideo(ComponentDrawContext context, int x, int y, State state) {
-    Graphics g = context.getGraphics();
+    final var g = context.getGraphics();
 
-    AttributeSet attrs = getAttributeSet();
-    Object blink_option = attrs.getValue(BLINK_OPTION);
-    ColorModel cm = getColorModel(attrs.getValue(COLOR_OPTION));
+    final var attrs = getAttributeSet();
+    Object blinkOption = attrs.getValue(BLINK_OPTION);
+    final var cm = getColorModel(attrs.getValue(COLOR_OPTION));
 
-    int s = attrs.getValue(SCALE_OPTION);
-    int w = attrs.getValue(WIDTH_OPTION);
-    int h = attrs.getValue(HEIGHT_OPTION);
-    int bw = (Math.max(s * w + 14, 100));
-    int bh = (Math.max(s * h + 14, 20));
+    final var s = attrs.getValue(SCALE_OPTION);
+    final var w = attrs.getValue(WIDTH_OPTION);
+    final var h = attrs.getValue(HEIGHT_OPTION);
+    final var bw = (Math.max(s * w + 14, 100));
+    final var bh = (Math.max(s * h + 14, 20));
 
     x += -30;
     y += -bh;
 
     g.drawRoundRect(x, y, bw, bh, 6, 6);
-    for (int i = 0; i < 6; i++) {
+    for (var i = 0; i < 6; i++) {
       if (i != P_CLK) context.drawPin(this, i);
     }
     context.drawClock(this, P_CLK, Direction.NORTH);
     g.drawRect(x + 6, y + 6, s * w + 2, s * h + 2);
     g.drawImage(state.img, x + 7, y + 7, x + 7 + s * w, y + 7 + s * h, 0, 0, w, h, null);
     // draw a little cursor for sanity
-    if (blink_option == null) blink_option = BLINK_OPTIONS[0];
-    if (BLINK_YES.equals(blink_option)
+    if (blinkOption == null) blinkOption = BLINK_OPTIONS[0];
+    if (BLINK_YES.equals(blinkOption)
         && blink()
-        && state.last_x >= 0
-        && state.last_x < w
-        && state.last_y >= 0
-        && state.last_y < h) {
+        && state.lastX >= 0
+        && state.lastX < w
+        && state.lastY >= 0
+        && state.lastY < h) {
       g.setColor(new Color(cm.getRGB(state.color)));
-      g.fillRect(x + 7 + state.last_x * s, y + 7 + state.last_y * s, s, s);
+      g.fillRect(x + 7 + state.lastX * s, y + 7 + state.lastY * s, s, s);
     }
   }
 
   private State getState(CircuitState circuitState) {
-    State state = (State) circuitState.getData(this);
+    var state = (State) circuitState.getData(this);
     if (state == null) {
       state = new State(new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB));
       circuitState.setData(this, state);
@@ -422,7 +431,9 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   private static class State implements ComponentState, Cloneable {
     public Value lastClock = null;
     public final BufferedImage img;
-    public int last_x, last_y, color;
+    public int lastX;
+    public int lastY;
+    public int color;
 
     State(BufferedImage img) {
       this.img = img;
@@ -430,11 +441,12 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     }
 
     public void reset() {
-      Graphics g = img.getGraphics();
+      final var g = img.getGraphics();
       g.setColor(Color.YELLOW);
       g.fillRect(0, 0, img.getWidth(), img.getHeight());
     }
 
+    @Override
     public Object clone() {
       try {
         return super.clone();
@@ -456,9 +468,10 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     else return super.getFeature(key);
   }
 
+  @Override
   public String getToolTip(ComponentUserEvent e) {
     int end = -1;
-    for (int i = getEnds().size() - 1; i >= 0; i--) {
+    for (var i = getEnds().size() - 1; i >= 0; i--) {
       if (getEndLocation(i).manhattanDistanceTo(e.getX(), e.getY()) < 10) {
         end = i;
         break;
@@ -474,7 +487,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       case P_Y:
         return S.get("rgbVideoY");
       case P_DATA:
-        AttributeSet attrs = getAttributeSet();
+        final var attrs = getAttributeSet();
         return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION));
       case P_RST:
         return S.get("rgbVideoRST");
@@ -483,17 +496,19 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     }
   }
 
+  @Override
   public void attributeListChanged(AttributeEvent e) {}
 
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     configureComponent();
   }
 
   void configureComponent() {
-    AttributeSet attrs = getAttributeSet();
-    int bpp = getColorModel(attrs.getValue(COLOR_OPTION)).getPixelSize();
-    int xs = 31 - Integer.numberOfLeadingZeros(attrs.getValue(WIDTH_OPTION));
-    int ys = 31 - Integer.numberOfLeadingZeros(attrs.getValue(HEIGHT_OPTION));
+    final var attrs = getAttributeSet();
+    final var bpp = getColorModel(attrs.getValue(COLOR_OPTION)).getPixelSize();
+    final var xs = 31 - Integer.numberOfLeadingZeros(attrs.getValue(WIDTH_OPTION));
+    final var ys = 31 - Integer.numberOfLeadingZeros(attrs.getValue(HEIGHT_OPTION));
     setEnd(P_X, getLocation().translate(40, 0), BitWidth.create(xs), EndData.INPUT_ONLY);
     setEnd(P_Y, getLocation().translate(50, 0), BitWidth.create(ys), EndData.INPUT_ONLY);
     setEnd(P_DATA, getLocation().translate(60, 0), BitWidth.create(bpp), EndData.INPUT_ONLY);

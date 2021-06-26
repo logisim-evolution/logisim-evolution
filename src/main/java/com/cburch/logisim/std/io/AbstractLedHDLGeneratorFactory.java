@@ -39,25 +39,21 @@ import java.util.ArrayList;
 public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
-      Contents.add(
+  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+    final var contents = new ArrayList<String>();
+    for (var i = 0; i < componentInfo.NrOfEnds(); i++) {
+      contents.add(
           "   "
               + HDL.assignPreamble()
               + HDLGeneratorFactory.LocalOutputBubbleBusname
               + HDL.BracketOpen()
-              + (ComponentInfo.GetLocalBubbleOutputStartId() + i)
+              + (componentInfo.GetLocalBubbleOutputStartId() + i)
               + HDL.BracketClose()
               + HDL.assignOperator()
-              + GetNetName(ComponentInfo, i, true, Nets)
+              + GetNetName(componentInfo, i, true, nets)
               + ";");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
