@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.file;
 
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.SelectTool;
@@ -141,34 +142,27 @@ public class MouseMappings {
     for (final var entry : map.entrySet()) {
       final var key = entry.getKey();
       final var tool = entry.getValue();
-      if (tool instanceof AddTool) {
-        final var factory = ((AddTool) tool).getFactory();
-        if (toolMap.containsKey(factory)) {
-          changed = true;
-          final var newTool = toolMap.get(factory);
-          if (newTool == null) {
-            map.remove(key);
-          } else {
-            final var clone = newTool.cloneTool();
-            LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-            map.put(key, clone);
-          }
-        }
-      } else {
-        if (toolMap.containsKey(tool)) {
-          changed = true;
-          final var newTool = toolMap.get(tool);
-          if (newTool == null) {
-            map.remove(key);
-          } else {
-            final var clone = newTool.cloneTool();
-            LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-            map.put(key, clone);
-          }
-        }
-      }
+      final var searchFor = (tool instanceof AddTool) ? ((AddTool) tool).getFactory() : tool;
+      changed |= replaceInMap(toolMap, tool, searchFor, key);
     }
     if (changed) fireMouseMappingsChanged();
+  }
+
+  private boolean replaceInMap(Map<Tool, Tool> toolMap, Tool tool, Object searchFor, Integer key) {
+    boolean changed = false;
+    if (toolMap.containsKey(searchFor)) {
+      changed = true;
+      final var newTool = toolMap.get(searchFor);
+      if (newTool == null) {
+        map.remove(searchFor);
+      } else {
+        final var clone = newTool.cloneTool();
+        LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
+        map.put(key, clone);
+      }
+    }
+
+    return changed;
   }
 
   public void setToolFor(int mods, Tool tool) {
