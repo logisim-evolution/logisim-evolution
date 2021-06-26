@@ -105,7 +105,7 @@ public class BitWidth implements Comparable<BitWidth> {
   public static final BitWidth UNKNOWN = new BitWidth(0);
 
   public static final BitWidth ONE = new BitWidth(1);
-  
+
   public static final int MAXWIDTH = 64;
   public static final int MINWIDTH = 1;
 
@@ -124,7 +124,7 @@ public class BitWidth implements Comparable<BitWidth> {
   @Override
   public boolean equals(Object other_obj) {
     if (!(other_obj instanceof BitWidth)) return false;
-    BitWidth other = (BitWidth) other_obj;
+    final var other = (BitWidth) other_obj;
     return this.width == other.width;
   }
 

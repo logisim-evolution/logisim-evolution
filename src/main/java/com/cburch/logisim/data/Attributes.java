@@ -54,8 +54,7 @@ public class Attributes {
 
     @Override
     public Boolean parse(String value) {
-      Boolean b = Boolean.valueOf(value);
-      return vals[b ? 0 : 1];
+      return vals[Boolean.valueOf(value) ? 0 : 1];
     }
 
     @Override
@@ -85,7 +84,7 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Color value) {
-      Color init = value == null ? Color.WHITE : value;
+      final var init = (value == null) ? Color.WHITE : value;
       return new ColorChooser(init);
     }
 
@@ -114,7 +113,7 @@ public class Attributes {
 
     @Override
     public String toStandardString(Color c) {
-      String ret = "#" + hex(c.getRed()) + hex(c.getGreen()) + hex(c.getBlue());
+      final var ret = "#" + hex(c.getRed()) + hex(c.getGreen()) + hex(c.getBlue());
       return c.getAlpha() == 255 ? ret : ret + hex(c.getAlpha());
     }
   }
@@ -267,7 +266,7 @@ public class Attributes {
 
     @Override
     public String toDisplayString(Integer value) {
-      int val = value;
+      final var val = value;
       return "0x" + Integer.toHexString(val);
     }
 
@@ -361,7 +360,7 @@ public class Attributes {
             options[i - start] = i;
           }
         }
-        ComboBox combo = new ComboBox<>(options);
+        final var combo = new ComboBox<>(options);
         if (value == null) combo.setSelectedIndex(-1);
         else combo.setSelectedItem(value);
         return combo;
@@ -437,7 +436,7 @@ public class Attributes {
     @Override
     public Component getListCellRendererComponent(
         JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      Component ret =
+      final var ret =
           super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       if (ret instanceof JLabel) {
         @SuppressWarnings("unchecked")

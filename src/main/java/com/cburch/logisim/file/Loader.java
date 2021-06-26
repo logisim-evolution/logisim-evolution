@@ -114,14 +114,14 @@ public class Loader implements LibraryLoader {
   }
 
   private static File determineBackupName(File base) {
-    File dir = base.getParentFile();
-    String name = base.getName();
+    final var dir = base.getParentFile();
+    var name = base.getName();
     if (name.endsWith(LOGISIM_EXTENSION)) {
       name = name.substring(0, name.length() - LOGISIM_EXTENSION.length());
     }
     for (int i = 1; i <= 20; i++) {
-      String ext = i == 1 ? ".bak" : (".bak" + i);
-      File candidate = new File(dir, name + ext);
+      final var ext = i == 1 ? ".bak" : (".bak" + i);
+      final var candidate = new File(dir, name + ext);
       if (!candidate.exists()) return candidate;
     }
     return null;
@@ -176,12 +176,7 @@ public class Loader implements LibraryLoader {
 
   // used here and in LibraryManager only, also in MemMenu
   public File getCurrentDirectory() {
-    File ref;
-    if (!filesOpening.empty()) {
-      ref = filesOpening.peek();
-    } else {
-      ref = mainFile;
-    }
+    final var ref = (!filesOpening.empty()) ? filesOpening.peek() : mainFile;
     return ref == null ? null : ref.getParentFile();
   }
 
@@ -194,16 +189,15 @@ public class Loader implements LibraryLoader {
   //
   File getFileFor(String name, FileFilter filter) {
     // Determine the actual file name.
-    File file = new File(name);
+    var file = new File(name);
     if (!file.isAbsolute()) {
-      File currentDirectory = getCurrentDirectory();
+      final var currentDirectory = getCurrentDirectory();
       if (currentDirectory != null) file = new File(currentDirectory, name);
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      OptionPane.showMessageDialog(
-          parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
-      JFileChooser chooser = createChooser();
+      OptionPane.showMessageDialog(parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
+      final var chooser = createChooser();
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(StringUtil.format(S.get("fileLibraryMissingTitle"), file.getName()));
       int action = chooser.showDialog(parent, S.get("fileLibraryMissingButton"));
@@ -228,7 +222,7 @@ public class Loader implements LibraryLoader {
   }
 
   Library loadJarFile(File request, String className) throws LoadFailedException {
-    File actual = getSubstitution(request);
+    final var actual = getSubstitution(request);
 
     // Anyway, here's the line for this new version:
     ZipClassLoader loader = new ZipClassLoader(actual);
@@ -256,7 +250,7 @@ public class Loader implements LibraryLoader {
   }
 
   public Library loadJarLibrary(File file, String className) {
-    File actual = getSubstitution(file);
+    final var actual = getSubstitution(file);
     return LibraryManager.instance.loadJarLibrary(this, actual, className);
   }
 
@@ -294,8 +288,8 @@ public class Loader implements LibraryLoader {
   }
 
   public Library loadLogisimLibrary(File file) {
-    File actual = getSubstitution(file);
-    LoadedLibrary ret = LibraryManager.instance.loadLogisimLibrary(this, actual);
+    final var actual = getSubstitution(file);
+    final var ret = LibraryManager.instance.loadLogisimLibrary(this, actual);
     if (ret != null) {
       LogisimFile retBase = (LogisimFile) ret.getBase();
       showMessages(retBase);
@@ -305,7 +299,7 @@ public class Loader implements LibraryLoader {
 
   public LogisimFile openLogisimFile(File file) throws LoadFailedException {
     try {
-      LogisimFile ret = loadLogisimFile(file);
+      final var ret = loadLogisimFile(file);
       if (ret != null) setMainFile(file);
       else throw new LoadFailedException("File could not be opened");
       showMessages(ret);
@@ -351,8 +345,8 @@ public class Loader implements LibraryLoader {
       return false;
     }
 
-    File backup = determineBackupName(dest);
-    boolean backupCreated = backup != null && dest.renameTo(backup);
+    final var backup = determineBackupName(dest);
+    final var backupCreated = backup != null && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
     try {
@@ -360,7 +354,7 @@ public class Loader implements LibraryLoader {
       file.write(fwrite, this, dest);
       file.setName(toProjectName(dest));
 
-      File oldFile = getMainFile();
+      final var oldFile = getMainFile();
       setMainFile(dest);
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
@@ -419,13 +413,10 @@ public class Loader implements LibraryLoader {
 
   public void showError(String description) {
     if (!filesOpening.empty()) {
-      File top = filesOpening.peek();
-      String init = toProjectName(top) + ":";
-      if (description.contains("\n")) {
-        description = init + "\n" + description;
-      } else {
-        description = init + " " + description;
-      }
+      final var top = filesOpening.peek();
+      final var init = toProjectName(top) + ":";
+      final var sep = description.contains("\n") ? "\n" : " ";
+      description = init + sep + description;
     }
 
     if (description.contains("\n") || description.length() > 60) {
@@ -472,18 +463,17 @@ public class Loader implements LibraryLoader {
   }
 
   public String vhdlImportChooser(Component window) {
-    JFileChooser chooser = createChooser();
+    final var chooser = createChooser();
     chooser.setFileFilter(Loader.VHDL_FILTER);
     chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenDialog"));
-    int returnVal = chooser.showOpenDialog(window);
+    final var returnVal = chooser.showOpenDialog(window);
     if (returnVal != JFileChooser.APPROVE_OPTION) return null;
-    File selected = chooser.getSelectedFile();
+    final var selected = chooser.getSelectedFile();
     if (selected == null) return null;
     try {
       return HdlFile.load(selected);
     } catch (IOException e) {
-      OptionPane.showMessageDialog(
-          window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
       return null;
     }
   }

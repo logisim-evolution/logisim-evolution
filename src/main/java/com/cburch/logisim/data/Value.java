@@ -61,7 +61,7 @@ public class Value {
             && val.error == error
             && val.unknown == unknown) return val;
       }
-      Value ret = new Value(width, error, unknown, value);
+      final var ret = new Value(width, error, unknown, value);
       cache.put(hashCode, ret);
       return ret;
     }
@@ -73,11 +73,11 @@ public class Value {
     if (values.length > MAX_WIDTH)
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
 
-    int width = values.length;
+    final var width = values.length;
     long value = 0;
     long unknown = 0;
     long error = 0;
-    for (int i = 0; i < values.length; i++) {
+    for (var i = 0; i < values.length; i++) {
       long mask = 1L << i;
       if (values[i] == TRUE) value |= mask;
       else if (values[i] == FALSE) /* do nothing */ ;
@@ -123,10 +123,11 @@ public class Value {
     if (n <= offset) throw new Exception("expected digits");
 
     int w = width.getWidth();
-    long value = 0, unknown = 0;
+    long value = 0;
+    long unknown = 0;
 
     for (int i = offset; i < n; i++) {
-      char c = t.charAt(i);
+      final var c = t.charAt(i);
       int d;
 
       if (c == 'x' && radix != 10) d = -1;
@@ -183,7 +184,7 @@ public class Value {
     if (bits == 1) {
       return base;
     } else {
-      Value[] ret = new Value[bits];
+      final var ret = new Value[bits];
       Arrays.fill(ret, base);
       return create(ret);
     }
@@ -308,7 +309,7 @@ public class Value {
   @Override
   public boolean equals(Object other_obj) {
     if (!(other_obj instanceof Value)) return false;
-    Value other = (Value) other_obj;
+    final var other = (Value) other_obj;
     return this.width == other.width
         && this.error == other.error
         && this.unknown == other.unknown
@@ -339,8 +340,8 @@ public class Value {
   }
 
   public Value[] getAll() {
-    Value[] ret = new Value[width];
-    for (int i = 0; i < ret.length; i++) {
+    final var ret = new Value[width];
+    for (var i = 0; i < ret.length; i++) {
       ret[i] = get(i);
     }
     return ret;
@@ -370,7 +371,7 @@ public class Value {
 
   @Override
   public int hashCode() {
-    int ret = width;
+    var ret = width;
     ret = 31 * ret + (int) (error ^ (error >>> 32));
     ret = 31 * ret + (int) (unknown ^ (unknown >>> 32));
     ret = 31 * ret + (int) (value ^ (value >>> 32));
@@ -448,7 +449,7 @@ public class Value {
         else if (value != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
-        StringBuilder ret = new StringBuilder();
+        final var ret = new StringBuilder();
         for (int i = width - 1; i >= 0; i--) {
           ret.append(get(i).toString());
         }
@@ -487,8 +488,8 @@ public class Value {
         else if (value != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
-        StringBuilder ret = new StringBuilder();
-        for (int i = width - 1; i >= 0; i--) {
+        final var ret = new StringBuilder();
+        for (var i = width - 1; i >= 0; i--) {
           ret.append(get(i).toString());
           if (i % 4 == 0 && i != 0) ret.append(" ");
         }
@@ -516,15 +517,15 @@ public class Value {
     if (width <= 1) {
       return toString();
     } else {
-      Value[] vals = getAll();
-      char[] c = new char[(vals.length + 3) / 4];
-      for (int i = 0; i < c.length; i++) {
-        int k = c.length - 1 - i;
-        int frst = 4 * k;
-        int last = Math.min(vals.length, 4 * (k + 1));
-        int v = 0;
+      final var vals = getAll();
+      final var c = new char[(vals.length + 3) / 4];
+      for (var i = 0; i < c.length; i++) {
+        final var k = c.length - 1 - i;
+        final var frst = 4 * k;
+        final var last = Math.min(vals.length, 4 * (k + 1));
+        var v = 0;
         c[i] = ' ';
-        for (int j = last - 1; j >= frst; j--) {
+        for (var j = last - 1; j >= frst; j--) {
           if (vals[j] == Value.ERROR) {
             c[i] = ERRORCHAR;
             break;
@@ -552,15 +553,15 @@ public class Value {
     if (width <= 1) {
       return toString();
     } else {
-      Value[] vals = getAll();
-      char[] c = new char[(vals.length + 2) / 3];
-      for (int i = 0; i < c.length; i++) {
-        int k = c.length - 1 - i;
-        int frst = 3 * k;
-        int last = Math.min(vals.length, 3 * (k + 1));
-        int v = 0;
+      final var vals = getAll();
+      final var c = new char[(vals.length + 2) / 3];
+      for (var i = 0; i < c.length; i++) {
+        final var k = c.length - 1 - i;
+        final var frst = 3 * k;
+        final var last = Math.min(vals.length, 3 * (k + 1));
+        var v = 0;
         c[i] = ' ';
-        for (int j = last - 1; j >= frst; j--) {
+        for (var j = last - 1; j >= frst; j--) {
           if (vals[j] == Value.ERROR) {
             c[i] = ERRORCHAR;
             break;
@@ -589,8 +590,8 @@ public class Value {
         else if (value != 0) return Character.toString(TRUECHAR);
         else return Character.toString(FALSECHAR);
       default:
-        StringBuilder ret = new StringBuilder();
-        for (int i = width - 1; i >= 0; i--) {
+        final var ret = new StringBuilder();
+        for (var i = width - 1; i >= 0; i--) {
           ret.append(get(i).toString());
           if (i % 4 == 0 && i != 0) ret.append(" ");
         }
