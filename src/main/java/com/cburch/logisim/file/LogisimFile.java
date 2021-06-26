@@ -343,6 +343,16 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return false;
   }
 
+  public boolean contains(VhdlContent content) {
+    for (AddTool tool : tools) {
+      if (tool.getFactory() instanceof VhdlEntity) {
+        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        if (factory.getContent() == content) return true;
+      }
+    }
+    return false;
+  }
+
   public boolean containsFactory(String name) {
     for (AddTool tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
@@ -351,16 +361,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       } else if (tool.getFactory() instanceof SubcircuitFactory) {
         SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
         if (factory.getSubcircuit().getName().equals(name)) return true;
-      }
-    }
-    return false;
-  }
-
-  public boolean contains(VhdlContent content) {
-    for (AddTool tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
-        if (factory.getContent() == content) return true;
       }
     }
     return false;
@@ -491,15 +491,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return libraries;
   }
 
-  @Override
-  public boolean removeLibrary(String Name) {
-    int index = -1;
-    for (Library lib : libraries) if (lib.getName().equals(Name)) index = libraries.indexOf(lib);
-    if (index < 0) return false;
-    libraries.remove(index);
-    return true;
-  }
-
   public Loader getLoader() {
     return loader;
   }
@@ -601,6 +592,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       Tool vhdlTool = tools.remove(index);
       fireEvent(LibraryEvent.REMOVE_TOOL, vhdlTool);
     }
+  }
+
+  @Override
+  public boolean removeLibrary(String Name) {
+    int index = -1;
+    for (Library lib : libraries) if (lib.getName().equals(Name)) index = libraries.indexOf(lib);
+    if (index < 0) return false;
+    libraries.remove(index);
+    return true;
   }
 
   public void removeLibrary(Library lib) {

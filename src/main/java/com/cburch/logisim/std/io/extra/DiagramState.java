@@ -91,7 +91,7 @@ class DiagramState implements InstanceData {
   public void moveback() { // move back all old values
     if (Length >= 1)
       for (byte i = 0; i < Inputs; i++) {
-          System.arraycopy(diagram[i], 1, diagram[i], 0, Length - 1);
+        System.arraycopy(diagram[i], 1, diagram[i], 0, Length - 1);
       }
   }
 

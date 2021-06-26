@@ -52,9 +52,9 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (HDL.isVHDL()) {
       Contents.add(" ");
       if (ComponentInfo.EndIsConnected(HexDigit.HEX)) {
-        Contents.add("   WITH ("+BusName+") SELECT "+HDLGeneratorFactory.LocalOutputBubbleBusname+"( "+
-        		(ComponentInfo.GetLocalBubbleOutputStartId() + 6)+" DOWNTO "+
-        		ComponentInfo.GetLocalBubbleOutputStartId()+") <= ");
+        Contents.add("   WITH (" + BusName + ") SELECT " + HDLGeneratorFactory.LocalOutputBubbleBusname
+                + "( " + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
+                + ComponentInfo.GetLocalBubbleOutputStartId() + ") <= ");
         Contents.add("      \"0111111\" WHEN \"0000\",");
         Contents.add("      \"0000110\" WHEN \"0001\",");
         Contents.add("      \"1011011\" WHEN \"0010\",");
@@ -72,55 +72,49 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add("      \"1111001\" WHEN \"1110\",");
         Contents.add("      \"1110001\" WHEN OTHERS;");
       } else {
-        Contents.add("   "+HDLGeneratorFactory.LocalOutputBubbleBusname+"( "+
-        		(ComponentInfo.GetLocalBubbleOutputStartId() + 6)+" DOWNTO "+
-        		ComponentInfo.GetLocalBubbleOutputStartId()+") <= "+BusName+";");
+        Contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "( "
+                + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
+                + ComponentInfo.GetLocalBubbleOutputStartId() + ") <= " + BusName + ";");
       }
       if (ComponentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        Contents.add( "   "
-                + HDLGeneratorFactory.LocalOutputBubbleBusname
-                + "("
-                + (ComponentInfo.GetLocalBubbleOutputStartId() + 7)
-                + ") <= "
-                + DPName
-                + ";");
+        Contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "("
+                + (ComponentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= " + DPName + ";");
       }
     } else {
-      String Signame = HDLGeneratorFactory.LocalOutputBubbleBusname+"["+
-                       (ComponentInfo.GetLocalBubbleOutputStartId() + 6)+":"+
-                       ComponentInfo.GetLocalBubbleOutputStartId()+"]";
+      String Signame = HDLGeneratorFactory.LocalOutputBubbleBusname + "["
+                        + (ComponentInfo.GetLocalBubbleOutputStartId() + 6) + ":"
+                        + ComponentInfo.GetLocalBubbleOutputStartId() + "]";
       if (ComponentInfo.EndIsConnected(HexDigit.HEX)) {
-        String RegName = "s_"+Label+"_reg";
+        String RegName = "s_" + Label + "_reg";
         Contents.add(" ");
-        Contents.add("   reg[6:0] "+RegName+";");
+        Contents.add("   reg[6:0] " + RegName + ";");
         Contents.add("   always @(*)");
-        Contents.add("      case ("+BusName+")");
-        Contents.add("        4'b0000 : "+RegName+" = 7'b0111111;");
-        Contents.add("        4'b0001 : "+RegName+" = 7'b0000110;");
-        Contents.add("        4'b0010 : "+RegName+" = 7'b1011011;");
-        Contents.add("        4'b0011 : "+RegName+" = 7'b1001111;");
-        Contents.add("        4'b0100 : "+RegName+" = 7'b1100110;");
-        Contents.add("        4'b0101 : "+RegName+" = 7'b1101101;");
-        Contents.add("        4'b0110 : "+RegName+" = 7'b1111101;");
-        Contents.add("        4'b0111 : "+RegName+" = 7'b0000111;");
-        Contents.add("        4'b1000 : "+RegName+" = 7'b1111111;");
-        Contents.add("        4'b1001 : "+RegName+" = 7'b1100111;");
-        Contents.add("        4'b1010 : "+RegName+" = 7'b1110111;");
-        Contents.add("        4'b1011 : "+RegName+" = 7'b1111100;");
-        Contents.add("        4'b1100 : "+RegName+" = 7'b0111001;");
-        Contents.add("        4'b1101 : "+RegName+" = 7'b1011110;");
-        Contents.add("        4'b1110 : "+RegName+" = 7'b1111001;");
-        Contents.add("        default : "+RegName+" = 7'b1110001;");
+        Contents.add("      case (" + BusName + ")");
+        Contents.add("        4'b0000 : " + RegName + " = 7'b0111111;");
+        Contents.add("        4'b0001 : " + RegName + " = 7'b0000110;");
+        Contents.add("        4'b0010 : " + RegName + " = 7'b1011011;");
+        Contents.add("        4'b0011 : " + RegName + " = 7'b1001111;");
+        Contents.add("        4'b0100 : " + RegName + " = 7'b1100110;");
+        Contents.add("        4'b0101 : " + RegName + " = 7'b1101101;");
+        Contents.add("        4'b0110 : " + RegName + " = 7'b1111101;");
+        Contents.add("        4'b0111 : " + RegName + " = 7'b0000111;");
+        Contents.add("        4'b1000 : " + RegName + " = 7'b1111111;");
+        Contents.add("        4'b1001 : " + RegName + " = 7'b1100111;");
+        Contents.add("        4'b1010 : " + RegName + " = 7'b1110111;");
+        Contents.add("        4'b1011 : " + RegName + " = 7'b1111100;");
+        Contents.add("        4'b1100 : " + RegName + " = 7'b0111001;");
+        Contents.add("        4'b1101 : " + RegName + " = 7'b1011110;");
+        Contents.add("        4'b1110 : " + RegName + " = 7'b1111001;");
+        Contents.add("        default : " + RegName + " = 7'b1110001;");
         Contents.add("      endcase");
         Contents.add(" ");
-        Contents.add("   assign "+Signame+" = "+RegName+";");
+        Contents.add("   assign " + Signame + " = " + RegName + ";");
       } else {
-        Contents.add("   assign "+Signame+" = "+BusName+";");
+        Contents.add("   assign " + Signame + " = " + BusName + ";");
       }
       if (ComponentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        Contents.add("   assign "+HDLGeneratorFactory.LocalOutputBubbleBusname+"["+
-            (ComponentInfo.GetLocalBubbleOutputStartId() + 7) +
-                     "] = "+DPName+";");
+        Contents.add("   assign " + HDLGeneratorFactory.LocalOutputBubbleBusname + "["
+                + (ComponentInfo.GetLocalBubbleOutputStartId()  +  7) + "] = " + DPName + ";");
       }
     }
     return Contents;

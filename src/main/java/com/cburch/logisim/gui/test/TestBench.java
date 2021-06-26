@@ -51,9 +51,9 @@ public class TestBench {
   private final Instance[] pinsOutput;
   private Project proj;
 
-  public TestBench(String Path, SplashScreen mon, HashMap<File, File> subs) {
+  public TestBench(String path, SplashScreen mon, HashMap<File, File> subs) {
     this.pinsOutput = new Instance[outputSignals.length];
-    File fileToOpen = new File(Path);
+    File fileToOpen = new File(path);
 
     try {
       this.proj = ProjectActions.doOpenNoWindow(mon, fileToOpen);
@@ -120,8 +120,8 @@ public class TestBench {
   private boolean startSimulator() {
     Simulator sim = proj == null ? null : proj.getSimulator();
     if (sim == null) {
-      /* TODO ERROR*/
-      //	logger.error("FATAL ERROR - no simulator available");
+      // TODO ERROR
+      // logger.error("FATAL ERROR - no simulator available");
       return false;
     }
 

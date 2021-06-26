@@ -51,15 +51,15 @@ public class VgaMenu implements ActionListener, MenuExtender {
   private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
-  
-  public VgaMenu( Instance inst ) {
+
+  public VgaMenu(Instance inst) {
     instance = inst;
   }
 
   @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     this.frame = proj.getFrame();
-    exportC = SocSupport.createItem(this,S.get("ExportC"));
+    exportC = SocSupport.createItem(this, S.get("ExportC"));
     menu.addSeparator();
     menu.add(exportC);
   }
@@ -80,17 +80,17 @@ public class VgaMenu implements ActionListener, MenuExtender {
       if (myState == null)
         throw new NullPointerException("BUG in VgaMenu.java");
       String compName = myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
-      String headerFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".h";
-      String cFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".c";
+      String headerFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
+      String cFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".c";
       FileWriter headerFile = null;
       FileWriter cFile = null;
       try {
-        headerFile = new FileWriter(headerFileName,false);
+        headerFile = new FileWriter(headerFileName, false);
       } catch (IOException e) {
         headerFile = null;
       }
       try {
-        cFile = new FileWriter(cFileName,false);
+        cFile = new FileWriter(cFileName, false);
       } catch (IOException e) {
         cFile = null;
       }
@@ -102,18 +102,18 @@ public class VgaMenu implements ActionListener, MenuExtender {
       PrintWriter cWriter = new PrintWriter(cFile);
       headerWriter.println("/* Logisim automatically generated file for a VGA-component */\n");
       cWriter.println("/* Logisim automatically generated file for a VGA-component */\n");
-      headerWriter.println("#ifndef __"+compName+"_H__");
-      headerWriter.println("#define __"+compName+"_H__");
+      headerWriter.println("#ifndef __" + compName + "_H__");
+      headerWriter.println("#define __" + compName + "_H__");
       headerWriter.println();
-      headerWriter.println("#define SOFT_MODE_160X120_MASK "+VgaAttributes.MODE_160_120_MASK);
-      headerWriter.println("#define SOFT_MODE_320X240_MASK "+VgaAttributes.MODE_320_240_MASK);
-      headerWriter.println("#define SOFT_MODE_640X480_MASK "+VgaAttributes.MODE_640_480_MASK);
-      headerWriter.println("#define SOFT_MODE_800X600_MASK "+VgaAttributes.MODE_800_600_MASK);
-      headerWriter.println("#define SOFT_MODE_1024X768_MASK "+VgaAttributes.MODE_1024_768_MASK);
+      headerWriter.println("#define SOFT_MODE_160X120_MASK " + VgaAttributes.MODE_160_120_MASK);
+      headerWriter.println("#define SOFT_MODE_320X240_MASK " + VgaAttributes.MODE_320_240_MASK);
+      headerWriter.println("#define SOFT_MODE_640X480_MASK " + VgaAttributes.MODE_640_480_MASK);
+      headerWriter.println("#define SOFT_MODE_800X600_MASK " + VgaAttributes.MODE_800_600_MASK);
+      headerWriter.println("#define SOFT_MODE_1024X768_MASK " + VgaAttributes.MODE_1024_768_MASK);
       headerWriter.println();
       int base = myState.getStartAddress();
       headerWriter.println(S.get("VgaMenuModeSelectFunctions"));
-      SocSupport.addAllFunctions(headerWriter,cWriter,compName,"VgaMode",base,0);
+      SocSupport.addAllFunctions(headerWriter, cWriter, compName, "VgaMode", base, 0);
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();

@@ -59,26 +59,26 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setTitle(S.fmt("statsDialogTitle", circuitName));
 
-    JTable table = new StatisticsTable();
+    var table = new StatisticsTable();
     TableSorter mySorter = new TableSorter(model, table.getTableHeader());
     Comparator<String> comp =
         new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
     mySorter.setColumnComparator(String.class, comp);
     table.setModel(mySorter);
-    JScrollPane tablePane = new JScrollPane(table);
+    final var tablePane = new JScrollPane(table);
 
-    JButton button = new JButton(S.get("statsCloseButton"));
+    var button = new JButton(S.get("statsCloseButton"));
     button.addActionListener(this);
-    JPanel buttonPanel = new JPanel();
+    var buttonPanel = new JPanel();
     buttonPanel.add(button);
 
-    Container contents = this.getContentPane();
+    var contents = this.getContentPane();
     contents.setLayout(new BorderLayout());
     contents.add(tablePane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.PAGE_END);
     this.pack();
 
-    Dimension pref = contents.getPreferredSize();
+    var pref = contents.getPreferredSize();
     if (pref.width > 750 || pref.height > 550) {
       if (pref.width > 750) pref.width = 750;
       if (pref.height > 550) pref.height = 550;

@@ -59,7 +59,7 @@ class SimulateOptions extends OptionsPanel {
           });
 
   private final JCheckBox simRandomness = new JCheckBox();
-  private final JCheckBox MemUnknown = new JCheckBox();
+  private final JCheckBox memUnknown = new JCheckBox();
   private final JLabel gateUndefinedLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -85,11 +85,11 @@ class SimulateOptions extends OptionsPanel {
 
     simRandomness.addActionListener(myListener);
 
-    MemUnknown.addActionListener(myListener);
-    MemUnknown.setSelected(AppPreferences.Memory_Startup_Unknown.get());
+    memUnknown.addActionListener(myListener);
+    memUnknown.setSelected(AppPreferences.Memory_Startup_Unknown.get());
 
     setLayout(new TableLayout(1));
-    add(MemUnknown);
+    add(memUnknown);
     add(simLimitPanel);
     add(gateUndefinedPanel);
     add(simRandomness);
@@ -116,7 +116,7 @@ class SimulateOptions extends OptionsPanel {
     simLimitLabel.setText(S.get("simulateLimit"));
     gateUndefinedLabel.setText(S.get("gateUndefined"));
     simRandomness.setText(S.get("simulateRandomness"));
-    MemUnknown.setText(S.get("MemoriesStartupUnknown"));
+    memUnknown.setText(S.get("MemoriesStartupUnknown"));
   }
 
   private class MyListener implements ActionListener, AttributeListener {
@@ -140,8 +140,8 @@ class SimulateOptions extends OptionsPanel {
               .doAction(
                   OptionsActions.setAttribute(attrs, Options.ATTR_GATE_UNDEFINED, opt.getValue()));
         }
-      } else if (source == MemUnknown) {
-        AppPreferences.Memory_Startup_Unknown.set(MemUnknown.isSelected());
+      } else if (source == memUnknown) {
+        AppPreferences.Memory_Startup_Unknown.set(memUnknown.isSelected());
         Simulator sim = getProject().getSimulator();
         if (sim != null) sim.reset();
       }

@@ -155,16 +155,16 @@ public class FPGAOptions extends OptionsPanel {
     c.gridx = 0;
     c.gridy = 3;
     c.gridwidth = 3;
-    add(AppPreferences.Boards.AddRemovePanel(), c);
+    add(AppPreferences.Boards.addRemovePanel(), c);
     c.gridy++;
-    add(getReporterOptions(),c);
+    add(getReporterOptions(), c);
     c.gridy++;
-    add(getEditCols(),c);
+    add(getEditCols(), c);
     c.gridy++;
-    add(getMapCols(),c);
+    add(getMapCols(), c);
     localeChanged();
   }
-  
+
   private JPanel getReporterOptions() {
     ReportPan = new JPanel();
     ReportPan.setLayout(new GridBagLayout());
@@ -172,14 +172,14 @@ public class FPGAOptions extends OptionsPanel {
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    SupressGated = ((PrefMonitorBoolean)AppPreferences.SupressGatedClockWarnings).getCheckBox();
-    ReportPan.add(SupressGated,c);
+    SupressGated = ((PrefMonitorBoolean) AppPreferences.SupressGatedClockWarnings).getCheckBox();
+    ReportPan.add(SupressGated, c);
     c.gridy++;
-    SupressOpen = ((PrefMonitorBoolean)AppPreferences.SupressOpenPinWarnings).getCheckBox();
+    SupressOpen = ((PrefMonitorBoolean) AppPreferences.SupressOpenPinWarnings).getCheckBox();
     ReportPan.add(SupressOpen, c);
     return ReportPan;
   }
-  
+
   private JPanel getEditCols() {
     editPan = new JPanel();
     editPan.setLayout(new GridBagLayout());
@@ -187,29 +187,29 @@ public class FPGAOptions extends OptionsPanel {
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    editPan.add(EditSelectLabel,c);
+    editPan.add(EditSelectLabel, c);
     c.gridx++;
     EditSelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_COLOR);
-    editPan.add(EditSelectColor,c);
+    editPan.add(EditSelectColor, c);
     c.gridx++;
-    editPan.add(EditHighligtLabel,c);
+    editPan.add(EditHighligtLabel, c);
     EditHighligtColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR);
     c.gridx++;
-    editPan.add(EditHighligtColor,c);
+    editPan.add(EditHighligtColor, c);
     c.gridy++;
-    c.gridx=0;
-    editPan.add(EditMoveLabel,c);
+    c.gridx = 0;
+    editPan.add(EditMoveLabel, c);
     EditMoveColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_MOVE_COLOR);
     c.gridx++;
-    editPan.add(EditMoveColor,c);
+    editPan.add(EditMoveColor, c);
     c.gridx++;
-    editPan.add(EditResizeLabel,c);
+    editPan.add(EditResizeLabel, c);
     EditResizeColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_RESIZE_COLOR);
     c.gridx++;
-    editPan.add(EditResizeColor,c);
+    editPan.add(EditResizeColor, c);
     return editPan;
   }
-  
+
   private JPanel getMapCols() {
     mapPan = new JPanel();
     mapPan.setLayout(new GridBagLayout());
@@ -228,18 +228,18 @@ public class FPGAOptions extends OptionsPanel {
     mapPan.add(SelMapColor);
     c.gridx = 0;
     c.gridy++;
-    mapPan.add(SelectMapLabel,c);
+    mapPan.add(SelectMapLabel, c);
     c.gridx++;
     SelectMapColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR);
-    mapPan.add(SelectMapColor,c);
+    mapPan.add(SelectMapColor, c);
     c.gridx++;
-    mapPan.add(SelectLabel,c);
+    mapPan.add(SelectLabel, c);
     c.gridx++;
     SelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECT_COLOR);
-    mapPan.add(SelectColor,c);
+    mapPan.add(SelectColor, c);
     return mapPan;
   }
-  
+
   @Override
   public String getHelpText() {
     return S.get("FPGAHelp");
@@ -268,7 +268,7 @@ public class FPGAOptions extends OptionsPanel {
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
     ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
   }
-  
+
   private void selectWorkSpace(Component parentComponent) {
     JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

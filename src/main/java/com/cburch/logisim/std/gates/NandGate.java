@@ -50,28 +50,33 @@ class NandGate extends AbstractGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      StringBuilder OneLine = new StringBuilder();
-      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.andOperator() + HDL.notOperator() + "(");
-      int TabWidth = OneLine.length();
+      var contents = new ArrayList<String>();
+      var oneLine = new StringBuilder();
+      oneLine.append("   ")
+          .append(HDL.assignPreamble())
+          .append("Result")
+          .append(HDL.andOperator())
+          .append(HDL.notOperator())
+          .append("(");
+      int tabWidth = oneLine.length();
       boolean first = true;
       for (int i = 0; i < nr_of_inputs; i++) {
         if (!first) {
-          OneLine.append(HDL.andOperator());
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < TabWidth) {
-            OneLine.append(" ");
+          oneLine.append(HDL.andOperator());
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < tabWidth) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_real_input_").append(i + 1);
       }
-      OneLine.append(");");
-      Contents.add(OneLine.toString());
-      Contents.add("");
-      return Contents;
+      oneLine.append(");");
+      contents.add(oneLine.toString());
+      contents.add("");
+      return contents;
     }
   }
 
@@ -115,7 +120,7 @@ class NandGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    AndGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    AndGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

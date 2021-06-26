@@ -28,10 +28,7 @@
 
 package com.cburch.logisim;
 
-/**
- * Logisim follows Semantic Versioning
- * https://semver.org/
- */
+/** Logisim follows Semantic Versioning https://semver.org/ */
 public class LogisimVersion {
   private int major = 0;
   private int minor = 0;
@@ -41,7 +38,6 @@ public class LogisimVersion {
     this.major = major;
     this.minor = minor;
     this.patch = patch;
-
   }
 
   /**
@@ -72,10 +68,11 @@ public class LogisimVersion {
   }
 
   /**
-   * Compare two Logisim versions, returning positive non-zero value whether the one passed as parameter is newer than the
-   * current one, equal (0) or older (negative non-zero value)
+   * Compare two Logisim versions, returning positive non-zero value whether the one passed as
+   * parameter is newer than the current one, equal (0) or older (negative non-zero value).
    *
-   * @return Negative value if the current version is older than the one passed as parameter, zero if equal, positive if newer.
+   * @return Negative value if the current version is older than the one passed as parameter, zero
+   *     if equal, positive if newer.
    */
   public int compareTo(LogisimVersion other) {
     int result = this.major - other.major;
@@ -90,7 +87,7 @@ public class LogisimVersion {
     return result;
   }
 
-  /** Build the hash code starting from the version number */
+  /** Build the hash code starting from the version number. */
   @Override
   public int hashCode() {
     int ret = major * 31 + minor;

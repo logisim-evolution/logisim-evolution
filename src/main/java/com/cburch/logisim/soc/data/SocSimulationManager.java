@@ -51,12 +51,12 @@ import javax.swing.JLabel;
 public class SocSimulationManager implements SocBusMasterInterface {
 
   private static class SocBusSelector extends JLabel implements MouseListener {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private Circuit myCirc;
     private final SocBusInfo myValue;
-    
+
     public SocBusSelector(Window source, SocBusInfo value) {
       super(S.get("SocBusSelectAttrClick"));
       myCirc = null;
@@ -67,15 +67,15 @@ public class SocSimulationManager implements SocBusMasterInterface {
       myValue = value;
       addMouseListener(this);
     }
-    
-	@Override
+
+    @Override
     public void mouseClicked(MouseEvent e) {
       if (myCirc == null)
         return;
       SocSimulationManager socMan = myCirc.getSocSimulationManager();
       if (!socMan.hasSocBusses()) {
-        OptionPane.showMessageDialog(null, S.get("SocManagerNoBusses"),
-        		S.get("SocBusSelectAttr"),OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, S.get("SocManagerNoBusses"), S.get("SocBusSelectAttr"), OptionPane.ERROR_MESSAGE);
         return;
       }
       String id = socMan.getGuiBusId();
@@ -107,21 +107,21 @@ public class SocSimulationManager implements SocBusMasterInterface {
 
   }
 
-	
+
   private static class SocBusSelectAttribute extends Attribute<SocBusInfo> {
 
     private SocBusSelectAttribute() {
-      super("SocBusSelection",S.getter("SocBusSelectAttr"));
+      super("SocBusSelection", S.getter("SocBusSelectAttr"));
     }
-    
+
     @Override
     public SocBusInfo parse(String value) {
       return new SocBusInfo(value);
-	}
-    
+    }
+
     @Override
     public java.awt.Component getCellEditor(Window source, SocBusInfo value) {
-      SocBusSelector ret = new SocBusSelector(source,value);
+      SocBusSelector ret = new SocBusSelector(source, value);
       ret.mouseClicked(null);
       return ret;
     }
@@ -130,16 +130,16 @@ public class SocSimulationManager implements SocBusMasterInterface {
     public String toDisplayString(SocBusInfo f) {
       return S.get("SocBusSelectAttrClick");
     }
-    
+
     @Override
     public String toStandardString(SocBusInfo value) {
       return value.getBusId();
     }
-        
+
   }
-  
-  public final static Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
-  private final HashMap<String,SocBusStateInfo> socBusses = new HashMap<>();
+
+  public static final Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
+  private final HashMap<String, SocBusStateInfo> socBusses = new HashMap<>();
   private final ArrayList<Component> toBeChecked = new ArrayList<>();
   private CircuitState state;
 
@@ -151,14 +151,14 @@ public class SocSimulationManager implements SocBusMasterInterface {
     String name = c == null ? null : c.getAttributeSet().getValue(StdAttr.LABEL);
     if ((name == null || name.isEmpty()) && c != null) {
       Location loc = c.getLocation();
-      name = c.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = c.getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     if (c == null)
       name = null;
     return name;
   }
-	  
-	
+
+
   public boolean registerComponent(Component c) {
     if (!c.getFactory().isSocComponent())
       return false;
@@ -170,11 +170,11 @@ public class SocSimulationManager implements SocBusMasterInterface {
       if (socBusses.containsKey(ID.getBusId()))
         socBusses.get(ID.getBusId()).setComponent(c);
       else
-        socBusses.put(ID.getBusId(), new SocBusStateInfo(this,c));
+        socBusses.put(ID.getBusId(), new SocBusStateInfo(this, c));
       c.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).setSocSimulationManager(this, c);
     }
     if (c.getAttributeSet().containsAttribute(SOC_BUS_SELECT)) {
-      c.getAttributeSet().getValue(SOC_BUS_SELECT).setSocSimulationManager(this,c);
+      c.getAttributeSet().getValue(SOC_BUS_SELECT).setSocSimulationManager(this, c);
       if (fact.isSocSlave() || fact.isSocSniffer()) {
         toBeChecked.add(c);
         Iterator<Component> iter = toBeChecked.iterator();
@@ -197,7 +197,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
     }
     return true;
   }
-  
+
   public boolean removeComponent(Component c) {
     if (!c.getFactory().isSocComponent())
       return false;
@@ -209,14 +209,14 @@ public class SocSimulationManager implements SocBusMasterInterface {
       if (info != null)
         info.setComponent(null);
     }
-    if (fact.isSocSlave()||fact.isSocSniffer()) {
+    if (fact.isSocSlave() || fact.isSocSniffer()) {
       SocBusInfo binfo = c.getAttributeSet().getValue(SOC_BUS_SELECT);
       if (binfo != null)
-        reRegisterSlaveSniffer(binfo.getBusId(),null,c);
+        reRegisterSlaveSniffer(binfo.getBusId(), null, c);
     }
     return true;
   }
-  
+
   public int nrOfSocBusses() {
     int result = 0;
     for (String s : socBusses.keySet())
@@ -224,33 +224,32 @@ public class SocSimulationManager implements SocBusMasterInterface {
         result++;
     return result;
   }
-  
+
   public boolean hasSocBusses() {
     return nrOfSocBusses() != 0;
   }
-  
+
   public String getGuiBusId() {
-	HashMap<String,String> busses = new HashMap<>();
-	for (String id : socBusses.keySet()) {
-	  if (socBusses.get(id).getComponent() != null)
-	    busses.put(getSocBusDisplayString(id), id);
-	}
-    String res = (String) OptionPane.showInputDialog(null,
-    		S.get("SocBusManagerSelectBus"),
-    		S.get("SocBusSelectAttr"),
-    		OptionPane.PLAIN_MESSAGE,
-    		null,
-    		busses.keySet().toArray(),
-    		"");
-    if (res!=null && !res.isEmpty())
-      return busses.get(res);
+    HashMap<String, String> busses = new HashMap<>();
+    for (String id : socBusses.keySet()) {
+      if (socBusses.get(id).getComponent() != null) busses.put(getSocBusDisplayString(id), id);
+    }
+    String res = (String) OptionPane.showInputDialog(
+        null,
+        S.get("SocBusManagerSelectBus"),
+        S.get("SocBusSelectAttr"),
+        OptionPane.PLAIN_MESSAGE,
+        null,
+        busses.keySet().toArray(),
+        "");
+    if (res != null && !res.isEmpty()) return busses.get(res);
     return "";
   }
-  
+
   public SocBusStateInfo getSocBusState(String busId) {
     return socBusses.get(busId);
   }
-  
+
   public void reRegisterSlaveSniffer(String oldId, String newId, Component comp) {
     SocInstanceFactory fact = (SocInstanceFactory) comp.getFactory();
     if (oldId != null && socBusses.containsKey(oldId)) {
@@ -258,10 +257,10 @@ public class SocSimulationManager implements SocBusMasterInterface {
       if (fact.isSocSlave())
         binfo.removeSocBusSlave(fact.getSlaveInterface(comp.getAttributeSet()));
       if (fact.isSocSniffer())
-    	binfo.removeSocBusSniffer(fact.getSnifferInterface(comp.getAttributeSet()));
+        binfo.removeSocBusSniffer(fact.getSnifferInterface(comp.getAttributeSet()));
     }
     if (newId != null && socBusses.containsKey(newId)) {
-        SocBusStateInfo binfo = socBusses.get(newId);
+      SocBusStateInfo binfo = socBusses.get(newId);
       if (fact.isSocSlave())
         binfo.registerSocBusSlave(fact.getSlaveInterface(comp.getAttributeSet()));
       if (fact.isSocSniffer())
@@ -269,13 +268,13 @@ public class SocSimulationManager implements SocBusMasterInterface {
     }
     toBeChecked.remove(comp);
   }
-  
+
   public Object getdata(Component comp) {
     if (state == null)
       return null;
     return state.getData(comp);
   }
-  
+
   public InstanceState getState(Component comp) {
     if (state == null)
       return null;
@@ -311,7 +310,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
       }
       iter.remove();
     }
-	info.initializeTransaction(trans, busId);
+    info.initializeTransaction(trans, busId);
   }
-  
+
 }

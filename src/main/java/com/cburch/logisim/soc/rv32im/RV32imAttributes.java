@@ -45,18 +45,26 @@ public class RV32imAttributes extends AbstractAttributeSet {
 
   private static class Rv32imStateAttribute extends Attribute<RV32im_state> {
 
-	@Override
-	public RV32im_state parse(String value) {return null;}
-	
-	@Override
-    public boolean isHidden() {return true;}
+    @Override
+    public RV32im_state parse(String value) {
+      return null;
+    }
+
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
   }
-  
+
   public static final Attribute<RV32im_state> RV32IM_STATE = new Rv32imStateAttribute();
-  public static final Attribute<BitWidth> NR_OF_IRQS = Attributes.forBitWidth("irqWidth", S.getter("rv32imIrqWidth"),0,32);
-  public static final Attribute<Integer> RESET_VECTOR = Attributes.forHexInteger("resetVector", S.getter("rv32ResetVector"));
-  public static final Attribute<Integer> EXCEPTION_VECTOR  = Attributes.forHexInteger("exceptionVector", S.getter("rv32ExceptionVector"));
-  public static final Attribute<Boolean> RV32IM_STATE_VISIBLE = Attributes.forBoolean("stateVisible", S.getter("rv32StateVisible"));
+  public static final Attribute<BitWidth> NR_OF_IRQS =
+      Attributes.forBitWidth("irqWidth", S.getter("rv32imIrqWidth"), 0, 32);
+  public static final Attribute<Integer> RESET_VECTOR =
+      Attributes.forHexInteger("resetVector", S.getter("rv32ResetVector"));
+  public static final Attribute<Integer> EXCEPTION_VECTOR =
+      Attributes.forHexInteger("exceptionVector", S.getter("rv32ExceptionVector"));
+  public static final Attribute<Boolean> RV32IM_STATE_VISIBLE =
+      Attributes.forBoolean("stateVisible", S.getter("rv32StateVisible"));
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
@@ -99,7 +107,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.LABEL) return (V) upState.getLabel();
     if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
     if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
-    if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V)upState.getAttachedBus();
+    if (attr == SocSimulationManager.SOC_BUS_SELECT) return (V) upState.getAttachedBus();
     if (attr == RV32IM_STATE) return (V) upState;
     if (attr == RV32IM_STATE_VISIBLE) return (V) stateVisible;
     return null;
@@ -109,7 +117,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
   public boolean isReadOnly(Attribute<?> attr) {
     return attr == RV32IM_STATE;
   }
-  
+
   @Override
   public boolean isToSave(Attribute<?> attr) {
     return attr != RV32IM_STATE;
@@ -117,7 +125,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-	V oldValue = getValue(attr);
+    V oldValue = getValue(attr);
     if (attr == RESET_VECTOR) {
       if (upState.setResetVector((int) value))
         fireAttributeValueChanged(attr, value, oldValue);
@@ -129,13 +137,13 @@ public class RV32imAttributes extends AbstractAttributeSet {
       return;
     }
     if (attr == NR_OF_IRQS) {
-      if (upState.setNrOfIrqs(((BitWidth)value).getWidth()))
+      if (upState.setNrOfIrqs(((BitWidth) value).getWidth()))
         fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
-      if (upState.setAttachedBus((SocBusInfo)value)) 
-    	fireAttributeValueChanged(attr, value, oldValue);
+      if (upState.setAttachedBus((SocBusInfo) value))
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL) {
@@ -168,5 +176,4 @@ public class RV32imAttributes extends AbstractAttributeSet {
       return;
     }
   }
-
 }

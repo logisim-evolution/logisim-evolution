@@ -339,8 +339,7 @@ public class AppPreferences {
 
   public static void setScaledFonts(Component[] comp) {
     for (Component component : comp) {
-      if (component instanceof Container)
-        setScaledFonts(((Container) component).getComponents());
+      if (component instanceof Container) setScaledFonts(((Container) component).getComponents());
       try {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();
@@ -350,10 +349,10 @@ public class AppPreferences {
     }
   }
 
-  public static int getDownScaled(int value, float ExtScale) {
+  public static int getDownScaled(int value, float extScale) {
     getPrefs();
     float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= ExtScale;
+    scale *= extScale;
     return (int) ((float) value / scale);
   }
 
@@ -368,10 +367,10 @@ public class AppPreferences {
     return value / SCALE_FACTOR.get();
   }
 
-  public static int getScaled(int value, float ExtScale) {
+  public static int getScaled(int value, float extScale) {
     getPrefs();
     float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
-    scale *= ExtScale;
+    scale *= extScale;
     return (int) ((float) value * scale);
   }
 
@@ -411,15 +410,15 @@ public class AppPreferences {
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
-    Image IcImage = icon.getImage();
+    Image iconImage = icon.getImage();
     return new ImageIcon(
-        IcImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
+        iconImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon, float scale) {
-    Image IcImage = icon.getImage();
+    Image iconImage = icon.getImage();
     return new ImageIcon(
-        IcImage.getScaledInstance(
+        iconImage.getScaledInstance(
             getScaled(IconSize, scale), getScaled(IconSize, scale), Image.SCALE_SMOOTH));
   }
 
@@ -465,10 +464,10 @@ public class AppPreferences {
   }
 
   // International preferences
-  public static final String SHAPE_SHAPED = "shaped"; //ANSI
+  public static final String SHAPE_SHAPED = "shaped"; // ANSI
 
-  public static final String SHAPE_RECTANGULAR = "rectangular"; //IEC
-  //	public static final String SHAPE_DIN40700 = "din40700";
+  public static final String SHAPE_RECTANGULAR = "rectangular"; // IEC
+  // public static final String SHAPE_DIN40700 = "din40700";
 
   public static final PrefMonitor<String> GATE_SHAPE =
       create(
@@ -495,9 +494,9 @@ public class AppPreferences {
   public static final String External_Boards = "ExternalBoards";
   public static final FPGABoards Boards = new FPGABoards();
   public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
-    create(new PrefMonitorBoolean("NoGatedClockWarnings",false));
+      create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
-    create(new PrefMonitorBoolean("NoOpenPinWarnings",false));
+      create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
 
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";
@@ -516,8 +515,7 @@ public class AppPreferences {
               },
               Direction.NORTH.toString()));
   public static final PrefMonitor<String> LookAndFeel =
-      create(
-          new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
+      create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   // defaiult grid colors
   public static final int defaultCanvasBgColor = 0xFFFFFFFF;
@@ -534,14 +532,13 @@ public class AppPreferences {
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
-          create(new PrefMonitorInt("canvasBgColor", defaultCanvasBgColor));
+      create(new PrefMonitorInt("canvasBgColor", defaultCanvasBgColor));
   public static final PrefMonitor<Integer> GRID_BG_COLOR =
-          create(new PrefMonitorInt("gridBgColor", defaultGridBgColor));
+      create(new PrefMonitorInt("gridBgColor", defaultGridBgColor));
   public static final PrefMonitor<Integer> GRID_DOT_COLOR =
-          create(new PrefMonitorInt("gridDotColor", defaultGridDotColor));
+      create(new PrefMonitorInt("gridDotColor", defaultGridDotColor));
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
-          create(new PrefMonitorInt("gridZoomedDotColor", defaultZoomedDotColor));
-
+      create(new PrefMonitorInt("gridZoomedDotColor", defaultZoomedDotColor));
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
@@ -561,7 +558,7 @@ public class AppPreferences {
   public static final PrefMonitor<Boolean> KMAP_LINED_STYLE =
       create(new PrefMonitorBoolean("KmapLinedStyle", false));
   public static final PrefMonitor<Boolean> ANIMATED_ICONS =
-      create(new PrefMonitorBoolean("AnimatedIcons",false));
+      create(new PrefMonitorBoolean("AnimatedIcons", false));
   public static final PrefMonitor<String> DefaultAppearance =
       create(
           new PrefMonitorStringOpts(
@@ -593,26 +590,33 @@ public class AppPreferences {
       create(
           new PrefMonitorDouble(
               "Scale",
-              Math.max((((!GraphicsEnvironment.isHeadless())
-                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                  : 0)
-                  / 1000), 1.0)));
+              Math.max(
+                  (((!GraphicsEnvironment.isHeadless())
+                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                          : 0)
+                      / 1000),
+                  1.0)));
 
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(
               "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
-
   public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
   public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
   public static final String PIN_APPEAR_DOT_BIG = "dot-big";
   public static final String PIN_APPEAR_DOT_BIGGER = "dot-bigger";
   public static final PrefMonitor<String> PinAppearance =
-    create(new PrefMonitorStringOpts("pinAppearance",
-            new String[] {PIN_APPEAR_DOT_SMALL, PIN_APPEAR_DOT_MEDIUM, PIN_APPEAR_DOT_BIG, PIN_APPEAR_DOT_BIGGER},
-            PIN_APPEAR_DOT_SMALL));
-
+      create(
+          new PrefMonitorStringOpts(
+              "pinAppearance",
+              new String[] {
+                PIN_APPEAR_DOT_SMALL,
+                PIN_APPEAR_DOT_MEDIUM,
+                PIN_APPEAR_DOT_BIG,
+                PIN_APPEAR_DOT_BIGGER
+              },
+              PIN_APPEAR_DOT_SMALL));
 
   public static final PrefMonitor<String> POKE_WIRE_RADIX1;
   public static final PrefMonitor<String> POKE_WIRE_RADIX2;
@@ -638,87 +642,86 @@ public class AppPreferences {
 
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
-      create(new PrefMonitorInt("SimTrueColor",0x0000D200));
+      create(new PrefMonitorInt("SimTrueColor", 0x0000D200));
   public static final PrefMonitor<String> TRUE_CHAR =
-	  create(new PrefMonitorString("SimTrueChar","1 "));
+      create(new PrefMonitorString("SimTrueChar", "1 "));
   public static final PrefMonitor<Integer> FALSE_COLOR =
-	      create(new PrefMonitorInt("SimFalseColor",0x00006400));
+      create(new PrefMonitorInt("SimFalseColor", 0x00006400));
   public static final PrefMonitor<String> FALSE_CHAR =
-		  create(new PrefMonitorString("SimFalseChar","0 "));
+      create(new PrefMonitorString("SimFalseChar", "0 "));
   public static final PrefMonitor<Integer> UNKNOWN_COLOR =
-	      create(new PrefMonitorInt("SimUnknownColor",0x002828FF));
+      create(new PrefMonitorInt("SimUnknownColor", 0x002828FF));
   public static final PrefMonitor<String> UNKNOWN_CHAR =
-		  create(new PrefMonitorString("SimUnknownChar","U "));
+      create(new PrefMonitorString("SimUnknownChar", "U "));
   public static final PrefMonitor<Integer> ERROR_COLOR =
-	      create(new PrefMonitorInt("SimErrorColor",0x00C00000));
+      create(new PrefMonitorInt("SimErrorColor", 0x00C00000));
   public static final PrefMonitor<String> ERROR_CHAR =
-		  create(new PrefMonitorString("SimErrorChar","E "));
+      create(new PrefMonitorString("SimErrorChar", "E "));
   public static final PrefMonitor<Integer> NIL_COLOR =
-	      create(new PrefMonitorInt("SimNilColor",0x808080));
+      create(new PrefMonitorInt("SimNilColor", 0x808080));
   public static final PrefMonitor<String> DONTCARE_CHAR =
-		  create(new PrefMonitorString("SimDontCareChar","- "));
-  public static final PrefMonitor<Integer> BUS_COLOR =
-	      create(new PrefMonitorInt("SimBusColor",0));
+      create(new PrefMonitorString("SimDontCareChar", "- "));
+  public static final PrefMonitor<Integer> BUS_COLOR = create(new PrefMonitorInt("SimBusColor", 0));
   public static final PrefMonitor<Integer> STROKE_COLOR =
-	      create(new PrefMonitorInt("SimStrokeColor",0xff00ff));
+      create(new PrefMonitorInt("SimStrokeColor", 0xff00ff));
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
-	      create(new PrefMonitorInt("SimWidthErrorColor",0xFF7B00));
+      create(new PrefMonitorInt("SimWidthErrorColor", 0xFF7B00));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
-	      create(new PrefMonitorInt("SimWidthErrorCaptionColor",0x550000));
+      create(new PrefMonitorInt("SimWidthErrorCaptionColor", 0x550000));
   public static final PrefMonitor<Integer> WIDTH_ERROR_HIGHLIGHT_COLOR =
-	      create(new PrefMonitorInt("SimWidthErrorHighlightColor",0xFFFF00));
+      create(new PrefMonitorInt("SimWidthErrorHighlightColor", 0xFFFF00));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
-	      create(new PrefMonitorInt("SimWidthErrorBackgroundColor",0xFFE6D2));
+      create(new PrefMonitorInt("SimWidthErrorBackgroundColor", 0xFFE6D2));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
-	      create(new PrefMonitorInt("KMAPColor1",0x800000));
+      create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
-	      create(new PrefMonitorInt("KMAPColor2",0xE6194B));
+      create(new PrefMonitorInt("KMAPColor2", 0xE6194B));
   public static final PrefMonitor<Integer> KMAP3_COLOR =
-	      create(new PrefMonitorInt("KMAPColor3",0xFABEBE));
+      create(new PrefMonitorInt("KMAPColor3", 0xFABEBE));
   public static final PrefMonitor<Integer> KMAP4_COLOR =
-	      create(new PrefMonitorInt("KMAPColor4",0xAA6E28));
+      create(new PrefMonitorInt("KMAPColor4", 0xAA6E28));
   public static final PrefMonitor<Integer> KMAP5_COLOR =
-	      create(new PrefMonitorInt("KMAPColor5",0xF58230));
+      create(new PrefMonitorInt("KMAPColor5", 0xF58230));
   public static final PrefMonitor<Integer> KMAP6_COLOR =
-	      create(new PrefMonitorInt("KMAPColor6",0xFFD7B4));
+      create(new PrefMonitorInt("KMAPColor6", 0xFFD7B4));
   public static final PrefMonitor<Integer> KMAP7_COLOR =
-	      create(new PrefMonitorInt("KMAPColor7",0x808000));
+      create(new PrefMonitorInt("KMAPColor7", 0x808000));
   public static final PrefMonitor<Integer> KMAP8_COLOR =
-	      create(new PrefMonitorInt("KMAPColor8",0xFFFF19));
+      create(new PrefMonitorInt("KMAPColor8", 0xFFFF19));
   public static final PrefMonitor<Integer> KMAP9_COLOR =
-	      create(new PrefMonitorInt("KMAPColor9",0xD2F53C));
+      create(new PrefMonitorInt("KMAPColor9", 0xD2F53C));
   public static final PrefMonitor<Integer> KMAP10_COLOR =
-	      create(new PrefMonitorInt("KMAPColor10",0x000080));
+      create(new PrefMonitorInt("KMAPColor10", 0x000080));
   public static final PrefMonitor<Integer> KMAP11_COLOR =
-	      create(new PrefMonitorInt("KMAPColor11",0x911EB4));
+      create(new PrefMonitorInt("KMAPColor11", 0x911EB4));
   public static final PrefMonitor<Integer> KMAP12_COLOR =
-	      create(new PrefMonitorInt("KMAPColor12",0x3CB4AF));
+      create(new PrefMonitorInt("KMAPColor12", 0x3CB4AF));
   public static final PrefMonitor<Integer> KMAP13_COLOR =
-	      create(new PrefMonitorInt("KMAPColor13",0x0082CB));
+      create(new PrefMonitorInt("KMAPColor13", 0x0082CB));
   public static final PrefMonitor<Integer> KMAP14_COLOR =
-	      create(new PrefMonitorInt("KMAPColor14",0xE6BEFF));
+      create(new PrefMonitorInt("KMAPColor14", 0xE6BEFF));
   public static final PrefMonitor<Integer> KMAP15_COLOR =
-	      create(new PrefMonitorInt("KMAPColor15",0xAAFFC3));
+      create(new PrefMonitorInt("KMAPColor15", 0xAAFFC3));
   public static final PrefMonitor<Integer> KMAP16_COLOR =
-	      create(new PrefMonitorInt("KMAPColor16",0xF032E6));
+      create(new PrefMonitorInt("KMAPColor16", 0xF032E6));
 
   // FPGA commander colors
   public static final PrefMonitor<Integer> FPGA_DEFINE_COLOR =
-          create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGADefineColor", 0xFF0000));
   public static final PrefMonitor<Integer> FPGA_DEFINE_HIGHLIGHT_COLOR =
-          create(new PrefMonitorInt("FPGADefineHighlightColor", 0x00FF00));
+      create(new PrefMonitorInt("FPGADefineHighlightColor", 0x00FF00));
   public static final PrefMonitor<Integer> FPGA_DEFINE_RESIZE_COLOR =
-          create(new PrefMonitorInt("FPGADefineResizeColor", 0x00FFFF));
+      create(new PrefMonitorInt("FPGADefineResizeColor", 0x00FFFF));
   public static final PrefMonitor<Integer> FPGA_DEFINE_MOVE_COLOR =
-          create(new PrefMonitorInt("FPGADefineMoveColor", 0xFF00FF));
+      create(new PrefMonitorInt("FPGADefineMoveColor", 0xFF00FF));
   public static final PrefMonitor<Integer> FPGA_MAPPED_COLOR =
-          create(new PrefMonitorInt("FPGAMappedColor", 0x005000));
+      create(new PrefMonitorInt("FPGAMappedColor", 0x005000));
   public static final PrefMonitor<Integer> FPGA_SELECTED_MAPPED_COLOR =
-          create(new PrefMonitorInt("FPGASelectedMappedColor", 0xFF0000));
+      create(new PrefMonitorInt("FPGASelectedMappedColor", 0xFF0000));
   public static final PrefMonitor<Integer> FPGA_SELECTABLE_MAPPED_COLOR =
-          create(new PrefMonitorInt("FPGASelectableMappedColor", 0x00A000));
+      create(new PrefMonitorInt("FPGASelectableMappedColor", 0x00A000));
   public static final PrefMonitor<Integer> FPGA_SELECT_COLOR =
-          create(new PrefMonitorInt("FPGASelectColor", 0x0000FF));
+      create(new PrefMonitorInt("FPGASelectColor", 0x0000FF));
 
   // Experimental preferences
   public static final String ACCEL_DEFAULT = "default";
@@ -794,9 +797,9 @@ public class AppPreferences {
                   : 0)));
 
   public static void resetWindow() {
-	  WINDOW_MAIN_SPLIT.set(0.251);
-	  WINDOW_LEFT_SPLIT.set(0.51);
-	  WINDOW_RIGHT_SPLIT.set(0.751);
+    WINDOW_MAIN_SPLIT.set(0.251);
+    WINDOW_LEFT_SPLIT.set(0.51);
+    WINDOW_RIGHT_SPLIT.set(0.751);
   }
 
   public static final PrefMonitor<String> WINDOW_LOCATION =

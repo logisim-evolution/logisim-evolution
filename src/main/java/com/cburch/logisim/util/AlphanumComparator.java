@@ -29,6 +29,7 @@
  */
 
 package com.cburch.logisim.util;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class AlphanumComparator implements Comparator<String> {
     return ((ch >= 48) && (ch <= 57));
   }
 
-  /** Length of string is passed in for improved efficiency (only need to calculate it once) * */
+  /** Length of string is passed in for improved efficiency (only need to calculate it once). */
   private String getChunk(String s, int slength, int marker) {
     StringBuilder chunk = new StringBuilder();
     char c = s.charAt(marker);

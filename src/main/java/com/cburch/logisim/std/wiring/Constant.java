@@ -122,7 +122,7 @@ public class Constant extends InstanceFactory {
       int width = attrs.getValue(StdAttr.WIDTH).getWidth();
       Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
       for (int b = 0; b < width; b++) {
-        expressionMap.put(instance.getLocation(), b, Expressions.constant((int)v.get(b).toLongValue()));
+        expressionMap.put(instance.getLocation(), b, Expressions.constant((int) v.get(b).toLongValue()));
       }
     }
   }
@@ -225,8 +225,7 @@ public class Constant extends InstanceFactory {
     int piny = 9;
     Direction dir = painter.getAttributeValue(StdAttr.FACING);
     if (dir == Direction.EAST) {
-    } // keep defaults
-    else if (dir == Direction.WEST) {
+    } else if (dir == Direction.WEST) {
       pinx = 4;
     } else if (dir == Direction.NORTH) {
       pinx = 9;

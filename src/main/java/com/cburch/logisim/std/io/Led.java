@@ -107,7 +107,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer( 0, 1, 0 )
+          new ComponentMapInformationContainer(0, 1, 0)
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(false));

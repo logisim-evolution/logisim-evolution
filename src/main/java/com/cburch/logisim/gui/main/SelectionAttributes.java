@@ -309,7 +309,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         this.selected = newSel;
       }
     } else {
-      Attribute<?>[] oldAttrs = this.attrs;
+      final Attribute<?>[] oldAttrs = this.attrs;
       Object[] oldValues = this.values;
       Attribute<?>[] newAttrs = new Attribute[attrMap.size()];
       Object[] newValues = new Object[newAttrs.length];

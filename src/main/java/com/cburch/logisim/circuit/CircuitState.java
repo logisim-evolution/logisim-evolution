@@ -59,8 +59,8 @@ public class CircuitState implements InstanceData {
     public void circuitChanged(CircuitEvent event) {
       int action = event.getAction();
 
-      /* Component was added */
       if (action == CircuitEvent.ACTION_ADD) {
+        /* Component was added */
         Component comp = (Component) event.getData();
         if (comp instanceof Wire) {
           Wire w = (Wire) comp;
@@ -69,13 +69,10 @@ public class CircuitState implements InstanceData {
         } else {
           markComponentAsDirty(comp);
         }
-      }
-
-      /* Component was removed */
-      else if (action == CircuitEvent.ACTION_REMOVE) {
+      } else if (action == CircuitEvent.ACTION_REMOVE) {
+        /* Component was removed */
         Component comp = (Component) event.getData();
-        if (comp == temporaryClock)
-          temporaryClock = null;
+        if (comp == temporaryClock) temporaryClock = null;
         if (comp.getFactory() instanceof Clock) {
           knownClocks = false; // just in case, will be recomputed by simulator
         }
@@ -90,7 +87,7 @@ public class CircuitState implements InstanceData {
             substate.reset();
           }
         } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider)getData(comp)).destroy();
+          ((ComponentDataGuiProvider) getData(comp)).destroy();
         if (comp instanceof Wire) {
           Wire w = (Wire) comp;
           markPointAsDirty(w.getEnd0());
@@ -99,19 +96,18 @@ public class CircuitState implements InstanceData {
           if (base != null) base.checkComponentEnds(CircuitState.this, comp);
           dirtyComponents.remove(comp);
         }
-      }
-
-      /* Whole circuit was cleared */
-      else if (action == CircuitEvent.ACTION_CLEAR) {
+      } else if (action == CircuitEvent.ACTION_CLEAR) {
+        /* Whole circuit was cleared */
         temporaryClock = null;
         knownClocks = false;
         substates.clear();
         wireData = null;
         for (Component c : componentData.keySet()) {
-          if (componentData.get(c) != null && componentData.get(c) instanceof ComponentDataGuiProvider)
-            ((ComponentDataGuiProvider)componentData.get(c)).destroy();
+          if (componentData.get(c) != null
+              && componentData.get(c) instanceof ComponentDataGuiProvider)
+            ((ComponentDataGuiProvider) componentData.get(c)).destroy();
           else if (componentData.get(c) instanceof CircuitState) {
-            ((CircuitState)componentData.get(c)).reset();
+            ((CircuitState) componentData.get(c)).reset();
           }
         }
         componentData.clear();
@@ -119,9 +115,7 @@ public class CircuitState implements InstanceData {
         dirtyComponents.clear();
         dirtyPoints.clear();
         causes.clear();
-      }
-
-      else if (action == CircuitEvent.ACTION_INVALIDATE) {
+      } else if (action == CircuitEvent.ACTION_INVALIDATE) {
         Component comp = (Component) event.getData();
         markComponentAsDirty(comp);
         // If simulator is in single step mode, we want to hilight the
@@ -433,8 +427,8 @@ public class CircuitState implements InstanceData {
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
-    /*  it.remove(); ktt1: clear out the state instead of removing the key to prevent concurrent
-        modification error */
+        // it.remove(); ktt1: clear out the state instead of removing the key to
+        // prevent concurrent modification error
         componentData.put(comp, null);
       }
     }
@@ -474,8 +468,9 @@ public class CircuitState implements InstanceData {
         }
       }
     } else {
-      if (componentData.get(comp)!= null && componentData.get(comp) instanceof ComponentDataGuiProvider)
-        ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
+      if (componentData.get(comp) != null
+          && componentData.get(comp) instanceof ComponentDataGuiProvider)
+        ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
     }
     componentData.put(comp, data);
   }
@@ -531,7 +526,7 @@ public class CircuitState implements InstanceData {
     // temporaryClock.getFactory() will be Pin, normally a 1 bit input
     Pin pin;
     try {
-      pin = (Pin)temporaryClock.getFactory();
+      pin = (Pin) temporaryClock.getFactory();
     } catch (ClassCastException e) {
       temporaryClock = null;
       return false;
@@ -544,7 +539,7 @@ public class CircuitState implements InstanceData {
     if (ticks >= 0) {
       InstanceState state = getInstanceState(i);
       // Value v = pin.getValue(state);
-      pin.setValue(state, ticks%2==0 ? Value.FALSE : Value.TRUE);
+      pin.setValue(state, ticks % 2 == 0 ? Value.FALSE : Value.TRUE);
       state.fireInvalidated();
     }
     return true;

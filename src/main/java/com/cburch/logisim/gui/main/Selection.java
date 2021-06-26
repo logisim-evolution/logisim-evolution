@@ -80,26 +80,26 @@ public class Selection extends SelectionBase {
 
     for (Component c : lifted) {
       if (!hidden.contains(c)) {
-        Location loc = c.getLocation();
+        var loc = c.getLocation();
 
-        Graphics g_new = g.create();
-        context.setGraphics(g_new);
+        var gfxNew = g.create();
+        context.setGraphics(gfxNew);
         c.getFactory().drawGhost(context, Color.GRAY, loc.getX(), loc.getY(), c.getAttributeSet());
-        g_new.dispose();
+        gfxNew.dispose();
       }
     }
 
     for (Component comp : unionSet) {
       if (!suppressHandles.contains(comp) && !hidden.contains(comp)) {
-        Graphics g_new = g.create();
-        context.setGraphics(g_new);
+        var gfxNew = g.create();
+        context.setGraphics(gfxNew);
         CustomHandles handler = (CustomHandles) comp.getFeature(CustomHandles.class);
         if (handler == null) {
           context.drawHandles(comp);
         } else {
           handler.drawHandles(context);
         }
-        g_new.dispose();
+        gfxNew.dispose();
       }
     }
 

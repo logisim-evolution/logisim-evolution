@@ -57,25 +57,25 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
   private final JComboBox<String> quotes;
   private final JComboBox<String> seperators;
-  private final JButton OkBut;
-  private final JLabel[] JLabels;
+  private final JButton okButton;
+  private final JLabel[] labels;
   private final File file;
 
   private static final long serialVersionUID = 1L;
 
   private final CsvParameter param;
-  private final String SepSpace;
+  private final String sepSpace;
   private boolean setVisible;
 
   public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parentFrame) {
     super(parentFrame);
     setVisible = true;
     this.file = file;
-    SepSpace = S.get("seperatorSpace");
-    String[] PossibleSeperators = {",", ";", ":", SepSpace, S.get("SeperatorTab")};
-    String[] PossibleQuotes = {"\"", "'"};
-    OkBut = new JButton(S.get("ConfirmCsvParameters"));
-    OkBut.addActionListener(this);
+    sepSpace = S.get("seperatorSpace");
+    final String[] PossibleSeperators = {",", ";", ":", sepSpace, S.get("SeperatorTab")};
+    final String[] PossibleQuotes = {"\"", "'"};
+    okButton = new JButton(S.get("ConfirmCsvParameters"));
+    okButton.addActionListener(this);
     quotes = new JComboBox<>(PossibleQuotes);
     quotes.addActionListener(this);
     seperators = new JComboBox<>(PossibleSeperators);
@@ -109,17 +109,17 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     int celwidth = AppPreferences.getScaled(200);
     int celHeight = AppPreferences.getScaled(25);
     c.gridwidth = 1;
-    JLabels = new JLabel[16];
+    labels = new JLabel[16];
     Border border = BorderFactory.createLineBorder(Color.BLACK, AppPreferences.getScaled(1));
     Dimension dim = new Dimension(celwidth, celHeight);
     for (int x = 0; x < 4; x++)
       for (int y = 0; y < 4; y++) {
         JPanel j = new JPanel();
-        JLabels[y * 4 + x] = new JLabel(x + "," + y);
+        labels[y * 4 + x] = new JLabel(x + "," + y);
         j.setBorder(border);
         j.setBackground(Color.WHITE);
         j.setPreferredSize(dim);
-        j.add(JLabels[y * 4 + x]);
+        j.add(labels[y * 4 + x]);
         c.gridx = x;
         c.gridy = 3 + y;
         add(j, c);
@@ -127,7 +127,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     c.gridwidth = 4;
     c.gridy = 7;
     c.gridx = 0;
-    add(OkBut, c);
+    add(okButton, c);
     pack();
     updateLabels();
     setModal(true);
@@ -142,8 +142,8 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
         if (scan.hasNext())
           line = CsvInterpretor.parseCsvLine(scan.next(), param.seperator(), param.quote());
         for (int x = 0; x < 4; x++) {
-          if (line == null || x >= line.size()) JLabels[y * 4 + x].setText("");
-          else JLabels[y * 4 + x].setText(line.get(x));
+          if (line == null || x >= line.size()) labels[y * 4 + x].setText("");
+          else labels[y * 4 + x].setText(line.get(x));
         }
       }
       scan.close();
@@ -173,12 +173,12 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
       String sel = (String) seperators.getSelectedItem();
       if (sel.length() == 1) {
         param.setSeperator(sel.charAt(0));
-      } else if (sel.equals(SepSpace)) {
+      } else if (sel.equals(sepSpace)) {
         param.setSeperator(' ');
       } else param.setSeperator('\t');
       updateLabels();
     }
-    if (e.getSource() == OkBut) {
+    if (e.getSource() == okButton) {
       param.setValid();
       setVisible(false);
       dispose();

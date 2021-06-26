@@ -69,8 +69,8 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   public static final String _ID = "Rv32im";
 
   public Rv32im_riscv() {
-    super(_ID, S.getter("Rv32imComponent"),SocMaster);
-    setIcon(new ArithmeticIcon("uP",2));
+    super(_ID, S.getter("Rv32imComponent"), SocMaster);
+    setIcon(new ArithmeticIcon("uP", 2));
     setOffsetBounds(Bounds.create(0, 0, 640, 640));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);
   }
@@ -95,14 +95,14 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
 
   private void updatePorts(Instance instance) {
     int NrOfIrqs = instance.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs();
-    Port[] ps = new Port[NrOfIrqs+2];
-    ps[0] = new Port(0,610,Port.INPUT,1);
+    Port[] ps = new Port[NrOfIrqs + 2];
+    ps[0] = new Port(0, 610, Port.INPUT, 1);
     ps[0].setToolTip(S.getter("Rv32imResetInput"));
-    ps[1] = new Port(0,630,Port.INPUT,1);
+    ps[1] = new Port(0, 630, Port.INPUT, 1);
     ps[1].setToolTip(S.getter("Rv32imClockInput"));
-    for (int i = 0 ; i < NrOfIrqs ; i++) {
-      ps[i+2] = new Port(0,10+i*10,Port.INPUT,1);
-      ps[i+2].setToolTip(S.getter("Rv32imIrqInput", Integer.toString(i)));
+    for (int i = 0; i < NrOfIrqs; i++) {
+      ps[i + 2] = new Port(0, 10 + i * 10, Port.INPUT, 1);
+      ps[i + 2].setToolTip(S.getter("Rv32imIrqInput", Integer.toString(i)));
     }
     instance.setPorts(ps);
   }
@@ -135,44 +135,61 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   @Override
   public void paintInstance(InstancePainter painter) {
     Location loc = painter.getLocation();
-    Graphics2D g2 = (Graphics2D)painter.getGraphics();
+    Graphics2D g2 = (Graphics2D) painter.getGraphics();
     painter.drawBounds();
     painter.drawLabel();
     painter.drawClock(1, Direction.EAST);
     painter.drawPort(0, "Reset", Direction.EAST);
-    for (int i = 0 ; i < painter.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs() ; i++) {
-      painter.drawPort(i+2, "IRQ"+i, Direction.EAST);
+    for (int i = 0; i < painter.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs(); i++) {
+      painter.drawPort(i + 2, "IRQ" + i, Direction.EAST);
     }
     Font f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX()+320, loc.getY()+630);
+    GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX() + 320, loc.getY() + 630);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2,
-    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(),
-    				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
+    painter
+        .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
+        .paint(
+            g2,
+            Bounds.create(
+                loc.getX() + CpuDrawSupport.busConBounds.getX(),
+                loc.getY() + CpuDrawSupport.busConBounds.getY(),
+                CpuDrawSupport.busConBounds.getWidth(),
+                CpuDrawSupport.busConBounds.getHeight()));
     RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
-    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISIBLE), painter.getData());
+    state.paint(
+        loc.getX(),
+        loc.getY(),
+        g2,
+        painter.getInstance(),
+        painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISIBLE),
+        painter.getData());
   }
 
   @Override
   public void propagate(InstanceState state) {
     RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData();
-	if (data == null) {
-	  data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
-	  state.setData(data);
-	}
-	if (state.getPortValue(0) == Value.TRUE)
-	  data.reset();
-	else
-	  data.setClock(state.getPortValue(1), ((InstanceStateImpl)state).getCircuitState());
+    if (data == null) {
+      data =
+          state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
+      state.setData(data);
+    }
+    if (state.getPortValue(0) == Value.TRUE)
+      data.reset();
+    else
+      data.setClock(state.getPortValue(1), ((InstanceStateImpl) state).getCircuitState());
   }
 
   @Override
-  public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) { return null; }
+  public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) {
+    return null;
+  }
 
   @Override
-  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) { return null; }
+  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) {
+    return null;
+  }
 
   @Override
   public SocProcessorInterface getProcessorInterface(AttributeSet attrs) {
@@ -180,6 +197,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   }
 
   @Override
-  public DynamicElement createDynamicElement(int x, int y, Path path) { return new SocCPUShape(x,y,path); }
-
+  public DynamicElement createDynamicElement(int x, int y, Path path) {
+    return new SocCPUShape(x, y, path);
+  }
 }

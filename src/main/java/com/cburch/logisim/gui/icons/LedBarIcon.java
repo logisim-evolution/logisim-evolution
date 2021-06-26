@@ -41,7 +41,8 @@ public class LedBarIcon extends AnimatedIcon {
     g2.setColor(Color.DARK_GRAY);
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
 
-    Color col1, col2;
+    Color col1;
+    Color col2;
     switch (state) {
       case 0:
         col1 = Color.gray;

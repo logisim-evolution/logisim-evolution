@@ -1,5 +1,8 @@
-Logisim-evolution
-=================
+![Logisim-evolution](src/main/resources/resources/logisim/img/logisim-evolution-logo.svg)
+
+# Digital logic designer and simulator #
+
+
 
 Branch [`master`](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
 
@@ -117,6 +120,11 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 
 ## Code style
 
+Source code should follow "Google Java" code style (this is still work in progress), therefore Logisim-evolution
+comes with CheckStyle configuration that you can apply to ensure your contributions follows the standard as well.
+Please see [docs/style.md](docs/style.md) for more information how to use CheckStyle with Gradle
+and with InteliJ-IDEA plugin.
+
 All of Logisim's Java files have been formatted using [`google-java-format`](https://github.com/google/google-java-format). If you are using [Eclipse](https://www.eclipse.org/), there is a [plugin](https://github.com/google/google-java-format#eclipse) available to enforce this formatting. If you are using [InteliJ IDEA](https://www.jetbrains.com/idea/), the corresponding plugin is available via its [Marketplace](https://plugins.jetbrains.com/plugin/8527-google-java-format).
 Code style to use is `Default Google java style`.
 
@@ -126,6 +134,8 @@ Code style to use is `Default Google java style`.
 [Here](http://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf) you can find a tutorial (French version [here](http://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
 
 Another good reference is [this book](https://github.com/grself/CIS221_Text/raw/master/dl.pdf), the accompanying [lab manual](https://github.com/grself/CIS221_Lab_Manual/raw/master/dl_lab.pdf), and [YouTube channel](http://bit.ly/2KLMcoc), where basic electronics is explained with the help of Logisim.
+
+Some circuit examples, ranging from simple combinational and sequential logic to advanced datapaths, that are useful for teaching and learning computer organization topics can be found [here](https://github.com/mkayaalp/computer-organization-logisim).
 
 
 ## Development

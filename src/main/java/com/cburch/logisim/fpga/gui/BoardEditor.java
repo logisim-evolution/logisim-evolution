@@ -55,7 +55,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class BoardEditor implements ActionListener, ComponentListener, 
+public class BoardEditor implements ActionListener, ComponentListener,
         LocaleListener, BoardManipulatorListener {
 
   private final JFrame panel;
@@ -108,13 +108,13 @@ public class BoardEditor implements ActionListener, ComponentListener,
     cancelButton.setActionCommand(CancelStr);
     cancelButton.addActionListener(this);
     ButtonPanel.add(cancelButton, gbc);
-    
+
     gbc.gridx = 1;
     gbc.gridy = 1;
     fpgaButton.setActionCommand(FPGAStr);
     fpgaButton.addActionListener(this);
     fpgaButton.setEnabled(false);
-    ButtonPanel.add(fpgaButton,gbc);
+    ButtonPanel.add(fpgaButton, gbc);
 
     gbc.gridx = 2;
     gbc.gridy = 1;
@@ -128,7 +128,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
     ButtonPanel.add(loadButton, gbc);
-    
+
     gbc.gridx = 4;
     importButton.setActionCommand("internal");
     importButton.addActionListener(this);
@@ -205,24 +205,30 @@ public class BoardEditor implements ActionListener, ComponentListener,
         String Board = getInternalBoardName();
         if (Board != null) {
           BoardReaderClass reader = new BoardReaderClass(
-              AppPreferences.Boards.GetBoardFilePath(Board));
+              AppPreferences.Boards.getBoardFilePath(Board));
           UpdateInfo(reader);
         }
         break;
     }
   }
-  
+
   private void UpdateInfo(BoardReaderClass reader) {
     TheBoard = reader.GetBoardInformation();
     picturepanel.setBoard(TheBoard);
     picturepanel.repaint();
   }
-  
+
   private String getInternalBoardName() {
-    ArrayList<String> boards = AppPreferences.Boards.GetBoardNames();
-    return (String)OptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
-        S.get("FpgaBoardLoadInternal"), OptionPane.PLAIN_MESSAGE, null,
-        boards.toArray(),boards.get(0));
+    ArrayList<String> boards = AppPreferences.Boards.getBoardNames();
+    return (String)
+        OptionPane.showInputDialog(
+            panel,
+            S.get("FpgaBoardSelect"),
+            S.get("FpgaBoardLoadInternal"),
+            OptionPane.PLAIN_MESSAGE,
+            null,
+            boards.toArray(),
+            boards.get(0));
   }
 
   private String checkIfEndsWithSlash(String path) {
@@ -268,7 +274,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
     }
     return old;
   }
-  
+
   public JFrame GetPanel() {
     return panel;
   }
@@ -276,7 +282,7 @@ public class BoardEditor implements ActionListener, ComponentListener,
   public boolean isActive() {
     return panel.isVisible();
   }
-  
+
   public void setActive() {
     this.clear();
     panel.setVisible(true);

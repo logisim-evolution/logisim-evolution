@@ -77,8 +77,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     ArrayList<String> Contents = new ArrayList<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
-      Contents.addAll(
-          MakeRemarkBlock("Here gate " + i + " is described", 3));
+      Contents.addAll(MakeRemarkBlock("Here gate " + i + " is described", 3));
       Contents.addAll(GetLogicFunction(i));
     }
     return Contents;

@@ -77,6 +77,7 @@ public class AttrTable extends JPanel implements LocaleListener {
   private final TableModelAdapter tableModel;
   private final CellEditor editor = new CellEditor();
   private boolean titleEnabled;
+
   public AttrTable(Window parent) {
     super(new BorderLayout());
     this.parent = parent;

@@ -111,7 +111,7 @@ public class bin2bcd extends InstanceFactory {
         (state.getPortValue(BINin).isFullyDefined()
                 & !state.getPortValue(BINin).isUnknown()
                 & !state.getPortValue(BINin).isErrorValue()
-            ? (int)state.getPortValue(BINin).toLongValue()
+            ? (int) state.getPortValue(BINin).toLongValue()
             : -1);
     BitWidth NrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(Math.pow(2.0, NrOfBits.getWidth())) + 1.0);

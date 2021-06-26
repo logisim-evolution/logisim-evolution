@@ -51,15 +51,15 @@ public class PioMenu implements ActionListener, MenuExtender {
   private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
-  
+
   public PioMenu(Instance inst) {
     instance = inst;
   }
-  
+
   @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     this.frame = proj.getFrame();
-    exportC = SocSupport.createItem(this,S.get("ExportC"));
+    exportC = SocSupport.createItem(this, S.get("ExportC"));
     menu.addSeparator();
     menu.add(exportC);
   }
@@ -79,58 +79,68 @@ public class PioMenu implements ActionListener, MenuExtender {
       PioState myState = instance.getAttributeValue(PioAttributes.PIO_STATE);
       if (myState == null)
         throw new NullPointerException("BUG in PioMenu.java");
-      String compName = myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
-      String headerFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".h";
-      String cFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".c";
+      String compName =
+          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
+      String headerFileName =
+          fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
+      String cFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".c";
       FileWriter headerFile = null;
       FileWriter cFile = null;
       try {
-        headerFile = new FileWriter(headerFileName,false);
+        headerFile = new FileWriter(headerFileName, false);
       } catch (IOException e) {
-    	headerFile = null;
+        headerFile = null;
       }
       try {
-        cFile = new FileWriter(cFileName,false);
+        cFile = new FileWriter(cFileName, false);
       } catch (IOException e) {
         cFile = null;
       }
       if (headerFile == null || cFile == null) {
-        OptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            frame,
+            S.get("ErrorCreatingHeaderAndOrCFile"),
+            S.get("ExportC"),
+            OptionPane.ERROR_MESSAGE);
         return;
       }
       PrintWriter headerWriter = new PrintWriter(headerFile);
       PrintWriter cWriter = new PrintWriter(cFile);
       headerWriter.println("/* Logisim automatically generated file for a PIO-component */\n");
       cWriter.println("/* Logisim automatically generated file for a PIO-component */\n");
-      headerWriter.println("#ifndef __"+compName+"_H__");
-      headerWriter.println("#define __"+compName+"_H__");
+      headerWriter.println("#ifndef __" + compName + "_H__");
+      headerWriter.println("#define __" + compName + "_H__");
       headerWriter.println();
       int base = myState.getStartAddress();
       int nrBits = myState.getNrOfIOs().getWidth();
       String functName;
       if (myState.getPortDirection() != PioAttributes.PORT_INPUT) {
-    	  functName = "OutputValue";
-          headerWriter.println(S.fmt("PioMenuOutputDataFunctionRemark",Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,0,true);
-          headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,0,false);
+        functName = "OutputValue";
+        headerWriter.println(S.fmt("PioMenuOutputDataFunctionRemark", Integer.toString(nrBits)));
+        SocSupport.addSetterFunction(headerWriter, compName, functName, base, 0, true);
+        headerWriter.println();
+        SocSupport.addSetterFunction(cWriter, compName, functName, base, 0, false);
       }
       if (myState.getPortDirection() != PioAttributes.PORT_OUTPUT) {
         functName = "InputValue";
-        headerWriter.println(S.fmt("PioMenuInputDataFunctionRemark",Integer.toString(nrBits)));
-        SocSupport.addGetterFunction(headerWriter,compName,functName,base,0,true);
+        headerWriter.println(S.fmt("PioMenuInputDataFunctionRemark", Integer.toString(nrBits)));
+        SocSupport.addGetterFunction(headerWriter, compName, functName, base, 0, true);
         headerWriter.println();
-        SocSupport.addGetterFunction(cWriter,compName,functName,base,0,false);
+        SocSupport.addGetterFunction(cWriter, compName, functName, base, 0, false);
         if (myState.getPortDirection() == PioAttributes.PORT_BIDIR) {
           functName = "DirectionReg";
           headerWriter.println(S.fmt("PioMenuBidirFunctionsRemark", Integer.toString(nrBits)));
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,2);
+          SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 2);
         }
         if (myState.inputGeneratesIrq()) {
           functName = "IrqMaskReg";
-          String reactName = myState.getIrqType() == PioAttributes.IRQ_EDGE ? S.get("PioMenuIrqEdge") : S.get("PioMenuIrqLevel");
-          headerWriter.println(S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));          
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,2);
+          String reactName =
+              myState.getIrqType() == PioAttributes.IRQ_EDGE
+                  ? S.get("PioMenuIrqEdge")
+                  : S.get("PioMenuIrqLevel");
+          headerWriter.println(
+              S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));
+          SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 2);
         }
         if (myState.inputIsCapturedSynchronisely()) {
           functName = "EdgeCapturReg";
@@ -139,28 +149,33 @@ public class PioMenu implements ActionListener, MenuExtender {
             EdgeName = S.get("PioMenuCaptureRising");
           if (myState.getInputCaptureEdge() == PioAttributes.CAPT_FALLING)
             EdgeName = S.get("PioMenuCaptureFalling");
-          String ClearName = myState.inputCaptureSupportsBitClearing() ? S.get("PioMenuCaptureBit") : S.get("PioMenuCaptureAll");
-          headerWriter.println(S.fmt("PioMenuEdgeCaptureRemark", EdgeName, ClearName, Integer.toString(nrBits)));
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,3);
+          String ClearName =
+              myState.inputCaptureSupportsBitClearing()
+                  ? S.get("PioMenuCaptureBit")
+                  : S.get("PioMenuCaptureAll");
+          headerWriter.println(
+              S.fmt("PioMenuEdgeCaptureRemark", EdgeName, ClearName, Integer.toString(nrBits)));
+          SocSupport.addAllFunctions(headerWriter, cWriter, compName, functName, base, 3);
         }
         if (myState.outputSupportsBitManipulations()) {
           functName = "OutsetReg";
           headerWriter.println(S.fmt("PioMenuOutSetRemark", Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,4,true);
+          SocSupport.addSetterFunction(headerWriter, compName, functName, base, 4, true);
           headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,4,false);
+          SocSupport.addSetterFunction(cWriter, compName, functName, base, 4, false);
           functName = "OutclearReg";
           headerWriter.println(S.fmt("PioMenuOutClearRemark", Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,5,true);
+          SocSupport.addSetterFunction(headerWriter, compName, functName, base, 5, true);
           headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,5,false);
+          SocSupport.addSetterFunction(cWriter, compName, functName, base, 5, false);
         }
       }
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();
-      OptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
+      OptionPane.showMessageDialog(
+          frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
-  
+
 }

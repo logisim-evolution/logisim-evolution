@@ -39,24 +39,26 @@ import java.util.ArrayList;
 
 public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterface {
 
-  private final static int INSTR_ROL = 0;
-  private final static int INSTR_ROR = 1;
-  private final static int INSTR_SLL = 2;
-  private final static int INSTR_SRA = 3;
-  private final static int INSTR_SRL = 4;
-  private final static int INSTR_ROLI = 5;
-  private final static int INSTR_SLLI = 6;
-  private final static int INSTR_SRAI = 7;
-  private final static int INSTR_SRLI = 8;
+  private static final int INSTR_ROL = 0;
+  private static final int INSTR_ROR = 1;
+  private static final int INSTR_SLL = 2;
+  private static final int INSTR_SRA = 3;
+  private static final int INSTR_SRL = 4;
+  private static final int INSTR_ROLI = 5;
+  private static final int INSTR_SLLI = 6;
+  private static final int INSTR_SRAI = 7;
+  private static final int INSTR_SRLI = 8;
 
-  private final static String[] AsmOpcodes = {"ROL","ROR","SLL","SRA","SRL",
-                                              "ROLI","SLLI","SRAI","SRLI" };
-  private final static Integer[] AsmOpxs = {0x03,0x0B,0x13,0x3B,0x1B,
-                                            0x02,0x12,0x3A,0x1A };
+  private static final String[] AsmOpcodes = {
+      "ROL", "ROR", "SLL", "SRA", "SRL",
+      "ROLI", "SLLI", "SRAI", "SRLI" };
+  private static final Integer[] AsmOpxs = {
+      0x03, 0x0B, 0x13, 0x3B, 0x1B,
+      0x02, 0x12, 0x3A, 0x1A };
 
   private final ArrayList<String> Opcodes = new ArrayList<>();
   private final ArrayList<Integer> OpxCodes = new ArrayList<>();
-  
+
   private int instruction;
   private boolean valid;
   private int operation;
@@ -64,47 +66,57 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
   private int sourceA;
   private int sourceB;
   private int sourceC;
-  
+
   public Nios2ShiftAndRotateInstructions() {
-    for (int i = 0 ; i < AsmOpcodes.length ; i++) {
+    for (int i = 0; i < AsmOpcodes.length; i++) {
       Opcodes.add(AsmOpcodes[i].toLowerCase());
       OpxCodes.add(AsmOpxs[i]);
     }
   }
- 
+
   @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
     Nios2State.ProcessorState cpuState = (Nios2State.ProcessorState) processorState;
-    int imm = cpuState.getRegisterValue(sourceB)&0x1F;
+    int imm = cpuState.getRegisterValue(sourceB) & 0x1F;
     int valueA = cpuState.getRegisterValue(sourceA);
     int result = 0;
     switch (operation) {
-      case INSTR_ROLI : imm = immediate&0x1F;
-                        // fall through
-      case INSTR_ROL  : long opp = SocSupport.convUnsignedInt(valueA) << imm;
-                        opp |= (opp>>32);
-                        result =SocSupport.convUnsignedLong(opp);
-                        break;
-      case INSTR_ROR  : opp = SocSupport.convUnsignedInt(valueA)<<(32-imm);
-                        opp |= (opp>>32);
-                        result =SocSupport.convUnsignedLong(opp);
-    		                break;
-      case INSTR_SLLI : imm = immediate&0x1F;
-                        // fall through
-      case INSTR_SLL  : result = valueA << imm;
-                        break;
-      case INSTR_SRAI : imm = immediate&0x1F;
-                        // fall through
-      case INSTR_SRA  : result = valueA >> imm;
-                        break;
-      case INSTR_SRLI : imm = immediate&0x1F;
-                        // fall through
-      case INSTR_SRL  : long opA = SocSupport.convUnsignedInt(valueA);
-                        opA >>= imm;
-                        result = SocSupport.convUnsignedLong(opA);
-                        break;
-      default         : return false;
+      case INSTR_ROLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_ROL:
+        long opp = SocSupport.convUnsignedInt(valueA) << imm;
+        opp |= (opp >> 32);
+        result = SocSupport.convUnsignedLong(opp);
+        break;
+      case INSTR_ROR:
+        opp = SocSupport.convUnsignedInt(valueA) << (32 - imm);
+        opp |= (opp >> 32);
+        result = SocSupport.convUnsignedLong(opp);
+        break;
+      case INSTR_SLLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SLL:
+        result = valueA << imm;
+        break;
+      case INSTR_SRAI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SRA:
+        result = valueA >> imm;
+        break;
+      case INSTR_SRLI:
+        imm = immediate & 0x1F;
+        // fall through
+      case INSTR_SRL:
+        long opA = SocSupport.convUnsignedInt(valueA);
+        opA >>= imm;
+        result = SocSupport.convUnsignedLong(opA);
+        break;
+      default:
+        return false;
     }
     cpuState.writeRegister(sourceC, result);
     return true;
@@ -125,7 +137,9 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
     return s.toString();
   }
 
-  public int getBinInstruction() { return instruction; }
+  public int getBinInstruction() {
+    return instruction;
+  }
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
@@ -158,8 +172,9 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
       sourceB = Nios2Support.getRegisterIndex(instr, 2);
     }
     if (valid) {
-      instruction = Nios2Support.getRTypeInstructionCode(sourceA, sourceB, sourceC, OpxCodes.get(operation), 
-                                                         immediate);
+      instruction =
+          Nios2Support.getRTypeInstructionCode(
+              sourceA, sourceB, sourceC, OpxCodes.get(operation), immediate);
       instr.setInstructionByteCode(instruction, 4);
     }
     return true;
@@ -179,24 +194,30 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
       valid = false;
     }
     operation = OpxCodes.indexOf(opx);
-    if ((operation < INSTR_ROLI && immediate != 0) ||
-        (operation >= INSTR_ROLI && sourceB != 0)) {
+    if ((operation < INSTR_ROLI && immediate != 0) || (operation >= INSTR_ROLI && sourceB != 0)) {
       valid = false;
     }
     return valid;
   }
 
-  public boolean performedJump() { return false; }
-  public boolean isValid() { return valid; }
-  public String getErrorMessage() { return null; }
+  public boolean performedJump() {
+    return false;
+  }
+
+  public boolean isValid() {
+    return valid;
+  }
+
+  public String getErrorMessage() {
+    return null;
+  }
 
   public ArrayList<String> getInstructions() {
     return Opcodes;
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-	if (Opcodes.contains(instruction.toLowerCase())) return 4;
+    if (Opcodes.contains(instruction.toLowerCase())) return 4;
     return -1;
   }
-
 }

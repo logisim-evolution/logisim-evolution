@@ -87,7 +87,7 @@ public class Demultiplexer extends InstanceFactory {
             new BitWidthConfigurator(PlexersLibrary.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new PlexerIcon(true,false));
+    setIcon(new PlexerIcon(true, false));
   }
 
   @Override
@@ -297,7 +297,7 @@ public class Demultiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = (int)sel.toLongValue();
+        outIndex = (int) sel.toLongValue();
         out = state.getPortValue(outputs + (enable ? 2 : 1));
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

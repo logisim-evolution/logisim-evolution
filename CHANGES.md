@@ -1,4 +1,5 @@
 * @dev (????-??-??)
+  * Introducing project logo 
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
   * Made pins' tooltips more descriptive for 74161.
@@ -14,6 +15,7 @@
   * Replace DarkLaf with FlatLaf for better compatibility.
   * Adds "Rotate Left" context menu action.
   * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
+  * Project "Dirty" state is now also refrected in window title with "*" marker.
   * Tons of code cleanup and internal improvements.
 
 * v3.5.0 (2021-05-25)

@@ -52,8 +52,9 @@ public class NetlistComponent {
     CompReference = Ref;
     Ends = new ArrayList<>();
     for (int i = 0; i < Ref.getEnds().size(); i++) {
-      Ends.add( new ConnectionEnd( Ref.getEnd(i).isOutput(), 
-                (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
+      Ends.add(
+          new ConnectionEnd(
+              Ref.getEnd(i).isOutput(), (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
     }
     if (Ref.getAttributeSet().containsAttribute(StdAttr.MAPINFO)) {
       MyMapInformation = Ref.getAttributeSet().getValue(StdAttr.MAPINFO).clone();
@@ -164,7 +165,7 @@ public class NetlistComponent {
   }
 
   public BubbleInformationContainer GetGlobalBubbleId(ArrayList<String> HierarchyName) {
-	if (GlobalIds == null) return null;
+    if (GlobalIds == null) return null;
     return GlobalIds.getOrDefault(HierarchyName, null);
   }
 
@@ -263,6 +264,11 @@ public class NetlistComponent {
     }
   }
 
-  public boolean IsGatedInstance() { return IsGatedInstance; }
-  public void SetIsGatedInstance() { IsGatedInstance = true; }
+  public boolean IsGatedInstance() {
+    return IsGatedInstance;
+  }
+
+  public void SetIsGatedInstance() {
+    IsGatedInstance = true;
+  }
 }

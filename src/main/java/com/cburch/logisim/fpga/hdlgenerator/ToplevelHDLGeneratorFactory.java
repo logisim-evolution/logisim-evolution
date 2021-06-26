@@ -68,7 +68,8 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           new TickComponentHDLGeneratorFactory(
               FpgaClockFrequency, TickFrequency);
       Components.addAll(
-          Ticker.GetComponentInstantiation(TheNetlist, null, Ticker.getComponentStringIdentifier()));
+          Ticker.GetComponentInstantiation(
+              TheNetlist, null, Ticker.getComponentStringIdentifier()));
       HDLGeneratorFactory ClockWorker =
           TheNetlist.GetAllClockSources()
               .get(0)

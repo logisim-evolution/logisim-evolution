@@ -76,9 +76,9 @@ public class WiringLibrary extends Library {
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Power.class, S.getter("powerComponent"), "power.gif"),
     new FactoryDescription(Ground.class, S.getter("groundComponent"), "ground.gif"),
-    new FactoryDescription(DoNotConnect.class, S.getter("noConnectionComponent"),"noconnect.gif"),
+    new FactoryDescription(DoNotConnect.class, S.getter("noConnectionComponent"), "noconnect.gif"),
     new FactoryDescription(Transistor.class, S.getter("transistorComponent"), "trans0.gif"),
-    new FactoryDescription(TransmissionGate.class, S.getter("transmissionGateComponent"),"transmis.gif"),
+    new FactoryDescription(TransmissionGate.class, S.getter("transmissionGateComponent"), "transmis.gif"),
     new FactoryDescription(BitExtender.class, S.getter("extenderComponent"), "extender.gif"),
   };
 

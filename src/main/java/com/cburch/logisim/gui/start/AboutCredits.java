@@ -30,214 +30,242 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.Main;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Paint;
+import java.awt.image.ImageObserver;
 import java.net.URL;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 class AboutCredits extends JComponent {
   private static final long serialVersionUID = 1L;
-  /** Time to spend freezing the credits before after after scrolling */
-  private static final int MILLIS_FREEZE = 1000;
-  /** Speed of how quickly the scrolling occurs */
-  private static final int MILLIS_PER_PIXEL = 20;
+  /** Speed of how quickly the scrolling occurs. */
+  private static final int MILLIS_PER_RASTER = 20;
+
   /**
    * Path to Hendrix College's logo - if you want your own logo included, please add it separately
    * rather than replacing this.
    */
-  private static final String HENDRIX_PATH = "resources/logisim/hendrix.png";
-  private static final int HENDRIX_WIDTH = 50;
-  private final Color[] colorBase;
-  private final Paint[] paintSteady;
-  private final Font[] font;
-  private final float fadeStop;
-  private final ArrayList<CreditsLine> lines;
-  private int scroll;
-  private int initialLines; // number of lines to show in initial freeze
-  private int initialHeight; // computed in code based on above
-  private int linesHeight; // computed in code based on above
-  public AboutCredits() {
-    scroll = 0;
-    setOpaque(false);
+  private static final String HENDRIX_LOGO_PATH = "resources/logisim/hendrix.png";
 
-    int prefWidth = About.IMAGE_WIDTH + 2 * About.IMAGE_BORDER;
-    int prefHeight = About.IMAGE_HEIGHT / 2 + About.IMAGE_BORDER;
-    setPreferredSize(new Dimension(prefWidth, prefHeight));
+  private final Lines lines;
 
-    fadeStop = (float) (About.IMAGE_HEIGHT / 4.0);
-
-    colorBase =
-        new Color[] {
-          new Color(143, 0, 0), new Color(48, 0, 96), new Color(48, 0, 96),
-        };
-    font =
-        new Font[] {
-          new Font("Sans Serif", Font.ITALIC, 20),
-          new Font("Sans Serif", Font.BOLD, 24),
-          new Font("Sans Serif", Font.BOLD, 18),
-        };
-    paintSteady = new Paint[colorBase.length];
-    for (int i = 0; i < colorBase.length; i++) {
-      Color hue = colorBase[i];
-      paintSteady[i] = new GradientPaint(0.0f, 0.0f, derive(hue, 0), 0.0f, fadeStop, hue);
-    }
-
-    URL url = AboutCredits.class.getClassLoader().getResource(HENDRIX_PATH);
-    Image hendrixLogo = null;
-    if (url != null) {
-      hendrixLogo = getToolkit().createImage(url);
-    }
-
-    // Logisim's policy concerning who is given credit:
-    // Past contributors are not acknowledged in the About dialog for the
-    // current
-    // version, but they do appear in the acknowledgements section of the
-    // User's
-    // Guide. Current contributors appear in both locations.
-
-    lines = new ArrayList<>();
-    linesHeight = 0; // computed in paintComponent
-    lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
-    lines.add(new CreditsLine(1, "College of the Holy Cross"));
-    lines.add(new CreditsLine(2, "https://www.holycross.edu"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/"));
-    lines.add(new CreditsLine(1, "Berner Fachhochschule"));
-    lines.add(new CreditsLine(2, "https://www.bfh.ch"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
-    lines.add(new CreditsLine(1, "et d'architecture de Gen\u00E8ve"));
-    lines.add(new CreditsLine(2, "https://hepia.hesge.ch"));
-    lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
-    lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
-    lines.add(new CreditsLine(2, "https://www.heig-vd.ch"));
-
-    /*
-     * If you fork Logisim, feel free to change the above lines, but please
-     * do not change these last four lines!
-     */
-    lines.add(new CreditsLine(0, S.get("creditsRoleOriginal"), hendrixLogo, HENDRIX_WIDTH));
-    lines.add(new CreditsLine(1, "Carl Burch"));
-    lines.add(new CreditsLine(2, "Hendrix College"));
-    lines.add(new CreditsLine(1, "www.cburch.com/logisim/"));
+  public AboutCredits(int width, int height) {
+    lines = new Lines();
+    lines
+        .title(Main.APP_DISPLAY_NAME)
+        .h2("Copyright \u00A9" + Main.COPYRIGHT_YEAR + " " + Main.APP_NAME + " developers")
+        .url(Main.APP_URL)
+        .space()
+        .h1(S.get("creditsRoleFork"))
+        .text("College of the Holy Cross")
+        .url("https://www.holycross.edu")
+        .text("Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/")
+        .text("Berner Fachhochschule")
+        .url("https://www.bfh.ch/")
+        .text("Haute \u00C9cole du paysage, d'ing\u00E9nierie")
+        .text("et d'architecture de Gen\u00E8ve")
+        .url("https://hepia.hesge.ch")
+        .text("Haute \u00C9cole d'Ing\u00E9nierie")
+        .text("et de Gestion du Canton de Vaud")
+        .url("https://www.heig-vd.ch/")
+        .space()
+        .h1(S.get("creditsRoleOriginal"))
+        .text("Carl Burch")
+        .text("Hendrix College")
+        .url("http://www.cburch.com/logisim/")
+        .img(getClass().getClassLoader().getResource(HENDRIX_LOGO_PATH));
   }
 
-  private Color derive(Color base, int alpha) {
-    return new Color(base.getRed(), base.getGreen(), base.getBlue(), alpha);
-  }
+  private long startMillis = 0;
 
   @Override
   protected void paintComponent(Graphics g) {
-    FontMetrics[] fms = new FontMetrics[font.length];
-    for (int i = 0; i < fms.length; i++) {
-      fms[i] = g.getFontMetrics(font[i]);
-    }
-    if (linesHeight == 0) {
-      int y = 0;
-      int index = -1;
-      for (CreditsLine line : lines) {
-        index++;
-        if (index == initialLines) initialHeight = y;
-        if (line.type == 0) y += 10;
-        FontMetrics fm = fms[line.type];
-        line.y = y + fm.getAscent();
-        y += fm.getHeight();
-      }
-      linesHeight = y;
+    if (startMillis == 0) {
+      startMillis = System.currentTimeMillis();
+      lines.initialize(getGraphics(), getWidth(), getHeight());
     }
 
-    Paint[] paint = paintSteady;
-    int yPos = 0;
     int height = getHeight();
-    int initY = Math.min(0, initialHeight - height + About.IMAGE_BORDER);
-    int maxY = linesHeight - height - initY;
-    int totalMillis = 2 * MILLIS_FREEZE + (linesHeight + height) * MILLIS_PER_PIXEL;
-    int offs = scroll % totalMillis;
-    if (offs >= 0 && offs < MILLIS_FREEZE) {
-      // frozen before starting the credits scroll
-      int a = 255 * (MILLIS_FREEZE - offs) / MILLIS_FREEZE;
-      if (a > 245) {
-        paint = null;
-      } else if (a < 15) {
-        paint = paintSteady;
-      } else {
-        paint = new Paint[colorBase.length];
-        for (int i = 0; i < paint.length; i++) {
-          Color hue = colorBase[i];
-          paint[i] = new GradientPaint(0.0f, 0.0f, derive(hue, a), 0.0f, fadeStop, hue);
-        }
-      }
-      yPos = initY;
-    } else if (offs < MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
-      // scrolling through credits
-      yPos = initY + (offs - MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-    } else if (offs < 2 * MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
-      // freezing at bottom of scroll
-      yPos = initY + maxY;
-    } else if (offs < 2 * MILLIS_FREEZE + (linesHeight - initY) * MILLIS_PER_PIXEL) {
-      // scrolling bottom off screen
-      yPos = initY + (offs - 2 * MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-    } else {
-      // scrolling next credits onto screen
-      int millis = offs - 2 * MILLIS_FREEZE - (linesHeight - initY) * MILLIS_PER_PIXEL;
-      paint = null;
-      yPos = -height + millis / MILLIS_PER_PIXEL;
-    }
+    int maxOffsetY = lines.totalScrollLinesHeight + height;
+    int offsetY =
+        ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
+    int yPos = offsetY - height;
 
-    int width = getWidth();
-    int centerX = width / 2;
-    maxY = getHeight();
-    for (CreditsLine line : lines) {
-      int y = line.y - yPos;
-      if (y < -100 || y > maxY + 50) continue;
+    for (var line : lines) {
+      int y = line.startY - yPos;
+      // do not attempt to draw line contents if it'd be outside of visible area anyway
+      if ((y < -line.displayHeight) && (y > height + line.displayHeight)) continue;
 
-      int type = line.type;
-      if (paint == null) {
-        g.setColor(colorBase[type]);
-      } else {
-        ((Graphics2D) g).setPaint(paint[type]);
-      }
-      g.setFont(font[type]);
-      int textWidth = fms[type].stringWidth(line.text);
-      g.drawString(line.text, centerX - textWidth / 2, line.y - yPos);
-
-      Image img = line.img;
-      if (img != null) {
-        int x = width - line.imgWidth - About.IMAGE_BORDER;
-        int top = y - fms[type].getAscent();
-        g.drawImage(img, x, top, this);
+      // Drawing of each line is kept outside its class for performance reasons.
+      Class cls = line.getClass();
+      if (cls.equals(ImgLine.class)) {
+        g.drawImage(line.img.getImage(), line.x, y, this);
+      } else if (cls.equals(TextLine.class)) {
+        ((Graphics2D) g).setPaint(line.paint);
+        g.setFont(line.font);
+        g.drawString(line.text, line.x, y);
       }
     }
   }
 
-  public void setScroll(int value) {
-    scroll = value;
-    repaint();
-  }
+  private class Lines extends ArrayList<CreditsLine> {
+    private static final int SPACE_HEIGHT = 20;
+    private boolean initialized = false;
 
-  private static class CreditsLine {
-    private final int type;
-    private final String text;
-    private final Image img;
-    private final int imgWidth;
-    private int y;
+    private int totalScrollLinesHeight = 0;
 
-    public CreditsLine(int type, String text) {
-      this(type, text, null, 0);
+    public void initialize(Graphics g, int displayWidth, int displayHeight) {
+      if (initialized) return;
+
+      // Lets's calculate at what Y value given lines should be drawn
+      for (var line : lines) {
+        line.init(g, displayWidth, displayHeight, totalScrollLinesHeight);
+        totalScrollLinesHeight += line.displayHeight;
+      }
+
+      initialized = true;
     }
 
-    public CreditsLine(int type, String text, Image img, int imgWidth) {
-      this.y = 0;
-      this.type = type;
+    public Lines space() {
+      add(new SpaceLine());
+      return this;
+    }
+
+    public Lines title(String text) {
+      add(
+          new TextLine(
+              new Font("Sans Serif", Font.ITALIC | Font.BOLD, 30),
+              new Color(0x00, 0x80, 0x00),
+              text));
+      return this;
+    }
+
+    public Lines h1(String text) {
+      add(
+          new TextLine(
+              new Font("Sans Serif", Font.ITALIC | Font.BOLD, 24),
+              new Color(0x8F, 0x00, 0x00),
+              text));
+      return this;
+    }
+
+    public Lines h2(String text) {
+      add(new TextLine(new Font("Sans Serif", Font.BOLD, 20), new Color(0x69, 0x00, 0x00), text));
+      return this;
+    }
+
+    public Lines url(String text) {
+      add(new TextLine(new Font("Sans Serif", Font.BOLD, 18), new Color(0xCC, 0x80, 0x00), text));
+      return this;
+    }
+
+    public Lines text(String text) {
+      add(new TextLine(new Font("Sans Serif", Font.BOLD, 20), new Color(0x30, 0x00, 0x60), text));
+      return this;
+    }
+
+    public Lines img(URL url) {
+      add(new ImgLine(url));
+      return this;
+    }
+  }
+
+  private static class TextLine extends CreditsLine {
+    public TextLine(Font font, Color color, String text) {
+      this.font = font;
+      this.color = color;
       this.text = text;
-      this.img = img;
-      this.imgWidth = imgWidth;
+    }
+
+    @Override
+    public void init(Graphics g, int displayAreaWidth, int displayAreaHeight, int currentY) {
+      super.init(g, displayAreaWidth, displayAreaHeight, currentY);
+
+      displayWidth = fm.stringWidth(text);
+      displayHeight = fm.getHeight();
+      // texts are drawn up Y axis, so we need to adjust startY accordingly
+      startY = currentY + displayHeight;
+      center(displayAreaWidth);
     }
   }
-}
+
+  private static class SpaceLine extends CreditsLine {
+    public SpaceLine() {
+      this.displayHeight = 20;
+    }
+  }
+
+  private static class ImgLine extends CreditsLine implements ImageObserver {
+    public ImgLine(URL url) {
+      this.img = new ImageIcon(url);
+      displayHeight = img.getIconHeight();
+      displayWidth = img.getIconWidth();
+    }
+
+    @Override
+    public boolean imageUpdate(Image image, int i, int i1, int i2, int i3, int i4) {
+      return false;
+    }
+
+    @Override
+    public void init(Graphics g, int displayAreaWidth, int displayAreaHeight, int currentY) {
+      super.init(g, displayAreaWidth, displayAreaHeight, currentY);
+
+      // total padding around image top/bottom
+      int padding = 20;
+      displayHeight = img.getIconHeight();
+      displayWidth = img.getIconWidth();
+      startY = currentY + (padding / 2);
+      center(displayAreaWidth);
+    }
+  }
+
+  private abstract static class CreditsLine {
+    protected String text = null;
+    protected ImageIcon img = null;
+
+    // these will be calculated in prepare phase
+    protected int displayWidth = 0;
+    protected int displayHeight = 0;
+    protected int startY = 0;
+    protected int x = 0;
+
+    protected Graphics g = null;
+    protected Color color = null;
+    protected GradientPaint paint = null;
+    protected Font font = null;
+    protected FontMetrics fm = null;
+
+    public void center(int displayAreaWidth) {
+      x = (displayAreaWidth - displayWidth) >> 1;
+    }
+
+    /**
+     * As some internals depend on Graphics context which can not be available at creation time this
+     * method must be called before using Line to ensure all internals are initialized.
+     *
+     * @param g Graphics context to use
+     */
+    public void init(Graphics g, int displayAreaWidth, int displayAreaHeight, int currentY) {
+      this.g = g;
+
+      if (font != null) {
+        this.fm = g.getFontMetrics(font);
+      }
+
+      if (color != null) {
+        int alpha = displayAreaHeight / 4;
+        var derrived = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+        paint = new GradientPaint(0.0f, 0.0f, derrived, 0.0f, alpha, color);
+      }
+    }
+  } // CreditsLine
+} // AboutCredits

@@ -45,9 +45,10 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
   private final Object lock = new Object();
   private boolean canceled = false;
   private PrintWriter writer = null;
-  private boolean modeDirty = true, headerDirty = true;
+  private boolean modeDirty = true;
+  private boolean headerDirty = true;
   private long lastWrite = 0;
-  private long tNextWrite = 0; // done writing up to this time, exclusive
+  private long timeNextWrite = 0; // done writing up to this time, exclusive
   private final HashMap<Signal, Signal.Iterator> cursors = new HashMap<>();
 
   public LogThread(Model model) {
@@ -56,7 +57,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
     model.addModelListener(this);
   }
 
-  //precondition: lock held and writing()==true
+  // precondition: lock held and writing()==true
   private void writeSignals() {
     if (writer == null) {
       try {
@@ -67,10 +68,10 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       }
     }
     if (modeDirty) {
-      String mode = model.isStepMode() ? "step"
+      var mode = model.isStepMode() ? "step"
           : model.isRealMode() ? "real-time"
           : "clocked";
-      String gran = model.isFine() ? "fine" : "coarse";
+      var gran = model.isFine() ? "fine" : "coarse";
       writer.println("# mode: " + mode + " granularity: " + gran);
       modeDirty = false;
     }
@@ -90,13 +91,13 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       Signal s = model.getSignal(i);
       cur[i] = cursors.get(s);
       if (cur[i] == null) {
-        cur[i] = s.new Iterator(tNextWrite);
+        cur[i] = s.new Iterator(timeNextWrite);
         cursors.put(s, cur[i]);
       }
     }
-    long tStop = model.getEndTime();
-    while (tNextWrite < tStop) {
-      long duration = tStop - tNextWrite;
+    long timeStop = model.getEndTime();
+    while (timeNextWrite < timeStop) {
+      long duration = timeStop - timeNextWrite;
       StringBuilder buf = new StringBuilder();
       for (int i = 0; i < cur.length; i++) {
         if (i > 0)
@@ -109,7 +110,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       writer.println(buf + "\t# " + Model.formatDuration(duration));
       for (Signal.Iterator c : cur)
         c.advance(duration);
-      tNextWrite += duration;
+      timeNextWrite += duration;
     }
     lastWrite = System.currentTimeMillis();
   }
@@ -128,13 +129,13 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
   public void signalsReset(Model.Event event) {
     synchronized (lock) {
       if (writing()) {
-        tNextWrite = 0;
+        timeNextWrite = 0;
         cursors.clear();
         writeSignals();
       }
     }
   }
-  
+
   @Override
   public void signalsExtended(Model.Event event) {
     synchronized (lock) {

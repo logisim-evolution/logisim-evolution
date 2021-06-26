@@ -168,8 +168,8 @@ public class TruthtableTextFile {
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
       throws IOException {
-    String[] s = line.split("\\s+");
-    VariableList cur = inputs;
+    var s = line.split("\\s+");
+    var cur = inputs;
     for (String value : s) {
       if (value.equals("|")) {
         if (cur == inputs)
@@ -182,20 +182,23 @@ public class TruthtableTextFile {
       if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(value, 1));
       } else {
-        Matcher m = NAME_FORMAT.matcher(value);
+        var m = NAME_FORMAT.matcher(value);
         if (!m.matches())
           throw new IOException(
               String.format("Line %d: Invalid variable name '%s'.", lineno, value));
-        String n = m.group(1);
-        int a, b;
+        var n = m.group(1);
+        int a;
+        int b;
         try {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
         if (a < 1 || b != 0)
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(
+              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {
@@ -302,24 +305,22 @@ public class TruthtableTextFile {
   public static void doLoad(File file, AnalyzerModel model, JFrame parent) throws IOException {
     int lineno = 0;
     try (Scanner sc = new Scanner(file)) {
-      VariableList inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-      VariableList outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-      ArrayList<Entry[]> rows = new ArrayList<>();
+      var inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+      var outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+      var rows = new ArrayList<Entry[]>();
       while (sc.hasNextLine()) {
         lineno++;
         String line = sc.nextLine();
         int ix = line.indexOf('#');
-        if (ix >= 0)
-          line = line.substring(0, ix);
+        if (ix >= 0) line = line.substring(0, ix);
         line = line.trim();
-        if (line.equals(""))
+        if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
           continue;
-        else if (line.matches("\\s*[~_=-][ ~_=-|]*"))
-          continue;
-        else if (inputs.vars.size() == 0)
+        } else if (inputs.vars.size() == 0) {
           validateHeader(line, inputs, outputs, lineno);
-        else
+        } else {
           validateRow(line, inputs, outputs, rows, lineno);
+        }
       }
       if (rows.size() == 0)
         throw new IOException("End of file: Truth table has no rows.");

@@ -53,12 +53,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-/** @author YSY */
 public class RegTabContent extends JScrollPane implements LocaleListener, Simulator.Listener {
   private static final long serialVersionUID = 1L;
   private static final HashMap<String, Component> registers = new HashMap<>();
   private final JPanel panel = new JPanel(new GridBagLayout());
-  private final GridBagConstraints c = new GridBagConstraints();
+  private final GridBagConstraints constraints = new GridBagConstraints();
   private final Project proj;
 
   public RegTabContent(Frame frame) {
@@ -78,11 +77,6 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
    * found, including their current value.
    */
   private void fillArray() {
-    int y = 0;
-    MyLabel col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
-    MyLabel col2 = new MyLabel("Reg name", Font.BOLD);
-    MyLabel col3 = new MyLabel("Value", Font.BOLD);
-
     registers.clear();
     panel.removeAll();
     for (Circuit circ : proj.getLogisimFile().getCircuits()) {
@@ -100,38 +94,44 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
       }
     }
 
+    var col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
+    var col2 = new MyLabel("Reg name", Font.BOLD);
+    var col3 = new MyLabel("Value", Font.BOLD);
+
     col1.setColor(Color.LIGHT_GRAY);
     col2.setColor(Color.LIGHT_GRAY);
     col3.setColor(Color.LIGHT_GRAY);
 
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.anchor = GridBagConstraints.FIRST_LINE_START;
-    c.ipady = 2;
-    c.weighty = 0;
-    c.gridy = y;
-    c.gridx = 0;
-    c.weightx = 0.3;
-    panel.add(col1, c);
-    c.gridx++;
-    c.weightx = 0.5;
-    panel.add(col2, c);
-    c.gridx++;
-    c.weightx = 0.2;
-    panel.add(col3, c);
+    constraints.fill = GridBagConstraints.HORIZONTAL;
+    constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+    constraints.ipady = 2;
+    constraints.weighty = 0;
+
+    int y = 0;
+    constraints.gridy = y;
+    constraints.gridx = 0;
+    constraints.weightx = 0.3;
+    panel.add(col1, constraints);
+    constraints.gridx++;
+    constraints.weightx = 0.5;
+    panel.add(col2, constraints);
+    constraints.gridx++;
+    constraints.weightx = 0.2;
+    panel.add(col3, constraints);
     y++;
 
     if (!registers.isEmpty()) {
       List<String> keys =
           registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
       for (String key : keys) {
-        c.gridy = y;
-        c.gridx = 0;
+        constraints.gridy = y;
+        constraints.gridx = 0;
         String circuitName = key.split("/")[0];
-        panel.add(new MyLabel(circuitName, Font.ITALIC, true), c);
-        c.gridx++;
+        panel.add(new MyLabel(circuitName, Font.ITALIC, true), constraints);
+        constraints.gridx++;
         String registerName = key.split("/")[1];
-        panel.add(new MyLabel(registerName), c);
-        c.gridx++;
+        panel.add(new MyLabel(registerName), constraints);
+        constraints.gridx++;
         Component selReg = registers.get(key);
         CircuitState mainCircState = proj.getCircuitState();
         while (mainCircState.getParentState() != null) { // Get the main
@@ -145,18 +145,18 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
         if (val != null) {
           MyLabel hexLabel = new MyLabel(val.toHexString());
           hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
-          panel.add(hexLabel, c);
+          panel.add(hexLabel, constraints);
         } else {
-          panel.add(new MyLabel("-"), c);
+          panel.add(new MyLabel("-"), constraints);
         }
         y++;
       }
     }
-    c.weighty = 1;
-    c.gridy++;
-    c.gridx = 0;
-    c.weightx = 1;
-    panel.add(new MyLabel(""), c);
+    constraints.weighty = 1;
+    constraints.gridy++;
+    constraints.gridx = 0;
+    constraints.weightx = 1;
+    panel.add(new MyLabel(""), constraints);
     panel.validate();
   }
 

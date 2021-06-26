@@ -402,9 +402,9 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   public void removeCircuitUsing(Component comp) {
     circuitsUsingThis.remove(comp);
   }
-  
+
   @Override
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {
     removeCircuitUsing(c);
   }
 }

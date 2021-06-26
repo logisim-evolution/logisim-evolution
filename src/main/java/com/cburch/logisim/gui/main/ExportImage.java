@@ -130,8 +130,8 @@ public class ExportImage {
             OptionPane.QUESTION_MESSAGE);
     if (action != OptionPane.OK_OPTION) return;
     List<Circuit> circuits = list.getSelectedCircuits();
-    double scale = options.getScale();
-    boolean printerView = options.getPrinterView();
+    final double scale = options.getScale();
+    final boolean printerView = options.getPrinterView();
     if (circuits.isEmpty()) return;
 
     int fmt = options.getImageFormat();

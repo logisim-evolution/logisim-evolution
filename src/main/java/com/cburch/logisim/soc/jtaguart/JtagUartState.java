@@ -45,41 +45,41 @@ import java.util.LinkedList;
 
 public class JtagUartState  implements SocBusSlaveInterface {
 
-  public class JtagUartFifoState implements InstanceData,Cloneable {
-	
-	private final LinkedList<Integer> WriteFifo = new LinkedList<>();
-	private final LinkedList<Integer> ReadFifo = new LinkedList<>();
-	private boolean readIrqEnable = false;
-	private boolean writeIrqEnable = false;
-	private boolean acBit = false;
-	private Value lastReset = Value.UNKNOWN;
-	private Value lastClock = Value.UNKNOWN;
-	private boolean doReset = false;
-	private boolean endReset = false;
-	
-	public JtagUartFifoState() {
-	  reset();
-	}
-	
-	public void reset() {
-	  WriteFifo.clear();
-	  ReadFifo.clear();
-	  readIrqEnable = false;
-	  writeIrqEnable = false;
-	  acBit = false;
-	}
-	
-	public void setReset(Value reset) {
-	  doReset = (lastReset == Value.FALSE && reset == Value.TRUE);
-	  endReset = (lastReset == Value.UNKNOWN) || (lastReset == Value.TRUE && reset == Value.FALSE);
-	  lastReset = reset;
-	}
-	
-	public boolean risingEdge(Value clock) {
-	  Value last = lastClock;
-	  lastClock = clock;
-	  return (last == Value.FALSE && clock == Value.TRUE);
-	}
+  public class JtagUartFifoState implements InstanceData, Cloneable {
+
+    private final LinkedList<Integer> WriteFifo = new LinkedList<>();
+    private final LinkedList<Integer> ReadFifo = new LinkedList<>();
+    private boolean readIrqEnable = false;
+    private boolean writeIrqEnable = false;
+    private boolean acBit = false;
+    private Value lastReset = Value.UNKNOWN;
+    private Value lastClock = Value.UNKNOWN;
+    private boolean doReset = false;
+    private boolean endReset = false;
+
+    public JtagUartFifoState() {
+      reset();
+    }
+
+    public void reset() {
+      WriteFifo.clear();
+      ReadFifo.clear();
+      readIrqEnable = false;
+      writeIrqEnable = false;
+      acBit = false;
+    }
+
+    public void setReset(Value reset) {
+      doReset = (lastReset == Value.FALSE && reset == Value.TRUE);
+      endReset = (lastReset == Value.UNKNOWN) || (lastReset == Value.TRUE && reset == Value.FALSE);
+      lastReset = reset;
+    }
+
+    public boolean risingEdge(Value clock) {
+      Value last = lastClock;
+      lastClock = clock;
+      return (last == Value.FALSE && clock == Value.TRUE);
+    }
 
     public PioRegState clone() {
       try {
@@ -88,70 +88,76 @@ public class JtagUartState  implements SocBusSlaveInterface {
         return null;
       }
     }
-    
+
     public void writeDataRegister(int value) {
-      int wdata = value&0xFF;
+      int wdata = value & 0xFF;
       if (WriteFifo.size() >= getSize(writeFifoSize)) return;
       WriteFifo.add(wdata);
     }
-    
+
     public Integer readDataRegister() {
       int result = 0;
       if (ReadFifo.isEmpty()) return 0;
-      result = ReadFifo.getFirst()&0xFF;
+      result = ReadFifo.getFirst() & 0xFF;
       ReadFifo.removeFirst();
-      result |= (1<<15);
-      result |= (ReadFifo.size()&0xFFFF)<<16;
+      result |= (1 << 15);
+      result |= (ReadFifo.size() & 0xFFFF) << 16;
       return result;
     }
-    
+
     public void writeControlRegister(int value) {
-      readIrqEnable = (value&1)!=0;
-      writeIrqEnable = (value&2)!=0;
-      if ((value&(1<<10)) != 0) acBit = false;
+      readIrqEnable = (value & 1) != 0;
+      writeIrqEnable = (value & 2) != 0;
+      if ((value & (1 << 10)) != 0) acBit = false;
     }
-    
+
     public Integer readControlRegister() {
       int result = 0;
       if (readIrqEnable) result |= 1;
       if (writeIrqEnable) result |= 2;
-      if (readIrqPending()) result |= 1<<8;
-      if (writeIrqPending()) result |= 1<<9;
-      if (acBit) result |= 1<<10;
+      if (readIrqPending()) result |= 1 << 8;
+      if (writeIrqPending()) result |= 1 << 9;
+      if (acBit) result |= 1 << 10;
       int avail = getSize(writeFifoSize) - WriteFifo.size();
-      result |= (avail&0xFFFF) << 16;
+      result |= (avail & 0xFFFF) << 16;
       return result;
     }
-    
+
     private boolean readIrqPending() {
       if (!readIrqEnable) return false;
       int readFifoEmptySpaces = getSize(readFifoSize) - ReadFifo.size();
       return readFifoEmptySpaces <= readIrqThreshold;
     }
-    
+
     private boolean writeIrqPending() {
       if (!writeIrqEnable) return false;
       return WriteFifo.size() <= writeIrqThreshold;
     }
-    
-    public boolean IrqPending() {return readIrqPending()|writeIrqPending(); }
-    public boolean WriteFifoEmpty() { return WriteFifo.isEmpty(); }
-    
-    public void setAcBit() { acBit = true; }
-    
-    
+
+    public boolean IrqPending() {
+      return readIrqPending() | writeIrqPending();
+    }
+
+    public boolean WriteFifoEmpty() {
+      return WriteFifo.isEmpty();
+    }
+
+    public void setAcBit() {
+      acBit = true;
+    }
+
     public int popWriteFifo() {
       if (WriteFifo.isEmpty()) return -1;
       int val = WriteFifo.getFirst();
       WriteFifo.removeFirst();
       return val;
     }
-	      
+
     public void pushReadFifo(Integer val) {
       if (ReadFifo.size() >= getSize(readFifoSize)) return;
       ReadFifo.add(val);
     }
-      
+
     private int getSize(AttributeOption opt) {
       if (opt.equals(JtagUartAttributes.OPT_8)) return 8;
       if (opt.equals(JtagUartAttributes.OPT_16)) return 16;
@@ -179,54 +185,73 @@ public class JtagUartState  implements SocBusSlaveInterface {
   private Integer readIrqThreshold = 8;
   private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<>();
 
-  public String getLabel() { return label; }
-  public SocBusInfo getAttachedBus() { return attachedBus; }
-  public Integer getStartAddress() { return startAddress; }
-  public AttributeOption getWriteFifoSize() { return writeFifoSize; }
-  public Integer getWriteIrqThreshold() { return writeIrqThreshold; }
-  public AttributeOption getReadFifoSize() { return readFifoSize; }
-  public Integer getReadIrqThreshold() { return readIrqThreshold; }
-  
-  
+  public String getLabel() {
+    return label;
+  }
+
+  public SocBusInfo getAttachedBus() {
+    return attachedBus;
+  }
+
+  public Integer getStartAddress() {
+    return startAddress;
+  }
+
+  public AttributeOption getWriteFifoSize() {
+    return writeFifoSize;
+  }
+
+  public Integer getWriteIrqThreshold() {
+    return writeIrqThreshold;
+  }
+
+  public AttributeOption getReadFifoSize() {
+    return readFifoSize;
+  }
+
+  public Integer getReadIrqThreshold() {
+    return readIrqThreshold;
+  }
+
   public boolean setLabel(String l) {
     if (l.equals(label)) return false;
     label = l;
     fireNameChanged();
     return true;
   }
-  
+
   public boolean setAttachedBus(SocBusInfo atb) {
     if (attachedBus.getBusId().equals(atb.getBusId())) return false;
     attachedBus.setBusId(atb.getBusId());
     return true;
   }
-  
+
   public boolean setStartAddress(int addr) {
     if (addr == startAddress) return false;
     startAddress = addr;
     firememMapChanged();
     return true;
   }
-  
-  public boolean setWriteFifoSize( AttributeOption wfs) {
+
+  public boolean setWriteFifoSize(AttributeOption wfs) {
     if (writeFifoSize.equals(wfs)) return false;
-    writeFifoSize=wfs;
+    writeFifoSize = wfs;
     return true;
   }
-  
-  public boolean setWriteIrqThreshold( Integer val ) {
+
+  public boolean setWriteIrqThreshold(Integer val) {
     if (writeIrqThreshold == val) return false;
     writeIrqThreshold = val;
     return true;
   }
 
-  public boolean setReadFifoSize( AttributeOption rfs) {
+  public boolean setReadFifoSize(AttributeOption rfs) {
     if (readFifoSize.equals(rfs)) return false;
-    readFifoSize=rfs;
+    readFifoSize = rfs;
     return true;
   }
 
-  public boolean setReadIrqThreshold( Integer val ) {
+  public boolean setReadIrqThreshold(Integer val) {
     if (readIrqThreshold == val) return false;
     readIrqThreshold = val;
     return true;
@@ -241,16 +266,16 @@ public class JtagUartState  implements SocBusSlaveInterface {
     d.writeIrqThreshold = writeIrqThreshold;
     d.readIrqThreshold = readIrqThreshold;
   }
-  
+
   public void handleOperations(InstanceState state) {
-	Value curReset = state.getPortValue(JtagUart.ResetPin);
-	Value curClock = state.getPortValue(JtagUart.ClockPin);
-	JtagUartFifoState instState = (JtagUartFifoState) state.getData();
-	if (instState == null) {
-	  instState = new JtagUartFifoState();
-	  state.setData(instState);
-	}
-	instState.setReset(curReset);
+    Value curReset = state.getPortValue(JtagUart.ResetPin);
+    Value curClock = state.getPortValue(JtagUart.ClockPin);
+    JtagUartFifoState instState = (JtagUartFifoState) state.getData();
+    if (instState == null) {
+      instState = new JtagUartFifoState();
+      state.setData(instState);
+    }
+    instState.setReset(curReset);
     if (instState.doReset) {
       state.setPort(JtagUart.ReadEnablePin, Value.FALSE, 5);
       state.setPort(JtagUart.ClearKeyboardPin, Value.TRUE, 5);
@@ -279,7 +304,8 @@ public class JtagUartState  implements SocBusSlaveInterface {
         state.setPort(JtagUart.WritePin, Value.TRUE, 5);
         state.setPort(JtagUart.DataOutPin, Value.createKnown(7, val), 5);
       }
-      if (state.getPortValue(JtagUart.AvailablePin) == Value.TRUE && state.getPortValue(JtagUart.ReadEnablePin) == Value.FALSE) {
+      if (state.getPortValue(JtagUart.AvailablePin) == Value.TRUE
+          && state.getPortValue(JtagUart.ReadEnablePin) == Value.FALSE) {
         instState.setAcBit();
         instState.pushReadFifo((int) state.getPortValue(JtagUart.DataInPin).toLongValue());
         state.setPort(JtagUart.ReadEnablePin, Value.TRUE, 5);
@@ -288,18 +314,18 @@ public class JtagUartState  implements SocBusSlaveInterface {
       }
     }
   }
-	
+
   @Override
   public boolean canHandleTransaction(SocBusTransaction trans) {
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
-    long end = start+8L;
+    long end = start + 8L;
     return (addr >= start && addr < end);
   }
 
   @Override
   public void handleTransaction(SocBusTransaction trans) {
-	if (!canHandleTransaction(trans)) return;
+    if (!canHandleTransaction(trans)) return;
     trans.setTransactionResponder(attachedBus.getComponent());
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
@@ -307,8 +333,10 @@ public class JtagUartState  implements SocBusSlaveInterface {
       trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
       return;
     }
-    JtagUartFifoState state = (JtagUartFifoState) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
-    long index = (addr-start);
+    JtagUartFifoState state =
+        (JtagUartFifoState)
+            attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
+    long index = (addr - start);
     if (index == 0) {
       if (trans.isReadTransaction()) {
         trans.setReadData(state.readDataRegister());
@@ -331,7 +359,9 @@ public class JtagUartState  implements SocBusSlaveInterface {
   }
 
   @Override
-  public Integer getMemorySize() { return 8; }
+  public Integer getMemorySize() {
+    return 8;
+  }
 
   @Override
   public String getName() {
@@ -340,7 +370,12 @@ public class JtagUartState  implements SocBusSlaveInterface {
     String name = label;
     if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name =
+          attachedBus.getComponent().getFactory().getDisplayName()
+              + "@"
+              + loc.getX()
+              + ","
+              + loc.getY();
     }
     return name;
   }
@@ -365,9 +400,9 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   private void fireNameChanged() {
     for (SocBusSlaveListener l : listeners)
-    l.labelChanged();
+      l.labelChanged();
   }
-	      
+
   private void firememMapChanged() {
     for (SocBusSlaveListener l : listeners)
       l.memoryMapChanged();

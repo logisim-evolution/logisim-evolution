@@ -107,7 +107,7 @@ public class Multiplexer extends InstanceFactory {
         JoinedConfigurator.create(
             new BitWidthConfigurator(PlexersLibrary.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
-    setIcon(new PlexerIcon(false,false));
+    setIcon(new PlexerIcon(false, false));
     setFacingAttribute(StdAttr.FACING);
   }
 
@@ -301,7 +301,7 @@ public class Multiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(inputs);
       if (sel.isFullyDefined()) {
-        out = state.getPortValue((int)sel.toLongValue());
+        out = state.getPortValue((int) sel.toLongValue());
       } else if (sel.isErrorValue()) {
         out = Value.createError(data);
       } else {

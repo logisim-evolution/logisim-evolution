@@ -36,7 +36,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.event.MouseEvent;
 
 public abstract class DynamicElementWithPoker extends DynamicElement {
-  
+
   private boolean isPressed;
   private Location AnchorPosition;
 
@@ -44,23 +44,26 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
     super(p, b);
     isPressed = false;
   }
-  
-  public void mousePressed(InstanceState state, MouseEvent e) { isPressed = true; }
-  
-  public void mouseReleased(InstanceState state, MouseEvent e) {
-    if (isPressed)
-      performClickAction(state,e);
-    isPressed=false;
+
+  public void mousePressed(InstanceState state, MouseEvent e) {
+    isPressed = true;
   }
-  
-  public void setAnchor(Location loc) { AnchorPosition = loc; }
+
+  public void mouseReleased(InstanceState state, MouseEvent e) {
+    if (isPressed) performClickAction(state, e);
+    isPressed = false;
+  }
+
+  public void setAnchor(Location loc) {
+    AnchorPosition = loc;
+  }
 
   public Bounds getScreenBounds(InstanceState state) {
     Direction dir = state.getAttributeValue(StdAttr.FACING);
     Location loc = state.getInstance().getLocation();
     if (dir == Direction.EAST) {
-      int xpos = bounds.getX()-AnchorPosition.getX()+loc.getX();
-      int ypos = bounds.getY()-AnchorPosition.getY()+loc.getY();
+      int xpos = bounds.getX() - AnchorPosition.getX() + loc.getX();
+      int ypos = bounds.getY() - AnchorPosition.getY() + loc.getY();
       return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.WEST) {
@@ -77,12 +80,12 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
     int ypos = bounds.getX() - AnchorPosition.getX() + loc.getY();
     return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
   }
-  
-  public Boolean mouseInside(InstanceState state , MouseEvent e) {
+
+  public Boolean mouseInside(InstanceState state, MouseEvent e) {
     Bounds b = getScreenBounds(state);
-    return b.contains(e.getX(),e.getY());
+    return b.contains(e.getX(), e.getY());
   }
-  
+
   public abstract void performClickAction(InstanceState state, MouseEvent e);
 
 }

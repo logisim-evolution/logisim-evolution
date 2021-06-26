@@ -37,45 +37,42 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SyntaxChecker {
-	
+
   public static String getErrorMessage(String val) {
     if (val.length() == 0) return null;
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
-      String HDL = CorrectLabel.HDLCorrectLabel(val);
-      String Message = "";
+      String hdl = CorrectLabel.HDLCorrectLabel(val);
+      String message = "";
       if (!variableMatcher.matches()) {
-        Message = Message.concat(S.get("variableInvalidCharacters"));
+        message = message.concat(S.get("variableInvalidCharacters"));
       }
       if (forbiddenMatcher.find()) {
-        Message = Message.concat(S.get("variableDoubleUnderscore"));
+        message = message.concat(S.get("variableDoubleUnderscore"));
       }
-      if (HDL != null) {
-        Message =
-            Message.concat(
-                HDL.equals(HDLGeneratorFactory.VHDL)
+      if (hdl != null) {
+        message =
+            message.concat(
+                hdl.equals(HDLGeneratorFactory.VHDL)
                     ? S.get("variableVHDLKeyword")
                     : S.get("variableVerilogKeyword"));
       }
       if (val.endsWith("_")) {
-        Message = Message.concat(S.get("variableEndsWithUndescore"));
+        message = message.concat(S.get("variableEndsWithUndescore"));
       }
-      if (Message.length() == 0)
-    	  return null;
-      else
-    	  return Message;
+      if (message.length() == 0) return null;
+      else return message;
     }
     return null;
   }
 
-  public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
-    String Message = getErrorMessage(val);
-    if (Message != null && ShowDialog) {
-        OptionPane.showMessageDialog(
-                null, Message.concat("\n" + S.get("variableNameNotAcceptable")));
+  public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {
+    String message = getErrorMessage(val);
+    if (message != null && showDialog) {
+      OptionPane.showMessageDialog(null, message.concat("\n" + S.get("variableNameNotAcceptable")));
     }
-    return Message == null;
+    return message == null;
   }
 
   private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");

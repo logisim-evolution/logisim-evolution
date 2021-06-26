@@ -74,8 +74,8 @@ public class SRFlipFlop extends AbstractFlipFlop {
     @Override
     public ArrayList<String> GetUpdateLogic() {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+
-          "(s_current_state_reg"+HDL.orOperator()+"S)"+HDL.andOperator()+HDL.notOperator()+"(R);");
+      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator()
+              + "(s_current_state_reg" + HDL.orOperator() + "S)" + HDL.andOperator() + HDL.notOperator() + "(R);");
       return Contents;
     }
   }
