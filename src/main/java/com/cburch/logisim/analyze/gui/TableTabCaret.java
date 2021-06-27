@@ -540,8 +540,8 @@ class TableTabCaret {
       final var outputs = table.getOutputColumnCount();
       final var x0 = table.getXLeft(0);
       final var x1 = table.getXRight(inputs + outputs - 1);
-      for (final var r : hilightRows) {
-        int y = table.getY(r);
+      for (final var rowId : hilightRows) {
+        int y = table.getY(rowId);
         int h = table.getCellHeight();
         g.fillRect(x0, y, x1 - x0, h);
       }

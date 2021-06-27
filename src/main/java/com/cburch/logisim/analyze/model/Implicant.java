@@ -158,16 +158,16 @@ public class Implicant implements Comparable<Implicant> {
       if (covered.contains(required)) continue;
       final var row = required.getRow();
       Implicant essential = null;
-      for (final var imp : primes) {
-        if ((row & ~imp.unknowns) == imp.values) {
-          essential = (essential == null) ? imp : null;
+      for (final var implicant : primes) {
+        if ((row & ~implicant.unknowns) == implicant.values) {
+          essential = (essential == null) ? implicant : null;
         }
       }
       if (essential != null) {
         retSet.add(essential);
         primes.remove(essential);
-        for (final var imp : essential.getTerms()) {
-          covered.add(imp);
+        for (final var implicant : essential.getTerms()) {
+          covered.add(implicant);
         }
       }
     }
@@ -197,10 +197,10 @@ public class Implicant implements Comparable<Implicant> {
       if (covered.contains(required)) continue;
       final var row = required.getRow();
       Implicant essential = null;
-      for (final var imp : primesNoDontCare) {
-        if ((row & ~imp.unknowns) == imp.values) {
+      for (final var implicant : primesNoDontCare) {
+        if ((row & ~implicant.unknowns) == implicant.values) {
           if (essential == null) {
-            essential = imp;
+            essential = implicant;
           } else {
             essential = null;
             break;
@@ -211,7 +211,7 @@ public class Implicant implements Comparable<Implicant> {
         retSet.add(essential);
         primesNoDontCare.remove(essential);
         primes.remove(essential);
-        for (final var imp : essential.getTerms()) covered.add(imp);
+        for (final var implicant : essential.getTerms()) covered.add(implicant);
       }
     }
     toCover.removeAll(covered);
@@ -265,14 +265,14 @@ public class Implicant implements Comparable<Implicant> {
     final var table = model.getTruthTable();
     if (format == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
       Expression product = null;
-      for (final var imp : implicants) {
-        product = Expressions.and(product, imp.toSum(table));
+      for (final var implicant : implicants) {
+        product = Expressions.and(product, implicant.toSum(table));
       }
       return product == null ? Expressions.constant(1) : product;
     } else {
       Expression sum = null;
-      for (final var imp : implicants) {
-        sum = Expressions.or(sum, imp.toProduct(table));
+      for (final var implicant : implicants) {
+        sum = Expressions.or(sum, implicant.toProduct(table));
       }
       return sum == null ? Expressions.constant(0) : sum;
     }
@@ -387,11 +387,11 @@ public class Implicant implements Comparable<Implicant> {
       var current = base;
       while (current.size() > 0) {
         final var next = new HashSet<Implicant>();
-        for (final var imp : current) {
-          all.add(imp);
+        for (final var implicant : current) {
+          all.add(implicant);
           for (int j = 1; j <= maxval; j *= 2) {
-            if ((imp.unknowns & j) != 0) continue;
-            final var opp = new Implicant(imp.unknowns, imp.values ^ j);
+            if ((implicant.unknowns & j) != 0) continue;
+            final var opp = new Implicant(implicant.unknowns, implicant.values ^ j);
             if (!all.contains(opp)) continue;
             final var i = new Implicant(opp.unknowns | j, opp.values);
             next.add(i);
@@ -403,10 +403,10 @@ public class Implicant implements Comparable<Implicant> {
       final var sorted = new ArrayList<Implicant>(all);
       sorted.sort(sortByGenerality);
       final var chosen = new ArrayList<Implicant>();
-      for (final var imp : sorted) {
-        if (disjoint(imp, chosen)) {
-          chosen.add(imp);
-          ret.put(imp, val);
+      for (final var implicant : sorted) {
+        if (disjoint(implicant, chosen)) {
+          chosen.add(implicant);
+          ret.put(implicant, val);
         }
       }
     }

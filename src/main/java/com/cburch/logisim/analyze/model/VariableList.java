@@ -166,8 +166,8 @@ public class VariableList {
     data.clear();
     data.addAll(values);
     names.clear();
-    for (final var v : values) {
-      for (final var bit : v) names.add(bit);
+    for (final var var : values) {
+      for (final var bit : var) names.add(bit);
     }
     fireEvent(VariableListEvent.ALL_REPLACED);
   }

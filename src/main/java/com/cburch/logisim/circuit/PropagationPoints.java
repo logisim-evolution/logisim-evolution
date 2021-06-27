@@ -75,7 +75,7 @@ class PropagationPoints {
 
   private void addSubstates(HashMap<CircuitState, CircuitState> map, CircuitState source, CircuitState value) {
     map.put(source, value);
-    for (final var s : source.getSubstates()) {
+    for (final var s : source.getSubStates()) {
       addSubstates(map, s, value);
     }
   }
@@ -88,21 +88,21 @@ class PropagationPoints {
   void draw(ComponentDrawContext context) {
     if (data.isEmpty()) return;
 
-    final var state = context.getCircuitState();
+    final var circState = context.getCircuitState();
     final var stateMap = new HashMap<CircuitState, CircuitState>();
-    for (final var s : state.getSubstates()) addSubstates(stateMap, s, s);
+    for (final var state : circState.getSubStates()) addSubstates(stateMap, state, state);
 
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
-    for (final var e : data) {
-      if (e.state == state) {
-        final var p = e.item;
+    for (final var entry : data) {
+      if (entry.state == circState) {
+        final var p = entry.item;
         g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
-      } else if (stateMap.containsKey(e.state)) {
-        final var substate = stateMap.get(e.state);
-        final var subcirc = substate.getSubcircuit();
-        final var b = subcirc.getBounds();
-        g.drawRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+      } else if (stateMap.containsKey(entry.state)) {
+        final var subState = stateMap.get(entry.state);
+        final var subCircuit = subState.getSubcircuit();
+        final var bound = subCircuit.getBounds();
+        g.drawRect(bound.getX(), bound.getY(), bound.getWidth(), bound.getHeight());
       }
     }
     GraphicsUtil.switchToWidth(g, 1);
@@ -114,7 +114,7 @@ class PropagationPoints {
 
     final var state = context.getCircuitState();
     final var stateMap = new HashMap<CircuitState, CircuitState>();
-    for (final var s : state.getSubstates()) addSubstates(stateMap, s, s);
+    for (final var s : state.getSubStates()) addSubstates(stateMap, s, s);
 
     final var g = context.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);

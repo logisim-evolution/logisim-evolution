@@ -332,12 +332,12 @@ class CircuitWires {
     }
 
     // merge any threads united by previous step
-    for (final var b : ret.getBundles()) {
-      if (b.isValid() && b.threads != null) {
-        for (int i = 0; i < b.threads.length; i++) {
-          final var thr = b.threads[i].find();
-          b.threads[i] = thr;
-          thr.getBundles().add(new ThreadBundle(i, b));
+    for (final var wireBundle : ret.getBundles()) {
+      if (wireBundle.isValid() && wireBundle.threads != null) {
+        for (int i = 0; i < wireBundle.threads.length; i++) {
+          final var thr = wireBundle.threads[i].find();
+          wireBundle.threads[i] = thr;
+          thr.getBundles().add(new ThreadBundle(i, wireBundle));
         }
       }
     }
@@ -350,8 +350,8 @@ class CircuitWires {
         ret.addWidthIncompatibilityData(wid);
       }
     }
-    for (final var b : ret.getBundles()) {
-      final var e = b.getWidthIncompatibilityData();
+    for (final var wireBundle : ret.getBundles()) {
+      final var e = wireBundle.getWidthIncompatibilityData();
       if (e != null) ret.addWidthIncompatibilityData(e);
     }
   }
@@ -413,17 +413,17 @@ class CircuitWires {
 
   private void connectWires(BundleMap ret) {
     // make a WireBundle object for each tree of connected wires
-    for (final var w : wires) {
-      final var b0 = ret.getBundleAt(w.e0);
+    for (final var wire : wires) {
+      final var b0 = ret.getBundleAt(wire.e0);
       if (b0 == null) {
-        final var b1 = ret.createBundleAt(w.e1);
-        b1.points.add(w.e0);
-        ret.setBundleAt(w.e0, b1);
+        final var b1 = ret.createBundleAt(wire.e1);
+        b1.points.add(wire.e0);
+        ret.setBundleAt(wire.e0, b1);
       } else {
-        final var b1 = ret.getBundleAt(w.e1);
+        final var b1 = ret.getBundleAt(wire.e1);
         if (b1 == null) { // t1 doesn't exist
-          b0.points.add(w.e1);
-          ret.setBundleAt(w.e1, b0);
+          b0.points.add(wire.e1);
+          ret.setBundleAt(wire.e1, b0);
         } else {
           b1.unite(b0); // unite b0 and b1
         }
@@ -442,9 +442,9 @@ class CircuitWires {
     final var bmap = getBundleMap();
     final var isValid = bmap.isValid();
     if (hidden == null || hidden.size() == 0) {
-      for (final var w : wires) {
-        final var s = w.e0;
-        final var t = w.e1;
+      for (final var wire : wires) {
+        final var s = wire.e0;
+        final var t = wire.e1;
         final var wb = bmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
@@ -455,7 +455,7 @@ class CircuitWires {
         } else {
           g.setColor(Color.BLACK);
         }
-        if (highlighted.containsWire(w)) {
+        if (highlighted.containsWire(wire)) {
           if (wb.isBus()) width = Wire.HIGHLIGHTED_WIDTH_BUS;
           else width = Wire.HIGHLIGHTED_WIDTH;
           GraphicsUtil.switchToWidth(g, width);
@@ -475,11 +475,11 @@ class CircuitWires {
         /* The following part is used by the FPGA-commanders DRC to highlight a wire with DRC
          * problems (KTT1)
          */
-        if (w.IsDRCHighlighted()) {
+        if (wire.IsDRCHighlighted()) {
           width += 2;
-          g.setColor(w.GetDRCHighlightColor());
+          g.setColor(wire.GetDRCHighlightColor());
           GraphicsUtil.switchToWidth(g, 2);
-          if (w.isVertical()) {
+          if (wire.isVertical()) {
             g.drawLine(s.getX() - width, s.getY(), t.getX() - width, t.getY());
             g.drawLine(s.getX() + width, s.getY(), t.getX() + width, t.getY());
           } else {
@@ -517,10 +517,10 @@ class CircuitWires {
         }
       }
     } else {
-      for (final var w : wires) {
-        if (!hidden.contains(w)) {
-          final var s = w.e0;
-          final var t = w.e1;
+      for (final var wire : wires) {
+        if (!hidden.contains(wire)) {
+          final var s = wire.e0;
+          final var t = wire.e1;
           final var wb = bmap.getBundleAt(s);
           if (!wb.isValid()) {
             g.setColor(Value.WIDTH_ERROR_COLOR);
@@ -530,7 +530,7 @@ class CircuitWires {
           } else {
             g.setColor(Color.BLACK);
           }
-          if (highlighted.containsWire(w)) {
+          if (highlighted.containsWire(wire)) {
             GraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
             g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
             GraphicsUtil.switchToWidth(g, Wire.WIDTH);

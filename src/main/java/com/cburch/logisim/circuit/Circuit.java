@@ -473,8 +473,8 @@ public class Circuit {
       project.getSimulator().tick(1);
       Thread.yield();
 
-      for (final var pinstatus : pin) {
-        pinsState[i] = state.getInstanceState(pinstatus);
+      for (final var pinStatus : pin) {
+        pinsState[i] = state.getInstanceState(pinStatus);
         vPins[i] = Pin.FACTORY.getValue(pinsState[i]);
         i++;
       }
@@ -668,8 +668,8 @@ public class Circuit {
       xMax = Integer.MIN_VALUE;
       yMax = Integer.MIN_VALUE;
     }
-    for (final var c : comps) {
-      final var bds = c.getBounds(g);
+    for (final var comp : comps) {
+      final var bds = comp.getBounds(g);
       if (bds != null && bds != Bounds.EMPTY_BOUNDS) {
         int x0 = bds.getX();
         int x1 = x0 + bds.getWidth();
