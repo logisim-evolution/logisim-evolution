@@ -29,6 +29,7 @@
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.file.LogisimFile;
@@ -46,17 +47,17 @@ import javax.swing.tree.TreeNode;
 class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 
   private static final long serialVersionUID = 1L;
-  private final JTree GuiElement;
+  private final JTree uiElement;
   private Project proj;
   private final boolean showMouseTools;
-  
+
   ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
     super(null);
     this.proj = proj;
     this.showMouseTools = showMouseTools;
     setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui, showMouseTools));
     proj.addProjectListener(this);
-    GuiElement = gui;
+    uiElement = gui;
   }
 
   Node<Tool> findTool(Tool tool) {
@@ -105,7 +106,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     if (file == null) {
       setRoot(null);
     } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file, GuiElement,showMouseTools));
+      setRoot(new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
     }
 
     fireStructureChanged();

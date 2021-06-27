@@ -57,6 +57,13 @@ import java.util.WeakHashMap;
  * @author christian.mueller@heig-vd.ch
  */
 public class TclGeneric extends TclComponent {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "TclGeneric";
 
   static class ContentAttribute extends Attribute<VhdlContentComponent> {
 
@@ -111,7 +118,7 @@ public class TclGeneric extends TclComponent {
   private final WeakHashMap<Instance, TclGenericListener> contentListeners;
 
   public TclGeneric() {
-    super("TclGeneric", S.getter("tclGeneric"));
+    super(_ID, S.getter("tclGeneric"));
 
     contentListeners = new WeakHashMap<>();
   }

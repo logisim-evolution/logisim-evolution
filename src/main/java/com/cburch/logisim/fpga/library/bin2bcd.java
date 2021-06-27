@@ -48,6 +48,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class bin2bcd extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Binary_to_BCD_converter";
 
   static final int PER_DELAY = 1;
   private static final int BINin = 0;
@@ -57,7 +64,7 @@ public class bin2bcd extends InstanceFactory {
       Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public bin2bcd() {
-    super("Binary_to_BCD_converter", S.getter("Bin2BCD"));
+    super(_ID, S.getter("Bin2BCD"));
     setAttributes(new Attribute[] {bin2bcd.ATTR_BinBits}, new Object[] {BitWidth.create(9)});
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
@@ -104,7 +111,7 @@ public class bin2bcd extends InstanceFactory {
         (state.getPortValue(BINin).isFullyDefined()
                 & !state.getPortValue(BINin).isUnknown()
                 & !state.getPortValue(BINin).isErrorValue()
-            ? (int)state.getPortValue(BINin).toLongValue()
+            ? (int) state.getPortValue(BINin).toLongValue()
             : -1);
     BitWidth NrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(Math.pow(2.0, NrOfBits.getWidth())) + 1.0);

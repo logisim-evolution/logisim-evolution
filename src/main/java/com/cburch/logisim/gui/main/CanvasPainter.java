@@ -53,7 +53,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
-import java.util.prefs.PreferenceChangeEvent;
 
 class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
@@ -130,10 +129,10 @@ class CanvasPainter implements PropertyChangeListener {
   }
 
   private void drawWithUserState(Graphics base, Graphics g, Project proj) {
-    Circuit circ = proj.getCurrentCircuit();
-    Selection sel = proj.getSelection();
+    final var circ = proj.getCurrentCircuit();
+    final var sel = proj.getSelection();
     Set<Component> hidden;
-    Tool dragTool = canvas.getDragTool();
+    var dragTool = canvas.getDragTool();
     if (dragTool == null) {
       hidden = NO_COMPONENTS;
     } else {
@@ -175,10 +174,10 @@ class CanvasPainter implements PropertyChangeListener {
     // draw tool
     Tool tool = dragTool != null ? dragTool : proj.getTool();
     if (tool != null && !canvas.isPopupMenuUp()) {
-      Graphics gCopy = g.create();
-      context.setGraphics(gCopy);
+      var gfxCopy = g.create();
+      context.setGraphics(gfxCopy);
       tool.draw(canvas, context);
-      gCopy.dispose();
+      gfxCopy.dispose();
     }
   }
 
@@ -212,9 +211,9 @@ class CanvasPainter implements PropertyChangeListener {
   // painting methods
   //
   void paintContents(Graphics g, Project proj) {
-    Rectangle clip = g.getClipBounds();
-    Dimension size = canvas.getSize();
-    double zoomFactor = canvas.getZoomFactor();
+    var clip = g.getClipBounds();
+    var size = canvas.getSize();
+    final double zoomFactor = canvas.getZoomFactor();
     if (canvas.ifPaintDirtyReset() || clip == null) {
       clip = new Rectangle(0, 0, size.width, size.height);
     }
@@ -222,32 +221,32 @@ class CanvasPainter implements PropertyChangeListener {
     grid.paintGrid(g);
     g.setColor(Color.black);
 
-    Graphics gScaled = g.create();
-    if (zoomFactor != 1.0 && gScaled instanceof Graphics2D) {
-      ((Graphics2D) gScaled).scale(zoomFactor, zoomFactor);
+    var gfxScaled = g.create();
+    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D) {
+      ((Graphics2D) gfxScaled).scale(zoomFactor, zoomFactor);
     }
-    drawWithUserState(g, gScaled, proj);
-    drawWidthIncompatibilityData(g, gScaled, proj);
-    Circuit circ = proj.getCurrentCircuit();
+    drawWithUserState(g, gfxScaled, proj);
+    drawWidthIncompatibilityData(g, gfxScaled, proj);
+    var circ = proj.getCurrentCircuit();
 
-    CircuitState circState = proj.getCircuitState();
-    ComponentDrawContext ptContext = new ComponentDrawContext(canvas, circ, circState, g, gScaled);
+    var circState = proj.getCircuitState();
+    var ptContext = new ComponentDrawContext(canvas, circ, circState, g, gfxScaled);
     ptContext.setHighlightedWires(highlightedWires);
-    gScaled.setColor(Color.RED);
+    gfxScaled.setColor(Color.RED);
     circState.drawOscillatingPoints(ptContext);
-    gScaled.setColor(Color.BLUE);
+    gfxScaled.setColor(Color.BLUE);
     proj.getSimulator().drawStepPoints(ptContext);
-    gScaled.setColor(Color.MAGENTA); // fixme
+    gfxScaled.setColor(Color.MAGENTA); // fixme
     proj.getSimulator().drawPendingInputs(ptContext);
-    gScaled.dispose();
+    gfxScaled.dispose();
   }
 
   public void propertyChange(PropertyChangeEvent event) {
     if (AppPreferences.GRID_BG_COLOR.isSource(event)
-          || AppPreferences.GRID_DOT_COLOR.isSource(event)
-          || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)) {
+        || AppPreferences.GRID_DOT_COLOR.isSource(event)
+        || AppPreferences.GRID_ZOOMED_DOT_COLOR.isSource(event)) {
+      canvas.repaint();
     }
-    canvas.repaint();
   }
 
   void setHaloedComponent(Circuit circ, Component comp) {

@@ -63,6 +63,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Counter extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Counter";
 
   public static int SymbolWidth(int NrOfBits) {
     return 150 + ((NrOfBits - 8) / 5) * 10;
@@ -99,7 +106,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   static final int CARRY = 7;
 
   public Counter() {
-    super("Counter", S.getter("counterComponent"));
+    super(_ID, S.getter("counterComponent"));
     setOffsetBounds(Bounds.create(-30, -20, 30, 40));
     setIcon(new CounterIcon());
     setInstancePoker(CounterPoker.class);
@@ -323,17 +330,21 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.drawRect(xpos + 20, RealYpos, SymbolWidth(NrOfBits), 20);
     /* Input Line */
     if (NrOfBits > 1) {
-    	// Input Line
-    	int[] ixPoints = {xpos + 5, xpos + 10, xpos + 20};
-    	int[] iyPoints = {RealYpos + 5, RealYpos + 10, RealYpos + 10};
-    	g.drawPolyline(ixPoints, iyPoints, 3);
-    	
-    	// Output Line
-    	int[] oxPoints = {xpos + 20 + SymbolWidth(NrOfBits), xpos + 30 + SymbolWidth(NrOfBits), xpos + 35 + SymbolWidth(NrOfBits)};
-    	int[] oyPoints = {RealYpos + 10, RealYpos + 10, RealYpos + 5};
-    	g.drawPolyline(oxPoints, oyPoints, 3);
+      // Input Line
+      int[] ixPoints = {xpos + 5, xpos + 10, xpos + 20};
+      int[] iyPoints = {RealYpos + 5, RealYpos + 10, RealYpos + 10};
+      g.drawPolyline(ixPoints, iyPoints, 3);
+
+      // Output Line
+      int[] oxPoints = {
+        xpos + 20 + SymbolWidth(NrOfBits),
+        xpos + 30 + SymbolWidth(NrOfBits),
+        xpos + 35 + SymbolWidth(NrOfBits)
+      };
+      int[] oyPoints = {RealYpos + 10, RealYpos + 10, RealYpos + 5};
+      g.drawPolyline(oxPoints, oyPoints, 3);
     } else {
-    	// Input Line
+      // Input Line
       g.drawLine(xpos, RealYpos + 10, xpos + 20, RealYpos + 10);
       // Output Line
       g.drawLine(
@@ -342,7 +353,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           xpos + 40 + SymbolWidth(NrOfBits),
           RealYpos + 10);
     }
-    
+
     g.setColor(Color.BLACK);
     if (NrOfBits > 1) {
       GraphicsUtil.drawText(
@@ -369,15 +380,19 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       painter.drawPort(IN);
       painter.drawPort(OUT);
       if (NrOfBits > 1) {
-    	  // Input Line
-      	int[] ixPoints = {xpos, xpos + 5, xpos + 5};
-      	int[] iyPoints = {RealYpos, RealYpos + 5, RealYpos + 20};
-      	g.drawPolyline(ixPoints, iyPoints, 3);
-      	
-      	// Output Line
-      	int[] oxPoints = {xpos + 35 + SymbolWidth(NrOfBits), xpos + 35 + SymbolWidth(NrOfBits), xpos + 40 + SymbolWidth(NrOfBits)};
-      	int[] oyPoints = {RealYpos + 20, RealYpos + 5, RealYpos};
-      	g.drawPolyline(oxPoints, oyPoints, 3);
+        // Input Line
+        int[] ixPoints = {xpos, xpos + 5, xpos + 5};
+        int[] iyPoints = {RealYpos, RealYpos + 5, RealYpos + 20};
+        g.drawPolyline(ixPoints, iyPoints, 3);
+
+        // Output Line
+        int[] oxPoints = {
+          xpos + 35 + SymbolWidth(NrOfBits),
+          xpos + 35 + SymbolWidth(NrOfBits),
+          xpos + 40 + SymbolWidth(NrOfBits)
+        };
+        int[] oyPoints = {RealYpos + 20, RealYpos + 5, RealYpos};
+        g.drawPolyline(oxPoints, oyPoints, 3);
       }
     } else if (last) {
       g.drawLine(xpos + 5, RealYpos, xpos + 5, RealYpos + 5);
@@ -570,7 +585,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       } else if (!oldVal.isFullyDefined()) {
         newVal = null;
       } else if (en) {
-    	BigInteger goal = (UpCount) ? max : BigInteger.ZERO;
+        BigInteger goal = (UpCount) ? max : BigInteger.ZERO;
         if (oldValue.compareTo(goal) == 0) {
           Object onGoal = state.getAttributeValue(ATTR_ON_GOAL);
           if (onGoal == ON_GOAL_WRAP) {
@@ -579,8 +594,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
             newVal = oldValue;
           } else if (onGoal == ON_GOAL_LOAD) {
             newVal = loadValue;
-            if (newVal.compareTo(max)>0)
-              newVal = newVal.and(max);
+            if (newVal.compareTo(max) > 0) newVal = newVal.and(max);
           } else if (onGoal == ON_GOAL_CONT) {
             newVal = (UpCount) ? oldValue.add(BigInteger.ONE) : oldValue.subtract(BigInteger.ONE);
           } else {

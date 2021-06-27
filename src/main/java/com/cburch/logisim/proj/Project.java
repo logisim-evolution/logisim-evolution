@@ -102,13 +102,15 @@ public class Project {
   private static final int MAX_UNDO_SIZE = 64;
 
   private final Simulator simulator = new Simulator();
-  private VhdlSimulatorTop VhdlSimulator = null;
+  private VhdlSimulatorTop vhdlSimulator = null;
 
   private LogisimFile file;
   private HdlModel hdlModel;
   private CircuitState circuitState; // active sim state
-  private final HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
-  private final LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
+  private final HashMap<Circuit, CircuitState> recentRootState =
+      new HashMap<>(); // most recent root sim state for each circuit
+  private final LinkedList<CircuitState> allRootStates =
+      new LinkedList<>(); // all root sim states, in display order
   private Frame frame = null;
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
@@ -143,7 +145,7 @@ public class Project {
     fileListeners.add(value);
     if (file != null) file.addLibraryListener(value);
   }
-  
+
   //
   // Listener methods
   //
@@ -253,7 +255,7 @@ public class Project {
   }
 
   /**
-   * Decide whether or not you can redo
+   * Decide whether or not you can redo.
    *
    * @return if we can redo
    */
@@ -298,8 +300,8 @@ public class Project {
     if (hdlModel == hdl) return;
     setTool(null);
     CircuitState old = circuitState;
-    HdlModel oldHdl = hdlModel;
-    Circuit oldCircuit = old == null ? null : old.getCircuit();
+    final HdlModel oldHdl = hdlModel;
+    Circuit oldCircuit = (old == null) ? null : old.getCircuit();
     if (oldCircuit != null) {
       for (CircuitListener l : circuitListeners) {
         oldCircuit.removeCircuitListener(l);
@@ -336,7 +338,7 @@ public class Project {
   }
 
   /**
-   * Returns the action of the last entry in the redo log
+   * Returns the action of the last entry in the redo log.
    *
    * @return last action in redo log
    */
@@ -384,13 +386,13 @@ public class Project {
   }
 
   public VhdlSimulatorTop getVhdlSimulator() {
-    if (VhdlSimulator == null) VhdlSimulator = new VhdlSimulatorTop(this);
+    if (vhdlSimulator == null) vhdlSimulator = new VhdlSimulatorTop(this);
 
-    return VhdlSimulator;
+    return vhdlSimulator;
   }
 
   public boolean isFileDirty() {
-    return (undoMods > 0)||forcedDirty;
+    return (undoMods > 0) || forcedDirty;
   }
 
   // We track whether this project is the empty project opened
@@ -400,10 +402,13 @@ public class Project {
   public boolean isStartupScreen() {
     return startupScreen;
   }
-  
-  public void setForcedDirty() {forcedDirty = true; file.setDirty(true);}
 
-  /** Redo actions that were previously undone */
+  public void setForcedDirty() {
+    forcedDirty = true;
+    file.setDirty(true);
+  }
+
+  /** Redo actions that were previously undone. */
   public void redoAction() {
     // If there ARE things to undo...
     if (redoLog != null && redoLog.size() > 0) {
@@ -453,7 +458,6 @@ public class Project {
     // the circuit)
     fireEvent(new ProjectEvent(ProjectEvent.REPAINT_REQUEST, this, null));
   }
-
 
   public void setCircuitState(CircuitState value) {
     if (value == null || circuitState == value) return;
@@ -516,7 +520,7 @@ public class Project {
 
   public void setFileAsClean() {
     undoMods = 0;
-    forcedDirty=false;
+    forcedDirty = false;
     file.setDirty(isFileDirty());
   }
 

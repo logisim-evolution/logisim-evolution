@@ -54,8 +54,8 @@ public class SocketClient {
 
   private Socket socket;
 
-  private BufferedReader socket_reader;
-  private PrintWriter socket_writer;
+  private BufferedReader socketReader;
+  private PrintWriter socketWriter;
 
   public SocketClient() {
 
@@ -89,7 +89,7 @@ public class SocketClient {
   public String receive() {
 
     try {
-      return socket_reader.readLine();
+      return socketReader.readLine();
     } catch (Exception e) {
       logger.error("Cannot read from socket : {}", e.getMessage());
       return null;
@@ -99,7 +99,7 @@ public class SocketClient {
   public void send(String message) {
 
     try {
-      socket_writer.println(message);
+      socketWriter.println(message);
     } catch (Exception e) {
       logger.error("Cannot write {} to socket {}", message, e.getMessage());
     }
@@ -110,9 +110,9 @@ public class SocketClient {
     try {
       socket = server.accept();
 
-      socket_reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-      socket_writer =
+      socketWriter =
           new PrintWriter(
               new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 

@@ -129,20 +129,22 @@ public class MainMenuListener extends MenuListener {
     }
 
     public void computeEnabled() {
-      Project proj = frame == null ? null : frame.getProject();
-      LogisimFile file = proj == null ? null : proj.getLogisimFile();
-      Circuit cur = proj == null ? null : proj.getCurrentCircuit();
-      int curIndex = file == null ? -1 : file.indexOfCircuit(cur);
-      boolean isProjectCircuit = curIndex >= 0;
-      String editorView = frame == null ? "" : frame.getEditorView();
-      boolean canSetMain = false;
-      boolean canMoveUp = false;
-      boolean canMoveDown = false;
-      boolean canRemove = false;
-      boolean canRevert = false;
-      boolean viewAppearance = editorView.equals(Frame.EDIT_APPEARANCE);
-      boolean viewLayout = editorView.equals(Frame.EDIT_LAYOUT);
-      if (isProjectCircuit) {
+      final Project proj = frame == null ? null : frame.getProject();
+      final LogisimFile file = proj == null ? null : proj.getLogisimFile();
+      final Circuit cur = proj == null ? null : proj.getCurrentCircuit();
+      final int curIndex = file == null ? -1 : file.indexOfCircuit(cur);
+      final String editorView = frame == null ? "" : frame.getEditorView();
+      final var viewAppearance = editorView.equals(Frame.EDIT_APPEARANCE);
+      final var viewLayout = editorView.equals(Frame.EDIT_LAYOUT);
+
+      var canSetMain = false;
+      var canMoveUp = false;
+      var canMoveDown = false;
+      var canRemove = false;
+      var canRevert = false;
+
+      // is project circuit?
+      if (curIndex >= 0) {
         List<?> tools = proj.getLogisimFile().getTools();
 
         canSetMain = proj.getLogisimFile().getMainCircuit() != cur;

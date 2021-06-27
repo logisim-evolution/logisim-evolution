@@ -35,6 +35,7 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMapInfo;
+import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.appear.AppearanceSvgReader;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -48,10 +49,22 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.wiring.BitExtender;
+import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
+import com.cburch.logisim.std.wiring.PullResistor;
+import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.MenuTool;
+import com.cburch.logisim.tools.PokeTool;
+import com.cburch.logisim.tools.SelectTool;
+import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
@@ -61,6 +74,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -287,11 +301,11 @@ class XmlReader {
       }
       return known;
     }
-    
+
     void loadMap(Element board, String boardName, Circuit circ) {
-      HashMap<String,CircuitMapInfo> map = new HashMap<>();
+      HashMap<String, CircuitMapInfo> map = new HashMap<>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
-        int x,y,w,h;
+        int x, y, w, h;
         String key = cmap.getAttribute("key");
         if (key == null || key.isEmpty()) continue;
         if (cmap.hasAttribute("open")) {
@@ -304,8 +318,10 @@ class XmlReader {
             continue;
           }
           map.put(key, new CircuitMapInfo(v));
-        } else if (cmap.hasAttribute("valx") && cmap.hasAttribute("valy") &&
-              cmap.hasAttribute("valw") && cmap.hasAttribute("valh")) {
+        } else if (cmap.hasAttribute("valx")
+            && cmap.hasAttribute("valy")
+            && cmap.hasAttribute("valw")
+            && cmap.hasAttribute("valh")) {
           /* Backward compatibility: */
           try {
             x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
@@ -315,7 +331,7 @@ class XmlReader {
           } catch (NumberFormatException e) {
             continue;
           }
-          BoardRectangle br = new BoardRectangle(x,y,w,h);
+          BoardRectangle br = new BoardRectangle(x, y, w, h);
           map.put(key, new CircuitMapInfo(br));
         } else {
           CircuitMapInfo cmapi = MapComponent.getMapInfo(cmap);
@@ -404,7 +420,7 @@ class XmlReader {
       if (versionString.equals("")) {
         sourceVersion = Main.VERSION;
       } else {
-        sourceVersion = LogisimVersion.parse(versionString);
+        sourceVersion = LogisimVersion.fromString(versionString);
         HolyCrossFile = versionString.endsWith("-HC");
       }
 
@@ -415,7 +431,7 @@ class XmlReader {
       // We have therefore to warn the user that things might be a little
       // strange in their
       // circuits...
-      if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
+      if (sourceVersion.compareTo(new LogisimVersion(2, 7, 2)) < 0) {
         IsEvolutionFile = true;
         OptionPane.showMessageDialog(
             null,
@@ -463,7 +479,7 @@ class XmlReader {
             for (Element boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
               String BoardName = boardMap.getAttribute("boardname");
               if (BoardName == null || BoardName.isEmpty()) continue;
-              loadMap(boardMap,BoardName,circData.circuit);
+              loadMap(boardMap, BoardName, circData.circuit);
             }
             circuitsData.add(circData);
             break;
@@ -536,7 +552,7 @@ class XmlReader {
   }
 
   /**
-   * Change label names in an XML tree according to a list of suggested labels
+   * Change label names in an XML tree according to a list of suggested labels.
    *
    * @param root root element of the XML tree
    * @param nodeType type of nodes to consider
@@ -846,7 +862,7 @@ class XmlReader {
   }
 
   /**
-   * Check if a given label could be a valid VHDL variable name
+   * Check if a given label could be a valid VHDL variable name.
    *
    * @param label candidate VHDL variable name
    * @return true if the label is NOT a valid name, false otherwise
@@ -995,8 +1011,8 @@ class XmlReader {
   }
 
   private void considerRepairs(Document doc, Element root) {
-    LogisimVersion version = LogisimVersion.parse(root.getAttribute("source"));
-    if (version.compareTo(LogisimVersion.get(2, 3, 0)) < 0) {
+    LogisimVersion version = LogisimVersion.fromString(root.getAttribute("source"));
+    if (version.compareTo(new LogisimVersion(2, 3, 0)) < 0) {
       // This file was saved before an Edit tool existed. Most likely
       // we should replace the Select and Wiring tools in the toolbar
       // with the Edit tool instead.
@@ -1007,18 +1023,18 @@ class XmlReader {
         for (Element elt : XmlIterator.forChildElements(toolbar, "tool")) {
           String eltName = elt.getAttribute("name");
           if (eltName != null && !eltName.equals("")) {
-            if (eltName.equals("Select Tool")) select = elt;
-            if (eltName.equals("Wiring Tool")) wiring = elt;
-            if (eltName.equals("Edit Tool")) edit = elt;
+            if (eltName.equals(SelectTool._ID)) select = elt;
+            if (eltName.equals(WiringTool._ID)) wiring = elt;
+            if (eltName.equals(EditTool._ID)) edit = elt;
           }
         }
         if (select != null && wiring != null && edit == null) {
-          select.setAttribute("name", "Edit Tool");
+          select.setAttribute("name", EditTool._ID);
           toolbar.removeChild(wiring);
         }
       }
     }
-    if (version.compareTo(LogisimVersion.get(2, 6, 3)) < 0) {
+    if (version.compareTo(new LogisimVersion(2, 6, 3)) < 0) {
       for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
           String name = attrElt.getAttribute("name");
@@ -1192,12 +1208,30 @@ class XmlReader {
         labelMap,
         oldBaseLabel,
         newBaseLabel,
-        "Poke Tool;" + "Edit Tool;Select Tool;Wiring Tool;Text Tool;Menu Tool;Text");
+        String.join(
+            ";",
+            Arrays.asList(
+                PokeTool._ID,
+                EditTool._ID,
+                SelectTool._ID,
+                WiringTool._ID,
+                TextTool._ID,
+                MenuTool._ID,
+                Text._ID)));
     addToLabelMap(
         labelMap,
         oldBaseLabel,
         wiringLabel,
-        "Splitter;Pin;" + "Probe;Tunnel;Clock;Pull Resistor;Bit Extender");
+        String.join(
+            ";",
+            Arrays.asList(
+                Splitter._ID,
+                Pin._ID,
+                Probe._ID,
+                Tunnel._ID,
+                Clock._ID,
+                PullResistor._ID,
+                BitExtender._ID)));
     addToLabelMap(labelMap, gatesLabel, wiringLabel, "Constant");
     relocateTools(oldBaseElt, newBaseElt, labelMap);
     relocateTools(oldBaseElt, wiringElt, labelMap);

@@ -53,22 +53,22 @@ public class SelectionPanel extends LogPanel {
   private final JLabel selectDesc;
   private final JLabel exploreLabel;
   private final JLabel listLabel;
-  
+
   public SelectionPanel(LogFrame window) {
     super(window);
     selector = new ComponentSelector(getModel().getCircuit(), ComponentSelector.ANY_SIGNAL);
     list = new SelectionList();
     list.setLogModel(getModel());
 
-    JScrollPane explorerPane = new JScrollPane(selector,
+    final var explorerPane = new JScrollPane(selector,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    JScrollPane listPane = new JScrollPane(list,
+    final var listPane = new JScrollPane(list,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    final var gridbag = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     setLayout(gridbag);
 
     gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -104,8 +104,8 @@ public class SelectionPanel extends LogPanel {
     add(explorerPane);
     explorerPane.setPreferredSize(new Dimension(120, 200));
 
-    JButton addArrow = new JButton(new FatArrowIcon(Direction.EAST));
-    JButton delArrow = new JButton(new FatArrowIcon(Direction.WEST));
+    final var addArrow = new JButton(new FatArrowIcon(Direction.EAST));
+    final var delArrow = new JButton(new FatArrowIcon(Direction.WEST));
     addArrow.setBorder(BorderFactory.createEmptyBorder());
     delArrow.setBorder(BorderFactory.createEmptyBorder());
     addArrow.setContentAreaFilled(false);
@@ -119,7 +119,7 @@ public class SelectionPanel extends LogPanel {
     addArrow.addActionListener(e -> list.add(selector.getSelectedItems()));
     delArrow.addActionListener(e -> list.removeSelected());
 
-    Box arrowBox = new Box(BoxLayout.Y_AXIS);
+    final var arrowBox = new Box(BoxLayout.Y_AXIS);
     arrowBox.add(addArrow);
     arrowBox.add(delArrow);
     gbc.fill = GridBagConstraints.NONE;
@@ -137,7 +137,8 @@ public class SelectionPanel extends LogPanel {
     gbc.gridy = 2;
     gridbag.setConstraints(listPane, gbc);
     add(listPane);
-    listPane.setPreferredSize(new Dimension(AppPreferences.getScaled(180), AppPreferences.getScaled(200)));
+    listPane.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(180), AppPreferences.getScaled(200)));
   }
 
   @Override
@@ -168,6 +169,7 @@ public class SelectionPanel extends LogPanel {
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
     final SelectionPanel selPanel;
+
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);
@@ -177,8 +179,12 @@ public class SelectionPanel extends LogPanel {
       setSize(400, 400);
       pack();
     }
-    public void cancelClicked() { okClicked(); }
-    public void okClicked() { }
+
+    public void cancelClicked() {
+      okClicked();
+    }
+
+    public void okClicked() {}
   }
 
   public static void doDialog(LogFrame logFrame) {

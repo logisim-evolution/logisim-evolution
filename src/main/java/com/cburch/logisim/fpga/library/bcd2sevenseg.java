@@ -45,6 +45,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class bcd2sevenseg extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "BCD_to_7_Segment_decoder";
 
   static final int PER_DELAY = 1;
   public static final int Segment_A = 0;
@@ -57,7 +64,7 @@ public class bcd2sevenseg extends InstanceFactory {
   public static final int BCDin = 7;
 
   public bcd2sevenseg() {
-    super("BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"));
+    super(_ID, S.getter("BCD2SevenSegment"));
     setAttributes(new Attribute[] {StdAttr.DUMMY}, new Object[] {""});
     setOffsetBounds(Bounds.create(-10, -20, 50, 100));
     Port[] ps = new Port[8];
@@ -103,7 +110,7 @@ public class bcd2sevenseg extends InstanceFactory {
     if (state.getPortValue(BCDin).isFullyDefined()
         & !state.getPortValue(BCDin).isErrorValue()
         & !state.getPortValue(BCDin).isUnknown()) {
-      int value = (int)state.getPortValue(BCDin).toLongValue();
+      int value = (int) state.getPortValue(BCDin).toLongValue();
       switch (value) {
         case 0:
           state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);

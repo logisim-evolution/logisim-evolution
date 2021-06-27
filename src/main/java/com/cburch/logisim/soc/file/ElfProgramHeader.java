@@ -37,43 +37,42 @@ import java.util.Map;
 
 public class ElfProgramHeader {
 
-  public final static int P_TYPE = 0;
-  public final static int P_FLAGS = 1;
-  public final static int P_OFFSET = 2;
-  public final static int P_VADDR = 3;
-  public final static int P_PADDR = 4;
-  public final static int P_FILESZ = 5;
-  public final static int P_MEMSZ = 6;
-  public final static int P_ALIGN = 7;
-  
-  public final static int PT_NULL = 0;
-  public final static int PT_LOAD = 1;
-  public final static int PT_DYNAMIC = 2;
-  public final static int PT_INTERP = 3;
-  public final static int PT_NOTE = 4;
-  public final static int PT_SHLIB = 5;
-  public final static int PT_PHDR = 6;
-  public final static int PT_LOPROC = 0x70000000;
-  public final static int PT_HIPROC = 0x7FFFFFFF;
+  public static final int P_TYPE = 0;
+  public static final int P_FLAGS = 1;
+  public static final int P_OFFSET = 2;
+  public static final int P_VADDR = 3;
+  public static final int P_PADDR = 4;
+  public static final int P_FILESZ = 5;
+  public static final int P_MEMSZ = 6;
+  public static final int P_ALIGN = 7;
+
+  public static final int PT_NULL = 0;
+  public static final int PT_LOAD = 1;
+  public static final int PT_DYNAMIC = 2;
+  public static final int PT_INTERP = 3;
+  public static final int PT_NOTE = 4;
+  public static final int PT_SHLIB = 5;
+  public static final int PT_PHDR = 6;
+  public static final int PT_LOPROC = 0x70000000;
+  public static final int PT_HIPROC = 0x7FFFFFFF;
   private static final Map<Integer, String> PT_TYPES;
   static {
     PT_TYPES = Map.of(PT_NULL, "PT_NULL", PT_LOAD, "PT_LOAD", PT_DYNAMIC, "PT_DYNAMIC", PT_INTERP,
         "PT_INTERP", PT_NOTE, "PT_NOTE", PT_SHLIB, "PT_SHLIB", PT_PHDR, "PT_PHDR", PT_LOPROC,
         "PT_LOPROC", PT_HIPROC, "PT_HIPROC");
   }
-  
-  public final static int PF_X = 1;
-  public final static int PF_W = 2;
-  public final static int PF_R = 4;
+
+  public static final int PF_X = 1;
+  public static final int PF_W = 2;
+  public static final int PF_R = 4;
   private static final Map<Integer, String> PF_FLAGS;
   static {
     PF_FLAGS = Map.of(PF_X, "PF_X", PF_W, "PF_W", PF_R, "PF_R");
   }
-  
-  
-  private final static int SUCCESS = 0;
-  private final static int PROGRAM_HEADER_NOT_FOUND_ERROR = 1;
-  private final static int PROGRAM_HEADER_READ_ERROR = 2;
+
+  private static final int SUCCESS = 0;
+  private static final int PROGRAM_HEADER_NOT_FOUND_ERROR = 1;
+  private static final int PROGRAM_HEADER_READ_ERROR = 2;
   private static final int PROGRAM_HEADER_SIZE_ERROR = 3;
 
   public static class ProgramHeader {
@@ -86,8 +85,8 @@ public class ElfProgramHeader {
     private final Long p_memsz;
     private final Long p_align;
     private final boolean is32Bit;
-    
-    public ProgramHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
+
+    public ProgramHeader(byte[] buffer, boolean is32Bit, boolean isLittleEndian, int offset) {
       int index = offset;
       this.is32Bit = is32Bit;
       p_type = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
@@ -113,7 +112,7 @@ public class ElfProgramHeader {
       }
       p_align = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     }
-    
+
     public Object getValue(int identifier) {
       switch (identifier) {
         case P_TYPE : return p_type;
@@ -127,7 +126,7 @@ public class ElfProgramHeader {
       }
       return null;
     }
-    
+
     public String toString() {
       StringBuilder s = new StringBuilder();
       s.append("Program Header Info:\np_type   : ");
@@ -135,7 +134,7 @@ public class ElfProgramHeader {
       s.append("\np_flags  : ");
       boolean first = true;
       for (int i : PF_FLAGS.keySet()) {
-        if ((p_flags&i) != 0) {
+        if ((p_flags & i) != 0) {
           if (!first)
             s.append(", ");
           first = false;
@@ -150,15 +149,16 @@ public class ElfProgramHeader {
       s.append("p_align  : ").append(String.format("0x%X", p_align)).append("\n\n");
       return s.toString();
     }
-    
+
   }
-  
+
   private int status;
   private ArrayList<ProgramHeader> headers;
   private long programHeaderSize;
 
-  public ElfProgramHeader(FileInputStream file , ElfHeader elfHeader) {
-	/* Important: the FileInputStream should be located at the beginning of the file (so directly after open) */
+  public ElfProgramHeader(FileInputStream file, ElfHeader elfHeader) {
+    // Important: the FileInputStream should be located at the beginning of the file (so directly
+    // after open)
     status = SUCCESS;
     try {
       file.skip(elfHeader.getSize());
@@ -168,7 +168,7 @@ public class ElfProgramHeader {
     }
     int nrOfProgramHeaders = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_PHNUM));
     int progHeaderEntrySize = ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_PHENTSIZE));
-    programHeaderSize = nrOfProgramHeaders*progHeaderEntrySize;
+    programHeaderSize = nrOfProgramHeaders * progHeaderEntrySize;
     byte[] buffer = new byte[(int) programHeaderSize];
     int nrRead = 0;
     try {
@@ -183,20 +183,20 @@ public class ElfProgramHeader {
     }
     int index = 0;
     headers = new ArrayList<>();
-    for (int i = 0 ; i < nrOfProgramHeaders ; i++) {
+    for (int i = 0; i < nrOfProgramHeaders; i++) {
       headers.add(new ProgramHeader(buffer, elfHeader.is32Bit(), elfHeader.isLittleEndian(), index));
       index += progHeaderEntrySize;
     }
   }
-  
+
   public boolean isValid() {
     return status == SUCCESS;
   }
-  
+
   public long getSize() {
     return programHeaderSize;
   }
-  
+
   public String getErrorString() {
     switch (status) {
       case SUCCESS : return S.get("ProgHeaderSuccess");
@@ -206,11 +206,11 @@ public class ElfProgramHeader {
     }
     return "BUG: this should never happen in ElfProgramHeader";
   }
-  
+
   public int getNrOfHeaders() {
     return headers.size();
   }
-  
+
   public ProgramHeader getHeader(int index) {
     if (index < 0 || index >= headers.size())
       return null;

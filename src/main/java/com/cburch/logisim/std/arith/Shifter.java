@@ -51,6 +51,14 @@ import java.awt.Graphics;
 import java.util.Arrays;
 
 public class Shifter extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Shifter";
+
   static final AttributeOption SHIFT_LOGICAL_LEFT =
       new AttributeOption("ll", S.getter("shiftLogicalLeft"));
   static final AttributeOption SHIFT_LOGICAL_RIGHT =
@@ -78,7 +86,7 @@ public class Shifter extends InstanceFactory {
   static final int OUT = 2;
 
   public Shifter() {
-    super("Shifter", S.getter("shifterComponent"));
+    super(_ID, S.getter("shifterComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT},
         new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
@@ -181,7 +189,7 @@ public class Shifter extends InstanceFactory {
     Value vd = state.getPortValue(IN1);
     Value vy; // y will by x shifted by d
     if (vd.isFullyDefined() && vx.getWidth() == bits) {
-      int d = (int)vd.toLongValue();
+      int d = (int) vd.toLongValue();
       Object shift = state.getAttributeValue(ATTR_SHIFT);
       if (d == 0) {
         vy = vx;

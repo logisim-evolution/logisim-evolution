@@ -47,6 +47,7 @@ public class CanvasPane extends JScrollPane {
   private final Listener listener;
   private final ZoomListener zoomListener;
   private ZoomModel zoomModel;
+
   public CanvasPane(CanvasPaneContents contents) {
     super((Component) contents);
     this.contents = contents;

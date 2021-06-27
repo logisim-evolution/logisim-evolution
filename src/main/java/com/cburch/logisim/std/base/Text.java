@@ -51,6 +51,14 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Text";
+
   public static final Attribute<String> ATTR_TEXT =
       Attributes.forString("text", S.getter("textTextAttr"));
   public static final Attribute<Font> ATTR_FONT =
@@ -95,10 +103,10 @@ public class Text extends InstanceFactory {
   public static final Text FACTORY = new Text();
 
   private Text() {
-    super("Text", S.getter("textComponent"));
+    super(_ID, S.getter("textComponent"));
     setShouldSnap(false);
   }
-  
+
   private void configureLabel(Instance instance) {
     TextAttributes attrs = (TextAttributes) instance.getAttributeSet();
     Location loc = instance.getLocation();
@@ -201,7 +209,7 @@ public class Text extends InstanceFactory {
     paintGhost(painter);
     g.translate(-x, -y);
   }
-  
+
   @Override
   public void paintIcon(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics().create();

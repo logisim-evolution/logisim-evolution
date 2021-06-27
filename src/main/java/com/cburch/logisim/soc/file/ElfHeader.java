@@ -57,16 +57,16 @@ public class ElfHeader {
   public static final int EI_ABIVERSION = 0x8;
   public static final int EI_PAD = 0x9;
   public static final int E_IDENT_SIZE = 0x10;
-  
+
   private static final int EI_ERROR_READING_FILE = 0x1;
   private static final int EI_SIZE_ERROR = 0x2;
   private static final int EI_MAGIC_ERROR = 0x4;
   private static final int EI_CLASS_ERROR = 0x8;
   private static final int EI_DATA_ERROR = 0x10;
-  
+
   public static final int ELF_HEADER_SIZE_32 = 0x34;
   public static final int ELF_HEADER_SIZE_64 = 0x40;
-  
+
   public static final int E_TYPE = 0x11;
   public static final int E_MACHINE = 0x12;
   public static final int E_VERSION = 0x13;
@@ -80,9 +80,9 @@ public class ElfHeader {
   public static final int E_SHENTSIZE = 0x1B;
   public static final int E_SHNUM = 0x1C;
   public static final int E_SHSTRNDX = 0x1D;
-  
+
   private static final int E_SIZE_ERROR = 0x20;
-  
+
   public static final int ET_NONE = 0x00;
   public static final int ET_REL = 0x01;
   public static final int ET_EXEC = 0x02;
@@ -92,7 +92,7 @@ public class ElfHeader {
   public static final int ET_HIOS = 0xfeff;
   public static final int ET_LOPROC = 0xff00;
   public static final int ET_HIPROC = 0xffff;
-  
+
   /* source for the below constants is : https://docs.rs/goblin/0.0.13/i686-unknown-linux-gnu/goblin/elf/header/ */
   public static final int EM_OPENRISC = 92;
   public static final int EM_INTEL_NIOS2 = 113;
@@ -101,11 +101,10 @@ public class ElfHeader {
   static {
     ARCHITECTURES = Map.of(EM_OPENRISC, "Open Risc", EM_INTEL_NIOS2, "Nios II", EM_RISCV, "Risc V");
   }
-  
-  
-  public final static long LONGMASK = Long.parseUnsignedLong("00FFFFFFFFFFFFFF", 16);
-  public final static long LONGINTMASK = Long.parseUnsignedLong("00000000FFFFFFFF", 16);
-  public final static int INTMASK = Integer.parseUnsignedInt("00FFFFFF", 16);
+
+  public static final long LONGMASK = Long.parseUnsignedLong("00FFFFFFFFFFFFFF", 16);
+  public static final long LONGINTMASK = Long.parseUnsignedLong("00000000FFFFFFFF", 16);
+  public static final int INTMASK = Integer.parseUnsignedInt("00FFFFFF", 16);
 
   private static class EInfo {
     private final Integer e_type;
@@ -122,47 +121,46 @@ public class ElfHeader {
     private final Integer e_shnum;
     private final Integer e_shstrndx;
     private final boolean is32Bit;
-    
-    
-    public EInfo (byte[] buffer , boolean is32Bit, boolean isLittleEndian) {
+
+    public EInfo(byte[] buffer, boolean is32Bit, boolean isLittleEndian) {
       this.is32Bit = is32Bit;
       int index = 0;
       int fieldSize = is32Bit ? 4 : 8;
-      e_type = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_machine = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_version = getIntValue(buffer,index,4,isLittleEndian);
-      index +=4;
-      e_entry = getLongValue(buffer,index,fieldSize,isLittleEndian);
+      e_type = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_machine = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_version = getIntValue(buffer, index, 4, isLittleEndian);
+      index += 4;
+      e_entry = getLongValue(buffer, index, fieldSize, isLittleEndian);
       index += fieldSize;
-      e_phoff = getLongValue(buffer,index,fieldSize,isLittleEndian);
+      e_phoff = getLongValue(buffer, index, fieldSize, isLittleEndian);
       index += fieldSize;
-      e_shoff = getLongValue(buffer,index,fieldSize,isLittleEndian);
+      e_shoff = getLongValue(buffer, index, fieldSize, isLittleEndian);
       index += fieldSize;
-      e_flags = getIntValue(buffer,index,4,isLittleEndian);
-      index +=4;
-      e_ehsize = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_phentsize = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_phnum = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_shentsize = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_shnum = getIntValue(buffer,index,2,isLittleEndian);
-      index +=2;
-      e_shstrndx = getIntValue(buffer,index,2,isLittleEndian);
+      e_flags = getIntValue(buffer, index, 4, isLittleEndian);
+      index += 4;
+      e_ehsize = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_phentsize = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_phnum = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_shentsize = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_shnum = getIntValue(buffer, index, 2, isLittleEndian);
+      index += 2;
+      e_shstrndx = getIntValue(buffer, index, 2, isLittleEndian);
     }
-    
-	public Object getValue(int identifier) {
+
+    public Object getValue(int identifier) {
       switch (identifier) {
         case E_TYPE : return e_type;
         case E_MACHINE : return e_machine;
         case E_VERSION : return e_version;
-        case E_ENTRY : return returnCorrectValue(e_entry,is32Bit); 
-        case E_PHOFF : return returnCorrectValue(e_phoff,is32Bit); 
-        case E_SHOFF : return returnCorrectValue(e_shoff,is32Bit); 
+        case E_ENTRY:  return returnCorrectValue(e_entry, is32Bit);
+        case E_PHOFF : return returnCorrectValue(e_phoff, is32Bit);
+        case E_SHOFF : return returnCorrectValue(e_shoff, is32Bit);
         case E_FLAGS : return e_flags;
         case E_EHSIZE : return e_ehsize;
         case E_PHENTSIZE : return e_phentsize;
@@ -173,13 +171,13 @@ public class ElfHeader {
       }
       return null;
     }
-    
+
   }
-  
+
   private int status = ELF_HEADER_CORRECT;
   private EInfo eInfo;
   private final byte[] e_ident = new byte[E_IDENT_SIZE];
-  
+
   public ElfHeader(FileInputStream file) {
     int nrRead = -1;
     try {
@@ -219,7 +217,7 @@ public class ElfHeader {
     }
     eInfo = new EInfo(buffer, is32Bit(), isLittleEndian());
   }
-  
+
   public Object getValue(int field) {
     if (!isValid())
       return null;
@@ -229,42 +227,42 @@ public class ElfHeader {
       return e_ident[field];
     if (field == EI_PAD) {
       Byte[] pad = new Byte[7];
-      for (int i = 0 ; i < 7 ; i++)
-        pad[i] = e_ident[EI_PAD+i];
+      for (int i = 0; i < 7; i++)
+        pad[i] = e_ident[EI_PAD + i];
       return pad;
     }
     return null;
   }
-  
+
   public boolean isValid() {
     return status == ELF_HEADER_CORRECT;
   }
-  
+
   public boolean is32Bit() {
     return e_ident[EI_CLASS] == EI_CLASS_32;
   }
-  
+
   public boolean isLittleEndian() {
     return e_ident[EI_DATA] == EI_DATA_LITTLE_ENDIAN;
   }
-  
+
   public boolean isElfFile() {
-    return (e_ident[EI_MAG0] == EI_MAG0_VALUE) &&
-           (e_ident[EI_MAG1] == EI_MAG1_VALUE) &&
-           (e_ident[EI_MAG2] == EI_MAG2_VALUE) &&
-           (e_ident[EI_MAG3] == EI_MAG3_VALUE);
+    return (e_ident[EI_MAG0] == EI_MAG0_VALUE)
+        && (e_ident[EI_MAG1] == EI_MAG1_VALUE)
+        && (e_ident[EI_MAG2] == EI_MAG2_VALUE)
+        && (e_ident[EI_MAG3] == EI_MAG3_VALUE);
   }
-  
+
   public int getElfHeaderSize() {
     return getIntValue(eInfo.getValue(E_EHSIZE));
   }
-  
+
   public String getArchitectureString(int arch) {
     if (ARCHITECTURES.containsKey(arch))
       return ARCHITECTURES.get(arch);
     return S.get("ElfHeaderUnknownArchitecture");
   }
-  
+
   public String getErrorString() {
     if (status == ELF_HEADER_CORRECT)
       return S.get("ElfHeaderNoErrors");
@@ -296,20 +294,21 @@ public class ElfHeader {
     }
     return s.toString();
   }
-  
+
   public long getSize() {
-	return getLongValue(getValue(ElfHeader.E_PHOFF));
+    return getLongValue(getValue(ElfHeader.E_PHOFF));
   }
-  
-  public static long getLongValue(byte[] buffer, int startIndex, int NrOfBytes, boolean isLittleEndian) {
+
+  public static long getLongValue(
+      byte[] buffer, int startIndex, int NrOfBytes, boolean isLittleEndian) {
     long result = 0;
-    for (int i = 0 ; i < NrOfBytes ; i++) {
-      int index = startIndex+i;
-      long value = (index < buffer.length) ? ((long)buffer[index])&0xFF : 0;
+    for (int i = 0; i < NrOfBytes; i++) {
+      int index = startIndex + i;
+      long value = (index < buffer.length) ? ((long) buffer[index]) & 0xFF : 0;
       if (isLittleEndian) {
         result >>= 8;
         result &= LONGMASK; /* prevent sign extensions */
-        result |= value << (NrOfBytes-1)*8;
+        result |= value << (NrOfBytes - 1) * 8;
       } else {
         result <<= 8;
         result |= value;
@@ -318,15 +317,16 @@ public class ElfHeader {
     return result;
   }
 
-  public static int getIntValue(byte[] buffer, int startIndex, int NrOfBytes, boolean isLittleEndian) {
+  public static int getIntValue(
+      byte[] buffer, int startIndex, int NrOfBytes, boolean isLittleEndian) {
     int result = 0;
-    for (int i = 0 ; i < NrOfBytes ; i++) {
-      int index = startIndex+i;
-      int value = (index < buffer.length) ? ((int)buffer[startIndex+i])&0xFF : 0;
+    for (int i = 0; i < NrOfBytes; i++) {
+      int index = startIndex + i;
+      int value = (index < buffer.length) ? ((int) buffer[startIndex + i]) & 0xFF : 0;
       if (isLittleEndian) {
         result >>= 8;
         result &= INTMASK; /* prevent sign extensions */
-        result |= value << (NrOfBytes-1)*8;
+        result |= value << (NrOfBytes - 1) * 8;
       } else {
         result <<= 8;
         result |= value;
@@ -334,37 +334,35 @@ public class ElfHeader {
     }
     return result;
   }
-  
+
   public static Object returnCorrectValue(Long value, boolean is32Bit) {
-	Integer intVal = Integer.parseUnsignedInt(String.format("%08X", value&LONGINTMASK), 16);
-	if (is32Bit)
-	  return intVal;
-    return value; 
+    Integer intVal = Integer.parseUnsignedInt(String.format("%08X", value & LONGINTMASK), 16);
+    if (is32Bit)
+      return intVal;
+    return value;
   }
-  
+
   public static int getIntValue(Object v) {
     if (v instanceof Integer)
-      return (int)v;
+      return (int) v;
     if (v instanceof Long)
-      return Integer.parseUnsignedInt(String.format("%08X", ((Long)v)&LONGINTMASK), 16);
+      return Integer.parseUnsignedInt(String.format("%08X", ((Long) v) & LONGINTMASK), 16);
     return 0;
   }
-  
+
   public static long getLongValue(Object v) {
     if (v instanceof Integer)
-      return Long.parseUnsignedLong(String.format("%08X", v),16);
+      return Long.parseUnsignedLong(String.format("%08X", v), 16);
     if (v instanceof Long)
-      return (long)v;
+      return (long) v;
     return 0;
   }
-  
+
   private boolean isCorrectClass() {
-    return (e_ident[EI_CLASS] == EI_CLASS_32) ||
-           (e_ident[EI_CLASS] == EI_CLASS_64);
+    return (e_ident[EI_CLASS] == EI_CLASS_32) || (e_ident[EI_CLASS] == EI_CLASS_64);
   }
-  
+
   private boolean isCorrectEncoding() {
-    return (e_ident[EI_DATA] == EI_DATA_LITTLE_ENDIAN) ||
-           (e_ident[EI_DATA] == EI_DATA_BIG_ENDIAN);
+    return (e_ident[EI_DATA] == EI_DATA_LITTLE_ENDIAN) || (e_ident[EI_DATA] == EI_DATA_BIG_ENDIAN);
   }
 }

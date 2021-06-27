@@ -56,6 +56,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class ShiftRegister extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Shift Register";
+
   static final Attribute<Integer> ATTR_LENGTH =
       Attributes.forIntegerRange("length", S.getter("shiftRegLengthAttr"), 1, 64);
   static final Attribute<Boolean> ATTR_LOAD =
@@ -70,7 +78,7 @@ public class ShiftRegister extends InstanceFactory {
   static final int SymbolWidth = 100;
 
   public ShiftRegister() {
-    super("Shift Register", S.getter("shiftRegisterComponent"));
+    super(_ID, S.getter("shiftRegisterComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -438,10 +446,8 @@ public class ShiftRegister extends InstanceFactory {
     DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
     ShiftRegisterData data = (ShiftRegisterData) painter.getData();
 
-    /**
-     * In the case data is null we assume that the different value are null. This allow the user to
-     * instantiate the shift register without simulation mode
-     */
+    // In the case data is null we assume that the different value are null. This allow the user to
+    // instantiate the shift register without simulation mode
     if (data == null) {
       for (int stage = 0; stage < len; stage++) {
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);

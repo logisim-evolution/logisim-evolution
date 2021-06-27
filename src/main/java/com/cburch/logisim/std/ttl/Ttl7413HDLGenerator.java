@@ -81,10 +81,10 @@ public class Ttl7413HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Contents = new ArrayList<>();
     String Inv = Inverted ? HDL.notOperator() : "";
-    Contents.add("   "+HDL.assignPreamble()+"Y0"+HDL.assignOperator() + Inv + 
-        " (A0"+HDL.andOperator()+"B0"+HDL.andOperator()+"C0"+HDL.andOperator()+"D0);");
-    Contents.add("   "+HDL.assignPreamble()+"Y1"+HDL.assignOperator() + Inv + 
-        " (A1"+HDL.andOperator()+"B1"+HDL.andOperator()+"C1"+HDL.andOperator()+"D1);");
+    Contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv
+            + " (A0" + HDL.andOperator() + "B0" + HDL.andOperator() + "C0" + HDL.andOperator() + "D0);");
+    Contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv
+            + " (A1" + HDL.andOperator() + "B1" + HDL.andOperator() + "C1" + HDL.andOperator() + "D1);");
     return Contents;
   }
 

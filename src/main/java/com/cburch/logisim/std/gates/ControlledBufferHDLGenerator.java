@@ -47,7 +47,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return true;
   }
-  
+
   @Override
   public ArrayList<String> GetInlinedCode(
       Netlist Nets,
@@ -55,29 +55,28 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       NetlistComponent ComponentInfo,
       String CircuitName) {
     ArrayList<String> Contents = new ArrayList<>();
-    String TriName = GetNetName(ComponentInfo,2,true, Nets);
+    String TriName = GetNetName(ComponentInfo, 2, true, Nets);
     String InpName = "";
     String OutpName = "";
-    String TriState = ""; 
-    int nrBits = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth(); 
+    String TriState = "";
+    int nrBits = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
-      InpName = GetBusName(ComponentInfo,1, Nets);
-      OutpName = GetBusName(ComponentInfo,0, Nets);
-      TriState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits+"'bZ";
+      InpName = GetBusName(ComponentInfo, 1, Nets);
+      OutpName = GetBusName(ComponentInfo, 0, Nets);
+      TriState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
     } else {
-      InpName = GetNetName(ComponentInfo,1,true, Nets);
-      OutpName = GetNetName(ComponentInfo,0,true, Nets);
+      InpName = GetNetName(ComponentInfo, 1, true, Nets);
+      OutpName = GetNetName(ComponentInfo, 0, true, Nets);
       TriState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
     if (ComponentInfo.EndIsConnected(2) && ComponentInfo.EndIsConnected(0)) {
-      String invert = ((ControlledBuffer)ComponentInfo.GetComponent().getFactory()).isInverter() ?
-        HDL.notOperator() : "";
+      String invert = ((ControlledBuffer) ComponentInfo.GetComponent().getFactory()).isInverter()
+              ? HDL.notOperator()
+              : "";
       if (HDL.isVHDL()) {
-        Contents.add("   "+OutpName+ "<= "+invert+InpName+" WHEN "+TriName+
-                     " = '1' ELSE "+TriState+";");
+        Contents.add("   " + OutpName + "<= " + invert + InpName + " WHEN " + TriName + " = '1' ELSE " + TriState + ";");
       } else {
-        Contents.add("   assign "+OutpName+" = ("+TriName+") ? "+invert+InpName+
-                     " : "+TriState+";");
+        Contents.add("   assign " + OutpName + " = (" + TriName + ") ? " + invert + InpName + " : " + TriState + ";");
       }
     }
     return Contents;

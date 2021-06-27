@@ -36,25 +36,30 @@ import javax.swing.JSlider;
 
 @SuppressWarnings("serial")
 public class ZoomSlider extends JSlider {
-  
+
   private int minzoom;
   private int maxzoom;
-  
-  public int getMaxZoom() { return maxzoom; }
-  public int getMinZoom() { return minzoom; }
-  
+
+  public int getMaxZoom() {
+    return maxzoom;
+  }
+
+  public int getMinZoom() {
+    return minzoom;
+  }
+
   public ZoomSlider(int orientation, int min, int max, int value) {
-    setup(orientation,min,max,value);
+    setup(orientation, min, max, value);
   }
 
   public ZoomSlider() {
-    setup(JSlider.HORIZONTAL,100,200,100);
+    setup(JSlider.HORIZONTAL, 100, 200, 100);
   }
-  
+
   private void setup(int orientation, int min, int max, int value) {
     minzoom = min;
     maxzoom = max;
-    int midvalue = min+((max-min)>>1);
+    int midvalue = min + ((max - min) >> 1);
     JLabel label;
     super.setOrientation(orientation);
     super.setMinimum(min);
@@ -80,10 +85,10 @@ public class ZoomSlider extends JSlider {
     setLabelTable(labelTable);
     setPaintLabels(true);
   }
-  
+
   private String getId(int value) {
-    int hun = value/100;
-    int tens = (value%100)/10;
-    return String.format("%d.%dx", hun,tens);
+    int hun = value / 100;
+    int tens = (value % 100) / 10;
+    return String.format("%d.%dx", hun, tens);
   }
 }

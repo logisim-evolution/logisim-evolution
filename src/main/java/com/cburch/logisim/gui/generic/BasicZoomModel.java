@@ -76,20 +76,16 @@ public class BasicZoomModel implements ZoomModel {
     return zoomFactor;
   }
 
+  public double[] getZoomOptions() {
+    return zoomOptions;
+  }
+
   public void setZoomFactor(double value) {
     double oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
     }
-  }
-
-  public double[] getZoomOptions() {
-    return zoomOptions;
-  }
-
-  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
-    support.removePropertyChangeListener(prop, l);
   }
 
   public void setZoomFactor(double value, MouseEvent e) {
@@ -118,6 +114,10 @@ public class BasicZoomModel implements ZoomModel {
       canvas.getHorizontalScrollBar().setValue(nvx);
       canvas.getVerticalScrollBar().setValue(nvy);
     }
+  }
+
+  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
+    support.removePropertyChangeListener(prop, l);
   }
 
   @Override

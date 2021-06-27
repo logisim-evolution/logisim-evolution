@@ -53,6 +53,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Multiplexer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Multiplexer";
+
   static void drawSelectCircle(Graphics g, Bounds bds, Location loc) {
     if (Math.min(bds.getHeight(), bds.getWidth()) <= 20) return; // no dot for narrow mode
     int locDelta = Math.max(bds.getHeight(), bds.getWidth()) <= 50 ? 8 : 6;
@@ -79,7 +87,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   public Multiplexer() {
-    super("Multiplexer", S.getter("multiplexerComponent"));
+    super(_ID, S.getter("multiplexerComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -99,7 +107,7 @@ public class Multiplexer extends InstanceFactory {
         JoinedConfigurator.create(
             new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
-    setIcon(new PlexerIcon(false,false));
+    setIcon(new PlexerIcon(false, false));
     setFacingAttribute(StdAttr.FACING);
   }
 
@@ -112,7 +120,7 @@ public class Multiplexer extends InstanceFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
-      int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
+      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
@@ -293,7 +301,7 @@ public class Multiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(inputs);
       if (sel.isFullyDefined()) {
-        out = state.getPortValue((int)sel.toLongValue());
+        out = state.getPortValue((int) sel.toLongValue());
       } else if (sel.isErrorValue()) {
         out = Value.createError(data);
       } else {

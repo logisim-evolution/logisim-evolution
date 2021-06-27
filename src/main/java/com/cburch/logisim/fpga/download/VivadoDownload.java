@@ -47,7 +47,8 @@ import java.util.Locale;
 
 public class VivadoDownload implements VendorDownload {
 
-  private final VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
+  private final VendorSoftware vivadoVendor =
+      VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
   private final String ScriptPath;
   private final String SandboxPath;
   private final String xdcPath;
@@ -246,18 +247,24 @@ public class VivadoDownload implements VendorDownload {
     contents.add("exit");
     return FileWriter.WriteContents(loadBitstreamFile, contents);
   }
-  
+
   private ArrayList<String> GetPinLocStrings() {
     ArrayList<String> contents = new ArrayList<>();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
-      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+      for (int i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
-          String netName = (map.isExternalInverted(i) ? "n_" : "")+map.getHdlString(i);
-          contents.add("set_property PACKAGE_PIN " + map.getPinLocation(i) + " [get_ports {" + netName + "}]");
+          String netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
+          contents.add(
+              "set_property PACKAGE_PIN "
+                  + map.getPinLocation(i)
+                  + " [get_ports {"
+                  + netName
+                  + "}]");
           FPGAIOInformationContainer info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.Unknown
+                && info.GetIOStandard() != IoStandards.DefaulStandard) {
               contents.add(
                   "    set_property IOSTANDARD "
                       + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
@@ -265,7 +272,8 @@ public class VivadoDownload implements VendorDownload {
                       + netName
                       + "}]");
             }
-            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.Unknown
+                && info.GetIOStandard() != IoStandards.DefaulStandard) {
               contents.add(
                   "    set_property IOSTANDARD "
                       + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())

@@ -362,8 +362,8 @@ public class Analyze {
         } catch (UnsupportedOperationException e) {
           throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
         }
-      } else if (comp.getFactory() instanceof Pin) {// pins are handled elsewhere
-      } else if (comp.getFactory() instanceof SplitterFactory) {// splitters are handled elsewhere
+      } else if (comp.getFactory() instanceof Pin) { // pins are handled elsewhere
+      } else if (comp.getFactory() instanceof SplitterFactory) { // splitters are handled elsewhere
       } else {
         throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
       }
@@ -428,7 +428,7 @@ public class Analyze {
         afterWhitespace = false;
       } else if (Character.isWhitespace(c)) {
         afterWhitespace = true;
-      } else {// just ignore any other characters
+      } else { // just ignore any other characters
       }
     }
     if (end != null && ret.length() > 0) ret.append(end);

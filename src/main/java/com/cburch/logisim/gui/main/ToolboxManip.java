@@ -78,7 +78,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     } else {
       for (Library sub : proj.getLogisimFile().getLibraries()) {
         if (sub instanceof Base) {
-          Tool tool = sub.getTool("Edit Tool");
+          Tool tool = sub.getTool(EditTool._ID);
           if (tool != null) {
             proj.setTool(tool);
             break;
@@ -150,8 +150,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
       if (lib == proj.getLogisimFile()) {
         return Popups.forProject(proj);
       } else {
-        boolean is_top = event.getTreePath().getPathCount() <= 2;
-        return Popups.forLibrary(proj, lib, is_top);
+        final var isTop = event.getTreePath().getPathCount() <= 2;
+        return Popups.forLibrary(proj, lib, isTop);
       }
     } else {
       return null;

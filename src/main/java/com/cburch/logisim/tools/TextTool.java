@@ -50,6 +50,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class TextTool extends Tool {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Text Tool";
+
   private class MyListener implements CaretListener, CircuitListener {
     public void circuitChanged(CircuitEvent event) {
       if (event.getCircuit() != caretCircuit) {
@@ -177,11 +185,6 @@ public class TextTool extends Tool {
   @Override
   public String getDisplayName() {
     return S.get("textTool");
-  }
-
-  @Override
-  public String getName() {
-    return "Text Tool";
   }
 
   @Override

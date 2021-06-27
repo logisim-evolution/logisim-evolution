@@ -201,7 +201,8 @@ class TableTabCaret {
       TruthTable model = table.getTruthTable();
       int inputs = table.getInputColumnCount();
       Entry newEntry = null;
-      int dx = 1, dy = 0;
+      int dx = 1;
+      int dy = 0;
       switch (c) {
         case ' ':
           if (cursor.col < inputs) {
@@ -248,28 +249,34 @@ class TableTabCaret {
         // obvious way to get from an index to a row number
         // except for scanning all existing rows.
         // First: save the old state
-        Pt oldCursor = cursor, oldMarkA = markA, oldMarkB = markB;
-        List<Integer> oldCursorIdx, oldMarkIdx;
+        var oldCursor = cursor;
+        var oldMarkA = markA;
+        var oldMarkB = markB;
+        List<Integer> oldCursorIdx;
+        List<Integer> oldMarkIdx;
         oldCursorIdx = allIndexesForRowRange(cursor.row, cursor.row);
         oldMarkIdx = allIndexesForRowRange(markA.row, markB.row);
         // Second: do the actual update
-        boolean updated = model.setVisibleInputEntry(cursor.row, cursor.col, newEntry, true);
+        var updated = model.setVisibleInputEntry(cursor.row, cursor.col, newEntry, true);
         // Third: try to update the cursor and selection.
         if (updated) {
           // Update the cursor position
           cursor = invalid;
-          int[] rows = allRowsContaining(oldCursorIdx);
+          var rows = allRowsContaining(oldCursorIdx);
           if (rows != null) {
-            if (newEntry != Entry.ONE) cursor = new Pt(rows[0], oldCursor.col);
-            else cursor = new Pt(rows[rows.length - 1], oldCursor.col);
+            if (newEntry != Entry.ONE) {
+              cursor = new Pt(rows[0], oldCursor.col);
+            } else {
+              cursor = new Pt(rows[rows.length - 1], oldCursor.col);
+            }
             hilightRows = rows;
           }
           // Update the selection
           markA = cursor;
           markB = invalid;
-          int[] marks = allRowsContaining(oldMarkIdx);
+          var marks = allRowsContaining(oldMarkIdx);
           if (marks != null) {
-            int n = marks.length;
+            var n = marks.length;
             if (isContiguous(marks)) {
               boolean fwd = oldMarkA.row <= oldMarkB.row;
               markA = new Pt(marks[fwd ? 0 : n - 1], oldMarkA.col);
@@ -283,26 +290,26 @@ class TableTabCaret {
         model.setVisibleOutputEntry(cursor.row, cursor.col - inputs, newEntry);
       }
       if (!markA.isValid() || !markB.isValid()) return;
-      Rectangle s = getSelection();
-      int row = cursor.row;
-      int col = cursor.col;
+      var selection = getSelection();
+      var row = cursor.row;
+      var col = cursor.col;
       if (dy > 0) { // advance down
-        col = s.x;
-        if (++row >= s.y + s.height) row = s.y;
+        col = selection.x;
+        if (++row >= selection.y + selection.height) row = selection.y;
       } else if (dx > 0) { // advance right
-        if (++col >= s.x + s.width) {
-          col = s.x;
-          if (++row >= s.y + s.height) {
-            row = s.y;
+        if (++col >= selection.x + selection.width) {
+          col = selection.x;
+          if (++row >= selection.y + selection.height) {
+            row = selection.y;
           }
         }
       } else if (dx < 0) { // advance left
-        if (--col < s.x) {
-          col = s.x + s.width - 1;
-          if (--row < s.y) row = s.y + s.height - 1;
+        if (--col < selection.x) {
+          col = selection.x + selection.width - 1;
+          if (--row < selection.y) row = selection.y + selection.height - 1;
         }
       }
-      Pt oldCursor = cursor;
+      var oldCursor = cursor;
       cursor = new Pt(row, col);
       repaint(oldCursor, cursor, markA, markB);
       scrollTo(cursor);
@@ -378,7 +385,8 @@ class TableTabCaret {
   }
 
   private class Pt implements Comparable<Pt> {
-    final int row, col;
+    final int row;
+    final int col;
 
     Pt() {
       row = -1;
@@ -498,6 +506,7 @@ class TableTabCaret {
   }
 
   boolean hadSelection = false;
+
   void updateMenus() {
     boolean sel = hasSelection();
     if (hadSelection != sel) {
@@ -584,9 +593,9 @@ class TableTabCaret {
   }
 
   private void setCursor(Pt p, Pt m) {
-    Pt oldCursor = cursor;
-    Pt oldMarkA = markA;
-    Pt oldMarkB = markB;
+    final var oldCursor = cursor;
+    final var oldMarkA = markA;
+    final var oldMarkB = markB;
     clearHilight();
     cursor = p;
     markA = m;
@@ -619,7 +628,10 @@ class TableTabCaret {
   }
 
   private Rectangle region(Pt... pts) {
-    int r0 = -1, r1 = -1, c0 = -1, c1 = -1;
+    int r0 = -1;
+    int r1 = -1;
+    int c0 = -1;
+    int c1 = -1;
     for (Pt p : pts) {
       if (p == null || !p.isValid()) continue;
       if (r0 == -1) {

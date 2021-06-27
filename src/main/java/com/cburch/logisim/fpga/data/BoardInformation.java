@@ -51,18 +51,16 @@ public class BoardInformation {
   }
 
   public void clear() {
-	if (MyComponents == null)
-	  MyComponents = new LinkedList<>();
-	else
-      MyComponents.clear();
+    if (MyComponents == null) MyComponents = new LinkedList<>();
+    else MyComponents.clear();
     boardname = null;
     fpga.clear();
     BoardPicture = null;
   }
-  
+
   public void setComponents(List<FPGAIOInformationContainer> comps) {
     MyComponents.clear();
-    MyComponents.addAll(comps);  
+    MyComponents.addAll(comps);
   }
 
   public LinkedList<FPGAIOInformationContainer> GetAllComponents() {

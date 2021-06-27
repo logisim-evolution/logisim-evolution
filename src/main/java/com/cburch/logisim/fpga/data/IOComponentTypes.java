@@ -48,71 +48,72 @@ public enum IOComponentTypes {
   Bus,
   Open,
   Constant,
+  LedBar,
   Unknown;
 
-  /* 
+  /*
    * Important note:
    * The number of pins specified in this enum are the defaults used when
    * using the board editor. The real number of pins are read from the
    * xml file and stored inside the FPGAIOInformation container.
-   * 
+   *
    * Bus is just a placeholder for a multi-bit pin. It should not be used for
    * mappable components
-   * 
+   *
    * Open and constant are used in the map dialog to be able to map IOcomponents
    * to a constant or a open (hence no connection external of the FPGA/CPLD).
    */
 
   public static IOComponentTypes getEnumFromString(String str) {
     for (IOComponentTypes elem : KnownComponentSet) {
-    if (elem.name().equalsIgnoreCase(str)) {
-      return elem;
-    }
+      if (elem.name().equalsIgnoreCase(str)) {
+        return elem;
+      }
     }
     return IOComponentTypes.Unknown;
   }
 
   public static int GetFPGAInOutRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case PortIO:
-      return 8;
-    case LocalBus:
-      return 16;
-    default:
-      return 0;
+      case PortIO:
+        return 8;
+      case LocalBus:
+        return 16;
+      default:
+        return 0;
     }
   }
 
   public static int GetFPGAInputRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case Button:
-      return 1;
-    case DIPSwitch:
-      return 8;
-    case LocalBus:
-      return 13;
-    default:
-      return 0;
+      case Button:
+        return 1;
+      case DIPSwitch:
+        return 8;
+      case LocalBus:
+        return 13;
+      default:
+        return 0;
     }
   }
 
   public static int GetFPGAOutputRequirement(IOComponentTypes comp) {
     switch (comp) {
-    case LED:
-      return 1;
-    case SevenSegment:
-      return 8;
-    case SevenSegmentNoDp:
-      return 7;
-    case RGBLED:
-      return 3;
-    case LocalBus:
-      return 2;
-    default:
-      return 0;
+      case LED:
+        return 1;
+      case SevenSegment:
+        return 8;
+      case SevenSegmentNoDp:
+        return 7;
+      case RGBLED:
+        return 3;
+      case LocalBus:
+        return 2;
+      default:
+        return 0;
     }
   }
-  
+
   public static boolean nrOfInputPinsConfigurable(IOComponentTypes comp) {
     return comp.equals(DIPSwitch);
   }
@@ -124,7 +125,7 @@ public enum IOComponentTypes {
   public static boolean nrOfIOPinsConfigurable(IOComponentTypes comp) {
     return comp.equals(PortIO);
   }
-  
+
   public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
       case DIPSwitch : return DipSwitch.getInputLabel(id);
@@ -132,46 +133,52 @@ public enum IOComponentTypes {
       default        : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
-  
+
   public static String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
-      case SevenSegmentNoDp : 
-      case SevenSegment     : return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
-      case RGBLED           : return RGBLed.getLabel(id);
-      case LocalBus         : return ReptarLocalBus.getOutputLabel(id);
-      default               : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+      case SevenSegmentNoDp:
+      case SevenSegment:
+        return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
+      case RGBLED:
+        return RGBLed.getLabel(id);
+      case LocalBus:
+        return ReptarLocalBus.getOutputLabel(id);
+      default:
+        return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
-  
+
   public static String getIOLabel(int nrPins, int id, IOComponentTypes comp) {
     if (comp == IOComponentTypes.LocalBus) {
       return ReptarLocalBus.getIOLabel(id);
     }
     return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
-  
+
   public static int GetNrOfFPGAPins(IOComponentTypes comp) {
-    return  GetFPGAInOutRequirement(comp)+ GetFPGAInputRequirement(comp)+GetFPGAOutputRequirement(comp);
+    return GetFPGAInOutRequirement(comp)
+        + GetFPGAInputRequirement(comp)
+        + GetFPGAOutputRequirement(comp);
   }
 
   public static final EnumSet<IOComponentTypes> KnownComponentSet =
-    EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
 
   public static final EnumSet<IOComponentTypes> SimpleInputSet =
-    EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
 
   public static final EnumSet<IOComponentTypes> InputComponentSet =
-    EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
+      EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
 
   public static final EnumSet<IOComponentTypes> OutputComponentSet =
-    EnumSet.of(
-      IOComponentTypes.LED,
-      IOComponentTypes.Pin,
-      IOComponentTypes.RGBLED,
-      IOComponentTypes.SevenSegment,
-      IOComponentTypes.SevenSegmentNoDp);
+      EnumSet.of(
+          IOComponentTypes.LED,
+          IOComponentTypes.Pin,
+          IOComponentTypes.RGBLED,
+          IOComponentTypes.SevenSegment,
+          IOComponentTypes.SevenSegmentNoDp,
+          IOComponentTypes.LedBar);
 
   public static final EnumSet<IOComponentTypes> InOutComponentSet =
-    EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
-
+      EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
 }

@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.circuit;
 
-
-
 public class WireUtil {
   /*
   static CircuitPoints computeCircuitPoints(

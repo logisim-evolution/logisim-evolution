@@ -39,18 +39,18 @@ import java.util.prefs.Preferences;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
-  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<>();
+  private final ArrayList<ConvertEventListener> myListeners = new ArrayList<>();
 
   PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);
   }
 
   public void addConvertListener(ConvertEventListener l) {
-    if (!MyListeners.contains(l)) MyListeners.add(l);
+    if (!myListeners.contains(l)) myListeners.add(l);
   }
 
   public void removeConvertListener(ConvertEventListener l) {
-    MyListeners.remove(l);
+    myListeners.remove(l);
   }
 
   @Override
@@ -64,7 +64,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
-        if (!MyListeners.isEmpty()) {
+        if (!myListeners.isEmpty()) {
           ConvertEvent e =
               new ConvertEvent(
                   newValue ? ProbeAttributes.APPEAR_EVOLUTION_NEW : StdAttr.APPEAR_CLASSIC);
@@ -72,7 +72,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
           int ret =
               OptionPane.showOptionDialog(
                   null,
-                  S.fmt("OptionConvertAllPinsProbes", e.GetValue().getDisplayGetter().toString()),
+                  S.fmt("OptionConvertAllPinsProbes", e.getValue().getDisplayGetter().toString()),
                   S.get("OptionConvertAll"),
                   OptionPane.YES_NO_OPTION,
                   OptionPane.QUESTION_MESSAGE,
@@ -88,6 +88,6 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
   }
 
   private void fireConvertAction(ConvertEvent e) {
-    for (ConvertEventListener l : MyListeners) l.AttributeValueChanged(e);
+    for (ConvertEventListener l : myListeners) l.attributeValueChanged(e);
   }
 }

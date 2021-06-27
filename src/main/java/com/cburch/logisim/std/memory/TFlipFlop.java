@@ -41,10 +41,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "T Flip-Flop";
+
   private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
-      return "T Flip-Flop";
+      return _ID;
     }
 
     @Override
@@ -64,14 +72,13 @@ public class TFlipFlop extends AbstractFlipFlop {
     @Override
     public ArrayList<String> GetUpdateLogic() {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+"s_current_state_reg"+
-                   HDL.xorOperator()+"T;");
+      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator() + "s_current_state_reg" + HDL.xorOperator() + "T;");
       return Contents;
     }
   }
 
   public TFlipFlop() {
-    super("T Flip-Flop", new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
   }
 
   @Override

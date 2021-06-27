@@ -100,22 +100,23 @@ public class KarnaughMapPanel extends JPanel
   private static class KMapInfo {
     private final int headWidth;
     private final int headHeight;
-    private final int Width;
-    private final int Height;
-    private int xOff, yOff;
+    private final int width;
+    private final int height;
+    private int xOff;
+    private int yOff;
 
     public KMapInfo(int headWidth, int headHeight, int tableWidth, int tableHeight) {
       xOff = 0;
       yOff = 0;
       this.headWidth = headWidth;
       this.headHeight = headHeight;
-      this.Width = tableWidth;
-      this.Height = tableHeight;
+      this.width = tableWidth;
+      this.height = tableHeight;
     }
 
     public void calculateOffsets(int boxWidth, int boxHeight) {
-      xOff = (boxWidth - Width) / 2;
-      yOff = (boxHeight - Height) / 2;
+      xOff = (boxWidth - width) / 2;
+      yOff = (boxHeight - height) / 2;
     }
 
     public int getXOffset() {
@@ -127,11 +128,11 @@ public class KarnaughMapPanel extends JPanel
     }
 
     public int getWidth() {
-      return Width;
+      return width;
     }
 
     public int getHeight() {
-      return Height;
+      return height;
     }
 
     public int getHeaderWidth() {
@@ -160,49 +161,51 @@ public class KarnaughMapPanel extends JPanel
   private int provisionalX;
   private int provisionalY;
   private Entry provisionalValue = null;
-  private final Font HeaderFont;
-  private final Font EntryFont;
-  private boolean KMapLined;
-  private Bounds KMapArea;
-  private KMapInfo KLinedInfo;
-  private KMapInfo KNumberedInfo;
+  private final Font headerFont;
+  private final Font entryFont;
+  private boolean isKMapLined;
+  private Bounds kMapArea;
+  private KMapInfo linedKMapInfo;
+  private KMapInfo numberedKMapInfo;
   private final KMapGroups kMapGroups;
-  private Bounds SelInfo;
+  private Bounds selInfo;
   private final Point hover;
   private Notation notation = Notation.MATHEMATICAL;
   private boolean selected;
   private Dimension kMapDim;
-  
+
   boolean isSelected() {
-	  return selected;
+    return selected;
   }
 
   public KarnaughMapPanel(AnalyzerModel model, ExpressionView expr) {
     super(new GridLayout(1, 1));
     completeExpression = expr;
     this.model = model;
-    EntryFont = AppPreferences.getScaledFont(getFont());
-    HeaderFont = EntryFont.deriveFont(Font.BOLD);
+    entryFont = AppPreferences.getScaledFont(getFont());
+    headerFont = entryFont.deriveFont(Font.BOLD);
     model.getOutputExpressions().addOutputExpressionsListener(myListener);
     model.getTruthTable().addTruthTableListener(myListener);
     setToolTipText(" ");
-    KMapLined = AppPreferences.KMAP_LINED_STYLE.get();
+    isKMapLined = AppPreferences.KMAP_LINED_STYLE.get();
     kMapGroups = new KMapGroups(model);
     addMouseMotionListener(this);
     addMouseListener(this);
     hover = new Point(-1, -1);
-    FocusListener f = new FocusListener() {
-      public void focusGained(FocusEvent e) {
-        if (e.isTemporary()) return;
-        selected = true;
-        repaint();
-      }
-      public void focusLost(FocusEvent e) {
-        if (e.isTemporary()) return;
-        selected = false;
-        repaint();
-      }
-    };
+    final var f =
+        new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            if (e.isTemporary()) return;
+            selected = true;
+            repaint();
+          }
+
+          public void focusLost(FocusEvent e) {
+            if (e.isTemporary()) return;
+            selected = false;
+            repaint();
+          }
+        };
     addFocusListener(f);
     Entry.ZERO.addListener(this);
     Entry.ONE.addListener(this);
@@ -210,9 +213,9 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private void computePreferredSize() {
-    SelInfo = null;
+    selInfo = null;
     Graphics2D g = (Graphics2D) getGraphics();
-    TruthTable table = model.getTruthTable();
+    final var table = model.getTruthTable();
 
     String message = null;
     if (output == null) {
@@ -232,33 +235,33 @@ public class KarnaughMapPanel extends JPanel
                 AppPreferences.getScaled(20 * message.length()),
                 AppPreferences.getScaled(AppPreferences.BoxSize)));
       } else {
-        FontRenderContext ctx = g.getFontRenderContext();
-        TextLayout mLayout = new TextLayout(message, HeaderFont, ctx);
+        final var ctx = g.getFontRenderContext();
+        final var msgLayout = new TextLayout(message, headerFont, ctx);
         setPreferredSize(
             new Dimension(
-                (int) mLayout.getBounds().getWidth(), (int) mLayout.getBounds().getHeight()));
+                (int) msgLayout.getBounds().getWidth(), (int) msgLayout.getBounds().getHeight()));
       }
     } else {
       computePreferredLinedSize(g, table);
       computePreferredNumberedSize(g, table);
-      int boxWidth = Math.max(KLinedInfo.getWidth(), KNumberedInfo.getWidth());
+      int boxWidth = Math.max(linedKMapInfo.getWidth(), numberedKMapInfo.getWidth());
       boxWidth = Math.max(boxWidth, AppPreferences.getScaled(300));
-      int boxHeight = Math.max(KLinedInfo.getHeight(), KNumberedInfo.getHeight());
-      KLinedInfo.calculateOffsets(boxWidth, boxHeight);
-      KNumberedInfo.calculateOffsets(boxWidth, boxHeight);
-      FontRenderContext ctx = g.getFontRenderContext();
+      int boxHeight = Math.max(linedKMapInfo.getHeight(), numberedKMapInfo.getHeight());
+      linedKMapInfo.calculateOffsets(boxWidth, boxHeight);
+      numberedKMapInfo.calculateOffsets(boxWidth, boxHeight);
+      final var ctx = g.getFontRenderContext();
       int selectedHeight;
-      TextLayout t1 = new TextLayout(S.get("SelectedKmapGroup"), HeaderFont, ctx);
+      final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
       selectedHeight = 3 * (int) t1.getBounds().getHeight();
-      SelInfo = Bounds.create(0, boxHeight, boxWidth, selectedHeight);
+      selInfo = Bounds.create(0, boxHeight, boxWidth, selectedHeight);
       setPreferredSize(new Dimension(boxWidth, boxHeight + selectedHeight));
-      kMapDim = new Dimension(boxWidth,boxHeight); 
+      kMapDim = new Dimension(boxWidth, boxHeight);
     }
 
     invalidate();
     if (g != null) repaint();
   }
-  
+
   public Dimension getKMapDim() {
     return kMapDim;
   }
@@ -272,21 +275,21 @@ public class KarnaughMapPanel extends JPanel
       FontRenderContext ctx) {
     List<TextLayout> lines = new ArrayList<>();
     if (start >= end) return lines;
-    StringBuilder ret = new StringBuilder(inputs.get(start));
+    final var ret = new StringBuilder(inputs.get(start));
     for (int i = start + 1; i < end; i++) {
       ret.append(", ");
       ret.append(inputs.get(i));
     }
     if (addComma) ret.append(",");
     int maxSize = rowLabel ? (1 << (end - start - 1)) * cellWidth : 100;
-    TextLayout myLayout = Styled(ret.toString(), HeaderFont, ctx);
+    final var myLayout = styled(ret.toString(), headerFont, ctx);
     if (((end - start) <= 1) || (myLayout.getBounds().getWidth() <= maxSize)) {
       lines.add(myLayout);
       return lines;
     }
-    int NrOfEntries = end - start;
-    if (NrOfEntries > 1) {
-      int half = NrOfEntries >> 1;
+    int nrOfEntries = end - start;
+    if (nrOfEntries > 1) {
+      int half = nrOfEntries >> 1;
       lines.addAll(header(inputs, start, end - half, rowLabel, true, ctx));
       lines.addAll(header(inputs, end - half, end, rowLabel, addComma, ctx));
     } else lines.add(myLayout);
@@ -294,16 +297,19 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private void computePreferredNumberedSize(Graphics2D g, TruthTable table) {
-    List<String> inputs = model.getInputs().bits;
-    int inputCount = table.getInputColumnCount();
-    int rowVars = ROW_VARS[inputCount];
-    int colVars = COL_VARS[inputCount];
-    int headHeight, headWidth, tableWidth, tableHeight;
+    final var inputs = model.getInputs().bits;
+    final var inputCount = table.getInputColumnCount();
+    final var rowVars = ROW_VARS[inputCount];
+    final var colVars = COL_VARS[inputCount];
+    int headHeight;
+    int headWidth;
+    int tableHeight;
+
     if (g == null) {
       cellHeight = 16;
       cellWidth = 24;
     } else {
-      FontMetrics fm = g.getFontMetrics(EntryFont);
+      final var fm = g.getFontMetrics(entryFont);
       cellHeight = fm.getAscent() + CELL_VERT_SEP;
       cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
     }
@@ -318,9 +324,9 @@ public class KarnaughMapPanel extends JPanel
       headWidth = 80;
       colLabelWidth = 80;
     } else {
-      FontRenderContext ctx = g.getFontRenderContext();
-      List<TextLayout> rowHeader = header(inputs, 0, rowVars, true, false, ctx);
-      List<TextLayout> colHeader = header(inputs, rowVars, rowVars + colVars, false, false, ctx);
+      final var ctx = g.getFontRenderContext();
+      final var rowHeader = header(inputs, 0, rowVars, true, false, ctx);
+      final var colHeader = header(inputs, rowVars, rowVars + colVars, false, false, ctx);
       headWidth = 0;
       int height = 0;
       for (TextLayout l : rowHeader) {
@@ -337,23 +343,27 @@ public class KarnaughMapPanel extends JPanel
       headHeight = colHeader.size() * height;
     }
     tableHeight = headHeight + bodyHeight + 5;
-    tableWidth = headWidth + Math.max(bodyWidth, colLabelWidth + cellWidth) + 5;
-    KNumberedInfo = new KMapInfo(headWidth, headHeight, tableWidth, tableHeight);
+    int tableWidth = headWidth + Math.max(bodyWidth, colLabelWidth + cellWidth) + 5;
+    numberedKMapInfo = new KMapInfo(headWidth, headHeight, tableWidth, tableHeight);
   }
 
   private void computePreferredLinedSize(Graphics2D g, TruthTable table) {
-    int headHeight, headWidth, tableWidth, tableHeight;
+    int headHeight;
+    final int headWidth;
+    int tableWidth;
+    int tableHeight;
+
     if (g == null) {
       headHeight = 16;
       cellHeight = 16;
       cellWidth = 24;
     } else {
-      FontRenderContext ctx = g.getFontRenderContext();
-      FontMetrics fm = g.getFontMetrics(HeaderFont);
-      int singleheight = StyledHeight(Styled("E", HeaderFont), ctx);
-      headHeight = StyledHeight(Styled("E:2", HeaderFont), ctx) + (fm.getAscent() - singleheight);
+      final var ctx = g.getFontRenderContext();
+      var fm = g.getFontMetrics(headerFont);
+      int singleheight = styledHeight(styled("E", headerFont), ctx);
+      headHeight = styledHeight(styled("E:2", headerFont), ctx) + (fm.getAscent() - singleheight);
 
-      fm = g.getFontMetrics(EntryFont);
+      fm = g.getFontMetrics(entryFont);
       cellHeight = fm.getAscent() + CELL_VERT_SEP;
       cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
     }
@@ -375,7 +385,7 @@ public class KarnaughMapPanel extends JPanel
       tableWidth += headHeight + (headHeight >> 2) + 11;
     }
     headWidth = 0;
-    KLinedInfo = new KMapInfo(headWidth, headHeight, tableWidth, tableHeight);
+    linedKMapInfo = new KMapInfo(headWidth, headHeight, tableWidth, tableHeight);
   }
 
   public static int getCol(int tableRow, int rows, int cols) {
@@ -394,13 +404,13 @@ public class KarnaughMapPanel extends JPanel
   }
 
   public void setStyleLined() {
-    KMapLined = true;
+    isKMapLined = true;
     AppPreferences.KMAP_LINED_STYLE.set(true);
     repaint();
   }
 
   public void setStyleNumbered() {
-    KMapLined = false;
+    isKMapLined = false;
     AppPreferences.KMAP_LINED_STYLE.set(false);
     repaint();
   }
@@ -428,8 +438,8 @@ public class KarnaughMapPanel extends JPanel
     TruthTable table = model.getTruthTable();
     int inputs = table.getInputColumnCount();
     if (inputs >= ROW_VARS.length) return -1;
-    int x = event.getX() - KMapArea.getX();
-    int y = event.getY() - KMapArea.getY();
+    int x = event.getX() - kMapArea.getX();
+    int y = event.getY() - kMapArea.getY();
     if (x < 0 || y < 0) return -1;
     int row = y / cellHeight;
     int col = x / cellWidth;
@@ -445,7 +455,7 @@ public class KarnaughMapPanel extends JPanel
 
   @Override
   public String getToolTipText(MouseEvent event) {
-    if (KMapArea == null) return null;
+    if (kMapArea == null) return null;
     TruthTable table = model.getTruthTable();
     int row = getRow(event);
     if (row < 0) return null;
@@ -478,10 +488,10 @@ public class KarnaughMapPanel extends JPanel
 
   @Override
   public void paintComponent(Graphics g) {
-	  paintKmap(g,true);
+    paintKmap(g, true);
   }
-  
-  public void paintKmap(Graphics g , boolean selectionBlock) {
+
+  public void paintKmap(Graphics g, boolean selectionBlock) {
     if (!(g instanceof Graphics2D)) return;
     Graphics2D g2 = (Graphics2D) g;
     if (AppPreferences.AntiAliassing.getBoolean()) {
@@ -510,57 +520,55 @@ public class KarnaughMapPanel extends JPanel
       message = S.get("karnaughTooFewInputsError");
     }
     if (message != null) {
-      g.setFont(HeaderFont);
+      g.setFont(headerFont);
       GraphicsUtil.drawCenteredText(g2, message, sz.width / 2, sz.height / 2);
       return;
     }
 
     int x;
     int y;
-    if (KMapLined) {
-      x = KLinedInfo.getXOffset();
-      y = KLinedInfo.getYOffset();
+    if (isKMapLined) {
+      x = linedKMapInfo.getXOffset();
+      y = linedKMapInfo.getYOffset();
       drawLinedHeader(g2, x, y);
-      x += KLinedInfo.getHeaderHeight() + 11;
-      y += KLinedInfo.getHeaderHeight() + 11;
+      x += linedKMapInfo.getHeaderHeight() + 11;
+      y += linedKMapInfo.getHeaderHeight() + 11;
     } else {
-      x = KNumberedInfo.getXOffset();
-      y = KNumberedInfo.getYOffset();
+      x = numberedKMapInfo.getXOffset();
+      y = numberedKMapInfo.getYOffset();
       drawNumberedHeader(g2, x, y);
-      x += KNumberedInfo.getHeaderWidth() + cellWidth;
-      y += KNumberedInfo.getHeaderHeight() + cellHeight;
+      x += numberedKMapInfo.getHeaderWidth() + cellWidth;
+      y += numberedKMapInfo.getHeaderHeight() + cellHeight;
     }
-    PaintKMap(g2, x, y, table);
-    if (!selectionBlock)
-      return;
-    Expression expr = kMapGroups.GetHighlightedExpression();
-    Color bcol = kMapGroups.GetBackgroundColor();
-    FontRenderContext ctx = g2.getFontRenderContext();
-    Color ccol = g2.getColor();
+    paintKMap(g2, x, y, table);
+    if (!selectionBlock) return;
+    final var expr = kMapGroups.getHighlightedExpression();
+    final var bcol = kMapGroups.getBackgroundColor();
+    final var ctx = g2.getFontRenderContext();
+    final var ccol = g2.getColor();
     if (bcol != null) g2.setColor(bcol);
     else g2.setColor(this.getBackground());
-    g2.fillRect(SelInfo.getX(), SelInfo.getY(), SelInfo.getWidth() - 1, SelInfo.getHeight() - 1);
+    g2.fillRect(selInfo.getX(), selInfo.getY(), selInfo.getWidth() - 1, selInfo.getHeight() - 1);
     g2.setColor(ccol);
-    g2.drawRect(SelInfo.getX(), SelInfo.getY(), SelInfo.getWidth() - 1, SelInfo.getHeight() - 1);
+    g2.drawRect(selInfo.getX(), selInfo.getY(), selInfo.getWidth() - 1, selInfo.getHeight() - 1);
     if (expr == null) {
-      TextLayout t1 = new TextLayout(S.get("NoSelectedKmapGroup"), HeaderFont, ctx);
-      int xoff = (SelInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
-      int yoff = (SelInfo.getHeight() - (int) t1.getBounds().getHeight()) / 2;
-      t1.draw(g2, xoff + SelInfo.getX(), yoff + SelInfo.getY() + t1.getAscent());
+      final var t1 = new TextLayout(S.get("NoSelectedKmapGroup"), headerFont, ctx);
+      int xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
+      int yoff = (selInfo.getHeight() - (int) t1.getBounds().getHeight()) / 2;
+      t1.draw(g2, xoff + selInfo.getX(), yoff + selInfo.getY() + t1.getAscent());
     } else {
-      TextLayout t1 = new TextLayout(S.get("SelectedKmapGroup"), HeaderFont, ctx);
-      int xoff = (SelInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
-      t1.draw(g2, xoff + SelInfo.getX(), SelInfo.getY() + t1.getAscent());
-      ExpressionRenderData t2 = new ExpressionRenderData(expr, SelInfo.getWidth(), notation);
-      xoff = (SelInfo.getWidth() - t2.getWidth()) / 2;
-      t2.paint(g, xoff + SelInfo.getX(), (int) (SelInfo.getY() + t1.getAscent() + t1.getDescent()));
+      final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
+      int xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
+      t1.draw(g2, xoff + selInfo.getX(), selInfo.getY() + t1.getAscent());
+      final var t2 = new ExpressionRenderData(expr, selInfo.getWidth(), notation);
+      xoff = (selInfo.getWidth() - t2.getWidth()) / 2;
+      t2.paint(g, xoff + selInfo.getX(), (int) (selInfo.getY() + t1.getAscent() + t1.getDescent()));
     }
   }
-  
+
   public void setNotation(Notation notation) {
-	  if (notation == this.notation)
-		  return;
-	  this.notation = notation;
+    if (notation == this.notation) return;
+    this.notation = notation;
   }
 
   private String label(int row, int rows) {
@@ -611,49 +619,49 @@ public class KarnaughMapPanel extends JPanel
   }
 
   private void drawNumberedHeader(Graphics2D g, int x, int y) {
-    TruthTable table = model.getTruthTable();
+    final var table = model.getTruthTable();
     int inputCount = table.getInputColumnCount();
-    int tableXstart = x + KNumberedInfo.getHeaderWidth() + cellWidth;
-    int tableYstart = y + KNumberedInfo.getHeaderHeight() + cellHeight;
+    int tableXstart = x + numberedKMapInfo.getHeaderWidth() + cellWidth;
+    int tableYstart = y + numberedKMapInfo.getHeaderHeight() + cellHeight;
     int rowVars = ROW_VARS[inputCount];
     int colVars = COL_VARS[inputCount];
     int rows = 1 << rowVars;
     int cols = 1 << colVars;
-    FontMetrics headFm = g.getFontMetrics(HeaderFont);
-    FontRenderContext ctx = g.getFontRenderContext();
-    Font NumberFont = HeaderFont;
+    final var headFm = g.getFontMetrics(headerFont);
+    final var ctx = g.getFontRenderContext();
+    var numberFont = headerFont;
     int width2 = headFm.stringWidth("00");
     int width3 = headFm.stringWidth("000");
     float scale = (float) width2 / (float) width3;
-    NumberFont = HeaderFont.deriveFont(scale * HeaderFont.getSize2D());
+    numberFont = headerFont.deriveFont(scale * headerFont.getSize2D());
     for (int c = 0; c < cols; c++) {
-      String label = label(c, cols);
-      TextLayout Slabel = Styled(label, NumberFont, ctx);
-      int xoff = (cellWidth - (int) Slabel.getBounds().getWidth()) >> 1;
-      Slabel.draw(
-          g, tableXstart + xoff + c * cellWidth, tableYstart - 3 - (int) Slabel.getDescent());
+      final var label = label(c, cols);
+      final var styledLabel = styled(label, numberFont, ctx);
+      int xoff = (cellWidth - (int) styledLabel.getBounds().getWidth()) >> 1;
+      styledLabel.draw(
+          g, tableXstart + xoff + c * cellWidth, tableYstart - 3 - (int) styledLabel.getDescent());
     }
     for (int r = 0; r < rows; r++) {
-      String label = label(r, rows);
-      TextLayout Slabel = Styled(label, NumberFont, ctx);
-      Slabel.draw(
+      final var label = label(r, rows);
+      final var styledLabel = styled(label, numberFont, ctx);
+      styledLabel.draw(
           g,
-          (float) (tableXstart - Slabel.getBounds().getWidth() - Slabel.getDescent() - 3),
+          (float) (tableXstart - styledLabel.getBounds().getWidth() - styledLabel.getDescent() - 3),
           tableYstart
-              + (cellHeight - Slabel.getAscent()) / 2
-              + Slabel.getAscent()
+              + (cellHeight - styledLabel.getAscent()) / 2
+              + styledLabel.getAscent()
               + r * cellHeight);
     }
-    List<TextLayout> rowHeader = header(model.getInputs().bits, 0, rowVars, true, false, ctx);
-    List<TextLayout> colHeader =
+    final var rowHeader = header(model.getInputs().bits, 0, rowVars, true, false, ctx);
+    final var colHeader =
         header(model.getInputs().bits, rowVars, rowVars + colVars, false, false, ctx);
     int rx = x + 3;
-    int ry = y + KNumberedInfo.getHeaderHeight() + cellHeight / 2;
+    int ry = y + numberedKMapInfo.getHeaderHeight() + cellHeight / 2;
     for (TextLayout l : rowHeader) {
       l.draw(g, rx, ry + l.getAscent());
       ry += (int) l.getBounds().getHeight();
     }
-    rx = x + KNumberedInfo.getHeaderWidth() + cellWidth / 2;
+    rx = x + numberedKMapInfo.getHeaderWidth() + cellWidth / 2;
     ry = y + 3;
     for (TextLayout l : colHeader) {
       l.draw(g, rx, ry + l.getAscent());
@@ -661,7 +669,7 @@ public class KarnaughMapPanel extends JPanel
     }
   }
 
-  private AttributedString Styled(String header, Font font) {
+  private AttributedString styled(String header, Font font) {
     ArrayList<Integer> starts = new ArrayList<>();
     ArrayList<Integer> stops = new ArrayList<>();
     StringBuilder str = new StringBuilder();
@@ -687,50 +695,50 @@ public class KarnaughMapPanel extends JPanel
     return styled;
   }
 
-  private TextLayout Styled(String header, Font font, FontRenderContext ctx) {
-    return new TextLayout(Styled(header, font).getIterator(), ctx);
+  private TextLayout styled(String header, Font font, FontRenderContext ctx) {
+    return new TextLayout(styled(header, font).getIterator(), ctx);
   }
 
-  private int StyledWidth(AttributedString header, FontRenderContext ctx) {
+  private int styledWidth(AttributedString header, FontRenderContext ctx) {
     TextLayout layout = new TextLayout(header.getIterator(), ctx);
     return (int) layout.getBounds().getWidth();
   }
 
-  private int StyledHeight(AttributedString header, FontRenderContext ctx) {
+  private int styledHeight(AttributedString header, FontRenderContext ctx) {
     TextLayout layout = new TextLayout(header.getIterator(), ctx);
     return (int) layout.getBounds().getHeight();
   }
 
-  private void drawKmapLine(Graphics2D g, Point P1, Point P2) {
-    Stroke oldstroke = g.getStroke();
+  private void drawKmapLine(Graphics2D g, Point p1, Point p2) {
+    final var oldStroke = g.getStroke();
     g.setStroke(new BasicStroke(2));
-    g.drawLine(P1.x, P1.y, P2.x, P2.y);
-    if (P1.y == P2.y) {
+    g.drawLine(p1.x, p1.y, p2.x, p2.y);
+    if (p1.y == p2.y) {
       // we have a horizontal line
-      g.drawLine(P1.x, P1.y - 4, P1.x, P1.y + 4);
-      g.drawLine(P2.x, P2.y - 4, P2.x, P2.y + 4);
+      g.drawLine(p1.x, p1.y - 4, p1.x, p1.y + 4);
+      g.drawLine(p2.x, p2.y - 4, p2.x, p2.y + 4);
     } else {
       // we have a vertical line
-      g.drawLine(P1.x - 4, P1.y, P1.x + 4, P1.y);
-      g.drawLine(P2.x - 4, P2.y, P2.x + 4, P2.y);
+      g.drawLine(p1.x - 4, p1.y, p1.x + 4, p1.y);
+      g.drawLine(p2.x - 4, p2.y, p2.x + 4, p2.y);
     }
-    g.setStroke(oldstroke);
+    g.setStroke(oldStroke);
   }
 
   private void drawLinedHeader(Graphics2D g, int x, int y) {
-    TruthTable table = model.getTruthTable();
+    final var table = model.getTruthTable();
     int inputCount = table.getInputColumnCount();
-    FontMetrics headFm = g.getFontMetrics(HeaderFont);
-    FontRenderContext ctx = g.getFontRenderContext();
+    final var headFm = g.getFontMetrics(headerFont);
+    final var ctx = g.getFontRenderContext();
     int rowVars = ROW_VARS[inputCount];
     int colVars = COL_VARS[inputCount];
     int rows = 1 << rowVars;
-    int cols = 1 << colVars;
-    int headHeight = KLinedInfo.getHeaderHeight();
+    final int cols = 1 << colVars;
+    int headHeight = linedKMapInfo.getHeaderHeight();
     for (int i = 0; i < inputCount; i++) {
-      AttributedString header = Styled(model.getInputs().bits.get(i), HeaderFont);
+      AttributedString header = styled(model.getInputs().bits.get(i), headerFont);
       boolean rotated = false;
-      int middleOffset = StyledWidth(header, ctx) >> 1;
+      int middleOffset = styledWidth(header, ctx) >> 1;
       int xoffset = headHeight + 11;
       int yoffset = headHeight + 11;
       switch (i) {
@@ -897,17 +905,17 @@ public class KarnaughMapPanel extends JPanel
     }
   }
 
-  private void PaintKMap(Graphics2D g, int x, int y, TruthTable table) {
+  private void paintKMap(Graphics2D g, int x, int y, TruthTable table) {
     int inputCount = table.getInputColumnCount();
     int rowVars = ROW_VARS[inputCount];
     int colVars = COL_VARS[inputCount];
     int rows = 1 << rowVars;
     int cols = 1 << colVars;
-    g.setFont(EntryFont);
+    g.setFont(entryFont);
     FontMetrics fm = g.getFontMetrics();
     int dy = (cellHeight + fm.getAscent()) / 2;
 
-    KMapArea = Bounds.create(x, y, cols * cellWidth, rows * cellHeight);
+    kMapArea = Bounds.create(x, y, cols * cellWidth, rows * cellHeight);
     Stroke oldstroke = g.getStroke();
     g.setStroke(new BasicStroke(2));
     g.drawLine(x - cellHeight, y - cellHeight, x, y);
@@ -1018,19 +1026,19 @@ public class KarnaughMapPanel extends JPanel
   public void mouseDragged(MouseEvent e) {}
 
   public void mouseMoved(MouseEvent e) {
-    if (KMapArea == null) return;
+    if (kMapArea == null) return;
     int posX = e.getX();
     int posY = e.getY();
-    if ((posX >= KMapArea.getX())
-        && (posX <= KMapArea.getX() + KMapArea.getWidth())
-        && (posY >= KMapArea.getY())
-        && (posY <= KMapArea.getY() + KMapArea.getHeight())) {
-      int x = posX - KMapArea.getX();
-      int y = posY - KMapArea.getY();
+    if ((posX >= kMapArea.getX())
+        && (posX <= kMapArea.getX() + kMapArea.getWidth())
+        && (posY >= kMapArea.getY())
+        && (posY <= kMapArea.getY() + kMapArea.getHeight())) {
+      int x = posX - kMapArea.getX();
+      int y = posY - kMapArea.getY();
       int col = x / cellWidth;
       int row = y / cellHeight;
       if (kMapGroups.highlight(col, row)) {
-        Expression expr = kMapGroups.GetHighlightedExpression();
+        Expression expr = kMapGroups.getHighlightedExpression();
         completeExpression.getRenderData().setSubExpression(expr);
         completeExpression.repaint();
         repaint();
@@ -1055,7 +1063,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   public void mouseClicked(MouseEvent e) {
-    if (KMapArea == null) return;
+    if (kMapArea == null) return;
     int row = getRow(e);
     if (row < 0) return;
     int col = getOutputColumn(e);
@@ -1080,5 +1088,7 @@ public class KarnaughMapPanel extends JPanel
   public void mouseExited(MouseEvent e) {}
 
   @Override
-  public void EntryDesriptionChanged() { repaint(); }
+  public void entryDesriptionChanged() {
+    repaint();
+  }
 }

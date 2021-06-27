@@ -30,6 +30,7 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.LibraryUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.util.Arrays;
 import java.util.List;
@@ -40,15 +41,14 @@ import org.slf4j.LoggerFactory;
 /**
  * This class allows an object to be created holding all the information essential to showing a
  * ComponentFactory in the explorer window, but without actually loading the ComponentFactory unless
- * a program genuinely gets around to needing to use it. Note that for this to work, the relevant
- * ComponentFactory class must be in the same package as its Library class, the ComponentFactory
+ * a program genuinely gets around to needing to use it. Note that for this to work, the ComponentFactory
  * class must be public, and it must include a public no-arguments constructor.
  */
 public class FactoryDescription {
 
   public static List<Tool> getTools(
       Class<? extends Library> base, FactoryDescription[] descriptions) {
-    Tool[] tools = new Tool[descriptions.length];
+    var tools = new Tool[descriptions.length];
     for (int i = 0; i < tools.length; i++) {
       tools[i] = new AddTool(base, descriptions[i]);
     }
@@ -57,42 +57,36 @@ public class FactoryDescription {
 
   static final Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
 
-  private final String name;
   private final StringGetter displayName;
   private String iconName;
   private boolean iconLoadAttempted;
   private Icon icon;
-  private final String factoryClassName;
+  private final Class factoryClass;
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;
 
-  public FactoryDescription(
-      String name, StringGetter displayName, Icon icon, String factoryClassName) {
-    this(name, displayName, factoryClassName);
-    this.iconName = "???";
-    this.iconLoadAttempted = true;
-    this.icon = icon;
+
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, Icon icon) {
+    this(factoryClass, displayName);
   }
 
-  public FactoryDescription(String name, StringGetter displayName, String factoryClassName) {
-    this.name = name;
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, String iconName) {
+    this(factoryClass, displayName);
+    this.iconName = iconName;
+    this.iconLoadAttempted = false;
+    this.icon = null;
+  }
+
+  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName) {
     this.displayName = displayName;
     this.iconName = "???";
     this.iconLoadAttempted = true;
     this.icon = null;
-    this.factoryClassName = factoryClassName;
+    this.factoryClass = factoryClass;
     this.factoryLoadAttempted = false;
     this.factory = null;
     this.toolTip = null;
-  }
-
-  public FactoryDescription(
-      String name, StringGetter displayName, String iconName, String factoryClassName) {
-    this(name, displayName, factoryClassName);
-    this.iconName = iconName;
-    this.iconLoadAttempted = false;
-    this.icon = null;
   }
 
   public String getDisplayName() {
@@ -103,41 +97,32 @@ public class FactoryDescription {
     ComponentFactory ret = factory;
     if (factory != null || factoryLoadAttempted) {
       return ret;
-    } else {
-      String msg = "";
-      try {
-        msg = "getting class loader";
-        ClassLoader loader = libraryClass.getClassLoader();
-        msg = "getting package name";
-        String name;
-        Package pack = libraryClass.getPackage();
-        if (pack == null) {
-          name = factoryClassName;
-        } else {
-          name = pack.getName() + "." + factoryClassName;
-        }
-        msg = "loading class";
-        Class<?> factoryClass = loader.loadClass(name);
-        msg = "creating instance";
-        Object factoryValue = factoryClass.getDeclaredConstructor().newInstance();
-        msg = "converting to factory";
-        if (factoryValue instanceof ComponentFactory) {
-          ret = (ComponentFactory) factoryValue;
-          factory = ret;
-          factoryLoadAttempted = true;
-          return ret;
-        }
-      } catch (Exception t) {
-        String name = t.getClass().getName();
-        String m = t.getMessage();
-        if (m != null) msg = msg + ": " + name + ": " + m;
-        else msg = msg + ": " + name;
-      }
-      logger.error("Error while {}", msg);
-      factory = null;
-      factoryLoadAttempted = true;
-      return null;
     }
+
+    var errorMsg = "";
+    try {
+      errorMsg = "Getting class loader";
+      var loader = this.factoryClass.getClassLoader();
+      errorMsg = "Loading class";
+      Class<?> factoryCls = loader.loadClass(this.factoryClass.getCanonicalName());
+      errorMsg = "Creating instance";
+      Object factoryValue = factoryCls.getDeclaredConstructor().newInstance();
+      errorMsg = "Converting to ComponentFactory";
+      factory = (ComponentFactory) factoryValue;
+      factoryLoadAttempted = true;
+      return factory;
+    } catch (Exception t) {
+      String name = t.getClass().getName();
+      String m = t.getMessage();
+
+      errorMsg += ": " + name;
+      if (m != null) errorMsg += ": " + m;
+    }
+
+    logger.error("Error while {}", errorMsg);
+    factory = null;
+    factoryLoadAttempted = true;
+    return null;
   }
 
   public Icon getIcon() {
@@ -150,8 +135,14 @@ public class FactoryDescription {
     return ret;
   }
 
+  /**
+   * Returns unique library identifier.
+   *
+   * As we want to have static _ID per library, generic
+   * implementation must look for it in the current instance
+   */
   public String getName() {
-    return name;
+    return LibraryUtil.getName(factoryClass);
   }
 
   public String getToolTip() {

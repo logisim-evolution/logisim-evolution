@@ -53,8 +53,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Demultiplexer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Demultiplexer";
+
   public Demultiplexer() {
-    super("Demultiplexer", S.getter("demultiplexerComponent"));
+    super(_ID, S.getter("demultiplexerComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -79,7 +87,7 @@ public class Demultiplexer extends InstanceFactory {
             new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new PlexerIcon(true,false));
+    setIcon(new PlexerIcon(true, false));
   }
 
   @Override
@@ -97,7 +105,7 @@ public class Demultiplexer extends InstanceFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
-      int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
+      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
@@ -289,7 +297,7 @@ public class Demultiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = (int)sel.toLongValue();
+        outIndex = (int) sel.toLongValue();
         out = state.getPortValue(outputs + (enable ? 2 : 1));
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

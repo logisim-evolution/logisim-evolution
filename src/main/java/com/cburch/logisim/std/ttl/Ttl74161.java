@@ -44,6 +44,13 @@ import static com.cburch.logisim.data.Value.FALSE_COLOR;
 import static com.cburch.logisim.data.Value.TRUE_COLOR;
 
 public class Ttl74161 extends AbstractTtlGate {
+    /**
+     * Unique identifier of the tool, used as reference in project files.
+     * Do NOT change as it will prevent project files from loading.
+     *
+     * Identifier value must MUST be unique string among all tools.
+     */
+    public static final String _ID = "74161";
 
     public static final int PORT_INDEX_nCLR = 0;
     public static final int PORT_INDEX_CLK = 1;
@@ -62,24 +69,24 @@ public class Ttl74161 extends AbstractTtlGate {
 
     public Ttl74161() {
         super(
-                "74161",
+                _ID,
                 (byte) 16,
                 new byte[]{11, 12, 13, 14, 15},
                 new String[]{
-                        "nClear",
-                        "Clock",
-                        "A",
-                        "B",
-                        "C",
-                        "D",
-                        "ENP",
-                        "nLoad",
-                        "Ent",
-                        "QD",
-                        "QC",
-                        "QB",
-                        "QA",
-                        "RC0"
+                        "MR/CLR (Reset, active LOW)",
+                        "CP/CLK (Clock)",
+                        "D0/A",
+                        "D1/B",
+                        "D2/C",
+                        "D3/D",
+                        "CE/ENP (Count Enable)",
+                        "PE/LOAD (Parallel Enable, active LOW)",
+                        "CET/ENT (Count Enable Carry)",
+                        "Q3/QD",
+                        "Q2/QC",
+                        "A1/QB",
+                        "A0/QA",
+                        "TC/RC0 (Terminal Count)"
                 });
         super.setInstancePoker(Poker.class);
     }

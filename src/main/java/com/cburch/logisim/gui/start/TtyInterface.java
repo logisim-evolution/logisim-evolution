@@ -124,7 +124,7 @@ public class TtyInterface {
       Library lib = count.getLibrary();
       String libName = lib == null ? "-" : lib.getDisplayName();
       System.out.printf(
-          fmtNormal, // OK
+          fmtNormal,
           count.getUniqueCount(),
           count.getRecursiveCount(),
           count.getFactory().getDisplayName(),
@@ -132,12 +132,12 @@ public class TtyInterface {
     }
     FileStatistics.Count totalWithout = stats.getTotalWithoutSubcircuits();
     System.out.printf(
-        fmt + "%s\n", // OK
+        fmt + "%s\n",
         totalWithout.getUniqueCount(),
         totalWithout.getRecursiveCount(),
         S.get("statsTotalWithout"));
     System.out.printf(
-        fmt + "%s\n", // OK
+        fmt + "%s\n",
         total.getUniqueCount(),
         total.getRecursiveCount(),
         S.get("statsTotalWith"));
@@ -159,10 +159,10 @@ public class TtyInterface {
     }
     if (shouldPrint) {
       for (int i = 0; i < curOutputs.size(); i++) {
-        if (i != 0) System.out.print("\t"); // OK
-        System.out.print(curOutputs.get(i)); // OK
+        if (i != 0) System.out.print("\t");
+        System.out.print(curOutputs.get(i));
       }
-      System.out.println(); // OK
+      System.out.println();
     }
   }
 
@@ -191,7 +191,7 @@ public class TtyInterface {
       if ((format & FORMAT_TABLE_TABBED) != 0) sep = "\t";
       else if ((format & FORMAT_TABLE_CSV) != 0) sep = ",";
       else // if ((format & FORMAT_TABLE_PRETTY) != 0)
-      sep = " ";
+        sep = " ";
       if (showHeader) {
         for (int i = 0; i < headers.size(); i++) {
           if ((format & FORMAT_TABLE_TABBED) != 0) formats.add("%s");
@@ -203,16 +203,16 @@ public class TtyInterface {
           }
         }
         for (int i = 0; i < headers.size(); i++) {
-          if (i != 0) System.out.print(sep); // OK
-          System.out.printf(formats.get(i), headers.get(i)); // OK
+          if (i != 0) System.out.print(sep);
+          System.out.printf(formats.get(i), headers.get(i));
         }
-        System.out.println(); // OK
+        System.out.println();
       }
       for (int i = 0; i < curOutputs.size(); i++) {
-        if (i != 0) System.out.print(sep); // OK
-        System.out.printf(formats.get(i), valueFormat(curOutputs.get(i), format)); // OK
+        if (i != 0) System.out.print(sep);
+        System.out.printf(formats.get(i), valueFormat(curOutputs.get(i), format));
       }
-      System.out.println(); // OK
+      System.out.println();
     }
     return shouldPrint;
   }
@@ -235,7 +235,7 @@ public class TtyInterface {
   private static void ensureLineTerminated() {
     if (!lastIsNewline) {
       lastIsNewline = true;
-      System.out.print('\n'); // OK
+      System.out.print('\n');
     }
   }
 
@@ -534,7 +534,7 @@ public class TtyInterface {
 
   public static void sendFromTty(char c) {
     lastIsNewline = c == '\n';
-    System.out.print(c); // OK
+    System.out.print(c);
   }
 
   // It's possible to avoid using the separate thread using

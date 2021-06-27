@@ -29,7 +29,6 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -37,6 +36,13 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Ttl7486 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7486";
 
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -48,15 +54,15 @@ public class Ttl7486 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+"gate_"+index+"_A"+
-                   HDL.xorOperator()+"gate_"+index+"_B;");
+      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+              + "gate_" + index + "_A" + HDL.xorOperator() + "gate_" + index + "_B;");
       Contents.add("");
       return Contents;
     }
   }
 
   public Ttl7486() {
-    super("7486", (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true);
   }
 
   @Override

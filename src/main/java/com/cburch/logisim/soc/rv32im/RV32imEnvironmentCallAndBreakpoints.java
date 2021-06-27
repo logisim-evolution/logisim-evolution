@@ -39,17 +39,17 @@ import java.util.Arrays;
 
 public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionInterface {
 
-  private final static int SYSTEM = 0x73;
-  
-  private final static int INSTR_ECALL = 0;
-  private final static int INSTR_EBREAK = 1;
-  
-  private final static String[] AsmOpcodes = {"ECALL","EBREAK"};
+  private static final int SYSTEM = 0x73;
+
+  private static final int INSTR_ECALL = 0;
+  private static final int INSTR_EBREAK = 1;
+
+  private static final String[] AsmOpcodes = {"ECALL", "EBREAK"};
 
   private int instruction = 0;
   private int operation;
   private boolean valid;
-  
+
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
@@ -78,13 +78,17 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
     return valid;
   }
 
-  public boolean performedJump() { return false; }
+  public boolean performedJump() {
+    return false;
+  }
 
-  public boolean isValid() { return valid; }
-  
+  public boolean isValid() {
+    return valid;
+  }
+
   private boolean decodeBin() {
     if (RV32imSupport.getOpcode(instruction) == SYSTEM) {
-      int funct12 = (instruction >> 20)&0xFFF;
+      int funct12 = (instruction >> 20) & 0xFFF;
       if (funct12 > 1)
         return false;
       operation = funct12;
@@ -93,31 +97,31 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
     return false;
   }
 
-  public String getErrorMessage() { return null; }
-  
-  public int getInstructionSizeInBytes(String instruction) {
-	if (getInstructions().contains(instruction.toUpperCase())) return 4;
-	return -1;
+  public String getErrorMessage() {
+    return null;
   }
+
+  public int getInstructionSizeInBytes(String instruction) {
+    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    return -1;
+  }
+
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
-	int operation = -1;
-	for (int i = 0 ; i < AsmOpcodes.length ; i++) 
-	  if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
-	if (operation < 0) {
-	  valid = false;
-	  return false;
-	}
-	if (instr.getNrOfParameters() != 0) {
-	  instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
-	  valid = false;
-	  return true;
-	}
-	instruction = RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
+    int operation = -1;
+    for (int i = 0; i < AsmOpcodes.length; i++)
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+    if (operation < 0) {
+      valid = false;
+      return false;
+    }
+    if (instr.getNrOfParameters() != 0) {
+      instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
+      valid = false;
+      return true;
+    }
+    instruction = RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
     valid = true;
     instr.setInstructionByteCode(instruction, 4);
     return true;
   }
-
-
-
 }

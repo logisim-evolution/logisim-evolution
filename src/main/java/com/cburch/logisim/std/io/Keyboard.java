@@ -50,6 +50,14 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class Keyboard extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Keyboard";
+
   public static class Poker extends InstancePoker {
     public void draw(InstancePainter painter) {
       KeyboardData data = getKeyboardState(painter);
@@ -175,7 +183,7 @@ public class Keyboard extends InstanceFactory {
       Attributes.forIntegerRange("buflen", S.getter("keybBufferLengthAttr"), 1, 256);
 
   public Keyboard() {
-    super("Keyboard", S.getter("keyboardComponent"));
+    super(_ID, S.getter("keyboardComponent"));
     setAttributes(
         new Attribute[] {ATTR_BUFFER, StdAttr.EDGE_TRIGGER},
         new Object[] {32, StdAttr.TRIG_RISING});

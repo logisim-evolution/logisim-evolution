@@ -105,7 +105,8 @@ import javax.swing.event.PopupMenuListener;
 public class Canvas extends JPanel
     implements LocaleListener, CanvasPaneContents, AdjustmentListener {
 
-  public static final byte zoomButtonSize = 52, zoomButtonMargin = 30;
+  public static final byte zoomButtonSize = 52;
+  public static final byte zoomButtonMargin = 30;
   public static final Color HALO_COLOR = new Color(255, 0, 255);
   // don't bother to update the size if it hasn't changed more than this
   static final double SQRT_2 = Math.sqrt(2.0);
@@ -133,7 +134,8 @@ public class Canvas extends JPanel
   private final CanvasPaintThread paintThread;
   private final CanvasPainter painter;
   private final Object repaintLock = new Object(); // for waitForRepaintDone
-  private Tool drag_tool, temp_tool;
+  private Tool dragTool;
+  private Tool tempTool;
   private MouseMappings mappings;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
@@ -173,7 +175,7 @@ public class Canvas extends JPanel
     paintThread.start();
   }
 
-  public static boolean AutoZoomButtonClicked(Dimension sz, double x, double y) {
+  public static boolean autoZoomButtonClicked(Dimension sz, double x, double y) {
     return Point2D.distance(
             x,
             y,
@@ -183,7 +185,7 @@ public class Canvas extends JPanel
   }
 
   public static void paintAutoZoomButton(Graphics g, Dimension sz, Color zoomButtonColor) {
-    Color oldcolor = g.getColor();
+    final var oldColor = g.getColor();
     g.setColor(TICK_RATE_COLOR);
     g.fillOval(
         sz.width - zoomButtonSize - 33,
@@ -215,15 +217,15 @@ public class Canvas extends JPanel
         height - zoomButtonSize / 4 + 4,
         width - zoomButtonSize / 2,
         height - zoomButtonSize * 3 / 4 - 4);
-    g.setColor(oldcolor);
+    g.setColor(oldColor);
   }
 
   public static void snapToGrid(MouseEvent e) {
-    int old_x = e.getX();
-    int old_y = e.getY();
-    int new_x = snapXToGrid(old_x);
-    int new_y = snapYToGrid(old_y);
-    e.translatePoint(new_x - old_x, new_y - old_y);
+    int oldX = e.getX();
+    int oldY = e.getY();
+    int newX = snapXToGrid(oldX);
+    int newY = snapYToGrid(oldY);
+    e.translatePoint(newX - oldX, newY - oldY);
   }
 
   //
@@ -300,8 +302,7 @@ public class Canvas extends JPanel
     // will (if needed) eventually, fire a propagateCompleted event, which will
     // cause a repaint. If not in autoPropagate mode, do the repaint here
     // instead.
-    if (!proj.getSimulator().nudge())
-      paintThread.requestRepaint();
+    if (!proj.getSimulator().nudge()) paintThread.requestRepaint();
   }
 
   public void computeSize(boolean immediate) {
@@ -310,7 +311,8 @@ public class Canvas extends JPanel
     Bounds bounds;
     if (g != null) bounds = proj.getCurrentCircuit().getBounds(getGraphics());
     else bounds = proj.getCurrentCircuit().getBounds();
-    int height = 0, width = 0;
+    int height = 0;
+    int width = 0;
     if (bounds != null && viewport != null) {
       width = bounds.getX() + bounds.getWidth() + viewport.getWidth();
       height = bounds.getY() + bounds.getHeight() + viewport.getHeight();
@@ -388,7 +390,7 @@ public class Canvas extends JPanel
   }
 
   Tool getDragTool() {
-    return drag_tool;
+    return dragTool;
   }
 
   public StringGetter getErrorMessage() {
@@ -397,6 +399,10 @@ public class Canvas extends JPanel
 
   public void setErrorMessage(StringGetter message) {
     viewport.setErrorMessage(message, null);
+  }
+
+  public void setErrorMessage(StringGetter message, Color color) {
+    viewport.setErrorMessage(message, color);
   }
 
   GridPainter getGridPainter() {
@@ -415,8 +421,8 @@ public class Canvas extends JPanel
     return canvasPane.getVerticalScrollBar().getValue();
   }
 
-  public void setVerticalScrollBar(int Y) {
-    canvasPane.getVerticalScrollBar().setValue(Y);
+  public void setVerticalScrollBar(int posY) {
+    canvasPane.getVerticalScrollBar().setValue(posY);
   }
 
   @Override
@@ -495,7 +501,7 @@ public class Canvas extends JPanel
   }
 
   boolean isPopupMenuUp() {
-    return myListener.menu_on;
+    return myListener.menuOn;
   }
 
   private void loadOptions(AttributeSet options) {
@@ -632,7 +638,8 @@ public class Canvas extends JPanel
     /* Disable for VHDL content */
     if (proj.getCurrentCircuit() == null) return;
     viewport.clearArrows();
-    Rectangle viewableBase, viewable;
+    Rectangle viewableBase;
+    Rectangle viewable;
     if (canvasPane != null) {
       viewableBase = canvasPane.getViewport().getViewRect();
     } else {
@@ -672,10 +679,6 @@ public class Canvas extends JPanel
     if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
   }
 
-  public void setErrorMessage(StringGetter message, Color color) {
-    viewport.setErrorMessage(message, color);
-  }
-
   void setHaloedComponent(Circuit circ, Component comp) {
     painter.setHaloedComponent(circ, comp);
   }
@@ -684,13 +687,13 @@ public class Canvas extends JPanel
     painter.setHighlightedWires(value);
   }
 
-  public void setHorizontalScrollBar(int X) {
-    canvasPane.getHorizontalScrollBar().setValue(X);
+  public void setHorizontalScrollBar(int posX) {
+    canvasPane.getHorizontalScrollBar().setValue(posX);
   }
 
-  public void setScrollBar(int X, int Y) {
-    setHorizontalScrollBar(X);
-    setVerticalScrollBar(Y);
+  public void setScrollBar(int posX, int posY) {
+    setHorizontalScrollBar(posX);
+    setVerticalScrollBar(posY);
   }
 
   public void showPopupMenu(JPopupMenu menu, int x, int y) {
@@ -699,7 +702,7 @@ public class Canvas extends JPanel
       x = (int) Math.round(x * zoom);
       y = (int) Math.round(y * zoom);
     }
-    myListener.menu_on = true;
+    myListener.menuOn = true;
     menu.addPopupMenuListener(myListener);
     menu.show(this, x, y);
   }
@@ -742,10 +745,10 @@ public class Canvas extends JPanel
           PropertyChangeListener,
           MouseWheelListener {
 
-    boolean menu_on = false;
+    boolean menuOn = false;
 
     private Tool getToolFor(MouseEvent e) {
-      if (menu_on) {
+      if (menuOn) {
         return null;
       }
 
@@ -792,20 +795,19 @@ public class Canvas extends JPanel
 
     @Override
     public void mouseDragged(MouseEvent e) {
-      if (drag_tool != null) {
-        drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
-        ZoomModel zoomModel = proj.getFrame().getZoomModel();
-        double ZoomFactor = zoomModel.getZoomFactor();
-        Rectangle r =
-            new Rectangle((int) (e.getX() * ZoomFactor), (int) (e.getY() * ZoomFactor), 1, 1);
-        scrollRectToVisible(r);
+      if (dragTool != null) {
+        dragTool.mouseDragged(Canvas.this, getGraphics(), e);
+        var zoomModel = proj.getFrame().getZoomModel();
+        double zoomFactor = zoomModel.getZoomFactor();
+        scrollRectToVisible(
+            new Rectangle((int) (e.getX() * zoomFactor), (int) (e.getY() * zoomFactor), 1, 1));
       }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-      if (drag_tool != null) {
-        drag_tool.mouseEntered(Canvas.this, getGraphics(), e);
+      if (dragTool != null) {
+        dragTool.mouseEntered(Canvas.this, getGraphics(), e);
       } else {
         Tool tool = getToolFor(e);
         if (tool != null) {
@@ -816,8 +818,8 @@ public class Canvas extends JPanel
 
     @Override
     public void mouseExited(MouseEvent e) {
-      if (drag_tool != null) {
-        drag_tool.mouseExited(Canvas.this, getGraphics(), e);
+      if (dragTool != null) {
+        dragTool.mouseExited(Canvas.this, getGraphics(), e);
       } else {
         Tool tool = getToolFor(e);
         if (tool != null) {
@@ -856,7 +858,7 @@ public class Canvas extends JPanel
       }
       if (e.getButton() == MouseEvent.BUTTON1
           && viewport.zoomButtonVisible
-          && AutoZoomButtonClicked(
+          && autoZoomButtonClicked(
               viewport.getSize(),
               e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
               e.getY() * getZoomFactor() - getVerticalScrollBar())) {
@@ -864,12 +866,12 @@ public class Canvas extends JPanel
         viewport.repaint();
       } else {
         Canvas.this.requestFocus();
-        drag_tool = getToolFor(e);
-        if (drag_tool != null) {
-          drag_tool.mousePressed(Canvas.this, getGraphics(), e);
+        dragTool = getToolFor(e);
+        if (dragTool != null) {
+          dragTool.mousePressed(Canvas.this, getGraphics(), e);
           if (e.getButton() != MouseEvent.BUTTON1) {
-            temp_tool = proj.getTool();
-            proj.setTool(drag_tool);
+            tempTool = proj.getTool();
+            proj.setTool(dragTool);
           }
         }
         completeAction();
@@ -880,7 +882,7 @@ public class Canvas extends JPanel
     public void mouseReleased(MouseEvent e) {
       if ((e.getButton() == MouseEvent.BUTTON1
               && viewport.zoomButtonVisible
-              && AutoZoomButtonClicked(
+              && autoZoomButtonClicked(
                   viewport.getSize(),
                   e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
                   e.getY() * getZoomFactor() - getVerticalScrollBar())
@@ -889,13 +891,13 @@ public class Canvas extends JPanel
         center();
         setCursor(proj.getTool().getCursor());
       }
-      if (drag_tool != null) {
-        drag_tool.mouseReleased(Canvas.this, getGraphics(), e);
-        drag_tool = null;
+      if (dragTool != null) {
+        dragTool.mouseReleased(Canvas.this, getGraphics(), e);
+        dragTool = null;
       }
-      if (temp_tool != null) {
-        proj.setTool(temp_tool);
-        temp_tool = null;
+      if (tempTool != null) {
+        proj.setTool(tempTool);
+        tempTool = null;
       }
       Tool tool = proj.getTool();
       if (tool != null && !(tool instanceof EditTool)) {
@@ -940,17 +942,18 @@ public class Canvas extends JPanel
         }
       }
     }
+
     //
     // PopupMenuListener mtehods
     //
     @Override
     public void popupMenuCanceled(PopupMenuEvent e) {
-      menu_on = false;
+      menuOn = false;
     }
 
     @Override
     public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-      menu_on = false;
+      menuOn = false;
     }
 
     @Override
@@ -1134,12 +1137,11 @@ public class Canvas extends JPanel
     @Override
     public void propagationCompleted(Simulator.Event e) {
       paintThread.requestRepaint();
-      if (e.didTick())
-        waitForRepaintDone();
+      if (e.didTick()) waitForRepaintDone();
     }
 
     @Override
-    public void simulatorStateChanged(Simulator.Event e) { }
+    public void simulatorStateChanged(Simulator.Event e) {}
 
     @Override
     public void simulatorReset(Simulator.Event e) {
@@ -1304,9 +1306,9 @@ public class Canvas extends JPanel
     }
 
     private int paintString(Graphics g, int y, String msg) {
-      Font old = g.getFont();
+      final var old = g.getFont();
       g.setFont(ERR_MSG_FONT);
-      FontMetrics fm = g.getFontMetrics();
+      var fm = g.getFontMetrics();
       int x = (getWidth() - fm.stringWidth(msg)) / 2;
       if (x < 0) {
         x = 0;

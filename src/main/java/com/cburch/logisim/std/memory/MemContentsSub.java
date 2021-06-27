@@ -56,7 +56,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -69,18 +69,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
+      int n = Math.min(values.length, data.length - (int) start);
       for (int i = 0; i < n; i++) {
-        data[(int)start + i] = (byte) (values[i] & mask);
+        data[(int) start + i] = (byte) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = data[(int)addr];
+        byte oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (byte) value;
+          data[(int) addr] = (byte) value;
         }
       }
     }
@@ -109,7 +109,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -122,18 +122,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
+      int n = Math.min(values.length, data.length - (int) start);
       for (int i = 0; i < n; i++) {
-        data[(int)start+i] = (int)(values[i] & mask);
+        data[(int) start + i] = (int) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = data[(int)addr];
+        int oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (int)value;
+          data[(int) addr] = (int) value;
         }
       }
     }
@@ -162,7 +162,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -175,22 +175,22 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
+      int n = Math.min(values.length, data.length - (int) start);
       /*
        * Bugfix in memory writing (by Roy77)
        * https://github.com/roy77
        */
-      for (int i = (int)start; i < n; i++) {
-        data[(int)start + i] = (short) (values[i] & mask);
+      for (int i = (int) start; i < n; i++) {
+        data[(int) start + i] = (short) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        short oldValue = data[(int)addr];
+        short oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (short) value;
+          data[(int) addr] = (short) value;
         }
       }
     }
@@ -219,7 +219,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -232,18 +232,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
+      int n = Math.min(values.length, data.length - (int) start);
       for (int i = 0; i < n; i++) {
-        data[(int)start+i] = (values[i] & mask);
+        data[(int) start + i] = (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        long oldValue = data[(int)addr];
+        long oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = value;
+          data[(int) addr] = value;
         }
       }
     }

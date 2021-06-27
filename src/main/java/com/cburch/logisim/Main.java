@@ -48,6 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
+  /**
+   * Application entry point.
+   *
+   * @param args Optional arguments.
+   */
   public static void main(String[] args) {
     System.setProperty("apple.awt.application.name", APP_NAME);
     try {
@@ -58,27 +63,28 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put(
+            "ToolTip.font",
+            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
-    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+    } catch (ClassNotFoundException
+        | UnsupportedLookAndFeelException
+        | IllegalAccessException
+        | InstantiationException e) {
       e.printStackTrace();
     }
     Startup startup = Startup.parseArgs(args);
     if (startup == null) {
       System.exit(0);
     } else {
-      // If the auto-updater actually performed an update, then quit the
-      // program, otherwise continue with the execution
-      if (!startup.autoUpdate()) {
-        try {
-          startup.run();
-        } catch (Throwable e) {
-          Writer result = new StringWriter();
-          PrintWriter printWriter = new PrintWriter(result);
-          e.printStackTrace(printWriter);
-          OptionPane.showMessageDialog(null, result.toString());
-          System.exit(-1);
-        }
+      try {
+        startup.run();
+      } catch (Throwable e) {
+        Writer result = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(result);
+        e.printStackTrace(printWriter);
+        OptionPane.showMessageDialog(null, result.toString());
+        System.exit(-1);
       }
     }
   }
@@ -86,18 +92,16 @@ public class Main {
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final String APP_NAME = "Logisim-evolution";
-  public static final LogisimVersion VERSION =
-    LogisimVersion.get(3, 5, 0, LogisimVersion.FINAL_REVISION);
-  public static final String VERSION_NAME = VERSION.toString();
+  public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
   public static final int COPYRIGHT_YEAR = 2021;
-  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION_NAME;
+  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
+  public static final String APP_URL = "https://github.com/logisim-evolution/";
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
-  public static boolean hasGui() { return !headless; }
 
-  /** URL for the automatic updater */
-  public static final String UPDATE_URL =
-      "https://raw.githubusercontent.com/reds-heig/logisim-evolution/develop/logisim_evolution_version.xml";
+  public static boolean hasGui() {
+    return !headless;
+  }
 }

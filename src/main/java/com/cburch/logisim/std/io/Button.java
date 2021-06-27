@@ -57,6 +57,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Button extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Button";
+
   public static class Logger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -73,7 +81,7 @@ public class Button extends InstanceFactory {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
       return data == null ? Value.FALSE : (Value) data.getValue();
     }
-    
+
     @Override
     public boolean isInput(InstanceState state, Object option) {
       return true;
@@ -105,7 +113,7 @@ public class Button extends InstanceFactory {
   private static final int DEPTH = 3;
 
   public Button() {
-    super("Button", S.getter("buttonComponent"));
+    super(_ID, S.getter("buttonComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

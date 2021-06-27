@@ -35,7 +35,6 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -96,19 +95,13 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
     PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Nets));
     for (int i = 1; i <= NrOfPorts; i++)
-      PortMap.putAll(
-          GetNetMap(
-              "BCD" + (int) (Math.pow(10, i - 1)),
-              true,
-              ComponentInfo,
-              i,
-              Nets));
+      PortMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, ComponentInfo, i, Nets));
     return PortMap;
   }
 
@@ -251,7 +244,8 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
       }
     } else {
-      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.Report.AddFatalError(
+          "Strange, this should not happen as Verilog is not yet supported!\n");
     }
     return Contents;
   }

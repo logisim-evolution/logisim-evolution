@@ -147,9 +147,9 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetOneHot(boolean inverted, int nr_of_inputs, boolean is_bus) {
-    ArrayList<String> Lines = new ArrayList<>();
-    String Spaces = "   ";
-    String IndexString = "";
+    var Lines = new ArrayList<String>();
+    var Spaces = "   ";
+    var IndexString = "";
     if (is_bus) {
       if (HDL.isVHDL()) {
         Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
@@ -164,32 +164,39 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
-    if (inverted) OneLine.append(HDL.notOperator() + "(");
-    int spaces = OneLine.length();
+    var oneLine = new StringBuilder();
+    oneLine
+        .append(Spaces)
+        .append(HDL.assignPreamble())
+        .append("Result")
+        .append(IndexString)
+        .append(HDL.assignOperator());
+    if (inverted) oneLine.append(HDL.notOperator()).append("(");
+    int spaces = oneLine.length();
     for (int termloop = 0; termloop < nr_of_inputs; termloop++) {
-      while (OneLine.length() < spaces) {
-        OneLine.append(" ");
+      while (oneLine.length() < spaces) {
+        oneLine.append(" ");
       }
-      OneLine.append("(");
+      oneLine.append("(");
       for (int i = 0; i < nr_of_inputs; i++) {
-        if (i == termloop) OneLine.append("s_real_input_").append(i + 1).append(IndexString);
-        else
-          OneLine.append( HDL.notOperator() + "(s_real_input_" + (i + 1) + IndexString + ")");
+        if (i == termloop) {
+          oneLine.append("s_real_input_").append(i + 1).append(IndexString);
+        } else {
+          oneLine.append(HDL.notOperator()).append("(s_real_input_").append(i + 1).append(IndexString).append(")");
+        }
         if (i < (nr_of_inputs - 1)) {
-          OneLine.append(" " + HDL.andOperator() + " ");
+          oneLine.append(" ").append(HDL.andOperator()).append(" ");
         }
       }
-      OneLine.append(")");
+      oneLine.append(")");
       if (termloop < (nr_of_inputs - 1)) {
-        OneLine.append(" " + HDL.orOperator() + " ");
+        oneLine.append(" ").append(HDL.orOperator()).append(" ");
       } else {
-        if (inverted) OneLine.append(")");
-        OneLine.append(";");
+        if (inverted) oneLine.append(")");
+        oneLine.append(";");
       }
-      Lines.add(OneLine.toString());
-      OneLine.setLength(0);
+      Lines.add(oneLine.toString());
+      oneLine.setLength(0);
     }
     if (is_bus) {
       if (HDL.isVHDL()) {
@@ -272,9 +279,9 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         IndexString = "[n]";
       }
     }
-    StringBuffer OneLine = new StringBuffer();
-    OneLine.append(Spaces + HDL.assignPreamble() + "Result" + IndexString + HDL.assignOperator());
-    if (inverted) OneLine.append(HDL.notOperator() + "(");
+    StringBuilder OneLine = new StringBuilder();
+    OneLine.append(Spaces).append(HDL.assignPreamble()).append("Result").append(IndexString).append(HDL.assignOperator());
+    if (inverted) OneLine.append(HDL.notOperator()).append("(");
     int spaces = OneLine.length();
     for (int i = 0; i < nr_of_inputs; i++) {
       while (OneLine.length() < spaces) {

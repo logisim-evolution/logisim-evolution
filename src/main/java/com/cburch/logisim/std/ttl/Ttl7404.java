@@ -29,14 +29,23 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+/**
+ * TTL 74x04: hex inverter gate
+ */
 public class Ttl7404 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7404";
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -53,19 +62,22 @@ public class Ttl7404 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
-          HDL.notOperator()+"(gate_"+index+"_A);");
+      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+              + HDL.notOperator() + "(gate_" + index + "_A);");
       Contents.add("");
       return Contents;
     }
   }
 
+  private static final byte portCount = 14;
+  private static final byte[] outPorts = {2, 4, 6, 8, 10, 12};
+
   public Ttl7404() {
-    super("7404", (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+    super(_ID, portCount, outPorts, true);
   }
 
-  public Ttl7404(String Name) {
-    super(Name, (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+  public Ttl7404(String name) {
+    super(name, portCount, outPorts, true);
   }
 
   @Override

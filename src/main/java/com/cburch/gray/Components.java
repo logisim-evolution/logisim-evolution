@@ -36,6 +36,14 @@ import java.util.List;
 /** The library of components that the user can access. */
 public class Components extends Library {
   /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Components";
+
+  /**
    * The list of all tools contained in this library. Technically, libraries contain tools, which is
    * a slightly more general concept than components; practically speaking, though, you'll most
    * often want to create AddTools for new components that can be added into the circuit.
@@ -67,7 +75,8 @@ public class Components extends Library {
     return tools;
   }
 
-  public boolean removeLibrary(String Name) {
+  @Override
+  public boolean removeLibrary(String name) {
     return false;
   }
 }

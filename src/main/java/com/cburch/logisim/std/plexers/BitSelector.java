@@ -53,11 +53,19 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class BitSelector extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "BitSelector";
+
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
 
   public BitSelector() {
-    super("BitSelector", S.getter("bitSelectorComponent"));
+    super(_ID, S.getter("bitSelectorComponent"));
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, GROUP_ATTR},
         new Object[] {Direction.EAST, BitWidth.create(8), BitWidth.ONE});
@@ -66,7 +74,7 @@ public class BitSelector extends InstanceFactory {
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
 
-    setIcon(new PlexerIcon(false,true));
+    setIcon(new PlexerIcon(false, true));
     setFacingAttribute(StdAttr.FACING);
   }
 
@@ -135,7 +143,7 @@ public class BitSelector extends InstanceFactory {
     if (!select.isFullyDefined()) {
       group = Value.createUnknown(groupBits);
     } else {
-      int shift = (int)select.toLongValue() * groupBits.getWidth();
+      int shift = (int) select.toLongValue() * groupBits.getWidth();
       if (shift >= data.getWidth()) {
         group = Value.createKnown(groupBits, 0);
       } else if (groupBits.getWidth() == 1) {

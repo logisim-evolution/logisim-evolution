@@ -60,6 +60,7 @@ public class CanvasModelEvent extends EventObject {
   private HandleGesture gesture;
   private String oldText;
   private String newText;
+
   // the boolean parameter is just because the compiler insists upon it to
   // avoid an erasure conflict with the first constructor
   private CanvasModelEvent(

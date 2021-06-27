@@ -102,15 +102,17 @@ public class ExportTableButton extends JButton {
         if (confirm != OptionPane.YES_OPTION) return;
       }
       try {
-        String FileName = file.getName();
-        int idx = FileName.lastIndexOf(".");
-        String ext = FileName.substring(idx + 1);
-        if (ext.equals("txt")) TruthtableTextFile.doSave(file, model);
-        else if (ext.equals("csv")) TruthtableCsvFile.doSave(file, model);
-        else {
+        final var fileName = file.getName();
+        int idx = fileName.lastIndexOf(".");
+        var ext = fileName.substring(idx + 1);
+        if (ext.equals("txt")) {
+          TruthtableTextFile.doSave(file, model);
+        } else if (ext.equals("csv")) {
+          TruthtableCsvFile.doSave(file, model);
+        } else {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("DoNotKnowHowto", FileName),
+              S.fmt("DoNotKnowHowto", fileName),
               S.get("openErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return;

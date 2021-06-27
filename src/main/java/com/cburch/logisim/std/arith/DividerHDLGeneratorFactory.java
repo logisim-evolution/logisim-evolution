@@ -121,8 +121,8 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Nets));
     PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Nets));
     PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Nets));

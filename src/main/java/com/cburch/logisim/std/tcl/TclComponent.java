@@ -54,7 +54,7 @@ import java.util.WeakHashMap;
  *
  * @author christian.mueller@heig-vd.ch
  */
-public abstract class TclComponent extends InstanceFactory {
+abstract public class TclComponent extends InstanceFactory {
 
   public static class PortDescription {
 
