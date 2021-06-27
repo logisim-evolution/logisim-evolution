@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Wiring extends Library {
+public class Wirding extends Library {
 
   /**
    * Unique identifier of the library, used as reference in project files.
