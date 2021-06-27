@@ -44,6 +44,11 @@ img.iconlibs{
 	width:32px;
 	vertical-align:middle;
 }
+img.appearancelibs{
+	height:64px;
+	width:64px;
+	vertical-align:middle;
+}
 /* For icon in the text */
 img.icontxt{
 	height:16px;
