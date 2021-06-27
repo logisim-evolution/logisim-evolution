@@ -65,7 +65,8 @@ import javax.swing.event.ChangeListener;
 public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final LogMenuListener menuListener;
 
-  private class MyListener implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
+  private class MyListener
+      implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
@@ -87,7 +88,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(event.getProject().getSimulator(),event.getProject().getCircuitState());
+        setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }
@@ -115,46 +116,46 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void simulatorStateChanged(Simulator.Event e) {
-      if (setSimulator(project.getSimulator(), project.getCircuitState()))
-        return;
-      if (curModel != null)
-        curModel.checkForClocks();
+      if (setSimulator(project.getSimulator(), project.getCircuitState())) return;
+      if (curModel != null) curModel.checkForClocks();
     }
   }
 
   // TODO should automatically repaint icons when component attr change
   // TODO ? moving a component using Select tool removes it from selection
-  private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
+  private class WindowMenuManager extends WindowMenuItemManager
+      implements LocaleListener, ProjectListener, LibraryListener {
     final Project proj;
+
     WindowMenuManager(Project p) {
       super(S.get("logFrameMenuItem"), false);
       proj = p;
       proj.addProjectListener(this);
       proj.addLibraryListener(this);
-  }
+    }
 
-  @Override
-  public JFrame getJFrame(boolean create, java.awt.Component parent) {
-    return LogFrame.this;
-  }
+    @Override
+    public JFrame getJFrame(boolean create, java.awt.Component parent) {
+      return LogFrame.this;
+    }
 
-  public void libraryChanged(LibraryEvent event) {
-    if (event.getAction() == LibraryEvent.SET_NAME) {
-      localeChanged();
+    public void libraryChanged(LibraryEvent event) {
+      if (event.getAction() == LibraryEvent.SET_NAME) {
+        localeChanged();
+      }
+    }
+
+    public void localeChanged() {
+      String title = proj.getLogisimFile().getDisplayName();
+      setText(S.fmt("logFrameMenuItem", title));
+    }
+
+    public void projectChanged(ProjectEvent event) {
+      if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
+        localeChanged();
+      }
     }
   }
-
-  public void localeChanged() {
-    String title = proj.getLogisimFile().getDisplayName();
-    setText(S.fmt("logFrameMenuItem", title));
-  }
-
-  public void projectChanged(ProjectEvent event) {
-    if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-      localeChanged();
-    }
-  }
-}
 
   private static String computeTitle(Model data, Project proj) {
     String name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
@@ -167,7 +168,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private final Map<CircuitState, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final MyChangeListener myChangeListener = new MyChangeListener();
-  
+
   private final WindowMenuManager windowManager;
   private final LogPanel[] panels;
   // private SelectionPanel selPanel;
@@ -176,6 +177,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   static class SelectionDialog extends JDialogOk {
     private static final long serialVersionUID = 1L;
     final SelectionPanel selPanel;
+
     SelectionDialog(LogFrame logFrame) {
       super("Signal Selection", false);
       selPanel = new SelectionPanel(logFrame);
@@ -186,8 +188,12 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       pack();
       setVisible(true);
     }
-    public void cancelClicked() { okClicked(); }
-    public void okClicked() { }
+
+    public void cancelClicked() {
+      okClicked();
+    }
+
+    public void okClicked() {}
   }
 
   public JButton makeSelectionButton() {
@@ -204,10 +210,10 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     project.addLibraryListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState());
 
-    panels = new LogPanel[] {
-      new OptionsPanel(this),
-      new ChronoPanel(this),
-    };
+    panels =
+        new LogPanel[] {
+          new OptionsPanel(this), new ChronoPanel(this),
+        };
     tabbedPane = new JTabbedPane();
     // tabbedPane.setFont(new Font("Dialog", Font.BOLD, 9));
     for (LogPanel panel : panels) {
@@ -215,7 +221,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     tabbedPane.addChangeListener(myChangeListener);
     myChangeListener.stateChanged(null);
-    
+
     Container contents = getContentPane();
     int w = Math.max(550, project.getFrame().getWidth());
     int h = 300;
@@ -234,23 +240,28 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     int x = r.x;
     int y = r.y + r.height;
     if (y + h > d.height) { // too small below circuit
-      if (r.y >= h) // plenty of room above circuit
+      if (r.y >= h) {
+        // plenty of room above circuit
         y = r.y - h;
-      else if (r.y > d.height - h) // circuit is near bottom of screen
+      } else if (r.y > d.height - h) {
+        // circuit is near bottom of screen
         y = 0;
-      else // circuit is near top of screen
+      } else {
+        // circuit is near top of screen
         y = d.height - h;
+      }
     }
     setLocation(x, y);
     setMinimumSize(new Dimension(300, 200));
     // set initial focus to first panel
-    addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowOpened(WindowEvent e) {
-        e.getWindow().removeWindowListener(this);
-        myChangeListener.stateChanged(null);
-      }
-    });
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowOpened(WindowEvent e) {
+            e.getWindow().removeWindowListener(this);
+            myChangeListener.stateChanged(null);
+          }
+        });
   }
 
   public LogisimMenuBar getLogisimMenuBar() {
@@ -260,7 +271,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   public LogMenuListener getMenuListener() {
     return menuListener;
   }
-  
+
   public Model getModel() {
     return curModel;
   }
@@ -271,15 +282,12 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   private boolean setSimulator(Simulator value, CircuitState state) {
     if ((value == null) == (curModel == null)) {
-      if (value == null || value.getCircuitState() == curModel.getCircuitState())
-      return false;
+      if (value == null || value.getCircuitState() == curModel.getCircuitState()) return false;
     }
     menubar.setCircuitState(value, state);
-    
-    if (curSimulator != null)
-      curSimulator.removeSimulatorListener(myListener);
-    if (curModel != null)
-      curModel.setSelected(false);
+
+    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(false);
 
     Model oldModel = curModel;
     Model data = null;
@@ -293,10 +301,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     curSimulator = value;
     curModel = data;
 
-    if (curSimulator != null)
-      curSimulator.addSimulatorListener(myListener);
-    if (curModel != null)
-      curModel.setSelected(true);
+    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(true);
     setTitle(computeTitle(curModel, project));
     if (panels != null) {
       for (LogPanel panel : panels) {
@@ -313,7 +319,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     }
     super.setVisible(value);
   }
-  
+
   @Override
   public void requestClose() {
     super.requestClose();
@@ -330,7 +336,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
         ((JPanel) selected).requestFocus();
       }
       if (selected instanceof LogPanel) {
-        LogPanel tab = (LogPanel)selected;
+        LogPanel tab = (LogPanel) selected;
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         // menuListener.setSimulationHandler(tab.getSimulationHandler());

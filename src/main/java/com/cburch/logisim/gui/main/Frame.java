@@ -151,15 +151,15 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
     CanvasPane canvasPane = new CanvasPane(layoutCanvas);
-    double[] Options = new double[49];
+    double[] options = new double[49];
     for (int i = 0; i < 49; i++) {
-      Options[i] = (i + 1) * 20;
+      options[i] = (i + 1) * 20;
     }
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
-            Options,
+            options,
             canvasPane); // ZOOM_OPTIONS);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
@@ -337,14 +337,16 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   private void computeTitle() {
     String title;
-    Circuit circuit = project.getCurrentCircuit();
-    String name = project.getLogisimFile().getName();
+    final var circuit = project.getCurrentCircuit();
+    final var name = project.getLogisimFile().getName();
     if (circuit != null) {
       title = StringUtil.format(S.get("titleCircFileKnown"), circuit.getName(), name);
     } else {
       title = StringUtil.format(S.get("titleFileKnown"), name);
     }
-    this.setTitle(StringUtil.format("%s · %s", title, Main.APP_DISPLAY_NAME));
+
+    final var dirtyMarker = project.isFileDirty() ? "*" : "";
+    this.setTitle(StringUtil.format("%s %s · %s", dirtyMarker, title, Main.APP_DISPLAY_NAME).trim());
     myProjectListener.enableSave();
   }
 
@@ -473,13 +475,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     AppPreferences.LAYOUT_SHOW_GRID.setBoolean(layoutZoomModel.getShowGrid());
     AppPreferences.LAYOUT_ZOOM.set(layoutZoomModel.getZoomFactor());
     if (appearance != null) {
-      ZoomModel aZoom = appearance.getZoomModel();
-      AppPreferences.APPEARANCE_SHOW_GRID.setBoolean(aZoom.getShowGrid());
-      AppPreferences.APPEARANCE_ZOOM.set(aZoom.getZoomFactor());
+      var appearanceZoom = appearance.getZoomModel();
+      AppPreferences.APPEARANCE_SHOW_GRID.setBoolean(appearanceZoom.getShowGrid());
+      AppPreferences.APPEARANCE_ZOOM.set(appearanceZoom.getZoomFactor());
     }
     int state = getExtendedState() & ~JFrame.ICONIFIED;
     AppPreferences.WINDOW_STATE.set(state);
-    Dimension dim = getSize();
+    var dim = getSize();
     AppPreferences.WINDOW_WIDTH.set(dim.width);
     AppPreferences.WINDOW_HEIGHT.set(dim.height);
     Point loc;
@@ -614,6 +616,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       if (e.getAction() == LibraryEvent.SET_NAME) {
         computeTitle();
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
+        computeTitle();
         enableSave();
       }
     }

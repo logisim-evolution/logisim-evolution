@@ -46,7 +46,8 @@ import java.nio.charset.StandardCharsets;
 abstract class BufferedLineReader {
 
   protected long bsize;
-  protected int bpos, cpos;
+  protected int bpos;
+  protected int cpos;
   protected char[] buf = new char[4096];
   protected int bufCount = 0; // how much of buf is full
   protected int bufPos = 0; // read position in buf
@@ -231,22 +232,22 @@ abstract class BufferedLineReader {
   }
 
   private static class Adapter extends InputStream {
-    final RandomAccessFile r;
+    final RandomAccessFile randAccessFile;
 
     Adapter(RandomAccessFile in) {
-      r = in;
+      randAccessFile = in;
     }
 
     public int read() throws IOException {
-      return r.read();
+      return randAccessFile.read();
     }
 
     public int read(byte[] b) throws IOException {
-      return r.read(b);
+      return randAccessFile.read(b);
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
-      return r.read(b, off, len);
+      return randAccessFile.read(b, off, len);
     }
   }
 
@@ -264,7 +265,8 @@ abstract class BufferedLineReader {
 
     public void reset() throws IOException {
       bin.seek(0);
-      cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8); // ISR buffers internally
+      // ISR buffers internally
+      cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8);
       super.reset();
     }
 

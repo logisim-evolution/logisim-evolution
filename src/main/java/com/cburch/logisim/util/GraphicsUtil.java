@@ -64,7 +64,7 @@ public class GraphicsUtil {
     int[] ys = {y0, y1, y2};
     GraphicsUtil.switchToWidth(g, 7);
     g.drawPolyline(xs, ys, 3);
-    Color oldColor = g.getColor();
+    final Color oldColor = g.getColor();
     g.setColor(Color.WHITE);
     GraphicsUtil.switchToWidth(g, 3);
     g.drawPolyline(xs, ys, 3);

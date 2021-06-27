@@ -292,7 +292,8 @@ public class LogisimFileActions {
         }
       }
       LogiLibs.clear();
-      /*this we are going to do in two steps, first add the circuits with inputs, outputs and wires */
+      // this we are going to do in two steps, first add the circuits with inputs,
+      // outputs and wires
       for (Circuit circ : MergedCircuits) {
         Circuit NewCirc = null;
         boolean replace = false;

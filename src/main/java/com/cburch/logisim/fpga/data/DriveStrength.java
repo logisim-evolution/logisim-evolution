@@ -74,5 +74,7 @@ public class DriveStrength {
 
   public static final char Unknown = 255;
 
-  public static final String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
+  public static final String[] Behavior_strings = {
+    "Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"
+  };
 }

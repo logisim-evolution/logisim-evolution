@@ -28,9 +28,6 @@
 
 package com.cburch.logisim.data;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -39,6 +36,9 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class TestVector {
 
   private static class TestVectorFilter extends FileFilter {

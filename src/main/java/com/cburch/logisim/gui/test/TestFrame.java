@@ -75,7 +75,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   private final JLabel fail = new JLabel();
   private Simulator curSimulator = null;
   private Model curModel;
-  private int finished, count;
+  private int finished;
+  private int count;
   private File curFile;
 
   public TestFrame(Project project) {
@@ -166,7 +167,11 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private class MyListener
-      implements ActionListener, ProjectListener, Simulator.Listener, LocaleListener, ModelListener {
+      implements ActionListener,
+          ProjectListener,
+          Simulator.Listener,
+          LocaleListener,
+          ModelListener {
 
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
@@ -238,7 +243,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
+        setSimulator(
+            event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }

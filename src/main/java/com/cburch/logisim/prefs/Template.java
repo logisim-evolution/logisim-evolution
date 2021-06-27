@@ -60,7 +60,7 @@ public class Template {
   public static Template createEmpty() {
     String circName = S.get("newCircuitName");
     String buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<project source=\"" + Main.VERSION.mainVersion()
+        + "<project source=\"" + Main.VERSION
         + "\" version=\"1.0\">"
         + " <circuit name=\"" + circName + "\" />"
         + "</project>";

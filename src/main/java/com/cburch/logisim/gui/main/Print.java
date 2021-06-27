@@ -164,12 +164,12 @@ public class Print {
     public int print(Graphics base, PageFormat format, int pageIndex) {
       if (pageIndex >= circuits.size()) return Printable.NO_SUCH_PAGE;
 
-      Circuit circ = circuits.get(pageIndex);
-      CircuitState circState = proj.getCircuitState(circ);
-      Graphics g = base.create();
-      Graphics2D g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
-      FontMetrics fm = g.getFontMetrics();
-      String head =
+      var circ = circuits.get(pageIndex);
+      final var circState = proj.getCircuitState(circ);
+      var g = base.create();
+      var g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
+      var fm = g.getFontMetrics();
+      var head =
           (header != null && !header.equals(""))
               ? format(header, pageIndex + 1, circuits.size(), circ.getName())
               : null;

@@ -70,6 +70,14 @@ import java.awt.image.IndexColorModel;
 
 // 128 x 128 pixel LCD display with 8bpp color (byte addressed)
 class Video extends ManagedComponent implements ToolTipMaker, AttributeListener {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "RGB Video";
+
   public static final ComponentFactory factory = new Factory();
 
   static final String BLINK_YES = "Blinking Dot";
@@ -121,7 +129,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     private Factory() {}
 
     public String getName() {
-      return "RGB Video";
+      return _ID;
     }
 
     public String getDisplayName() {
@@ -178,7 +186,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   public ComponentFactory getFactory() {
     return factory;
   }
-  
+
   public void setFactory(ComponentFactory fact) {}
 
   Location loc(int pin) {
@@ -190,7 +198,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   int addr(CircuitState s, int pin) {
-    return (int)val(s, pin).toLongValue();
+    return (int) val(s, pin).toLongValue();
   }
 
   public void propagate(CircuitState circuitState) {
@@ -238,7 +246,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     g.setColor(Color.WHITE);
     g.fillRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
     g.setColor(Color.BLACK);
-    g.drawRoundRect(scale(2),scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
+    g.drawRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
     int five = scale(5);
     int ten = scale(10);
     g.setColor(Color.RED);
@@ -251,9 +259,9 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     g.fillRect(ten, ten, five, five);
     g.dispose();
   }
-  
+
   private static int scale(int v) {
-    return AppPreferences.getScaled(v);  
+    return AppPreferences.getScaled(v);
   }
 
   boolean blink() {

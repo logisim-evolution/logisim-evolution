@@ -61,6 +61,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PortIO extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "PortIO";
 
   public static ArrayList<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
@@ -123,7 +130,7 @@ public class PortIO extends InstanceFactory {
     }
 
     public Value get(int i) {
-      return pin[i/BitWidth.MAXWIDTH].get(i%BitWidth.MAXWIDTH);
+      return pin[i / BitWidth.MAXWIDTH].get(i % BitWidth.MAXWIDTH);
     }
 
     public Color getColor(int i) {
@@ -134,12 +141,13 @@ public class PortIO extends InstanceFactory {
     @Override
     public Object clone() {
       try {
-        PortState other = (PortState)super.clone();
+        PortState other = (PortState) super.clone();
         other.pin = Arrays.copyOf(pin, pin.length);
         other.usr = Arrays.copyOf(usr, usr.length);
         return other;
+      } catch (CloneNotSupportedException e) {
+        return null;
       }
-      catch (CloneNotSupportedException e) { return null; }
     }
   }
 
@@ -155,7 +163,7 @@ public class PortIO extends InstanceFactory {
       int j = cy / 10;
       if (j > 1)
         return;
-      int n = 2*i + j;
+      int n = 2 * i + j;
       PortState data = getState(state);
       if (n < 0 || n >= data.size)
         return;
@@ -169,24 +177,19 @@ public class PortIO extends InstanceFactory {
   private static final int INITPORTSIZE = 8;
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
-  
-  public static final AttributeOption INPUT =
-     new AttributeOption("onlyinput", S.getter("pioInput"));
-  public static final AttributeOption OUTPUT =
-     new AttributeOption("onlyOutput", S.getter("pioOutput"));
-  public static final AttributeOption INOUTSE =
-     new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
-  public static final AttributeOption INOUTME =
-     new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
-  
+
+  public static final AttributeOption INPUT = new AttributeOption("onlyinput", S.getter("pioInput"));
+  public static final AttributeOption OUTPUT = new AttributeOption("onlyOutput", S.getter("pioOutput"));
+  public static final AttributeOption INOUTSE = new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
+  public static final AttributeOption INOUTME = new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
+
   public static final Attribute<AttributeOption> ATTR_DIR =
-     Attributes.forOption("direction", S.getter("pioDirection"), 
-         new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
+      Attributes.forOption("direction", S.getter("pioDirection"), new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
 
   protected static final int DELAY = 1;
 
   public PortIO() {
-    super("PortIO", S.getter("pioComponent"));
+    super(_ID, S.getter("pioComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -208,7 +211,7 @@ public class PortIO extends InstanceFactory {
           false,
           BitWidth.create(INITPORTSIZE),
           INOUTSE,
-          new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) ) 
+          new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE))
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
@@ -225,7 +228,7 @@ public class PortIO extends InstanceFactory {
     instance.computeLabelTextField(Instance.AVOID_BOTTOM);
     ComponentMapInformationContainer map = instance.getAttributeSet().getValue(StdAttr.MAPINFO);
     if (map == null) {
-      map = new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) );
+      map = new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_SIZE, BitWidth.create(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_DIR, INOUTSE);
     }
@@ -242,9 +245,9 @@ public class PortIO extends InstanceFactory {
     if (dir == INPUT || dir == OUTPUT)
       nPorts = nBus;
     else if (dir == INOUTME)
-      nPorts = 3*nBus;
+      nPorts = 3 * nBus;
     else if (dir == INOUTSE)
-      nPorts = 2*nBus + 1;
+      nPorts = 2 * nBus + 1;
     Port[] ps = new Port[nPorts];
     int p = 0;
 
@@ -258,30 +261,34 @@ public class PortIO extends InstanceFactory {
     else
       dx = 10;
     if (dir == INPUT || dir == OUTPUT) {
-      x += dx; y += dy;
+      x += dx;
+      y += dy;
     }
     if (dir == INOUTSE) {
-      ps[p] = new Port(x-dy, y+dx, Port.INPUT, 1);
+      ps[p] = new Port(x - dy, y + dx, Port.INPUT, 1);
       ps[p].setToolTip(S.getter("pioOutEnable"));
       p++;
-      x += dx; y += dy;
+      x += dx;
+      y += dy;
     }
     int n = size;
     int i = 0;
     while (n > 0) {
       int e = (Math.min(n, BitWidth.MAXWIDTH));
-      String range = "[" + i + "..." + (i + e - 1) +"]";
+      String range = "[" + i + "..." + (i + e - 1) + "]";
       if (dir == INOUTME) {
-        ps[p] = new Port(x-dy, y+dx, Port.INPUT, e);
+        ps[p] = new Port(x - dy, y + dx, Port.INPUT, e);
         ps[p].setToolTip(S.getter("pioOutEnables", range));
         p++;
-        x += dx; y += dy;
+        x += dx;
+        y += dy;
       }
       if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.INPUT, e);
         ps[p].setToolTip(S.getter("pioOutputs", range));
         p++;
-        x += dx; y += dy;
+        x += dx;
+        y += dy;
       }
       i += BitWidth.MAXWIDTH;
       n -= e;
@@ -290,12 +297,13 @@ public class PortIO extends InstanceFactory {
     i = 0;
     while (n > 0) {
       int e = (Math.min(n, BitWidth.MAXWIDTH));
-      String range = "[" + i + "..." + (i + e - 1) +"]";
+      String range = "[" + i + "..." + (i + e - 1) + "]";
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.OUTPUT, e);
         ps[p].setToolTip(S.getter("pioInputs", range));
         p++;
-        x += dx; y += dy;
+        x += dx;
+        y += dy;
       }
       i += BitWidth.MAXWIDTH;
       n -= e;
@@ -309,7 +317,7 @@ public class PortIO extends InstanceFactory {
     int n = attrs.getValue(ATTR_SIZE).getWidth();
     if (n < 8)
       n = 8;
-    return Bounds.create(0, 0, 10 + n/2 * 10, 50).rotate(Direction.EAST, facing, 0, 0);
+    return Bounds.create(0, 0, 10 + n / 2 * 10, 50).rotate(Direction.EAST, facing, 0, 0);
   }
 
   @Override
@@ -326,17 +334,17 @@ public class PortIO extends InstanceFactory {
         int inputs = 0;
         int outputs = 0;
         int ios = 0;
-        ArrayList<String> labels = GetLabels(nrPins); 
-        if (instance.getAttributeValue(ATTR_DIR)==INPUT) {
+        ArrayList<String> labels = GetLabels(nrPins);
+        if (instance.getAttributeValue(ATTR_DIR) == INPUT) {
           inputs = nrPins;
-        } else if (instance.getAttributeValue(ATTR_DIR)==OUTPUT) {
+        } else if (instance.getAttributeValue(ATTR_DIR) == OUTPUT) {
           outputs = nrPins;
         } else {
           ios = nrPins;
         }
         map.setNrOfInports(inputs, labels);
         map.setNrOfOutports(outputs, labels);
-        map.setNrOfInOutports( ios, labels );
+        map.setNrOfInOutports(ios, labels);
       }
     }
   }
@@ -360,8 +368,8 @@ public class PortIO extends InstanceFactory {
 
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.DARK_GRAY);
-    int[] bx = {1, 1, 5, w-6, w-2, w-2, 1};
-    int[] by = {20, h-8, h-4, h-4, h-8, 20, 20};
+    int[] bx = {1, 1, 5, w - 6, w - 2, w - 2, 1};
+    int[] by = {20, h - 8, h - 4, h - 4, h - 8, 20, 20};
     g.fillPolygon(bx, by, 6);
     g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 1);
@@ -372,12 +380,12 @@ public class PortIO extends InstanceFactory {
     if (!painter.getShowState()) {
       g.setColor(Color.LIGHT_GRAY);
       for (int i = 0; i < size; i++)
-        g.fillRect(7 + ((i/2) * 10),  25 + (i%2)*10, 6, 6);
+        g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
     }  else {
       PortState data = getState(painter);
       for (int i = 0; i < size; i++) {
         g.setColor(data.getColor(i));
-        g.fillRect(7 + ((i/2) * 10),  25 + (i%2)*10, 6, 6);
+        g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
       }
     }
     g.setColor(Color.BLACK);
@@ -388,24 +396,24 @@ public class PortIO extends InstanceFactory {
       if (dir == INOUTSE) {
         GraphicsUtil.switchToWidth(g, 3);
         if (p == 0) {
-          g.drawLine(px, py+10, px+6, py+10);
+          g.drawLine(px, py + 10, px + 6, py + 10);
           px += 10;
         } else {
-          g.drawLine(px-6, py+10, px-4, py+10);
+          g.drawLine(px - 6, py + 10, px - 4, py + 10);
         }
       }
       if (dir == INOUTME) {
         GraphicsUtil.switchToWidth(g, 3);
-        g.drawLine(px, py+10, px+6, py+10);
+        g.drawLine(px, py + 10, px + 6, py + 10);
         px += 10;
       }
       if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
         GraphicsUtil.switchToWidth(g, 3);
-        g.drawLine(px, py, px, py+4);
-        g.drawLine(px, py+15, px, py+20);
+        g.drawLine(px, py, px, py + 4);
+        g.drawLine(px, py + 15, px, py + 20);
         GraphicsUtil.switchToWidth(g, 2);
-        int[] xp = {px, px-4, px+4, px};
-        int[] yp = {py+15, py+5, py+5, py+15};
+        int[] xp = {px, px - 4, px + 4, px};
+        int[] yp = {py + 15, py + 5, py + 5, py + 15};
         g.drawPolyline(xp, yp, 4);
         px += 10;
       }
@@ -414,11 +422,11 @@ public class PortIO extends InstanceFactory {
     for (int p = 0; p < nBus; p++) {
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         GraphicsUtil.switchToWidth(g, 3);
-        g.drawLine(px, py, px, py+5);
-        g.drawLine(px, py+16, px, py+20);
+        g.drawLine(px, py, px, py + 5);
+        g.drawLine(px, py + 16, px, py + 20);
         GraphicsUtil.switchToWidth(g, 2);
-        int[] xp = {px, px-4, px+4, px};
-        int[] yp = {py+6, py+16, py+16, py+6};
+        int[] xp = {px, px - 4, px + 4, px};
+        int[] yp = {py + 6, py + 16, py + 16, py + 6};
         g.drawPolyline(xp, yp, 4);
         px += 10;
       }
@@ -473,16 +481,16 @@ public class PortIO extends InstanceFactory {
       // 0 | 0 0 E E
       // 1 | 1 E 1 E
       for (int i = 0; i < nBus; i++) {
-        Value in = state.getPortValue(i+1);
+        Value in = state.getPortValue(i + 1);
         data.pin[i] = data.usr[i].combine(en.controls(in));
-        state.setPort(1+nBus+i, data.pin[i], DELAY);
+        state.setPort(1 + nBus + i, data.pin[i], DELAY);
       }
     } else if (dir == INOUTME) {
       for (int i = 0; i < nBus; i++) {
-        Value en = state.getPortValue(i*2);
-        Value in = state.getPortValue(i*2+1);
+        Value en = state.getPortValue(i * 2);
+        Value in = state.getPortValue(i * 2 + 1);
         data.pin[i] = data.usr[i].combine(en.controls(in));
-        state.setPort(2*nBus+i, data.pin[i], DELAY);
+        state.setPort(2 * nBus + i, data.pin[i], DELAY);
       }
     }
   }

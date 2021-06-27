@@ -57,6 +57,13 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class Buffer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Buffer";
 
   private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
@@ -99,7 +106,7 @@ class Buffer extends InstanceFactory {
   public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
-    super("Buffer", S.getter("bufferComponent"));
+    super(_ID, S.getter("bufferComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -256,13 +263,13 @@ class Buffer extends InstanceFactory {
     in = Buffer.repair(state, in);
     state.setPort(0, in, GateAttributes.DELAY);
   }
-  
+
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D)painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
-      AbstractGate.paintIconIEC(g, "1", false,true);
+      AbstractGate.paintIconIEC(g, "1", false, true);
     else
-      AbstractGate.paintIconBufferANSI(g, false,false);
+      AbstractGate.paintIconBufferANSI(g, false, false);
   }
 }

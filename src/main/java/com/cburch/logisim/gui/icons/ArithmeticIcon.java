@@ -25,6 +25,7 @@
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
  */
+
 package com.cburch.logisim.gui.icons;
 
 import java.awt.BasicStroke;
@@ -35,19 +36,19 @@ import java.awt.font.TextLayout;
 
 public class ArithmeticIcon extends AbstractIcon {
 
-  private final String Opp;
+  private final String opp;
   private boolean invalid;
-  private int NrOfChars = 2;
+  private int nrOfChars = 2;
 
-  public ArithmeticIcon(String Operation) {
-    Opp = Operation;
+  public ArithmeticIcon(String operation) {
+    opp = operation;
     invalid = false;
   }
 
-  public ArithmeticIcon(String Operation, int CharsPerLine) {
-    Opp = Operation;
+  public ArithmeticIcon(String operation, int charsPerLine) {
+    opp = operation;
     invalid = false;
-    NrOfChars = CharsPerLine;
+    nrOfChars = charsPerLine;
   }
 
   public void setInvalid(boolean invalid) {
@@ -57,25 +58,25 @@ public class ArithmeticIcon extends AbstractIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.BLACK);
-    float scale = Opp.length() >= NrOfChars ? NrOfChars : 1;
-    int yoff = Opp.length() > NrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
+    float scale = opp.length() >= nrOfChars ? nrOfChars : 1;
+    int yoff = opp.length() > nrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
     Font f = g2.getFont().deriveFont((float) getIconWidth() / scale).deriveFont(Font.BOLD);
     g2.drawRect(scale(1), scale(1), getIconWidth() - scale(2), getIconHeight() - scale(2));
     TextLayout t =
         new TextLayout(
-            Opp.length() > NrOfChars ? Opp.substring(0, NrOfChars) : Opp,
+            opp.length() > nrOfChars ? opp.substring(0, nrOfChars) : opp,
             f,
             g2.getFontRenderContext());
     t.draw(
         g2,
         (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
         (float) (yoff - t.getBounds().getCenterY()));
-    if (Opp.length() > NrOfChars) {
+    if (opp.length() > nrOfChars) {
       t =
           new TextLayout(
-              Opp.length() > 2 * NrOfChars
-                  ? Opp.substring(NrOfChars, 2 * NrOfChars)
-                  : Opp.substring(NrOfChars),
+              opp.length() > 2 * nrOfChars
+                  ? opp.substring(nrOfChars, 2 * nrOfChars)
+                  : opp.substring(nrOfChars),
               f,
               g2.getFontRenderContext());
       t.draw(

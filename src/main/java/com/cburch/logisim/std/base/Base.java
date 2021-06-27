@@ -44,6 +44,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Base";
+
   private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
@@ -59,7 +67,7 @@ public class Base extends Library {
         new TextTool(),
         new MenuTool());
     }
-  
+
   @Override
   public boolean contains(ComponentFactory querry) {
     return super.contains(querry) || (querry instanceof Text);
@@ -69,7 +77,7 @@ public class Base extends Library {
   public Tool getTool(String name) {
     Tool t = super.getTool(name);
     if (t == null) {
-      if (name.equals("Text"))
+      if (name.equals(Text._ID))
         return textAdder; // needed by XmlCircuitReader
     }
     return t;
@@ -78,11 +86,6 @@ public class Base extends Library {
   @Override
   public String getDisplayName() {
     return S.get("baseLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Base";
   }
 
   @Override

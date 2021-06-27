@@ -77,7 +77,7 @@ public class Analyzer extends LFrame.SubWindow {
         ((JPanel) selected).requestFocus();
       }
       if (selected instanceof AnalyzerTab) {
-    	AnalyzerTab tab = (AnalyzerTab)selected;
+        AnalyzerTab tab = (AnalyzerTab) selected;
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         model.getOutputExpressions().enableUpdates();
@@ -95,7 +95,7 @@ public class Analyzer extends LFrame.SubWindow {
       tabbedPane.setTitleAt(TABLE_TAB, S.get("tableTab"));
       tabbedPane.setTitleAt(EXPRESSION_TAB, S.get("expressionTab"));
       tabbedPane.setTitleAt(MINIMIZED_TAB, S.get("minimizedTab"));
-      tabbedPane .setToolTipTextAt(IO_TAB, S.get("inputsOutputsTabTip"));
+      tabbedPane.setToolTipTextAt(IO_TAB, S.get("inputsOutputsTabTip"));
       tabbedPane.setToolTipTextAt(TABLE_TAB, S.get("tableTabTip"));
       tabbedPane.setToolTipTextAt(EXPRESSION_TAB, S.get("expressionTabTip"));
       tabbedPane.setToolTipTextAt(MINIMIZED_TAB, S.get("minimizedTabTip"));
@@ -140,25 +140,22 @@ public class Analyzer extends LFrame.SubWindow {
     AnalyzerModel model = frame.getModel();
 
     if (args.length >= 2) {
-      ArrayList<Var> inputs = new ArrayList<>();
-      ArrayList<Var> outputs = new ArrayList<>();
-      for (String s: args[0].split(","))
-        inputs.add(Var.parse(s));
-      for (String s: args[1].split(","))
-        outputs.add(Var.parse(s));
+      var inputs = new ArrayList<Var>();
+      var outputs = new ArrayList<Var>();
+      for (String s : args[0].split(",")) inputs.add(Var.parse(s));
+      for (String s : args[1].split(",")) outputs.add(Var.parse(s));
       model.setVariables(inputs, outputs);
     }
     for (int i = 2; i < args.length; i++) {
-      String s = args[i];
+      var s = args[i];
       int idx = s.indexOf('=');
-      if (idx < 0) {
-        Parser.parse(s, model); // for testing Parser.parse
-        continue;
-      } else {
-        String name = s.substring(0, idx);
-        String exprString = s.substring(idx+1);
-        Expression expr = Parser.parse(exprString, model);
+      if (idx >= 0) {
+        var name = s.substring(0, idx);
+        var exprString = s.substring(idx + 1);
+        var expr = Parser.parse(exprString, model);
         model.getOutputExpressions().setExpression(name, expr, exprString);
+      } else {
+        Parser.parse(s, model); // for testing Parser.parse
       }
     }
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -188,7 +185,7 @@ public class Analyzer extends LFrame.SubWindow {
 
   Analyzer() {
     super(null);
-    TableListener tableListener = new TableListener();
+    final var tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
@@ -209,12 +206,12 @@ public class Analyzer extends LFrame.SubWindow {
     addTab(EXPRESSION_TAB, expressionPanel);
     addTab(MINIMIZED_TAB, minimizedPanel);
 
-    Container contents = getContentPane();
-    JPanel vertStrut = new JPanel(null);
+    final var contents = getContentPane();
+    final var vertStrut = new JPanel(null);
     vertStrut.setPreferredSize(new Dimension(0, AppPreferences.getScaled(300)));
-    JPanel horzStrut = new JPanel(null);
+    final var horzStrut = new JPanel(null);
     horzStrut.setPreferredSize(new Dimension(AppPreferences.getScaled(450), 0));
-    JPanel buttonPanel = new JPanel();
+    final var buttonPanel = new JPanel();
     buttonPanel.add(importTable);
     buttonPanel.add(buildCircuit);
     buttonPanel.add(exportTable);
@@ -224,10 +221,10 @@ public class Analyzer extends LFrame.SubWindow {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    MyLocaleListener myLocaleListener = new MyLocaleListener();
+    final var myLocaleListener = new MyLocaleListener();
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
-    MyChangeListener myChangeListener = new MyChangeListener();
+    final var myChangeListener = new MyChangeListener();
     tabbedPane.addChangeListener(myChangeListener);
     setSelectedTab(0);
     myChangeListener.stateChanged(null);
@@ -235,8 +232,8 @@ public class Analyzer extends LFrame.SubWindow {
 
   private void addTab(int index, final JComponent comp) {
     if (comp instanceof TableTab || comp instanceof VariableTab || comp instanceof ExpressionTab) {
-        tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
-        return;
+      tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
+      return;
     }
     final JScrollPane pane = new JScrollPane(comp,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -266,7 +263,6 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public abstract static class PleaseWait<T> extends JDialog {
-    /** */
     private static final long serialVersionUID = 1L;
 
     private final SwingWorker<T, Void> worker;

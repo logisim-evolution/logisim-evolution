@@ -49,13 +49,21 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class PriorityEncoder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Priority Encoder";
+
   static final int OUT = 0;
   static final int EN_IN = 1;
   static final int EN_OUT = 2;
   static final int GS = 3;
 
   public PriorityEncoder() {
-    super("Priority Encoder", S.getter("priorityEncoderComponent"));
+    super(_ID, S.getter("priorityEncoderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.FACING, Plexers.ATTR_SELECT, Plexers.ATTR_DISABLED},
         new Object[] {Direction.EAST, BitWidth.create(3), Plexers.DISABLED_ZERO});

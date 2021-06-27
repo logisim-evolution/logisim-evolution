@@ -31,16 +31,14 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
-
-import javax.swing.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
@@ -109,16 +107,20 @@ class LayoutOptions extends OptionsPanel {
             });
 
     // How connection pins should be drawn like
-    PrefPinAppearance = new PrefOptionList(
-      AppPreferences.PinAppearance,
-        S.getter("layoutPinAppearance"),
+    PrefPinAppearance =
+        new PrefOptionList(
+            AppPreferences.PinAppearance,
+            S.getter("layoutPinAppearance"),
             new PrefOption[] {
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
-                  new PrefOption(AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_SMALL, S.getter("layoutPinAppearanceDotSmall")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_MEDIUM, S.getter("layoutPinAppearanceDotMedium")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_BIG, S.getter("layoutPinAppearanceDotBig")),
+              new PrefOption(
+                  AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
             });
-
 
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(DefaultAppear.getJLabel());
@@ -164,10 +166,7 @@ class LayoutOptions extends OptionsPanel {
   private static class MyListener implements PreferenceChangeListener {
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-      boolean update = false;
-      if (evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier())) {
-        update = true;
-      }
+      boolean update = evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier());
       if (update) {
         for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
       }

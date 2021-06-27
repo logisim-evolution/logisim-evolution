@@ -62,12 +62,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean GenerateAllHDLDescriptions(
-	      Set<String> HandledComponents,
-	      String WorkingDir,
-	      ArrayList<String> Hierarchy) {
-	   return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
+      Set<String> HandledComponents, String WorkingDir, ArrayList<String> Hierarchy) {
+    return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
   }
-  
+
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
@@ -130,10 +128,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     /* Now we go down the hierarchy to get all other components */
     for (NetlistComponent ThisCircuit : MyNetList.GetSubCircuits()) {
-       CircuitHDLGeneratorFactory Worker = (CircuitHDLGeneratorFactory)
-          ThisCircuit.GetComponent()
-              .getFactory()
-              .getHDLGenerator(ThisCircuit.GetComponent().getAttributeSet());
+      CircuitHDLGeneratorFactory Worker =
+          (CircuitHDLGeneratorFactory)
+              ThisCircuit.GetComponent()
+                  .getFactory()
+                  .getHDLGenerator(ThisCircuit.GetComponent().getAttributeSet());
       if (Worker == null) {
         Reporter.Report.AddFatalError(
             "INTERNAL ERROR: Unable to get a subcircuit VHDL generator for '"
@@ -195,12 +194,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + comp.GetLocalBubbleOutputEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleOutputStartId()
-                      + HDL.BracketClose(); 
+                      + HDL.BracketClose();
       case 2 : return HDL.BracketOpen()
                       + comp.GetLocalBubbleInOutEndId()
                       + HDL.vectorLoopId()
                       + comp.GetLocalBubbleInOutStartId()
-                      + HDL.BracketClose(); 
+                      + HDL.BracketClose();
     }
     return "";
   }
@@ -260,7 +259,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
     ArrayList<String> Contents = new ArrayList<>();
-    StringBuffer OneLine = new StringBuffer();
+    StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
       if (ThisNet.IsForcedRootNet()) {
@@ -270,53 +269,52 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           for (ConnectionPoint Source : ThisNet.GetSourceNets(bit)) {
             OneLine.setLength(0);
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + HDL.BracketOpen()
-                      + bit
-                      + HDL.BracketClose());
+              OneLine.append(BusName)
+                  .append(TheNets.GetNetId(ThisNet))
+                  .append(HDL.BracketOpen())
+                  .append(bit)
+                  .append(HDL.BracketClose());
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
-            String line = "   "+
-                          HDL.assignPreamble()+
-                          OneLine.toString()+
-                          HDL.assignOperator()+
-                          BusName+
-                          TheNets.GetNetId(Source.GetParentNet())+
-                          HDL.BracketOpen()+
-                          Source.GetParentNetBitIndex()+
-                          HDL.BracketClose()+";";
+            String line =
+                "   "
+                    + HDL.assignPreamble()
+                    + OneLine
+                    + HDL.assignOperator()
+                    + BusName
+                    + TheNets.GetNetId(Source.GetParentNet())
+                    + HDL.BracketOpen()
+                    + Source.GetParentNetBitIndex()
+                    + HDL.BracketClose()
+                    + ";";
             if (!Contents.contains(line)) Contents.add(line);
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
             OneLine.setLength(0);
-            OneLine.append(
-                BusName
-                    + TheNets.GetNetId(Source.GetParentNet())
-                    + HDL.BracketOpen()
-                    + Source.GetParentNetBitIndex()
-                    + HDL.BracketClose());
+            OneLine.append(BusName)
+                .append(TheNets.GetNetId(Source.GetParentNet()))
+                .append(HDL.BracketOpen())
+                .append(Source.GetParentNetBitIndex())
+                .append(HDL.BracketClose());
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
-              OneLine.append(
-                  BusName
-                      + TheNets.GetNetId(ThisNet)
-                      + HDL.BracketOpen()
-                      + bit
-                      + HDL.BracketClose());
+              OneLine.append(BusName)
+                  .append(TheNets.GetNetId(ThisNet))
+                  .append(HDL.BracketOpen())
+                  .append(bit)
+                  .append(HDL.BracketClose());
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            String line = "   "+HDL.assignPreamble()+OneLine.toString()+";";
+            String line = "   " + HDL.assignPreamble() + OneLine + ";";
             if (!Contents.contains(line)) Contents.add(line);
           }
         }
@@ -359,68 +357,70 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (int i = 0; i < MyNetList.NumberOfInputPorts(); i++) {
       NetlistComponent selected = MyNetList.GetInputPin(i);
       if (selected != null) {
-        Inputs.put( CorrectLabel.getCorrectLabel( selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-              selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
+        Inputs.put(
+            CorrectLabel.getCorrectLabel(
+                selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+            selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
       }
     }
     return Inputs;
   }
 
   @Override
-  public String GetInstanceIdentifier(NetlistComponent ComponentInfo, Long ComponentId) {
-    if (ComponentInfo != null) {
-      String CompId =
+  public String GetInstanceIdentifier(NetlistComponent componentInfo, Long componentId) {
+    if (componentInfo != null) {
+      String compId =
           CorrectLabel.getCorrectLabel(
-              ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (!CompId.isEmpty()) {
-        return CompId;
+              componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (!compId.isEmpty()) {
+        return compId;
       }
     }
-    return getComponentStringIdentifier() + "_" + ComponentId.toString();
+    return getComponentStringIdentifier() + "_" + componentId.toString();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    boolean FirstLine = true;
-    StringBuilder Temp = new StringBuilder();
-    Map<String, Long> CompIds = new HashMap<>();
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    var contents = new ArrayList<String>();
+    var isFirstLine = true;
+    var temp = new StringBuilder();
+    Map<String, Long> compIds = new HashMap<>();
     /* we start with the connection of the clock sources */
-    for (NetlistComponent ClockSource : TheNetlist.GetClockSources()) {
-      if (FirstLine) {
-        Contents.add("");
-        Contents.addAll(MakeRemarkBlock("Here all clock generator connections are defined", 3));
-        FirstLine = false;
+    for (NetlistComponent clockSource : theNetlist.GetClockSources()) {
+      if (isFirstLine) {
+        contents.add("");
+        contents.addAll(MakeRemarkBlock("Here all clock generator connections are defined", 3));
+        isFirstLine = false;
       }
-      if (!ClockSource.EndIsConnected(0)) {
-        if (ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL).equals("sysclk")) {
+      if (!clockSource.EndIsConnected(0)) {
+        if (clockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL).equals("sysclk")) {
           Reporter.Report.AddInfo(
               "Clock component found with no connection, skipping: '"
-                  + ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
+                  + clockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
                   + "'");
         } else {
           Reporter.Report.AddWarning(
               "Clock component found with no connection, skipping: '"
-                  + ClockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
+                  + clockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
                   + "'");
         }
         continue;
       }
-      String ClockNet = GetClockNetName(ClockSource, 0, TheNetlist);
+      String ClockNet = GetClockNetName(clockSource, 0, theNetlist);
       if (ClockNet.isEmpty()) {
         Reporter.Report.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
-      String ConnectedNet = GetNetName(ClockSource, 0, true, TheNetlist);
-      Temp.setLength(0);
-      Temp.append(ConnectedNet);
-      while (Temp.length() < SallignmentSize) {
-        Temp.append(" ");
+      String ConnectedNet = GetNetName(clockSource, 0, true, theNetlist);
+      temp.setLength(0);
+      temp.append(ConnectedNet);
+      while (temp.length() < SallignmentSize) {
+        temp.append(" ");
       }
-      if (!TheNetlist.RequiresGlobalClockConnection()) {
-        Contents.add(
+      if (!theNetlist.RequiresGlobalClockConnection()) {
+        contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + temp
                 + HDL.assignOperator()
                 + ClockNet
                 + HDL.BracketOpen()
@@ -428,444 +428,457 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 + HDL.BracketClose()
                 + ";");
       } else {
-        Contents.add(
+        contents.add(
             "   "
                 + HDL.assignPreamble()
-                + Temp.toString()
+                + temp
                 + HDL.assignOperator()
                 + TickComponentHDLGeneratorFactory.FPGAClock
                 + ";");
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */
-    ArrayList<String> Wiring = GetHDLWiring(TheNetlist);
+    ArrayList<String> Wiring = GetHDLWiring(theNetlist);
     if (!Wiring.isEmpty()) {
-      Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here all wiring is defined", 3));
-      Contents.addAll(Wiring);
+      contents.add("");
+      contents.addAll(MakeRemarkBlock("Here all wiring is defined", 3));
+      contents.addAll(Wiring);
     }
     /* Now we define all input signals; hence Input port -> Internal Net */
-    FirstLine = true;
-    for (int i = 0; i < TheNetlist.NumberOfInputPorts(); i++) {
-      if (FirstLine) {
-        Contents.add("");
-        Contents.addAll(MakeRemarkBlock("Here all input connections are defined", 3));
-        FirstLine = false;
+    isFirstLine = true;
+    for (int i = 0; i < theNetlist.NumberOfInputPorts(); i++) {
+      if (isFirstLine) {
+        contents.add("");
+        contents.addAll(MakeRemarkBlock("Here all input connections are defined", 3));
+        isFirstLine = false;
       }
-      NetlistComponent MyInput = TheNetlist.GetInputPin(i);
-        Contents.add(
-            GetSignalMap(
-                CorrectLabel.getCorrectLabel(
-                    MyInput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-                MyInput,
-                0,
-                3,
-                TheNetlist));
+      NetlistComponent MyInput = theNetlist.GetInputPin(i);
+      contents.add(
+          GetSignalMap(
+              CorrectLabel.getCorrectLabel(
+                  MyInput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+              MyInput,
+              0,
+              3,
+              theNetlist));
     }
     /* Now we define all output signals; hence Internal Net -> Input port */
-    FirstLine = true;
-    for (int i = 0; i < TheNetlist.NumberOfOutputPorts(); i++) {
-      if (FirstLine) {
-        Contents.add("");
-        Contents.addAll(MakeRemarkBlock("Here all output connections are defined", 3));
-        FirstLine = false;
+    isFirstLine = true;
+    for (int i = 0; i < theNetlist.NumberOfOutputPorts(); i++) {
+      if (isFirstLine) {
+        contents.add("");
+        contents.addAll(MakeRemarkBlock("Here all output connections are defined", 3));
+        isFirstLine = false;
       }
-      NetlistComponent MyOutput = TheNetlist.GetOutputPin(i);
-      Contents.add(
+      NetlistComponent MyOutput = theNetlist.GetOutputPin(i);
+      contents.add(
           GetSignalMap(
               CorrectLabel.getCorrectLabel(
                   MyOutput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               MyOutput,
               0,
               3,
-              TheNetlist));
+              theNetlist));
     }
     /* Here all in-lined components are generated */
-    FirstLine = true;
-    for (NetlistComponent comp : TheNetlist.GetNormalComponents()) {
-      HDLGeneratorFactory Worker =
-          comp.GetComponent()
-              .getFactory()
-              .getHDLGenerator(comp.GetComponent().getAttributeSet());
-      if (Worker != null) {
-        if (Worker.IsOnlyInlined()) {
-          String InlinedName =
+    isFirstLine = true;
+    for (NetlistComponent comp : theNetlist.GetNormalComponents()) {
+      var worker =
+          comp.GetComponent().getFactory().getHDLGenerator(comp.GetComponent().getAttributeSet());
+      if (worker != null) {
+        if (worker.IsOnlyInlined()) {
+          var inlinedName =
               comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
-          String InlinedId = Worker.getComponentStringIdentifier();
-          Long id;
-          if (CompIds.containsKey(InlinedId)) {
-            id = CompIds.get(InlinedId);
-          } else {
-            id = (long) 1;
+          var InlinedId = worker.getComponentStringIdentifier();
+          Long id = (compIds.containsKey(InlinedId)) ? compIds.get(InlinedId) : (long) 1;
+          if (isFirstLine) {
+            contents.add("");
+            contents.addAll(MakeRemarkBlock("Here all in-lined components are defined", 3));
+            isFirstLine = false;
           }
-          if (FirstLine) {
-            Contents.add("");
-            Contents.addAll(
-                MakeRemarkBlock("Here all in-lined components are defined", 3));
-            FirstLine = false;
-          }
-          Contents.addAll(
-              Worker.GetInlinedCode(TheNetlist, id++, comp, InlinedName));
-          CompIds.remove(InlinedId);
-          CompIds.put(InlinedId, id);
+          contents.addAll(worker.GetInlinedCode(theNetlist, id++, comp, inlinedName));
+          compIds.remove(InlinedId);
+          compIds.put(InlinedId, id);
         }
       }
     }
     /* Here all "normal" components are generated */
-    FirstLine = true;
-    for (NetlistComponent comp : TheNetlist.GetNormalComponents()) {
-      HDLGeneratorFactory Worker =
-          comp.GetComponent()
-              .getFactory()
-              .getHDLGenerator(comp.GetComponent().getAttributeSet());
+    isFirstLine = true;
+    for (NetlistComponent comp : theNetlist.GetNormalComponents()) {
+      var Worker =
+          comp.GetComponent().getFactory().getHDLGenerator(comp.GetComponent().getAttributeSet());
       if (Worker != null) {
         if (!Worker.IsOnlyInlined()) {
-          String CompName = comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
-          String CompId = Worker.getComponentStringIdentifier();
+          var compName =
+              comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
+          var compId = Worker.getComponentStringIdentifier();
           Long id;
-          if (CompIds.containsKey(CompId)) {
-            id = CompIds.get(CompId);
+          if (compIds.containsKey(compId)) {
+            id = compIds.get(compId);
           } else {
             id = (long) 1;
           }
-          if (FirstLine) {
-            Contents.add("");
-            Contents.addAll(MakeRemarkBlock("Here all normal components are defined", 3));
-            FirstLine = false;
+          if (isFirstLine) {
+            contents.add("");
+            contents.addAll(MakeRemarkBlock("Here all normal components are defined", 3));
+            isFirstLine = false;
           }
-          Contents.addAll(Worker.GetComponentMap(TheNetlist, id++, comp, null, CompName));
-          CompIds.remove(CompId);
-          CompIds.put(CompId, id);
+          contents.addAll(Worker.GetComponentMap(theNetlist, id++, comp, null, compName));
+          compIds.remove(compId);
+          compIds.put(compId, id);
         }
       }
     }
     /* Finally we instantiate all sub-circuits */
-    FirstLine = true;
-    for (NetlistComponent comp : TheNetlist.GetSubCircuits()) {
-      HDLGeneratorFactory Worker =
+    isFirstLine = true;
+    for (NetlistComponent comp : theNetlist.GetSubCircuits()) {
+      var worker =
           comp.GetComponent().getFactory().getHDLGenerator(comp.GetComponent().getAttributeSet());
-      if (Worker != null) {
-        String CompName =
+      if (worker != null) {
+        String compName =
             comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
-        if (comp.IsGatedInstance())  CompName = CompName.concat("_gated");
-        String CompId = Worker.getComponentStringIdentifier();
-        Long id;
-        if (CompIds.containsKey(CompId)) {
-          id = CompIds.get(CompId);
-        } else {
-          id = (long) 1;
-        }
-        ArrayList<String> CompMap = Worker.GetComponentMap(TheNetlist, id++, comp, null, CompName);
-        if (!CompMap.isEmpty()) {
-          if (FirstLine) {
-            Contents.add("");
-            Contents.addAll(MakeRemarkBlock("Here all sub-circuits are defined", 3));
-            FirstLine = false;
+        if (comp.IsGatedInstance())  compName = compName.concat("_gated");
+        var CompId = worker.getComponentStringIdentifier();
+        Long id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
+        var compMap = worker.GetComponentMap(theNetlist, id++, comp, null, compName);
+        if (!compMap.isEmpty()) {
+          if (isFirstLine) {
+            contents.add("");
+            contents.addAll(MakeRemarkBlock("Here all sub-circuits are defined", 3));
+            isFirstLine = false;
           }
-          CompIds.remove(CompId);
-          CompIds.put(CompId, id);
-          Contents.addAll(CompMap);
+          compIds.remove(CompId);
+          compIds.put(CompId, id);
+          contents.addAll(compMap);
         }
       }
     }
-    Contents.add("");
-    return Contents;
+    contents.add("");
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    int OutputBubbles = MyNetList.NumberOfOutputBubbles();
-    if (OutputBubbles > 0) {
-      if (OutputBubbles > 1) {
-        Outputs.put(HDLGeneratorFactory.LocalOutputBubbleBusname, OutputBubbles);
-      } else {
-        Outputs.put(HDLGeneratorFactory.LocalOutputBubbleBusname, 0);
-      }
+  public SortedMap<String, Integer> GetOutputList(Netlist myNetList, AttributeSet attrs) {
+    SortedMap<String, Integer> outputs = new TreeMap<>();
+    int outputBubbles = myNetList.NumberOfOutputBubbles();
+    if (outputBubbles > 0) {
+      outputs.put(
+          HDLGeneratorFactory.LocalOutputBubbleBusname, (outputBubbles == 1) ? 0 : outputBubbles);
     }
-    for (int i = 0; i < MyNetList.NumberOfOutputPorts(); i++) {
-      NetlistComponent selected = MyNetList.GetOutputPin(i);
+
+    for (int i = 0; i < myNetList.NumberOfOutputPorts(); i++) {
+      NetlistComponent selected = myNetList.GetOutputPin(i);
       if (selected != null) {
-          Outputs.put(
-              CorrectLabel.getCorrectLabel(
-                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-              selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
+        outputs.put(
+            CorrectLabel.getCorrectLabel(
+                selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+            selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
       }
     }
-    return Outputs;
+    return outputs;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
     if (MapInfo == null) return null;
     boolean topLevel = MapInfo instanceof MappableResourcesContainer;
-    NetlistComponent ComponentInfo = topLevel ? null : (NetlistComponent) MapInfo;
-    MappableResourcesContainer mapInfo = topLevel ? (MappableResourcesContainer) MapInfo : null;
+    var componentInfo = topLevel ? null : (NetlistComponent) MapInfo;
+    var mapInfo = topLevel ? (MappableResourcesContainer) MapInfo : null;
     String Preamble = topLevel ? "s_" : "";
-      SubcircuitFactory sub = topLevel ? null : (SubcircuitFactory) ComponentInfo.GetComponent().getFactory();
-      Netlist MyNetList = topLevel ? Nets : sub.getSubcircuit().getNetList();
-      int NrOfClockTrees = MyNetList.NumberOfClockTrees();
-      int NrOfInputBubbles = MyNetList.NumberOfInputBubbles();
-      int NrOfOutputBubbles = MyNetList.NumberOfOutputBubbles();
-      int NrOfIOBubbles = MyNetList.NumberOfInOutBubbles();
-      int NrOfInputPorts = MyNetList.NumberOfInputPorts();
-      int NrOfInOutPorts = MyNetList.NumberOfInOutPorts();
-      int NrOfOutputPorts = MyNetList.NumberOfOutputPorts();
-      /* First we instantiate the Clock tree busses when present */
-      for (int i = 0; i < NrOfClockTrees; i++) {
-        PortMap.put(ClockTreeName + i, Preamble + ClockTreeName + i);
-      }
-      if (MyNetList.RequiresGlobalClockConnection()) {
-        PortMap.put(
-            TickComponentHDLGeneratorFactory.FPGAClock, TickComponentHDLGeneratorFactory.FPGAClock);
-      }
-      if (NrOfInputBubbles > 0) {
-        PortMap.put(
-            HDLGeneratorFactory.LocalInputBubbleBusname, topLevel ? Preamble+HDLGeneratorFactory.LocalInputBubbleBusname :
-            HDLGeneratorFactory.LocalInputBubbleBusname + GetBubbleIndex(ComponentInfo, 0));
-      }
-      if (NrOfOutputBubbles > 0) {
-        PortMap.put(
-            HDLGeneratorFactory.LocalOutputBubbleBusname, topLevel ? Preamble+HDLGeneratorFactory.LocalOutputBubbleBusname :
-            HDLGeneratorFactory.LocalOutputBubbleBusname + GetBubbleIndex(ComponentInfo, 1));
-      }
-      if (NrOfIOBubbles > 0) {
-        if (topLevel) {
-          StringBuilder vector = new StringBuilder();
-          for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
-            /* first pass find the component which is connected to this io */
-            int compPin = -1;
-            MapComponent map = null;
-            for (ArrayList<String> key : mapInfo.getMappableResources().keySet()) {
-              MapComponent comp = mapInfo.getMappableResources().get(key);
-              if (comp.hasIOs()) {
-                int id =  comp.getIOBublePinId(i);
-                if (id >= 0) {
-                  compPin = id;
-                  map = comp;
-                  break;
-                }
-              }
-            }
-            if (map == null || compPin < 0) {
-              Reporter.Report.AddError("BUG: did not find IOpin");
-              continue;
-            }
-            if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
-              if (HDL.isVHDL())
-                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+"("+i+")","OPEN");
-              else {
-                if (vector.length() != 0) vector.append(",");
-                vector.append("OPEN"); // still not found the correct method but this seems to work
-              }
-            } else {
-              if (HDL.isVHDL())
-                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+"("+i+")",
-                  (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
-              else {
-                if (vector.length() != 0) vector.append(",");
-                vector.append(map.isExternalInverted(compPin) ? "n_" : "")
-                    .append(map.getHdlString(compPin));
+    var sub = topLevel ? null : (SubcircuitFactory) componentInfo.GetComponent().getFactory();
+    var myNetList = topLevel ? nets : sub.getSubcircuit().getNetList();
+
+    /* First we instantiate the Clock tree busses when present */
+    for (int i = 0; i < myNetList.NumberOfClockTrees(); i++) {
+      PortMap.put(ClockTreeName + i, Preamble + ClockTreeName + i);
+    }
+    if (myNetList.RequiresGlobalClockConnection()) {
+      PortMap.put(
+          TickComponentHDLGeneratorFactory.FPGAClock, TickComponentHDLGeneratorFactory.FPGAClock);
+    }
+    if (myNetList.NumberOfInputBubbles() > 0) {
+      PortMap.put(
+          HDLGeneratorFactory.LocalInputBubbleBusname,
+          topLevel
+              ? Preamble + HDLGeneratorFactory.LocalInputBubbleBusname
+              : HDLGeneratorFactory.LocalInputBubbleBusname + GetBubbleIndex(componentInfo, 0));
+    }
+    if (myNetList.NumberOfOutputBubbles() > 0) {
+      PortMap.put(
+          HDLGeneratorFactory.LocalOutputBubbleBusname,
+          topLevel
+              ? Preamble + HDLGeneratorFactory.LocalOutputBubbleBusname
+              : HDLGeneratorFactory.LocalOutputBubbleBusname + GetBubbleIndex(componentInfo, 1));
+    }
+
+    int nrOfIOBubbles = myNetList.NumberOfInOutBubbles();
+    if (nrOfIOBubbles > 0) {
+      if (topLevel) {
+        StringBuilder vector = new StringBuilder();
+        for (int i = nrOfIOBubbles - 1; i >= 0; i--) {
+          /* first pass find the component which is connected to this io */
+          int compPin = -1;
+          MapComponent map = null;
+          for (ArrayList<String> key : mapInfo.getMappableResources().keySet()) {
+            MapComponent comp = mapInfo.getMappableResources().get(key);
+            if (comp.hasIOs()) {
+              int id = comp.getIOBublePinId(i);
+              if (id >= 0) {
+                compPin = id;
+                map = comp;
+                break;
               }
             }
           }
-          if (HDL.isVerilog())
-            PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
-        } else {
-          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 
-        		  HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(ComponentInfo, 2));
+          if (map == null || compPin < 0) {
+            Reporter.Report.AddError("BUG: did not find IOpin");
+            continue;
+          }
+          if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
+            if (HDL.isVHDL())
+              PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname + "(" + i + ")", "OPEN");
+            else {
+              if (vector.length() != 0) vector.append(",");
+              vector.append("OPEN"); // still not found the correct method but this seems to work
+            }
+          } else {
+            if (HDL.isVHDL())
+              PortMap.put(
+                  HDLGeneratorFactory.LocalInOutBubbleBusname + "(" + i + ")",
+                  (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));
+            else {
+              if (vector.length() != 0) vector.append(",");
+              vector
+                  .append(map.isExternalInverted(compPin) ? "n_" : "")
+                  .append(map.getHdlString(compPin));
+            }
+          }
         }
+        if (HDL.isVerilog())
+          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
+      } else {
+        PortMap.put(
+            HDLGeneratorFactory.LocalInOutBubbleBusname,
+            HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(componentInfo, 2));
       }
-      if (NrOfInputPorts > 0) {
-        for (int i = 0; i < NrOfInputPorts; i++) {
-          NetlistComponent selected = MyNetList.GetInputPin(i);
-          if (selected != null) {
-            String PinLabel =
-                CorrectLabel.getCorrectLabel(
-                    selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            if (topLevel) {
-              PortMap.put(PinLabel, Preamble+PinLabel);
-            } else {
-              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
-              if (endid < 0) {
-                Reporter.Report.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
+    }
+
+    int nrOfInputPorts = myNetList.NumberOfInputPorts();
+    if (nrOfInputPorts > 0) {
+      for (int i = 0; i < nrOfInputPorts; i++) {
+        NetlistComponent selected = myNetList.GetInputPin(i);
+        if (selected != null) {
+          String PinLabel =
+              CorrectLabel.getCorrectLabel(
+                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
+          if (topLevel) {
+            PortMap.put(PinLabel, Preamble + PinLabel);
+          } else {
+            int endid = nets.GetEndIndex(componentInfo, PinLabel, false);
+            if (endid < 0) {
+              Reporter.Report.AddFatalError(
+                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '"
                       + PinLabel
                       + "'");
-            
-              } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
-              }
-            }
-          }
-        }
-      }
-      if (NrOfInOutPorts > 0) {
-        for (int i = 0; i < NrOfInOutPorts; i++) {
-          NetlistComponent selected = MyNetList.GetInOutPin(i);
-          if (selected != null) {
-            String PinLabel =
-                CorrectLabel.getCorrectLabel(
-                    selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            if (topLevel) {
-              /* Do not exist yet in logisim */
-              /* TODO: implement by going over each bit */
+
             } else {
-              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
-              if (endid < 0) {
-                Reporter.Report.AddFatalError(
-                    "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
-                        + PinLabel
-                        + "'");
-              } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
-              }
+              PortMap.putAll(GetNetMap(PinLabel, true, componentInfo, endid, nets));
             }
           }
         }
       }
-      if (NrOfOutputPorts > 0) {
-        for (int i = 0; i < NrOfOutputPorts; i++) {
-          NetlistComponent selected = MyNetList.GetOutputPin(i);
-          if (selected != null) {
-            String PinLabel =
-                CorrectLabel.getCorrectLabel(
-                    selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            if (topLevel) {
-              PortMap.put(PinLabel, Preamble+PinLabel);	
+    }
+
+    int nrOfInOutPorts = myNetList.NumberOfInOutPorts();
+    if (nrOfInOutPorts > 0) {
+      for (int i = 0; i < nrOfInOutPorts; i++) {
+        NetlistComponent selected = myNetList.GetInOutPin(i);
+        if (selected != null) {
+          String PinLabel =
+              CorrectLabel.getCorrectLabel(
+                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
+          if (topLevel) {
+            /* Do not exist yet in logisim */
+            /* TODO: implement by going over each bit */
+          } else {
+            int endid = nets.GetEndIndex(componentInfo, PinLabel, false);
+            if (endid < 0) {
+              Reporter.Report.AddFatalError(
+                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '"
+                      + PinLabel
+                      + "'");
             } else {
-              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
-              if (endid < 0) {
-                Reporter.Report.AddFatalError(
-                    "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
-                        + PinLabel
-                        + "'");
-              } else {
-                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Nets));
-              }
+              PortMap.putAll(GetNetMap(PinLabel, true, componentInfo, endid, nets));
             }
           }
         }
       }
+    }
+
+    int nrOfOutputPorts = myNetList.NumberOfOutputPorts();
+    if (nrOfOutputPorts > 0) {
+      for (int i = 0; i < nrOfOutputPorts; i++) {
+        NetlistComponent selected = myNetList.GetOutputPin(i);
+        if (selected != null) {
+          String PinLabel =
+              CorrectLabel.getCorrectLabel(
+                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
+          if (topLevel) {
+            PortMap.put(PinLabel, Preamble + PinLabel);
+          } else {
+            int endid = nets.GetEndIndex(componentInfo, PinLabel, true);
+            if (endid < 0) {
+              Reporter.Report.AddFatalError(
+                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '"
+                      + PinLabel
+                      + "'");
+            } else {
+              PortMap.putAll(GetNetMap(PinLabel, true, componentInfo, endid, nets));
+            }
+          }
+        }
+      }
+    }
     return PortMap;
   }
 
   private String GetSignalMap(
-      String PortName,
+      String portName,
       NetlistComponent comp,
-      int EndIndex,
-      int TabSize,
+      int endIndex,
+      int tabSize,
       Netlist TheNets) {
-    StringBuffer Contents = new StringBuffer();
-    StringBuffer Source = new StringBuffer();
-    StringBuffer Destination = new StringBuffer();
-    StringBuffer Tab = new StringBuffer();
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    var contents = new StringBuilder();
+    var source = new StringBuilder();
+    var destination = new StringBuilder();
+    var tab = new StringBuilder();
+    if ((endIndex < 0) || (endIndex >= comp.NrOfEnds())) {
       Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"
               + comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
               + "'");
       return "";
     }
-    Tab.append(" ".repeat(TabSize));
-    ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
-    boolean IsOutput = ConnectionInformation.IsOutputEnd();
-    int NrOfBits = ConnectionInformation.NrOfBits();
-    if (NrOfBits == 1) {
+    tab.append(" ".repeat(tabSize));
+    var connectionInformation = comp.getEnd(endIndex);
+    boolean isOutput = connectionInformation.IsOutputEnd();
+    int nrOfBits = connectionInformation.NrOfBits();
+    if (nrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
-      if (IsOutput) {
-        if (!comp.EndIsConnected(EndIndex)) {
+      if (isOutput) {
+        if (!comp.EndIsConnected(endIndex)) {
           return " ";
         }
-        Source.append(PortName);
-        Destination.append(GetNetName(comp, EndIndex, true, TheNets));
+        source.append(portName);
+        destination.append(GetNetName(comp, endIndex, true, TheNets));
       } else {
-        if (!comp.EndIsConnected(EndIndex)) {
-          Reporter.Report.AddSevereWarning("Found an unconnected output pin, tied the pin to ground!");
+        if (!comp.EndIsConnected(endIndex)) {
+          Reporter.Report.AddSevereWarning(
+              "Found an unconnected output pin, tied the pin to ground!");
         }
-        Source.append(GetNetName(comp, EndIndex, true, TheNets));
-        Destination.append(PortName);
-        if (!comp.EndIsConnected(EndIndex)) {
-          return Contents.toString();
+        source.append(GetNetName(comp, endIndex, true, TheNets));
+        destination.append(portName);
+        if (!comp.EndIsConnected(endIndex)) {
+          return contents.toString();
         }
       }
-      while (Destination.length() < SallignmentSize) {
-        Destination.append(" ");
+      while (destination.length() < SallignmentSize) {
+        destination.append(" ");
       }
-      Contents.append(Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+      contents
+          .append(tab)
+          .append(HDL.assignPreamble())
+          .append(destination)
+          .append(HDL.assignOperator())
+          .append(source)
+          .append(";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
        * be mapped
        */
       /* First we check if the bus has a connection */
-      boolean Connected = false;
-      for (int i = 0; i < NrOfBits; i++) {
-        if (ConnectionInformation.GetConnection((byte) i).GetParentNet() != null) {
-          Connected = true;
+      var connected = false;
+      for (int i = 0; i < nrOfBits; i++) {
+        if (connectionInformation.GetConnection((byte) i).GetParentNet() != null) {
+          connected = true;
         }
       }
-      if (!Connected) {
+      if (!connected) {
         /* Here is the easy case, the bus is unconnected */
-        if (IsOutput) {
-          return Contents.toString();
+        if (isOutput) {
+          return contents.toString();
         } else {
           Reporter.Report.AddSevereWarning(
               "Found an unconnected output bus pin, tied all the pin bits to ground!");
         }
-        Destination.append(PortName);
-        while (Destination.length() < SallignmentSize) {
-          Destination.append(" ");
+        destination.append(portName);
+        while (destination.length() < SallignmentSize) {
+          destination.append(" ");
         }
-        Contents.append(
-            Tab.toString()
-                + HDL.assignPreamble()
-                + Destination.toString()
-                + HDL.assignOperator()
-                + HDL.GetZeroVector(NrOfBits, true)
-                + ";");
+        contents
+            .append(tab)
+            .append(HDL.assignPreamble())
+            .append(destination)
+            .append(HDL.assignOperator())
+            .append(HDL.GetZeroVector(nrOfBits, true))
+            .append(";");
       } else {
         /*
          * There are connections, we detect if it is a continues bus
          * connection
          */
-        if (TheNets.IsContinuesBus(comp, EndIndex)) {
-          Destination.setLength(0);
-          Source.setLength(0);
+        if (TheNets.IsContinuesBus(comp, endIndex)) {
+          destination.setLength(0);
+          source.setLength(0);
           /* Another easy case, the continues bus connection */
-          if (IsOutput) {
-            Source.append(PortName);
-            Destination.append(GetBusNameContinues(comp, EndIndex, TheNets));
+          if (isOutput) {
+            source.append(portName);
+            destination.append(GetBusNameContinues(comp, endIndex, TheNets));
           } else {
-            Destination.append(PortName);
-            Source.append(GetBusNameContinues(comp, EndIndex, TheNets));
+            destination.append(portName);
+            source.append(GetBusNameContinues(comp, endIndex, TheNets));
           }
-          while (Destination.length() < SallignmentSize) {
-            Destination.append(" ");
+          while (destination.length() < SallignmentSize) {
+            destination.append(" ");
           }
-          Contents.append(
-              Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+          contents
+              .append(tab)
+              .append(HDL.assignPreamble())
+              .append(destination)
+              .append(HDL.assignOperator())
+              .append(source)
+              .append(";");
         } else {
           /* The last case, we have to enumerate through each bit */
-          for (int bit = 0; bit < NrOfBits; bit++) {
-            Source.setLength(0);
-            Destination.setLength(0);
-            if (IsOutput) {
-              Source.append(PortName + HDL.BracketOpen() + bit + HDL.BracketClose());
+          for (int bit = 0; bit < nrOfBits; bit++) {
+            source.setLength(0);
+            destination.setLength(0);
+            if (isOutput) {
+              source
+                  .append(portName)
+                  .append(HDL.BracketOpen())
+                  .append(bit)
+                  .append(HDL.BracketClose());
             } else {
-              Destination.append(PortName + HDL.BracketOpen() + bit + HDL.BracketClose());
+              destination
+                  .append(portName)
+                  .append(HDL.BracketOpen())
+                  .append(bit)
+                  .append(HDL.BracketClose());
             }
-            ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) bit);
+            ConnectionPoint SolderPoint = connectionInformation.GetConnection((byte) bit);
             if (SolderPoint.GetParentNet() == null) {
               /* The net is not connected */
-              if (IsOutput) {
+              if (isOutput) {
                 continue;
               } else {
                 Reporter.Report.AddSevereWarning(
                     "Found an unconnected output bus pin, tied bit "
                         + bit
                         + " to ground!");
-                Source.append(HDL.GetZeroVector(1, true));
+                source.append(HDL.GetZeroVector(1, true));
               }
             } else {
               /*
@@ -874,43 +887,48 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                */
               if (SolderPoint.GetParentNet().BitWidth() == 1) {
                 /* The connection is to a Net */
-                if (IsOutput) {
-                  Destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
+                if (isOutput) {
+                  destination.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
                 } else {
-                  Source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
+                  source.append(NetName).append(TheNets.GetNetId(SolderPoint.GetParentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
-                if (IsOutput) {
-                  Destination.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParentNet())
-                          + HDL.BracketOpen()
-                          + SolderPoint.GetParentNetBitIndex()
-                          + HDL.BracketClose());
+                if (isOutput) {
+                  destination
+                      .append(BusName)
+                      .append(TheNets.GetNetId(SolderPoint.GetParentNet()))
+                      .append(HDL.BracketOpen())
+                      .append(SolderPoint.GetParentNetBitIndex())
+                      .append(HDL.BracketClose());
                 } else {
-                  Source.append(
-                      BusName
-                          + TheNets.GetNetId(SolderPoint.GetParentNet())
-                          + HDL.BracketOpen()
-                          + SolderPoint.GetParentNetBitIndex()
-                          + HDL.BracketClose());
+                  source
+                      .append(BusName)
+                      .append(TheNets.GetNetId(SolderPoint.GetParentNet()))
+                      .append(HDL.BracketOpen())
+                      .append(SolderPoint.GetParentNetBitIndex())
+                      .append(HDL.BracketClose());
                 }
               }
             }
-            while (Destination.length() < SallignmentSize) {
-              Destination.append(" ");
+            while (destination.length() < SallignmentSize) {
+              destination.append(" ");
             }
             if (bit != 0) {
-              Contents.append("\n");
+              contents.append("\n");
             }
-            Contents.append(
-                Tab.toString() + HDL.assignPreamble() + Destination + HDL.assignOperator() + Source + ";");
+            contents
+                .append(tab)
+                .append(HDL.assignPreamble())
+                .append(destination)
+                .append(HDL.assignOperator())
+                .append(source)
+                .append(";");
           }
         }
       }
     }
-    return Contents.toString();
+    return contents.toString();
   }
 
   @Override

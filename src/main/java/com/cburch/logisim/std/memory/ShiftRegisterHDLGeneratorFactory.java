@@ -442,14 +442,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             PortMap.put("Q" + HDL.BracketOpen() + (NrOfStages - 1) + HDL.BracketClose(), "OPEN");
           }
         } else {
-          for (int i = NrOfStages-1; i >= 0; i--) {
+          for (int i = NrOfStages - 1; i >= 0; i--) {
             if (Vector.length() != 0) Vector.append(",");
             Vector.append(GetNetName(ComponentInfo, 6 + 2 * i, true, Nets));
           }
           PortMap.put("D", Vector.toString());
           Vector.setLength(0);
           Vector.append("open");
-          for (int i = NrOfStages-2; i >= 0; i--) {
+          for (int i = NrOfStages - 2; i >= 0; i--) {
             if (Vector.length() != 0) Vector.append(",");
             Vector.append(GetNetName(ComponentInfo, 7 + 2 * i, true, Nets));
           }
@@ -476,18 +476,18 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           }
         } else {
           Vector.setLength(0);
-          for (int bit = NrOfBits-1 ; bit >= 0; bit--) {
-            for (int i = NrOfStages-1 ; i >= 0 ; i--) {
+          for (int bit = NrOfBits - 1; bit >= 0; bit--) {
+            for (int i = NrOfStages - 1; i >= 0; i--) {
               if (Vector.length() != 0) Vector.append(",");
               Vector.append(GetBusEntryName(ComponentInfo, 6 + 2 * i, true, bit, Nets));
             }
           }
           PortMap.put("D", Vector.toString());
           Vector.setLength(0);
-          for (int bit = NrOfBits-1; bit >= 0 ; bit--) {
+          for (int bit = NrOfBits - 1; bit >= 0; bit--) {
             if (Vector.length() != 0) Vector.append(",");
             Vector.append("open");
-            for (int i = NrOfStages-2; i >= 0; i--) {
+            for (int i = NrOfStages - 2; i >= 0; i--) {
               if (Vector.length() != 0) Vector.append(",");
               Vector.append(GetBusEntryName(ComponentInfo, 7 + 2 * i, true, bit, Nets));
             }
@@ -497,7 +497,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
     } else {
       PortMap.put("Q", HDL.unconnected(true));
-      StringBuffer Temp = new StringBuffer();
+      StringBuilder Temp = new StringBuilder();
       if (HDL.isVerilog()) {
         Temp.append("0");
       } else {

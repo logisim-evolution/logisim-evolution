@@ -51,11 +51,9 @@ class InstanceLoggerAdapter implements Loggable {
       this.state = new InstanceStateImpl(null, comp);
     } catch (Exception t) {
       String className = loggerClass.getName();
-      loggerS.error("Error while instantiating logger {}: {}", className,
-          t.getClass().getName());
+      loggerS.error("Error while instantiating logger {}: {}", className, t.getClass().getName());
       String msg = t.getMessage();
-      if (msg != null)
-        loggerS.error("  ({})", msg); // OK
+      if (msg != null) loggerS.error("  ({})", msg);
       logger = null;
     }
   }
@@ -67,7 +65,7 @@ class InstanceLoggerAdapter implements Loggable {
   public BitWidth getBitWidth(Object option) {
     return logger == null ? null : logger.getBitWidth(state, option);
   }
-  
+
   public boolean isInput(Object option) {
     return logger == null ? false : logger.isInput(state, option);
   }
@@ -78,8 +76,7 @@ class InstanceLoggerAdapter implements Loggable {
 
   public Value getLogValue(CircuitState circuitState, Object option) {
     if (logger != null) {
-      if (state.getCircuitState() != circuitState)
-        state.repurpose(circuitState, comp);
+      if (state.getCircuitState() != circuitState) state.repurpose(circuitState, comp);
       return logger.getLogValue(state, option);
     } else {
       return Value.UNKNOWN;

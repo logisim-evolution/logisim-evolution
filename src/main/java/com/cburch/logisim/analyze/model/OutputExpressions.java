@@ -471,9 +471,8 @@ public class OutputExpressions {
   public void disableUpdates() {
     allowUpdates = false;
   }
-  
-  public boolean UpdatesEnabled() {
-	  return allowUpdates;
+
+  public boolean updatesEnabled() {
+    return allowUpdates;
   }
-  
 }

@@ -67,26 +67,33 @@ public class LFrame extends JFrame implements WindowClosable {
 
   public static class MainWindow extends LFrame {
     private static final long serialVersionUID = 1L;
+
     public MainWindow(Project p) {
       super(MAIN_WINDOW, p, true);
       if (p == null)
         throw new IllegalArgumentException("project is null");
     }
   }
+
   public static class SubWindow extends LFrame {
     private static final long serialVersionUID = 1L;
+
     public SubWindow(Project p) { // may be null
       super(SUB_WINDOW, p, false);
     }
   }
+
   public static class SubWindowWithSimulation extends LFrame {
     private static final long serialVersionUID = 1L;
+
     public SubWindowWithSimulation(Project p) { // may be null
       super(SUB_WINDOW, p, true);
     }
   }
+
   public static class Dialog extends LFrame {
     private static final long serialVersionUID = 1L;
+
     public Dialog(Project p) { // may be null
       super(DIALOG, p, false);
     }
@@ -153,11 +160,11 @@ public class LFrame extends JFrame implements WindowClosable {
     WindowEvent closing = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
     processWindowEvent(closing);
   }
-  
+
   public Project getProject() {
     return project;
   }
-  
+
   public LogisimMenuBar getLogisimMenuBar() {
     return menubar;
   }

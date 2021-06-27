@@ -52,8 +52,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Decoder extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Decoder";
+
   public Decoder() {
-    super("Decoder", S.getter("decoderComponent"));
+    super(_ID, S.getter("decoderComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -72,7 +80,7 @@ public class Decoder extends InstanceFactory {
           Boolean.TRUE
         });
     setKeyConfigurator(new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0));
-    setIcon(new PlexerIcon(true,false));
+    setIcon(new PlexerIcon(true, false));
     setFacingAttribute(StdAttr.FACING);
   }
 
@@ -91,7 +99,7 @@ public class Decoder extends InstanceFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
-      int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
+      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
@@ -288,7 +296,7 @@ public class Decoder extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = (int)sel.toLongValue();
+        outIndex = (int) sel.toLongValue();
         out = Value.TRUE;
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

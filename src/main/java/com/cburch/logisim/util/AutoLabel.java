@@ -53,24 +53,24 @@ public class AutoLabel {
       new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
   public static Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
 
-  private final HashMap<Circuit, String> LabelBase = new HashMap<>();
-  private final HashMap<Circuit, Integer> CurrentIndex = new HashMap<>();
-  private final HashMap<Circuit, Boolean> UseLabelBaseOnly = new HashMap<>();
-  private final HashMap<Circuit, Boolean> UseUnderscore = new HashMap<>();
+  private final HashMap<Circuit, String> labelBase = new HashMap<>();
+  private final HashMap<Circuit, Integer> currentIndex = new HashMap<>();
+  private final HashMap<Circuit, Boolean> useLabelBaseOnly = new HashMap<>();
+  private final HashMap<Circuit, Boolean> useUnderscore = new HashMap<>();
   private final HashMap<Circuit, Boolean> active = new HashMap<>();
-  private final HashMap<Circuit, String> CurrentLabel = new HashMap<>();
+  private final HashMap<Circuit, String> currentLabel = new HashMap<>();
 
   public AutoLabel() {
     this("", null, false);
   }
 
-  public AutoLabel(String Label, Circuit circ) {
-    this(Label, circ, true);
+  public AutoLabel(String label, Circuit circ) {
+    this(label, circ, true);
   }
 
-  public AutoLabel(String Label, Circuit circ, boolean UseFirstLabel) {
-    update(circ, Label, UseFirstLabel, null);
-    Activate(circ);
+  public AutoLabel(String label, Circuit circ, boolean useFirstLabel) {
+    update(circ, label, useFirstLabel, null);
+    activate(circ);
   }
 
   public boolean hasNext(Circuit circ) {
@@ -78,187 +78,190 @@ public class AutoLabel {
     return active.get(circ);
   }
 
-  public String GetCurrent(Circuit circ, ComponentFactory me) {
-    if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
+  public String getCurrent(Circuit circ, ComponentFactory me) {
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
-    if (Circuit.IsCorrectLabel(circ.getName(),CurrentLabel.get(circ), circ.getNonWires(), null, me, false))
-      return CurrentLabel.get(circ);
+    if (Circuit.IsCorrectLabel(
+        circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+      return currentLabel.get(circ);
     else if (hasNext(circ)) {
-      return GetNext(circ, me);
+      return getNext(circ, me);
     } else {
-      SetLabel("", circ, me);
+      setLabel("", circ, me);
     }
     return "";
   }
 
-  public boolean CorrectMatrixBaseLabel(
-      Circuit circ, ComponentFactory me, String Common, int maxX, int maxY) {
-    if ((Common == null) || (Common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
-    if (!SyntaxChecker.isVariableNameAcceptable(Common, true)) return false;
+  public boolean correctMatrixBaseLabel(
+      Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
+    if ((common == null) || (common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
+    if (!SyntaxChecker.isVariableNameAcceptable(common, true)) return false;
     for (int x = 0; x < maxX; x++)
       for (int y = 0; y < maxY; y++) {
-        if (GetMatrixLabel(circ, me, Common, x, y).isEmpty()) {
+        if (getMatrixLabel(circ, me, common, x, y).isEmpty()) {
           return false;
         }
       }
     return true;
   }
 
-  public String GetMatrixLabel(Circuit circ, ComponentFactory me, String Common, int x, int y) {
-    String Label;
-    if ((Common == null) || (Common.isEmpty()) || (x < 0) || (y < 0)) return "";
-    if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
+  public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
+    String label;
+    if ((common == null) || (common.isEmpty()) || (x < 0) || (y < 0)) return "";
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
-    Label = Common.concat("_X" + x + "_Y" + y);
-    if (Circuit.IsCorrectLabel(circ.getName(),Label, circ.getNonWires(), null, me, false)
-        & SyntaxChecker.isVariableNameAcceptable(Label, false)) return Label;
+    label = common.concat("_X" + x + "_Y" + y);
+    if (Circuit.IsCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
+        & SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
     return "";
   }
 
-  public String GetNext(Circuit circ, ComponentFactory me) {
+  public String getNext(Circuit circ, ComponentFactory me) {
     if (circ == null) return "";
-    if (UseLabelBaseOnly.get(circ)) {
-      UseLabelBaseOnly.put(circ, false);
-      return LabelBase.get(circ);
+    if (useLabelBaseOnly.get(circ)) {
+      useLabelBaseOnly.put(circ, false);
+      return labelBase.get(circ);
     }
-    String NewLabel = "";
-    int CurIdx = CurrentIndex.get(circ);
-    String BaseLab = LabelBase.get(circ);
-    boolean Undescore = UseUnderscore.get(circ);
+    String newLabel = "";
+    int curIdx = currentIndex.get(circ);
+    String baseLabel = labelBase.get(circ);
+    boolean undescore = useUnderscore.get(circ);
     do {
-      CurIdx++;
-      NewLabel = BaseLab;
-      if (Undescore) NewLabel = NewLabel.concat("_");
-      NewLabel = NewLabel.concat(Integer.toString(CurIdx));
-    } while (!Circuit.IsCorrectLabel(circ.getName(),NewLabel, circ.getNonWires(), null, me, false));
-    CurrentIndex.put(circ, CurIdx);
-    CurrentLabel.put(circ, NewLabel);
-    return NewLabel;
+      curIdx++;
+      newLabel = baseLabel;
+      if (undescore) newLabel = newLabel.concat("_");
+      newLabel = newLabel.concat(Integer.toString(curIdx));
+    } while (!Circuit.IsCorrectLabel(
+        circ.getName(), newLabel, circ.getNonWires(), null, me, false));
+    currentIndex.put(circ, curIdx);
+    currentLabel.put(circ, newLabel);
+    return newLabel;
   }
 
-  public boolean IsActive(Circuit circ) {
+  public boolean isActive(Circuit circ) {
     if (circ == null) return false;
     if (!active.containsKey(circ)) return false;
     return active.get(circ);
   }
 
-  public void SetLabel(String Label, Circuit circ, ComponentFactory me) {
+  public void setLabel(String label, Circuit circ, ComponentFactory me) {
     if (circ == null) return;
-    update(circ, Label, true, me);
+    update(circ, label, true, me);
   }
 
-  public void Activate(Circuit circ) {
+  public void activate(Circuit circ) {
     if (circ == null) return;
-    if (LabelBase.containsKey(circ)
-        && CurrentIndex.containsKey(circ)
-        && UseLabelBaseOnly.containsKey(circ)
-        && UseUnderscore.containsKey(circ)) active.put(circ, !LabelBase.get(circ).isEmpty());
+    if (labelBase.containsKey(circ)
+        && currentIndex.containsKey(circ)
+        && useLabelBaseOnly.containsKey(circ)
+        && useUnderscore.containsKey(circ)) active.put(circ, !labelBase.get(circ).isEmpty());
   }
 
-  public void Stop(Circuit circ) {
+  public void stop(Circuit circ) {
     if (circ == null) return;
-    SetLabel("", circ, null);
+    setLabel("", circ, null);
     active.put(circ, false);
   }
 
-  public static boolean LabelEndsWithNumber(String Label) {
-    return CorrectLabel.Numbers.contains(Label.substring(Label.length() - 1));
+  public static boolean labelEndsWithNumber(String label) {
+    return CorrectLabel.Numbers.contains(label.substring(label.length() - 1));
   }
 
-  private int GetLabelBaseEndIndex(String Label) {
-    int index = Label.length();
-    while ((index > 1) && CorrectLabel.Numbers.contains(Label.substring(index - 1, index))) index--;
+  private int getLabelBaseEndIndex(String label) {
+    int index = label.length();
+    while ((index > 1) && CorrectLabel.Numbers.contains(label.substring(index - 1, index))) index--;
     return (index - 1);
   }
 
-  private void update(Circuit circ, String Label, boolean UseFirstLabel, ComponentFactory me) {
+  private void update(Circuit circ, String label, boolean useFirstLabel, ComponentFactory me) {
     if (circ == null) return;
-    if (Label.isEmpty() || !SyntaxChecker.isVariableNameAcceptable(Label, false)) {
-      LabelBase.put(circ, "");
-      CurrentIndex.put(circ, 0);
-      UseLabelBaseOnly.put(circ, false);
-      CurrentLabel.put(circ, "");
+    if (label.isEmpty() || !SyntaxChecker.isVariableNameAcceptable(label, false)) {
+      labelBase.put(circ, "");
+      currentIndex.put(circ, 0);
+      useLabelBaseOnly.put(circ, false);
+      currentLabel.put(circ, "");
       return;
     }
-    UseLabelBaseOnly.put(circ, UseFirstLabel);
-    if (LabelEndsWithNumber(Label)) {
-      int Index = GetLabelBaseEndIndex(Label);
-      CurrentIndex.put(circ, Integer.valueOf(Label.substring(Index + 1)));
-      LabelBase.put(circ, Label.substring(0, Index + 1));
-      UseUnderscore.put(circ, false);
-      UseLabelBaseOnly.put(circ, false);
+    useLabelBaseOnly.put(circ, useFirstLabel);
+    if (labelEndsWithNumber(label)) {
+      int index = getLabelBaseEndIndex(label);
+      currentIndex.put(circ, Integer.valueOf(label.substring(index + 1)));
+      labelBase.put(circ, label.substring(0, index + 1));
+      useUnderscore.put(circ, false);
+      useLabelBaseOnly.put(circ, false);
     } else {
-      LabelBase.put(circ, Label);
-      CurrentIndex.put(circ, 0);
-      UseUnderscore.put(circ, !Label.endsWith("_"));
+      labelBase.put(circ, label);
+      currentIndex.put(circ, 0);
+      useUnderscore.put(circ, !label.endsWith("_"));
     }
-    if (UseFirstLabel) CurrentLabel.put(circ, Label);
-    else CurrentLabel.put(circ, GetNext(circ, me));
+    if (useFirstLabel) currentLabel.put(circ, label);
+    else currentLabel.put(circ, getNext(circ, me));
   }
 
-  public static SortedSet<Component> Sort(Set<Component> comps) {
+  public static SortedSet<Component> sort(Set<Component> comps) {
     SortedSet<Component> sorted = new TreeSet<>(new PositionComparator());
     sorted.addAll(comps);
     return sorted;
   }
 
-  public String AskAndSetLabel(
-      String ComponentName,
-      String OldLabel,
+  public String askAndSetLabel(
+      String componentName,
+      String oldLabel,
       Circuit circ,
       Component comp,
-      ComponentFactory compfac,
+      ComponentFactory compFactory,
       AttributeSet attrs,
       SetAttributeAction act,
-      boolean CreateAction) {
+      boolean createAction) {
     boolean correct = false;
-    String NewLabel = OldLabel;
+    String newLabel = oldLabel;
     while (!correct) {
-      NewLabel =
+      newLabel =
           (String)
               OptionPane.showInputDialog(
                   null,
-                  S.get("editLabelQuestion") + " " + ComponentName,
+                  S.get("editLabelQuestion") + " " + componentName,
                   S.get("editLabelDialog"),
                   OptionPane.QUESTION_MESSAGE,
                   null,
                   null,
-                  OldLabel);
-      if (NewLabel != null) {
-        if (Circuit.IsCorrectLabel(circ.getName(),NewLabel, circ.getNonWires(), attrs, compfac, true)
-            && SyntaxChecker.isVariableNameAcceptable(NewLabel, true)
-            && !CorrectLabel.IsKeyword(NewLabel, true)) {
-          if (CreateAction) act.set(comp, StdAttr.LABEL, NewLabel);
-          else SetLabel(NewLabel, circ, compfac);
+                  oldLabel);
+      if (newLabel != null) {
+        if (Circuit.IsCorrectLabel(
+                circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
+            && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
+            && !CorrectLabel.IsKeyword(newLabel, true)) {
+          if (createAction) act.set(comp, StdAttr.LABEL, newLabel);
+          else setLabel(newLabel, circ, compFactory);
           correct = true;
         }
       } else {
         correct = true;
-        NewLabel = OldLabel;
+        newLabel = oldLabel;
       }
     }
-    return NewLabel;
+    return newLabel;
   }
 
-  public boolean LabelKeyboardHandler(
-      int KeyCode,
+  public boolean labelKeyboardHandler(
+      int keyCode,
       AttributeSet attrs,
-      String ComponentName,
+      String componentName,
       Component comp,
-      ComponentFactory compfac,
+      ComponentFactory compFactory,
       Circuit circ,
       SetAttributeAction act,
-      boolean CreateAction) {
-    switch (KeyCode) {
+      boolean createAction) {
+    switch (keyCode) {
       case KeyEvent.VK_L:
         if (attrs.containsAttribute(StdAttr.LABEL)) {
-          String OldLabel = attrs.getValue(StdAttr.LABEL);
-          String NewLabel =
-              AskAndSetLabel(
-                  ComponentName, OldLabel, circ, comp, compfac, attrs, act, CreateAction);
-          if (!NewLabel.equals(OldLabel)) {
-            if (!NewLabel.isEmpty() && LabelEndsWithNumber(NewLabel)) {
-              Activate(circ);
+          String oldLabel = attrs.getValue(StdAttr.LABEL);
+          String newLabel =
+              askAndSetLabel(
+                  componentName, oldLabel, circ, comp, compFactory, attrs, act, createAction);
+          if (!newLabel.equals(oldLabel)) {
+            if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
+              activate(circ);
             } else {
               active.put(circ, false);
             }
@@ -267,7 +270,7 @@ public class AutoLabel {
         return true;
       case KeyEvent.VK_T:
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
-          if (CreateAction)
+          if (createAction)
             act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
           else attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
         }
@@ -275,19 +278,19 @@ public class AutoLabel {
       case KeyEvent.VK_V:
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (CreateAction) act.set(comp, StdAttr.LABEL_VISIBILITY, true);
+          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, true);
           else attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
         }
         return true;
       case KeyEvent.VK_H:
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (CreateAction) act.set(comp, StdAttr.LABEL_VISIBILITY, false);
+          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, false);
           else attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
         }
         return true;
       case KeyEvent.VK_A:
-        Stop(circ);
+        stop(circ);
         return true;
     }
     return false;

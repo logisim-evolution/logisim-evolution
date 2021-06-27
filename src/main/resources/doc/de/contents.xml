@@ -84,7 +84,7 @@
 			<tocitem target="prefs_layout" text="Die Registerkarte &quot;Layouteditor&quot;" />
 <!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->			
 			<tocitem target="prefs_exp" text="Die Registerkarte &quot;Experimentell&quot;" />
-<!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
+<!--	<tocitem target="prefs_sofware" text="L'onglet Logiciel tiers"/> -->
 <!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->			
 			<tocitem target="prefs_cmdline" text="Die Kommandozeile" />
 		</tocitem>

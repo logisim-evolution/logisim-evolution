@@ -46,6 +46,7 @@ public class PopupMenu extends MouseAdapter {
 
   private class PopupContents extends JPopupMenu {
     private static final long serialVersionUID = 1L;
+
     public PopupContents() {
       super("Options");
       RadixOption radix = null;
@@ -59,7 +60,7 @@ public class PopupMenu extends MouseAdapter {
       }
       ButtonGroup g = new ButtonGroup();
       for (RadixOption r : RadixOption.OPTIONS) {
-        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString()); 
+        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString());
         add(m);
         m.setEnabled(signals.size() > 0);
         g.add(m);
@@ -91,7 +92,7 @@ public class PopupMenu extends MouseAdapter {
 
   private final List<Signal> signals;
   private final ChronoPanel chronoPanel;
-  
+
   public PopupMenu(ChronoPanel p, List<Signal> s) {
     chronoPanel = p;
     signals = s;

@@ -67,6 +67,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class ProgrammableGenerator extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "ProgrammableGenerator";
+
   public abstract static class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -329,7 +337,7 @@ public class ProgrammableGenerator extends InstanceFactory {
   }
 
   public ProgrammableGenerator() {
-    super("ProgrammableGenerator", S.getter("ProgrammableGeneratorComponent"));
+    super(_ID, S.getter("ProgrammableGeneratorComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

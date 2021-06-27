@@ -36,38 +36,34 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class Memory extends Library {
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "Memory";
+
   protected static final int DELAY = 5;
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "D Flip-Flop", S.getter("dFlipFlopComponent"), "dFlipFlop.gif", "DFlipFlop"),
-    new FactoryDescription(
-        "T Flip-Flop", S.getter("tFlipFlopComponent"), "tFlipFlop.gif", "TFlipFlop"),
-    new FactoryDescription(
-        "J-K Flip-Flop", S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif", "JKFlipFlop"),
-    new FactoryDescription(
-        "S-R Flip-Flop", S.getter("srFlipFlopComponent"), "srFlipFlop.gif", "SRFlipFlop"),
-    new FactoryDescription("Register", S.getter("registerComponent"), "register.gif", "Register"),
-    new FactoryDescription("Counter", S.getter("counterComponent"), "counter.gif", "Counter"),
-    new FactoryDescription(
-        "Shift Register", S.getter("shiftRegisterComponent"), "shiftreg.gif", "ShiftRegister"),
-    new FactoryDescription("Random", S.getter("randomComponent"), "random.gif", "Random"),
-    new FactoryDescription("RAM", S.getter("ramComponent"), "ram.gif", "Ram"),
-    new FactoryDescription("ROM", S.getter("romComponent"), "rom.gif", "Rom"),
+    new FactoryDescription(DFlipFlop.class, S.getter("dFlipFlopComponent"), "dFlipFlop.gif"),
+    new FactoryDescription(TFlipFlop.class, S.getter("tFlipFlopComponent"), "tFlipFlop.gif"),
+    new FactoryDescription(JKFlipFlop.class, S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif"),
+    new FactoryDescription(SRFlipFlop.class, S.getter("srFlipFlopComponent"), "srFlipFlop.gif"),
+    new FactoryDescription(Register.class, S.getter("registerComponent"), "register.gif"),
+    new FactoryDescription(Counter.class, S.getter("counterComponent"), "counter.gif"),
+    new FactoryDescription(ShiftRegister.class, S.getter("shiftRegisterComponent"), "shiftreg.gif"),
+    new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
+    new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
+    new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
   };
 
   private List<Tool> tools = null;
 
-  public Memory() {}
-
   @Override
   public String getDisplayName() {
     return S.get("memoryLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Memory";
   }
 
   @Override

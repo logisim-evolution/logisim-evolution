@@ -56,6 +56,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
@@ -77,7 +78,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.Icon;
 
-public class AddTool extends Tool implements Transferable,PropertyChangeListener {
+public class AddTool extends Tool implements Transferable, PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
     public void attributeListChanged(AttributeEvent e) {
       bounds = null;
@@ -204,11 +205,11 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
     if (afterAdd.equals(AppPreferences.ADD_AFTER_UNCHANGED)) {
       return null;
     } else { // switch to Edit Tool
-      Library base = proj.getLogisimFile().getLibrary("Base");
+      Library base = proj.getLogisimFile().getLibrary(Base._ID);
       if (base == null) {
         return null;
       } else {
-        return base.getTool("Edit Tool");
+        return base.getTool(EditTool._ID);
       }
     }
   }
@@ -227,7 +228,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
     Color DrawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      DrawColor = AutoLabler.IsActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
+      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
       if (MatrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
@@ -240,7 +241,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
             getBaseAttributes());
       }
     } else if (state == SHOW_ADD) {
-      DrawColor = AutoLabler.IsActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
+      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
       if (MatrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
@@ -384,7 +385,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
       int KeybEvent = event.getKeyCode();
       String Component = getFactory().getDisplayName();
       if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null, attrs, canvas, null, false))
-        if (AutoLabler.LabelKeyboardHandler(
+        if (AutoLabler.labelKeyboardHandler(
             KeybEvent,
             getAttributeSet(),
             Component,
@@ -421,8 +422,8 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
               break;
             case KeyEvent.VK_ESCAPE:
               Project proj = canvas.getProject();
-              Library base = proj.getLogisimFile().getLibrary("Base");
-              Tool next = (base == null) ? null : base.getTool("Edit Tool");
+              Library base = proj.getLogisimFile().getLibrary(Base._ID);
+              Tool next = (base == null) ? null : base.getTool(EditTool._ID);
               if (next != null) {
                 proj.setTool(next);
                 Action act = SelectionActions.dropAll(canvas.getSelection());
@@ -525,14 +526,14 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         Label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
-        if (AutoLabler.IsActive(canvas.getCircuit()) && ((Label == null) || Label.isEmpty())) {
-          Label = AutoLabler.GetCurrent(canvas.getCircuit(), source);
+        if (AutoLabler.isActive(canvas.getCircuit()) && ((Label == null) || Label.isEmpty())) {
+          Label = AutoLabler.getCurrent(canvas.getCircuit(), source);
           if (AutoLabler.hasNext(canvas.getCircuit()))
-            AutoLabler.GetNext(canvas.getCircuit(), source);
-          else AutoLabler.Stop(canvas.getCircuit());
+            AutoLabler.getNext(canvas.getCircuit(), source);
+          else AutoLabler.stop(canvas.getCircuit());
         }
-        if (!AutoLabler.IsActive(canvas.getCircuit()))
-          AutoLabler.SetLabel("", canvas.getCircuit(), source);
+        if (!AutoLabler.isActive(canvas.getCircuit()))
+          AutoLabler.setLabel("", canvas.getCircuit(), source);
       }
 
       MatrixPlacerInfo matrix = new MatrixPlacerInfo(Label);
@@ -542,24 +543,24 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
         matrix.SetBounds(bds);
         MatrixPlacerDialog diag =
             new MatrixPlacerDialog(
-                matrix, source.getName(), AutoLabler.IsActive(canvas.getCircuit()));
+                matrix, source.getName(), AutoLabler.isActive(canvas.getCircuit()));
         boolean okay = false;
         while (!okay) {
           if (!diag.execute()) return;
           if (SyntaxChecker.isVariableNameAcceptable(matrix.GetLabel(), true)) {
-            AutoLabler.SetLabel(matrix.GetLabel(), canvas.getCircuit(), source);
+            AutoLabler.setLabel(matrix.GetLabel(), canvas.getCircuit(), source);
             okay =
-                AutoLabler.CorrectMatrixBaseLabel(
+                AutoLabler.correctMatrixBaseLabel(
                     canvas.getCircuit(),
                     source,
                     matrix.GetLabel(),
                     matrix.getNrOfXCopies(),
                     matrix.getNrOfYCopies());
-            AutoLabler.SetLabel(Label, canvas.getCircuit(), source);
+            AutoLabler.setLabel(Label, canvas.getCircuit(), source);
             if (!okay) {
               OptionPane.showMessageDialog(
                   null,
-                  "Base label either has wrong syntax or is contained in circuit",
+                  "Base label either has wrong syntax or is contained in circuit",  // FIXME: hardcoded string
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);
               matrix.UndoLabel();
@@ -581,7 +582,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
               if (MatrixPlace)
                 attrsCopy.setValue(
                     StdAttr.LABEL,
-                    AutoLabler.GetMatrixLabel(
+                    AutoLabler.getMatrixLabel(
                         canvas.getCircuit(), source, matrix.GetLabel(), x, y));
               else {
                 attrsCopy.setValue(StdAttr.LABEL, matrix.GetLabel());
@@ -750,7 +751,7 @@ public class AddTool extends Tool implements Transferable,PropertyChangeListener
 
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-    if(!isDataFlavorSupported(flavor))
+    if (!isDataFlavorSupported(flavor))
       throw new UnsupportedFlavorException(flavor);
     return this;
   }

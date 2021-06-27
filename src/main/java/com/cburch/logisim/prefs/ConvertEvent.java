@@ -37,7 +37,7 @@ public class ConvertEvent {
     this.value = value;
   }
 
-  public AttributeOption GetValue() {
+  public AttributeOption getValue() {
     return value;
   }
 }

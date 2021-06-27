@@ -135,7 +135,8 @@ public class InstancePainter implements InstanceState {
   }
 
   /**
-   * @brief this function will return the instance data information
+   * This medthod returns the instance data information.
+   *
    * @pre it assumes that your circuit was instantiate before.
    */
   public InstanceData getData() {
@@ -147,7 +148,7 @@ public class InstancePainter implements InstanceState {
       return (InstanceData) circState.getData(comp);
     }
   }
-  
+
   public CircuitState getCircuitState() {
     return context.getCircuitState();
   }

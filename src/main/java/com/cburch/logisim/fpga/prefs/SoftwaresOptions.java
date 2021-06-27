@@ -59,8 +59,6 @@ public class SoftwaresOptions extends OptionsPanel {
 
       if (source == questaPathButton) {
         Softwares.setQuestaPath(getPreferencesFrame());
-      } else if (source == AutoUpdateCheckbox) {
-        AppPreferences.AutomaticUpdateCheck.setBoolean(AutoUpdateCheckbox.isSelected());
       } else if (source == questaValidationCheckBox) {
         AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
       } else if (source == QuartusPathButton) {
@@ -78,8 +76,6 @@ public class SoftwaresOptions extends OptionsPanel {
 
       if (property.equals(AppPreferences.QUESTA_PATH.getIdentifier())) {
         questaPathField.setText(AppPreferences.QUESTA_PATH.get());
-      } else if (property.equals(AppPreferences.AutomaticUpdateCheck.getIdentifier())) {
-        AutoUpdateCheckbox.setSelected(AppPreferences.AutomaticUpdateCheck.getBoolean());
       } else if (property.equals(AppPreferences.QUESTA_VALIDATION.getIdentifier())) {
         questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
       } else if (property.equals(AppPreferences.QuartusToolPath.getIdentifier())) {
@@ -245,8 +241,6 @@ public class SoftwaresOptions extends OptionsPanel {
     c.gridy = 14;
     c.fill = GridBagConstraints.NONE;
     add(VivadoPathButton, c);
-
-    AutoUpdateCheckbox.setSelected(AppPreferences.AutomaticUpdateCheck.getBoolean());
 
     questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
 

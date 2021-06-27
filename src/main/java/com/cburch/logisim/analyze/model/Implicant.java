@@ -181,15 +181,15 @@ public class Implicant implements Comparable<Implicant> {
     // that cover the most uncovered rows.
     // BUG: This algorithm does not always find the correct solution
     // Fix: We are first making a set that contains primes without the don't care set
-    boolean ContainsDontCare;
+    boolean containsDontCare;
     HashSet<Implicant> primesNoDontCare = new HashSet<>();
     for (Implicant implicant : primes) {
-      ContainsDontCare = false;
+      containsDontCare = false;
       for (Implicant term : implicant.getTerms()) {
         if (table.getOutputEntry(term.getRow(), column).equals(Entry.DONT_CARE))
-          ContainsDontCare = true;
+          containsDontCare = true;
       }
-      if (!ContainsDontCare) {
+      if (!containsDontCare) {
         primesNoDontCare.add(implicant);
       }
     }
@@ -285,7 +285,8 @@ public class Implicant implements Comparable<Implicant> {
   static final Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
   static final List<Implicant> MINIMAL_LIST = Collections.singletonList(MINIMAL_IMPLICANT);
 
-  final int unknowns, values;
+  final int unknowns;
+  final int values;
 
   private Implicant(int unknowns, int values) {
     this.unknowns = unknowns;

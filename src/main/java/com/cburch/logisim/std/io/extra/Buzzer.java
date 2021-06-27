@@ -62,6 +62,13 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class Buzzer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Buzzer";
 
   private static final byte FREQ = 0;
   private static final byte ENABLE = 1;
@@ -104,7 +111,7 @@ public class Buzzer extends InstanceFactory {
       Attributes.forIntegerRange("smooth_width", S.getter("buzzerSmoothWidth"), 1, 10);
 
   public Buzzer() {
-    super("Buzzer", S.getter("buzzerComponent"));
+    super(_ID, S.getter("buzzerComponent"));
     setAttributes(
         new Attribute[]{
             StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT,
@@ -125,10 +132,8 @@ public class Buzzer extends InstanceFactory {
       if (d != null && d.thread.isAlive()) {
         d.is_on.set(false);
       }
-    }
-    // if it's a subcircuit search other buzzer's instances inside it and stop all
-    // sound threads
-    else if (compFact instanceof SubcircuitFactory) {
+    } else if (compFact instanceof SubcircuitFactory) {
+      // if it's a subcircuit search other buzzer's instances inside it and stop all sound threads
       for (Component subComponent :
           ((SubcircuitFactory) comp.getFactory()).getSubcircuit().getComponents()) {
         // recursive if there are other subcircuits
@@ -226,9 +231,7 @@ public class Buzzer extends InstanceFactory {
         freq /= 10;
       }
       d.hz = freq;
-    }
-    else
-    {
+    } else {
       d.hz = 440;
     }
     d.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
@@ -243,9 +246,7 @@ public class Buzzer extends InstanceFactory {
       int vol = (int) state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
       d.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, VolumeWidth) - 1);
-    }
-    else
-    {
+    } else {
       d.vol = 0.5;
     }
     d.updateRequired = true;
@@ -335,9 +336,8 @@ public class Buzzer extends InstanceFactory {
               return;
             }
 
-            if (hz != oldfreq)
-            {
-              sampleRate = (int)Math.ceil(44100.0 / hz) * hz;
+            if (hz != oldfreq) {
+              sampleRate = (int) Math.ceil(44100.0 / hz) * hz;
               af = new AudioFormat(sampleRate, 16, 2, true, false);
               oldfreq = hz;
             }
@@ -345,9 +345,8 @@ public class Buzzer extends InstanceFactory {
             // TODO: Computing all those values takes time; it may be interesting to replace this by a LUT
             int cycle = Math.max(1, sampleRate / hz);
             double[] values = new double[4 * cycle];
-            for (int i = 0; i < values.length; i++)
-            {
-              values[i] = wf.strategy.amplitude(i / (double)sampleRate, hz, pw / 256.0);
+            for (int i = 0; i < values.length; i++) {
+              values[i] = wf.strategy.amplitude(i / (double) sampleRate, hz, pw / 256.0);
             }
 
             if (wf != BuzzerWaveform.Sine && smoothLevel > 0 && smoothWidth > 0) {
@@ -366,8 +365,7 @@ public class Buzzer extends InstanceFactory {
             }
 
             double[] rvalues = new double[sampleRate];
-            for(var i = 0; i < sampleRate; i += cycle)
-            {
+            for (var i = 0; i < sampleRate; i += cycle) {
               System.arraycopy(values, 2 * cycle, rvalues, i, Math.min(cycle, sampleRate - i));
             }
 

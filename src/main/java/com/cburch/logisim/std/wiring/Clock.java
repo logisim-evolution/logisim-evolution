@@ -58,6 +58,14 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 
 public class Clock extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Clock";
+
   public static class ClockLogger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -74,7 +82,7 @@ public class Clock extends InstanceFactory {
       ClockState s = getState(state);
       return s.sending;
     }
-    
+
     @Override
     public boolean isInput(InstanceState state, Object option) {
       return true;
@@ -122,7 +130,7 @@ public class Clock extends InstanceFactory {
       sending = desired;
       return true;
     }
-    
+
     @Override
     public ClockState clone() {
       try {
@@ -147,7 +155,7 @@ public class Clock extends InstanceFactory {
     ClockState state = (ClockState) circState.getData(comp);
     boolean dirty = false;
     if (state == null) {
-      state = new ClockState(ticks,attrs);
+      state = new ClockState(ticks, attrs);
       circState.setData(comp, state);
       dirty = true;
     } else {
@@ -166,13 +174,13 @@ public class Clock extends InstanceFactory {
 
   public static final Attribute<Integer> ATTR_PHASE = new DurationAttribute(
       "phaseOffset", S.getter("clockPhaseAttr"), 0, Integer.MAX_VALUE, true);
-  
+
   public static final Clock FACTORY = new Clock();
 
   private static final Icon toolIcon = Icons.getIcon("clock.gif");
 
   public Clock() {
-    super("Clock", S.getter("clockComponent"));
+    super(_ID, S.getter("clockComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT

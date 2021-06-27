@@ -46,9 +46,16 @@ import java.util.List;
  * files (std.properties).
  */
 public class TclConsoleReds extends TclComponent {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "TclConsoleReds";
 
   public TclConsoleReds() {
-    super("TclConsoleReds", S.getter("tclConsoleReds"));
+    super(_ID, S.getter("tclConsoleReds"));
 
     List<PortDescription> inputsDesc = new ArrayList<>();
     List<PortDescription> outputsDesc = new ArrayList<>();

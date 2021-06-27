@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public abstract class HDL {
-  
+
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
   }
@@ -47,47 +47,47 @@ public abstract class HDL {
   public static String BracketClose() {
     return isVHDL() ? ")" : "]";
   }
-  
+
   public static int remarkOverhead() {
     return isVHDL() ? 3 : 4;
   }
-  
+
   public static String getRemakrChar(boolean first,boolean last) {
     if (isVHDL()) return "-";
     if (first) return "/";
     if (last) return " ";
     return "*";
   }
-  
+
   public static String getRemarkStart() {
     if (isVHDL()) return "-- ";
     return " ** ";
   }
-  
+
   public static String assignPreamble() {
     return isVHDL() ? "" : "assign ";
   }
-  
+
   public static String assignOperator() {
     return isVHDL() ? " <= " : " = ";
   }
-  
+
   public static String notOperator() {
     return isVHDL() ? " NOT " : "~";
   }
-  
+
   public static String andOperator() {
     return isVHDL() ? " AND " : "&";
   }
-  
+
   public static String orOperator() {
     return isVHDL() ? " OR " : "|";
   }
-  
+
   public static String xorOperator() {
     return isVHDL() ? " XOR " : "^";
   }
-  
+
   public static String zeroBit() {
     return isVHDL() ? "'0'" : "1'b0";
   }
@@ -95,50 +95,42 @@ public abstract class HDL {
   public static String oneBit() {
     return isVHDL() ? "'1'" : "1'b1";
   }
-  
+
   public static String unconnected(boolean empty) {
     return isVHDL() ? "OPEN" : empty ? "" : "'bz";
   }
-  
+
   public static String vectorLoopId() {
     return isVHDL() ? " DOWNTO " : ":";
   }
-  
-  public static String GetZeroVector(int NrOfBits, boolean FloatingPinTiedToGround) {
-    StringBuffer Contents = new StringBuffer();
+
+  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+    var contents = new StringBuilder();
     if (isVHDL()) {
-      String FillValue = (FloatingPinTiedToGround) ? "0" : "1";
-      String HexFillValue = (FloatingPinTiedToGround) ? "0" : "F";
-      if (NrOfBits == 1) {
-        Contents.append("'" + FillValue + "'");
+      var fillValue = (floatingPinTiedToGround) ? "0" : "1";
+      var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
+      if (nrOfBits == 1) {
+        contents.append("'").append(fillValue).append("'");
       } else {
-        if ((NrOfBits % 4) > 0) {
-          Contents.append("\"");
-          for (int i = 0; i < (NrOfBits % 4); i++) {
-            Contents.append(FillValue);
-          }
-          Contents.append("\"");
-          if (NrOfBits > 3) {
-            Contents.append("&");
+        if ((nrOfBits % 4) > 0) {
+          contents.append("\"");
+          contents.append(fillValue.repeat((nrOfBits % 4)));
+          contents.append("\"");
+          if (nrOfBits > 3) {
+            contents.append("&");
           }
         }
-        if ((NrOfBits / 4) > 0) {
-          Contents.append("X\"");
-          for (int i = 0; i < (NrOfBits / 4); i++) {
-            Contents.append(HexFillValue);
-          }
-          Contents.append("\"");
+        if ((nrOfBits / 4) > 0) {
+          contents.append("X\"");
+          contents.append(hexFillValue.repeat(Math.max(0, (nrOfBits / 4))));
+          contents.append("\"");
         }
       }
     } else {
-      Contents.append(NrOfBits + "'d");
-      if (FloatingPinTiedToGround) {
-        Contents.append("0");
-      } else {
-        Contents.append("-1");
-      }
+      contents.append(nrOfBits).append("'d");
+      contents.append(floatingPinTiedToGround ? "0" : "-1");
     }
-    return Contents.toString();
+    return contents.toString();
   }
 
 }

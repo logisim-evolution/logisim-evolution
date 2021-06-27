@@ -34,9 +34,8 @@ import java.util.LinkedList;
 
 public class RV32imAssembler extends AbstractAssembler {
 
-  
   public RV32imAssembler() {
-	super();
+    super();
     /* Here we add the RV32I base integer instruction set */
     super.addAssemblerExecutionUnit(new RV32imIntegerRegisterImmediateInstructions());
     super.addAssemblerExecutionUnit(new RV32imIntegerRegisterRegisterOperations());
@@ -47,8 +46,14 @@ public class RV32imAssembler extends AbstractAssembler {
     /* Here we add the "M" standard extension for integer multiplication and Division */
     super.addAssemblerExecutionUnit(new RV32im_M_ExtensionInstructions());
   }
-  
-  public boolean usesRoundedBrackets() { return true; }
-  public String getHighlightStringIdentifier() { return "asm/riscv"; }
-  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) { }
+
+  public boolean usesRoundedBrackets() {
+    return true;
+  }
+
+  public String getHighlightStringIdentifier() {
+    return "asm/riscv";
+  }
+
+  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {}
 }

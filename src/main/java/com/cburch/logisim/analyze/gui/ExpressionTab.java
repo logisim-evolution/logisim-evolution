@@ -101,39 +101,38 @@ class ExpressionTab extends AnalyzerTab {
   private final JTable table = new JTable(1, 1);
   private final JLabel error = new JLabel();
 
-  public class ExpressionTableModel extends AbstractTableModel implements VariableListListener, OutputExpressionsListener {
+  public class ExpressionTableModel extends AbstractTableModel
+      implements VariableListListener, OutputExpressionsListener {
     private static final long serialVersionUID = 1L;
     NamedExpression[] listCopy;
-    
+
     public ExpressionTableModel() {
-        updateCopy();
-        model.getOutputs().addVariableListListener(this);
-        model.getOutputExpressions().addOutputExpressionsListener(this);
+      updateCopy();
+      model.getOutputs().addVariableListListener(this);
+      model.getOutputExpressions().addOutputExpressionsListener(this);
     }
-    
+
     @Override
     public void fireTableChanged(TableModelEvent event) {
       int    index;
       TableModelListener listener;
       Object[] list = listenerList.getListenerList();
-      for (index = 0; index < list.length; index += 2)
-      {
-        listener = (TableModelListener) list [index + 1];
+      for (index = 0; index < list.length; index += 2) {
+        listener = (TableModelListener) list[index + 1];
         listener.tableChanged(event);
       }
     }
 
     @Override
-    public void setValueAt(Object o, int row, int column) {
+    public void setValueAt(Object obj, int row, int column) {
       NamedExpression ne = listCopy[row];
-      if (!(o instanceof NamedExpression))
+      if (!(obj instanceof NamedExpression))
         return;
-      NamedExpression e = (NamedExpression)o;
+      NamedExpression e = (NamedExpression) obj;
       if (ne != e && !ne.name.equals(e.name))
         return;
       listCopy[row] = e;
-      if (e.expr != null)
-        model.getOutputExpressions().setExpression(e.name, e.expr, e.exprString);
+      if (e.expr != null) model.getOutputExpressions().setExpression(e.name, e.expr, e.exprString);
     }
 
     @Override
@@ -142,21 +141,34 @@ class ExpressionTab extends AnalyzerTab {
     }
 
     @Override
-    public boolean isCellEditable(int row, int column) { return true; }
-    @Override
-    public int getColumnCount() { return 1; }
+    public boolean isCellEditable(int row, int column) {
+      return true;
+    }
 
     @Override
-    public String getColumnName(int column) { return ""; }
+    public int getColumnCount() {
+      return 1;
+    }
+
     @Override
-    public Class<?> getColumnClass(int columnIndex) { return NamedExpression.class; }
+    public String getColumnName(int column) {
+      return "";
+    }
+
     @Override
-    public int getRowCount() { return listCopy.length; }
+    public Class<?> getColumnClass(int columnIndex) {
+      return NamedExpression.class;
+    }
+
+    @Override
+    public int getRowCount() {
+      return listCopy.length;
+    }
 
     @Override
     public void expressionChanged(OutputExpressionsEvent event) {
       if (event.getType() == OutputExpressionsEvent.OUTPUT_EXPRESSION) {
-    	String name = event.getVariable();
+        String name = event.getVariable();
         int idx = -1;
         for (NamedExpression e : listCopy) {
           idx++;
@@ -180,27 +192,25 @@ class ExpressionTab extends AnalyzerTab {
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-      case VariableListEvent.ALL_REPLACED:
-        fireTableDataChanged();
-        return;
-      case VariableListEvent.ADD:
-        fireTableRowsInserted(idx, idx);
-        return;
-      case VariableListEvent.REMOVE:
-        fireTableRowsDeleted(idx, idx);
-        return;
-      case VariableListEvent.MOVE:
-        fireTableDataChanged();
-        return;
-      case VariableListEvent.REPLACE:
-        fireTableRowsUpdated(idx, idx);
-        return;
+        case VariableListEvent.ALL_REPLACED:
+        case VariableListEvent.MOVE:
+          fireTableDataChanged();
+          return;
+        case VariableListEvent.ADD:
+          fireTableRowsInserted(idx, idx);
+          return;
+        case VariableListEvent.REMOVE:
+          fireTableRowsDeleted(idx, idx);
+          return;
+        case VariableListEvent.REPLACE:
+          fireTableRowsUpdated(idx, idx);
+          return;
       }
     }
 
     void update() {
-        updateCopy();
-        fireTableDataChanged();
+      updateCopy();
+      fireTableDataChanged();
     }
 
     void updateCopy() {
@@ -220,14 +230,15 @@ class ExpressionTab extends AnalyzerTab {
       }
     }
   }
-    
+
   public class ExpressionTableCellRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
     public Component getTableCellRendererComponent(JTable table,
         Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      Color fg, bg;
+      Color fg;
+      Color bg;
       if (isSelected) {
         fg = table.getSelectionForeground();
         bg = table.getSelectionBackground();
@@ -241,8 +252,7 @@ class ExpressionTab extends AnalyzerTab {
       prettyView.setBackground(bg);
       int h = prettyView.getExpressionHeight();
       prettyView.setNotation(notation);
-      if (table.getRowHeight(row)!=h)
-    	  table.setRowHeight(row, h);
+      if (table.getRowHeight(row) != h) table.setRowHeight(row, h);
       return prettyView;
     }
   }
@@ -251,10 +261,13 @@ class ExpressionTab extends AnalyzerTab {
     private static final long serialVersionUID = 1L;
     final JTextField field = new JTextField();
     final JLabel label = new JLabel();
-    NamedExpression oldExpr, newExpr;
+    NamedExpression oldExpr;
+    NamedExpression newExpr;
 
     public ExpressionEditor() {
-      field.setBorder(BorderFactory.createCompoundBorder(field.getBorder(),BorderFactory.createEmptyBorder(1, 3, 1, 3)));
+      field.setBorder(
+          BorderFactory.createCompoundBorder(
+              field.getBorder(), BorderFactory.createEmptyBorder(1, 3, 1, 3)));
       BuddySupport.addLeft(label, field);
     }
 
@@ -266,13 +279,9 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public Component getTableCellEditorComponent(JTable table,
         Object value, boolean isSelected, int row, int column) {
-      newExpr = null;
-      oldExpr = (NamedExpression)value;
+      oldExpr = (NamedExpression) value;
       label.setText(" " + Expressions.variable(oldExpr.name) + " = ");
-      if (oldExpr.expr != null)
-        field.setText(oldExpr.expr.toString());
-      else
-        field.setText("");
+      field.setText((oldExpr.expr != null) ? oldExpr.expr.toString() : "");
       return field;
     }
 
@@ -317,22 +326,21 @@ class ExpressionTab extends AnalyzerTab {
       return false;
     }
   }
-  
+
   private class MyListener implements ItemListener {
 
-	@Override
-	public void itemStateChanged(ItemEvent event) {
-		if (event.getSource() == notationChoice) {
-	        Notation not = Notation.values()[notationChoice.getSelectedIndex()];
-	        if (not != notation) {
-	        	notation = not;
-	        	tableModel.fireTableStructureChanged();
-	        }
-		}
-	}
-	  
+    @Override
+    public void itemStateChanged(ItemEvent event) {
+      if (event.getSource() == notationChoice) {
+        Notation not = Notation.values()[notationChoice.getSelectedIndex()];
+        if (not != notation) {
+          notation = not;
+          tableModel.fireTableStructureChanged();
+        }
+      }
+    }
   }
-  
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
   private final JLabel notationLabel = new JLabel();
@@ -340,7 +348,7 @@ class ExpressionTab extends AnalyzerTab {
   private Notation notation = Notation.MATHEMATICAL;
   private final MyListener myListener = new MyListener();
   private final ExpressionView prettyView = new ExpressionView();
-  
+
   public ExpressionTab(AnalyzerModel model, LogisimMenuBar menubar) {
     localeChanged();
     this.model = model;
@@ -351,30 +359,30 @@ class ExpressionTab extends AnalyzerTab {
     table.setDefaultRenderer(NamedExpression.class, new ExpressionTableCellRenderer());
     table.setDefaultEditor(NamedExpression.class, new ExpressionEditor());
     table.setDragEnabled(true);
-    TransferHandler ccp = new ExpressionTransferHandler();
+    var ccp = new ExpressionTransferHandler();
     table.setTransferHandler(ccp);
     table.setDropMode(DropMode.ON);
-    
-    InputMap inputMap = table.getInputMap();
-    for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
-      KeyStroke accel = menubar.getAccelerator(item);
+
+    var inputMap = table.getInputMap();
+    for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
+      var accel = menubar.getAccelerator(item);
       inputMap.put(accel, item);
     }
 
-    ActionMap actionMap = table.getActionMap();
+    var actionMap = table.getActionMap();
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
+    var gb = new GridBagLayout();
+    var gc = new GridBagConstraints();
     setLayout(gb);
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    
+
     gc.weightx = 1.0;
     gc.gridx = 0;
     gc.gridy = GridBagConstraints.RELATIVE;
     gc.weighty = 0.0;
     gc.fill = GridBagConstraints.BOTH;
-    JPanel control = control();
+    var control = control();
     gb.setConstraints(control, gc);
     add(control);
 
@@ -382,11 +390,12 @@ class ExpressionTab extends AnalyzerTab {
     gb.setConstraints(infoLabel, gc);
     add(infoLabel);
 
-    JScrollPane scroll = new JScrollPane(table,
+    var scroll = new JScrollPane(table,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
-    gc.weighty=1.0;
+    scroll.setPreferredSize(
+        new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
+    gc.weighty = 1.0;
     gc.fill = GridBagConstraints.BOTH;
     gb.setConstraints(scroll, gc);
     add(scroll);
@@ -395,17 +404,19 @@ class ExpressionTab extends AnalyzerTab {
     gc.fill = GridBagConstraints.HORIZONTAL;
     gb.setConstraints(error, gc);
     add(error);
-    
-    FocusListener f = new FocusListener() {
-      public void focusGained(FocusEvent e) {
-        if (e.isTemporary()) return;
-        editHandler.computeEnabled();
-      }
-      public void focusLost(FocusEvent e) {
-        if (e.isTemporary()) return;
-        editHandler.computeEnabled();
-      }
-    };
+
+    var f =
+        new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            if (e.isTemporary()) return;
+            editHandler.computeEnabled();
+          }
+
+          public void focusLost(FocusEvent e) {
+            if (e.isTemporary()) return;
+            editHandler.computeEnabled();
+          }
+        };
     addFocusListener(f);
     table.addFocusListener(f);
 
@@ -456,9 +467,9 @@ class ExpressionTab extends AnalyzerTab {
 
   @Override
   void updateTab() {
-	  tableModel.update();
+    tableModel.update();
   }
-  
+
   @Override
   EditHandler getEditHandler() {
     return editHandler;
@@ -481,6 +492,7 @@ class ExpressionTab extends AnalyzerTab {
       setEnabled(LogisimMenuBar.ADD_CONTROL, false);
       setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
       Object action = e.getSource();
@@ -496,7 +508,7 @@ class ExpressionTab extends AnalyzerTab {
     public boolean importData(TransferHandler.TransferSupport info) {
       String s;
       try {
-        s = (String)info.getTransferable().getTransferData(DataFlavor.stringFlavor);
+        s = (String) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
       } catch (Exception e) {
         setError(S.getter("cantImportFormatError"));
         return false;
@@ -515,33 +527,30 @@ class ExpressionTab extends AnalyzerTab {
 
       int idx = -1;
       if (table.getRowCount() == 0) {
-          return false;
-      } if (table.getRowCount() == 1) {
-          idx = 0;
+        return false;
+      }
+      if (table.getRowCount() == 1) {
+        idx = 0;
       } else if (info.isDrop()) {
         try {
-          JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
+          JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
           idx = dl.getRow();
         } catch (ClassCastException ignored) {
         }
       } else {
-          idx = table.getSelectedRow();
-          if (idx < 0 && Expression.isAssignment(expr)) {
-            String v = Expression.getAssignmentVariable(expr);
-            for (idx = table.getRowCount()-1; idx >= 0; idx--) {
-              NamedExpression ne = (NamedExpression)table.getValueAt(idx, 0);
-              if (v.equals(ne.name))
-                break;
-            }
+        idx = table.getSelectedRow();
+        if (idx < 0 && Expression.isAssignment(expr)) {
+          String v = Expression.getAssignmentVariable(expr);
+          for (idx = table.getRowCount() - 1; idx >= 0; idx--) {
+            NamedExpression ne = (NamedExpression) table.getValueAt(idx, 0);
+            if (v.equals(ne.name)) break;
           }
+        }
       }
-      if (idx < 0 || idx >= table.getRowCount())
-        return false;
+      if (idx < 0 || idx >= table.getRowCount()) return false;
+      if (Expression.isAssignment(expr)) expr = Expression.getAssignmentExpression(expr);
 
-      if (Expression.isAssignment(expr))
-        expr = Expression.getAssignmentExpression(expr);
-
-      NamedExpression ne = (NamedExpression)table.getValueAt(idx, 0);
+      NamedExpression ne = (NamedExpression) table.getValueAt(idx, 0);
       ne.exprString = s;
       ne.expr = expr;
       ne.err = null;
@@ -554,7 +563,7 @@ class ExpressionTab extends AnalyzerTab {
       int idx = table.getSelectedRow();
       if (idx < 0)
         return null;
-      NamedExpression ne = (NamedExpression)table.getValueAt(idx, 0);
+      NamedExpression ne = (NamedExpression) table.getValueAt(idx, 0);
       String s = ne.expr != null ? ne.expr.toString(notation) : ne.err;
       return s == null ? null : new StringSelection(ne.name + " = " + s);
     }
@@ -576,72 +585,72 @@ class ExpressionTab extends AnalyzerTab {
     return printHandler;
   }
 
-  final PrintHandler printHandler = new PrintHandler() {
-    @Override
-    public Dimension getExportImageSize() {
-      int width = table.getWidth();
-      int height = 14;
-      int n = table.getRowCount();
-      for (int i = 0; i < n; i++) {
-        NamedExpression ne = (NamedExpression)table.getValueAt(i, 0);
-        prettyView.setWidth(width);
-        prettyView.setExpression(ne);
-        height += prettyView.getExpressionHeight() + 14;
-      }
-      return new Dimension(width + 6, height);
-    }
-
-    @Override
-    public void paintExportImage(BufferedImage img, Graphics2D g) {
-      int width = img.getWidth();
-      int height = img.getHeight();
-      g.setClip(0, 0, width, height);
-      g.translate(6/2, 14);
-      int n = table.getRowCount();
-      for (int i = 0; i < n; i++) {
-        NamedExpression ne = (NamedExpression)table.getValueAt(i, 0);
-        prettyView.setForeground(Color.BLACK);
-        prettyView.setBackground(Color.WHITE);
-        prettyView.setWidth(width - 6);
-        prettyView.setExpression(ne);
-        int rh = prettyView.getExpressionHeight();
-        prettyView.setSize(new Dimension(width-6, rh));
-        prettyView.paintComponent(g);
-        g.translate(0, rh + 14);
-      }
-    }
-
-    @Override
-    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
-
-      int width = (int)Math.ceil(w);
-      g.translate(6/2, 14/2);
-
-      int n = table.getRowCount();
-      double y = 0;
-      int pg = 0;
-      for (int i = 0; i < n; i++) {
-        NamedExpression ne = (NamedExpression)table.getValueAt(i, 0);
-        prettyView.setWidth(width - 6);
-        prettyView.setForeground(Color.BLACK);
-        prettyView.setBackground(Color.WHITE);
-        prettyView.setExpression(ne);
-        int rh = prettyView.getExpressionHeight();
-        if (y > 0 && y + rh > h) {
-          // go to next page
-          y = 0;
-          pg++;
-          if (pg > pageNum)
-            return Printable.PAGE_EXISTS; // done the page we wanted
+  final PrintHandler printHandler =
+      new PrintHandler() {
+        @Override
+        public Dimension getExportImageSize() {
+          int width = table.getWidth();
+          int height = 14;
+          int n = table.getRowCount();
+          for (int i = 0; i < n; i++) {
+            NamedExpression ne = (NamedExpression) table.getValueAt(i, 0);
+            prettyView.setWidth(width);
+            prettyView.setExpression(ne);
+            height += prettyView.getExpressionHeight() + 14;
+          }
+          return new Dimension(width + 6, height);
         }
-        if (pg == pageNum) {
-          prettyView.setSize(new Dimension(width-6, rh));
-          prettyView.paintComponent(g);
-          g.translate(0, rh + 14);
+
+        @Override
+        public void paintExportImage(BufferedImage img, Graphics2D g) {
+          int width = img.getWidth();
+          int height = img.getHeight();
+          g.setClip(0, 0, width, height);
+          g.translate(6 / 2, 14);
+          int n = table.getRowCount();
+          for (int i = 0; i < n; i++) {
+            NamedExpression ne = (NamedExpression) table.getValueAt(i, 0);
+            prettyView.setForeground(Color.BLACK);
+            prettyView.setBackground(Color.WHITE);
+            prettyView.setWidth(width - 6);
+            prettyView.setExpression(ne);
+            int rh = prettyView.getExpressionHeight();
+            prettyView.setSize(new Dimension(width - 6, rh));
+            prettyView.paintComponent(g);
+            g.translate(0, rh + 14);
+          }
         }
-        y += rh + 14;
-      }
-      return (pg < pageNum ? Printable.NO_SUCH_PAGE : Printable.PAGE_EXISTS);
-    }
-  };
+
+        @Override
+        public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+
+          int width = (int) Math.ceil(w);
+          g.translate(6 / 2, 14 / 2);
+
+          int n = table.getRowCount();
+          double y = 0;
+          int pg = 0;
+          for (int i = 0; i < n; i++) {
+            NamedExpression ne = (NamedExpression) table.getValueAt(i, 0);
+            prettyView.setWidth(width - 6);
+            prettyView.setForeground(Color.BLACK);
+            prettyView.setBackground(Color.WHITE);
+            prettyView.setExpression(ne);
+            int rh = prettyView.getExpressionHeight();
+            if (y > 0 && y + rh > h) {
+              // go to next page
+              y = 0;
+              pg++;
+              if (pg > pageNum) return Printable.PAGE_EXISTS; // done the page we wanted
+            }
+            if (pg == pageNum) {
+              prettyView.setSize(new Dimension(width - 6, rh));
+              prettyView.paintComponent(g);
+              g.translate(0, rh + 14);
+            }
+            y += rh + 14;
+          }
+          return (pg < pageNum ? Printable.NO_SUCH_PAGE : Printable.PAGE_EXISTS);
+        }
+      };
 }

@@ -70,20 +70,23 @@ import javax.swing.table.TableCellEditor;
 
 public class SelectionList extends JTable {
 
-  private class SelectionListModel
-    extends AbstractTableModel implements Model.Listener {
+  private class SelectionListModel extends AbstractTableModel implements Model.Listener {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void modeChanged(Model.Event event) { }
+    public void modeChanged(Model.Event event) {}
+
     @Override
-    public void signalsExtended(Model.Event event) { }
+    public void signalsExtended(Model.Event event) {}
+
     @Override
-    public void signalsReset(Model.Event event) { }
+    public void signalsReset(Model.Event event) {}
+
     @Override
-    public void filePropertyChanged(Model.Event event) { }
+    public void filePropertyChanged(Model.Event event) {}
+
     @Override
-    public void historyLimitChanged(Model.Event event) { }
+    public void historyLimitChanged(Model.Event event) {}
 
     @Override
     public void selectionChanged(Model.Event event) {
@@ -91,34 +94,50 @@ public class SelectionList extends JTable {
     }
 
     @Override
-    public int getColumnCount() { return 1; }
+    public int getColumnCount() {
+      return 1;
+    }
 
     @Override
-    public String getColumnName(int column) { return ""; }
-    @Override
-    public Class<?> getColumnClass(int columnIndex) { return SignalInfo.class; }
+    public String getColumnName(int column) {
+      return "";
+    }
 
     @Override
-    public int getRowCount() { return logModel == null ? 0 : logModel.getSignalCount(); }
-    @Override
-    public Object getValueAt(int row, int col) { return logModel.getItem(row); }
-    @Override
-    public void setValueAt(Object o, int row, int column) { /* nothing to do */ }
+    public Class<?> getColumnClass(int columnIndex) {
+      return SignalInfo.class;
+    }
 
     @Override
-    public boolean isCellEditable(int row, int column) { return true; }
+    public int getRowCount() {
+      return logModel == null ? 0 : logModel.getSignalCount();
+    }
 
+    @Override
+    public Object getValueAt(int row, int col) {
+      return logModel.getItem(row);
+    }
+
+    @Override
+    public void setValueAt(Object o, int row, int column) {
+      /* nothing to do */
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+      return true;
+    }
   }
 
   private static class SignalInfoRenderer extends DefaultTableCellRenderer {
     @Override
-    public java.awt.Component getTableCellRendererComponent(JTable table,
-        Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      java.awt.Component ret = super.getTableCellRendererComponent(table,
-          value, isSelected, hasFocus, row, column);
+    public java.awt.Component getTableCellRendererComponent(
+        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      java.awt.Component ret =
+          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       if (ret instanceof JLabel && value instanceof SignalInfo) {
         JLabel label = (JLabel) ret;
-        SignalInfo item = (SignalInfo)value;
+        SignalInfo item = (SignalInfo) value;
         label.setIcon(item.icon);
         label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
       }
@@ -143,26 +162,27 @@ public class SelectionList extends JTable {
 
       ButtonGroup g = new ButtonGroup();
       for (RadixOption r : RadixOption.OPTIONS) {
-        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString()); 
+        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString());
         radixMenuItems.put(r, m);
         popup.add(m);
         g.add(m);
-        m.addActionListener(e -> {
-          for (SignalInfo s : items)
-            logModel.setRadix(s, r);
-          if (item != null)
-            label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
-          SelectionList.this.repaint();
-        });
+        m.addActionListener(
+            e -> {
+              for (SignalInfo s : items) logModel.setRadix(s, r);
+              if (item != null)
+                label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
+              SelectionList.this.repaint();
+            });
       }
 
       popup.addSeparator();
       JMenuItem m = new JMenuItem("Delete");
       popup.add(m);
-      m.addActionListener(e -> {
-        cancelCellEditing();
-        removeSelected();
-      });
+      m.addActionListener(
+          e -> {
+            cancelCellEditing();
+            removeSelected();
+          });
 
       button.setMargin(new Insets(0, 0, 0, 0));
       button.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -186,8 +206,8 @@ public class SelectionList extends JTable {
     }
 
     @Override
-    public java.awt.Component getTableCellEditorComponent(JTable table,
-        Object value, boolean isSelected, int row, int column) {
+    public java.awt.Component getTableCellEditorComponent(
+        JTable table, Object value, boolean isSelected, int row, int column) {
       int margin = getColumnModel().getColumnMargin();
       label.setBorder(BorderFactory.createEmptyBorder(0, margin, 0, margin));
 
@@ -197,7 +217,7 @@ public class SelectionList extends JTable {
       label.setMaximumSize(new Dimension(d.width - button.getWidth(), d.height));
 
       panel.setBackground(isSelected ? getSelectionBackground() : getBackground());
-      item = (SignalInfo)value;
+      item = (SignalInfo) value;
       items = getSelectedValuesList();
       if (!items.contains(item)) {
         items.clear();
@@ -206,19 +226,20 @@ public class SelectionList extends JTable {
       radixMenuItems.get(item.getRadix()).setSelected(true);
       label.setIcon(item.icon);
       label.setText(item.toString() + " [" + item.getRadix().toDisplayString() + "]");
-      //width.setSelectedItem(item.getRadix());
+      // width.setSelectedItem(item.getRadix());
       return panel;
     }
 
-     @Override
-     public boolean stopCellEditing() {
-       super.stopCellEditing();
-       return true;
-     }
-     @Override
-     public boolean isCellEditable(EventObject e) {
-       return true;
-     }
+    @Override
+    public boolean stopCellEditing() {
+      super.stopCellEditing();
+      return true;
+    }
+
+    @Override
+    public boolean isCellEditable(EventObject e) {
+      return true;
+    }
   }
 
   private static final long serialVersionUID = 1L;
@@ -244,11 +265,13 @@ public class SelectionList extends JTable {
     InputMap inputMap = getInputMap();
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
     ActionMap actionMap = getActionMap();
-    actionMap.put("Delete", new AbstractAction() {
-      public void actionPerformed(ActionEvent e) {
-        removeSelected();
-      }
-    });
+    actionMap.put(
+        "Delete",
+        new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            removeSelected();
+          }
+        });
   }
 
   void removeSelected() {
@@ -259,7 +282,7 @@ public class SelectionList extends JTable {
     }
     int count = logModel.remove(items);
     if (count > 0 && logModel.getSignalCount() > 0) {
-      idx = Math.min(idx+1-count, logModel.getSignalCount()-1);
+      idx = Math.min(idx + 1 - count, logModel.getSignalCount() - 1);
       setRowSelectionInterval(idx, idx);
     }
     repaint();
@@ -272,11 +295,9 @@ public class SelectionList extends JTable {
   public void setLogModel(Model m) {
     if (logModel != m) {
       SelectionListModel listModel = (SelectionListModel) getModel();
-      if (logModel != null)
-        logModel.removeModelListener(listModel);
+      if (logModel != null) logModel.removeModelListener(listModel);
       logModel = m;
-      if (logModel != null)
-        logModel.addModelListener(listModel);
+      if (logModel != null) logModel.addModelListener(listModel);
       listModel.selectionChanged(null);
     }
   }
@@ -284,8 +305,7 @@ public class SelectionList extends JTable {
   SignalInfo.List getSelectedValuesList() {
     SignalInfo.List items = new SignalInfo.List();
     int[] sel = getSelectedRows();
-    for (int i : sel)
-      items.add(logModel.getItem(i));
+    for (int i : sel) items.add(logModel.getItem(i));
     return items;
   }
 
@@ -307,8 +327,7 @@ public class SelectionList extends JTable {
 
     @Override
     public void exportDone(JComponent comp, Transferable trans, int action) {
-      if (removing)
-        logModel.remove(getSelectedValuesList());
+      if (removing) logModel.remove(getSelectedValuesList());
       removing = false;
     }
 
@@ -322,12 +341,11 @@ public class SelectionList extends JTable {
       removing = false;
       try {
         SignalInfo.List items =
-            (SignalInfo.List)support.getTransferable().getTransferData(
-                SignalInfo.List.dataFlavor);
+            (SignalInfo.List) support.getTransferable().getTransferData(SignalInfo.List.dataFlavor);
         int newIdx = logModel.getSignalCount();
         if (support.isDrop()) {
           try {
-            JTable.DropLocation dl = (JTable.DropLocation)support.getDropLocation();
+            JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
             newIdx = Math.min(dl.getRow(), logModel.getSignalCount());
           } catch (ClassCastException ignored) {
           }
@@ -342,8 +360,7 @@ public class SelectionList extends JTable {
   }
 
   private void addOrMove(SignalInfo.List items, int idx) {
-    if (items == null || items.size() == 0)
-      return;
+    if (items == null || items.size() == 0) return;
     logModel.addOrMove(items, idx);
     clearSelection();
     for (SignalInfo item : items) {
@@ -363,13 +380,10 @@ public class SelectionList extends JTable {
     super.paintComponent(g);
 
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-    Graphics2D g2 = (Graphics2D)g;
+    Graphics2D g2 = (Graphics2D) g;
     g2.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint(
-        RenderingHints.KEY_ANTIALIASING,
-        RenderingHints.VALUE_ANTIALIAS_ON);
+        RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
     Font f = g.getFont();
     Color c = g.getColor();

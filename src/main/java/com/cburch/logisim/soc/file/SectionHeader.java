@@ -46,7 +46,7 @@ public class SectionHeader {
   public static final int SHF_ALLOC = 2;
   public static final int SHF_EXECINSTR = 4;
   public static final int SHF_MASKPROC = 0xf0000000;
-  
+
   public static final int SHT_NULL = 0;
   public static final int SHT_PROGBITS = 1;
   public static final int SHT_SYMTAB = 2;
@@ -63,7 +63,7 @@ public class SectionHeader {
   public static final int SHT_HIPROC = 0x7fffffff;
   public static final int SHT_LOUSER = 0x80000000;
   public static final int SHT_HIUSER = 0xffffffff;
-  
+
 
   private final Integer sh_name;
   private final Integer sh_type;
@@ -78,15 +78,15 @@ public class SectionHeader {
   private final boolean is32Bit;
   private String name;
   private final ArrayList<SymbolTable> symbols;
-  
-  public SectionHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
+
+  public SectionHeader(byte[] buffer, boolean is32Bit, boolean isLittleEndian, int offset) {
     this.is32Bit = is32Bit;
     int index = offset;
     int increment = is32Bit ? 4 : 8;
     sh_name = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
     sh_type = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
-    index+=4;
+    index += 4;
     sh_flags = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
     sh_addr = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
@@ -98,54 +98,83 @@ public class SectionHeader {
     sh_link = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
     sh_info = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
-    index+=4;
+    index += 4;
     sh_addrAlign = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
     sh_entsize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     name = "";
     symbols = new ArrayList<>();
   }
-  
+
   public SectionHeader(String name) {
     symbols = new ArrayList<>();
     this.name = name;
     is32Bit = true;
     sh_name = -1;
     sh_type = SHT_PROGBITS;
-    sh_flags = (long)SHF_ALLOC;
-    if (!name.equals(".rodata")) sh_flags |= (long)SHF_WRITE;
+    sh_flags = (long) SHF_ALLOC;
+    if (!name.equals(".rodata")) sh_flags |= (long) SHF_WRITE;
     sh_addr = 0L;
     sh_offset = -1L;
     sh_size = -1L;
     sh_link = 0;
     sh_info = 0;
     sh_addrAlign = 0L;
-    sh_entsize = 0L; 
+    sh_entsize = 0L;
   }
-  
-  public void setName(String val) { name = val; }
-  public String getName() { return name; }
-  public void addSymbol( SymbolTable info ) { symbols.add(info); }
-  public ArrayList<SymbolTable> getSymbols() { return symbols; }
-  public boolean isWritable() { return (sh_flags&(long)SHF_WRITE) != 0L; }
-  public boolean isAllocated() { return (sh_flags&(long)SHF_ALLOC) != 0L; }
-  public boolean isExecutable() { return (sh_flags&(long)SHF_EXECINSTR) != 0L; }
-  public void setStartAddress(long addr) {sh_addr = addr;}
-  public void addExecutableFlag() {sh_flags |= (long) SHF_EXECINSTR; }
-  public void setSize(long size) {sh_size = size;}
-  
+
+  public void setName(String val) {
+    name = val;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void addSymbol(SymbolTable info) {
+    symbols.add(info);
+  }
+
+  public ArrayList<SymbolTable> getSymbols() {
+    return symbols;
+  }
+
+  public boolean isWritable() {
+    return (sh_flags & (long) SHF_WRITE) != 0L;
+  }
+
+  public boolean isAllocated() {
+    return (sh_flags & (long) SHF_ALLOC) != 0L;
+  }
+
+  public boolean isExecutable() {
+    return (sh_flags & (long) SHF_EXECINSTR) != 0L;
+  }
+
+  public void setStartAddress(long addr) {
+    sh_addr = addr;
+  }
+
+  public void addExecutableFlag() {
+    sh_flags |= (long) SHF_EXECINSTR;
+  }
+
+  public void setSize(long size) {
+    sh_size = size;
+  }
+
   public Object getValue(int identifier) {
     switch (identifier) {
-    case SH_NAME : return sh_name;
-    case SH_TYPE : return sh_type;
-    case SH_FLAGS : return ElfHeader.returnCorrectValue(sh_flags, is32Bit);
-    case SH_ADDR : return ElfHeader.returnCorrectValue(sh_addr, is32Bit);
-    case SH_OFFSET : return ElfHeader.returnCorrectValue(sh_offset, is32Bit);
-    case SH_SIZE : return ElfHeader.returnCorrectValue(sh_size, is32Bit);
-    case SH_LINK : return sh_link;
-    case SH_INFO : return sh_info;
-    case SH_ADDRALIGN : return ElfHeader.returnCorrectValue(sh_addrAlign, is32Bit);
-    case SH_ENTSIZE : return ElfHeader.returnCorrectValue(sh_entsize, is32Bit);
+      case SH_NAME : return sh_name;
+      case SH_TYPE : return sh_type;
+      case SH_FLAGS : return ElfHeader.returnCorrectValue(sh_flags, is32Bit);
+      case SH_ADDR : return ElfHeader.returnCorrectValue(sh_addr, is32Bit);
+      case SH_OFFSET : return ElfHeader.returnCorrectValue(sh_offset, is32Bit);
+      case SH_SIZE : return ElfHeader.returnCorrectValue(sh_size, is32Bit);
+      case SH_LINK : return sh_link;
+      case SH_INFO : return sh_info;
+      case SH_ADDRALIGN : return ElfHeader.returnCorrectValue(sh_addrAlign, is32Bit);
+      case SH_ENTSIZE : return ElfHeader.returnCorrectValue(sh_entsize, is32Bit);
     }
     return null;
   }

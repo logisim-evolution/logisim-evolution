@@ -38,6 +38,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.beans.PropertyChangeEvent;
@@ -195,7 +196,7 @@ public class LayoutEditHandler extends EditHandler
     for (Library sub : proj.getLogisimFile().getLibraries()) {
       if (sub instanceof Base) {
         Base base = (Base) sub;
-        Tool tool = base.getTool("Edit Tool");
+        Tool tool = base.getTool(EditTool._ID);
         if (tool != null) proj.setTool(tool);
       }
     }

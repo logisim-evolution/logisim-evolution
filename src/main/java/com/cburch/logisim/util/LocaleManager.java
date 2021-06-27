@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.swing.JComponent;
@@ -166,7 +167,7 @@ public class LocaleManager {
     }
     return ret.toString();
   }
-  
+
   private static void updateButtonText() {
     UIManager.put("FileChooser.openDialogTitleText", S.get("LMopenDialogTitleText"));
     UIManager.put("FileChooser.saveDialogTitleText", S.get("LMsaveDialogTitleText"));
@@ -176,7 +177,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.homeFolderToolTipText", S.get("LMhomeFolderToolTipText"));
     UIManager.put("FileChooser.newFolderToolTipText", S.get("LMnewFolderToolTipText"));
     UIManager.put("FileChooser.listViewButtonToolTipText", S.get("LMlistViewButtonToolTipText"));
-    UIManager.put("FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
     UIManager.put("FileChooser.fileNameHeaderText", S.get("LMfileNameHeaderText"));
     UIManager.put("FileChooser.fileSizeHeaderText", S.get("LMfileSizeHeaderText"));
     UIManager.put("FileChooser.fileTypeHeaderText", S.get("LMfileTypeHeaderText"));
@@ -189,7 +191,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.saveButtonText", S.get("LMsaveButtonText"));
     UIManager.put("FileChooser.saveButtonToolTipText", S.get("LMsaveButtonToolTipText"));
     UIManager.put("FileChooser.directoryOpenButtonText", S.get("LMdirectoryOpenButtonText"));
-    UIManager.put("FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
     UIManager.put("FileChooser.cancelButtonText", S.get("LMcancelButtonText"));
     UIManager.put("FileChooser.cancelButtonToolTipText", S.get("LMcancelButtonToolTipText"));
     UIManager.put("FileChooser.newFolderErrorText", S.get("LMnewFolderErrorText"));
@@ -217,11 +220,7 @@ public class LocaleManager {
         }
       }
       if (select == null) {
-        if (backup == null) {
-          select = new Locale("en");
-        } else {
-          select = backup;
-        }
+        select = Objects.requireNonNullElseGet(backup, () -> new Locale("en"));
       }
 
       curLocale = select;
@@ -259,14 +258,14 @@ public class LocaleManager {
 
   private static Locale curLocale = null;
   // instance members
-  private final String dir_name;
-  private final String file_start;
+  private final String dirName;
+  private final String fileStart;
   private ResourceBundle settings = null;
   private ResourceBundle locale = null;
 
-  public LocaleManager(String dir_name, String file_start) {
-    this.dir_name = dir_name;
-    this.file_start = file_start;
+  public LocaleManager(String dirName, String fileStart) {
+    this.dirName = dirName;
+    this.fileStart = fileStart;
     loadDefault();
     managers.add(this);
   }
@@ -344,7 +343,7 @@ public class LocaleManager {
   private void loadDefault() {
     if (settings == null) {
       try {
-        settings = ResourceBundle.getBundle(dir_name + "/" + SETTINGS_NAME);
+        settings = ResourceBundle.getBundle(dirName + "/" + SETTINGS_NAME);
       } catch (java.util.MissingResourceException ignored) {
       }
     }
@@ -366,7 +365,7 @@ public class LocaleManager {
   }
 
   private void loadLocale(Locale loc) {
-    String bundleName = dir_name + "/strings/" + file_start + "/" + file_start;
+    String bundleName = dirName + "/strings/" + fileStart + "/" + fileStart;
     locale = ResourceBundle.getBundle(bundleName, loc);
   }
 }

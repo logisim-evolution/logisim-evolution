@@ -29,12 +29,13 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.util.LibraryUtil;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Library {
   private boolean hidden = false;
-	
+
   public boolean contains(ComponentFactory query) {
     return indexOf(query) >= 0;
   }
@@ -52,6 +53,13 @@ public abstract class Library {
     return getName();
   }
 
+  /**
+   * Returns unique library identifier as specified in library static const "_ID" attribute.
+   */
+  public String getName() {
+    return LibraryUtil.getName(getClass());
+  }
+
   public List<Library> getLibraries() {
     return Collections.emptyList();
   }
@@ -66,10 +74,6 @@ public abstract class Library {
   }
 
   public abstract boolean removeLibrary(String name);
-
-  public String getName() {
-    return getClass().getName();
-  }
 
   public Tool getTool(String name) {
     for (Tool tool : getTools()) {
@@ -97,11 +101,11 @@ public abstract class Library {
   public boolean isDirty() {
     return false;
   }
-  
+
   public boolean isHidden() {
-    return hidden;  
+    return hidden;
   }
-  
+
   public void setHidden() {
     hidden = true;
   }

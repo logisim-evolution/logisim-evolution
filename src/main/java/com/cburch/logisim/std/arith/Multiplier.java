@@ -52,18 +52,25 @@ import java.awt.Graphics;
 import java.math.BigInteger;
 
 public class Multiplier extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Multiplier";
 
   public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
   public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
   public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
 
   static BigInteger extend(int w, long v, boolean unsigned) {
-	long mask = w == 64 ? 0 : (-1L) << w;
-	mask ^= 0xFFFFFFFFFFFFFFFFL;
-	long value = v & mask;
-	if (!unsigned && (value >> (w-1)) != 0) value |= ~mask;
-	if (unsigned) return new BigInteger(Long.toUnsignedString(value));
-	return new BigInteger(Long.toString(value));
+    long mask = w == 64 ? 0 : (-1L) << w;
+    mask ^= 0xFFFFFFFFFFFFFFFFL;
+    long value = v & mask;
+    if (!unsigned && (value >> (w - 1)) != 0) value |= ~mask;
+    if (unsigned) return new BigInteger(Long.toUnsignedString(value));
+    return new BigInteger(Long.toString(value));
   }
 
   static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
@@ -74,8 +81,8 @@ public class Multiplier extends InstanceFactory {
       BigInteger bb = extend(w, b.toLongValue(), unsigned);
       BigInteger cc = extend(w, c_in.toLongValue(), unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
-  	  long mask = w == 64 ? 0 : (-1L) << w;
-  	  mask ^= 0xFFFFFFFFFFFFFFFFL;
+      long mask = w == 64 ? 0 : (-1L) << w;
+      mask ^= 0xFFFFFFFFFFFFFFFFL;
       long lo = rr.and(BigInteger.valueOf(mask)).longValue();
       long hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).longValue();
       return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
@@ -136,7 +143,7 @@ public class Multiplier extends InstanceFactory {
   private static int getKnown(Value[] vals) {
     int ret = 0;
     for (int i = 0; i < vals.length; i++) {
-      int val = (int)vals[i].toLongValue();
+      int val = (int) vals[i].toLongValue();
       if (val < 0) return ret;
       ret |= val << i;
     }
@@ -155,7 +162,7 @@ public class Multiplier extends InstanceFactory {
   public static final int C_OUT = 4;
 
   public Multiplier() {
-    super("Multiplier", S.getter("multiplierComponent"));
+    super(_ID, S.getter("multiplierComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
@@ -187,12 +194,12 @@ public class Multiplier extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == MODE_ATTR) instance.fireInvalidated();
-  }  
-  
+  }
+
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();

@@ -45,32 +45,32 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
-public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveListener,LocaleListener,MouseListener {
+public class SocMemMapModel extends AbstractTableModel
+    implements SocBusSlaveListener, LocaleListener, MouseListener {
 
   private static final long serialVersionUID = 1L;
   private static final long longMask = Long.parseUnsignedLong("FFFFFFFF", 16);
-  
-  public static class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
 
+  public static class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
 
-	public memMapHeaderRenderer() {
+    public memMapHeaderRenderer() {
       setForeground(Color.BLUE);
       setBorder(BorderFactory.createEtchedBorder());
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column) {
+    public Component getTableCellRendererComponent(
+        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       if (column < 2)
         setHorizontalAlignment(JLabel.CENTER);
       else
-    	setHorizontalAlignment(JLabel.LEFT);
+        setHorizontalAlignment(JLabel.LEFT);
       setText(value.toString());
       return this;
     }
   }
-  
+
   public static class SlaveInfoRenderer extends JLabel implements TableCellRenderer {
 
     private static final long serialVersionUID = 1L;
@@ -80,24 +80,26 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column) {
-    	SlaveInfo s = (SlaveInfo) value;
-    	setBackground(s.getColor());
-    	setForeground(s.getTextColor());
-    	switch (column) {
-    	  case 0 : setText(String.format("0x%08X", s.getStartAddress()));
-    	           setHorizontalAlignment(JLabel.CENTER);
-    	           break;
-    	  case 1 : setText(String.format("0x%08X", s.getEndAddress()));
-    	           setHorizontalAlignment(JLabel.CENTER);
-    	           break;
-    	  default: setText(s.getName());
-    	           setHorizontalAlignment(JLabel.LEFT);
-    	}
-        return this;
+    public Component getTableCellRendererComponent(
+        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      SlaveInfo s = (SlaveInfo) value;
+      setBackground(s.getColor());
+      setForeground(s.getTextColor());
+      switch (column) {
+        case 0:
+          setText(String.format("0x%08X", s.getStartAddress()));
+          setHorizontalAlignment(JLabel.CENTER);
+          break;
+        case 1:
+          setText(String.format("0x%08X", s.getEndAddress()));
+          setHorizontalAlignment(JLabel.CENTER);
+          break;
+        default:
+          setText(s.getName());
+          setHorizontalAlignment(JLabel.LEFT);
+      }
+      return this;
     }
-      
   }
 
   public static class SlaveInfo {
@@ -105,90 +107,90 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     private final SocBusSlaveInterface slave;
     private long start;
     private long end;
-    
+
     public SlaveInfo(SocBusSlaveInterface s) {
       slave = s;
       hasOverlap = false;
     }
-    
-    public SlaveInfo(long start , long end) {
+
+    public SlaveInfo(long start, long end) {
       slave = null;
       hasOverlap = false;
       this.start = start;
       this.end = end;
     }
-    
+
     public void setOverlap() {
       hasOverlap = true;
     }
-    
+
     public boolean hasMemoryOverlap() {
       return hasOverlap;
     }
-    
+
     public long getStartAddress() {
-      return (slave == null) ? start : ((long)slave.getStartAddress())&longMask;
+      return (slave == null) ? start : ((long) slave.getStartAddress()) & longMask;
     }
-    
+
     public long getEndAddress() {
       if (slave == null)
         return end;
-      long start = ((long)slave.getStartAddress())&longMask;
-      long size = ((long)slave.getMemorySize())&longMask;
-      return start+size-1;
+      long start = ((long) slave.getStartAddress()) & longMask;
+      long size = ((long) slave.getMemorySize()) & longMask;
+      return start + size - 1;
     }
-    
+
     public String getName() {
       return slave == null ? S.get("SocMemMapEmpty") : slave.getName();
     }
-    
+
     public boolean contains(long address) {
       boolean ret = address >= getStartAddress() && address <= getEndAddress();
       hasOverlap |= ret;
       return ret;
     }
-    
+
     public Color getColor() {
       if (slave == null)
         return Color.LIGHT_GRAY;
       return hasOverlap ? Color.RED : Color.GREEN;
     }
-    
+
     public Color getTextColor() {
       if (hasOverlap)
         return Color.LIGHT_GRAY;
       return Color.BLACK;
     }
-    
+
     public InstanceComponent getComponent() {
       if (slave == null)
         return null;
       return slave.getComponent();
     }
   }
-  
+
   private static class SlaveMap {
     private final LinkedList<SlaveInfo> slaves;
-    
+
     public SlaveMap() {
       slaves = new LinkedList<>();
     }
-    
+
     public void add(SocBusSlaveInterface s) {
       SlaveInfo slave = new SlaveInfo(s);
       add(slave);
     }
-    
+
     public void add(SlaveInfo slave) {
       if (slaves.isEmpty()) {
         slaves.add(slave);
         return;
       }
-      for (int i = 0 ; i < slaves.size() ; i++) {
+      for (int i = 0; i < slaves.size(); i++) {
         SlaveInfo cur = slaves.get(i);
         if (cur.contains(slave.getStartAddress()))
           slave.setOverlap();
-        if (cur.getStartAddress()>= slave.getStartAddress()) {
+        if (cur.getStartAddress() >= slave.getStartAddress()) {
           if (slave.contains(cur.getStartAddress()))
             cur.setOverlap();
           slaves.add(i, slave);
@@ -197,28 +199,28 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
       }
       slaves.add(slave);
     }
-    
+
     public SlaveInfo getSlave(int index) {
       if (index < 0 || index >= slaves.size())
         return null;
       return slaves.get(index);
     }
-    
+
     public int size() {
       return slaves.size();
     }
-    
+
     public void clear() {
       slaves.clear();
     }
   }
-  
+
   private final ArrayList<SocBusSlaveInterface> slaves;
   private final SlaveMap slaveMap;
   private final SlaveInfoRenderer slaveRenderer;
   private final memMapHeaderRenderer headRenderer;
   private InstanceComponent marked;
-  
+
   public SocMemMapModel() {
     super();
     LocaleManager.addLocaleListener(this);
@@ -237,7 +239,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
       rebuild();
     }
   }
-      
+
   public void removeSocBusSlave(SocBusSlaveInterface slave) {
     if (slaves.contains(slave)) {
       slaves.remove(slave);
@@ -245,20 +247,20 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
       rebuild();
     }
   }
-  
+
   public ArrayList<SocBusSlaveInterface> getSlaves() {
     return slaves;
   }
-  
+
   public SlaveInfoRenderer getCellRender() {
     return slaveRenderer;
   }
-  
+
   public memMapHeaderRenderer getHeaderRenderer() {
     return headRenderer;
   }
-  
-  
+
+
   @Override
   public String getColumnName(int col) {
     switch (col) {
@@ -268,7 +270,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     }
     return "";
   }
-  
+
   @Override
   public int getRowCount() {
     return slaveMap.size();
@@ -283,15 +285,21 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
   public Object getValueAt(int rowIndex, int columnIndex) {
     return slaveMap.getSlave(rowIndex);
   }
-  
-  @Override
-  public boolean isCellEditable(int row, int col) { return false; }
 
   @Override
-  public void labelChanged() { rebuild(); }
+  public boolean isCellEditable(int row, int col) {
+    return false;
+  }
 
   @Override
-  public void memoryMapChanged() { rebuild(); }
+  public void labelChanged() {
+    rebuild();
+  }
+
+  @Override
+  public void memoryMapChanged() {
+    rebuild();
+  }
 
   private void rebuild() {
     slaveMap.clear();
@@ -303,12 +311,12 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
       /* now we fill in the blanks */
       ArrayList<SlaveInfo> empties = new ArrayList<>();
       long addr = 0;
-      for (int i = 0 ; i < slaveMap.size() ; i++) {
+      for (int i = 0; i < slaveMap.size(); i++) {
         SlaveInfo s = slaveMap.getSlave(i);
         if (addr < s.getStartAddress()) {
           empties.add(new SlaveInfo(addr, s.getStartAddress() - 1));
         }
-        addr = s.getEndAddress()+1;
+        addr = s.getEndAddress() + 1;
       }
       if (addr < longMask)
         empties.add(new SlaveInfo(addr, longMask));
@@ -319,24 +327,24 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
   }
 
   @Override
-  public void localeChanged() { rebuild(); }
-  
-  
+  public void localeChanged() {
+    rebuild();
+  }
 
   @Override
   public void mouseClicked(MouseEvent e) {
-	if (e.getComponent() instanceof JTable) {
+    if (e.getComponent() instanceof JTable) {
       JTable t = (JTable) e.getComponent();
       int row = t.rowAtPoint(e.getPoint());
       if (row >= 0 && row < slaveMap.size()) {
         InstanceComponent comp = slaveMap.getSlave(row).getComponent();
         if (marked != null)
           marked.clearMarks();
-        comp.MarkInstance();
+        comp.markInstance();
         comp.getInstance().fireInvalidated();
         marked = comp;
       }
-	}
+    }
   }
 
   @Override
@@ -349,11 +357,11 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
   public void mouseEntered(MouseEvent e) {}
 
   @Override
-  public void mouseExited(MouseEvent e) { 
+  public void mouseExited(MouseEvent e) {
     if (marked != null) {
       marked.clearMarks();
       marked.getInstance().fireInvalidated();
-      marked = null; 
+      marked = null;
     }
   }
 }

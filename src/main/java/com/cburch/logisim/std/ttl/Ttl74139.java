@@ -19,12 +19,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-
 import java.util.ArrayList;
 
 /**
@@ -32,6 +29,13 @@ import java.util.ArrayList;
  * Model based on https://www.ti.com/product/SN74LS139A datasheet.
  */
 public class Ttl74139 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74139";
 
   // IC pin indices as specified in the datasheet
   public static final byte L1_nEN = 1;
@@ -56,7 +60,7 @@ public class Ttl74139 extends AbstractTtlGate {
 
   public Ttl74139() {
     super(
-        "74139",
+        _ID,
         (byte) 16,
 
         new byte[] {
@@ -75,9 +79,9 @@ public class Ttl74139 extends AbstractTtlGate {
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
     final int label_len_max = 4;
     ArrayList<String> names = new ArrayList<>();
-    for (String name: portnames) {
+    for (String name : portnames) {
       String[] tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0,label_len_max));
+      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0, label_len_max));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -86,7 +90,7 @@ public class Ttl74139 extends AbstractTtlGate {
   // Port consts are datasheet based (1-indexed), but in code we have them 0-indexed
   // with GND, VCC omitted (thus indices are shifted comparing to datasheet numbers).
   protected byte mapPort(byte dsIdx) {
-    return (byte)((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
+    return (byte) ((dsIdx <= GND) ? dsIdx - 1 : dsIdx - 2);
   }
 
   protected void computeState(InstanceState state, byte inEn, byte inA, byte inB, byte[] outPorts) {
@@ -113,11 +117,6 @@ public class Ttl74139 extends AbstractTtlGate {
     computeState(state, L1_nEN, L1_A, L1_B, out1);
     byte[] out2 = {L2_Y0, L2_Y1, L2_Y2, L2_Y3};
     computeState(state, L2_nEN, L2_A, L2_B, out2);
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
 }

@@ -57,6 +57,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Constant extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Constant";
+
   private static class ConstantAttributes extends AbstractAttributeSet {
     private Direction facing = Direction.EAST;
     private BitWidth width = BitWidth.ONE;
@@ -114,7 +122,7 @@ public class Constant extends InstanceFactory {
       int width = attrs.getValue(StdAttr.WIDTH).getWidth();
       Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
       for (int b = 0; b < width; b++) {
-        expressionMap.put(instance.getLocation(), b, Expressions.constant((int)v.get(b).toLongValue()));
+        expressionMap.put(instance.getLocation(), b, Expressions.constant((int) v.get(b).toLongValue()));
       }
     }
   }
@@ -138,7 +146,7 @@ public class Constant extends InstanceFactory {
       Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
-    super("Constant", S.getter("constantComponent"));
+    super(_ID, S.getter("constantComponent"));
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -217,8 +225,7 @@ public class Constant extends InstanceFactory {
     int piny = 9;
     Direction dir = painter.getAttributeValue(StdAttr.FACING);
     if (dir == Direction.EAST) {
-    } // keep defaults
-    else if (dir == Direction.WEST) {
+    } else if (dir == Direction.WEST) {
       pinx = 4;
     } else if (dir == Direction.NORTH) {
       pinx = 9;

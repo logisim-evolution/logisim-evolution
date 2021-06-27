@@ -46,28 +46,35 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class DoNotConnect extends InstanceFactory {
-	
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "NoConnect";
+
   private static class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-	  @Override
-	  public boolean IsOnlyInlined() {
-	    return true;
-	  }
+    @Override
+    public boolean IsOnlyInlined() {
+      return true;
+    }
   }
 
   public DoNotConnect() {
-    super("NoConnect", S.getter("noConnectionComponent"));
+    super(_ID, S.getter("noConnectionComponent"));
     setIconName("noconnect.gif");
-    setAttributes(new Attribute[] {StdAttr.WIDTH},new Object[] {BitWidth.ONE});
+    setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setPorts(new Port[] {new Port(0, 0, Port.INOUT, StdAttr.WIDTH)});
   }
-  
+
   private void drawInstance(InstancePainter painter, boolean isGhost) {
     Graphics2D g = (Graphics2D) painter.getGraphics().create();
     Location loc = painter.getLocation();
     g.setColor(isGhost ? Color.GRAY : Color.RED);
-    g.drawLine(loc.getX()-5, loc.getY()-5, loc.getX()+5, loc.getY()+5);
-    g.drawLine(loc.getX()-5, loc.getY()+5, loc.getX()+5, loc.getY()-5);
+    g.drawLine(loc.getX() - 5, loc.getY() - 5, loc.getX() + 5, loc.getY() + 5);
+    g.drawLine(loc.getX() - 5, loc.getY() + 5, loc.getX() + 5, loc.getY() - 5);
   }
 
   @Override
@@ -88,7 +95,7 @@ public class DoNotConnect extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) { }
-	
+
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new DoNotConnectGateHDLGeneratorFactory();

@@ -48,8 +48,16 @@ import javax.swing.ImageIcon;
  * features beyond the SimpleGrayCounter class.
  */
 class GrayCounter extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Gray Counter";
+
   public GrayCounter() {
-    super("Gray Counter");
+    super(_ID);
     setOffsetBounds(Bounds.create(-30, -15, 30, 30));
     setPorts(
         new Port[] {
