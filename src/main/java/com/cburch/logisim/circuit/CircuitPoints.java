@@ -119,25 +119,25 @@ class CircuitPoints {
 
     // first see how many elements we have; we can handle some simple
     // cases without creating any new lists
-    final var list = locData.components;
+    final var components = locData.components;
     var retSize = 0;
     Component retValue = null;
-    for (final var o : list) {
-      if ((o instanceof Wire) == isWire) {
-        retValue = o;
+    for (final var comp : components) {
+      if ((comp instanceof Wire) == isWire) {
+        retValue = comp;
         retSize++;
       }
     }
-    if (retSize == list.size()) return list;
+    if (retSize == components.size()) return components;
     if (retSize == 0) return Collections.emptySet();
     if (retSize == 1) return Collections.singleton(retValue);
 
     // otherwise we have to create our own list
     final var ret = new Component[retSize];
     var retPos = 0;
-    for (final var o : list) {
-      if ((o instanceof Wire) == isWire) {
-        ret[retPos] = o;
+    for (final var comp : components) {
+      if ((comp instanceof Wire) == isWire) {
+        ret[retPos] = comp;
         retPos++;
       }
     }

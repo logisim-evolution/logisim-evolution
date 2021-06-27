@@ -47,9 +47,9 @@ public class WireSet {
     } else {
       this.wires = wires;
       points = new HashSet<>();
-      for (final var w : wires) {
-        points.add(w.e0);
-        points.add(w.e1);
+      for (final var wire : wires) {
+        points.add(wire.e0);
+        points.add(wire.e1);
       }
     }
   }

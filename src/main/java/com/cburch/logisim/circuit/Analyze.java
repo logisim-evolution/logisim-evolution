@@ -369,18 +369,18 @@ public class Analyze {
   // propagates expressions down wires
   private static void propagateWires(ExpressionMap expressionMap, HashSet<LocationBit> pointsToProcess) throws AnalyzeException {
     expressionMap.currentCause = null;
-    for (final var p : pointsToProcess) {
-      final var e = expressionMap.get(p);
-      expressionMap.currentCause = expressionMap.causes.get(p);
-      final var bundle = expressionMap.circuit.wires.getWireBundle(p.loc);
+    for (final var locationBit : pointsToProcess) {
+      final var e = expressionMap.get(locationBit);
+      expressionMap.currentCause = expressionMap.causes.get(locationBit);
+      final var bundle = expressionMap.circuit.wires.getWireBundle(locationBit.loc);
       if (e != null && bundle != null && bundle.isValid() && bundle.threads != null) {
-        if (bundle.threads.length <= p.bit) {
+        if (bundle.threads.length <= locationBit.bit) {
           throw new AnalyzeException.CannotHandle("incompatible widths");
         }
-        final var t = bundle.threads[p.bit];
+        final var t = bundle.threads[locationBit.bit];
         for (final var tb : t.getBundles()) {
           for (final var p2 : tb.b.points) {
-            if (p2.equals(p.loc)) continue;
+            if (p2.equals(locationBit.loc)) continue;
             final var p2b = new LocationBit(p2, tb.loc);
             final var old = expressionMap.get(p2b);
             if (old != null) {

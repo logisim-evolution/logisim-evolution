@@ -129,11 +129,11 @@ class CircuitMutatorImpl implements CircuitMutator {
       repl.freeze();
       getMap(circuit).append(repl);
 
-      for (final var c : repl.getRemovals()) {
-        circuit.mutatorRemove(c);
+      for (final var component : repl.getRemovals()) {
+        circuit.mutatorRemove(component);
       }
-      for (final var c : repl.getAdditions()) {
-        circuit.mutatorAdd(c);
+      for (final var component : repl.getAdditions()) {
+        circuit.mutatorAdd(component);
       }
     }
   }

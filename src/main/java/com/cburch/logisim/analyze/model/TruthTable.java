@@ -100,10 +100,10 @@ public class TruthTable {
     public String toBitString(List<Var> vars) {
       StringBuilder s = null;
       var i = 0;
-      for (final var v : vars) {
+      for (final var var : vars) {
         if (s == null) s = new StringBuilder();
         else s.append(" ");
-        for (int j = 0; j < v.width; j++) s.append(inputs[i++].toBitString());
+        for (int j = 0; j < var.width; j++) s.append(inputs[i++].toBitString());
       }
       return s.toString();
     }
@@ -619,9 +619,9 @@ public class TruthTable {
       final var moveLeft = newIndex > oldIndex;
       final var blockMask = allMask ^ sameMask ^ moveMask; // bits that move by one
       ArrayList<Row> ret = new ArrayList<>(2 * rows.size());
-      for (final var r : rows) {
-        final var i = r.baseIndex();
-        final var dc = r.dcMask();
+      for (final var row : rows) {
+        final var i = row.baseIndex();
+        final var dc = row.dcMask();
         int idx0;
         int dc0;
         if (moveLeft) {
@@ -640,9 +640,9 @@ public class TruthTable {
     private void addInput(int index, int oldCount) {
       // add another Entry column to each row.input
       final var ret = new ArrayList<Row>(2 * rows.size());
-      for (final var r : rows) {
-        final var i = r.baseIndex();
-        final var dc = r.dcMask();
+      for (final var row : rows) {
+        final var i = row.baseIndex();
+        final var dc = row.dcMask();
         final var b = 1 << (oldCount - index); // _0001000
         var mask = b - 1; // _0000111
         final var idx0 = ((i & ~mask) << 1) | 0 | (i & mask); // xxxx0yyy

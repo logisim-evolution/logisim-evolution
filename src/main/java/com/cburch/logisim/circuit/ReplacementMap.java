@@ -145,11 +145,11 @@ public class ReplacementMap {
 
   public void print(PrintStream out) {
     var found = false;
-    for (final var a : getRemovals()) {
+    for (final var comp : getRemovals()) {
       if (!found) out.println("  removals:");
       found = true;
-      out.println("    " + a.toString());
-      for (final var b : map.get(a))
+      out.println("    " + comp.toString());
+      for (final var b : map.get(comp))
         out.println("     `--> " + b.toString());
     }
     if (!found) out.println("  removals: none");

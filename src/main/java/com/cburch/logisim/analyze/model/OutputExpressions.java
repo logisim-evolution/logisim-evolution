@@ -310,10 +310,10 @@ public class OutputExpressions {
       return false;
     } else {
       final var ait = a.iterator();
-      for (final var bi : b) {
+      for (final var bImplicant : b) {
         if (!ait.hasNext()) return false; // should never happen
         final var ai = ait.next();
-        if (!ai.equals(bi)) return false;
+        if (!ai.equals(bImplicant)) return false;
       }
       return true;
     }

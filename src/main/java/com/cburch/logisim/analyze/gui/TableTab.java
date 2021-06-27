@@ -200,23 +200,23 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       if (x < leftPadding) return 0;
       x -= leftPadding;
       var col = 0;
-      for (final var v : vars) {
+      for (final var var : vars) {
         if (x < -(cellPadding / 2)) return col - 1;
         if (x < 0) return col;
-        if (x < v.width * cellWidth) return col + x / cellWidth;
-        col += v.width;
-        x -= v.width * cellWidth + cellPadding;
+        if (x < var.width * cellWidth) return col + x / cellWidth;
+        col += var.width;
+        x -= var.width * cellWidth + cellPadding;
       }
       return col - 1;
     }
 
     int getX(int col) {
       var x = leftPadding;
-      for (final var v : vars) {
+      for (final var var : vars) {
         if (col < 0) return x;
-        if (col < v.width) return x + col * cellWidth;
-        col -= v.width;
-        x += v.width * cellWidth + cellPadding;
+        if (col < var.width) return x + col * cellWidth;
+        col -= var.width;
+        x += var.width * cellWidth + cellPadding;
       }
       return x;
     }
@@ -225,12 +225,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       final var fm = g.getFontMetrics();
       y += fm.getAscent() + 1;
       x += leftPadding;
-      for (final var v : vars) {
-        final var s = v.toString();
-        final var sx = x + (v.width * cellWidth) / 2;
+      for (final var var : vars) {
+        final var s = var.toString();
+        final var sx = x + (var.width * cellWidth) / 2;
         final var sw = fm.stringWidth(s);
         g.drawString(s, sx - (sw / 2), y);
-        x += (v.width * cellWidth) + cellPadding;
+        x += (var.width * cellWidth) + cellPadding;
       }
     }
 
@@ -238,8 +238,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       x += leftPadding;
       final var cy = y + fm.getAscent();
       var col = 0;
-      for (final var v : vars) {
-        for (var b = v.width - 1; b >= 0; b--) {
+      for (final var var : vars) {
+        for (var b = var.width - 1; b >= 0; b--) {
           final var entry = isInput
                                     ? table.getVisibleInputEntry(row, col++)
                                     : table.getVisibleOutputEntry(row, col++);
