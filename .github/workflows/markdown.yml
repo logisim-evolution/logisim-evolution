@@ -19,5 +19,6 @@ jobs:
     - name: "Running markdown linter..."
       uses: ruzickap/action-my-markdown-linter@v1
       with:
-        exclude: LICENSE.md
+        exclude: "LICENSE.md"
+        search_paths: "**/*.md"
 
