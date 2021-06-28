@@ -1,0 +1,23 @@
+# Runs markdownlint on all *.md files
+
+name: "Markdown Lint"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # https://github.com/marketplace/actions/my-markdown-linter
+    - name: "Running markdown linter..."
+      uses: ruzickap/action-my-markdown-linter@v1
+      with:
+        exclude: LICENSE.md
+
