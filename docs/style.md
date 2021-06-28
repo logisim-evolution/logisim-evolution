@@ -9,7 +9,7 @@
     * [Editing built-in config](#editing-built-in-config)
     * [Using cloned config](#using-cloned-config)
   * [Using Gradle plugin](#using-gradle-plugin)
-    
+
 ---
 
 # Coding style #

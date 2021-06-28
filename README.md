@@ -8,16 +8,18 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
 
 ---
 
-* **Logisim-evolution**
-    * [Features](#features)
-    * [Requirements](#requirements)
-    * **[Downloads](#download)**
-    * [Pictures of Logisim-evolution](docs/pics.md)
-    * [Documentation](docs/docs.md)
-    * [Bugs reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
-    * [For developers](docs/developers.md)
-    * [How to contribute](docs/developers.md#how-to-contribute)
-    * [Credits](docs/credits.md)
+# Logisim-evolution #
+
+* **Table of contents**
+  * [Features](#features)
+  * [Requirements](#requirements)
+  * **[Downloads](#download)**
+  * [Pictures of Logisim-evolution](docs/pics.md)
+  * [Documentation](docs/docs.md)
+  * [Bugs reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
+  * [For developers](docs/developers.md)
+  * [How to contribute](docs/developers.md#how-to-contribute)
+  * [Credits](docs/credits.md)
 
 ---
 
@@ -38,7 +40,7 @@ Project highlights:
 * Supports [multiple languages](docs/docs.md#translations),
 * and more!
 
-[![Logisim-evolution](docs/img/logisim-evolution-01-small.webp)](docs/pics.md) 
+[![Logisim-evolution](docs/img/logisim-evolution-01-small.webp)](docs/pics.md)
 [![Logisim-evolution](docs/img/logisim-evolution-02-small.webp)](docs/pics.md)
 
 ---
@@ -66,9 +68,7 @@ The following binary versions are [available](https://github.com/logisim-evoluti
 
 ---
 
-## License
+## License ##
 
 * `Logisim-evolution` is copyrighted ©2021 by Logisim-evolution [developers](docs/credits.md).
 * This is free software licensed under [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-
-

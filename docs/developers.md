@@ -3,12 +3,15 @@
 
 ---
 
+# Developers #
+
 * [« Go back](../README.md)
 * **Developer's corner**
+  * [Requirements](#requirements)
+  * [Gradle](#gradle)
   * [Import project into IDE](#import-project-into-ide)
     * [Eclipse](#import-project-into-ide)
     * [InteliJ IDEA](#import-project-into-ide)
-  * [Gradle](#gradle)
   * [Building from sources](#building-from-sources)
   * [Testing development code](#testing-development-code)
   * [Code style](style.md)
@@ -31,14 +34,16 @@ that supports it, incl. [Eclipse](https://www.eclipse.org) and [IntelliJ IDEA](h
 ## Import project into IDE ##
 
 How to import Gradle project:
-* [How to import Gradle project into Eclipse](https://www.eclipse.org/community/eclipse_newsletter/2018/february/buildship.php),
-* [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project from a Gradle model").
 
+* [How to import Gradle project into Eclipse](https://www.eclipse.org/community/eclipse_newsletter/2018/february/buildship.php),
+* [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
+  from a Gradle model").
 
 ## Building from sources ##
 
-To build and run `Logisim-evolution` application invoke `Gradle` build system and pass specified task name as argument. `Logisim-evolution` 
-comes with Gradle wrapper script, which can be invoked as `./gradlew <ARGS>` on Linux or macOS, and `gradlew <ARGS>` on Windows.
+To build and run `Logisim-evolution` application invoke `Gradle` build system and pass specified task name as argument.
+`Logisim-evolution` comes with Gradle wrapper script, which can be invoked as `./gradlew <ARGS>` on Linux or macOS, and
+`gradlew <ARGS>` on Windows.
 
 To build and run on Linux and macOS:
 
@@ -72,10 +77,10 @@ newer. Packages can be built by running `jpackage` task:
 ./gradlew jpackage
 ```
 
-> **NOTE:** `jpackage` creates the installer for the platform that builds it. Building cross-platform installers is not supported by
-> Java's `jpackage` utility. You may also need to install additional developer tools for the platform in order to build the installer.
-> See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html) for more details of
-> tool requirements.
+> **NOTE:** `jpackage` creates the installer for the platform that builds it. Building cross-platform installers is not supported
+> by Java's `jpackage` utility. You may also need to install additional developer tools for the platform in order to build the
+> installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html)
+> for more details of tool requirements.
 
 To see all available tasks `./gradlew tasks --all`
 
@@ -107,5 +112,8 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 * Click on *compare across forks*.
 * On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right hand side select your branch, for example: *base: bugfixes*
-* On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code of the latest stable release!)
+* On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on
+  the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as
+  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code of the latest stable
+  release!)
 * Make sure that there are no conflicts reported.
