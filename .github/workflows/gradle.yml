@@ -5,9 +5,16 @@ name: "Build"
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
+    # Run action only if we have anything changed in the following folders
+    paths:
+    - src/**
+
   pull_request:
     branches: [ master, develop ]
+    # Run action only if we have anything changed in the following folders
+    paths:
+    - src/**
 
 jobs:
   build:
@@ -19,15 +26,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: "Set up JDK"
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
+
     - name: "Grant execute permission for gradlew"
       run: |
        chmod +x gradlew
        chmod +x gradle/wrapper/gradle-wrapper.jar
+
     - name: "Build with Gradle"
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
