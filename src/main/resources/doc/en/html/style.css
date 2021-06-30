@@ -1,4 +1,4 @@
-﻿/* 
+/* 
 This CSS document is suitable for use in java help v2.0
 There is a compromise between css rules and html properties for it to work
 java-help supports version 1 of CSS
@@ -27,8 +27,8 @@ kbd {
 
 /* For img in the text */
 img.intxt {
-	height:auto;
-	width:auto;
+	height:16;
+	width:16;
 	vertical-align:middle;
 	margin:2px;
 }
@@ -40,8 +40,13 @@ img.notscal {
 }
 
 img.iconlibs{
-	height:16px;
-	width:16px;
+	height:32px;
+	width:32px;
+	vertical-align:middle;
+}
+img.appearancelibs{
+	height:64px;
+	width:64px;
 	vertical-align:middle;
 }
 /* For icon in the text */

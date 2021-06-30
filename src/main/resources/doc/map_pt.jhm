@@ -52,6 +52,7 @@
 	<mapID target="analyze_table"       url="pt/html/guide/analyze/ana-table.html" />
 	<mapID target="analyze_expr"        url="pt/html/guide/analyze/ana-expr.html" />
 	<mapID target="analyze_gen"         url="pt/html/guide/analyze/ana-gen.html" />
+    <mapID target="analyze_expimp"      url="pt/html/guide/analyze/ana-expimp.html" />
 	<mapID target="log"                 url="pt/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="pt/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="pt/html/guide/log/timetable.html" />
@@ -173,8 +174,8 @@
 
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="img-guide/poke.png" />
-	<mapID target="icon_edit"        url="img-guide/select.png" />
-	<mapID target="icon_select"      url="img-guide/select.png" />
+	<mapID target="icon_edit"        url="img-guide/toolselect.png" />
+	<mapID target="icon_select"      url="img-guide/toolselect.png" />
 	<mapID target="icon_wiring"      url="icons/wiring.gif" />
 	<mapID target="icon_text"        url="img-guide/text.png" />
 	<mapID target="icon_menu"        url="icons/menu.gif" />
