@@ -131,13 +131,13 @@ public class LogisimFileActions {
               final var errLoc = toolNames.get(key);
               final var errParts = errLoc.split("->");
               if (errParts.length > 1) {
-                solStr = solStr.concat(S.fmt("LibMergeFailure4", errParts[1]));
+                solStr = solStr.concat(S.get("LibMergeFailure4", errParts[1]));
               } else {
-                solStr = solStr.concat(S.fmt("LibMergeFailure3", key));
+                solStr = solStr.concat(S.get("LibMergeFailure3", key));
               }
               solStr = solStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-              solStr = solStr.concat(S.fmt("LibMergeFailure6", lib.getName()));
-              errors.put(solStr, S.fmt("LibMergeFailure1", lib.getName(), key));
+              solStr = solStr.concat(S.get("LibMergeFailure6", lib.getName()));
+              errors.put(solStr, S.get("LibMergeFailure1", lib.getName(), key));
             }
             canContinue = false;
           }
@@ -166,10 +166,10 @@ public class LogisimFileActions {
               final var errParts = errLoc.split("->");
               if (errParts.length > 1) {
                 var solStr = S.get("LibMergeFailure2") + " a) ";
-                solStr = solStr.concat(S.fmt("LibMergeFailure4", errParts[1]));
+                solStr = solStr.concat(S.get("LibMergeFailure4", errParts[1]));
                 solStr = solStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-                solStr = solStr.concat(S.fmt("LibMergeFailure8", circ.getName()));
-                errors.put(solStr, S.fmt("LibMergeFailure7", key, errParts[1]));
+                solStr = solStr.concat(S.get("LibMergeFailure8", circ.getName()));
+                errors.put(solStr, S.get("LibMergeFailure7", key, errParts[1]));
                 canContinue = false;
               }
             }

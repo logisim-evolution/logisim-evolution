@@ -98,8 +98,8 @@ public class TruthtableTextFile {
     try (PrintStream out = new PrintStream(file)) {
       out.println(S.get("tableRemark1"));
       final var c = model.getCurrentCircuit();
-      if (c != null) out.println(S.fmt("tableRemark2", c.getName()));
-      out.println(S.fmt("tableRemark3", new Date()));
+      if (c != null) out.println(S.get("tableRemark2", c.getName()));
+      out.println(S.get("tableRemark3", new Date()));
       out.println();
       out.println(S.get("tableRemark4"));
       out.println();

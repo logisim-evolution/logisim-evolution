@@ -76,6 +76,7 @@ public class SubcircuitFactory extends InstanceFactory {
       this.instance = instance;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       final var superState = proj.getCircuitState();
       if (superState == null) return;
@@ -89,7 +90,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void configureMenu(JPopupMenu menu, Project proj) {
       this.proj = proj;
       final var name = instance.getFactory().getDisplayName();
-      final var text = S.fmt("subcircuitViewItem", name);
+      final var text = S.get("subcircuitViewItem", name);
       final var item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
@@ -121,6 +122,7 @@ public class SubcircuitFactory extends InstanceFactory {
       }
     }
 
+    @Override
     public String toString() {
       return source.getName();
     }

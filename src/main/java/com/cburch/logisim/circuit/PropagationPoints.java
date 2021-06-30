@@ -136,6 +136,6 @@ class PropagationPoints {
   String getSingleStepMessage() {
     final var n = data.isEmpty() ? "no" : "" + data.size();
     final var m = pendingInputs.isEmpty() ? "no" : "" + pendingInputs.size();
-    return S.fmt("singleStepMessage", n, m);
+    return S.get("singleStepMessage", n, m);
   }
 }

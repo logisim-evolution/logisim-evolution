@@ -349,7 +349,7 @@ public class Keyboard extends InstanceFactory {
     } else {
       final var bds = painter.getBounds();
       final var len = getBufferLength(painter.getAttributeValue(ATTR_BUFFER));
-      final var str = S.fmt("keybDesc", "" + len);
+      final var str = S.get("keybDesc", "" + len);
       final var fm = g.getFontMetrics();
       final var x = bds.getX() + (WIDTH - fm.stringWidth(str)) / 2;
       final var y = bds.getY() + (HEIGHT + fm.getAscent()) / 2;
