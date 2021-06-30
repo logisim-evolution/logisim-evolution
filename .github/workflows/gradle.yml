@@ -2,15 +2,59 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
 name: "Build"
-
 on:
   push:
-    branches: [ master, develop ]
+    # No need to run on push to "develop" as there should not be any direct pushes.
+    # master is left just for emergency cases.
+    branches: [ master ]
   pull_request:
     branches: [ master, develop ]
 
 jobs:
+
+  # I intentionally do not use "paths:" (as part of "push:"), i.e.
+  #
+  # on:
+  #   push:
+  #     branches: [ master ]
+  #     paths:
+  #     - src/**
+  #
+  # It's because that can cause confusion why there's no build action triggered on specific
+  # PR, so to avoid this this action is intentionally always triggered, but it will skip
+  # building process if nothing has changed in specified paths (sources).
+  #
+  analyze_sources:
+    name: "Analyze commit"
+    outputs:
+      run_build: ${{ steps.src_check.outputs.run_build }}
+    runs-on: ubuntu-latest
+    steps:
+    # https://github.com/marketplace/actions/checkout
+    - uses: actions/checkout@v2
+
+    - name: "Processing changeset..."
+      id: check
+      run: |
+        gif diff --name-only HEAD^ HEAD > changes.txt
+        found=""
+        while IFS= read -r file; do
+          if [[ "${file}" == src/* ]]; then
+            found="YES"
+            break
+          fi
+        done < changes.txt
+        if [[ "${found}" == "YES" ]]; then
+          echo "::set-output name=run_build::true"
+        else
+          echo "No changes in 'src/' folder. Build skipped"
+        fi
+
   build:
+    name: "Building application"
+    needs: analyze_sources
+    if: analyze_sources.check.output.run_build == 'true'
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,15 +63,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: "Set up JDK"
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
+
     - name: "Grant execute permission for gradlew"
       run: |
        chmod +x gradlew
        chmod +x gradle/wrapper/gradle-wrapper.jar
+
     - name: "Build with Gradle"
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
