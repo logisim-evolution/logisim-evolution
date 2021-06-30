@@ -52,32 +52,31 @@ public class DefaultEvolutionAppearance {
 
   private DefaultEvolutionAppearance() {}
 
-  public static List<CanvasObject> build(
-      Collection<Instance> pins, String CircuitName, boolean FixedSize) {
+  public static List<CanvasObject> build(Collection<Instance> pins, String circuitName, boolean fixedSize) {
     Map<Direction, List<Instance>> edge;
     edge = new HashMap<>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
-    int MaxLeftLabelLength = 0;
-    int MaxRightLabelLength = 0;
-    int TitleWidth =
-        (CircuitName == null)
+    int maxLeftLabelLength = 0;
+    int maxRightLabelLength = 0;
+    int titleWidth =
+        (circuitName == null)
             ? 14 * DrawAttr.FixedFontCharWidth
-            : CircuitName.length() * DrawAttr.FixedFontCharWidth;
+            : circuitName.length() * DrawAttr.FixedFontCharWidth;
 
     if (!pins.isEmpty()) {
-      for (Instance pin : pins) {
+      for (final var pin : pins) {
         Direction pinEdge;
-        Text label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
-        int LabelWidth = label.getText().length() * DrawAttr.FixedFontCharWidth;
+        final var label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
+        final var labelWidth = label.getText().length() * DrawAttr.FixedFontCharWidth;
         if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
           pinEdge = Direction.EAST;
-          if (LabelWidth > MaxRightLabelLength) MaxRightLabelLength = LabelWidth;
+          if (labelWidth > maxRightLabelLength) maxRightLabelLength = labelWidth;
         } else {
           pinEdge = Direction.WEST;
-          if (LabelWidth > MaxLeftLabelLength) MaxLeftLabelLength = LabelWidth;
+          if (labelWidth > maxLeftLabelLength) maxLeftLabelLength = labelWidth;
         }
-        List<Instance> e = edge.get(pinEdge);
+        final var e = edge.get(pinEdge);
         e.add(pin);
       }
     }
@@ -86,19 +85,19 @@ public class DefaultEvolutionAppearance {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxVert = Math.max(numEast, numWest);
+    final var numEast = edge.get(Direction.EAST).size();
+    final var numWest = edge.get(Direction.WEST).size();
+    final var maxVert = Math.max(numEast, numWest);
 
-    int dy = ((DrawAttr.FixedFontHeight + (DrawAttr.FixedFontHeight >> 2) + 5) / 10) * 10;
-    int textWidth =
-        (FixedSize)
+    final var dy = ((DrawAttr.FixedFontHeight + (DrawAttr.FixedFontHeight >> 2) + 5) / 10) * 10;
+    final var textWidth =
+        (fixedSize)
             ? 25 * DrawAttr.FixedFontCharWidth
-            : Math.max((MaxLeftLabelLength + MaxRightLabelLength + 35), (TitleWidth + 15));
-    int Thight = ((DrawAttr.FixedFontHeight + 10) / 10) * 10;
-    int width = (textWidth / 10) * 10 + 20;
-    int height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;
-    int sdy = (DrawAttr.FixedFontAscent - DrawAttr.FixedFontDescent) >> 1;
+            : Math.max((maxLeftLabelLength + maxRightLabelLength + 35), (titleWidth + 15));
+    final var thight = ((DrawAttr.FixedFontHeight + 10) / 10) * 10;
+    final var width = (textWidth / 10) * 10 + 20;
+    final var height = (maxVert > 0) ? maxVert * dy + thight : 10 + thight;
+    final var  sdy = (DrawAttr.FixedFontAscent - DrawAttr.FixedFontDescent) >> 1;
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -115,13 +114,13 @@ public class DefaultEvolutionAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    final var  rx = OFFS + (9 - (ax + 9) % 10);
+    final var  ry = OFFS + (9 - (ay + 9) % 10);
 
-    List<CanvasObject> ret = new ArrayList<>();
-    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, FixedSize);
-    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, FixedSize);
-    Rectangle rect = new Rectangle(rx + 10, ry + height - Thight, width - 20, Thight);
+    final var  ret = new ArrayList<CanvasObject>();
+    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, fixedSize);
+    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, fixedSize);
+    var rect = new Rectangle(rx + 10, ry + height - thight, width - 20, thight);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
     rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
@@ -129,14 +128,15 @@ public class DefaultEvolutionAppearance {
     rect = new Rectangle(rx + 10, ry, width - 20, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     ret.add(rect);
-    String Label = CircuitName == null ? "VHDL Component" : CircuitName;
-    if (FixedSize) {
-      if (Label.length() > 23) {
-        Label = Label.substring(0, 20);
-        Label = Label.concat("...");
+    String labelStr = circuitName == null ? "VHDL Component" : circuitName;
+    if (fixedSize) {
+      if (labelStr.length() > 23) {
+        labelStr = labelStr.substring(0, 20);
+        labelStr = labelStr.concat("...");
       }
     }
-    Text label = new Text(rx + (width >> 1), ry + (height - DrawAttr.FixedFontDescent - 5), Label);
+
+    final var label = new Text(rx + (width >> 1), ry + (height - DrawAttr.FixedFontDescent - 5), labelStr);
     label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
     label.getLabel().setColor(Color.WHITE);
     label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
@@ -145,28 +145,17 @@ public class DefaultEvolutionAppearance {
     return ret;
   }
 
-  private static void placePins(
-      List<CanvasObject> dest,
-      List<Instance> pins,
-      int x,
-      int y,
-      int dx,
-      int dy,
-      boolean LeftSide,
-      int ldy,
-      boolean FixedSize) {
+  private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy, boolean leftSide, int ldy, boolean fixedSize) {
     int halign;
-    Color color = Color.DARK_GRAY;
+    final var color = Color.DARK_GRAY;
     int ldx;
-    for (Instance pin : pins) {
-      int offset =
-          (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
-              ? Wire.WIDTH_BUS >> 1
-              : Wire.WIDTH >> 1;
-      int height =
-          (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
+    for (final var pin : pins) {
+      final var  offset = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
+                                ? Wire.WIDTH_BUS >> 1
+                                : Wire.WIDTH >> 1;
+      final var  height = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
       Rectangle rect;
-      if (LeftSide) {
+      if (leftSide) {
         ldx = 15;
         halign = EditableLabel.LEFT;
         rect = new Rectangle(x, y - offset, 10, height);
@@ -181,14 +170,14 @@ public class DefaultEvolutionAppearance {
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y), pin));
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        String Label = pin.getAttributeValue(StdAttr.LABEL);
-        if (FixedSize) {
-          if (Label.length() > 12) {
-            Label = Label.substring(0, 9);
-            Label = Label.concat("..");
+        var labelValue = pin.getAttributeValue(StdAttr.LABEL);
+        if (fixedSize) {
+          if (labelValue.length() > 12) {
+            labelValue = labelValue.substring(0, 9);
+            labelValue = labelValue.concat("..");
           }
         }
-        Text label = new Text(x + ldx, y + ldy, Label);
+        final var label = new Text(x + ldx, y + ldy, labelValue);
         label.getLabel().setHorizontalAlignment(halign);
         label.getLabel().setColor(color);
         label.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);

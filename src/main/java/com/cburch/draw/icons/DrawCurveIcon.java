@@ -69,6 +69,9 @@ public class DrawCurveIcon extends AnimatedIcon {
         // fall through
       case 1:
         g2.drawRect(scale(0), scale(5), wh, wh);
+        break;
+      default:
+        // no default action
     }
   }
 

@@ -111,6 +111,8 @@ class TableTabCaret {
           TruthTable model = table.getTruthTable();
           model.expandVisibleRows();
           break;
+        default:
+          // no default action
       }
     }
 

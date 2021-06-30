@@ -78,6 +78,7 @@ public class Caret {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {}
         };
     String nullKey = "null";
@@ -143,7 +144,7 @@ public class Caret {
       value = -1;
     }
     if (cursor != value) {
-      long oldValue = cursor;
+      final long oldValue = cursor;
       if (highlight != null) {
         hex.getHighlighter().remove(highlight);
         highlight = null;
@@ -166,14 +167,17 @@ public class Caret {
   }
 
   private class Listener implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
+    @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void focusLost(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
       int cols = hex.getMeasures().getColumnCount();
       int rows;
@@ -235,11 +239,15 @@ public class Caret {
           if (cursor >= rows * cols) setDot(cursor - rows * cols, shift);
           else if (cursor >= cols) setDot(cursor % cols, shift);
           break;
+        default:
+          // do nothing for default
       }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
+    @Override
     public void keyTyped(KeyEvent e) {
       int mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
@@ -273,8 +281,10 @@ public class Caret {
       }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {}
 
+    @Override
     public void mouseDragged(MouseEvent e) {
       Measures measures = hex.getMeasures();
       long loc = measures.toAddress(e.getX(), e.getY());
@@ -284,12 +294,16 @@ public class Caret {
       // component
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {}
 
+    @Override
     public void mouseExited(MouseEvent e) {}
 
+    @Override
     public void mouseMoved(MouseEvent e) {}
 
+    @Override
     public void mousePressed(MouseEvent e) {
       Measures measures = hex.getMeasures();
       long loc = measures.toAddress(e.getX(), e.getY());
@@ -297,6 +311,7 @@ public class Caret {
       if (!hex.isFocusOwner()) hex.requestFocus();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       mouseDragged(e);
     }

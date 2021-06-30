@@ -62,6 +62,7 @@ public class LogisimVersion {
       if (parts.length >= 2) minor = Integer.parseInt(parts[1]);
       if (parts.length >= 3) patch = Integer.parseInt(parts[2]);
     } catch (NumberFormatException ignored) {
+      // FIXME not sure if falling back to 0.0.0 is a good idea here.
     }
 
     return new LogisimVersion(major, minor, patch);

@@ -104,7 +104,7 @@ public abstract class DownloadBase {
      * name plus component/sub-circuit name
      */
     MyMappableResources = RootSheet.getBoardMap(MyBoardInformation.getBoardName());
-    if (MyMappableResources == null) 
+    if (MyMappableResources == null)
       MyMappableResources = new MappableResourcesContainer(MyBoardInformation, RootSheet);
     else
       MyMappableResources.updateMapableComponents();
@@ -113,9 +113,13 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesignCheckIOs() {
-	if (MyMappableResources.isCompletelyMapped()) return true;
-	int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
-      S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
+    if (MyMappableResources.isCompletelyMapped()) return true;
+    final var confirm =
+        OptionPane.showConfirmDialog(
+            MyProject.getFrame(),
+            S.get("FpgaNotCompleteMap"),
+            S.get("FpgaIncompleteMap"),
+            OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
@@ -235,13 +239,13 @@ public abstract class DownloadBase {
             MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
     if (!AbstractHDLGeneratorFactory.WriteEntity(
         ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Worker.GetEntity(RootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
         Worker.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
         ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Worker.GetArchitecture(RootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
         Worker.getComponentStringIdentifier());
   }
 

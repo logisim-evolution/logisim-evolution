@@ -38,8 +38,7 @@ public class ClockTreeContainer {
   private final ArrayList<String> HierarchyId;
   private boolean isPinClockSource;
 
-  public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId,
-		                    boolean pinClockSource) {
+  public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId, boolean pinClockSource) {
     ClockSources = new ArrayList<>();
     ClockNets = new ArrayList<>();
     ClockSourceId = sourceId;
@@ -60,11 +59,11 @@ public class ClockTreeContainer {
     ClockSources.clear();
     ClockNets.clear();
   }
-  
+
   public void setPinClock() {
     isPinClockSource = true;
   }
-  
+
   public boolean IsPinClockSource() {
     return isPinClockSource;
   }

@@ -8,6 +8,7 @@
     <suppress checks="MissingJavadocType"/>
     <suppress checks="JavadocParagraph"/>
     <suppress checks="NeedBraces"/>
+    <suppress checks="LineLength"/>
 
     <suppress checks="LocalVariableName"/>
     <suppress checks="ParameterName"/>

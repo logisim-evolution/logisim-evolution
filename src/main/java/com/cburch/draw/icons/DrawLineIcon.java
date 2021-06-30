@@ -57,6 +57,9 @@ public class DrawLineIcon extends AnimatedIcon {
         // fall through
       case 1:
         g2.drawRect(0, scale(13), wh, wh);
+        break;
+      default:
+        // no default action
     }
   }
 

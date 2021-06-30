@@ -31,13 +31,13 @@ package com.cburch.draw.toolbar;
 import java.util.List;
 
 public interface ToolbarModel {
-  void addToolbarModelListener(ToolbarModelListener listener);
-
   List<ToolbarItem> getItems();
 
   boolean isSelected(ToolbarItem item);
 
   void itemSelected(ToolbarItem item);
+
+  void addToolbarModelListener(ToolbarModelListener listener);
 
   void removeToolbarModelListener(ToolbarModelListener listener);
 }

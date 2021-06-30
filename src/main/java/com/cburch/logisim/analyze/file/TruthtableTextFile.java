@@ -223,7 +223,7 @@ public class TruthtableTextFile {
 
     if (nbits < 4 && (d >= (1 << nbits))) {
       throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
-      }
+    }
 
     return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;
   }

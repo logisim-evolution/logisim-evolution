@@ -210,7 +210,7 @@ public class AutoLabel {
       SetAttributeAction act,
       boolean createAction) {
     var correct = false;
-     var newLabel = oldLabel;
+    var newLabel = oldLabel;
     while (!correct) {
       newLabel = (String)
               OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,

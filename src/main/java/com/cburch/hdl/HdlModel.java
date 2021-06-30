@@ -30,9 +30,6 @@ package com.cburch.hdl;
 
 public interface HdlModel {
 
-  /** Registers a listener for changes to the values. */
-  void addHdlModelListener(HdlModelListener l);
-
   /** Compares the model's content with another model. */
   boolean compare(HdlModel model);
 
@@ -44,6 +41,9 @@ public interface HdlModel {
 
   /** Get the component's name. */
   String getName();
+
+  /** Registers a listener for changes to the values. */
+  void addHdlModelListener(HdlModelListener l);
 
   /** Unregisters a listener for changes to the values. */
   void removeHdlModelListener(HdlModelListener l);
