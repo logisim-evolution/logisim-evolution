@@ -35,7 +35,6 @@ import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.comp.TextField;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -58,23 +57,21 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 
 abstract class AbstractGate extends InstanceFactory {
   static Value pullOutput(Value value, Object outType) {
     if (outType == GateAttributes.OUTPUT_01) {
       return value;
     } else {
-      Value[] v = value.getAll();
+      final var v = value.getAll();
       if (outType == GateAttributes.OUTPUT_0Z) {
-        for (int i = 0; i < v.length; i++) {
+        for (var i = 0; i < v.length; i++) {
           if (v[i] == Value.TRUE) v[i] = Value.UNKNOWN;
         }
       } else if (outType == GateAttributes.OUTPUT_Z1) {
-        for (int i = 0; i < v.length; i++) {
+        for (var i = 0; i < v.length; i++) {
           if (v[i] == Value.FALSE) v[i] = Value.UNKNOWN;
         }
       }
@@ -106,16 +103,16 @@ abstract class AbstractGate extends InstanceFactory {
   protected abstract Expression computeExpression(Expression[] inputs, int numInputs);
 
   private void computeLabel(Instance instance) {
-    GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
-    Direction facing = attrs.facing;
-    int baseWidth = (Integer) attrs.size.getValue();
+    final var attrs = (GateAttributes) instance.getAttributeSet();
+    final var facing = attrs.facing;
+    final var baseWidth = (Integer) attrs.size.getValue();
 
-    int axis = baseWidth / 2 + (negateOutput ? 10 : 0);
-    int perp = 0;
+    final var axis = baseWidth / 2 + (negateOutput ? 10 : 0);
+    var perp = 0;
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       perp += 6;
     }
-    Location loc = instance.getLocation();
+    final var loc = instance.getLocation();
     int cx;
     int cy;
     if (facing == Direction.NORTH) {
@@ -138,13 +135,13 @@ abstract class AbstractGate extends InstanceFactory {
   protected abstract Value computeOutput(Value[] inputs, int numInputs, InstanceState state);
 
   void computePorts(Instance instance) {
-    GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
+    final var attrs = (GateAttributes) instance.getAttributeSet();
     int inputs = attrs.inputs;
 
-    Port[] ports = new Port[inputs + 1];
+    final var ports = new Port[inputs + 1];
     ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-    for (int i = 0; i < inputs; i++) {
-      Location offs = getInputOffset(attrs, i);
+    for (var i = 0; i < inputs; i++) {
+      final var offs = getInputOffset(attrs, i);
       ports[i + 1] = new Port(offs.getX(), offs.getY(), Port.INPUT, StdAttr.WIDTH);
     }
     instance.setPorts(ports);
@@ -162,13 +159,13 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public boolean contains(Location loc, AttributeSet attrsBase) {
-    GateAttributes attrs = (GateAttributes) attrsBase;
+    final var attrs = (GateAttributes) attrsBase;
     if (super.contains(loc, attrs)) {
       if (attrs.negated == 0) {
         return true;
       } else {
-        Direction facing = attrs.facing;
-        Bounds bds = getOffsetBounds(attrsBase);
+        final var facing = attrs.facing;
+        final var bds = getOffsetBounds(attrsBase);
         int delt;
         if (facing == Direction.NORTH) {
           delt = loc.getY() - (bds.getY() + bds.getHeight());
@@ -183,7 +180,7 @@ abstract class AbstractGate extends InstanceFactory {
           return true;
         } else {
           int inputs = attrs.inputs;
-          for (int i = 1; i <= inputs; i++) {
+          for (var i = 1; i <= inputs; i++) {
             Location offs = getInputOffset(attrs, i);
             if (loc.manhattanDistanceTo(offs) <= 5) return true;
           }
@@ -202,30 +199,28 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr instanceof NegateAttribute) {
-      return Boolean.FALSE;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return (attr instanceof NegateAttribute)
+        ? Boolean.FALSE
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    GateAttributes myattrs = (GateAttributes) attrs;
-    StringBuilder CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
-    BitWidth width = myattrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() > 1) CompleteName.append("_BUS");
-    Integer inputCount = myattrs.getValue(GateAttributes.ATTR_INPUTS);
+    final var myAttrs = (GateAttributes) attrs;
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    final var width = myAttrs.getValue(StdAttr.WIDTH);
+    if (width.getWidth() > 1) completeName.append("_BUS");
+    final var inputCount = myAttrs.getValue(GateAttributes.ATTR_INPUTS);
     if (inputCount > 2) {
-      CompleteName.append("_").append(inputCount).append("_INPUTS");
+      completeName.append("_").append(inputCount).append("_INPUTS");
     }
-    if (myattrs.containsAttribute(GateAttributes.ATTR_XOR)) {
-      if (myattrs.getValue(GateAttributes.ATTR_XOR).equals(GateAttributes.XOR_ONE)) {
-        CompleteName.append("_ONEHOT");
+    if (myAttrs.containsAttribute(GateAttributes.ATTR_XOR)) {
+      if (myAttrs.getValue(GateAttributes.ATTR_XOR).equals(GateAttributes.XOR_ONE)) {
+        completeName.append("_ONEHOT");
       }
     }
-    return CompleteName.toString();
+    return completeName.toString();
   }
 
   //
@@ -234,11 +229,11 @@ abstract class AbstractGate extends InstanceFactory {
   protected abstract Value getIdentity();
 
   Location getInputOffset(GateAttributes attrs, int index) {
-    int inputs = attrs.inputs;
-    Direction facing = attrs.facing;
-    int size = (Integer) attrs.size.getValue();
-    int axisLength = size + bonusWidth + (negateOutput ? 10 : 0);
-    long negated = attrs.negated;
+    final var inputs = attrs.inputs;
+    final var facing = attrs.facing;
+    final var size = (Integer) attrs.size.getValue();
+    final var axisLength = size + bonusWidth + (negateOutput ? 10 : 0);
+    final var negated = attrs.negated;
 
     int skipStart;
     int skipDist;
@@ -277,7 +272,7 @@ abstract class AbstractGate extends InstanceFactory {
     }
 
     int dx = axisLength;
-    int negatedBit = (int)(negated >> index) & 1;
+    int negatedBit = (int) (negated >> index) & 1;
     if (negatedBit == 1) {
       dx += 10;
     }
@@ -299,52 +294,53 @@ abstract class AbstractGate extends InstanceFactory {
       return (WireRepair) data -> AbstractGate.this.shouldRepairWire(instance, data);
     }
     if (key == ExpressionComputer.class) {
-      return (ExpressionComputer) expressionMap -> {
-        GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
-        int inputCount = attrs.inputs;
-        long negated = attrs.negated;
-        int width = attrs.width.getWidth();
+      return (ExpressionComputer)
+          expressionMap -> {
+            final var attrs = (GateAttributes) instance.getAttributeSet();
+            final var inputCount = attrs.inputs;
+            final var negated = attrs.negated;
+            final var width = attrs.width.getWidth();
 
-        for (int b = 0; b < width; b++) {
-          Expression[] inputs = new Expression[inputCount];
-          int numInputs = 0;
-          for (int i = 1; i <= inputCount; i++) {
-            Expression e = expressionMap.get(instance.getPortLocation(i), b);
-            if (e != null) {
-              int negatedBit = (int)(negated >> (i - 1)) & 1;
-              if (negatedBit == 1) {
-                e = Expressions.not(e);
+            for (var b = 0; b < width; b++) {
+              final var inputs = new Expression[inputCount];
+              var numInputs = 0;
+              for (var i = 1; i <= inputCount; i++) {
+                Expression e = expressionMap.get(instance.getPortLocation(i), b);
+                if (e != null) {
+                  final var negatedBit = (int) (negated >> (i - 1)) & 1;
+                  if (negatedBit == 1) {
+                    e = Expressions.not(e);
+                  }
+                  inputs[numInputs] = e;
+                  ++numInputs;
+                }
               }
-              inputs[numInputs] = e;
-              ++numInputs;
+              if (numInputs > 0) {
+                Expression out = AbstractGate.this.computeExpression(inputs, numInputs);
+                expressionMap.put(instance.getPortLocation(0), b, out);
+              }
             }
-          }
-          if (numInputs > 0) {
-            Expression out = AbstractGate.this.computeExpression(inputs, numInputs);
-            expressionMap.put(instance.getPortLocation(0), b, out);
-          }
-        }
-      };
+          };
     }
     return super.getInstanceFeature(instance, key);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
-    GateAttributes attrs = (GateAttributes) attrsBase;
-    Direction facing = attrs.facing;
-    int size = (Integer) attrs.size.getValue();
-    int inputs = attrs.inputs;
+    final var attrs = (GateAttributes) attrsBase;
+    final var facing = attrs.facing;
+    final var size = (Integer) attrs.size.getValue();
+    var inputs = attrs.inputs;
     if (inputs % 2 == 0) {
       inputs++;
     }
-    long negated = attrs.negated;
+    final var negated = attrs.negated;
 
-    int width = size + bonusWidth + (negateOutput ? 10 : 0);
+    var width = size + bonusWidth + (negateOutput ? 10 : 0);
     if (negated != 0) {
       width += 10;
     }
-    int height = Math.max(10 * inputs, size);
+    final var height = Math.max(10 * inputs, size);
     if (facing == Direction.SOUTH) {
       return Bounds.create(-height / 2, -width, height, width);
     } else if (facing == Direction.NORTH) {
@@ -362,9 +358,9 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
-    if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
-      return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
-    else return false;
+    return (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
+        ? (attrs.getValue(GateAttributes.ATTR_OUTPUT) != GateAttributes.OUTPUT_01)
+        : false;
   }
 
   @Override
@@ -382,16 +378,16 @@ abstract class AbstractGate extends InstanceFactory {
   }
 
   private void paintBase(InstancePainter painter) {
-    GateAttributes attrs = (GateAttributes) painter.getAttributeSet();
-    Direction facing = attrs.facing;
-    int inputs = attrs.inputs;
-    long negated = attrs.negated;
+    final var attrs = (GateAttributes) painter.getAttributeSet();
+    final var facing = attrs.facing;
+    final var inputs = attrs.inputs;
+    final var negated = attrs.negated;
 
     Object shape = painter.getGateShape();
-    Location loc = painter.getLocation();
-    Bounds bds = painter.getOffsetBounds();
-    int width = bds.getWidth();
-    int height = bds.getHeight();
+    final var loc = painter.getLocation();
+    final var bds = painter.getOffsetBounds();
+    var width = bds.getWidth();
+    var height = bds.getHeight();
     if (facing == Direction.NORTH || facing == Direction.SOUTH) {
       int t = width;
       width = height;
@@ -401,13 +397,13 @@ abstract class AbstractGate extends InstanceFactory {
       width -= 10;
     }
 
-    Graphics g = painter.getGraphics();
-    Color baseColor = g.getColor();
+    final var g = painter.getGraphics();
+    final var baseColor = g.getColor();
     if (shape == AppPreferences.SHAPE_SHAPED && paintInputLines) {
       PainterShaped.paintInputLines(painter, this);
     } else if (negated != 0) {
       for (int i = 0; i < inputs; i++) {
-        int negatedBit = (int)(negated >> i) & 1;
+        int negatedBit = (int) (negated >> i) & 1;
         if (negatedBit == 1) {
           Location in = getInputOffset(attrs, i);
           Location cen = in.translate(facing, 5);
@@ -418,17 +414,17 @@ abstract class AbstractGate extends InstanceFactory {
 
     g.setColor(baseColor);
     g.translate(loc.getX(), loc.getY());
-    double rotate = 0.0;
+    var rotate = 0.0;
     if (facing != Direction.EAST && g instanceof Graphics2D) {
       rotate = -facing.toRadians();
-      Graphics2D g2 = (Graphics2D) g;
+      final var g2 = (Graphics2D) g;
       g2.rotate(rotate);
     }
 
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       paintRectangular(painter, width, height);
-      //		} else if (shape == AppPreferences.SHAPE_DIN40700) {
-      //			paintDinShape(painter, width, height, inputs);
+      //    } else if (shape == AppPreferences.SHAPE_DIN40700) {
+      //      paintDinShape(painter, width, height, inputs);
     } else { // SHAPE_SHAPED
       if (negateOutput) {
         g.translate(-10, 0);
@@ -460,77 +456,85 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public final void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D) painter.getGraphics().create();
+    final var g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.black);
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    int border = AppPreferences.getIconBorder();
+    final var border = AppPreferences.getIconBorder();
     if (painter.getGateShape().equals(AppPreferences.SHAPE_RECTANGULAR))
-      paintIconIEC(g,getRectangularLabel(painter.getAttributeSet()),negateOutput,false);
+      paintIconIEC(g, getRectangularLabel(painter.getAttributeSet()), negateOutput, false);
     else
-      paintIconANSI(g,AppPreferences.getIconSize()-(border<<1),border,AppPreferences.getScaled(4));
+      paintIconANSI(
+          g, AppPreferences.getIconSize() - (border << 1), border, AppPreferences.getScaled(4));
     g.dispose();
   }
-  
+
   protected static void paintIconIEC(Graphics2D g, String label, boolean negateOutput, boolean singleInput) {
-	GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    int iconBorder = AppPreferences.getIconBorder();
-    int iconSize = AppPreferences.getIconSize()-(iconBorder<<1);
-    int negateDiameter = AppPreferences.getScaled(4);
-    int yoffset = singleInput ? (int)((double)iconSize/6.0) : 0;
-    int ysize = singleInput ? iconSize-(yoffset<<1) : iconSize;
-    AffineTransform af = g.getTransform();
+    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    final var iconBorder = AppPreferences.getIconBorder();
+    final var iconSize = AppPreferences.getIconSize() - (iconBorder << 1);
+    final var negateDiameter = AppPreferences.getScaled(4);
+    final var yoffset = singleInput ? (int) ((double) iconSize / 6.0) : 0;
+    final var ysize = singleInput ? iconSize - (yoffset << 1) : iconSize;
+    final var af = g.getTransform();
     g.translate(iconBorder, iconBorder);
-    g.drawRect(0, yoffset, iconSize-negateDiameter, ysize);
-    Font IconFont = g.getFont().deriveFont(((float)iconSize)/2).deriveFont(Font.BOLD);
-    g.setFont(IconFont);
+    g.drawRect(0, yoffset, iconSize - negateDiameter, ysize);
+    final var iconFont = g.getFont().deriveFont(((float) iconSize) / 2).deriveFont(Font.BOLD);
+    g.setFont(iconFont);
     if (label.length() < 3) {
-      TextLayout txt = new TextLayout(label,IconFont,g.getFontRenderContext());
-      float xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
-      float ypos = ((float)iconSize)/2-(float)txt.getBounds().getCenterY();
+      final var txt = new TextLayout(label, iconFont, g.getFontRenderContext());
+      float xpos =
+          ((float) iconSize - (float) negateDiameter) / 2 - (float) txt.getBounds().getCenterX();
+      float ypos = ((float) iconSize) / 2 - (float) txt.getBounds().getCenterY();
       txt.draw(g, xpos, ypos);
     } else {
-      TextLayout txt = new TextLayout(label.substring(0, 2),IconFont,g.getFontRenderContext());
-      float xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
-      float ypos = ((float)iconSize)/4-(float)txt.getBounds().getCenterY();
+      var txt = new TextLayout(label.substring(0, 2), iconFont, g.getFontRenderContext());
+      float xpos =
+          ((float) iconSize - (float) negateDiameter) / 2 - (float) txt.getBounds().getCenterX();
+      float ypos = ((float) iconSize) / 4 - (float) txt.getBounds().getCenterY();
       txt.draw(g, xpos, ypos);
-      txt = new TextLayout(label.substring(2, label.length()<5 ? label.length() : 4),IconFont,g.getFontRenderContext());
-      xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
-      ypos = (3*(float)iconSize)/4-(float)txt.getBounds().getCenterY();
+      txt =
+          new TextLayout(label.substring(2, label.length() < 5 ? label.length() : 4),
+              iconFont, g.getFontRenderContext());
+      xpos = ((float) iconSize - (float) negateDiameter) / 2 - (float) txt.getBounds().getCenterX();
+      ypos = (3 * (float) iconSize) / 4 - (float) txt.getBounds().getCenterY();
       txt.draw(g, xpos, ypos);
     }
-    paintIconPins(g,iconSize,iconBorder,negateDiameter,negateOutput,singleInput);
+    paintIconPins(g, iconSize, iconBorder, negateDiameter, negateOutput, singleInput);
     g.setTransform(af);
   }
-  
-  protected static void paintIconPins(Graphics2D g , int iconSize,
-		  int iconBorder, int negateDiameter, boolean negateOutput, boolean singleInput ) {
-    if (negateOutput) g.drawOval(iconSize-negateDiameter, (iconSize-negateDiameter)>>1, negateDiameter, negateDiameter);
-    g.drawLine(iconSize-(negateOutput ? 0 : negateDiameter), iconSize>>1, iconSize-(negateOutput ? 0 : negateDiameter)+iconBorder, iconSize>>1);
+
+  protected static void paintIconPins(Graphics2D g, int iconSize, int iconBorder, int negateDiameter, boolean negateOutput, boolean singleInput) {
+    if (negateOutput)
+      g.drawOval(iconSize - negateDiameter, (iconSize - negateDiameter) >> 1, negateDiameter, negateDiameter);
+    g.drawLine(
+        iconSize - (negateOutput ? 0 : negateDiameter),
+        iconSize >> 1,
+        iconSize - (negateOutput ? 0 : negateDiameter) + iconBorder,
+        iconSize >> 1);
     if (singleInput)
-      g.drawLine(-iconBorder, iconSize>>1, 0, iconSize>>1);
-    else {	
-      g.drawLine(-iconBorder, iconSize>>2, 0, iconSize>>2);
-      g.drawLine(-iconBorder, (3*iconSize)>>2, 0, (3*iconSize)>>2);
+      g.drawLine(-iconBorder, iconSize >> 1, 0, iconSize >> 1);
+    else {
+      g.drawLine(-iconBorder, iconSize >> 2, 0, iconSize >> 2);
+      g.drawLine(-iconBorder, (3 * iconSize) >> 2, 0, (3 * iconSize) >> 2);
     }
   }
-  
-  protected static void paintIconBufferANSI(Graphics2D g, boolean negate,boolean controlled) {
+
+  protected static void paintIconBufferANSI(Graphics2D g, boolean negate, boolean controlled) {
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    int borderSize = AppPreferences.getIconBorder();
-    int iconSize = AppPreferences.getIconSize()-(borderSize<<1);
-    int negateSize = AppPreferences.getScaled(4);
-    AffineTransform af = g.getTransform();
+    final var borderSize = AppPreferences.getIconBorder();
+    final var iconSize = AppPreferences.getIconSize() - (borderSize << 1);
+    final var negateSize = AppPreferences.getScaled(4);
+    final var af = g.getTransform();
     g.translate(borderSize, borderSize);
-    int ystart = negateSize >>1;
-    int yend = iconSize-ystart;
-    int xstart = 0;
-    int xend = iconSize-negateSize;
-    int[] xpos = new int[] {xstart,xend,xstart,xstart};
-    int[] ypos = new int[] {ystart,iconSize>>1,yend,ystart};
+    final var ystart = negateSize >> 1;
+    final var yend = iconSize - ystart;
+    final var xstart = 0;
+    final var xend = iconSize - negateSize;
+    final var xpos = new int[] {xstart, xend, xstart, xstart};
+    final var ypos = new int[] {ystart, iconSize >> 1, yend, ystart};
     g.drawPolygon(xpos, ypos, 4);
-    paintIconPins(g,iconSize,borderSize,negateSize,negate,true);
-    if (controlled)
-      g.drawLine(xend>>1, ((3*(yend-ystart))>>2)+ystart , xend>>1, yend);
+    paintIconPins(g, iconSize, borderSize, negateSize, negate, true);
+    if (controlled) g.drawLine(xend >> 1, ((3 * (yend - ystart)) >> 2) + ystart, xend >> 1, yend);
     g.setTransform(af);
   }
 
@@ -545,8 +549,8 @@ abstract class AbstractGate extends InstanceFactory {
   }
 
   protected void paintRectangular(InstancePainter painter, int width, int height) {
-    int don = negateOutput ? 10 : 0;
-    AttributeSet attrs = painter.getAttributeSet();
+    final var don = negateOutput ? 10 : 0;
+    final var attrs = painter.getAttributeSet();
     painter.drawRectangle(-width, -height / 2, width - don, height, getRectangularLabel(attrs));
     if (negateOutput) {
       painter.drawDongle(-5, 0);
@@ -557,19 +561,19 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    GateAttributes attrs = (GateAttributes) state.getAttributeSet();
-    int inputCount = attrs.inputs;
-    long negated = attrs.negated;
-    AttributeSet opts = state.getProject().getOptions().getAttributeSet();
-    boolean errorIfUndefined =
+    final var attrs = (GateAttributes) state.getAttributeSet();
+    final var inputCount = attrs.inputs;
+    final var negated = attrs.negated;
+    final var opts = state.getProject().getOptions().getAttributeSet();
+    final var errorIfUndefined =
         opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR);
 
-    Value[] inputs = new Value[inputCount];
-    int numInputs = 0;
-    boolean error = false;
-    for (int i = 1; i <= inputCount; i++) {
+    final var inputs = new Value[inputCount];
+    var numInputs = 0;
+    var error = false;
+    for (var i = 1; i <= inputCount; i++) {
       if (state.isPortConnected(i)) {
-        int negatedBit = (int)(negated >> (i - 1)) & 1;
+        final var negatedBit = (int) (negated >> (i - 1)) & 1;
         if (negatedBit == 1) {
           inputs[numInputs] = state.getPortValue(i).not();
         } else {
@@ -582,13 +586,10 @@ abstract class AbstractGate extends InstanceFactory {
         }
       }
     }
-    Value out = null;
-    if (numInputs == 0 || error) {
-      out = Value.createError(attrs.width);
-    } else {
-      out = computeOutput(inputs, numInputs, state);
-      out = pullOutput(out, attrs.out);
-    }
+
+    final var out = (numInputs == 0 || error)
+            ? Value.createError(attrs.width)
+            : pullOutput(computeOutput(inputs, numInputs, state), attrs.out);
     state.setPort(0, out, GateAttributes.DELAY);
   }
 

@@ -42,10 +42,10 @@ abstract class CircuitDetermination {
     private Gate binary(
         CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
       if (aret instanceof Gate) {
-        Gate a = (Gate) aret;
+        final var a = (Gate) aret;
         if (a.factory == factory) {
           if (bret instanceof Gate) {
-            Gate b = (Gate) bret;
+            final var b = (Gate) bret;
             if (b.factory == factory) {
               a.inputs.addAll(b.inputs);
               return a;
@@ -57,14 +57,14 @@ abstract class CircuitDetermination {
       }
 
       if (bret instanceof Gate) {
-        Gate b = (Gate) bret;
+        final var b = (Gate) bret;
         if (b.factory == factory) {
           b.inputs.add(aret);
           return b;
         }
       }
 
-      Gate ret = new Gate(factory);
+      final var ret = new Gate(factory);
       ret.inputs.add(aret);
       ret.inputs.add(bret);
       return ret;
@@ -82,9 +82,9 @@ abstract class CircuitDetermination {
 
     @Override
     public CircuitDetermination visitNot(Expression aBase) {
-      CircuitDetermination aret = aBase.visit(this);
+      final var aret = aBase.visit(this);
       if (aret instanceof Gate) {
-        Gate a = (Gate) aret;
+        final var a = (Gate) aret;
         if (a.factory == AndGate.FACTORY) {
           a.factory = NandGate.FACTORY;
           return a;
@@ -98,12 +98,12 @@ abstract class CircuitDetermination {
       }
 
       if (aret instanceof Input) {
-        Input a = (Input) aret;
+        final var a = (Input) aret;
         a.TogleInversion();
         return a;
       }
 
-      Gate ret = new Gate(NotGate.FACTORY);
+      final var ret = new Gate(NotGate.FACTORY);
       ret.inputs.add(aret);
       return ret;
     }
@@ -122,12 +122,12 @@ abstract class CircuitDetermination {
     public CircuitDetermination visitXor(Expression a, Expression b) {
       return binary(a.visit(this), b.visit(this), XorGate.FACTORY);
     }
-    
+
     @Override
     public CircuitDetermination visitXnor(Expression a, Expression b) {
       return binary(a.visit(this), b.visit(this), XnorGate.FACTORY);
     }
-    
+
     @Override
     public CircuitDetermination visitEq(Expression a, Expression b) {
     	return binary(a.visit(this), b.visit(this), XnorGate.FACTORY);
@@ -172,7 +172,7 @@ abstract class CircuitDetermination {
     @Override
     void convertToTwoInputs() {
       if (inputs.size() <= 2) {
-        for (CircuitDetermination a : inputs) {
+        for (final var a : inputs) {
           a.convertToTwoInputs();
         }
       } else {
@@ -182,8 +182,8 @@ abstract class CircuitDetermination {
         else subFactory = factory;
 
         int split = (inputs.size() + 1) / 2;
-        CircuitDetermination a = convertToTwoInputsSub(0, split, subFactory);
-        CircuitDetermination b = convertToTwoInputsSub(split, inputs.size(), subFactory);
+        final var a = convertToTwoInputsSub(0, split, subFactory);
+        final var b = convertToTwoInputsSub(split, inputs.size(), subFactory);
         inputs.clear();
         inputs.add(a);
         inputs.add(b);
@@ -193,13 +193,13 @@ abstract class CircuitDetermination {
     private CircuitDetermination convertToTwoInputsSub(
         int start, int stop, ComponentFactory subFactory) {
       if (stop - start == 1) {
-        CircuitDetermination a = inputs.get(start);
+        final var a = inputs.get(start);
         a.convertToTwoInputs();
         return a;
       } else {
         int split = (start + stop + 1) / 2;
-        CircuitDetermination a = convertToTwoInputsSub(start, split, subFactory);
-        CircuitDetermination b = convertToTwoInputsSub(split, stop, subFactory);
+        final var a = convertToTwoInputsSub(start, split, subFactory);
+        final var b = convertToTwoInputsSub(split, stop, subFactory);
         Gate ret = new Gate(subFactory);
         ret.inputs.add(a);
         ret.inputs.add(b);
@@ -222,17 +222,17 @@ abstract class CircuitDetermination {
 
     private void notAllInputs() {
       for (int i = 0; i < inputs.size(); i++) {
-        CircuitDetermination old = inputs.get(i);
+        final var old = inputs.get(i);
         if (inputs.get(i) instanceof CircuitDetermination.Value) {
-          Value inp = (Value) inputs.get(i);
+          final var inp = (Value) inputs.get(i);
           inp.value ^= 1;
         } else if (inputs.get(i) instanceof CircuitDetermination.Input) {
-          Input inp = (Input) inputs.get(i);
+          final var inp = (Input) inputs.get(i);
           inp.TogleInversion();
         } else if (old.isNandNot()) {
           inputs.set(i, ((Gate) old).inputs.get(0));
         } else {
-          Gate now = new Gate(NandGate.FACTORY);
+          final var now = new Gate(NandGate.FACTORY);
           now.inputs.add(old);
           now.inputs.add(old);
           inputs.set(i, now);
@@ -241,7 +241,7 @@ abstract class CircuitDetermination {
     }
 
     private void notOutput() {
-      Gate sub = new Gate(NandGate.FACTORY);
+      final var sub = new Gate(NandGate.FACTORY);
       sub.inputs = this.inputs;
       this.inputs = new ArrayList<>();
       inputs.add(sub);
@@ -254,7 +254,7 @@ abstract class CircuitDetermination {
       int num = inputs.size();
       if (num > GateAttributes.MAX_INPUTS) {
         int newNum = (num + GateAttributes.MAX_INPUTS - 1) / GateAttributes.MAX_INPUTS;
-        ArrayList<CircuitDetermination> oldInputs = inputs;
+        final var oldInputs = inputs;
         inputs = new ArrayList<>();
 
         ComponentFactory subFactory = factory;
@@ -265,7 +265,7 @@ abstract class CircuitDetermination {
         int numExtra = num - per * newNum;
         int k = 0;
         for (int i = 0; i < newNum; i++) {
-          Gate sub = new Gate(subFactory);
+          final var sub = new Gate(subFactory);
           int subCount = per + (i < numExtra ? 1 : 0);
           for (int j = 0; j < subCount; j++) {
             sub.inputs.add(oldInputs.get(k));
@@ -285,7 +285,7 @@ abstract class CircuitDetermination {
       }
 
       // finally, recurse to clean up any children
-      for (CircuitDetermination sub : inputs) {
+      for (final var sub : inputs) {
         sub.repair();
       }
     }

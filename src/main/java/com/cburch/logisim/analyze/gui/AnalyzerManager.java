@@ -60,13 +60,10 @@ public class AnalyzerManager extends WindowMenuItemManager implements LocaleList
 
   @Override
   public JFrame getJFrame(boolean create, java.awt.Component parent) {
-    if (create) {
-      return getAnalyzer(parent);
-    } else {
-      return analysisWindow;
-    }
+    return (create) ? getAnalyzer(parent) : analysisWindow;
   }
 
+  @Override
   public void localeChanged() {
     setText(S.get("analyzerWindowTitle"));
   }

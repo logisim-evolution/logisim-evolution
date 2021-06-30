@@ -48,6 +48,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
       update(locale);
     }
 
+    @Override
     public void run() {
       if (!LocaleManager.getLocale().equals(locale)) {
         LocaleManager.setLocale(locale);
@@ -78,7 +79,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     DefaultListModel<LocaleOption> model = new DefaultListModel<>();
     items = new LocaleOption[locales.length];
-    for (int i = 0; i < locales.length; i++) {
+    for (var i = 0; i < locales.length; i++) {
       items[i] = new LocaleOption(locales[i]);
       model.addElement(items[i]);
     }
@@ -89,10 +90,11 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
     addListSelectionListener(this);
   }
 
+  @Override
   public void localeChanged() {
-    Locale current = LocaleManager.getLocale();
+    final var current = LocaleManager.getLocale();
     LocaleOption sel = null;
-    for (LocaleOption item : items) {
+    for (final var item : items) {
       item.update(current);
       if (current.equals(item.locale))
         sel = item;
@@ -102,8 +104,9 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
     }
   }
 
+  @Override
   public void valueChanged(ListSelectionEvent e) {
-    LocaleOption opt = (LocaleOption) getSelectedValue();
+    final var opt = (LocaleOption) getSelectedValue();
     if (opt != null) {
       SwingUtilities.invokeLater(opt);
     }

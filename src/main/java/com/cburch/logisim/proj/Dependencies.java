@@ -33,7 +33,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
@@ -50,19 +49,19 @@ public class Dependencies {
         case CircuitEvent.ACTION_ADD:
           comp = (Component) e.getData();
           if (comp.getFactory() instanceof SubcircuitFactory) {
-            SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+            final var factory = (SubcircuitFactory) comp.getFactory();
             depends.addEdge(e.getCircuit(), factory.getSubcircuit());
           } else if (comp.getFactory() instanceof VhdlEntity) {
-            VhdlEntity factory = (VhdlEntity) comp.getFactory();
+            final var factory = (VhdlEntity) comp.getFactory();
             depends.addEdge(e.getCircuit(), factory.getContent());
           }
           break;
         case CircuitEvent.ACTION_REMOVE:
           comp = (Component) e.getData();
           if (comp.getFactory() instanceof SubcircuitFactory) {
-            SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-            boolean found = false;
-            for (Component o : e.getCircuit().getNonWires()) {
+            final var factory = (SubcircuitFactory) comp.getFactory();
+            var found = false;
+            for (final var o : e.getCircuit().getNonWires()) {
               if (o.getFactory() == factory) {
                 found = true;
                 break;
@@ -70,9 +69,9 @@ public class Dependencies {
             }
             if (!found) depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
           } else if (comp.getFactory() instanceof VhdlEntity) {
-            VhdlEntity factory = (VhdlEntity) comp.getFactory();
-            boolean found = false;
-            for (Component o : e.getCircuit().getNonWires()) {
+            final var factory = (VhdlEntity) comp.getFactory();
+            var found = false;
+            for (final var o : e.getCircuit().getNonWires()) {
               if (o.getFactory() == factory) {
                 found = true;
                 break;
@@ -91,23 +90,23 @@ public class Dependencies {
       switch (e.getAction()) {
         case LibraryEvent.ADD_TOOL:
           if (e.getData() instanceof AddTool) {
-            ComponentFactory factory = ((AddTool) e.getData()).getFactory();
+            final var factory = ((AddTool) e.getData()).getFactory();
             if (factory instanceof SubcircuitFactory) {
-              SubcircuitFactory circFact = (SubcircuitFactory) factory;
+              final var circFact = (SubcircuitFactory) factory;
               processCircuit(circFact.getSubcircuit());
             }
           }
           break;
         case LibraryEvent.REMOVE_TOOL:
           if (e.getData() instanceof AddTool) {
-            ComponentFactory factory = ((AddTool) e.getData()).getFactory();
+            final var factory = ((AddTool) e.getData()).getFactory();
             if (factory instanceof SubcircuitFactory) {
-              SubcircuitFactory circFact = (SubcircuitFactory) factory;
-              Circuit circ = circFact.getSubcircuit();
+              final var circFact = (SubcircuitFactory) factory;
+              final var circ = circFact.getSubcircuit();
               depends.removeNode(circ);
               circ.removeCircuitListener(this);
             } else if (factory instanceof VhdlEntity) {
-              VhdlEntity circFact = (VhdlEntity) factory;
+              final var circFact = (VhdlEntity) factory;
               depends.removeNode(circFact.getContent());
             }
           }
@@ -144,12 +143,12 @@ public class Dependencies {
 
   private void processCircuit(Circuit circ) {
     circ.addCircuitListener(myListener);
-    for (Component comp : circ.getNonWires()) {
+    for (final var comp : circ.getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+        final var factory = (SubcircuitFactory) comp.getFactory();
         depends.addEdge(circ, factory.getSubcircuit());
       } else if (comp.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) comp.getFactory();
+        final var factory = (VhdlEntity) comp.getFactory();
         depends.addEdge(circ, factory.getContent());
       }
     }

@@ -54,6 +54,7 @@ public abstract class ManagedComponent extends AbstractComponent {
     this.endsView = Collections.unmodifiableList(ends);
   }
 
+  @Override
   public void addComponentListener(ComponentListener l) {
     listeners.add(l);
   }
@@ -62,7 +63,7 @@ public abstract class ManagedComponent extends AbstractComponent {
   // methods for altering data
   //
   public void clearManager() {
-    for (EndData end : ends) {
+    for (final var end : ends) {
       fireEndChanged(new ComponentEvent(this, end, null));
     }
     ends.clear();
@@ -72,24 +73,24 @@ public abstract class ManagedComponent extends AbstractComponent {
   //
   // user interface methods
   //
+  @Override
   public void expose(ComponentDrawContext context) {
-    Bounds bounds = getBounds();
-    java.awt.Component dest = context.getDestination();
-    if (bounds != null) {
-      dest.repaint(
-          bounds.getX() - 5, bounds.getY() - 5, bounds.getWidth() + 10, bounds.getHeight() + 10);
+    final var bds = getBounds();
+    final var dest = context.getDestination();
+    if (bds != null) {
+      dest.repaint(bds.getX() - 5, bds.getY() - 5, bds.getWidth() + 10, bds.getHeight() + 10);
     }
   }
 
   protected void fireComponentInvalidated(ComponentEvent e) {
-    for (ComponentListener l : listeners) {
+    for (final var l : listeners) {
       l.componentInvalidated(e);
     }
   }
 
   protected void fireEndChanged(ComponentEvent e) {
     ComponentEvent copy = null;
-    for (ComponentListener l : listeners) {
+    for (final var l : listeners) {
       if (copy == null) {
         copy =
             new ComponentEvent(
@@ -103,12 +104,13 @@ public abstract class ManagedComponent extends AbstractComponent {
 
   protected void fireEndsChanged(List<EndData> oldEnds, List<EndData> newEnds) {
     ComponentEvent e = null;
-    for (ComponentListener l : listeners) {
+    for (final var l : listeners) {
       if (e == null) e = new ComponentEvent(this, oldEnds, newEnds);
       l.endChanged(e);
     }
   }
 
+  @Override
   public AttributeSet getAttributeSet() {
     return attrs;
   }
@@ -116,8 +118,8 @@ public abstract class ManagedComponent extends AbstractComponent {
   @Override
   public Bounds getBounds() {
     if (bounds == null) {
-      Location loc = getLocation();
-      Bounds offBounds = getFactory().getOffsetBounds(getAttributeSet());
+      final var loc = getLocation();
+      final var offBounds = getFactory().getOffsetBounds(getAttributeSet());
       bounds = offBounds.translate(loc.getX(), loc.getY());
     }
     return bounds;
@@ -158,6 +160,7 @@ public abstract class ManagedComponent extends AbstractComponent {
     bounds = null;
   }
 
+  @Override
   public void removeComponentListener(ComponentListener l) {
     listeners.remove(l);
   }
@@ -179,7 +182,7 @@ public abstract class ManagedComponent extends AbstractComponent {
       ends.add(data);
       fireEndChanged(new ComponentEvent(this, null, data));
     } else {
-      EndData old = ends.get(i);
+      final var old = ends.get(i);
       if (old == null || !old.equals(data)) {
         ends.set(i, data);
         fireEndChanged(new ComponentEvent(this, old, data));
@@ -196,23 +199,23 @@ public abstract class ManagedComponent extends AbstractComponent {
   }
 
   public void setEnds(EndData[] newEnds) {
-    List<EndData> oldEnds = ends;
-    int minLen = Math.min(oldEnds.size(), newEnds.length);
-    ArrayList<EndData> changesOld = new ArrayList<>();
-    ArrayList<EndData> changesNew = new ArrayList<>();
-    for (int i = 0; i < minLen; i++) {
-      EndData old = oldEnds.get(i);
+    final var oldEnds = ends;
+    final var minLen = Math.min(oldEnds.size(), newEnds.length);
+    final var changesOld = new ArrayList<EndData>();
+    final var changesNew = new ArrayList<EndData>();
+    for (var i = 0; i < minLen; i++) {
+      final var old = oldEnds.get(i);
       if (newEnds[i] != null && !newEnds[i].equals(old)) {
         changesOld.add(old);
         changesNew.add(newEnds[i]);
         oldEnds.set(i, newEnds[i]);
       }
     }
-    for (int i = oldEnds.size() - 1; i >= minLen; i--) {
+    for (var i = oldEnds.size() - 1; i >= minLen; i--) {
       changesOld.add(oldEnds.remove(i));
       changesNew.add(null);
     }
-    for (int i = minLen; i < newEnds.length; i++) {
+    for (var i = minLen; i < newEnds.length; i++) {
       oldEnds.add(newEnds[i]);
       changesOld.add(null);
       changesNew.add(newEnds[i]);

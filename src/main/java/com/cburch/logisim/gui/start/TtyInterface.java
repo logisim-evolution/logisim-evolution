@@ -99,8 +99,8 @@ public class TtyInterface {
     else if (hertz >= 0.01) precision = 0.0001;
     else precision = 0.0000001;
     hertz = (int) (hertz / precision) * precision;
-    String hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-    Object[] paramArray = {StringUtil.format(S.get("ttySpeedMsg")), hertzStr, tickCount, elapse};
+    var hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
+    Object[] paramArray = {S.get("ttySpeedMsg"), hertzStr, tickCount, elapse};
     logger.info("{}", paramArray);
   }
 
@@ -253,7 +253,7 @@ public class TtyInterface {
       }
     }
 
-    for (CircuitState sub : circState.getSubstates()) {
+    for (CircuitState sub : circState.getSubStates()) {
       found |= loadRam(sub, loadFile);
     }
     return found;
@@ -275,7 +275,7 @@ public class TtyInterface {
       }
     }
 
-    for (CircuitState sub : circState.getSubstates()) {
+    for (CircuitState sub : circState.getSubStates()) {
       found |= prepareForTty(sub, keybStates);
     }
     return found;
@@ -288,7 +288,7 @@ public class TtyInterface {
     try {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
-      logger.error("{}", S.fmt("ttyLoadError", fileToOpen.getName()));
+      logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
       System.exit(-1);
       return;
     }

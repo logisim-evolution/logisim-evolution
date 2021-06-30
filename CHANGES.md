@@ -1,5 +1,9 @@
+![Logisim-evolution](src/main/resources/resources/logisim/img/logisim-evolution-logo.svg)
+
+# Changes #
+
 * @dev (????-??-??)
-  * Introducing project logo 
+  * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
   * Made pins' tooltips more descriptive for 74161.
@@ -20,4 +24,3 @@
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
-

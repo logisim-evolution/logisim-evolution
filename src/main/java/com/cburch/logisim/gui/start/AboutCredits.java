@@ -99,7 +99,7 @@ class AboutCredits extends JComponent {
         ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
     int yPos = offsetY - height;
 
-    for (var line : lines) {
+    for (final var line : lines) {
       int y = line.startY - yPos;
       // do not attempt to draw line contents if it'd be outside of visible area anyway
       if ((y < -line.displayHeight) && (y > height + line.displayHeight)) continue;
@@ -126,7 +126,7 @@ class AboutCredits extends JComponent {
       if (initialized) return;
 
       // Lets's calculate at what Y value given lines should be drawn
-      for (var line : lines) {
+      for (final var line : lines) {
         line.init(g, displayWidth, displayHeight, totalScrollLinesHeight);
         totalScrollLinesHeight += line.displayHeight;
       }

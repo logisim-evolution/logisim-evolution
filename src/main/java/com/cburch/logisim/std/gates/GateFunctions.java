@@ -32,7 +32,7 @@ import com.cburch.logisim.data.Value;
 
 class GateFunctions {
   static Value computeAnd(Value[] inputs, int numInputs) {
-    Value ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = ret.and(inputs[i]);
     }
@@ -40,12 +40,12 @@ class GateFunctions {
   }
 
   static Value computeExactlyOne(Value[] inputs, int numInputs) {
-    int width = inputs[0].getWidth();
-    Value[] ret = new Value[width];
-    for (int i = 0; i < width; i++) {
-      int count = 0;
-      for (int j = 0; j < numInputs; j++) {
-        Value v = inputs[j].get(i);
+    final var width = inputs[0].getWidth();
+    final var ret = new Value[width];
+    for (var i = 0; i < width; i++) {
+      var count = 0;
+      for (var j = 0; j < numInputs; j++) {
+        final var v = inputs[j].get(i);
         if (v == Value.TRUE) {
           count++;
         } else if (v == Value.FALSE) {
@@ -67,7 +67,7 @@ class GateFunctions {
   }
 
   static Value computeOddParity(Value[] inputs, int numInputs) {
-    Value ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = ret.xor(inputs[i]);
     }
@@ -75,7 +75,7 @@ class GateFunctions {
   }
 
   static Value computeOr(Value[] inputs, int numInputs) {
-    Value ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = ret.or(inputs[i]);
     }

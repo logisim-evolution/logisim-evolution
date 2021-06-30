@@ -50,7 +50,7 @@ class NegateAttribute extends Attribute<Boolean> {
   @Override
   public boolean equals(Object other) {
     if (other instanceof NegateAttribute) {
-      NegateAttribute o = (NegateAttribute) other;
+      final var o = (NegateAttribute) other;
       return this.index == o.index && this.side == o.side;
     } else {
       return false;
@@ -64,7 +64,7 @@ class NegateAttribute extends Attribute<Boolean> {
 
   @Override
   public String getDisplayName() {
-    String ret = StringUtil.format(S.get("gateNegateAttr"), "" + (index + 1));
+    String ret = S.get("gateNegateAttr", "" + (index + 1));
     if (side != null) {
       ret += " (" + side.toVerticalDisplayString() + ")";
     }

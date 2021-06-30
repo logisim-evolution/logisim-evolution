@@ -35,16 +35,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
 
 public class GraphicsUtil {
-  public static void drawArrow(
-      Graphics g, int x0, int y0, int x1, int y1, int headLength, int headAngle) {
-    double offs = headAngle * Math.PI / 180.0;
-    double angle = Math.atan2(y0 - y1, x0 - x1);
+  public static void drawArrow(Graphics g, int x0, int y0, int x1, int y1, int headLength, int headAngle) {
+    final var offs = headAngle * Math.PI / 180.0;
+    final var angle = Math.atan2(y0 - y1, x0 - x1);
     int[] xs = {
       x1 + (int) (headLength * Math.cos(angle + offs)),
       x1,
@@ -64,7 +59,7 @@ public class GraphicsUtil {
     int[] ys = {y0, y1, y2};
     GraphicsUtil.switchToWidth(g, 7);
     g.drawPolyline(xs, ys, 3);
-    final Color oldColor = g.getColor();
+    final var oldColor = g.getColor();
     g.setColor(Color.WHITE);
     GraphicsUtil.switchToWidth(g, 3);
     g.drawPolyline(xs, ys, 3);
@@ -90,22 +85,21 @@ public class GraphicsUtil {
     drawText(g, text, x, y, H_CENTER, V_CENTER, fg, bg);
   }
 
-  public static Rectangle getTextCursor(
-      Graphics g, String text, int x, int y, int pos, int halign, int valign) {
-    Rectangle r = getTextBounds(g, text, x, y, halign, valign);
+  public static Rectangle getTextCursor(Graphics g, String text, int x, int y, int pos, int halign, int valign) {
+    final var r = getTextBounds(g, text, x, y, halign, valign);
     if (pos > 0) r.x += new TextMetrics(g, text.substring(0, pos)).width;
     r.width = 1;
     return r;
   }
 
   public static int getTextPosition(Graphics g, String text, int x, int y, int halign, int valign) {
-    Rectangle r = getTextBounds(g, text, 0, 0, halign, valign);
+    final var r = getTextBounds(g, text, 0, 0, halign, valign);
     x -= r.x;
-    int last = 0;
-    Font font = g.getFont();
-    FontRenderContext fr = ((Graphics2D) g).getFontRenderContext();
-    for (int i = 0; i < text.length(); i++) {
-      int cur = (int) font.getStringBounds(text.substring(0, i + 1), fr).getWidth();
+    var last = 0;
+    final var font = g.getFont();
+    final var fr = ((Graphics2D) g).getFontRenderContext();
+    for (var i = 0; i < text.length(); i++) {
+      final var cur = (int) font.getStringBounds(text.substring(0, i + 1), fr).getWidth();
       if (x <= (last + cur) / 2) {
         return i;
       }
@@ -124,7 +118,7 @@ public class GraphicsUtil {
       int valign,
       Color fg,
       Color bg) {
-    Font oldfont = g.getFont();
+    final var oldfont = g.getFont();
     if (font != null) g.setFont(font);
     drawText(g, text, x, y, halign, valign, fg, bg);
     if (font != null) g.setFont(oldfont);
@@ -132,7 +126,7 @@ public class GraphicsUtil {
 
   public static void drawText(
       Graphics g, Font font, String text, int x, int y, int halign, int valign) {
-    Font oldfont = g.getFont();
+    final var oldfont = g.getFont();
     if (font != null) g.setFont(font);
     drawText(g, text, x, y, halign, valign);
     if (font != null) g.setFont(oldfont);
@@ -140,16 +134,15 @@ public class GraphicsUtil {
 
   public static void drawText(Graphics g, String text, int x, int y, int halign, int valign) {
     if (text.length() == 0) return;
-    Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
-    TextMetrics tm = new TextMetrics(g, text);
+    final var bd = getTextBounds(g, text, x, y, halign, valign);
+    final var tm = new TextMetrics(g, text);
     g.drawString(text, bd.x, bd.y + tm.ascent);
   }
 
-  public static void drawText(
-      Graphics g, String text, int x, int y, int halign, int valign, Color fg, Color bg) {
+  public static void drawText(Graphics g, String text, int x, int y, int halign, int valign, Color fg, Color bg) {
     if (text.length() == 0) return;
-    Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
-    TextMetrics tm = new TextMetrics(g, text);
+    final var bd = getTextBounds(g, text, x, y, halign, valign);
+    final var tm = new TextMetrics(g, text);
     if (g instanceof Graphics2D) {
       ((Graphics2D) g).setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
@@ -159,10 +152,10 @@ public class GraphicsUtil {
   }
 
   public static void outlineText(Graphics g, String text, int x, int y, Color fg, Color bg) {
-    Graphics2D g2 = (Graphics2D) g;
-    GlyphVector glyphVector = g2.getFont().createGlyphVector(g2.getFontRenderContext(), text);
-    Shape textShape = glyphVector.getOutline();
-    AffineTransform transform = g2.getTransform();
+    final var g2 = (Graphics2D) g;
+    final var glyphVector = g2.getFont().createGlyphVector(g2.getFontRenderContext(), text);
+    final var textShape = glyphVector.getOutline();
+    final var transform = g2.getTransform();
     g2.translate(x, y);
     g2.setColor(bg);
     g2.draw(textShape);
@@ -171,25 +164,24 @@ public class GraphicsUtil {
     g2.setTransform(transform);
   }
 
-  public static Rectangle getTextBounds(
-      Graphics g, Font font, String text, int x, int y, int halign, int valign) {
+  public static Rectangle getTextBounds(Graphics g, Font font, String text, int x, int y, int halign, int valign) {
     if (g == null) return new Rectangle(x, y, 0, 0);
-    Font oldfont = g.getFont();
+    final var oldfont = g.getFont();
     if (font != null) g.setFont(font);
-    Rectangle ret = getTextBounds(g, text, x, y, halign, valign);
+    final var ret = getTextBounds(g, text, x, y, halign, valign);
     if (font != null) g.setFont(oldfont);
     return ret;
   }
 
-  public static Rectangle getTextBounds(
-      Graphics g, String text, int x, int y, int halign, int valign) {
+  public static Rectangle getTextBounds(Graphics g, String text, int x, int y, int halign, int valign) {
     if (g == null) return new Rectangle(x, y, 0, 0);
-    TextMetrics tm = new TextMetrics(g, text);
-    int width = tm.width;
-    int ascent = tm.ascent;
-    int height = tm.height;
 
-    Rectangle ret = new Rectangle(x, y, width, height);
+    final var tm = new TextMetrics(g, text);
+    final var width = tm.width;
+    final var ascent = tm.ascent;
+    final var height = tm.height;
+
+    final var ret = new Rectangle(x, y, width, height);
     switch (halign) {
       case H_CENTER:
         ret.translate(-(width / 2), 0);
@@ -221,8 +213,7 @@ public class GraphicsUtil {
 
   public static void switchToWidth(Graphics g, int width) {
     if (g instanceof Graphics2D) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setStroke(new BasicStroke((float) width));
+      ((Graphics2D) g).setStroke(new BasicStroke((float) width));
     }
   }
 

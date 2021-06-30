@@ -370,22 +370,22 @@ public class SimOptions extends OptionsPanel {
     WidthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
     DefaultButton.setText(S.get("simDefaultColors"));
     ColorBlindButton.setText(S.get("simColorBlindColors"));
-    Kmap1ColorTitle.setText(S.fmt("simKmapColors", 1));
-    Kmap2ColorTitle.setText(S.fmt("simKmapColors", 2));
-    Kmap3ColorTitle.setText(S.fmt("simKmapColors", 3));
-    Kmap4ColorTitle.setText(S.fmt("simKmapColors", 4));
-    Kmap5ColorTitle.setText(S.fmt("simKmapColors", 5));
-    Kmap6ColorTitle.setText(S.fmt("simKmapColors", 6));
-    Kmap7ColorTitle.setText(S.fmt("simKmapColors", 7));
-    Kmap8ColorTitle.setText(S.fmt("simKmapColors", 8));
-    Kmap9ColorTitle.setText(S.fmt("simKmapColors", 9));
-    Kmap10ColorTitle.setText(S.fmt("simKmapColors", 10));
-    Kmap11ColorTitle.setText(S.fmt("simKmapColors", 11));
-    Kmap12ColorTitle.setText(S.fmt("simKmapColors", 12));
-    Kmap13ColorTitle.setText(S.fmt("simKmapColors", 13));
-    Kmap14ColorTitle.setText(S.fmt("simKmapColors", 14));
-    Kmap15ColorTitle.setText(S.fmt("simKmapColors", 15));
-    Kmap16ColorTitle.setText(S.fmt("simKmapColors", 16));
+    Kmap1ColorTitle.setText(S.get("simKmapColors", 1));
+    Kmap2ColorTitle.setText(S.get("simKmapColors", 2));
+    Kmap3ColorTitle.setText(S.get("simKmapColors", 3));
+    Kmap4ColorTitle.setText(S.get("simKmapColors", 4));
+    Kmap5ColorTitle.setText(S.get("simKmapColors", 5));
+    Kmap6ColorTitle.setText(S.get("simKmapColors", 6));
+    Kmap7ColorTitle.setText(S.get("simKmapColors", 7));
+    Kmap8ColorTitle.setText(S.get("simKmapColors", 8));
+    Kmap9ColorTitle.setText(S.get("simKmapColors", 9));
+    Kmap10ColorTitle.setText(S.get("simKmapColors", 10));
+    Kmap11ColorTitle.setText(S.get("simKmapColors", 11));
+    Kmap12ColorTitle.setText(S.get("simKmapColors", 12));
+    Kmap13ColorTitle.setText(S.get("simKmapColors", 13));
+    Kmap14ColorTitle.setText(S.get("simKmapColors", 14));
+    Kmap15ColorTitle.setText(S.get("simKmapColors", 15));
+    Kmap16ColorTitle.setText(S.get("simKmapColors", 16));
     KmapColorsTitle.setText(S.get("simKmapColorsTitle"));
   }
 

@@ -34,10 +34,8 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
-import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -46,7 +44,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -89,27 +86,28 @@ public class MenuTool extends Tool {
       attrs.addActionListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
       if (src == del) {
-        Circuit circ = proj.getCurrentCircuit();
-        CircuitMutation xn = new CircuitMutation(circ);
+        final var circ = proj.getCurrentCircuit();
+        final var xn = new CircuitMutation(circ);
         xn.remove(comp);
         proj.doAction(
             xn.toAction(S.getter("removeComponentAction", comp.getFactory().getDisplayGetter())));
       } else if (src == attrs) {
         proj.getFrame().viewComponentAttributes(circ, comp);
       } else if (src == rotateRight) {
-        Circuit circ = proj.getCurrentCircuit();
-        CircuitMutation xn = new CircuitMutation(circ);
-        Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
+        final var circ = proj.getCurrentCircuit();
+        final var xn = new CircuitMutation(circ);
+        final var d = comp.getAttributeSet().getValue(StdAttr.FACING);
         xn.set(comp, StdAttr.FACING, d.getRight());
         proj.doAction(
             xn.toAction(S.getter("rotateComponentAction", comp.getFactory().getDisplayGetter())));
       } else if (src == rotateLeft) {
-        Circuit circ = proj.getCurrentCircuit();
-        CircuitMutation xn = new CircuitMutation(circ);
-        Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
+        final var circ = proj.getCurrentCircuit();
+        final var xn = new CircuitMutation(circ);
+        final var d = comp.getAttributeSet().getValue(StdAttr.FACING);
         xn.set(comp, StdAttr.FACING, d.getLeft());
         proj.doAction(
             xn.toAction(S.getter("rotateComponentAction", comp.getFactory().getDisplayGetter())));
@@ -137,9 +135,10 @@ public class MenuTool extends Tool {
       copy.addActionListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
-      Selection sel = proj.getSelection();
+      final var sel = proj.getSelection();
       if (src == del) {
         proj.doAction(SelectionActions.clear(sel));
       } else if (src == cut) {
@@ -181,27 +180,27 @@ public class MenuTool extends Tool {
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     int x = e.getX();
     int y = e.getY();
-    Location pt = Location.create(x, y);
+    final var pt = Location.create(x, y);
 
     JPopupMenu menu;
-    Project proj = canvas.getProject();
-    Selection sel = proj.getSelection();
-    Collection<Component> in_sel = sel.getComponentsContaining(pt, g);
+    final var proj = canvas.getProject();
+    final var sel = proj.getSelection();
+    final var in_sel = sel.getComponentsContaining(pt, g);
     if (!in_sel.isEmpty()) {
-      Component comp = in_sel.iterator().next();
+      final var comp = in_sel.iterator().next();
       if (sel.getComponents().size() > 1) {
         menu = new MenuSelection(proj);
       } else {
         menu = new MenuComponent(proj, canvas.getCircuit(), comp);
-        MenuExtender extender = (MenuExtender) comp.getFeature(MenuExtender.class);
+        final var extender = (MenuExtender) comp.getFeature(MenuExtender.class);
         if (extender != null) extender.configureMenu(menu, proj);
       }
     } else {
-      Collection<Component> cl = canvas.getCircuit().getAllContaining(pt, g);
+      final var cl = canvas.getCircuit().getAllContaining(pt, g);
       if (!cl.isEmpty()) {
-        Component comp = cl.iterator().next();
+        final var comp = cl.iterator().next();
         menu = new MenuComponent(proj, canvas.getCircuit(), comp);
-        MenuExtender extender = (MenuExtender) comp.getFeature(MenuExtender.class);
+        final var extender = (MenuExtender) comp.getFeature(MenuExtender.class);
         if (extender != null) extender.configureMenu(menu, proj);
       } else {
         menu = null;
@@ -215,7 +214,7 @@ public class MenuTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Graphics g = c.getGraphics();
+    final var g = c.getGraphics();
     g.fillRect(x + 2, y + 1, 9, 2);
     g.drawRect(x + 2, y + 3, 15, 12);
     g.setColor(Color.lightGray);

@@ -197,11 +197,11 @@ public class ModelReorderAction extends ModelAction {
   @Override
   public String getName() {
     if (type < 0) {
-      return S.fmt("actionRaise", getShapesName(objects));
+      return S.get("actionRaise", getShapesName(objects));
     } else if (type > 0) {
-      return S.fmt("actionLower", getShapesName(objects));
+      return S.get("actionLower", getShapesName(objects));
     } else {
-      return S.fmt("actionReorder", getShapesName(objects));
+      return S.get("actionReorder", getShapesName(objects));
     }
   }
 

@@ -56,7 +56,7 @@ public class Ttl7451 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 50, y + 24, 10, 10, false);
     Drawgates.paintAnd(g, x + 50, y + 36, 10, 10, false);
     Drawgates.paintOr(g, x + 70, y + 30, 10, 10, true, false);
@@ -65,10 +65,10 @@ public class Ttl7451 extends AbstractTtlGate {
     Drawgates.paintAnd(g, x + 100, y + 36, 10, 10, false);
     Drawgates.paintOr(g, x + 120, y + 30, 10, 10, true, false);
 
-    int offset = (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
+    final var offset = (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
 
-    int[] xpos = new int[] {x + 50, x + 53 + offset / 2, x + 53 + offset / 2, x + 56 + offset};
-    int[] ypos = new int[] {y + 24, y + 24, y + 26 + offset / 2, y + 26 + offset / 2};
+    var xpos = new int[] {x + 50, x + 53 + offset / 2, x + 53 + offset / 2, x + 56 + offset};
+    var ypos = new int[] {y + 24, y + 24, y + 26 + offset / 2, y + 26 + offset / 2};
     g.drawPolyline(xpos, ypos, 4);
     for (int i = 0; i < 4; i++) {
       xpos[i] += 50;
@@ -115,8 +115,8 @@ public class Ttl7451 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val1 = state.getPortValue(1).and(state.getPortValue(2));
-    Value val2 = state.getPortValue(3).and(state.getPortValue(4));
+    var val1 = state.getPortValue(1).and(state.getPortValue(2));
+    var val2 = state.getPortValue(3).and(state.getPortValue(4));
     state.setPort(5, val1.or(val2).not(), 3);
     val1 = state.getPortValue(0).and(state.getPortValue(9));
     val2 = state.getPortValue(7).and(state.getPortValue(8));

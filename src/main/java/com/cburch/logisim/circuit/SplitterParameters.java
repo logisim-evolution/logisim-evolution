@@ -50,7 +50,7 @@ class SplitterParameters {
 
     Object appear = attrs.appear;
     int fanout = attrs.fanout;
-    Direction facing = attrs.facing;
+    final var facing = attrs.facing;
 
     int justify;
     if (appear == SplitterAttributes.APPEAR_CENTER || appear == SplitterAttributes.APPEAR_LEGACY) {
@@ -60,10 +60,10 @@ class SplitterParameters {
     } else {
       justify = -1;
     }
-    int width = 20;
+    final var width = 20;
 
-    int gap = attrs.spacing * 10;
-    int offs = 6;
+    final var gap = attrs.spacing * 10;
+    final var offs = 6;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) { // ^ or V
       int m = facing == Direction.NORTH ? 1 : -1;
       dxEnd0 =
@@ -83,7 +83,7 @@ class SplitterParameters {
       halign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
       valign = GraphicsUtil.V_BASELINE;
     } else { // > or <
-      int m = facing == Direction.WEST ? -1 : 1;
+      final var m = facing == Direction.WEST ? -1 : 1;
       dxEnd0 = m * width;
       dyEnd0 =
           justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));

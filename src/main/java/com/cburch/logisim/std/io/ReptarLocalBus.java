@@ -43,7 +43,6 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class ReptarLocalBus extends InstanceFactory {
@@ -100,10 +99,10 @@ public class ReptarLocalBus extends InstanceFactory {
   public ReptarLocalBus() {
     super(_ID, S.getter("repLBComponent"));
 
-    ArrayList<String> inpLabels = new ArrayList<>();
-    ArrayList<String> outpLabels = new ArrayList<>();
-    ArrayList<String> ioLabels = new ArrayList<>();
-    for (int i = 0; i < 16; i++) {
+    final var inpLabels = new ArrayList<String>();
+    final var outpLabels = new ArrayList<String>();
+    final var ioLabels = new ArrayList<String>();
+    for (var i = 0; i < 16; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));
       ioLabels.add(getIOLabel(i));
@@ -120,7 +119,7 @@ public class ReptarLocalBus extends InstanceFactory {
     setOffsetBounds(Bounds.create(-110, -10, 110, 110));
     setIconName("localbus.gif");
 
-    Port[] ps = new Port[10];
+    final var ps = new Port[10];
     ps[SP6_LB_nCS3_o] = new Port(0, 0, Port.OUTPUT, 1);
     ps[SP6_LB_nADV_ALE_o] = new Port(0, 10, Port.OUTPUT, 1);
     ps[SP6_LB_RE_nOE_o] = new Port(0, 20, Port.OUTPUT, 1);
@@ -170,7 +169,7 @@ public class ReptarLocalBus extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.BLACK);

@@ -44,7 +44,7 @@ public class CircuitAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    CircuitTransactionResult result = forward.execute();
+    final var result = forward.execute();
     if (result != null) {
       reverse = result.getReverseTransaction();
     }

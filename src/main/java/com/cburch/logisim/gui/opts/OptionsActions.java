@@ -107,7 +107,7 @@ class OptionsActions {
 
     @Override
     public String getName() {
-      return StringUtil.format(S.get("setOptionAction"), attr.getDisplayName());
+      return S.get("setOptionAction", attr.getDisplayName());
     }
 
     @Override

@@ -31,7 +31,6 @@ package com.cburch.logisim.std.tcl;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,10 +49,9 @@ public class TclVhdlEntityContent extends VhdlContentComponent {
 
   // TODO: remove code duplication with parent class
   private static String loadTemplate() {
-    InputStream input = VhdlContentComponent.class.getResourceAsStream(RESOURCE);
-    BufferedReader in = new BufferedReader(new InputStreamReader(input));
-
-    StringBuilder tmp = new StringBuilder();
+    final var input = VhdlContentComponent.class.getResourceAsStream(RESOURCE);
+    final var in = new BufferedReader(new InputStreamReader(input));
+    final var tmp = new StringBuilder();
     String line;
 
     try {

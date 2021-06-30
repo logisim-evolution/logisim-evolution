@@ -36,7 +36,6 @@ import com.cburch.draw.util.EditableLabel;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.base.Text;
@@ -65,9 +64,9 @@ public class RegisterShape extends DynamicElement {
   }
 
   void calculateBounds() {
-    BitWidth widthVal = path.leaf().getAttributeSet().getValue(StdAttr.WIDTH);
+    final var widthVal = path.leaf().getAttributeSet().getValue(StdAttr.WIDTH);
     int width = (widthVal == null ? 8 : widthVal.getWidth());
-    String zeros = StringUtil.toHexString(width, 0);
+    final var zeros = StringUtil.toHexString(width, 0);
     label.setText(zeros);
     int x = bounds.getX();
     int y = bounds.getY();
@@ -119,10 +118,10 @@ public class RegisterShape extends DynamicElement {
     g.setColor(Color.BLACK);
     g.drawRect(x, y, w, h);
     if (state != null) {
-      BitWidth widthVal = path.leaf().getAttributeSet().getValue(StdAttr.WIDTH);
-      int width = (widthVal == null ? 8 : widthVal.getWidth());
-      RegisterData data = (RegisterData) getData(state);
-      long val = data == null ? 0 : data.value.toLongValue();
+      final var widthVal = path.leaf().getAttributeSet().getValue(StdAttr.WIDTH);
+      final var width = (widthVal == null ? 8 : widthVal.getWidth());
+      final var data = (RegisterData) getData(state);
+      final var val = data == null ? 0 : data.value.toLongValue();
       label.setText(StringUtil.toHexString(width, val));
     }
     label.paint(g);
@@ -136,7 +135,7 @@ public class RegisterShape extends DynamicElement {
 
   public Element toSvgElement(Element ret) {
     ret = super.toSvgElement(ret);
-    Font font = label.getFont();
+    final var font = label.getFont();
     if (!font.equals(DEFAULT_FONT)) SvgCreator.setFontAttribute(ret, font, "value-");
     return ret;
   }

@@ -50,79 +50,78 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     return "GATE";
   }
 
-  public boolean GetFloatingValue(boolean is_inverted) {
-    return !is_inverted;
+  public boolean GetFloatingValue(boolean isInverted) {
+    return !isInverted;
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    int Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
-    int NrOfInputs =
+  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
+    final var inputs = new TreeMap<String, Integer>();
+    final var Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
+    final var NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    for (int i = 0; i < NrOfInputs; i++) {
-      MyInputs.put("Input_" + (i + 1), Bitwidth);
+    for (var i = 0; i < NrOfInputs; i++) {
+      inputs.put("Input_" + (i + 1), Bitwidth);
     }
-    return MyInputs;
+    return inputs;
   }
 
-  public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+  public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
     return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    int Bitwidth = attrs.getValue(StdAttr.WIDTH).getWidth();
-    int NrOfInputs =
+  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    final var bitWidht = attrs.getValue(StdAttr.WIDTH).getWidth();
+    final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
 
-    if (NrOfInputs > 1) {
-      Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the bubbles are processed", 3));
+    if (nrOfInputs > 1) {
+      contents.add("");
+      contents.addAll(MakeRemarkBlock("Here the bubbles are processed", 3));
       if (HDL.isVHDL()) {
-        String AllignmentSpaces;
-        if (NrOfInputs < 10) AllignmentSpaces = " ";
-        else if (NrOfInputs < 100) AllignmentSpaces = "  ";
-        else AllignmentSpaces = "   ";
-        Contents.add(
+        String allignmentSpaces;
+        if (nrOfInputs < 10) allignmentSpaces = " ";
+        else if (nrOfInputs < 100) allignmentSpaces = "  ";
+        else allignmentSpaces = "   ";
+        contents.add(
             "   s_signal_invert_mask <= std_logic_vector(to_unsigned("
                 + BubblesString
                 + ","
-                + NrOfInputs
+                + nrOfInputs
                 + "));");
-        StringBuilder WhenLineBegin = new StringBuilder();
-        WhenLineBegin.append(" ".repeat(21 + AllignmentSpaces.length()));
-        for (int i = 0; i < NrOfInputs; i++) {
-          String LocalSpaces;
-          if (i < 10) LocalSpaces = AllignmentSpaces;
+        final var whenLineBegin = new StringBuilder();
+        whenLineBegin.append(" ".repeat(21 + allignmentSpaces.length()));
+        for (var i = 0; i < nrOfInputs; i++) {
+          var localSpaces = " ";
+          if (i < 10) localSpaces = allignmentSpaces;
           else if (i < 100)
-            LocalSpaces = AllignmentSpaces.substring(0, AllignmentSpaces.length() - 1);
+            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 1);
           else if (i < 1000)
-            LocalSpaces = AllignmentSpaces.substring(0, AllignmentSpaces.length() - 2);
-          else LocalSpaces = " ";
-          Contents.add(
+            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
+          contents.add(
               "   s_real_input_"
                   + (i + 1)
-                  + LocalSpaces
+                  + localSpaces
                   + " <= NOT( Input_"
                   + (i + 1)
                   + " )");
-          Contents.add(
-              WhenLineBegin
+          contents.add(
+              whenLineBegin
                   + "   WHEN s_signal_invert_mask("
                   + i
                   + ") = '1' ELSE");
-          Contents.add(WhenLineBegin + "Input_" + (i + 1) + ";");
+          contents.add(whenLineBegin + "Input_" + (i + 1) + ";");
         }
       } else {
-        Contents.add("   assign s_signal_invert_mask = " + BubblesString + ";");
-        for (int i = 0; i < NrOfInputs; i++) {
-          Contents.add(
+        contents.add("   assign s_signal_invert_mask = " + BubblesString + ";");
+        for (var i = 0; i < nrOfInputs; i++) {
+          contents.add(
               "   assign s_real_input_"
                   + (i + 1)
                   + " = (s_signal_invert_mask["
@@ -136,209 +135,209 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         }
       }
     }
-    Contents.add("");
-    Contents.addAll(MakeRemarkBlock("Here the functionality is defined", 3));
-    boolean onehot = false;
+    contents.add("");
+    contents.addAll(MakeRemarkBlock("Here the functionality is defined", 3));
+    var onehot = false;
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    Contents.addAll(GetLogicFunction(NrOfInputs, Bitwidth, onehot));
-    return Contents;
+    contents.addAll(GetLogicFunction(nrOfInputs, bitWidht, onehot));
+    return contents;
   }
 
-  public ArrayList<String> GetOneHot(boolean inverted, int nr_of_inputs, boolean is_bus) {
-    var Lines = new ArrayList<String>();
-    var Spaces = "   ";
-    var IndexString = "";
-    if (is_bus) {
+  public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
+    var lines = new ArrayList<String>();
+    var spaces = "   ";
+    var indexString = "";
+    if (isBus) {
       if (HDL.isVHDL()) {
-        Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
-        Spaces += "   ";
-        IndexString = "(n)";
+        lines.add(spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
+        spaces += "   ";
+        indexString = "(n)";
       } else {
-        Lines.add("   genvar n;");
-        Lines.add("   generate");
-        Lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
-        Lines.add("         begin: bit");
-        Spaces += "         ";
-        IndexString = "[n]";
+        lines.add("   genvar n;");
+        lines.add("   generate");
+        lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
+        lines.add("         begin: bit");
+        spaces += "         ";
+        indexString = "[n]";
       }
     }
     var oneLine = new StringBuilder();
     oneLine
-        .append(Spaces)
+        .append(spaces)
         .append(HDL.assignPreamble())
         .append("Result")
-        .append(IndexString)
+        .append(indexString)
         .append(HDL.assignOperator());
     if (inverted) oneLine.append(HDL.notOperator()).append("(");
-    int spaces = oneLine.length();
-    for (int termloop = 0; termloop < nr_of_inputs; termloop++) {
-      while (oneLine.length() < spaces) {
+    final var spacesLen = oneLine.length();
+    for (var termloop = 0; termloop < nrOfInputs; termloop++) {
+      while (oneLine.length() < spacesLen) {
         oneLine.append(" ");
       }
       oneLine.append("(");
-      for (int i = 0; i < nr_of_inputs; i++) {
+      for (var i = 0; i < nrOfInputs; i++) {
         if (i == termloop) {
-          oneLine.append("s_real_input_").append(i + 1).append(IndexString);
+          oneLine.append("s_real_input_").append(i + 1).append(indexString);
         } else {
-          oneLine.append(HDL.notOperator()).append("(s_real_input_").append(i + 1).append(IndexString).append(")");
+          oneLine.append(HDL.notOperator()).append("(s_real_input_").append(i + 1).append(indexString).append(")");
         }
-        if (i < (nr_of_inputs - 1)) {
+        if (i < (nrOfInputs - 1)) {
           oneLine.append(" ").append(HDL.andOperator()).append(" ");
         }
       }
       oneLine.append(")");
-      if (termloop < (nr_of_inputs - 1)) {
+      if (termloop < (nrOfInputs - 1)) {
         oneLine.append(" ").append(HDL.orOperator()).append(" ");
       } else {
         if (inverted) oneLine.append(")");
         oneLine.append(";");
       }
-      Lines.add(oneLine.toString());
+      lines.add(oneLine.toString());
       oneLine.setLength(0);
     }
-    if (is_bus) {
+    if (isBus) {
       if (HDL.isVHDL()) {
-        Lines.add("   END GENERATE GenBits;");
+        lines.add("   END GENERATE GenBits;");
       } else {
-        Lines.add("         end");
-        Lines.add("   endgenerate");
+        lines.add("         end");
+        lines.add("   endgenerate");
       }
     }
-    return Lines;
+    return lines;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    int Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
-    MyOutputs.put("Result", Bitwidth);
-    return MyOutputs;
+  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
+    final var outputs = new TreeMap<String, Integer>();
+    final var bitWidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
+    outputs.put("Result", bitWidth);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> MyParameters = new TreeMap<>();
-    int NrOfInputs =
+    final var params = new TreeMap<Integer, String>();
+    int nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
     if (is_bus(attrs)) {
-      MyParameters.put(BitWidthGeneric, BitWidthString);
+      params.put(BitWidthGeneric, BitWidthString);
     }
-    if (NrOfInputs > 1) {
-      MyParameters.put(BubblesGeneric, BubblesString);
+    if (nrOfInputs > 1) {
+      params.put(BubblesGeneric, BubblesString);
     }
-    return MyParameters;
+    return params;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    boolean is_bus = is_bus(ComponentInfo.GetComponent().getAttributeSet());
-    AttributeSet Myattrs = ComponentInfo.GetComponent().getAttributeSet();
-    int NrOfInputs =
-        Myattrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? Myattrs.getValue(GateAttributes.ATTR_INPUTS)
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    final var parameterMap = new TreeMap<String, Integer>();
+    final var isBus = is_bus(componentInfo.GetComponent().getAttributeSet());
+    final var myAttrs = componentInfo.GetComponent().getAttributeSet();
+    int nrOfInputs =
+        myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
+            ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
     int bubleMask, mask;
-    if (is_bus) {
-      ParameterMap.put(BitWidthString, Myattrs.getValue(StdAttr.WIDTH).getWidth());
+    if (isBus) {
+      parameterMap.put(BitWidthString, myAttrs.getValue(StdAttr.WIDTH).getWidth());
     }
-    if (NrOfInputs > 1) {
+    if (nrOfInputs > 1) {
       bubleMask = 0;
       mask = 1;
-      for (int i = 0; i < NrOfInputs; i++) {
-        boolean input_is_inverted =
-            ComponentInfo.GetComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (input_is_inverted) bubleMask |= mask;
+      for (var i = 0; i < nrOfInputs; i++) {
+        final var inputIsInverted =
+            componentInfo.GetComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
+        if (inputIsInverted) bubleMask |= mask;
         mask <<= 1;
       }
-      ParameterMap.put(BubblesString, bubleMask);
+      parameterMap.put(BubblesString, bubleMask);
     }
 
-    return ParameterMap;
+    return parameterMap;
   }
 
-  public ArrayList<String> GetParity(boolean inverted, int nr_of_inputs, boolean is_bus) {
-    ArrayList<String> Lines = new ArrayList<>();
-    String Spaces = "   ";
-    String IndexString = "";
-    if (is_bus) {
+  public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
+    final var lines = new ArrayList<String>();
+    var spaces = "   ";
+    var indexString = "";
+    if (isBus) {
       if (HDL.isVHDL()) {
-        Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
-        Spaces += "   ";
-        IndexString = "(n)";
+        lines.add(spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
+        spaces += "   ";
+        indexString = "(n)";
       } else {
-        Lines.add("   genvar n;");
-        Lines.add("   generate");
-        Lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
-        Lines.add("         begin: bit");
-        Spaces += "         ";
-        IndexString = "[n]";
+        lines.add("   genvar n;");
+        lines.add("   generate");
+        lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
+        lines.add("         begin: bit");
+        spaces += "         ";
+        indexString = "[n]";
       }
     }
-    StringBuilder OneLine = new StringBuilder();
-    OneLine.append(Spaces).append(HDL.assignPreamble()).append("Result").append(IndexString).append(HDL.assignOperator());
-    if (inverted) OneLine.append(HDL.notOperator()).append("(");
-    int spaces = OneLine.length();
-    for (int i = 0; i < nr_of_inputs; i++) {
-      while (OneLine.length() < spaces) {
-        OneLine.append(" ");
+    final var oneLine = new StringBuilder();
+    oneLine.append(spaces).append(HDL.assignPreamble()).append("Result").append(indexString).append(HDL.assignOperator());
+    if (inverted) oneLine.append(HDL.notOperator()).append("(");
+    final var spacesLen = oneLine.length();
+    for (var i = 0; i < nrOfInputs; i++) {
+      while (oneLine.length() < spacesLen) {
+        oneLine.append(" ");
       }
-      OneLine.append("s_real_input_").append(i + 1).append(IndexString);
-      if (i < (nr_of_inputs - 1)) {
-        OneLine.append(HDL.xorOperator());
+      oneLine.append("s_real_input_").append(i + 1).append(indexString);
+      if (i < (nrOfInputs - 1)) {
+        oneLine.append(HDL.xorOperator());
       } else {
-        if (inverted) OneLine.append(")");
-        OneLine.append(";");
+        if (inverted) oneLine.append(")");
+        oneLine.append(";");
       }
-      Lines.add(OneLine.toString());
-      OneLine.setLength(0);
+      lines.add(oneLine.toString());
+      oneLine.setLength(0);
     }
-    if (is_bus) {
+    if (isBus) {
       if (HDL.isVHDL()) {
-        Lines.add("   END GENERATE GenBits;");
+        lines.add("   END GENERATE GenBits;");
       } else {
-        Lines.add("         end");
-        Lines.add("   endgenerate");
+        lines.add("         end");
+        lines.add("   endgenerate");
       }
     }
-    return Lines;
+    return lines;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-    int NrOfInputs =
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var portMap = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    boolean[] InputFloatingValues = new boolean[NrOfInputs];
-    if (NrOfInputs == 1) {
-      InputFloatingValues[0] = true;
+    final var inputFloatingValues = new boolean[nrOfInputs];
+    if (nrOfInputs == 1) {
+      inputFloatingValues[0] = true;
     } else {
-      for (int i = 1; i <= NrOfInputs; i++) {
-        boolean input_is_inverted = attrs.getValue(new NegateAttribute(i - 1, null));
-        InputFloatingValues[i - 1] = GetFloatingValue(input_is_inverted);
+      for (var i = 1; i <= nrOfInputs; i++) {
+        final var inputIsInverted = attrs.getValue(new NegateAttribute(i - 1, null));
+        inputFloatingValues[i - 1] = GetFloatingValue(inputIsInverted);
       }
     }
-    for (int i = 1; i <= NrOfInputs; i++) {
-      PortMap.putAll(
+    for (var i = 1; i <= nrOfInputs; i++) {
+      portMap.putAll(
           GetNetMap(
               "Input_" + i,
-              InputFloatingValues[i - 1],
-              ComponentInfo,
+              inputFloatingValues[i - 1],
+              componentInfo,
               i,
-              Nets));
+              nets));
     }
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("Result", true, componentInfo, 0, nets));
 
-    return PortMap;
+    return portMap;
   }
 
   @Override
@@ -351,21 +350,21 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    int Bitwidth = attrs.getValue(StdAttr.WIDTH).getWidth();
-    int NrOfInputs =
+  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
+    final var wires = new TreeMap<String, Integer>();
+    final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
+    final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    if (NrOfInputs > 1) {
-      for (int i = 0; i < NrOfInputs; i++) {
-        if (Bitwidth > 1) Wires.put("s_real_input_" + (i + 1), BitWidthGeneric);
-        else Wires.put("s_real_input_" + (i + 1), 1);
+    if (nrOfInputs > 1) {
+      for (var i = 0; i < nrOfInputs; i++) {
+        if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BitWidthGeneric);
+        else wires.put("s_real_input_" + (i + 1), 1);
       }
-      Wires.put("s_signal_invert_mask", NrOfInputs);
+      wires.put("s_signal_invert_mask", nrOfInputs);
     }
-    return Wires;
+    return wires;
   }
 
   @Override

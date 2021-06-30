@@ -130,7 +130,7 @@ public enum IOComponentTypes {
     switch (comp) {
       case DIPSwitch : return DipSwitch.getInputLabel(id);
       case LocalBus  : return ReptarLocalBus.getInputLabel(id);
-      default        : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+      default        : return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
 
@@ -144,7 +144,7 @@ public enum IOComponentTypes {
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
       default:
-        return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+        return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
 
@@ -152,7 +152,7 @@ public enum IOComponentTypes {
     if (comp == IOComponentTypes.LocalBus) {
       return ReptarLocalBus.getIOLabel(id);
     }
-    return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+    return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
 
   public static int GetNrOfFPGAPins(IOComponentTypes comp) {

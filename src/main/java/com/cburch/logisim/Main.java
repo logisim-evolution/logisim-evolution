@@ -40,7 +40,6 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
@@ -63,9 +62,8 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put(
-            "ToolTip.font",
-            new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put("ToolTip.font",
+                new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException
@@ -73,19 +71,19 @@ public class Main {
         | InstantiationException e) {
       e.printStackTrace();
     }
-    Startup startup = Startup.parseArgs(args);
+
+    final var startup = Startup.parseArgs(args);
     if (startup == null) {
       System.exit(0);
-    } else {
-      try {
-        startup.run();
-      } catch (Throwable e) {
-        Writer result = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(result);
-        e.printStackTrace(printWriter);
-        OptionPane.showMessageDialog(null, result.toString());
-        System.exit(-1);
-      }
+    }
+    try {
+      startup.run();
+    } catch (Throwable e) {
+      final var strWriter = new StringWriter();
+      final var printWriter = new PrintWriter(strWriter);
+      e.printStackTrace(printWriter);
+      OptionPane.showMessageDialog(null, strWriter.toString());
+      System.exit(-1);
     }
   }
 

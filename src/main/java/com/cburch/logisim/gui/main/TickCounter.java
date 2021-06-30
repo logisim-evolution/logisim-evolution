@@ -92,15 +92,15 @@ class TickCounter implements Simulator.Listener {
           }
         }
         if (min < 0.9 * rate) min = rate;
-        
+
         // report the full-cycle frequency, not the half-cycle tick rate
         min /= 2;
         rate /= 2;
 
         if (min >= 1000.0) {
-          return S.fmt("tickRateKHz", roundString(rate / 1000.0, min / 1000.0));
+          return S.get("tickRateKHz", roundString(rate / 1000.0, min / 1000.0));
         } else {
-          return S.fmt("tickRateHz", roundString(rate, min));
+          return S.get("tickRateHz", roundString(rate, min));
         }
       }
     }

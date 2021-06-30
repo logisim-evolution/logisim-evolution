@@ -50,7 +50,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class Demultiplexer extends InstanceFactory {
   /**
@@ -98,7 +97,7 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public boolean contains(Location loc, AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING).reverse();
+    final var facing = attrs.getValue(StdAttr.FACING).reverse();
     return Plexers.contains(loc, getOffsetBounds(attrs), facing);
   }
 
@@ -114,24 +113,21 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
-    CompleteName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
-    return CompleteName.toString();
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) completeName.append("_bus");
+    completeName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    return completeName.toString();
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    BitWidth select = attrs.getValue(Plexers.ATTR_SELECT);
-    int outputs = 1 << select.getWidth();
-    Bounds bds;
-    if (outputs == 2) {
-      bds = Bounds.create(0, -25, 30, 50);
-    } else {
-      bds = Bounds.create(0, -(outputs / 2) * 10 - 10, 40, outputs * 10 + 20);
-    }
+    final var facing = attrs.getValue(StdAttr.FACING);
+    final var select = attrs.getValue(Plexers.ATTR_SELECT);
+    final var outputs = 1 << select.getWidth();
+    final var bds = (outputs == 2)
+            ? Bounds.create(0, -25, 30, 50)
+            : Bounds.create(0, -(outputs / 2) * 10 - 10, 40, outputs * 10 + 20);
     return bds.rotate(Direction.EAST, facing, 0, 0);
   }
 
@@ -161,9 +157,9 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
-    BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    Bounds bds = painter.getBounds();
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
+    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
+    final var bds = painter.getBounds();
 
     if (select.getWidth() == 1) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
@@ -186,29 +182,29 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
-    BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
-    int outputs = 1 << select.getWidth();
+    final var g = painter.getGraphics();
+    final var bds = painter.getBounds();
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
+    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
+    final var enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var outputs = 1 << select.getWidth();
 
     // draw select and enable inputs
     GraphicsUtil.switchToWidth(g, 3);
-    boolean vertical = facing == Direction.NORTH || facing == Direction.SOUTH;
+    final var vertical = facing == Direction.NORTH || facing == Direction.SOUTH;
     Object selectLoc = painter.getAttributeValue(Plexers.ATTR_SELECT_LOC);
-    int selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
-    int dx = vertical ? selMult : 0;
-    int dy = vertical ? 0 : -selMult;
+    final var selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
+    final var dx = vertical ? selMult : 0;
+    final var dy = vertical ? 0 : -selMult;
     if (outputs == 2) { // draw select wire
-      Location sel = painter.getInstance().getPortLocation(outputs);
+      final var sel = painter.getInstance().getPortLocation(outputs);
       if (painter.getShowState()) {
         g.setColor(painter.getPortValue(outputs).getColor());
       }
       g.drawLine(sel.getX(), sel.getY(), sel.getX() + 2 * dx, sel.getY() + 2 * dy);
     }
     if (enable) {
-      Location en = painter.getInstance().getPortLocation(outputs + 1);
+      final var en = painter.getInstance().getPortLocation(outputs + 1);
       if (painter.getShowState()) {
         g.setColor(painter.getPortValue(outputs + 1).getColor());
       }
@@ -295,7 +291,7 @@ public class Demultiplexer extends InstanceFactory {
     } else if (en == Value.ERROR && state.isPortConnected(outputs + 1)) {
       others = Value.createError(data);
     } else {
-      Value sel = state.getPortValue(outputs);
+      final var sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
         outIndex = (int) sel.toLongValue();
         out = state.getPortValue(outputs + (enable ? 2 : 1));
@@ -307,19 +303,19 @@ public class Demultiplexer extends InstanceFactory {
     }
 
     // now propagate them
-    for (int i = 0; i < outputs; i++) {
+    for (var i = 0; i < outputs; i++) {
       state.setPort(i, i == outIndex ? out : others, Plexers.DELAY);
     }
   }
 
   private void updatePorts(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
     Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
-    BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
-    BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
-    int outputs = 1 << select.getWidth();
-    Port[] ps = new Port[outputs + (enable ? 3 : 2)];
+    final var data = instance.getAttributeValue(StdAttr.WIDTH);
+    final var select = instance.getAttributeValue(Plexers.ATTR_SELECT);
+    final var enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
+    var outputs = 1 << select.getWidth();
+    final var ps = new Port[outputs + (enable ? 3 : 2)];
     Location sel;
     int selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
     if (outputs == 2) {
@@ -346,9 +342,9 @@ public class Demultiplexer extends InstanceFactory {
       ps[1] = new Port(end1.getX(), end1.getY(), Port.OUTPUT, data.getWidth());
     } else {
       int dx = -(outputs / 2) * 10;
-      int ddx = 10;
-      int dy = dx;
-      int ddy = 10;
+      var ddx = 10;
+      var dy = dx;
+      var ddy = 10;
       if (facing == Direction.WEST) {
         dx = -40;
         ddx = 0;
@@ -366,20 +362,20 @@ public class Demultiplexer extends InstanceFactory {
         ddx = 0;
         sel = Location.create(20, selMult * (dy + 10 * outputs));
       }
-      for (int i = 0; i < outputs; i++) {
+      for (var i = 0; i < outputs; i++) {
         ps[i] = new Port(dx, dy, Port.OUTPUT, data.getWidth());
         dx += ddx;
         dy += ddy;
       }
     }
-    Location en = sel.translate(facing, -10);
+    final var en = sel.translate(facing, -10);
     ps[outputs] = new Port(sel.getX(), sel.getY(), Port.INPUT, select.getWidth());
     if (enable) {
       ps[outputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);
     }
     ps[ps.length - 1] = new Port(0, 0, Port.INPUT, data.getWidth());
 
-    for (int i = 0; i < outputs; i++) {
+    for (var i = 0; i < outputs; i++) {
       ps[i].setToolTip(S.getter("demultiplexerOutTip", "" + i));
     }
     ps[outputs].setToolTip(S.getter("demultiplexerSelectTip"));

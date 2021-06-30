@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -14,7 +14,9 @@
   <body>
   <div class="maindiv">
     <h1>
-      &lt;<img class="iconlibs" src="../../../../icons/pinInput.gif" alt="#########"> &lt;<img class="iconlibs" src="../../../../icons/pinOutput.gif" alt="#########"> <em>Pin</em>
+       <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32"> 
+       <img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32"> 
+	   <em>Pin</em>
     </h1>
     <table>
       <tbody>
@@ -52,8 +54,7 @@
       being sent or received is displayed within the component (except within printer view, when the component only says how many bits wide the pin is).
     </p>
     <p>
-      A pin is a convenient component for interacting with a circuit, and beginning Logisim users need not use them in any other way. But a user building a circuit using several subcircuits (as described in the `<a href="../../guide/subcirc/index.html">Subcircuits</a>' section of the <em>User's
-      Guide</em>) will use pins also to specify the interface between a circuit and a subcircuit. In particular, a circuit layout's pin components define the pins that appear on the subcircuit component when the layout is used within another circuit. In such a circuit, the values sent and received
+      A pin is a convenient component for interacting with a circuit, and beginning Logisim users need not use them in any other way. But a user building a circuit using several subcircuits (as described in the <a class=refguide href="../../guide/subcirc/index.html">Subcircuits</a>' section of the </a> section of the <a href="../index.html">User guide</a>. will use pins also to specify the interface between a circuit and a subcircuit. In particular, a circuit layout's pin components define the pins that appear on the subcircuit component when the layout is used within another circuit. In such a circuit, the values sent and received
       to those locations on the subcircuit component are tied to the pins within the subcircuit layout.
     </p>
     <h2>
@@ -79,7 +80,7 @@
         Output?
       </dt>
       <dd>
-        Specifies whether the component is an output pin or an input pin. (Note that if the pin component is an input pin, then the pin that acts as its interface within the circuit will be an output, and vice versa.)
+        Specifies whether the component is an output pin or an input pin. <b class=note>Note :</b> If the pin component is an input pin, then the pin that acts as its interface within the circuit will be an output, and vice versa.)
       </dd>
       <dt>
         Data Bits

@@ -81,7 +81,7 @@ public abstract class PrintHandler implements Printable {
     } catch (PrinterException e) {
       OptionPane.showMessageDialog(
           KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-          S.fmt("printError", e.toString()),
+          S.get("printError", e.toString()),
           S.get("printErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     }

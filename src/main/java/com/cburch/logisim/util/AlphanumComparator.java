@@ -32,7 +32,6 @@ package com.cburch.logisim.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +48,8 @@ public class AlphanumComparator implements Comparator<String> {
 
   /** Length of string is passed in for improved efficiency (only need to calculate it once). */
   private String getChunk(String s, int slength, int marker) {
-    StringBuilder chunk = new StringBuilder();
-    char c = s.charAt(marker);
+    final var chunk = new StringBuilder();
+    var c = s.charAt(marker);
     chunk.append(c);
     marker++;
     if (isDigit(c)) {
@@ -76,27 +75,27 @@ public class AlphanumComparator implements Comparator<String> {
       return 0;
     }
 
-    int thisMarker = 0;
-    int thatMarker = 0;
-    int s1Length = s1.length();
-    int s2Length = s2.length();
+    var thisMarker = 0;
+    var thatMarker = 0;
+    var s1Length = s1.length();
+    var s2Length = s2.length();
 
     while (thisMarker < s1Length && thatMarker < s2Length) {
-      String thisChunk = getChunk(s1, s1Length, thisMarker);
+      final var thisChunk = getChunk(s1, s1Length, thisMarker);
       thisMarker += thisChunk.length();
 
-      String thatChunk = getChunk(s2, s2Length, thatMarker);
+      final var thatChunk = getChunk(s2, s2Length, thatMarker);
       thatMarker += thatChunk.length();
 
       // If both chunks contain numeric characters, sort them numerically
-      int result = 0;
+      var result = 0;
       if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0))) {
         // Simple chunk comparison by length.
-        int thisChunkLength = thisChunk.length();
+        var thisChunkLength = thisChunk.length();
         result = thisChunkLength - thatChunk.length();
         // If equal, the first different number counts
         if (result == 0) {
-          for (int i = 0; i < thisChunkLength; i++) {
+          for (var i = 0; i < thisChunkLength; i++) {
             result = thisChunk.charAt(i) - thatChunk.charAt(i);
             if (result != 0) {
               return result;
@@ -115,7 +114,7 @@ public class AlphanumComparator implements Comparator<String> {
 
   /** Shows an example of how the comparator works. Feel free to delete this in your own code! */
   public static void main(String[] args) {
-    List<String> values =
+    final var values =
         Arrays.asList(
             "dazzle2",
             "dazzle10",

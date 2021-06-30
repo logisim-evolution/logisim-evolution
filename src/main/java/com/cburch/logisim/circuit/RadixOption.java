@@ -284,9 +284,8 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public int getMaxLength(BitWidth width) {
-      int bits = width.getWidth();
-      if (bits <= 1) return 1;
-      return bits + ((bits - 1) / 4);
+      final var bits = width.getWidth();
+      return (bits <= 1) ? 1 : bits + ((bits - 1) / 4);
     }
 
     @Override
@@ -353,7 +352,7 @@ public abstract class RadixOption extends AttributeOption {
   }
 
   public static RadixOption decode(String value) {
-    for (RadixOption opt : OPTIONS) {
+    for (final var opt : OPTIONS) {
       if (value.equals(opt.saveName)) {
         return opt;
       }
@@ -376,8 +375,7 @@ public abstract class RadixOption extends AttributeOption {
     RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16, RADIX_FLOAT
   };
 
-  public static final Attribute<RadixOption> ATTRIBUTE =
-      Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
+  public static final Attribute<RadixOption> ATTRIBUTE = Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
   private final String saveName;
 
@@ -389,6 +387,7 @@ public abstract class RadixOption extends AttributeOption {
     this.displayGetter = displayGetter;
   }
 
+  @Override
   public StringGetter getDisplayGetter() {
     return displayGetter;
   }

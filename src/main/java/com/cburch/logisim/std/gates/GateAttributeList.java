@@ -52,7 +52,7 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
 
   @Override
   public Attribute<?> get(int index) {
-    int len = BASE_ATTRIBUTES.length;
+    final var len = BASE_ATTRIBUTES.length;
     if (index < len) {
       return BASE_ATTRIBUTES[index];
     }
@@ -61,8 +61,8 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
       index--;
       if (index < 0) return GateAttributes.ATTR_XOR;
     }
-    Direction facing = attrs.facing;
-    int inputs = attrs.inputs;
+    final var facing = attrs.facing;
+    final var inputs = attrs.inputs;
     if (index == 0) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
         return new NegateAttribute(index, Direction.NORTH);
@@ -83,7 +83,7 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
 
   @Override
   public int size() {
-    int ret = BASE_ATTRIBUTES.length;
+    var ret = BASE_ATTRIBUTES.length;
     if (attrs.xorBehave != null) ret++;
     ret += attrs.inputs;
     return ret;

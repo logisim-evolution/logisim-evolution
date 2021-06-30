@@ -37,7 +37,7 @@ class Assignments {
   public Assignments() {}
 
   public boolean get(String variable) {
-    Boolean value = map.get(variable);
+    final var value = map.get(variable);
     return value != null && value;
   }
 

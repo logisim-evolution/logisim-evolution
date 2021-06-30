@@ -57,7 +57,6 @@ public class TestVector {
   }
 
   private class TestVectorReader {
-
     private final BufferedReader in;
     private StringTokenizer curLine;
 
@@ -67,12 +66,12 @@ public class TestVector {
     }
 
     private StringTokenizer findNonemptyLine() throws IOException {
-      String line = in.readLine();
+      var line = in.readLine();
 
       while (line != null) {
-        int i = line.indexOf('#');
+        final var i = line.indexOf('#');
         if (i >= 0) line = line.substring(0, i);
-        StringTokenizer ret = new StringTokenizer(line);
+        final var ret = new StringTokenizer(line);
         if (ret.hasMoreTokens()) return ret;
         line = in.readLine();
       }
@@ -94,9 +93,9 @@ public class TestVector {
     }
 
     private void parseData() throws IOException {
-      Value[] vals = new Value[columnName.length];
-      for (int i = 0; i < columnName.length; i++) {
-        String t = curLine.nextToken();
+      final var vals = new Value[columnName.length];
+      for (var i = 0; i < columnName.length; i++) {
+        final var t = curLine.nextToken();
 
         try {
           vals[i] = Value.fromLogString(columnWidth[i], t);
@@ -111,27 +110,27 @@ public class TestVector {
     }
 
     private void parseHeader() throws IOException {
-      int n = curLine.countTokens();
+      final var n = curLine.countTokens();
       columnName = new String[n];
       columnWidth = new BitWidth[n];
       columnRadix = new int[n];
 
-      for (int i = 0; i < n; i++) {
+      for (var i = 0; i < n; i++) {
         columnRadix[i] = 2;
-        String t = (String) curLine.nextElement();
+        final var t = (String) curLine.nextElement();
         int s = t.indexOf('[');
 
         if (s < 0) {
           columnName[i] = t;
           columnWidth[i] = BitWidth.ONE;
         } else {
-          int e = t.indexOf(']');
+          final var e = t.indexOf(']');
 
           if (e != t.length() - 1 || s == 0 || e == s + 1)
             throw new IOException("Test Vector header format error: bad spec: " + t);
 
           columnName[i] = t.substring(0, s);
-          int w = 0;
+          var w = 0;
           try {
             w = Integer.parseInt(t.substring(s + 1, e));
           } catch (NumberFormatException ignored) {
@@ -153,9 +152,8 @@ public class TestVector {
   public ArrayList<Value[]> data;
 
   public TestVector(File src) throws IOException {
-
-    try (BufferedReader in = new BufferedReader(new FileReader(src))) {
-      TestVectorReader r = new TestVectorReader(in);
+    try (final var in = new BufferedReader(new FileReader(src))) {
+      final var r = new TestVectorReader(in);
       r.parse();
     }
   }

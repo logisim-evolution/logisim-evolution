@@ -43,7 +43,6 @@ import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,13 +61,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -98,6 +95,7 @@ class MinimizedTab extends AnalyzerTab {
       localeChanged();
     }
 
+    @Override
     public Object getElementAt(int index) {
       return choices[index];
     }
@@ -109,10 +107,12 @@ class MinimizedTab extends AnalyzerTab {
       return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
     }
 
+    @Override
     public Object getSelectedItem() {
       return choices[selected];
     }
 
+    @Override
     public int getSize() {
       return choices.length;
     }
@@ -123,8 +123,9 @@ class MinimizedTab extends AnalyzerTab {
       fireContentsChanged(this, 0, choices.length);
     }
 
+    @Override
     public void setSelectedItem(Object value) {
-      for (int i = 0; i < choices.length; i++) {
+      for (var i = 0; i < choices.length; i++) {
         if (choices[i].equals(value)) {
           selected = i;
         }
@@ -145,10 +146,12 @@ class MinimizedTab extends AnalyzerTab {
       localeChanged();
     }
 
+    @Override
     public int getSize() {
       return choices.length;
     }
 
+    @Override
     public Object getElementAt(int index) {
       return choices[index];
     }
@@ -159,6 +162,7 @@ class MinimizedTab extends AnalyzerTab {
       fireContentsChanged(this, 0, choices.length);
     }
 
+    @Override
     public void setSelectedItem(Object anItem) {
       for (int i = 0; i < choices.length; i++) {
         if (choices[i].equals(anItem)) {
@@ -212,7 +216,7 @@ class MinimizedTab extends AnalyzerTab {
 
     @Override
     public void setSelectedItem(Object anItem) {
-      for (int i = 0; i < choices.length; i++) {
+      for (var i = 0; i < choices.length; i++) {
         if (choices[i].equals(anItem)) {
           selected = i;
         }
@@ -226,15 +230,17 @@ class MinimizedTab extends AnalyzerTab {
   }
 
   private class MyListener implements OutputExpressionsListener, ActionListener, ItemListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
-      String output = getCurrentVariable();
-      int format = outputExprs.getMinimizedFormat(output);
+      final var output = getCurrentVariable();
+      final var format = outputExprs.getMinimizedFormat(output);
       formatChoice.setSelectedIndex(FormatModel.getFormatIndex(format));
       outputExprs.setExpression(output, outputExprs.getMinimalExpression(output));
     }
 
+    @Override
     public void expressionChanged(OutputExpressionsEvent event) {
-      String output = getCurrentVariable();
+      final var output = getCurrentVariable();
       if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL
           && event.getVariable().equals(output)) {
         minimizedExpr.setExpression(outputExprs.getMinimalExpression(output));
@@ -245,17 +251,18 @@ class MinimizedTab extends AnalyzerTab {
       formatChoice.setSelectedIndex(FormatModel.getFormatIndex(format));
     }
 
+    @Override
     public void itemStateChanged(ItemEvent event) {
       if (event.getSource() == formatChoice) {
-        String output = getCurrentVariable();
-        FormatModel model = (FormatModel) formatChoice.getModel();
+        final var output = getCurrentVariable();
+        final var model = (FormatModel) formatChoice.getModel();
         outputExprs.setMinimizedFormat(output, model.getSelectedFormat());
         karnaughMap.setFormat(model.getSelectedFormat());
       } else if (event.getSource() == formatStyle) {
-        StyleModel model = (StyleModel) formatStyle.getModel();
+        final var model = (StyleModel) formatStyle.getModel();
         model.setStyle(karnaughMap);
       } else if (event.getSource() == notationChoice) {
-        Notation notation = Notation.values()[notationChoice.getSelectedIndex()];
+        final var notation = Notation.values()[notationChoice.getSelectedIndex()];
         minimizedExpr.setNotation(notation);
         karnaughMap.setNotation(notation);
       } else {
@@ -350,6 +357,7 @@ class MinimizedTab extends AnalyzerTab {
 
     MouseMotionAdapter m =
         new MouseMotionAdapter() {
+          @Override
           public void mouseDragged(MouseEvent e) {
             JComponent c = (JComponent) e.getSource();
             TransferHandler handler = c.getTransferHandler();
@@ -360,6 +368,7 @@ class MinimizedTab extends AnalyzerTab {
     minimizedExpr.addMouseMotionListener(m);
 
     addMouseListener(new MouseAdapter() {
+      @Override
       public void mouseClicked(MouseEvent e) {
         requestFocusInWindow();
       }
@@ -367,11 +376,13 @@ class MinimizedTab extends AnalyzerTab {
 
     final var f =
         new FocusListener() {
+          @Override
           public void focusGained(FocusEvent e) {
             if (e.isTemporary()) return;
             editHandler.computeEnabled();
           }
 
+          @Override
           public void focusLost(FocusEvent e) {
             if (e.isTemporary()) return;
             editHandler.computeEnabled();
@@ -383,9 +394,9 @@ class MinimizedTab extends AnalyzerTab {
   }
 
   private JPanel control() {
-    JPanel control = new JPanel();
-    GridBagLayout gb = new GridBagLayout();
-    GridBagConstraints gc = new GridBagConstraints();
+    final var control = new JPanel();
+    final var gb = new GridBagLayout();
+    final var gc = new GridBagConstraints();
     control.setLayout(gb);
     gc.weightx = 1.0;
     gc.gridwidth = 1;
@@ -442,7 +453,7 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("serial")
   @Override
   void updateTab() {
-    final String output = getCurrentVariable();
+    final var output = getCurrentVariable();
     if (model.getTruthTable().getRowCount() > 4096) {
       (new Analyzer.PleaseWait<Void>(S.get("expressionCalc"), this) {
             @Override
@@ -454,7 +465,7 @@ class MinimizedTab extends AnalyzerTab {
           .get();
     }
     karnaughMap.setOutput(output);
-    int format = outputExprs.getMinimizedFormat(output);
+    final var format = outputExprs.getMinimizedFormat(output);
     formatChoice.setSelectedIndex(FormatModel.getFormatIndex(format));
     minimizedExpr.setExpression(outputExprs.getMinimalExpression(output));
     setAsExpr.setEnabled(output != null && !outputExprs.isExpressionMinimal(output));
@@ -486,7 +497,7 @@ class MinimizedTab extends AnalyzerTab {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          Object action = e.getSource();
+          final var action = e.getSource();
           if (minimizedExpr.isSelected())
             minimizedExpr.getActionMap().get(action).actionPerformed(e);
           else if (karnaughMap.isSelected())
@@ -575,10 +586,10 @@ class MinimizedTab extends AnalyzerTab {
 
   static class KmapSelection extends ImageSelection {
     public KmapSelection(KarnaughMapPanel kmap) {
-      int w = kmap.getKMapDim().width;
-      int h = kmap.getKMapDim().height;
-      BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-      Graphics2D g = img.createGraphics();
+      final var w = kmap.getKMapDim().width;
+      final var h = kmap.getKMapDim().height;
+      final var img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      final var g = img.createGraphics();
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, w, h);
       g.setColor(Color.BLACK);
@@ -590,13 +601,12 @@ class MinimizedTab extends AnalyzerTab {
 
   static class ExpressionSelection extends ImageSelection {
     public ExpressionSelection(ExpressionRenderData prettyView) {
-      if (prettyView == null)
-        return;
-      Dimension dim = prettyView.getPreferredSize();
-      int w = dim.width;
-      int h = dim.height;
-      BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-      Graphics2D g = img.createGraphics();
+      if (prettyView == null) return;
+      final var dim = prettyView.getPreferredSize();
+      final var w = dim.width;
+      final var h = dim.height;
+      final var img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      final var g = img.createGraphics();
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, w, h);
       g.setColor(Color.BLACK);
@@ -616,21 +626,21 @@ class MinimizedTab extends AnalyzerTab {
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {
-          int kWidth = karnaughMap.getKMapDim().width;
-          int kHeight = karnaughMap.getKMapDim().height;
-          int eWidth = minimizedExpr.getRenderData().getPreferredSize().width;
-          int eHeight = minimizedExpr.getRenderData().getPreferredSize().height;
+          final var kWidth = karnaughMap.getKMapDim().width;
+          final var kHeight = karnaughMap.getKMapDim().height;
+          final var eWidth = minimizedExpr.getRenderData().getPreferredSize().width;
+          final var eHeight = minimizedExpr.getRenderData().getPreferredSize().height;
 
-          int width = Math.max(kWidth, eWidth);
-          int height = kHeight + 30 + eHeight;
+          final var width = Math.max(kWidth, eWidth);
+          final var height = kHeight + 30 + eHeight;
 
           return new Dimension(width, height);
         }
 
         @Override
         public void paintExportImage(BufferedImage img, Graphics2D g) {
-          int width = img.getWidth();
-          int height = img.getHeight();
+          final var width = img.getWidth();
+          final var height = img.getHeight();
           g.setClip(0, 0, width, height);
 
           doPrint(g, width);

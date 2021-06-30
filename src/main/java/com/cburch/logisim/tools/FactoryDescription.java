@@ -49,7 +49,7 @@ public class FactoryDescription {
   public static List<Tool> getTools(
       Class<? extends Library> base, FactoryDescription[] descriptions) {
     var tools = new Tool[descriptions.length];
-    for (int i = 0; i < tools.length; i++) {
+    for (var i = 0; i < tools.length; i++) {
       tools[i] = new AddTool(base, descriptions[i]);
     }
     return Arrays.asList(tools);
@@ -94,7 +94,7 @@ public class FactoryDescription {
   }
 
   public ComponentFactory getFactory(Class<? extends Library> libraryClass) {
-    ComponentFactory ret = factory;
+    final var ret = factory;
     if (factory != null || factoryLoadAttempted) {
       return ret;
     }
@@ -102,7 +102,7 @@ public class FactoryDescription {
     var errorMsg = "";
     try {
       errorMsg = "Getting class loader";
-      var loader = this.factoryClass.getClassLoader();
+      final var loader = this.factoryClass.getClassLoader();
       errorMsg = "Loading class";
       Class<?> factoryCls = loader.loadClass(this.factoryClass.getCanonicalName());
       errorMsg = "Creating instance";
@@ -112,8 +112,8 @@ public class FactoryDescription {
       factoryLoadAttempted = true;
       return factory;
     } catch (Exception t) {
-      String name = t.getClass().getName();
-      String m = t.getMessage();
+      final var name = t.getClass().getName();
+      final var m = t.getMessage();
 
       errorMsg += ": " + name;
       if (m != null) errorMsg += ": " + m;
@@ -126,7 +126,7 @@ public class FactoryDescription {
   }
 
   public Icon getIcon() {
-    Icon ret = icon;
+    var ret = icon;
     if (ret == null && !iconLoadAttempted) {
       ret = Icons.getIcon(iconName);
       icon = ret;

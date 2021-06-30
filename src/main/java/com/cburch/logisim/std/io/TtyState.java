@@ -55,7 +55,7 @@ class TtyState implements InstanceData, Cloneable {
       TtyInterface.sendFromTty(c);
     }
 
-    int lastLength = lastRow.length();
+    final var lastLength = lastRow.length();
     switch (c) {
       case 12: // control-L
         row = 0;
@@ -120,7 +120,7 @@ class TtyState implements InstanceData, Cloneable {
   }
 
   public Value setLastClock(Value newClock) {
-    Value ret = lastClock;
+    final var ret = lastClock;
     lastClock = newClock;
     return ret;
   }
@@ -128,19 +128,19 @@ class TtyState implements InstanceData, Cloneable {
   public void setSendStdout(boolean value) {
     sendStdout = value;
   }
-  
+
   public int getNrRows() {
     return rowData.length + 1;
   }
-  
+
   public int getNrCols() {
     return colCount;
   }
 
   public void updateSize(int rows, int cols) {
-    int oldRows = rowData.length + 1;
+    final var oldRows = rowData.length + 1;
     if (rows != oldRows) {
-      String[] newData = new String[rows - 1];
+      final var newData = new String[rows - 1];
       if (rows > oldRows // rows have been added,
           || row < rows - 1) { // or rows removed but filled rows fit
         System.arraycopy(rowData, 0, newData, 0, row);
@@ -152,12 +152,12 @@ class TtyState implements InstanceData, Cloneable {
       rowData = newData;
     }
 
-    int oldCols = colCount;
+    final var oldCols = colCount;
     if (cols != oldCols) {
       colCount = cols;
       if (cols < oldCols) { // will need to trim any long rows
         for (int i = 0; i < rows - 1; i++) {
-          String s = rowData[i];
+          final var s = rowData[i];
           if (s.length() > cols) rowData[i] = s.substring(0, cols);
         }
         if (lastRow.length() > cols) {

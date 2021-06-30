@@ -32,7 +32,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
@@ -43,7 +42,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -77,7 +75,7 @@ public class Analyzer extends LFrame.SubWindow {
         ((JPanel) selected).requestFocus();
       }
       if (selected instanceof AnalyzerTab) {
-        AnalyzerTab tab = (AnalyzerTab) selected;
+        final var tab = (AnalyzerTab) selected;
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         model.getOutputExpressions().enableUpdates();
@@ -126,7 +124,7 @@ public class Analyzer extends LFrame.SubWindow {
     }
 
     private void update() {
-      TruthTable tt = model.getTruthTable();
+      final var tt = model.getTruthTable();
       buildCircuit.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
       exportTable.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
       exportTex.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0
@@ -136,23 +134,23 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public static void main(String[] args) throws Exception {
-    Analyzer frame = new Analyzer();
-    AnalyzerModel model = frame.getModel();
+    final var frame = new Analyzer();
+    final var model = frame.getModel();
 
     if (args.length >= 2) {
-      var inputs = new ArrayList<Var>();
-      var outputs = new ArrayList<Var>();
+      final var inputs = new ArrayList<Var>();
+      final var outputs = new ArrayList<Var>();
       for (String s : args[0].split(",")) inputs.add(Var.parse(s));
       for (String s : args[1].split(",")) outputs.add(Var.parse(s));
       model.setVariables(inputs, outputs);
     }
     for (int i = 2; i < args.length; i++) {
-      var s = args[i];
-      int idx = s.indexOf('=');
+      final var s = args[i];
+      final var idx = s.indexOf('=');
       if (idx >= 0) {
-        var name = s.substring(0, idx);
-        var exprString = s.substring(idx + 1);
-        var expr = Parser.parse(exprString, model);
+        final var name = s.substring(0, idx);
+        final var exprString = s.substring(idx + 1);
+        final var expr = Parser.parse(exprString, model);
         model.getOutputExpressions().setExpression(name, expr, exprString);
       } else {
         Parser.parse(s, model); // for testing Parser.parse
@@ -235,12 +233,12 @@ public class Analyzer extends LFrame.SubWindow {
       tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
       return;
     }
-    final JScrollPane pane = new JScrollPane(comp,
+    final var pane = new JScrollPane(comp,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     pane.addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent event) {
-        int width = pane.getViewport().getWidth();
+        final var width = pane.getViewport().getWidth();
         comp.setSize(new Dimension(width, comp.getHeight()));
       }
     });
@@ -295,9 +293,9 @@ public class Analyzer extends LFrame.SubWindow {
 
     public T get() {
       worker.execute();
-      JProgressBar progressBar = new JProgressBar();
+      final var progressBar = new JProgressBar();
       progressBar.setIndeterminate(true);
-      JPanel panel = new JPanel(new BorderLayout());
+      final var panel = new JPanel(new BorderLayout());
       panel.add(progressBar, BorderLayout.CENTER);
       panel.add(new JLabel(S.get("analyzePleaseWait")), BorderLayout.PAGE_START);
       add(panel);

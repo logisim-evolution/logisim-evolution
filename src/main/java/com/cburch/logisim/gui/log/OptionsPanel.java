@@ -431,16 +431,16 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       matched = false;
       if (!matched) trySuffix("ns", 1);
       if (!matched) trySuffix("nsec", 1);
-      if (!matched) trySuffix(S.fmt("nsFormat", ""), 1);
+      if (!matched) trySuffix(S.get("nsFormat", ""), 1);
       if (!matched) trySuffix("us", 1000);
       if (!matched) trySuffix("usec", 1000);
-      if (!matched) trySuffix(S.fmt("usFormat", ""), 1000);
+      if (!matched) trySuffix(S.get("usFormat", ""), 1000);
       if (!matched) trySuffix("ms", 1000000);
       if (!matched) trySuffix("msec", 1000000);
-      if (!matched) trySuffix(S.fmt("msFormat", ""), 1000000);
+      if (!matched) trySuffix(S.get("msFormat", ""), 1000000);
       if (!matched) trySuffix("s", 1000000000);
       if (!matched) trySuffix("sec", 1000000000);
-      if (!matched) trySuffix(S.fmt("sFormat", ""), 1000000000);
+      if (!matched) trySuffix(S.get("sFormat", ""), 1000000000);
       if (!matched) scale = 1000000;
       try {
         value = Long.parseLong(text);
@@ -604,8 +604,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       mode = "stepTime";
       boolean fine = stepFine.isSelected();
       stepGate.setEnabled(fine);
-      if (fine) d = S.fmt("stepFineDescription", stepGate.getText(), stepScale.getText());
-      else d = S.fmt("stepCoarseDescription", stepScale.getText());
+      if (fine) d = S.get("stepFineDescription", stepGate.getText(), stepScale.getText());
+      else d = S.get("stepCoarseDescription", stepScale.getText());
 
       realFine.setSelected(fine);
       clockFine.setSelected(fine);
@@ -615,8 +615,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     } else if (realTime.isSelected()) {
       mode = "realTime";
       boolean fine = realFine.isSelected();
-      if (fine) d = S.fmt("realFineDescription", realScale.getText());
-      else d = S.fmt("realCoarseDescription", realScale.getText());
+      if (fine) d = S.get("realFineDescription", realScale.getText());
+      else d = S.get("realCoarseDescription", realScale.getText());
       stepFine.setSelected(fine);
       clockFine.setSelected(fine);
       stepScale.setSelectedItem(realScale.getValue());
@@ -641,22 +641,22 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
         clockSrcButton.setText(clockSource.getDisplayName());
         ticks = ClockSource.getCycleInfo(clockSource).ticks;
       }
-      clockTicks.setText(S.fmt("cycleLength", ticks));
+      clockTicks.setText(S.get("cycleLength", ticks));
 
       String dgate = clockGate.getText();
       long t = clockScale.getValue();
       String dcycle = clockScale.renderAsText(t * ticks);
       String dtick = clockScale.renderAsText(t);
-      if (fine) d = S.fmt("clockFineDescription", dgate, dcycle, dtick);
+      if (fine) d = S.get("clockFineDescription", dgate, dcycle, dtick);
       else if (discipline == Model.CLOCK_DUAL)
-        d = S.fmt("clockCoarseDescriptionDual", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionDual", dcycle, dtick);
       else if (discipline == Model.CLOCK_RISING)
-        d = S.fmt("clockCoarseDescriptionRising", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionRising", dcycle, dtick);
       else if (discipline == Model.CLOCK_FALLING)
-        d = S.fmt("clockCoarseDescriptionFalling", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionFalling", dcycle, dtick);
       else if (discipline == Model.CLOCK_HIGH)
-        d = S.fmt("clockCoarseDescriptionHigh", dgate, dcycle, dtick);
-      else d = S.fmt("clockCoarseDescriptionLow", dgate, dcycle, dtick);
+        d = S.get("clockCoarseDescriptionHigh", dgate, dcycle, dtick);
+      else d = S.get("clockCoarseDescriptionLow", dgate, dcycle, dtick);
       stepFine.setSelected(fine);
       realFine.setSelected(fine);
       stepScale.setSelectedItem(clockScale.getValue());

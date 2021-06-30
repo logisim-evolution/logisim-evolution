@@ -81,7 +81,7 @@ public class FailException extends TestException {
   }
 
   public ArrayList<FailException> getAll() {
-    ArrayList<FailException> ret = new ArrayList<>();
+    final var ret = new ArrayList<FailException>();
     ret.add(this);
     ret.addAll(more);
     return ret;

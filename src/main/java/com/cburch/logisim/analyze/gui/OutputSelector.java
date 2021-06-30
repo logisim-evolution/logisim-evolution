@@ -36,10 +36,8 @@ import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.event.ItemListener;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -62,9 +60,9 @@ class OutputSelector {
 
       @Override
       public Dimension getPreferredSize() {
-        Dimension dim = super.getPreferredSize();
-        Font f = getFont();
-        Insets i = getInsets();
+        final var dim = super.getPreferredSize();
+        final var f = getFont();
+        final var i = getInsets();
         dim.height = i.top + i.bottom + f.getSize() + f.getSize() / 2;
         return dim;
       }
@@ -83,12 +81,12 @@ class OutputSelector {
 
       @Override
       public void paint(Graphics g) {
-        String txt = getText();
+        final var txt = getText();
         if (txt == null) {
           super.paint(g);
           return;
         }
-        Graphics2D g2 = (Graphics2D) g.create();
+        final var g2 = (Graphics2D) g.create();
         final var i = getInsets();
         final var font = getFont();
         g2.setPaint(getBackground());
@@ -96,13 +94,13 @@ class OutputSelector {
         final var frc = g2.getFontRenderContext();
         AttributedString as;
         if (txt.contains(":")) {
-          int idx = txt.indexOf(':');
+          final var idx = txt.indexOf(':');
           as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1));
           as.addAttribute(
               TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
         } else if (txt.contains("[")) {
-          int start = txt.indexOf('[');
-          int stop = txt.lastIndexOf(']');
+          final var start = txt.indexOf('[');
+          final var stop = txt.lastIndexOf(']');
           as = new AttributedString(txt.substring(0, start) + txt.substring(start + 1, stop));
           as.addAttribute(
               TextAttribute.SUPERSCRIPT,
@@ -114,7 +112,8 @@ class OutputSelector {
         }
         as.addAttribute(TextAttribute.FAMILY, font.getFamily());
         as.addAttribute(TextAttribute.SIZE, font.getSize());
-        TextLayout tl = new TextLayout(as.getIterator(), frc);
+
+        final var tl = new TextLayout(as.getIterator(), frc);
         g2.setColor(getForeground());
         tl.draw(g2, i.left, i.top + tl.getAscent());
       }
@@ -138,13 +137,15 @@ class OutputSelector {
       return selected;
     }
 
+    @Override
     public int getSize() {
       return source.bits.size();
     }
 
+    @Override
     public void listChanged(VariableListEvent event) {
-      int oldSize = select.getItemCount();
-      int newSize = source.bits.size();
+      final var oldSize = select.getItemCount();
+      final var newSize = source.bits.size();
       fireContentsChanged(this, 0, Math.max(oldSize, newSize));
       if (!source.bits.contains(selected)) {
         selected = (newSize == 0 ? null : source.bits.get(0));
@@ -152,6 +153,7 @@ class OutputSelector {
       }
     }
 
+    @Override
     public void setSelectedItem(Object value) {
       selected = (String) value;
     }
@@ -164,7 +166,7 @@ class OutputSelector {
   public OutputSelector(AnalyzerModel model) {
     this.source = model.getOutputs();
 
-    Model listModel = new Model();
+    final var listModel = new Model();
     select.setModel(listModel);
     select.setRenderer(listModel.getMyRenderer());
     source.addVariableListListener(listModel);
@@ -175,7 +177,7 @@ class OutputSelector {
   }
 
   public JPanel createPanel() {
-    JPanel ret = new JPanel();
+    final var ret = new JPanel();
     ret.add(label);
     ret.add(select);
     return ret;
@@ -190,7 +192,7 @@ class OutputSelector {
   }
 
   public String getSelectedOutput() {
-    String value = (String) select.getSelectedItem();
+    var value = (String) select.getSelectedItem();
     if (value != null && !source.bits.contains(value)) {
       if (source.bits.isEmpty()) {
         value = null;

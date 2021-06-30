@@ -1,2 +1,4 @@
 This path is the documentation icon repository.
 The "todelete" path is for obsolete icons.
+svgwithbackground     contains icons in svg mode  experimental  06.2021 
+svgwithoutbackground  contains icons in svg mode  experimental  06.2021

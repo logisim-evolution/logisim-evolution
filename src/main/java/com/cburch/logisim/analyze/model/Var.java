@@ -45,7 +45,7 @@ public class Var implements Iterable<String> {
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Var)) return false;
-    Var other = (Var) o;
+    final var other = (Var) o;
     return (other.name.equals(this.name) && other.width == this.width);
   }
 
@@ -56,17 +56,16 @@ public class Var implements Iterable<String> {
 
   @Override
   public String toString() {
-    if (width > 1) return name + "[" + (width - 1) + "..0]";
-    else return name;
+    return (width > 1) ? name + "[" + (width - 1) + "..0]" : name;
   }
 
   public static Var parse(String s) throws ParserException {
     s = s.trim();
-    int i = s.indexOf('[');
-    int j = s.lastIndexOf(']');
-    int w = 1;
+    final var i = s.indexOf('[');
+    final var j = s.lastIndexOf(']');
+    var w = 1;
     if (0 < i && i < j && j == s.length() - 1) {
-      String braces = s.substring(i + 1, j);
+      final var braces = s.substring(i + 1, j);
       if (!braces.endsWith("..0")) throw new ParserException(S.getter("variableFormat"), i);
       try {
         w = 1 + Integer.parseInt(braces.substring(0, braces.length() - 3));
@@ -94,17 +93,16 @@ public class Var implements Iterable<String> {
     }
 
     public String toString() {
-      if (bitIndex == -1) return name;
-      else return name + "[" + bitIndex + "]";
+      return (bitIndex == -1) ? name : name + "[" + bitIndex + "]";
     }
 
     public static Bit parse(String s) throws ParserException {
       s = s.trim();
-      int i = s.indexOf(':');
+      var i = s.indexOf(':');
       if (i > 0) {
         try {
-          String name = s.substring(0, i);
-          int sub = Integer.parseInt(s.substring(i + 1));
+          final var name = s.substring(0, i);
+          final var sub = Integer.parseInt(s.substring(i + 1));
           return new Bit(name, sub);
         } catch (NumberFormatException e) {
           throw new ParserException(S.getter("badVariableIndexError"), i);
@@ -116,8 +114,8 @@ public class Var implements Iterable<String> {
       int j = s.lastIndexOf(']');
       if (0 < i && i < j && j == s.length() - 1) {
         try {
-          String name = s.substring(0, i).trim();
-          int sub = Integer.parseInt(s.substring(i + 1, j));
+          final var name = s.substring(0, i).trim();
+          final var sub = Integer.parseInt(s.substring(i + 1, j));
           return new Bit(name, sub);
         } catch (NumberFormatException e) {
           throw new ParserException(S.getter("badVariableIndexError"), i);
@@ -133,8 +131,7 @@ public class Var implements Iterable<String> {
     if (b >= width) {
       throw new IllegalArgumentException("Can't access bit " + b + " of " + width);
     }
-    if (width > 1) return name + "[" + b + "]";
-    else return name;
+    return (width > 1) ? name + "[" + b + "]" : name;
   }
 
   public Iterator<String> iterator() {

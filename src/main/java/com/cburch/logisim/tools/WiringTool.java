@@ -93,9 +93,9 @@ public class WiringTool extends Tool {
       cand = Location.create(end.getX() + delta, end.getY());
     }
 
-    for (Component comp : canvas.getCircuit().getNonWires(cand)) {
+    for (final var comp : canvas.getCircuit().getNonWires(cand)) {
       if (comp.getBounds().contains(end, 2)) {
-        WireRepair repair = (WireRepair) comp.getFeature(WireRepair.class);
+        final var repair = (WireRepair) comp.getFeature(WireRepair.class);
         if (repair != null && repair.shouldRepairWire(new WireRepairData(w, cand))) {
           w = Wire.create(w.getOtherEnd(end), cand);
           canvas.repaint(end.getX() - 13, end.getY() - 13, 26, 26);
@@ -108,7 +108,7 @@ public class WiringTool extends Tool {
 
   private boolean computeMove(int newX, int newY) {
     if (cur.getX() == newX && cur.getY() == newY) return false;
-    Location start = this.start;
+    final var start = this.start;
     if (direction == 0) {
       if (newX != start.getX()) direction = HORIZONTAL;
       else if (newY != start.getY()) direction = VERTICAL;
@@ -124,13 +124,13 @@ public class WiringTool extends Tool {
 
   @Override
   public void draw(Canvas canvas, ComponentDrawContext context) {
-    Graphics g = context.getGraphics();
+    final var g = context.getGraphics();
     if (exists) {
-      Location e0 = start;
-      Location e1 = cur;
-      Wire shortenBefore = willShorten(start, cur);
+      var e0 = start;
+      var e1 = cur;
+      final var shortenBefore = willShorten(start, cur);
       if (shortenBefore != null) {
-        Wire shorten = getShortenResult(shortenBefore, start, cur);
+        final var shorten = getShortenResult(shortenBefore, start, cur);
         if (shorten == null) {
           return;
         } else {
@@ -138,10 +138,10 @@ public class WiringTool extends Tool {
           e1 = shorten.getEnd1();
         }
       }
-      int x0 = e0.getX();
-      int y0 = e0.getY();
-      int x1 = e1.getX();
-      int y1 = e1.getY();
+      final var x0 = e0.getX();
+      final var y0 = e0.getY();
+      final var x1 = e1.getX();
+      final var y1 = e1.getY();
 
       g.setColor(Color.BLACK);
       GraphicsUtil.switchToWidth(g, 3);
@@ -231,7 +231,7 @@ public class WiringTool extends Tool {
       if (!computeMove(curX, curY)) return;
       hasDragged = true;
 
-      Rectangle rect = new Rectangle();
+      final var rect = new Rectangle();
       rect.add(start.getX(), start.getY());
       rect.add(cur.getX(), cur.getY());
       rect.add(curX, curY);
@@ -242,7 +242,7 @@ public class WiringTool extends Tool {
 
       Wire shorten = null;
       if (startShortening) {
-        for (Wire w : canvas.getCircuit().getWires(start)) {
+        for (final var w : canvas.getCircuit().getWires(start)) {
           if (w.contains(cur)) {
             shorten = w;
             break;
@@ -250,7 +250,7 @@ public class WiringTool extends Tool {
         }
       }
       if (shorten == null) {
-        for (Wire w : canvas.getCircuit().getWires(cur)) {
+        for (final var w : canvas.getCircuit().getWires(cur)) {
           if (w.contains(start)) {
             shorten = w;
             break;
@@ -282,8 +282,8 @@ public class WiringTool extends Tool {
     } else {
       Canvas.snapToGrid(e);
       inCanvas = true;
-      int curX = e.getX();
-      int curY = e.getY();
+      final var curX = e.getX();
+      final var curY = e.getY();
       if (cur.getX() != curX || cur.getY() != curY) {
         cur = Location.create(curX, curY);
       }
@@ -321,8 +321,8 @@ public class WiringTool extends Tool {
     if (!exists) return;
 
     Canvas.snapToGrid(e);
-    int curX = e.getX();
-    int curY = e.getY();
+    final var curX = e.getX();
+    final var curY = e.getY();
     if (computeMove(curX, curY)) {
       cur = Location.create(curX, curY);
     }
@@ -330,14 +330,12 @@ public class WiringTool extends Tool {
       exists = false;
       super.mouseReleased(canvas, g, e);
 
-      ArrayList<Wire> ws = new ArrayList<>(2);
+      final var ws = new ArrayList<Wire>(2);
       if (cur.getY() == start.getY() || cur.getX() == start.getX()) {
-        Wire w = Wire.create(cur, start);
+        var w = Wire.create(cur, start);
         w = checkForRepairs(canvas, w, w.getEnd0());
         w = checkForRepairs(canvas, w, w.getEnd1());
-        if (performShortening(canvas, start, cur)) {
-          return;
-        }
+        if (performShortening(canvas, start, cur)) return;
         if (w.getLength() > 0) ws.add(w);
       } else {
         Location m;
@@ -346,20 +344,18 @@ public class WiringTool extends Tool {
         } else {
           m = Location.create(start.getX(), cur.getY());
         }
-        Wire w0 = Wire.create(start, m);
-        Wire w1 = Wire.create(m, cur);
+        var w0 = Wire.create(start, m);
+        var w1 = Wire.create(m, cur);
         w0 = checkForRepairs(canvas, w0, start);
         w1 = checkForRepairs(canvas, w1, cur);
         if (w0.getLength() > 0) ws.add(w0);
         if (w1.getLength() > 0) ws.add(w1);
       }
-      if (ws.size() > 0) {
-        CircuitMutation mutation = new CircuitMutation(canvas.getCircuit());
+      if (!ws.isEmpty()) {
+        final var mutation = new CircuitMutation(canvas.getCircuit());
         mutation.addAll(ws);
-        StringGetter desc;
-        if (ws.size() == 1) desc = S.getter("addWireAction");
-        else desc = S.getter("addWiresAction");
-        Action act = mutation.toAction(desc);
+        final var desc = (ws.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
+        final var act = mutation.toAction(desc);
         canvas.getProject().doAction(act);
         lastAction = act;
       }
@@ -368,19 +364,19 @@ public class WiringTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Graphics2D g2 = (Graphics2D) c.getGraphics().create();
+    final var g2 = (Graphics2D) c.getGraphics().create();
     g2.translate(x, y);
     int[] points = {3, 13, 8, 13, 8, 3, 13, 3};
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.BLACK);
-    for (int i = 0; i < points.length - 2; i += 2)
+    for (var i = 0; i < points.length - 2; i += 2)
       g2.drawLine(
           AppPreferences.getScaled(points[i]),
           AppPreferences.getScaled(points[i + 1]),
           AppPreferences.getScaled(points[i + 2]),
           AppPreferences.getScaled(points[i + 3]));
     g2.setColor(Value.TRUE_COLOR);
-    int wh = AppPreferences.getScaled(5);
+    final var wh = AppPreferences.getScaled(5);
     g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(11), wh, wh);
     g2.setColor(Value.UNKNOWN_COLOR);
     g2.fillOval(AppPreferences.getScaled(11), AppPreferences.getScaled(1), wh, wh);
@@ -388,13 +384,13 @@ public class WiringTool extends Tool {
   }
 
   private boolean performShortening(Canvas canvas, Location drag0, Location drag1) {
-    Wire shorten = willShorten(drag0, drag1);
+    final var shorten = willShorten(drag0, drag1);
     if (shorten == null) {
       return false;
     } else {
-      CircuitMutation xn = new CircuitMutation(canvas.getCircuit());
+      final var xn = new CircuitMutation(canvas.getCircuit());
       StringGetter actName;
-      Wire result = getShortenResult(shorten, drag0, drag1);
+      final var result = getShortenResult(shorten, drag0, drag1);
       if (result == null) {
         xn.remove(shorten);
         actName = S.getter("removeComponentAction", shorten.getFactory().getDisplayGetter());
@@ -429,7 +425,7 @@ public class WiringTool extends Tool {
   }
 
   private Wire willShorten(Location drag0, Location drag1) {
-    Wire shorten = shortening;
+    final var shorten = shortening;
     if (shorten == null) {
       return null;
     } else if (shorten.endsAt(drag0) || shorten.endsAt(drag1)) {

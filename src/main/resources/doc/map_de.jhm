@@ -175,8 +175,8 @@
 
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="img-guide/poke.png" />
-	<mapID target="icon_edit"        url="img-guide/select.png" />
-	<mapID target="icon_select"      url="img-guide/select.png" />
+	<mapID target="icon_edit"        url="img-guide/toolselect.png" />
+	<mapID target="icon_select"      url="img-guide/toolselect.png" />
 	<mapID target="icon_wiring"      url="icons/wiring.gif" />
 	<mapID target="icon_text"        url="img-guide/text.png" />
 	<mapID target="icon_menu"        url="icons/menu.gif" />

@@ -35,10 +35,8 @@ import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
@@ -74,10 +72,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   @Override
   public void circuitChanged(CircuitEvent event) {
-    int act = event.getAction();
+    final var act = event.getAction();
     if (act == CircuitEvent.ACTION_CHECK_NAME) {
-      String oldname = (String) event.getData();
-      String newname = event.getCircuit().getName();
+      final var oldname = (String) event.getData();
+      final var newname = event.getCircuit().getName();
       if (NameIsInUse(newname, event.getCircuit())) {
         OptionPane.showMessageDialog(
             null,
@@ -92,10 +90,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   // Name check Methods
   private boolean NameIsInUse(String Name, Circuit changed) {
     if (Name.isEmpty()) return false;
-    for (Library mylib : getLibraries()) {
+    for (final var mylib : getLibraries()) {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
-    for (Circuit mytool : this.getCircuits()) {
+    for (final var mytool : this.getCircuits()) {
       if (Name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
         return true;
     }
@@ -104,10 +102,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   private boolean NameIsInLibraries(Library lib, String Name) {
     if (Name.isEmpty()) return false;
-    for (Library mylib : lib.getLibraries()) {
+    for (final var mylib : lib.getLibraries()) {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
-    for (Tool mytool : lib.getTools()) {
+    for (final var mytool : lib.getTools()) {
       if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
@@ -129,7 +127,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       try {
         out.close();
       } catch (IOException e) {
-        file.loader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+        file.loader.showError(S.get("fileDuplicateError", e.toString()));
       }
     }
   }
@@ -138,7 +136,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   // creation methods
   //
   public static LogisimFile createNew(Loader loader, Project proj) {
-    LogisimFile ret = new LogisimFile(loader);
+    final var ret = new LogisimFile(loader);
     ret.main = new Circuit("main", ret, proj);
     // The name will be changed in LogisimPreferences
     ret.tools.add(new AddTool(ret.main.getSubcircuitFactory()));
@@ -146,13 +144,13 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   private static String getFirstLine(BufferedInputStream in) throws IOException {
-    byte[] first = new byte[512];
+    final var first = new byte[512];
     in.mark(first.length - 1);
     in.read(first);
     in.reset();
 
     int lineBreak = first.length;
-    for (int i = 0; i < lineBreak; i++) {
+    for (var i = 0; i < lineBreak; i++) {
       if (first[i] == '\n') {
         lineBreak = i;
       }
@@ -180,7 +178,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         return loadSub(in, loader, file);
       } catch (Exception t) {
         firstExcept.printStackTrace();
-        loader.showError(StringUtil.format(S.get("xmlFormatError"), firstExcept.toString()));
+        loader.showError(S.get("xmlFormatError", firstExcept.toString()));
       } finally {
         try {
           in.close();
@@ -197,7 +195,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       return loadSub(in, loader);
     } catch (SAXException e) {
       e.printStackTrace();
-      loader.showError(StringUtil.format(S.get("xmlFormatError"), e.toString()));
+      loader.showError(S.get("xmlFormatError", e.toString()));
       return null;
     }
   }
@@ -210,8 +208,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public static LogisimFile loadSub(InputStream in, Loader loader, File file)
       throws IOException, SAXException {
     // fetch first line and then reset
-    BufferedInputStream inBuffered = new BufferedInputStream(in);
-    String firstLine = getFirstLine(inBuffered);
+    final var inBuffered = new BufferedInputStream(in);
+    final var firstLine = getFirstLine(inBuffered);
 
     if (firstLine == null) {
       throw new IOException("File is empty");
@@ -221,15 +219,14 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       throw new IOException("Version 1.0 files no longer supported");
     }
 
-    XmlReader xmlReader = new XmlReader(loader, file);
+    final var xmlReader = new XmlReader(loader, file);
     /* Can set the project pointer to zero as it is fixed later */
-    LogisimFile ret = xmlReader.readLibrary(inBuffered, null);
+    final var ret = xmlReader.readLibrary(inBuffered, null);
     ret.loader = loader;
     return ret;
   }
 
-  private final EventSourceWeakSupport<LibraryListener> listeners =
-      new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
   private Loader loader;
   private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
@@ -250,7 +247,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     // Creates the default project name, adding an underscore if needed
     name = S.get("defaultProjectName");
     if (Projects.windowNamed(name)) {
-      for (int i = 2; true; i++) {
+      for (var i = 2; true; i++) {
         if (!Projects.windowNamed(name + "_" + i)) {
           name += "_" + i;
           break;
@@ -265,7 +262,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public void addCircuit(Circuit circuit, int index) {
     circuit.addCircuitListener(this);
-    AddTool tool = new AddTool(circuit.getSubcircuitFactory());
+    final var tool = new AddTool(circuit.getSubcircuitFactory());
     tools.add(index, tool);
     if (tools.size() == 1) setMainCircuit(circuit);
     fireEvent(LibraryEvent.ADD_TOOL, tool);
@@ -276,16 +273,16 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public void addVhdlContent(VhdlContent content, int index) {
-    AddTool tool = new AddTool(new VhdlEntity(content));
+    final var tool = new AddTool(new VhdlEntity(content));
     tools.add(index, tool);
     fireEvent(LibraryEvent.ADD_TOOL, tool);
   }
 
   public void addLibrary(Library lib) {
     if (!lib.getName().equals(Base._ID)) {
-      for (Tool tool : lib.getTools()) {
-        AddTool tool1 = (AddTool) tool;
-        AttributeSet atrs = tool1.getAttributeSet();
+      for (final var tool : lib.getTools()) {
+        final var tool1 = (AddTool) tool;
+        final var atrs = tool1.getAttributeSet();
         for (Attribute<?> attr : atrs.getAttributes()) {
           if (attr == CircuitAttributes.NAME_ATTR) atrs.setReadOnly(attr, true);
         }
@@ -312,19 +309,19 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   @SuppressWarnings("resource")
   public LogisimFile cloneLogisimFile(Loader newloader) {
-    PipedInputStream reader = new PipedInputStream();
-    PipedOutputStream writer = new PipedOutputStream();
+    final var reader = new PipedInputStream();
+    final var writer = new PipedOutputStream();
     try {
       reader.connect(writer);
     } catch (IOException e) {
-      newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+      newloader.showError(S.get("fileDuplicateError", e.toString()));
       return null;
     }
     new WritingThread(writer, this).start();
     try {
       return LogisimFile.load(reader, newloader);
     } catch (IOException e) {
-      newloader.showError(StringUtil.format(S.get("fileDuplicateError"), e.toString()));
+      newloader.showError(S.get("fileDuplicateError", e.toString()));
       try {
         reader.close();
       } catch (IOException ignored) {
@@ -334,9 +331,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public boolean contains(Circuit circ) {
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+        final var factory = (SubcircuitFactory) tool.getFactory();
         if (factory.getSubcircuit() == circ) return true;
       }
     }
@@ -344,9 +341,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public boolean contains(VhdlContent content) {
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         if (factory.getContent() == content) return true;
       }
     }
@@ -354,12 +351,12 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public boolean containsFactory(String name) {
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         if (factory.getContent().getName().equals(name)) return true;
       } else if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+        final var factory = (SubcircuitFactory) tool.getFactory();
         if (factory.getSubcircuit().getName().equals(name)) return true;
       }
     }
@@ -367,31 +364,31 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   private Tool findTool(Library lib, Tool query) {
-    for (Tool tool : lib.getTools()) {
+    for (final var tool : lib.getTools()) {
       if (tool.equals(query)) return tool;
     }
     return null;
   }
 
   Tool findTool(Tool query) {
-    for (Library lib : getLibraries()) {
-      Tool ret = findTool(lib, query);
+    for (final var lib : getLibraries()) {
+      final var ret = findTool(lib, query);
       if (ret != null) return ret;
     }
     return null;
   }
 
   private void fireEvent(int action, Object data) {
-    LibraryEvent e = new LibraryEvent(this, action, data);
-    for (LibraryListener l : listeners) {
+    final var e = new LibraryEvent(this, action, data);
+    for (final var l : listeners) {
       l.libraryChanged(e);
     }
   }
 
   public AddTool getAddTool(Circuit circ) {
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+        final var factory = (SubcircuitFactory) tool.getFactory();
         if (factory.getSubcircuit() == circ) {
           return tool;
         }
@@ -401,9 +398,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public AddTool getAddTool(VhdlContent content) {
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         if (factory.getContent() == content) {
           return tool;
         }
@@ -414,9 +411,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public Circuit getCircuit(String name) {
     if (name == null) return null;
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+        final var factory = (SubcircuitFactory) tool.getFactory();
         if (name.equals(factory.getName())) return factory.getSubcircuit();
       }
     }
@@ -425,9 +422,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public VhdlContent getVhdlContent(String name) {
     if (name == null) return null;
-    for (AddTool tool : tools) {
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         if (name.equals(factory.getName())) return factory.getContent();
       }
     }
@@ -439,21 +436,20 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<Circuit> getCircuits() {
-    List<Circuit> ret = new ArrayList<>(tools.size());
-    for (AddTool tool : tools) {
+    final var ret = new ArrayList<Circuit>(tools.size());
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-        ret.add(factory.getSubcircuit());
+        ret.add(((SubcircuitFactory) tool.getFactory()).getSubcircuit());
       }
     }
     return ret;
   }
 
   public int indexOfCircuit(Circuit circ) {
-    for (int i = 0; i < tools.size(); i++) {
-      AddTool tool = tools.get(i);
+    for (var i = 0; i < tools.size(); i++) {
+      final var tool = tools.get(i);
       if (tool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+        final var factory = (SubcircuitFactory) tool.getFactory();
         if (factory.getSubcircuit() == circ) {
           return i;
         }
@@ -463,10 +459,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<VhdlContent> getVhdlContents() {
-    List<VhdlContent> ret = new ArrayList<>(tools.size());
-    for (AddTool tool : tools) {
+    final var ret = new ArrayList<VhdlContent>(tools.size());
+    for (final var tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         ret.add(factory.getContent());
       }
     }
@@ -474,10 +470,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public int indexOfVhdl(VhdlContent vhdl) {
-    for (int i = 0; i < tools.size(); i++) {
-      AddTool tool = tools.get(i);
+    for (var i = 0; i < tools.size(); i++) {
+      final var tool = tools.get(i);
       if (tool.getFactory() instanceof VhdlEntity) {
-        VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        final var factory = (VhdlEntity) tool.getFactory();
         if (factory.getContent() == vhdl) {
           return i;
         }
@@ -500,8 +496,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public String getMessage() {
-    if (messages.size() == 0) return null;
-    return messages.removeFirst();
+    return (messages.isEmpty()) ? null : messages.removeFirst();
   }
 
   //
@@ -522,24 +517,24 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public String getUnloadLibraryMessage(Library lib) {
-    HashSet<ComponentFactory> factories = new HashSet<>();
-    for (Tool tool : lib.getTools()) {
+    final var factories = new HashSet<ComponentFactory>();
+    for (final var tool : lib.getTools()) {
       if (tool instanceof AddTool) {
         factories.add(((AddTool) tool).getFactory());
       }
     }
 
-    for (Circuit circuit : getCircuits()) {
-      for (Component comp : circuit.getNonWires()) {
+    for (final var circuit : getCircuits()) {
+      for (final var comp : circuit.getNonWires()) {
         if (factories.contains(comp.getFactory())) {
-          return StringUtil.format(S.get("unloadUsedError"), circuit.getName());
+          return S.get("unloadUsedError", circuit.getName());
         }
       }
     }
 
-    ToolbarData tb = options.getToolbarData();
-    MouseMappings mm = options.getMouseMappings();
-    for (Tool t : lib.getTools()) {
+    final var tb = options.getToolbarData();
+    final var mm = options.getMouseMappings();
+    for (final var t : lib.getTools()) {
       if (tb.usesToolFromSource(t)) {
         return S.get("unloadToolbarError");
       }
@@ -575,29 +570,29 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
     int index = indexOfCircuit(circuit);
     if (index >= 0) {
-      Tool circuitTool = tools.remove(index);
+      final Tool circuitTool = tools.remove(index);
 
       if (main == circuit) {
-        AddTool dflt_tool = tools.get(0);
-        SubcircuitFactory factory = (SubcircuitFactory) dflt_tool.getFactory();
-        setMainCircuit(factory.getSubcircuit());
+        setMainCircuit(((SubcircuitFactory) tools.get(0).getFactory()).getSubcircuit());
       }
       fireEvent(LibraryEvent.REMOVE_TOOL, circuitTool);
     }
   }
 
   public void removeVhdl(VhdlContent vhdl) {
-    int index = indexOfVhdl(vhdl);
+    final var index = indexOfVhdl(vhdl);
     if (index >= 0) {
-      Tool vhdlTool = tools.remove(index);
+      final Tool vhdlTool = tools.remove(index);
       fireEvent(LibraryEvent.REMOVE_TOOL, vhdlTool);
     }
   }
 
   @Override
-  public boolean removeLibrary(String Name) {
+  public boolean removeLibrary(String name) {
     int index = -1;
-    for (Library lib : libraries) if (lib.getName().equals(Name)) index = libraries.indexOf(lib);
+    for (final var lib : libraries)
+      if (lib.getName().equals(name))
+        index = libraries.indexOf(lib);
     if (index < 0) return false;
     libraries.remove(index);
     return true;
@@ -646,8 +641,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     } catch (ParserConfigurationException e) {
       loader.showError("internal error configuring parser");
     } catch (TransformerException e) {
-      String msg = e.getMessage();
-      String err = S.get("xmlConversionError");
+      final var msg = e.getMessage();
+      var err = S.get("xmlConversionError");
       if (msg == null) err += ": " + msg;
       loader.showError(err);
     }

@@ -60,16 +60,16 @@ public class VariableList {
   }
 
   public boolean containsDuplicate(VariableList data, Var oldVar, String name) {
-    boolean found = false;
+    var found = false;
     for (int i = 0, n = vars.size(); i < n && !found; i++) {
-      Var other = vars.get(i);
+      final var other = vars.get(i);
       if (other != oldVar && name.equals(other.name)) {
         found = true;
         break;
       }
     }
     for (int i = 0; i < others.size() && !found; i++) {
-      VariableList l = others.get(i);
+      final var l = others.get(i);
       if (l.equals(data)) continue;
       found |= l.containsDuplicate(data, oldVar, name);
     }
@@ -80,10 +80,10 @@ public class VariableList {
     if (data.size() + variable.width >= maxSize) {
       throw new IllegalArgumentException("maximum size is " + maxSize);
     }
-    int index = data.size();
+    final var index = data.size();
     data.add(variable);
-    for (String bit : variable) names.add(bit);
-    int bitIndex = names.size() - 1;
+    for (final var bit : variable) names.add(bit);
+    final var bitIndex = names.size() - 1;
     fireEvent(VariableListEvent.ADD, variable, index, bitIndex);
   }
 
@@ -97,7 +97,7 @@ public class VariableList {
 
   private void fireEvent(int type, Var variable, Integer index, Integer bitIndex) {
     if (listeners.size() == 0) return;
-    VariableListEvent event = new VariableListEvent(this, type, variable, index, bitIndex);
+    final var event = new VariableListEvent(this, type, variable, index, bitIndex);
     for (VariableListListener l : listeners) {
       l.listChanged(event);
     }
@@ -108,11 +108,11 @@ public class VariableList {
   }
 
   public void move(Var var, int delta) {
-    int index = data.indexOf(var);
+    final var index = data.indexOf(var);
     if (index < 0) throw new NoSuchElementException(var.toString());
-    int bitIndex = names.indexOf(var.bitName(0));
+    final var bitIndex = names.indexOf(var.bitName(0));
     if (bitIndex < 0) throw new NoSuchElementException(var.toString());
-    int newIndex = index + delta;
+    final var newIndex = index + delta;
     if (newIndex < 0) {
       throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
     }
@@ -124,16 +124,16 @@ public class VariableList {
     data.remove(index);
     data.add(newIndex, var);
     names.subList(bitIndex + 1 - var.width, bitIndex + 1).clear();
-    int i = (newIndex == 0 ? 0 : (1 + names.indexOf(data.get(newIndex - 1).bitName(0))));
-    for (String bit : var) names.add(i++, bit);
-    int bitDelta = names.indexOf(var.bitName(0)) - bitIndex;
+    var i = (newIndex == 0 ? 0 : (1 + names.indexOf(data.get(newIndex - 1).bitName(0))));
+    for (final var bit : var) names.add(i++, bit);
+    final var bitDelta = names.indexOf(var.bitName(0)) - bitIndex;
     fireEvent(VariableListEvent.MOVE, var, delta, bitDelta);
   }
 
   public void remove(Var var) {
-    int index = data.indexOf(var);
+    final var index = data.indexOf(var);
     if (index < 0) throw new NoSuchElementException(var.toString());
-    int bitIndex = names.indexOf(var.bitName(0));
+    final var bitIndex = names.indexOf(var.bitName(0));
     if (bitIndex < 0) throw new NoSuchElementException(var.toString());
     data.remove(index);
     names.subList(bitIndex + 1 - var.width, bitIndex + 1).clear();
@@ -145,27 +145,29 @@ public class VariableList {
   }
 
   public void replace(Var oldVar, Var newVar) {
-    int index = data.indexOf(oldVar);
+    final var index = data.indexOf(oldVar);
     if (index < 0) throw new NoSuchElementException(oldVar.toString());
-    int bitIndex = names.indexOf(oldVar.bitName(0));
+    final var bitIndex = names.indexOf(oldVar.bitName(0));
     if (bitIndex < 0) throw new NoSuchElementException(oldVar.toString());
     if (oldVar.equals(newVar)) return;
     data.set(index, newVar);
     names.subList(bitIndex + 1 - oldVar.width, bitIndex + 1).clear();
-    int i = bitIndex + 1 - oldVar.width;
-    for (String bit : newVar) names.add(i++, bit);
+    var i = bitIndex + 1 - oldVar.width;
+    for (final var bit : newVar) {
+      names.add(i++, bit);
+    }
     fireEvent(VariableListEvent.REPLACE, oldVar, index, bitIndex);
   }
 
   public void setAll(List<Var> values) {
-    int total = 0;
+    var total = 0;
     for (Var v : values) total += v.width;
     if (total > maxSize) throw new IllegalArgumentException("maximum size is " + maxSize);
     data.clear();
     data.addAll(values);
     names.clear();
-    for (Var v : values) {
-      for (String bit : v) names.add(bit);
+    for (final var var : values) {
+      for (final var bit : var) names.add(bit);
     }
     fireEvent(VariableListEvent.ALL_REPLACED);
   }

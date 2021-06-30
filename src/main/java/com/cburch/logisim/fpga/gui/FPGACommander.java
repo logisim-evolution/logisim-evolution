@@ -339,7 +339,7 @@ public class FPGACommander
     int nrItems = 1;
     actionCommands.removeAllItems();
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
-    ToolPath.setText(S.fmt("FpgaGuiToolpath",
+    ToolPath.setText(S.get("FpgaGuiToolpath",
           VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
     if (MyBoardInformation != null
         && VendorSoftware.toolsPresent(
@@ -466,7 +466,7 @@ public class FPGACommander
         } else {
           OptionPane.showMessageDialog(
               null,
-              S.fmt("FpgaToolsNotFound", ToolPath),
+              S.get("FpgaToolsNotFound", ToolPath),
               S.get("FpgaGuiSoftwareSelect"),
               OptionPane.ERROR_MESSAGE);
         }

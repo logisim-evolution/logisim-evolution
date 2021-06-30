@@ -68,18 +68,18 @@ public class ExportTableButton extends JButton {
       if (c != null) lastFile = new File(c.getName() + ".txt");
       else lastFile = new File("truthtable.txt");
     }
-    JFileChooser chooser = JFileChoosers.createSelected(lastFile);
+    final var chooser = JFileChoosers.createSelected(lastFile);
     chooser.setDialogTitle(S.get("saveButton"));
     chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
     chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
     chooser.setFileFilter(TruthtableTextFile.FILE_FILTER);
-    int choice = chooser.showSaveDialog(parent);
+    final var choice = chooser.showSaveDialog(parent);
     if (choice == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final var file = chooser.getSelectedFile();
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("notFileMessage", file.getName()),
+            S.get("notFileMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -87,24 +87,24 @@ public class ExportTableButton extends JButton {
       if (file.exists() && !file.canWrite()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("cantWriteMessage", file.getName()),
+            S.get("cantWriteMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
       }
       if (file.exists()) {
-        int confirm =
+        final var confirm =
             OptionPane.showConfirmDialog(
                 parent,
-                S.fmt("confirmOverwriteMessage", file.getName()),
+                S.get("confirmOverwriteMessage", file.getName()),
                 S.get("confirmOverwriteTitle"),
                 OptionPane.YES_NO_OPTION);
         if (confirm != OptionPane.YES_OPTION) return;
       }
       try {
         final var fileName = file.getName();
-        int idx = fileName.lastIndexOf(".");
-        var ext = fileName.substring(idx + 1);
+        final var idx = fileName.lastIndexOf(".");
+        final var ext = fileName.substring(idx + 1);
         if (ext.equals("txt")) {
           TruthtableTextFile.doSave(file, model);
         } else if (ext.equals("csv")) {
@@ -112,7 +112,7 @@ public class ExportTableButton extends JButton {
         } else {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("DoNotKnowHowto", fileName),
+              S.get("DoNotKnowHowto", fileName),
               S.get("openErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return;

@@ -56,24 +56,24 @@ public class DFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("D", true, ComponentInfo, 0, Nets));
-      return PortMap;
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
+      final var portMap = new HashMap<String, String>();
+      portMap.putAll(GetNetMap("D", true, ComponentInfo, 0, nets));
+      return portMap;
     }
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("D", 1);
-      return Inputs;
+      final var inputs = new HashMap<String, Integer>();
+      inputs.put("D", 1);
+      return inputs;
     }
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator() + "D;");
-      return Contents;
+      final var contents = new ArrayList<String>();
+      contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator() + "D;");
+      return contents;
     }
   }
 

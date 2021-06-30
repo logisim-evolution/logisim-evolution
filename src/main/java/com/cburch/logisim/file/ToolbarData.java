@@ -29,13 +29,11 @@
 package com.cburch.logisim.file;
 
 import com.cburch.logisim.data.AttributeListener;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 public class ToolbarData {
@@ -54,8 +52,8 @@ public class ToolbarData {
   }
 
   private void addAttributeListeners(Tool tool) {
-    for (AttributeListener l : toolListeners) {
-      AttributeSet attrs = tool.getAttributeSet();
+    for (final var l : toolListeners) {
+      final var attrs = tool.getAttributeSet();
       if (attrs != null) attrs.addAttributeListener(l);
     }
   }
@@ -83,9 +81,9 @@ public class ToolbarData {
   }
 
   public void addToolAttributeListener(AttributeListener l) {
-    for (Tool tool : contents) {
+    for (final var tool : contents) {
       if (tool != null) {
-        AttributeSet attrs = tool.getAttributeSet();
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.addAttributeListener(l);
       }
     }
@@ -104,19 +102,19 @@ public class ToolbarData {
   //
   public void copyFrom(ToolbarData other, LogisimFile file) {
     if (this == other) return;
-    for (Tool tool : contents) {
+    for (final var tool : contents) {
       if (tool != null) {
         removeAttributeListeners(tool);
       }
     }
     this.contents.clear();
-    for (Tool srcTool : other.contents) {
+    for (final var srcTool : other.contents) {
       if (srcTool == null) {
         this.addSeparator();
       } else {
         Tool toolCopy = file.findTool(srcTool);
         if (toolCopy != null) {
-          Tool dstTool = toolCopy.cloneTool();
+          final var dstTool = toolCopy.cloneTool();
           AttributeSets.copy(srcTool.getAttributeSet(), dstTool.getAttributeSet());
           this.addTool(dstTool);
           addAttributeListeners(toolCopy);
@@ -127,7 +125,7 @@ public class ToolbarData {
   }
 
   public void fireToolbarChanged() {
-    for (ToolbarListener l : listeners) {
+    for (final var l : listeners) {
       l.toolbarChanged();
     }
   }
@@ -144,14 +142,14 @@ public class ToolbarData {
   }
 
   public Tool getFirstTool() {
-    for (Tool tool : contents) {
+    for (final var tool : contents) {
       if (tool != null) return tool;
     }
     return null;
   }
 
   public Object move(int from, int to) {
-    Tool moved = contents.remove(from);
+    final var moved = contents.remove(from);
     contents.add(to, moved);
     fireToolbarChanged();
     return moved;
@@ -165,16 +163,16 @@ public class ToolbarData {
   }
 
   private void removeAttributeListeners(Tool tool) {
-    for (AttributeListener l : toolListeners) {
-      AttributeSet attrs = tool.getAttributeSet();
+    for (final var l : toolListeners) {
+      final var attrs = tool.getAttributeSet();
       if (attrs != null) attrs.removeAttributeListener(l);
     }
   }
 
   public void removeToolAttributeListener(AttributeListener l) {
-    for (Tool tool : contents) {
+    for (final var tool : contents) {
       if (tool != null) {
-        AttributeSet attrs = tool.getAttributeSet();
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.removeAttributeListener(l);
       }
     }
@@ -189,17 +187,17 @@ public class ToolbarData {
   // package-protected methods
   //
   void replaceAll(Map<Tool, Tool> toolMap) {
-    boolean changed = false;
-    for (ListIterator<Tool> it = contents.listIterator(); it.hasNext(); ) {
+    var changed = false;
+    for (final var it = contents.listIterator(); it.hasNext(); ) {
       Object old = it.next();
       if (toolMap.containsKey(old)) {
         changed = true;
         removeAttributeListeners((Tool) old);
-        Tool newTool = toolMap.get(old);
+        final var newTool = toolMap.get(old);
         if (newTool == null) {
           it.remove();
         } else {
-          Tool addedTool = newTool.cloneTool();
+          final var addedTool = newTool.cloneTool();
           addAttributeListeners(addedTool);
           LoadedLibrary.copyAttributes(addedTool.getAttributeSet(), ((Tool) old).getAttributeSet());
           it.set(addedTool);
@@ -214,7 +212,7 @@ public class ToolbarData {
   }
 
   boolean usesToolFromSource(Tool query) {
-    for (Tool tool : contents) {
+    for (final var tool : contents) {
       if (tool != null && tool.sharesSource(query)) return true;
     }
     return false;

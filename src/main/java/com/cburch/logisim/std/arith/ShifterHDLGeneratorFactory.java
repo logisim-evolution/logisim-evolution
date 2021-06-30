@@ -50,100 +50,92 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("DataA", attrs.getValue(StdAttr.WIDTH).getWidth());
-    Inputs.put("ShiftAmount", getNrofShiftBits(attrs));
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put("DataA", attrs.getValue(StdAttr.WIDTH).getWidth());
+    inputs.put("ShiftAmount", getNrofShiftBits(attrs));
+    return inputs;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var contents = new ArrayList<String>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add(
-          "   -----------------------------------------------------------------------------");
-      Contents.add(
-          "   --- ShifterMode represents when:                                          ---");
-      Contents.add(
-          "   --- 0 : Logical Shift Left                                                ---");
-      Contents.add(
-          "   --- 1 : Rotate Left                                                       ---");
-      Contents.add(
-          "   --- 2 : Logical Shift Right                                               ---");
-      Contents.add(
-          "   --- 3 : Arithmetic Shift Right                                            ---");
-      Contents.add(
-          "   --- 4 : Rotate Right                                                      ---");
-      Contents.add(
-          "   -----------------------------------------------------------------------------");
-      Contents.add("");
-      Contents.add("");
+      contents.add("   -----------------------------------------------------------------------------");
+      contents.add("   --- ShifterMode represents when:                                          ---");
+      contents.add("   --- 0 : Logical Shift Left                                                ---");
+      contents.add("   --- 1 : Rotate Left                                                       ---");
+      contents.add("   --- 2 : Logical Shift Right                                               ---");
+      contents.add("   --- 3 : Arithmetic Shift Right                                            ---");
+      contents.add("   --- 4 : Rotate Right                                                      ---");
+      contents.add("   -----------------------------------------------------------------------------");
+      contents.add("");
+      contents.add("");
       if (nrOfBits == 1) {
-        Contents.add("   Result <= DataA WHEN " + ShiftModeStr + " = 1 OR");
-        Contents.add("                        " + ShiftModeStr + " = 3 OR");
-        Contents.add(
+        contents.add("   Result <= DataA WHEN " + ShiftModeStr + " = 1 OR");
+        contents.add("                        " + ShiftModeStr + " = 3 OR");
+        contents.add(
             "                        " + ShiftModeStr + " = 4 ELSE DataA AND NOT(ShiftAmount);");
       } else {
         int stage;
         for (stage = 0; stage < getNrofShiftBits(attrs); stage++) {
-          Contents.addAll(GetStageFunctionalityVHDL(stage, nrOfBits));
+          contents.addAll(GetStageFunctionalityVHDL(stage, nrOfBits));
         }
-        Contents.add(
+        contents.add(
             "   -----------------------------------------------------------------------------");
-        Contents.add(
+        contents.add(
             "   --- Here we assign the result                                             ---");
-        Contents.add(
+        contents.add(
             "   -----------------------------------------------------------------------------");
-        Contents.add("");
-        Contents.add(
+        contents.add("");
+        contents.add(
             "   Result <= s_stage_" + (getNrofShiftBits(attrs) - 1) + "_result;");
-        Contents.add("");
+        contents.add("");
       }
     } else {
-      Contents.add(
+      contents.add(
           "   /***************************************************************************");
-      Contents.add(
+      contents.add(
           "    ** ShifterMode represents when:                                          **");
-      Contents.add(
+      contents.add(
           "    ** 0 : Logical Shift Left                                                **");
-      Contents.add(
+      contents.add(
           "    ** 1 : Rotate Left                                                       **");
-      Contents.add(
+      contents.add(
           "    ** 2 : Logical Shift Right                                               **");
-      Contents.add(
+      contents.add(
           "    ** 3 : Arithmetic Shift Right                                            **");
-      Contents.add(
+      contents.add(
           "    ** 4 : Rotate Right                                                      **");
-      Contents.add(
+      contents.add(
           "    ***************************************************************************/");
-      Contents.add("");
-      Contents.add("");
+      contents.add("");
+      contents.add("");
       if (nrOfBits == 1) {
-        Contents.add("   assign Result = ((" + ShiftModeStr + " == 1)||");
-        Contents.add("                    (" + ShiftModeStr + " == 3)||");
-        Contents.add(
+        contents.add("   assign Result = ((" + ShiftModeStr + " == 1)||");
+        contents.add("                    (" + ShiftModeStr + " == 3)||");
+        contents.add(
             "                    (" + ShiftModeStr + " == 4)) ? DataA : DataA&(~ShiftAmount);");
       } else {
         int stage;
         for (stage = 0; stage < getNrofShiftBits(attrs); stage++) {
-          Contents.addAll(GetStageFunctionalityVerilog(stage, nrOfBits));
+          contents.addAll(GetStageFunctionalityVerilog(stage, nrOfBits));
         }
-        Contents.add(
+        contents.add(
             "   /***************************************************************************");
-        Contents.add(
+        contents.add(
             "    ** Here we assign the result                                             **");
-        Contents.add(
+        contents.add(
             "    ***************************************************************************/");
-        Contents.add("");
-        Contents.add(
+        contents.add("");
+        contents.add(
             "   assign Result = s_stage_"
                 + (getNrofShiftBits(attrs) - 1)
                 + "_result;");
-        Contents.add("");
+        contents.add("");
       }
     }
-    return Contents;
+    return contents;
   }
 
   private int getNrofShiftBits(AttributeSet attrs) {
@@ -155,40 +147,40 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    Outputs.put("Result", inputbits);
-    return Outputs;
+    outputs.put("Result", inputbits);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(ShiftModeId, ShiftModeStr);
-    return Parameters;
+    final var parameters = new TreeMap<Integer, String>();
+    parameters.put(ShiftModeId, ShiftModeStr);
+    return parameters;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
+    final var parameterMap = new TreeMap<String, Integer>();
     Object shift = ComponentInfo.GetComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
-    if (shift == Shifter.SHIFT_LOGICAL_LEFT) ParameterMap.put(ShiftModeStr, 0);
-    else if (shift == Shifter.SHIFT_ROLL_LEFT) ParameterMap.put(ShiftModeStr, 1);
-    else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) ParameterMap.put(ShiftModeStr, 2);
-    else if (shift == Shifter.SHIFT_ARITHMETIC_RIGHT) ParameterMap.put(ShiftModeStr, 3);
-    else ParameterMap.put(ShiftModeStr, 4);
-    return ParameterMap;
+    if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(ShiftModeStr, 0);
+    else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(ShiftModeStr, 1);
+    else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(ShiftModeStr, 2);
+    else if (shift == Shifter.SHIFT_ARITHMETIC_RIGHT) parameterMap.put(ShiftModeStr, 3);
+    else parameterMap.put(ShiftModeStr, 4);
+    return parameterMap;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Nets));
-    PortMap.putAll(GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Nets));
+    portMap.putAll(GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Nets));
+    portMap.putAll(GetNetMap("Result", true, ComponentInfo, Shifter.OUT, Nets));
+    return portMap;
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int StageNumber, int NrOfBits) {
@@ -408,14 +400,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var wires = new TreeMap<String, Integer>();
     int shift = getNrofShiftBits(attrs);
     int loop;
     for (loop = 0; loop < shift; loop++) {
-      Wires.put("s_stage_" + loop + "_result", attrs.getValue(StdAttr.WIDTH).getWidth());
-      Wires.put("s_stage_" + loop + "_shiftin", 1 << loop);
+      wires.put("s_stage_" + loop + "_result", attrs.getValue(StdAttr.WIDTH).getWidth());
+      wires.put("s_stage_" + loop + "_shiftin", 1 << loop);
     }
-    return Wires;
+    return wires;
   }
 
   @Override

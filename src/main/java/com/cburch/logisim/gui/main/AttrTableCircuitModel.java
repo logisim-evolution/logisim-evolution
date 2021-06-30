@@ -49,7 +49,7 @@ public class AttrTableCircuitModel extends AttributeSetTableModel {
 
   @Override
   public String getTitle() {
-    return S.fmt("circuitAttrTitle", circ.getName());
+    return S.get("circuitAttrTitle", circ.getName());
   }
 
   @Override

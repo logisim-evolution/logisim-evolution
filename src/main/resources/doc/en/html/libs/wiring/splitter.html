@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-27T06:18:42.262000000">
+    <meta name="changed" content="2021-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/splitter.gif" alt="#########"> <em>Splitter</em>
+        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>Splitter</em>
       </h1>
       <table>
         <tbody>
@@ -48,13 +48,13 @@
         Behavior
       </h2>
       <p>
-        The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the `<a href="../../guide/feature/fet-splitting.html">Splitters</a>' section of the <em>User's Guide</em>
+        The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> section of the <a href="../index.html">User guide</a>
       </p>
       <p>
         Logisim treats splitters specially when propagating values within a circuit: Whereas all other components have a computed delay for purposes of simulating their behavior, values propagate through splitters (as well as wires) instantaneously.
       </p>
       <p>
-        <strong>Note:</strong> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes.
+        <b classe=note>Note:</b> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes.
       </p>
       <h2>
         Pins
@@ -142,36 +142,42 @@
               <tbody>
                 <tr>
                   <td>
-                    <img src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
+                    <img class=notscal src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
+                    <img class=notscal  src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
+                    <img class=notscal  src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
+                    <img class=notscal  src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    A droite
+                    Left-handed
                   </td>
                   <td>
-                    A gauche
+                    Right-handed
                   </td>
                   <td>
-                    Au centre
+                    Centered
                   </td>
                   <td>
-                    Héritage
+                    Legacy
                   </td>
                 </tr>
               </tbody>
             </table>
           </center>
         </dd>
+		<dt>
+          Spacing
+      </dt>
+      <dd>
+	    Determines the spacing between terminations.
+      <dt>
         <dt>
           Bit <var>x</var>
         </dt>

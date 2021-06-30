@@ -36,11 +36,9 @@ import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
-import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.log.LogFrame;
-import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.SelectionActions;
@@ -76,7 +74,7 @@ public class Project {
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.REMOVE_LIBRARY) {
-        Library unloaded = (Library) event.getData();
+        final var unloaded = (Library) event.getData();
         if (tool != null && unloaded.containsFromSource(tool)) {
           setTool(null);
         }
@@ -85,7 +83,7 @@ public class Project {
         if (data instanceof AddTool) {
           Object factory = ((AddTool) data).getFactory();
           if (factory instanceof SubcircuitFactory) {
-            SubcircuitFactory fact = (SubcircuitFactory) factory;
+            final var fact = (SubcircuitFactory) factory;
             if (fact.getSubcircuit() == getCurrentCircuit()) {
               setCurrentCircuit(file.getMainCircuit());
             }
@@ -137,7 +135,7 @@ public class Project {
 
   public void addCircuitListener(CircuitListener value) {
     circuitListeners.add(value);
-    Circuit current = getCurrentCircuit();
+    final var current = getCurrentCircuit();
     if (current != null) current.addCircuitListener(value);
   }
 
@@ -159,7 +157,7 @@ public class Project {
 
   public JFileChooser createChooser() {
     if (file == null) return JFileChoosers.create();
-    Loader loader = file.getLoader();
+    final var loader = file.getLoader();
     return loader == null ? JFileChoosers.create() : loader.createChooser();
   }
 
@@ -172,8 +170,8 @@ public class Project {
     redoLog.clear();
 
     if (!undoLog.isEmpty() && act.shouldAppendTo(getLastAction())) {
-      ActionData firstData = undoLog.removeLast();
-      Action first = firstData.action;
+      final var firstData = undoLog.removeLast();
+      final var first = firstData.action;
       if (first.isModification()) {
         --undoMods;
       }
@@ -231,7 +229,7 @@ public class Project {
   }
 
   public int doTestVector(String vectorname, String name) {
-    Circuit circuit = (name == null ? file.getMainCircuit() : file.getCircuit(name));
+    final var circuit = (name == null ? file.getMainCircuit() : file.getCircuit(name));
     if (circuit == null) {
       System.err.println("Circuit '" + name + "' not found.");
       return -1;
@@ -249,7 +247,7 @@ public class Project {
   }
 
   private void fireEvent(ProjectEvent event) {
-    for (ProjectListener l : projectListeners) {
+    for (final var l : projectListeners) {
       l.projectChanged(event);
     }
   }
@@ -278,7 +276,7 @@ public class Project {
     if (circuitState != null && circuitState.getCircuit() == circuit) {
       return circuitState;
     } else {
-      CircuitState ret = recentRootState.get(circuit);
+      var ret = recentRootState.get(circuit);
       if (ret == null) {
         ret = new CircuitState(this, circuit);
         recentRootState.put(circuit, ret);
@@ -299,11 +297,11 @@ public class Project {
   public void setCurrentHdlModel(HdlModel hdl) {
     if (hdlModel == hdl) return;
     setTool(null);
-    CircuitState old = circuitState;
-    final HdlModel oldHdl = hdlModel;
-    Circuit oldCircuit = (old == null) ? null : old.getCircuit();
+    final var old = circuitState;
+    final var oldHdl = hdlModel;
+    final var oldCircuit = (old == null) ? null : old.getCircuit();
     if (oldCircuit != null) {
-      for (CircuitListener l : circuitListeners) {
+      for (final var l : circuitListeners) {
         oldCircuit.removeCircuitListener(l);
       }
     }
@@ -367,7 +365,7 @@ public class Project {
 
   public Selection getSelection() {
     if (frame == null) return null;
-    Canvas canvas = frame.getCanvas();
+    final var canvas = frame.getCanvas();
     if (canvas == null) return null;
     return canvas.getSelection();
   }
@@ -417,14 +415,14 @@ public class Project {
       ++undoMods;
 
       // Remove the last item in the redo log, but keep the data
-      ActionData data = redoLog.removeLast();
+      final var data = redoLog.removeLast();
 
       // Restore the circuit state to the redo's state
       if (data.circuitState != null) setCircuitState(data.circuitState);
       else if (data.hdlModel != null) setCurrentHdlModel(data.hdlModel);
 
       // Get the actions required to make that state change happen
-      Action action = data.action;
+      final var action = data.action;
 
       // Call the event
       fireEvent(new ProjectEvent(ProjectEvent.REDO_START, this, action));
@@ -439,7 +437,7 @@ public class Project {
 
   public void removeCircuitListener(CircuitListener value) {
     circuitListeners.remove(value);
-    Circuit current = getCurrentCircuit();
+    final var current = getCurrentCircuit();
     if (current != null) current.removeCircuitListener(value);
   }
 
@@ -462,20 +460,20 @@ public class Project {
   public void setCircuitState(CircuitState value) {
     if (value == null || circuitState == value) return;
 
-    CircuitState old = circuitState;
-    HdlModel oldHdl = hdlModel;
+    final var old = circuitState;
+    final var oldHdl = hdlModel;
     Object oldActive = old;
     if (oldHdl != null) oldActive = oldHdl;
-    Circuit oldCircuit = old == null ? null : old.getCircuit();
-    Circuit newCircuit = value.getCircuit();
+    final var oldCircuit = old == null ? null : old.getCircuit();
+    final var newCircuit = value.getCircuit();
     boolean circuitChanged = old == null || oldCircuit != newCircuit;
     if (circuitChanged) {
-      Canvas canvas = frame == null ? null : frame.getCanvas();
+      final var canvas = frame == null ? null : frame.getCanvas();
       if (canvas != null) {
         if (tool != null) tool.deselect(canvas);
-        Selection selection = canvas.getSelection();
+        final var selection = canvas.getSelection();
         if (selection != null) {
-          Action act = SelectionActions.dropAll(selection);
+          final var act = SelectionActions.dropAll(selection);
           if (act != null) {
             doAction(act);
           }
@@ -483,7 +481,7 @@ public class Project {
         if (tool != null) tool.select(canvas);
       }
       if (oldCircuit != null) {
-        for (CircuitListener l : circuitListeners) {
+        for (final var l : circuitListeners) {
           oldCircuit.removeCircuitListener(l);
         }
       }
@@ -497,7 +495,7 @@ public class Project {
     if (circuitChanged) {
       fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, newCircuit);
       if (newCircuit != null) {
-        for (CircuitListener l : circuitListeners) {
+        for (final var l : circuitListeners) {
           newCircuit.addCircuitListener(l);
         }
       }
@@ -509,7 +507,7 @@ public class Project {
   }
 
   public void setCurrentCircuit(Circuit circuit) {
-    CircuitState circState = recentRootState.get(circuit);
+    var circState = recentRootState.get(circuit);
     if (circState == null) {
       circState = new CircuitState(this, circuit);
       recentRootState.put(circuit, circState);
@@ -530,16 +528,16 @@ public class Project {
 
   public void setFrame(Frame value) {
     if (frame == value) return;
-    Frame oldValue = frame;
+    final var oldValue = frame;
     frame = value;
     Projects.windowCreated(this, oldValue, value);
     value.getCanvas().getSelection().addListener(myListener);
   }
 
   public void setLogisimFile(LogisimFile value) {
-    LogisimFile old = this.file;
+    final var old = this.file;
     if (old != null) {
-      for (LibraryListener l : fileListeners) {
+      for (final var l : fileListeners) {
         old.removeLibraryListener(l);
       }
     }
@@ -557,7 +555,7 @@ public class Project {
     fireEvent(ProjectEvent.ACTION_SET_FILE, old, file);
     setCurrentCircuit(file.getMainCircuit());
     if (file != null) {
-      for (LibraryListener l : fileListeners) {
+      for (final var l : fileListeners) {
         file.addLibraryListener(l);
       }
     }
@@ -574,13 +572,13 @@ public class Project {
 
   public void setTool(Tool value) {
     if (tool == value) return;
-    Tool old = tool;
-    Canvas canvas = frame.getCanvas();
+    final var old = tool;
+    final var canvas = frame.getCanvas();
     if (old != null) old.deselect(canvas);
-    Selection selection = canvas.getSelection();
+    final var selection = canvas.getSelection();
     if (selection != null && !selection.isEmpty()) {
       if (value == null || !getOptions().getMouseMappings().containsSelectTool()) {
-        Action act = SelectionActions.anchorAll(selection);
+        final var act = SelectionActions.anchorAll(selection);
         /*
          * Circuit circuit = canvas.getCircuit(); CircuitMutation xn =
          * new CircuitMutation(circuit); if (value == null) { Action act
@@ -606,10 +604,10 @@ public class Project {
   public void undoAction() {
     if (undoLog != null && undoLog.size() > 0) {
       redoLog.addLast(undoLog.getLast());
-      ActionData data = undoLog.removeLast();
+      final var data = undoLog.removeLast();
       if (data.circuitState != null) setCircuitState(data.circuitState);
       else if (data.hdlModel != null) setCurrentHdlModel(data.hdlModel);
-      Action action = data.action;
+      final var action = data.action;
       if (action.isModification()) {
         --undoMods;
       }

@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl7442 extends AbstractTtlGate {
   /**
@@ -63,9 +62,9 @@ public class Ttl7442 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     g.drawRect(x + 18, y + 10, 84, 18);
-    int mask = 1;
+    var mask = 1;
     for (int i = 0; i < 10; i++) {
       g.drawOval(x + 22 + i * 8, y + 28, 4, 4);
       g.drawLine(

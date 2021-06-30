@@ -30,11 +30,9 @@ package com.cburch.logisim.file;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,12 +79,11 @@ public class FileStatistics {
   }
 
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
-    Set<Circuit> include = new HashSet<>(file.getCircuits());
-    Map<Circuit, Map<ComponentFactory, Count>> countMap;
-    countMap = new HashMap<>();
+    final var include = new HashSet<Circuit>(file.getCircuits());
+    final var countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
     doRecursiveCount(circuit, include, countMap);
     doUniqueCounts(countMap.get(circuit), countMap);
-    List<Count> countList = sortCounts(countMap.get(circuit), file);
+    final var countList = sortCounts(countMap.get(circuit), file);
     return new FileStatistics(countList, getTotal(countList, include), getTotal(countList, null));
   }
 
@@ -96,26 +93,25 @@ public class FileStatistics {
       return countMap.get(circuit);
     }
 
-    Map<ComponentFactory, Count> counts = doSimpleCount(circuit);
+    final var counts = doSimpleCount(circuit);
     countMap.put(circuit, counts);
-    for (Count count : counts.values()) {
+    for (final var count : counts.values()) {
       count.uniqueCount = count.simpleCount;
       count.recursiveCount = count.simpleCount;
     }
-    for (Circuit sub : include) {
-      SubcircuitFactory subFactory = sub.getSubcircuitFactory();
+    for (final var sub : include) {
+      final var subFactory = sub.getSubcircuitFactory();
       if (counts.containsKey(subFactory)) {
-        int multiplier = counts.get(subFactory).simpleCount;
-        Map<ComponentFactory, Count> subCount;
-        subCount = doRecursiveCount(sub, include, countMap);
-        for (Count subcount : subCount.values()) {
-          ComponentFactory subfactory = subcount.factory;
-          Count supercount = counts.get(subfactory);
-          if (supercount == null) {
-            supercount = new Count(subfactory);
-            counts.put(subfactory, supercount);
+        final var multiplier = counts.get(subFactory).simpleCount;
+        final var subCountRecursive = doRecursiveCount(sub, include, countMap);
+        for (final var subCount : subCountRecursive.values()) {
+          final var subfactory = subCount.factory;
+          var superCount = counts.get(subfactory);
+          if (superCount == null) {
+            superCount = new Count(subfactory);
+            counts.put(subfactory, superCount);
           }
-          supercount.recursiveCount += multiplier * subcount.recursiveCount;
+          superCount.recursiveCount += multiplier * subCount.recursiveCount;
         }
       }
     }
@@ -124,11 +120,10 @@ public class FileStatistics {
   }
 
   private static Map<ComponentFactory, Count> doSimpleCount(Circuit circuit) {
-    Map<ComponentFactory, Count> counts;
-    counts = new HashMap<>();
-    for (Component comp : circuit.getNonWires()) {
-      ComponentFactory factory = comp.getFactory();
-      Count count = counts.get(factory);
+    final var counts = new HashMap<ComponentFactory, Count>();
+    for (final var comp : circuit.getNonWires()) {
+      final var factory = comp.getFactory();
+      var count = counts.get(factory);
       if (count == null) {
         count = new Count(factory);
         counts.put(factory, count);
@@ -141,11 +136,11 @@ public class FileStatistics {
   private static void doUniqueCounts(
       Map<ComponentFactory, Count> counts,
       Map<Circuit, Map<ComponentFactory, Count>> circuitCounts) {
-    for (Count count : counts.values()) {
-      ComponentFactory factory = count.getFactory();
-      int unique = 0;
-      for (Circuit circ : circuitCounts.keySet()) {
-        Count subcount = circuitCounts.get(circ).get(factory);
+    for (final var count : counts.values()) {
+      final var factory = count.getFactory();
+      var unique = 0;
+      for (final var circ : circuitCounts.keySet()) {
+        final var subcount = circuitCounts.get(circ).get(factory);
         if (subcount != null) {
           unique += subcount.simpleCount;
         }
@@ -155,9 +150,9 @@ public class FileStatistics {
   }
 
   private static Count getTotal(List<Count> counts, Set<Circuit> exclude) {
-    Count ret = new Count(null);
-    for (Count count : counts) {
-      ComponentFactory factory = count.getFactory();
+    final var ret = new Count(null);
+    for (final var count : counts) {
+      final var factory = count.getFactory();
       Circuit factoryCirc = null;
       if (factory instanceof SubcircuitFactory) {
         factoryCirc = ((SubcircuitFactory) factory).getSubcircuit();
@@ -172,20 +167,20 @@ public class FileStatistics {
   }
 
   private static List<Count> sortCounts(Map<ComponentFactory, Count> counts, LogisimFile file) {
-    List<Count> ret = new ArrayList<>();
-    for (AddTool tool : file.getTools()) {
-      ComponentFactory factory = tool.getFactory();
-      Count count = counts.get(factory);
+    final var ret = new ArrayList<Count>();
+    for (final var tool : file.getTools()) {
+      final var factory = tool.getFactory();
+      final var count = counts.get(factory);
       if (count != null) {
         count.library = file;
         ret.add(count);
       }
     }
-    for (Library lib : file.getLibraries()) {
-      for (Tool tool : lib.getTools()) {
+    for (final var lib : file.getLibraries()) {
+      for (final var tool : lib.getTools()) {
         if (tool instanceof AddTool) {
-          ComponentFactory factory = ((AddTool) tool).getFactory();
-          Count count = counts.get(factory);
+          final var factory = ((AddTool) tool).getFactory();
+          final var count = counts.get(factory);
           if (count != null) {
             count.library = lib;
             ret.add(count);
