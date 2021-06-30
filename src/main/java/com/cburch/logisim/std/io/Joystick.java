@@ -156,8 +156,7 @@ public class Joystick extends InstanceFactory {
 
   public Joystick() {
     super(_ID, S.getter("joystickComponent"));
-    setAttributes(new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
-        new Attribute[] {ATTR_WIDTH, IoLibrary.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
+    setAttributes(new Attribute[] {ATTR_WIDTH, IoLibrary.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
     setIcon(new JoystickIcon());
