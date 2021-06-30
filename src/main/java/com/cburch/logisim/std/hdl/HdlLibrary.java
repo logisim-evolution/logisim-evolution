@@ -36,7 +36,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Hdl extends Library {
+public class HdlLibrary extends Library {
 
   /**
    * Unique identifier of the library, used as reference in project files.
@@ -52,8 +52,6 @@ public class Hdl extends Library {
 
   private List<Tool> tools = null;
 
-  public Hdl() {}
-
   @Override
   public String getDisplayName() {
     return S.get("hdlLibrary");
@@ -62,7 +60,7 @@ public class Hdl extends Library {
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Hdl.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(HdlLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

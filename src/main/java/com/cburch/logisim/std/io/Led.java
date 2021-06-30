@@ -86,9 +86,9 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          Io.ATTR_ON_COLOR,
-          Io.ATTR_OFF_COLOR,
-          Io.ATTR_ACTIVE,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
+          IoLibrary.ATTR_ACTIVE,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -117,7 +117,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public boolean ActiveOnHigh(AttributeSet attrs) {
-    return attrs.getValue(Io.ATTR_ACTIVE);
+    return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
   @Override
@@ -164,9 +164,9 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 
     final var g = painter.getGraphics();
     if (painter.getShowState()) {
-      final var onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-      final var offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
-      final var activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
+      final var onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
+      final var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
+      final var activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       final var desired = activ ? Value.TRUE : Value.FALSE;
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());

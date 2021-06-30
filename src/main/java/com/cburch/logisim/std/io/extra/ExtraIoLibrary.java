@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ITA_IO extends Library {
+public class ExtraIoLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -75,7 +75,7 @@ public class ITA_IO extends Library {
     if (tools == null) {
       List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
       ret.addAll(Arrays.asList(ADD_TOOLS));
-      ret.addAll(FactoryDescription.getTools(ITA_IO.class, DESCRIPTIONS));
+      ret.addAll(FactoryDescription.getTools(ExtraIoLibrary.class, DESCRIPTIONS));
       tools = ret;
     }
     return tools;

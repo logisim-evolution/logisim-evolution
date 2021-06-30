@@ -82,10 +82,10 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         final var index = getIndex(state, e);
-        TTLRegisterData myState = (TTLRegisterData) state.getData();
+        TtlRegisterData myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
         final var values = myState.getValue().getAll();
         if (values[index].isFullyDefined())
@@ -179,14 +179,14 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     g.drawLine(x + 46, y + 57, x + 53, y + 63);
     g.drawLine(x + 46, y + 20, x + 46, y + 57);
     g.setStroke(new BasicStroke(1));
-    drawState(g, x, y, (TTLRegisterData) painter.getData());
+    drawState(g, x, y, (TtlRegisterData) painter.getData());
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    var data = (TTLRegisterData) state.getData();
+    var data = (TtlRegisterData) state.getData();
     if (data == null) {
-      data = new TTLRegisterData(BitWidth.create(8));
+      data = new TtlRegisterData(BitWidth.create(8));
       state.setData(data);
     }
     var changed = false;
@@ -233,7 +233,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     state.setPort(17, data.getValue().get(7), 8);
   }
 
-  private void drawState(Graphics2D g, int x, int y, TTLRegisterData state) {
+  private void drawState(Graphics2D g, int x, int y, TtlRegisterData state) {
     if (state != null) {
       g.rotate(-Math.PI / 2, x, y);
       for (var i = 0; i < 8; i++) {

@@ -31,7 +31,7 @@ package com.cburch.logisim.gui.generic;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private void buildChildren() {
     Library lib = getValue();
     if (lib != null) {
-      boolean showLib = (showMouseTools & lib instanceof Base) || !lib.isHidden();
+      boolean showLib = (showMouseTools & lib instanceof BaseLibrary) || !lib.isHidden();
       if (showLib) {
         buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
         buildChildren(
@@ -108,7 +108,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     for (T tool : items) {
       if (tool instanceof Library && ((Library) tool).isHidden()) {
         if (!showMouseTools) continue;
-        else if (!(tool instanceof Base)) continue;
+        else if (!(tool instanceof BaseLibrary)) continue;
       }
       if (tool instanceof AddTool) {
         AddTool a = (AddTool) tool;

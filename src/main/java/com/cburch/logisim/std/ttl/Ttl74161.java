@@ -124,7 +124,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
         @Override
         public void mouseReleased(InstanceState state, MouseEvent e) {
-            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
+            if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
             if (isPressed && isInside(state, e)) {
                 int index = getIndex(state, e);
 
@@ -137,7 +137,7 @@ public class Ttl74161 extends AbstractTtlGate {
                 System.out.print(index);
                 System.out.println(index);
 
-                final var data = (TTLRegisterData) state.getData();
+                final var data = (TtlRegisterData) state.getData();
                 if (data == null) return;
                 var current = data.getValue().toLongValue();
                 final long bitValue = 1 << index;
@@ -149,10 +149,10 @@ public class Ttl74161 extends AbstractTtlGate {
         }
     }
 
-    private TTLRegisterData getData(InstanceState state) {
-        var data = (TTLRegisterData) state.getData();
+    private TtlRegisterData getData(InstanceState state) {
+        var data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
         return data;
@@ -170,11 +170,11 @@ public class Ttl74161 extends AbstractTtlGate {
                 new String[]{
                         "nClr", "Clk", "A", "B", "C", "D", "EnP", "nLD", "EnT", "Qd", "Qc", "Qb", "Qa", "RC0"
                 });
-        final var data = (TTLRegisterData) painter.getData();
+        TtlRegisterData data = (TtlRegisterData) painter.getData();
         drawState(g, x, y, height, data);
     }
 
-    private void drawState(Graphics2D g, int x, int y, int height, TTLRegisterData state) {
+    private void drawState(Graphics2D g, int x, int y, int height, TtlRegisterData state) {
         if (state != null) {
             long value = state.getValue().toLongValue();
             for (var i = 0; i < 4; i++) {
@@ -192,9 +192,9 @@ public class Ttl74161 extends AbstractTtlGate {
     @Override
     public void ttlpropagate(InstanceState state) {
 
-        var data = (TTLRegisterData) state.getData();
+        TtlRegisterData data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
 

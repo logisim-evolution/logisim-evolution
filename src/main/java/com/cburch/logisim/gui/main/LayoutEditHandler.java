@@ -37,7 +37,7 @@ import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -71,7 +71,7 @@ public class LayoutEditHandler extends EditHandler
 
     boolean selectAvailable = false;
     for (Library lib : proj.getLogisimFile().getLibraries()) {
-      if (lib instanceof Base) {
+      if (lib instanceof BaseLibrary) {
         selectAvailable = true;
         break;
       }
@@ -194,9 +194,9 @@ public class LayoutEditHandler extends EditHandler
 
   private void selectSelectTool(Project proj) {
     for (Library sub : proj.getLogisimFile().getLibraries()) {
-      if (sub instanceof Base) {
-        Base base = (Base) sub;
-        Tool tool = base.getTool(EditTool._ID);
+      if (sub instanceof BaseLibrary) {
+        BaseLibrary baseLibrary = (BaseLibrary) sub;
+        Tool tool = baseLibrary.getTool(EditTool._ID);
         if (tool != null) proj.setTool(tool);
       }
     }

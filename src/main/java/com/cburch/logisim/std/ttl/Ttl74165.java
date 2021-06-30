@@ -107,7 +107,7 @@ public class Ttl74165 extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         final var index = getIndex(state, e);
         System.out.println(index);

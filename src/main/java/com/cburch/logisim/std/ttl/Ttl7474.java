@@ -89,10 +89,10 @@ public class Ttl7474 extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         final var index = getIndex(state, e);
-        final var myState = (TTLRegisterData) state.getData();
+        final var myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
         final var values = myState.getValue().getAll();
         if (values[index].isFullyDefined())
@@ -109,7 +109,7 @@ public class Ttl7474 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var g = painter.getGraphics();
-    final var state = (TTLRegisterData) painter.getData();
+    final var state = (TtlRegisterData) painter.getData();
     super.paintBase(painter, false, false);
     drawflop(g, x, y + 1);
     drawflop(g, x + 70, y - 2);
@@ -121,9 +121,9 @@ public class Ttl7474 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    var data = (TTLRegisterData) state.getData();
+    var data = (TtlRegisterData) state.getData();
     if (data == null) {
-      data = new TTLRegisterData(BitWidth.create(2));
+      data = new TtlRegisterData(BitWidth.create(2));
       state.setData(data);
     }
     final var triggered1 = data.updateClock(state.getPortValue(2), 0);
@@ -155,7 +155,7 @@ public class Ttl7474 extends AbstractTtlGate {
     state.setPort(7, data.getValue().get(1), 8);
   }
 
-  private void drawState(Graphics g, int x, int y, int ID, TTLRegisterData state) {
+  private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
     if (state != null) {
       g.setColor(state.getValue().get(ID).getColor());
       g.fillOval(x + 33, y + 30, 8, 8);

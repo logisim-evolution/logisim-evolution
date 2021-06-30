@@ -79,8 +79,8 @@ public class LedShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    final var offColor = path.leaf().getAttributeSet().getValue(Io.ATTR_OFF_COLOR);
-    final var onColor = path.leaf().getAttributeSet().getValue(Io.ATTR_ON_COLOR);
+    final var offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+    final var onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
     final var x = bounds.getX() + 1;
     final var y = bounds.getY() + 1;
     final var w = bounds.getWidth() - 2;
@@ -91,7 +91,7 @@ public class LedShape extends DynamicElement {
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      final var activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       Object desired = activ ? Value.TRUE : Value.FALSE;
       final var data = (InstanceDataSingleton) getData(state);
       final var val = data == null ? Value.FALSE : (Value) data.getValue();

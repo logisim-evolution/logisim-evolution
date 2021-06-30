@@ -71,7 +71,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     super(name);
     setIconName("ttl.gif");
     setAttributes(
-        new Attribute[] {StdAttr.FACING, TTL.VCC_GND, TTL.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
+        new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
         new Object[] {Direction.EAST, false, false, ""});
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
@@ -174,7 +174,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
       instance.recomputeBounds();
       updateports(instance);
       computeTextField(instance);
-    } else if (attr == TTL.VCC_GND) {
+    } else if (attr == TtlLibrary.VCC_GND) {
       updateports(instance);
     }
   }
@@ -279,7 +279,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     painter.drawPorts();
     final var g = (Graphics2D) painter.getGraphics();
     painter.drawLabel();
-    if (!painter.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) {
+    if (!painter.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) {
       final var dir = painter.getAttributeValue(StdAttr.FACING);
       final var bds = painter.getBounds();
       final var x = bds.getX();
@@ -420,7 +420,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     final var NrOfUnusedPins = unusedpins.size();
-    if (state.getAttributeValue(TTL.VCC_GND)
+    if (state.getAttributeValue(TtlLibrary.VCC_GND)
         && (state.getPortValue(this.pinnumber - 2 - NrOfUnusedPins) != Value.FALSE
             || state.getPortValue(this.pinnumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
       var port = 0;
@@ -444,7 +444,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     final var height = bds.getHeight();
     byte portindex = 0;
     var isoutput = false;
-    var hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
+    var hasvccgnd = instance.getAttributeValue(TtlLibrary.VCC_GND);
     var skip = false;
     final var NrOfUnusedPins = unusedpins.size();
     /*

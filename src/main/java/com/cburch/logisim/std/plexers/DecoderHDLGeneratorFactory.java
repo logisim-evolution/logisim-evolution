@@ -48,14 +48,14 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Enable", 1);
-    map.put("Sel", attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    map.put("Sel", attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
     return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var numOutputs = (1 << nrOfSelectBits);
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
@@ -80,7 +80,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    for (var i = 0; i < (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()); i++) {
+    for (var i = 0; i < (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth()); i++) {
       map.put("DecoderOut_" + i, 1);
     }
     return map;
@@ -92,7 +92,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
     for (var i = 0; i < selectInputIndex; i++)
@@ -101,7 +101,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE).booleanValue()) {
+    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

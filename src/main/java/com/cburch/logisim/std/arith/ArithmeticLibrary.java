@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.memory;
+package com.cburch.logisim.std.arith;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -35,41 +35,38 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Memory extends Library {
+public class ArithmeticLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "Memory";
-
-  protected static final int DELAY = 5;
+  public static final String _ID = "Arithmetic";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(DFlipFlop.class, S.getter("dFlipFlopComponent"), "dFlipFlop.gif"),
-    new FactoryDescription(TFlipFlop.class, S.getter("tFlipFlopComponent"), "tFlipFlop.gif"),
-    new FactoryDescription(JKFlipFlop.class, S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif"),
-    new FactoryDescription(SRFlipFlop.class, S.getter("srFlipFlopComponent"), "srFlipFlop.gif"),
-    new FactoryDescription(Register.class, S.getter("registerComponent"), "register.gif"),
-    new FactoryDescription(Counter.class, S.getter("counterComponent"), "counter.gif"),
-    new FactoryDescription(ShiftRegister.class, S.getter("shiftRegisterComponent"), "shiftreg.gif"),
-    new FactoryDescription(Random.class, S.getter("randomComponent"), "random.gif"),
-    new FactoryDescription(Ram.class, S.getter("ramComponent"), "ram.gif"),
-    new FactoryDescription(Rom.class, S.getter("romComponent"), "rom.gif"),
+    new FactoryDescription(Adder.class, S.getter("adderComponent"), "adder.gif"),
+    new FactoryDescription(Subtractor.class, S.getter("subtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(Multiplier.class, S.getter("multiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(Divider.class, S.getter("dividerComponent"), "divider.gif"),
+    new FactoryDescription(Negator.class, S.getter("negatorComponent"), "negator.gif"),
+    new FactoryDescription(Comparator.class, S.getter("comparatorComponent"), "comparator.gif"),
+    new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
+    new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
+    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
   };
 
   private List<Tool> tools = null;
 
   @Override
   public String getDisplayName() {
-    return S.get("memoryLibrary");
+    return S.get("arithmeticLibrary");
   }
 
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Memory.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(ArithmeticLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

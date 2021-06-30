@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.library;
+package com.cburch.logisim.std.bfh;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
