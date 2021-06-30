@@ -70,7 +70,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   private String label = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = false;
-  private String SimName = "";
+  private String simName = "";
 
   VhdlEntityAttributes() {
     content = VhdlContentComponent.create();
@@ -78,7 +78,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    VhdlEntityAttributes attr = (VhdlEntityAttributes) dest;
+    final var attr = (VhdlEntityAttributes) dest;
     attr.labelFont = labelFont;
     attr.content = content.clone();
   }
@@ -104,7 +104,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) labelVisible;
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return (V) SimName;
+      return (V) simName;
     }
     return null;
   }
@@ -113,33 +113,33 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == VhdlEntityComponent.CONTENT_ATTR) {
-      VhdlContentComponent newContent = (VhdlContentComponent) value;
+      final var newContent = (VhdlContentComponent) value;
       if (!content.equals(newContent)) content = newContent;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL && value instanceof String) {
-      String newLabel = (String) value;
-      String oldlabel = label;
+      final var newLabel = (String) value;
+      final var oldlabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
     }
     if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
-      Font newFont = (Font) value;
+      final var newFont = (Font) value;
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean newvis = (Boolean) value;
+      final var newvis = (Boolean) value;
       if (labelVisible.equals(newvis)) return;
       labelVisible = newvis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      String Name = (String) value;
-      if (value.equals(SimName)) return;
-      SimName = Name;
+      final var Name = (String) value;
+      if (value.equals(simName)) return;
+      simName = Name;
       fireAttributeValueChanged(attr, value, null);
     }
   }

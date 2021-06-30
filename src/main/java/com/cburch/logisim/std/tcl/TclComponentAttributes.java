@@ -110,7 +110,7 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    TclComponentAttributes attr = (TclComponentAttributes) dest;
+    final var attr = (TclComponentAttributes) dest;
     attr.labelFont = labelFont;
     attr.contentFile = new File(contentFile.getAbsolutePath());
   }
@@ -138,12 +138,12 @@ public class TclComponentAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == CONTENT_FILE_ATTR) {
-      File newFile = (File) value;
+      final var newFile = (File) value;
       if (!contentFile.equals(newFile)) contentFile = newFile;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL) {
-      String newLabel = (String) value;
+      final var newLabel = (String) value;
       if (label.equals(newLabel)) return;
       @SuppressWarnings("unchecked")
       V Oldlabel = (V) label;
@@ -151,7 +151,7 @@ public class TclComponentAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, Oldlabel);
     }
     if (attr == StdAttr.LABEL_FONT) {
-      Font newFont = (Font) value;
+      final var newFont = (Font) value;
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);

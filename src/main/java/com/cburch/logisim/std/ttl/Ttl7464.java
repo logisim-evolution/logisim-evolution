@@ -29,11 +29,9 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.Graphics;
 
 public class Ttl7464 extends AbstractTtlGate {
   /**
@@ -56,9 +54,9 @@ public class Ttl7464 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    boolean isIEC = AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR);
-    int AndOffset = isIEC ? 10 : 0;
-    Graphics g = painter.getGraphics();
+    final var isIEC = AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR);
+    final var AndOffset = isIEC ? 10 : 0;
+    final var g = painter.getGraphics();
     Drawgates.paintOr(g, x + 125, y + 35, 10, isIEC ? 40 : 10, true, false);
     Drawgates.paintAnd(g, x + 105 + AndOffset, y + 20, 10, 10, false);
     Drawgates.paintAnd(g, x + 105 + AndOffset, y + 30, 10, 10, false);
@@ -67,7 +65,7 @@ public class Ttl7464 extends AbstractTtlGate {
     g.drawLine(x + 129, y + 35, x + 130, y + 35);
     g.drawLine(x + 130, y + 35, x + 130, y + AbstractTtlGate.pinheight);
     int[] xpos, ypos;
-    for (int i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
       if (!isIEC) {
         int tmpOff = (i == 0) | (i == 3) ? 2 : 0;
         xpos = new int[] {x + 105, x + 107 + tmpOff, x + 107 + tmpOff, x + 111};
@@ -106,14 +104,14 @@ public class Ttl7464 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val1 = state.getPortValue(1).and(state.getPortValue(2));
-    Value val2 = state.getPortValue(3).and(state.getPortValue(4).and(state.getPortValue(5)));
-    Value val3 = state.getPortValue(7).and(state.getPortValue(8));
-    Value val4 =
+    final var val1 = state.getPortValue(1).and(state.getPortValue(2));
+    final var val2 = state.getPortValue(3).and(state.getPortValue(4).and(state.getPortValue(5)));
+    final var val3 = state.getPortValue(7).and(state.getPortValue(8));
+    final var val4 =
         state
             .getPortValue(9)
             .and(state.getPortValue(10).and(state.getPortValue(11).and(state.getPortValue(0))));
-    Value val5 = val1.or(val2.or(val3.or(val4)));
+    final var val5 = val1.or(val2.or(val3.or(val4)));
     state.setPort(6, val5.not(), 7);
   }
 

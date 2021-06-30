@@ -106,15 +106,15 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     c.fill = GridBagConstraints.CENTER;
     add(new JLabel(S.get("cvsFilePreview")), c);
     pack();
-    int celwidth = AppPreferences.getScaled(200);
-    int celHeight = AppPreferences.getScaled(25);
+    var celwidth = AppPreferences.getScaled(200);
+    var celHeight = AppPreferences.getScaled(25);
     c.gridwidth = 1;
     labels = new JLabel[16];
-    Border border = BorderFactory.createLineBorder(Color.BLACK, AppPreferences.getScaled(1));
-    Dimension dim = new Dimension(celwidth, celHeight);
+    final var border = BorderFactory.createLineBorder(Color.BLACK, AppPreferences.getScaled(1));
+    final var dim = new Dimension(celwidth, celHeight);
     for (int x = 0; x < 4; x++)
       for (int y = 0; y < 4; y++) {
-        JPanel j = new JPanel();
+        final var j = new JPanel();
         labels[y * 4 + x] = new JLabel(x + "," + y);
         j.setBorder(border);
         j.setBackground(Color.WHITE);
@@ -136,14 +136,17 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
   private void updateLabels() {
     try {
-      Scanner scan = new Scanner(file);
+      final var scan = new Scanner(file);
       for (int y = 0; y < 4; y++) {
         List<String> line = null;
         if (scan.hasNext())
           line = CsvInterpretor.parseCsvLine(scan.next(), param.seperator(), param.quote());
         for (int x = 0; x < 4; x++) {
-          if (line == null || x >= line.size()) labels[y * 4 + x].setText("");
-          else labels[y * 4 + x].setText(line.get(x));
+          if (line == null || x >= line.size()) {
+            labels[y * 4 + x].setText("");
+          } else {
+            labels[y * 4 + x].setText(line.get(x));
+          }
         }
       }
       scan.close();
@@ -165,12 +168,12 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     if (param == null) return;
     if (e.getSource() == quotes) {
-      String sel = (String) quotes.getSelectedItem();
+      final var sel = (String) quotes.getSelectedItem();
       param.setQuote(sel.charAt(0));
       updateLabels();
     }
     if (e.getSource() == seperators) {
-      String sel = (String) seperators.getSelectedItem();
+      final var sel = (String) seperators.getSelectedItem();
       if (sel.length() == 1) {
         param.setSeperator(sel.charAt(0));
       } else if (sel.equals(sepSpace)) {

@@ -49,9 +49,9 @@ public class LibraryTools {
   }
 
   private static String Message(String LibName, HashMap<String, String> Messages) {
-    String Message = "";
-    int item = 0;
-    for (String myerror : Messages.keySet()) {
+    var Message = "";
+    var item = 0;
+    for (final var myerror : Messages.keySet()) {
       item++;
       Message = Message.concat(item + ") " + Messages.get(myerror) + " \"" + myerror + "\".\n");
     }
@@ -66,16 +66,16 @@ public class LibraryTools {
   }
 
   public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
-    boolean ret = true;
+    var ret = true;
     if (!lib.getName().equals("Base")) {
-      for (Tool tool1 : lib.getTools()) {
+      for (final var tool1 : lib.getTools()) {
         if (Tools.containsKey(tool1.getName().toUpperCase()))
           ret = false;
         else
           Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
       }
     }
-    for (Library sublib : lib.getLibraries()) {
+    for (final var sublib : lib.getLibraries()) {
       ret &= BuildToolList(sublib, Tools);
     }
     return ret;
@@ -85,7 +85,7 @@ public class LibraryTools {
     Circuit ret = null;
     if (lib instanceof LogisimFile) {
       LogisimFile llib = (LogisimFile) lib;
-      for (Circuit circ : llib.getCircuits()) {
+      for (final var circ : llib.getCircuits()) {
         if (circ.getName().toUpperCase().equals(UpperCaseName)) return circ;
       }
     }
@@ -99,10 +99,9 @@ public class LibraryTools {
     return null;
   }
 
-  public static ArrayList<String> LibraryCanBeMerged(
-      HashSet<String> SourceTools, HashSet<String> NewTools) {
-    ArrayList<String> ret = new ArrayList<>();
-    for (String This : NewTools) {
+  public static ArrayList<String> LibraryCanBeMerged(HashSet<String> SourceTools, HashSet<String> NewTools) {
+    final var ret = new ArrayList<String>();
+    for (final var This : NewTools) {
       if (SourceTools.contains(This)) {
         ret.add(This);
       }
@@ -114,7 +113,7 @@ public class LibraryTools {
       Library lib, String Location, ArrayList<String> UpercaseNames) {
     Iterator<? extends Tool> tooliter = lib.getTools().iterator();
     String MyLocation;
-    HashMap<String, String> ret = new HashMap<>();
+    final var ret = new HashMap<String, String>();
     if (Location.isEmpty()) MyLocation = lib.getName();
     else MyLocation = Location + "->" + lib.getName();
     while (tooliter.hasNext()) {
@@ -123,7 +122,7 @@ public class LibraryTools {
         ret.put(tool.getName(), MyLocation);
       }
     }
-    for (Library sublib : lib.getLibraries()) {
+    for (final var sublib : lib.getLibraries()) {
       ret.putAll(GetToolLocation(sublib, MyLocation, UpercaseNames));
     }
     return ret;
@@ -158,7 +157,7 @@ public class LibraryTools {
 
   public static void BuildLibraryList(Library lib, HashMap<String, Library> Names) {
     Names.put(lib.getName().toUpperCase(), lib);
-    for (Library sublib : lib.getLibraries()) {
+    for (final var sublib : lib.getLibraries()) {
       BuildLibraryList(sublib, Names);
     }
   }
@@ -166,17 +165,18 @@ public class LibraryTools {
   public static void RemovePresentLibraries(
       Library lib, HashMap<String, Library> KnownLibs, boolean AddToSet) {
     /* we work top -> down */
-    HashSet<String> ToBeRemoved = new HashSet<>();
-    for (Library sublib : lib.getLibraries()) {
+    final var ToBeRemoved = new HashSet<String>();
+    for (final var sublib : lib.getLibraries()) {
       if (KnownLibs.containsKey(sublib.getName().toUpperCase())) {
         ToBeRemoved.add(sublib.getName());
       } else if (AddToSet) {
         KnownLibs.put(sublib.getName().toUpperCase(), sublib);
       }
     }
-    for (String remove : ToBeRemoved) {
+    for (final var remove : ToBeRemoved) {
       lib.removeLibrary(remove);
     }
-    for (Library sublib : lib.getLibraries()) RemovePresentLibraries(sublib, KnownLibs, AddToSet);
+    for (final var sublib : lib.getLibraries())
+      RemovePresentLibraries(sublib, KnownLibs, AddToSet);
   }
 }

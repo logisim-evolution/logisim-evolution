@@ -29,14 +29,12 @@
 package com.cburch.logisim.std.memory;
 
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -58,33 +56,33 @@ public class RegisterPoker extends InstancePoker {
 
   @Override
   public void keyTyped(InstanceState state, KeyEvent e) {
-    int val = Character.digit(e.getKeyChar(), 16);
+    final var val = Character.digit(e.getKeyChar(), 16);
     if (val < 0) return;
 
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     if (dataWidth == null) dataWidth = BitWidth.create(8);
     curValue = (curValue * 16 + val) & dataWidth.getMask();
-    RegisterData data = (RegisterData) state.getData();
+    final var data = (RegisterData) state.getData();
     data.value = Value.createKnown(dataWidth, curValue);
     state.fireInvalidated();
   }
 
   @Override
   public void keyPressed(InstanceState state, KeyEvent e) {
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     if (dataWidth == null) dataWidth = BitWidth.create(8);
     if (e.getKeyCode() == KeyEvent.VK_UP) {
-      long maxVal = dataWidth.getMask();
+      final var maxVal = dataWidth.getMask();
       if (curValue != maxVal) {
         curValue = curValue + 1;
-        RegisterData data = (RegisterData) state.getData();
+        final var data = (RegisterData) state.getData();
         data.value = Value.createKnown(dataWidth, curValue);
         state.fireInvalidated();
       }
     } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
       if (curValue != 0) {
         curValue = curValue - 1;
-        RegisterData data = (RegisterData) state.getData();
+        final var data = (RegisterData) state.getData();
         data.value = Value.createKnown(dataWidth, curValue);
         state.fireInvalidated();
       }
@@ -93,14 +91,14 @@ public class RegisterPoker extends InstancePoker {
 
   @Override
   public void paint(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
-    BitWidth dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
-    int width = dataWidth == null ? 8 : dataWidth.getWidth();
-    int len = (width + 3) / 4;
+    final var bds = painter.getBounds();
+    final var dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
+    final var width = dataWidth == null ? 8 : dataWidth.getWidth();
+    final var len = (width + 3) / 4;
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     g.setColor(Color.RED);
-    int wid = 8 * len + 2;
+    final var wid = 8 * len + 2;
     g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY(), wid, 16);
     g.setColor(Color.BLACK);
   }

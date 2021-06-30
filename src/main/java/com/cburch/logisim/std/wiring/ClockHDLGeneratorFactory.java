@@ -72,10 +72,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("GlobalClock", 1);
-    Inputs.put("ClockTick", 1);
-    return Inputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("GlobalClock", 1);
+    map.put("ClockTick", 1);
+    return map;
   }
 
   @Override
@@ -214,24 +214,24 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("ClockBus", NrOfClockBits);
-    return Outputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("ClockBus", NrOfClockBits);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(HighTickId, HighTickStr);
-    Parameters.put(LowTickId, LowTickStr);
-    Parameters.put(PhaseId, PhaseStr);
-    Parameters.put(NrOfBitsId, NrOfBitsStr);
-    return Parameters;
+    final var map = new TreeMap<Integer, String>();
+    map.put(HighTickId, HighTickStr);
+    map.put(LowTickId, LowTickStr);
+    map.put(PhaseId, PhaseStr);
+    map.put(NrOfBitsId, NrOfBitsStr);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     int HighTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
     int LowTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
     int Phase = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
@@ -242,32 +242,32 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       nr_of_bits++;
       MaxValue /= 2;
     }
-    ParameterMap.put(HighTickStr, HighTicks);
-    ParameterMap.put(LowTickStr, LowTicks);
-    ParameterMap.put(PhaseStr, (HighTicks + LowTicks) - Phase);
-    ParameterMap.put(NrOfBitsStr, nr_of_bits);
-    return ParameterMap;
+    map.put(HighTickStr, HighTicks);
+    map.put(LowTickStr, LowTicks);
+    map.put(PhaseStr, (HighTicks + LowTicks) - Phase);
+    map.put(NrOfBitsStr, nr_of_bits);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGAClock);
-    PortMap.put("ClockTick", TickComponentHDLGeneratorFactory.FPGATick);
-    PortMap.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.GetComponent(), Nets));
-    return PortMap;
+    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGAClock);
+    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGATick);
+    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.GetComponent(), Nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
-    Regs.put("s_output_regs", NrOfClockBits - 1);
-    Regs.put("s_buf_regs", 2);
-    Regs.put("s_counter_reg", NrOfBitsId);
-    Regs.put("s_derived_clock_reg", PhaseId);
-    return Regs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_output_regs", NrOfClockBits - 1);
+    map.put("s_buf_regs", 2);
+    map.put("s_counter_reg", NrOfBitsId);
+    map.put("s_derived_clock_reg", PhaseId);
+    return map;
   }
 
   @Override
@@ -281,10 +281,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_counter_next", NrOfBitsId);
-    Wires.put("s_counter_is_zero", 1);
-    return Wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_counter_next", NrOfBitsId);
+    map.put("s_counter_is_zero", 1);
+    return map;
   }
 
   @Override

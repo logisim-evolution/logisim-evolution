@@ -57,20 +57,20 @@ public class Ttl74175 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
     DrawFlops(g, x, y, height);
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    TTLRegisterData data = (TTLRegisterData) state.getData();
+    var data = (TTLRegisterData) state.getData();
     if (data == null) {
       // changed = true;
       data = new TTLRegisterData(BitWidth.create(4));
       state.setData(data);
     }
-    boolean triggered = data.updateClock(state.getPortValue(7));
+    var triggered = data.updateClock(state.getPortValue(7));
     if (state.getPortValue(0) == Value.TRUE) {
       data.setValue(Value.createKnown(data.getWidth(), 0));
     } else if (triggered) {

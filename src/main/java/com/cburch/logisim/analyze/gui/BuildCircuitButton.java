@@ -32,9 +32,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
-import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
@@ -48,7 +46,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -68,12 +65,12 @@ class BuildCircuitButton extends JButton {
     private final JCheckBox nands = new JCheckBox();
 
     DialogPanel() {
-      List<Project> projects = Projects.getOpenProjects();
-      Object[] options = new Object[projects.size() + 1];
+      final var projects = Projects.getOpenProjects();
+      final var options = new Object[projects.size() + 1];
       Object initialSelection = null;
       options[0] = new ProjectItem(null);
       for (int i = 1; i < options.length; i++) {
-        Project proj = projects.get(i - 1);
+        final var proj = projects.get(i - 1);
         options[i] = new ProjectItem(proj);
         if (proj == model.getCurrentProject()) {
           initialSelection = options[i];
@@ -89,16 +86,16 @@ class BuildCircuitButton extends JButton {
         project.setSelectedItem(options[options.length - 1]);
       }
 
-      Circuit defaultCircuit = model.getCurrentCircuit();
+      final var defaultCircuit = model.getCurrentCircuit();
       if (defaultCircuit != null) {
         name.setText(defaultCircuit.getName());
         name.selectAll();
       }
 
-      VariableList outputs = model.getOutputs();
-      boolean enableNands = true;
+      final var outputs = model.getOutputs();
+      var enableNands = true;
       for (String output : outputs.bits) {
-        Expression expr = model.getOutputExpressions().getExpression(output);
+        final var expr = model.getOutputExpressions().getExpression(output);
         if (expr != null && (expr.contains(Expression.Op.XOR) || expr.contains(Expression.Op.EQ))) {
           enableNands = false;
           break;
@@ -106,8 +103,8 @@ class BuildCircuitButton extends JButton {
       }
       nands.setEnabled(enableNands);
 
-      GridBagLayout gb = new GridBagLayout();
-      GridBagConstraints gc = new GridBagConstraints();
+      final var gb = new GridBagLayout();
+      final var gc = new GridBagConstraints();
       setLayout(gb);
       gc.anchor = GridBagConstraints.LINE_START;
       gc.fill = GridBagConstraints.NONE;
@@ -141,17 +138,18 @@ class BuildCircuitButton extends JButton {
   }
 
   private class MyListener implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
       Project dest = null;
       String name = null;
-      boolean twoInputs = false;
-      boolean useNands = false;
-      boolean replace = false;
+      var twoInputs = false;
+      var useNands = false;
+      var replace = false;
 
-      boolean ok = false;
+      var ok = false;
       while (!ok) {
         DialogPanel dlog = new DialogPanel();
-        int action =
+        var action =
             OptionPane.showConfirmDialog(
                 parent,
                 dlog,
@@ -160,7 +158,7 @@ class BuildCircuitButton extends JButton {
                 OptionPane.QUESTION_MESSAGE);
         if (action != OptionPane.OK_OPTION) return;
 
-        ProjectItem projectItem = (ProjectItem) dlog.project.getSelectedItem();
+        final var projectItem = (ProjectItem) dlog.project.getSelectedItem();
         if (projectItem == null) {
           OptionPane.showMessageDialog(
               parent,
@@ -184,9 +182,9 @@ class BuildCircuitButton extends JButton {
         if (!SyntaxChecker.isVariableNameAcceptable(name, true)) continue;
 
         /* Check for name collisions with input and output names */
-        HashSet<String> labels = new HashSet<>();
-        for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
-        for (String label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
+        final var labels = new HashSet<String>();
+        for (final var label : model.getInputs().getNames()) labels.add(label.toUpperCase());
+        for (final var label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
           OptionPane.showMessageDialog(
                 parent,
@@ -198,7 +196,7 @@ class BuildCircuitButton extends JButton {
 
         if (dest != null) {
           /* prevent upper-case lower-case mismatch */
-          for (Circuit circ : dest.getLogisimFile().getCircuits()) {
+          for (final var circ : dest.getLogisimFile().getCircuits()) {
             if (circ.getName().equalsIgnoreCase(name)) name = circ.getName();
           }
         }
@@ -256,10 +254,9 @@ class BuildCircuitButton extends JButton {
     setText(S.get("buildCircuitButton"));
   }
 
-  private void performAction(
-      Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
+  private void performAction(Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
     if (replace) {
-      final Circuit circuit = dest.getLogisimFile().getCircuit(name);
+      final var circuit = dest.getLogisimFile().getCircuit(name);
       if (circuit == null) {
         OptionPane.showMessageDialog(
             parent,
@@ -269,7 +266,7 @@ class BuildCircuitButton extends JButton {
         return;
       }
 
-      CircuitMutation xn = CircuitBuilder.build(circuit, model, twoInputs, useNands);
+      final var xn = CircuitBuilder.build(circuit, model, twoInputs, useNands);
       dest.doAction(xn.toAction(S.getter("replaceCircuitAction")));
     } else {
       // create new project if necessary
@@ -277,8 +274,8 @@ class BuildCircuitButton extends JButton {
         dest = ProjectActions.doNew(dest);
       }
       // add the circuit
-      Circuit circuit = new Circuit(name, dest.getLogisimFile(), dest);
-      CircuitMutation xn = CircuitBuilder.build(circuit, model, twoInputs, useNands);
+      final var circuit = new Circuit(name, dest.getLogisimFile(), dest);
+      final var xn = CircuitBuilder.build(circuit, model, twoInputs, useNands);
       xn.execute();
       dest.doAction(LogisimFileActions.addCircuit(circuit));
       dest.setCurrentCircuit(circuit);

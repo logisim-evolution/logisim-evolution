@@ -29,7 +29,6 @@
 package com.cburch.logisim.prefs;
 
 import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.Preferences;
 
 class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   private final int dflt;
@@ -39,7 +38,7 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
     super(name);
     this.dflt = dflt;
     this.value = dflt;
-    Preferences prefs = AppPreferences.getPrefs();
+    final var prefs = AppPreferences.getPrefs();
     set(prefs.getInt(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }
@@ -49,12 +48,12 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
-    Preferences prefs = event.getNode();
-    String prop = event.getKey();
-    String name = getIdentifier();
+    final var prefs = event.getNode();
+    final var prop = event.getKey();
+    final var name = getIdentifier();
     if (prop.equals(name)) {
-      int oldValue = value;
-      int newValue = prefs.getInt(name, dflt);
+      final var oldValue = value;
+      final var newValue = prefs.getInt(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(
@@ -64,7 +63,7 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   }
 
   public void set(Integer newValue) {
-    int newVal = newValue;
+    final var newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putInt(getIdentifier(), newVal);
     }

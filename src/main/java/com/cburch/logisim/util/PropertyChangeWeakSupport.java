@@ -67,14 +67,12 @@ public class PropertyChangeWeakSupport {
     PropertyChangeEvent e = null;
     for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
       ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
+      final var l = data.listener.get();
       if (l == null) {
         it.remove();
       } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
-          e =
-              new PropertyChangeEvent(
-                  source, property, oldValue, newValue);
+          e = new PropertyChangeEvent(source, property, oldValue, newValue);
         }
         l.propertyChange(e);
       }

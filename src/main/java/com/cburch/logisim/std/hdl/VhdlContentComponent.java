@@ -40,7 +40,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
@@ -176,7 +175,7 @@ public class VhdlContentComponent extends HdlContent {
   }
 
   public boolean parseContent(String content) {
-    VhdlParser parser = new VhdlParser(content);
+    final var parser = new VhdlParser(content);
     try {
       parser.parse();
     } catch (Exception ex) {
@@ -189,13 +188,13 @@ public class VhdlContentComponent extends HdlContent {
     libraries = parser.getLibraries();
     architecture = parser.getArchitecture();
 
-    List<VhdlParser.PortDescription> inputsDesc = parser.getInputs();
-    List<VhdlParser.PortDescription> outputsDesc = parser.getOutputs();
+    final var inputsDesc = parser.getInputs();
+    final var outputsDesc = parser.getOutputs();
     inputs = new Port[inputsDesc.size()];
     outputs = new Port[outputsDesc.size()];
 
-    for (int i = 0; i < inputsDesc.size(); i++) {
-      VhdlParser.PortDescription desc = inputsDesc.get(i);
+    for (var i = 0; i < inputsDesc.size(); i++) {
+      final var desc = inputsDesc.get(i);
       inputs[i] =
           new Port(
               0,
@@ -206,7 +205,7 @@ public class VhdlContentComponent extends HdlContent {
     }
 
     for (int i = 0; i < outputsDesc.size(); i++) {
-      VhdlParser.PortDescription desc = outputsDesc.get(i);
+      final var desc = outputsDesc.get(i);
       outputs[i] =
           new Port(
               VhdlEntityComponent.WIDTH,
@@ -224,18 +223,18 @@ public class VhdlContentComponent extends HdlContent {
 
   @Override
   public boolean setContent(String content) {
-    StringBuffer title = new StringBuffer();
-    StringBuffer result = new StringBuffer();
+    final var title = new StringBuffer();
+    final var result = new StringBuffer();
 
     switch (Softwares.validateVhdl(content, title, result)) {
       case Softwares.ERROR:
-        JTextArea message = new JTextArea();
+        final var message = new JTextArea();
         message.setText(result.toString());
         message.setEditable(false);
         message.setLineWrap(false);
         message.setMargin(new Insets(5, 5, 5, 5));
 
-        JScrollPane sp = new JScrollPane(message);
+        final var sp = new JScrollPane(message);
         sp.setPreferredSize(new Dimension(700, 400));
 
         OptionPane.showOptionDialog(

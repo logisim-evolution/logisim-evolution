@@ -53,10 +53,11 @@ public class TclGenericAttributes extends TclComponentAttributes {
 
   public static HdlContentEditor getContentEditor(Window source, HdlContent value, Project proj) {
     synchronized (windowRegistry) {
-      HdlContentEditor ret = windowRegistry.get(value);
+      var ret = windowRegistry.get(value);
       if (ret == null) {
-        if (source instanceof Frame) ret = new HdlContentEditor((Frame) source, proj, value);
-        else ret = new HdlContentEditor((Dialog) source, proj, value);
+        ret = (source instanceof Frame)
+                ? new HdlContentEditor((Frame) source, proj, value)
+                : new HdlContentEditor((Dialog) source, proj, value);
         windowRegistry.put(value, ret);
       }
       return ret;
@@ -64,11 +65,9 @@ public class TclGenericAttributes extends TclComponentAttributes {
   }
 
   private static final List<Attribute<?>> attributes =
-      Arrays.asList(
-          CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
+      Arrays.asList(CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
-  private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<>();
+  private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<>();
 
   private VhdlContentComponent vhdlEntitiy;
 
@@ -84,7 +83,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    TclGenericAttributes attr = (TclGenericAttributes) dest;
+    final var attr = (TclGenericAttributes) dest;
     attr.vhdlEntitiy = vhdlEntitiy;
 
     super.copyInto(dest);
@@ -98,7 +97,6 @@ public class TclGenericAttributes extends TclComponentAttributes {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-
     if (attr == TclGeneric.CONTENT_ATTR) {
       return (V) vhdlEntitiy;
     } else {
@@ -109,7 +107,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == TclGeneric.CONTENT_ATTR) {
-      VhdlContentComponent newContent = (VhdlContentComponent) value;
+      final var newContent = (VhdlContentComponent) value;
       if (!vhdlEntitiy.equals(newContent)) vhdlEntitiy = newContent;
       fireAttributeValueChanged(attr, value, null);
     } else {

@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl74125 extends AbstractTtlGate {
   /**
@@ -48,9 +47,10 @@ public class Ttl74125 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
-    int portwidth = 15, portheight = 8;
-    int youtput = y + (up ? 20 : 40);
+    final var g = painter.getGraphics();
+    final var portwidth = 15;
+    final var portheight = 8;
+    final var youtput = y + (up ? 20 : 40);
     Drawgates.paintBuffer(g, x + 50, youtput, portwidth, portheight);
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 45, youtput, up, height);

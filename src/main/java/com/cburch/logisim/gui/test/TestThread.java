@@ -119,9 +119,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
       }
     }
     System.out.println();
-    System.out.println(
-        StringUtil.format(
-            S.get("testResults"), Integer.toString(numPass), Integer.toString(numFail)));
+    System.out.println(S.get("testResults", Integer.toString(numPass), Integer.toString(numFail)));
     return 0;
   }
 
@@ -129,6 +127,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     canceled = true;
   }
 
+  @Override
   public void circuitChanged(CircuitEvent event) {
     int action = event.getAction();
     if (action == CircuitEvent.ACTION_SET_NAME) return;
@@ -164,6 +163,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     }
   }
 
+  @Override
   public void run() {
     try {
       for (int i = 0; i < vector.data.size() && !canceled; i++) {

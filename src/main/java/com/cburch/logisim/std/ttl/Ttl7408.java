@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Ttl7408 extends AbstractTtlGate {
@@ -53,7 +52,7 @@ public class Ttl7408 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
-      ArrayList<String> Contents = new ArrayList<>();
+      final var Contents = new ArrayList<String>();
       Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
               + "gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B;");
       Contents.add("");
@@ -67,9 +66,10 @@ public class Ttl7408 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
-    int portwidth = 15, portheight = 15;
-    int youtput = y + (up ? 20 : 40);
+    final var g = painter.getGraphics();
+    final var portwidth = 15;
+    final var portheight = 15;
+    final var youtput = y + (up ? 20 : 40);
     Drawgates.paintAnd(g, x + 44, youtput, portwidth, portheight, false);
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up, height);

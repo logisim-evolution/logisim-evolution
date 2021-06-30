@@ -39,6 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CircuitLocker {
   private static class CircuitComparator implements Comparator<Circuit> {
+    @Override
     public int compare(Circuit a, Circuit b) {
       int an = a.getLocker().serialNumber;
       int bn = b.getLocker().serialNumber;
@@ -47,24 +48,24 @@ public class CircuitLocker {
   }
 
   static Map<Circuit, Lock> acquireLocks(CircuitTransaction xn, CircuitMutatorImpl mutator) {
-    Map<Circuit, Integer> requests = xn.getAccessedCircuits();
-    Map<Circuit, Lock> circuitLocks = new HashMap<>();
+    final var requests = xn.getAccessedCircuits();
+    final var circuitLocks = new HashMap<Circuit, Lock>();
     // Acquire locks in serial-number order to avoid deadlock
-    Circuit[] lockOrder = requests.keySet().toArray(new Circuit[0]);
+    final var lockOrder = requests.keySet().toArray(new Circuit[0]);
     Arrays.sort(lockOrder, new CircuitComparator());
     try {
-      for (Circuit circ : lockOrder) {
-        Integer access = requests.get(circ);
-        CircuitLocker locker = circ.getLocker();
+      for (final var circ : lockOrder) {
+        final var access = requests.get(circ);
+        final var locker = circ.getLocker();
         if (access == CircuitTransaction.READ_ONLY) {
-          Lock lock = locker.circuitLock.readLock();
+          final var lock = locker.circuitLock.readLock();
           lock.lock();
           circuitLocks.put(circ, lock);
         } else if (access == CircuitTransaction.READ_WRITE) {
-          Thread curThread = Thread.currentThread();
+          final var curThread = Thread.currentThread();
           if (locker.mutatingThread == curThread) { // nothing to do - thread already has lock
           } else {
-            Lock lock = locker.circuitLock.writeLock();
+            final var lock = locker.circuitLock.writeLock();
             lock.lock();
             circuitLocks.put(circ, lock);
             locker.mutatingThread = Thread.currentThread();
@@ -83,11 +84,11 @@ public class CircuitLocker {
   }
 
   static void releaseLocks(Map<Circuit, Lock> locks) {
-    Thread curThread = Thread.currentThread();
+    final var curThread = Thread.currentThread();
     for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
-      Circuit circ = entry.getKey();
-      Lock lock = entry.getValue();
-      CircuitLocker locker = circ.getLocker();
+      final var circ = entry.getKey();
+      final var lock = entry.getValue();
+      final var locker = circ.getLocker();
       if (locker.mutatingThread == curThread) {
         locker.mutatingThread = null;
         locker.mutatingMutator = null;

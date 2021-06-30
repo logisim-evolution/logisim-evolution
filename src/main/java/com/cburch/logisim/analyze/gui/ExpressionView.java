@@ -33,7 +33,6 @@ import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -48,7 +47,7 @@ class ExpressionView extends JPanel {
   private class MyListener extends ComponentAdapter {
 
     public void componentResized(ComponentEvent arg0) {
-      int width = getWidth();
+      final var width = getWidth();
       if (renderData != null && Math.abs(renderData.getParentWidth() - width) > 2) {
         renderData = new ExpressionRenderData(expr, width, notation);
         setPreferredSize(renderData.getPreferredSize());
@@ -96,11 +95,13 @@ class ExpressionView extends JPanel {
     width = -1;
     final var f =
         new FocusListener() {
+          @Override
           public void focusGained(FocusEvent e) {
             if (e.isTemporary()) return;
             selected = true;
           }
 
+          @Override
           public void focusLost(FocusEvent e) {
             if (e.isTemporary()) return;
             selected = false;

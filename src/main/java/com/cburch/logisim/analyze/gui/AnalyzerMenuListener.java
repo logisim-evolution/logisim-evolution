@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 public class AnalyzerMenuListener extends MenuListener {
 
   protected class FileListener implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
       if (printer != null) printer.actionPerformed(event);
     }

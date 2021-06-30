@@ -30,7 +30,6 @@ package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
@@ -55,7 +54,7 @@ public class Propagator {
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof ComponentPoint)) return false;
-      ComponentPoint o = (ComponentPoint) other;
+      final var o = (ComponentPoint) other;
       return this.cause.equals(o.cause) && this.loc.equals(o.loc);
     }
 
@@ -72,10 +71,12 @@ public class Propagator {
       prop = new WeakReference<>(propagator);
     }
 
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
-      Propagator p = prop.get();
+      final var p = prop.get();
       if (p == null) {
         e.getSource().removeAttributeListener(this);
       } else if (e.getAttribute().equals(Options.ATTR_SIM_RAND)) {
@@ -104,15 +105,16 @@ public class Propagator {
     }
 
     public SetData cloneFor(CircuitState newState) {
-      Propagator newProp = newState.getPropagator();
-      int dtime = newProp.clock - state.getPropagator().clock;
-      SetData ret =
+      final var newProp = newState.getPropagator();
+      final var dtime = newProp.clock - state.getPropagator().clock;
+      final var ret =
           new SetData(time + dtime, newProp.setDataSerialNumber, newState, loc, cause, val);
       newProp.setDataSerialNumber++;
       if (this.next != null) ret.next = this.next.cloneFor(newState);
       return ret;
     }
 
+    @Override
     public int compareTo(SetData o) {
       // Yes, these subtractions may overflow. This is intentional, as it
       // avoids potential wraparound problems as the counters increment.
@@ -132,7 +134,7 @@ public class Propagator {
   //
   static Value computeValue(SetData causes) {
     if (causes == null) return Value.NIL;
-    Value ret = causes.val;
+    var ret = causes.val;
     for (SetData n = causes.next; n != null; n = n.next) {
       ret = ret.combine(n.val);
     }
@@ -167,7 +169,7 @@ public class Propagator {
 
   public Propagator(CircuitState root) {
     this.root = root;
-    Listener l = new Listener(this);
+    final var l = new Listener(this);
     root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     updateRandomness();
   }
@@ -177,7 +179,7 @@ public class Propagator {
       return removeCause(state, head, data.loc, data.cause);
     }
 
-    HashMap<Location, SetData> causes = state.causes;
+    final var causes = state.causes;
 
     // first check whether this is change of previous info.
     boolean replaced = false;
@@ -207,13 +209,13 @@ public class Propagator {
   // private methods
   //
   void checkComponentEnds(CircuitState state, Component comp) {
-    for (EndData end : comp.getEnds()) {
-      Location loc = end.getLocation();
-      SetData oldHead = state.causes.get(loc);
-      Value oldVal = computeValue(oldHead);
-      SetData newHead = removeCause(state, oldHead, loc, comp);
-      Value newVal = computeValue(newHead);
-      Value wireVal = state.getValueByWire(loc);
+    for (final var end : comp.getEnds()) {
+      final var loc = end.getLocation();
+      final var oldHead = state.causes.get(loc);
+      final var oldVal = computeValue(oldHead);
+      final var newHead = removeCause(state, oldHead, loc, comp);
+      final var newVal = computeValue(newHead);
+      final var wireVal = state.getValueByWire(loc);
 
       if (!newVal.equals(oldVal) || wireVal != null) {
         state.markPointAsDirty(loc);
@@ -286,9 +288,9 @@ public class Propagator {
     root.processDirtyPoints();
     root.processDirtyComponents();
 
-    int oscThreshold = simLimit;
-    int logThreshold = 3 * oscThreshold / 4;
-    int iters = 0;
+    final var oscThreshold = simLimit;
+    final var logThreshold = 3 * oscThreshold / 4;
+    var iters = 0;
     while (!toProcess.isEmpty()) {
       if (iters > 0 && propListener != null)
         propListener.propagationInProgress(propEvent);
@@ -312,15 +314,15 @@ public class Propagator {
   }
 
   private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
-    HashMap<Location, SetData> causes = state.causes;
+    final var causes = state.causes;
     if (head == null) {
     } else if (head.cause == cause) {
       head = head.next;
       if (head == null) causes.remove(loc);
       else causes.put(loc, head);
     } else {
-      SetData prev = head;
-      SetData cur = head.next;
+      var prev = head;
+      var cur = head.next;
       while (cur != null) {
         if (cur.cause == cause) {
           prev.next = cur.next;
@@ -348,7 +350,7 @@ public class Propagator {
     if (delay <= 0) {
       delay = 1;
     }
-    int randomShift = simRandomShift;
+    final var randomShift = simRandomShift;
     if (randomShift > 0) { // random noise is turned on
       // multiply the delay by 32 so that the random noise
       // only changes the delay by 3%.
@@ -376,10 +378,9 @@ public class Propagator {
     root.processDirtyPoints();
     root.processDirtyComponents();
 
-    if (toProcess.isEmpty())
-      return false;
+    if (toProcess.isEmpty()) return false;
 
-    PropagationPoints oldOsc = oscPoints;
+    final var oldOsc = oscPoints;
     oscAdding = changedPoints != null;
     oscPoints = changedPoints;
     stepInternal(changedPoints);
@@ -395,16 +396,15 @@ public class Propagator {
     clock = toProcess.peek().time;
 
     // propagate all values for this clock tick
-    HashMap<CircuitState, HashSet<ComponentPoint>> visited =
-        new HashMap<>();
+    final var visited = new HashMap<CircuitState, HashSet<ComponentPoint>>();
     while (true) {
-      SetData data = toProcess.peek();
+      final var data = toProcess.peek();
       if (data == null || data.time != clock) break;
       toProcess.remove();
-      CircuitState state = data.state;
+      final var state = data.state;
 
       // if it's already handled for this clock tick, continue
-      HashSet<ComponentPoint> handled = visited.get(state);
+      var handled = visited.get(state);
       if (handled != null) {
         if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
       } else {
@@ -422,10 +422,10 @@ public class Propagator {
       if (changedPoints != null) changedPoints.add(state, data.loc);
 
       // change the information about value
-      SetData oldHead = state.causes.get(data.loc);
-      Value oldVal = computeValue(oldHead);
-      SetData newHead = addCause(state, oldHead, data);
-      Value newVal = computeValue(newHead);
+      final var oldHead = state.causes.get(data.loc);
+      final var oldVal = computeValue(oldHead);
+      final var newHead = addCause(state, oldHead, data);
+      final var newVal = computeValue(newHead);
 
       // if the value at point has changed, propagate it
       if (!newVal.equals(oldVal)) {
@@ -448,10 +448,10 @@ public class Propagator {
   }
 
   private void updateRandomness() {
-    Options opts = root.getProject().getOptions();
+    final var opts = root.getProject().getOptions();
     Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    int val = (Integer) rand;
-    int logVal = 0;
+    final var val = (Integer) rand;
+    var logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;
   }

@@ -19,10 +19,11 @@
 
 package com.cburch.logisim.util;
 
-import java.lang.reflect.Field;
 import java.util.NoSuchElementException;
 
 public class LibraryUtil {
+
+  public final static String ID_FIELD_NAME = "_ID";
 
   /**
    * Tries to read unique identifier from object (mainly Library or Tool) stored in object's class
@@ -38,14 +39,13 @@ public class LibraryUtil {
    * @return ID of the object
    */
   public static String getName(Class cls) {
-    final String idFieldName = "_ID";
     try {
-      Field[] fields = cls.getDeclaredFields();
-      for (Field field : fields) {
-        if (field.getName().equals(idFieldName)) {
-          String id = (String) field.get(null);
+      final var fields = cls.getDeclaredFields();
+      for (final var field : fields) {
+        if (field.getName().equals(ID_FIELD_NAME)) {
+          final var id = (String) field.get(null);
           if (id != null) return id;
-          throw new NullPointerException("The " + idFieldName + " for " + cls + " cannot be NULL");
+          throw new NullPointerException("The " + ID_FIELD_NAME + " for " + cls + " cannot be NULL");
         }
       }
     } catch (Exception ex) {
@@ -56,6 +56,6 @@ public class LibraryUtil {
       }
     }
 
-    throw new NoSuchElementException("Missing " + idFieldName + " static const field for " + cls);
+    throw new NoSuchElementException("Missing " + ID_FIELD_NAME + " static const field for " + cls);
   }
 }

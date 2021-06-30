@@ -37,16 +37,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
-import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.util.WeakHashMap;
 
@@ -82,7 +78,7 @@ public class TclGeneric extends TclComponent {
 
     @Override
     public VhdlContentComponent parse(String value) {
-      VhdlContentComponent content = VhdlContentComponent.create();
+      final var content = VhdlContentComponent.create();
       if (!content.compare(value)) content.setContent(value);
       return content;
     }
@@ -125,8 +121,8 @@ public class TclGeneric extends TclComponent {
 
   @Override
   protected void configureNewInstance(Instance instance) {
-    VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
-    TclGenericListener listener = new TclGenericListener(instance);
+    final var content = instance.getAttributeValue(CONTENT_ATTR);
+    final var listener = new TclGenericListener(instance);
 
     contentListeners.put(instance, listener);
     content.addHdlModelListener(listener);
@@ -147,9 +143,9 @@ public class TclGeneric extends TclComponent {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    VhdlContentComponent content = attrs.getValue(CONTENT_ATTR);
-    int nbInputs = content.getInputsNumber();
-    int nbOutputs = content.getOutputsNumber();
+    final var content = attrs.getValue(CONTENT_ATTR);
+    final var nbInputs = content.getInputsNumber();
+    final var nbOutputs = content.getOutputsNumber();
 
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
   }
@@ -164,13 +160,13 @@ public class TclGeneric extends TclComponent {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    VhdlContentComponent content = painter.getAttributeValue(CONTENT_ATTR);
-    FontMetrics metric = g.getFontMetrics();
+    final var g = painter.getGraphics();
+    final var content = painter.getAttributeValue(CONTENT_ATTR);
+    var metric = g.getFontMetrics();
 
-    Bounds bds = painter.getBounds();
-    int x0 = bds.getX() + (bds.getWidth() / 2);
-    int y0 = bds.getY() + metric.getHeight() + 12;
+    final var bds = painter.getBounds();
+    final var x0 = bds.getX() + (bds.getWidth() / 2);
+    final var y0 = bds.getY() + metric.getHeight() + 12;
     GraphicsUtil.drawText(
         g,
         StringUtil.resizeString(content.getName(), metric, WIDTH),
@@ -179,12 +175,11 @@ public class TclGeneric extends TclComponent {
         GraphicsUtil.H_CENTER,
         GraphicsUtil.V_BOTTOM);
 
-    String glbLabel = painter.getAttributeValue(StdAttr.LABEL);
+    final var glbLabel = painter.getAttributeValue(StdAttr.LABEL);
     if (glbLabel != null) {
-      Font font = g.getFont();
+      final var font = g.getFont();
       g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(
-          g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
+      GraphicsUtil.drawCenteredText(g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
       g.setFont(font);
     }
 
@@ -192,10 +187,10 @@ public class TclGeneric extends TclComponent {
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 
-    Port[] inputs = content.getInputs();
-    Port[] outputs = content.getOutputs();
+    final var inputs = content.getInputs();
+    final var outputs = content.getOutputs();
 
-    for (int i = 0; i < inputs.length; i++)
+    for (var i = 0; i < inputs.length; i++)
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(inputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),
@@ -203,7 +198,7 @@ public class TclGeneric extends TclComponent {
           bds.getY() + HEIGHT - 2 + (i * PORT_GAP),
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-    for (int i = 0; i < outputs.length; i++)
+    for (var i = 0; i < outputs.length; i++)
       GraphicsUtil.drawText(
           g,
           StringUtil.resizeString(outputs[i].getToolTip(), metric, (WIDTH / 2) - X_PADDING),

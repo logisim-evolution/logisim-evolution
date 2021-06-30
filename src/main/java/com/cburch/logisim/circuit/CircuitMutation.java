@@ -74,37 +74,37 @@ public final class CircuitMutation extends CircuitTransaction {
 
   @Override
   protected Map<Circuit, Integer> getAccessedCircuits() {
-    HashMap<Circuit, Integer> accessMap = new HashMap<>();
-    HashSet<Circuit> supercircsDone = new HashSet<>();
-    HashSet<VhdlEntity> vhdlDone = new HashSet<>();
-    HashSet<ComponentFactory> siblingsDone = new HashSet<>();
-    for (CircuitChange change : changes) {
-      Circuit circ = change.getCircuit();
+    final var accessMap = new HashMap<Circuit, Integer>();
+    final var supercircsDone = new HashSet<Circuit>();
+    final var vhdlDone = new HashSet<VhdlEntity>();
+    final var siblingsDone = new HashSet<ComponentFactory>();
+    for (final var change : changes) {
+      final var circ = change.getCircuit();
       accessMap.put(circ, READ_WRITE);
 
       if (change.concernsSupercircuit()) {
-        boolean isFirstForCirc = supercircsDone.add(circ);
+        final var isFirstForCirc = supercircsDone.add(circ);
         if (isFirstForCirc) {
-          for (Circuit supercirc : circ.getCircuitsUsingThis()) {
+          for (final var supercirc : circ.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
         }
       }
 
       if (change.concernsSiblingComponents()) {
-        ComponentFactory factory = change.getComponent().getFactory();
-        boolean isFirstForSibling = siblingsDone.add(factory);
+        final var factory = change.getComponent().getFactory();
+        final var isFirstForSibling = siblingsDone.add(factory);
         if (isFirstForSibling) {
           if (factory instanceof SubcircuitFactory) {
-            Circuit sibling = ((SubcircuitFactory) factory).getSubcircuit();
-            boolean isFirstForCirc = supercircsDone.add(sibling);
+            final var sibling = ((SubcircuitFactory) factory).getSubcircuit();
+            final var isFirstForCirc = supercircsDone.add(sibling);
             if (isFirstForCirc) {
               for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
                 accessMap.put(supercirc, READ_WRITE);
               }
             }
           } else if (factory instanceof VhdlEntity) {
-            VhdlEntity sibling = (VhdlEntity) factory;
+            final var sibling = (VhdlEntity) factory;
             boolean isFirstForVhdl = vhdlDone.add(sibling);
             if (isFirstForVhdl) {
               for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
@@ -131,7 +131,7 @@ public final class CircuitMutation extends CircuitTransaction {
   }
 
   public void replace(Component oldComp, Component newComp) {
-    ReplacementMap repl = new ReplacementMap(oldComp, newComp);
+    final var repl = new ReplacementMap(oldComp, newComp);
     changes.add(CircuitChange.replace(primary, repl));
   }
 
@@ -146,8 +146,8 @@ public final class CircuitMutation extends CircuitTransaction {
   protected void run(CircuitMutator mutator) {
     Circuit curCircuit = null;
     ReplacementMap curReplacements = null;
-    for (CircuitChange change : changes) {
-      Circuit circ = change.getCircuit();
+    for (final var change : changes) {
+      final var circ = change.getCircuit();
       if (circ != curCircuit) {
         if (curCircuit != null) {
           mutator.replace(curCircuit, curReplacements);

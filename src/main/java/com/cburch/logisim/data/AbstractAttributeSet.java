@@ -47,15 +47,14 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   @Override
   public Object clone() {
-    AbstractAttributeSet ret;
     try {
-      ret = (AbstractAttributeSet) super.clone();
+      AbstractAttributeSet ret = (AbstractAttributeSet) super.clone();
+      ret.listeners = new ArrayList<>();
+      this.copyInto(ret);
+      return ret;
     } catch (CloneNotSupportedException ex) {
       throw new UnsupportedOperationException();
     }
-    ret.listeners = new ArrayList<>();
-    this.copyInto(ret);
-    return ret;
   }
 
   public boolean containsAttribute(Attribute<?> attr) {
@@ -66,9 +65,8 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   protected void fireAttributeListChanged() {
     if (listeners != null) {
-      AttributeEvent event = new AttributeEvent(this);
-      List<AttributeListener> ls = new ArrayList<>(listeners);
-      for (AttributeListener l : ls) {
+      final var event = new AttributeEvent(this);
+      for (final var l : new ArrayList<>(listeners)) {
         l.attributeListChanged(event);
       }
     }
@@ -76,9 +74,9 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value, V oldvalue) {
     if (listeners != null) {
-      AttributeEvent event = new AttributeEvent(this, attr, value, oldvalue);
-      List<AttributeListener> ls = new ArrayList<>(listeners);
-      for (AttributeListener l : ls) {
+      final var event = new AttributeEvent(this, attr, value, oldvalue);
+      final var ls = new ArrayList<>(listeners);
+      for (final var l : ls) {
         l.attributeValueChanged(event);
       }
     }
@@ -115,5 +113,5 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   }
 
   public abstract <V> void setValue(Attribute<V> attr, V value);
-  
+
 }

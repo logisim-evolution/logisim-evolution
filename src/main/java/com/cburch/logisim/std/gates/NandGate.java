@@ -44,23 +44,23 @@ class NandGate extends AbstractGate {
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public boolean GetFloatingValue(boolean is_inverted) {
-      return is_inverted;
+    public boolean GetFloatingValue(boolean isInverted) {
+      return isInverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      var contents = new ArrayList<String>();
-      var oneLine = new StringBuilder();
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = new ArrayList<String>();
+      final var oneLine = new StringBuilder();
       oneLine.append("   ")
           .append(HDL.assignPreamble())
           .append("Result")
           .append(HDL.andOperator())
           .append(HDL.notOperator())
           .append("(");
-      int tabWidth = oneLine.length();
-      boolean first = true;
-      for (int i = 0; i < nr_of_inputs; i++) {
+      final var tabWidth = oneLine.length();
+      var first = true;
+      for (var i = 0; i < nrOfInputs; i++) {
         if (!first) {
           oneLine.append(HDL.andOperator());
           contents.add(oneLine.toString());
@@ -90,7 +90,7 @@ class NandGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = Expressions.and(ret, inputs[i]);
     }

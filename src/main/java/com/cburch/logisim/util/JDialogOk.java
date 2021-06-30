@@ -50,8 +50,9 @@ import javax.swing.KeyStroke;
 
 public abstract class JDialogOk extends JDialog {
   private class MyListener extends WindowAdapter implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == ok) {
         okClicked();
         dispose();
@@ -92,12 +93,12 @@ public abstract class JDialogOk extends JDialog {
   public void cancelClicked() {}
 
   private void configure(boolean withCancel) {
-    MyListener listener = new MyListener();
+    final var listener = new MyListener();
     this.addWindowListener(listener);
     ok.addActionListener(listener);
     cancel.addActionListener(listener);
 
-    Box buttons = Box.createHorizontalBox();
+    final var buttons = Box.createHorizontalBox();
     buttons.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     buttons.add(Box.createHorizontalGlue());
     buttons.add(ok);
@@ -107,7 +108,7 @@ public abstract class JDialogOk extends JDialog {
     }
     buttons.add(Box.createHorizontalGlue());
 
-    Container pane = super.getContentPane();
+    final var pane = super.getContentPane();
     pane.add(contents, BorderLayout.CENTER);
     pane.add(buttons, BorderLayout.SOUTH);
 
@@ -123,6 +124,7 @@ public abstract class JDialogOk extends JDialog {
 
     addWindowListener(
         new WindowAdapter() {
+          @Override
           public void windowOpened(WindowEvent e) {
             ok.requestFocus();
             e.getWindow().removeWindowListener(this);
@@ -135,6 +137,7 @@ public abstract class JDialogOk extends JDialog {
     return contents;
   }
 
+  @Override
   public void pack() {
     super.pack();
     while (parent != null && !parent.isShowing()) parent = parent.getOwner();

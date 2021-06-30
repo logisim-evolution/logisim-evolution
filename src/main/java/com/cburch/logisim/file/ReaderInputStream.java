@@ -146,7 +146,7 @@ public class ReaderInputStream extends InputStream {
         slack = null;
       }
     } else {
-      byte[] buf = new byte[1];
+      final var buf = new byte[1];
       if (read(buf, 0, 1) <= 0) {
         result = -1;
       }
@@ -176,7 +176,7 @@ public class ReaderInputStream extends InputStream {
     }
 
     while (slack == null) {
-      char[] buf = new char[len]; // might read too much
+      final var buf = new char[len]; // might read too much
       int n = in.read(buf);
       if (n == -1) {
         return -1;

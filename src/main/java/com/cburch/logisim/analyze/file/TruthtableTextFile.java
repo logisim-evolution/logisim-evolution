@@ -32,10 +32,8 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +41,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
@@ -100,48 +97,42 @@ public class TruthtableTextFile {
   public static void doSave(File file, AnalyzerModel model) throws IOException {
     try (PrintStream out = new PrintStream(file)) {
       out.println(S.get("tableRemark1"));
-      Circuit c = model.getCurrentCircuit();
-      if (c != null)
-        out.println(S.get("tableRemark2", c.getName()));
+      final var c = model.getCurrentCircuit();
+      if (c != null) out.println(S.get("tableRemark2", c.getName()));
       out.println(S.get("tableRemark3", new Date()));
       out.println();
       out.println(S.get("tableRemark4"));
       out.println();
       VariableList inputs = model.getInputs();
       VariableList outputs = model.getOutputs();
-      int[] colwidth = new int[inputs.vars.size() + outputs.vars.size()];
-      int i;
+      final var colwidth = new int[inputs.vars.size() + outputs.vars.size()];
+      var i = 0;
+      for (final var variable : inputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
+      for (final var variable : outputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
       i = 0;
-      for (Var var : inputs.vars)
-        colwidth[i++] = Math.max(var.toString().length(), var.width);
-      for (Var var : outputs.vars)
-        colwidth[i++] = Math.max(var.toString().length(), var.width);
-      i = 0;
-      for (Var var : inputs.vars) {
-        center(out, var.toString(), colwidth[i++]);
+      for (final var variable : inputs.vars) {
+        center(out, variable.toString(), colwidth[i++]);
         out.print(" ");
       }
       out.print("|");
-      for (Var var : outputs.vars) {
+      for (final var variable : outputs.vars) {
         out.print(" ");
-        center(out, var.toString(), colwidth[i++]);
+        center(out, variable.toString(), colwidth[i++]);
       }
       out.println();
       for (i = 0; i < colwidth.length; i++) {
-        for (int j = 0; j < colwidth[i] + 1; j++)
-          out.print("~");
+        for (var j = 0; j < colwidth[i] + 1; j++) out.print("~");
       }
       out.println("~");
-      TruthTable table = model.getTruthTable();
-      int rows = table.getVisibleRowCount();
-      for (int row = 0; row < rows; row++) {
+      final var table = model.getTruthTable();
+      final var rows = table.getVisibleRowCount();
+      for (var row = 0; row < rows; row++) {
         i = 0;
-        int col;
-        col = 0;
-        for (Var var : inputs.vars) {
-          StringBuilder s = new StringBuilder();
-          for (int b = var.width - 1; b >= 0; b--) {
-            Entry val = table.getVisibleInputEntry(row, col++);
+        var col = 0;
+        for (final var variable : inputs.vars) {
+          final var s = new StringBuilder();
+          for (var b = variable.width - 1; b >= 0; b--) {
+            final var val = table.getVisibleInputEntry(row, col++);
             s.append(val.toBitString());
           }
           center(out, s.toString(), colwidth[i++]);
@@ -149,10 +140,10 @@ public class TruthtableTextFile {
         }
         out.print("|");
         col = 0;
-        for (Var var : outputs.vars) {
-          StringBuilder s = new StringBuilder();
-          for (int b = var.width - 1; b >= 0; b--) {
-            Entry val = table.getVisibleOutputEntry(row, col++);
+        for (final var variable : outputs.vars) {
+          final var s = new StringBuilder();
+          for (var b = variable.width - 1; b >= 0; b--) {
+            final var val = table.getVisibleOutputEntry(row, col++);
             s.append(val.toBitString());
           }
           out.print(" ");
@@ -163,29 +154,21 @@ public class TruthtableTextFile {
     }
   }
 
-  static final Pattern NAME_FORMAT =
-      Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
+  static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
 
-  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
-      throws IOException {
-    var s = line.split("\\s+");
+  static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno) throws IOException {
+    final var s = line.split("\\s+");
     var cur = inputs;
-    for (String value : s) {
+    for (final var value : s) {
       if (value.equals("|")) {
-        if (cur == inputs)
-          cur = outputs;
-        else
-          throw new IOException(
-              String.format("Line %d: Separator '|' must appear only once.", lineno));
-        continue;
+        if (cur != inputs) throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
+        cur = outputs;
       }
       if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(value, 1));
       } else {
         var m = NAME_FORMAT.matcher(value);
-        if (!m.matches())
-          throw new IOException(
-              String.format("Line %d: Invalid variable name '%s'.", lineno, value));
+        if (!m.matches()) throw new IOException(String.format("Line %d: Invalid variable name '%s'.", lineno, value));
         var n = m.group(1);
         int a;
         int b;
@@ -193,12 +176,9 @@ public class TruthtableTextFile {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(
-              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
-        if (a < 1 || b != 0)
-          throw new IOException(
-              String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
+        if (a < 1 || b != 0) throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {
@@ -211,40 +191,41 @@ public class TruthtableTextFile {
         }
       }
     }
-    if (inputs.vars.size() == 0)
-      throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-    if (outputs.vars.size() == 0)
-      throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
+    if (inputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
+    if (outputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
   }
 
   static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
-    if (c == 'x' || c == 'X' || c == '-') return Entry.DONT_CARE;
-    else if (c == '0') return Entry.ZERO;
-    else if (c == '1') return Entry.ONE;
-    else
-      throw new IOException(
-          String.format(
-              "Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.",
-              lineno, c, sval));
+    if (c == 'x' || c == 'X' || c == '-') {
+      return Entry.DONT_CARE;
+    } else if (c == '0') {
+      return Entry.ZERO;
+    } else if (c == '1') {
+      return Entry.ONE;
+    }
+
+    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
   }
 
-  static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno)
-      throws IOException {
+  static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
     if (c == 'x' || c == 'X' || c == '-') return Entry.DONT_CARE;
-    int d = 0;
-    if ('0' <= c && c <= '9') d = c - '0';
-    else if ('a' <= c && c <= 'f') d = 0xa + (c - 'a');
-    else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
-    else
+    var d = 0;
+    if ('0' <= c && c <= '9') {
+      d = c - '0';
+    } else if ('a' <= c && c <= 'f') {
+      d = 0xa + (c - 'a');
+    } else if ('A' <= c && c <= 'F') {
+      d = 0xA + (c - 'A');
+    } else {
       throw new IOException(
-          String.format(
-              "Line %d: Hex digit '%c' in \"%s\" must be one of '0'-'9', 'a'-'f' or 'x'.",
-              lineno, c, sval));
-    if (nbits < 4 && (d >= (1 << nbits)))
-      throw new IOException(
-          String.format(
-              "Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
-    return (((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE);
+          String.format("Line %d: Hex digit '%c' in \"%s\" must be one of '0'-'9', 'a'-'f' or 'x'.", lineno, c, sval));
+    }
+
+    if (nbits < 4 && (d >= (1 << nbits))) {
+      throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
+      }
+
+    return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;
   }
 
   static int parseVal(Entry[] row, int col, String sval, Var var, int lineno) throws IOException {
@@ -275,27 +256,27 @@ public class TruthtableTextFile {
   static void validateRow(
       String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno)
       throws IOException {
-    Entry[] row = new Entry[inputs.bits.size() + outputs.bits.size()];
-    int col = 0;
-    String[] s = line.split("\\s+");
-    int ix = 0;
-    for (Var var : inputs.vars) {
+    final var row = new Entry[inputs.bits.size() + outputs.bits.size()];
+    var col = 0;
+    final var s = line.split("\\s+");
+    var ix = 0;
+    for (final var variable : inputs.vars) {
       if (ix >= s.length || s[ix].equals("|"))
         throw new IOException(String.format("Line %d: Not enough input columns.", lineno));
-      col = parseVal(row, col, s[ix++], var, lineno);
+      col = parseVal(row, col, s[ix++], variable, lineno);
     }
     if (ix >= s.length)
       throw new IOException(String.format("Line %d: Missing '|' column separator.", lineno));
     else if (!s[ix].equals("|"))
       throw new IOException(String.format("Line %d: Too many input columns.", lineno));
     ix++;
-    for (Var var : outputs.vars) {
+    for (final var variable : outputs.vars) {
       if (ix >= s.length)
         throw new IOException(String.format("Line %d: Not enough output columns.", lineno));
       else if (s[ix].equals("|"))
         throw new IOException(
             String.format("Line %d: Column separator '|' must appear only once.", lineno));
-      col = parseVal(row, col, s[ix++], var, lineno);
+      col = parseVal(row, col, s[ix++], variable, lineno);
     }
     if (ix != s.length)
       throw new IOException(String.format("Line %d: Too many output columns.", lineno));
@@ -303,11 +284,11 @@ public class TruthtableTextFile {
   }
 
   public static void doLoad(File file, AnalyzerModel model, JFrame parent) throws IOException {
-    int lineno = 0;
+    var lineno = 0;
     try (Scanner sc = new Scanner(file)) {
-      var inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-      var outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-      var rows = new ArrayList<Entry[]>();
+      final var inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+      final var outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+      final var rows = new ArrayList<Entry[]>();
       while (sc.hasNextLine()) {
         lineno++;
         String line = sc.nextLine();
@@ -322,25 +303,21 @@ public class TruthtableTextFile {
           validateRow(line, inputs, outputs, rows, lineno);
         }
       }
-      if (rows.size() == 0)
-        throw new IOException("End of file: Truth table has no rows.");
+      if (rows.size() == 0) throw new IOException("End of file: Truth table has no rows.");
       try {
         model.setVariables(inputs.vars, outputs.vars);
       } catch (IllegalArgumentException e) {
         throw new IOException(e.getMessage());
       }
-      TruthTable table = model.getTruthTable();
+      final var table = model.getTruthTable();
       try {
         table.setVisibleRows(rows, false);
       } catch (IllegalArgumentException e) {
         int confirm =
             OptionPane.showConfirmDialog(
-                parent,
-                new String[]{e.getMessage(), S.get("tableParseErrorMessage")},
-                S.get("tableParseErrorTitle"),
-                OptionPane.YES_NO_OPTION);
-        if (confirm != OptionPane.YES_OPTION)
-          return;
+                parent, new String[]{e.getMessage(), S.get("tableParseErrorMessage")},
+                S.get("tableParseErrorTitle"), OptionPane.YES_NO_OPTION);
+        if (confirm != OptionPane.YES_OPTION) return;
         try {
           table.setVisibleRows(rows, true);
         } catch (IllegalArgumentException ex) {

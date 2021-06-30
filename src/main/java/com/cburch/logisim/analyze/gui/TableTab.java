@@ -54,7 +54,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -74,14 +73,17 @@ import javax.swing.SwingConstants;
 
 class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private class MyListener implements TruthTableListener, LocaleListener {
+    @Override
     public void rowsChanged(TruthTableEvent event) {
       updateTable();
     }
 
+    @Override
     public void cellsChanged(TruthTableEvent event) {
       repaint();
     }
 
+    @Override
     public void structureChanged(TruthTableEvent event) {
       updateTable();
     }
@@ -153,14 +155,14 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
     void calculate(FontMetrics fm) {
       for (int i = 1; i < vars.size(); i++) {
-        Var v1 = vars.get(i - 1);
-        Var v2 = vars.get(i);
-        int hw1 = fm.stringWidth(v1.toString());
-        int hw2 = fm.stringWidth(v2.toString());
-        int hw = (hw1 - hw1 / 2) + headerPadding + (hw2 / 2);
-        int cw1 = v1.width * cellWidth;
-        int cw2 = v2.width * cellWidth;
-        int cw = (cw1 - cw1 / 2) + cellPadding + (cw2 / 2);
+        final var v1 = vars.get(i - 1);
+        final var v2 = vars.get(i);
+        final var hw1 = fm.stringWidth(v1.toString());
+        final var hw2 = fm.stringWidth(v2.toString());
+        final var hw = (hw1 - hw1 / 2) + headerPadding + (hw2 / 2);
+        final var cw1 = v1.width * cellWidth;
+        final var cw2 = v2.width * cellWidth;
+        final var cw = (cw1 - cw1 / 2) + cellPadding + (cw2 / 2);
         if (hw > cw) cellPadding += (hw - cw);
       }
       Var v;
@@ -170,15 +172,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       leftPadding = Math.max(defaultCellPadding / 2, (w / 2) - (cellWidth * v.width / 2));
       v = vars.get(vars.size() - 1);
       w = fm.stringWidth(v.toString());
-      rightPadding =
-          Math.max(
-              defaultCellPadding / 2,
-              (w - w / 2) - (cellWidth * v.width - cellWidth * v.width / 2));
+      rightPadding = Math.max(defaultCellPadding / 2, (w - w / 2) - (cellWidth * v.width - cellWidth * v.width / 2));
       calculateWidth();
     }
 
     void calculateWidth() {
-      int w = -cellPadding;
+      var w = -cellPadding;
       for (Var v : vars) w += cellPadding + v.width * cellWidth;
       width = leftPadding + w + rightPadding;
     }
@@ -186,8 +185,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     int getColumn(int x) {
       if (x < leftPadding) return -1;
       x -= leftPadding;
-      int col = 0;
-      for (Var v : vars) {
+      var col = 0;
+      for (final var v : vars) {
         if (x < 0) return -1;
         if (x < v.width * cellWidth) return col + x / cellWidth;
         col += v.width;
@@ -200,59 +199,58 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     int getNearestColumn(int x) {
       if (x < leftPadding) return 0;
       x -= leftPadding;
-      int col = 0;
-      for (Var v : vars) {
+      var col = 0;
+      for (final var var : vars) {
         if (x < -(cellPadding / 2)) return col - 1;
         if (x < 0) return col;
-        if (x < v.width * cellWidth) return col + x / cellWidth;
-        col += v.width;
-        x -= v.width * cellWidth + cellPadding;
+        if (x < var.width * cellWidth) return col + x / cellWidth;
+        col += var.width;
+        x -= var.width * cellWidth + cellPadding;
       }
       return col - 1;
     }
 
     int getX(int col) {
-      int x = leftPadding;
-      for (Var v : vars) {
+      var x = leftPadding;
+      for (final var var : vars) {
         if (col < 0) return x;
-        if (col < v.width) return x + col * cellWidth;
-        col -= v.width;
-        x += v.width * cellWidth + cellPadding;
+        if (col < var.width) return x + col * cellWidth;
+        col -= var.width;
+        x += var.width * cellWidth + cellPadding;
       }
       return x;
     }
 
     void paintHeaders(Graphics g, int x, int y) {
-      FontMetrics fm = g.getFontMetrics();
+      final var fm = g.getFontMetrics();
       y += fm.getAscent() + 1;
       x += leftPadding;
-      for (Var v : vars) {
-        String s = v.toString();
-        int sx = x + (v.width * cellWidth) / 2;
-        int sw = fm.stringWidth(s);
+      for (final var var : vars) {
+        final var s = var.toString();
+        final var sx = x + (var.width * cellWidth) / 2;
+        final var sw = fm.stringWidth(s);
         g.drawString(s, sx - (sw / 2), y);
-        x += (v.width * cellWidth) + cellPadding;
+        x += (var.width * cellWidth) + cellPadding;
       }
     }
 
     void paintRow(Graphics g, FontMetrics fm, int x, int y, int row, boolean isInput) {
       x += leftPadding;
-      int cy = y + fm.getAscent();
-      int col = 0;
-      for (Var v : vars) {
-        for (int b = v.width - 1; b >= 0; b--) {
-          Entry entry =
-              isInput
-                  ? table.getVisibleInputEntry(row, col++)
-                  : table.getVisibleOutputEntry(row, col++);
+      final var cy = y + fm.getAscent();
+      var col = 0;
+      for (final var var : vars) {
+        for (var b = var.width - 1; b >= 0; b--) {
+          final var entry = isInput
+                                    ? table.getVisibleInputEntry(row, col++)
+                                    : table.getVisibleOutputEntry(row, col++);
           if (entry.isError()) {
             g.setColor(Value.ERROR_COLOR);
             g.fillRect(x, y, cellWidth, cellHeight);
             g.setColor(Color.BLACK);
           }
           g.setColor(entry == Entry.BUS_ERROR ? Value.ERROR_COLOR : Color.BLACK);
-          String label = entry.getDescription();
-          int width = fm.stringWidth(label);
+          final var label = entry.getDescription();
+          final var width = fm.stringWidth(label);
           g.drawString(label, x + (cellWidth - width) / 2, cy);
           x += cellWidth;
         }
@@ -289,8 +287,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
     @Override
     public Dimension getPreferredSize() {
-      Dimension d = super.getPreferredSize();
-      int s = (int) d.getHeight();
+      final var d = super.getPreferredSize();
+      final var s = (int) d.getHeight();
       return new Dimension(s, s);
     }
 
@@ -320,6 +318,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     bodyPane.addComponentListener(new ComponentAdapter() {
+          @Override
           public void componentResized(ComponentEvent event) {
             int width = bodyPane.getViewport().getWidth();
             body.setSize(new Dimension(width, body.getHeight()));
@@ -333,6 +332,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     headerPane.addComponentListener(
         new ComponentAdapter() {
+          @Override
           public void componentResized(ComponentEvent event) {
             int width = headerPane.getViewport().getWidth();
             header.setSize(new Dimension(width, header.getHeight()));
@@ -344,7 +344,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     headerPane.setBorder(null);
     header.setBorder(null);
 
-    var toolbar = new JPanel();
+    final var toolbar = new JPanel();
     toolbar.setLayout(new FlowLayout());
     Entry.DONT_CARE.addListener(dontcare);
     Entry.ZERO.addListener(zero);
@@ -366,9 +366,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.setEnabled(getRowCount() < table.getRowCount());
     count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
 
-    var layout = new GridBagLayout();
+    final var layout = new GridBagLayout();
     setLayout(layout);
-    var gc = new GridBagConstraints();
+    final var gc = new GridBagConstraints();
     gc.fill = GridBagConstraints.HORIZONTAL;
     gc.gridx = 0;
     gc.gridy = 0;
@@ -402,11 +402,10 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       boolean done;
       public void componentShown(ComponentEvent e) {
         TableTab.this.removeComponentListener(this);
-        if (done)
-          return;
+        if (done) return;
         done = true;
         // account for missing scrollbar on header portion
-        int pad = bodyPane.getVerticalScrollBar().getWidth();
+        final var pad = bodyPane.getVerticalScrollBar().getWidth();
         GridBagConstraints gc = layout.getConstraints(headerPane);
         Insets i = gc.insets;
         gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
@@ -441,8 +440,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     cellHeight = defaultCellHeight;
     inDim.reset(inputVars);
     outDim.reset(outputVars);
-    Graphics g = getGraphics();
-    FontMetrics fm = (g != null ? g.getFontMetrics(headFont) : canvas.getFontMetrics(headFont));
+    final var g = getGraphics();
+    final var fm = (g != null ? g.getFontMetrics(headFont) : canvas.getFontMetrics(headFont));
     cellHeight = fm.getHeight();
     inDim.calculate(fm);
     outDim.calculate(fm);
@@ -478,9 +477,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   public int getColumn(MouseEvent event) {
-    int left = (body.getWidth() - tableWidth) / 2;
-    int mid = left + inDim.width + headerHorizSep;
-    int x = event.getX();
+    final var left = (body.getWidth() - tableWidth) / 2;
+    final var mid = left + inDim.width + headerHorizSep;
+    final var x = event.getX();
     if (x < mid) {
       return inDim.getColumn(x - left);
     } else {
@@ -490,12 +489,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   public int getNearestColumn(MouseEvent event) {
-    int inputs = table.getInputColumnCount();
-    int outputs = table.getOutputColumnCount();
+    final var inputs = table.getInputColumnCount();
+    final var outputs = table.getOutputColumnCount();
     if (inputs + outputs == 0) return -1;
-    int left = (body.getWidth() - tableWidth) / 2;
-    int mid = left + inDim.width + headerHorizSep;
-    int x = event.getX();
+    final var left = (body.getWidth() - tableWidth) / 2;
+    final var mid = left + inDim.width + headerHorizSep;
+    final var x = event.getX();
     if (x < left) return 0;
     else if (x >= mid + outDim.width) return inputs + outputs - 1;
     else if (x < mid - headerHorizSep / 2 && inputs > 0) return inDim.getNearestColumn(x - left);
@@ -503,30 +502,30 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   int getColumnCount() {
-    int inputs = table.getInputColumnCount();
-    int outputs = table.getOutputColumnCount();
+    final var inputs = table.getInputColumnCount();
+    final var outputs = table.getOutputColumnCount();
     return inputs + outputs;
   }
 
   public int getOutputColumn(MouseEvent event) {
-    int c = getColumn(event);
-    int inputs = table.getInputColumnCount();
+    final var c = getColumn(event);
+    final var inputs = table.getInputColumnCount();
     return (c < inputs ? -1 : c - inputs);
   }
 
   public int getRow(MouseEvent event) {
-    int y = event.getY();
+    final var y = event.getY();
     if (y < 0) return -1;
-    int ret = y / cellHeight;
-    int rows = getRowCount();
+    final var ret = y / cellHeight;
+    final var rows = getRowCount();
     return ret >= 0 && ret < rows ? ret : -1;
   }
 
   public int getNearestRow(MouseEvent event) {
-    int y = event.getY();
+    final var y = event.getY();
     if (y < 0) return 0;
-    int ret = y / cellHeight;
-    int rows = getRowCount();
+    final var ret = y / cellHeight;
+    final var rows = getRowCount();
     return ret < 0 ? 0 : ret >= rows ? rows - 1 : ret;
   }
 
@@ -544,11 +543,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   @Override
   public String getToolTipText(MouseEvent event) {
-    int row = getRow(event);
+    final var row = getRow(event);
     if (row < 0) return null;
-    int col = getOutputColumn(event);
+    final var col = getOutputColumn(event);
     if (col < 0) return null;
-    Entry entry = table.getVisibleOutputEntry(row, col);
+    final var entry = table.getVisibleOutputEntry(row, col);
     return entry.getErrorMessage();
   }
 
@@ -562,9 +561,9 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
       @Override
       public int getBlockIncrement(int direction) {
-        int curY = getValue();
-        int curHeight = getVisibleAmount();
-        int numCells = curHeight / cellHeight - 1;
+        final var curY = getValue();
+        final var curHeight = getVisibleAmount();
+        var numCells = curHeight / cellHeight - 1;
         if (numCells <= 0) numCells = 1;
         if (direction > 0) {
           return curY > 0 ? numCells * cellHeight : numCells * cellHeight + headerVertSep;
@@ -577,7 +576,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
       @Override
       public int getUnitIncrement(int direction) {
-        int curY = getValue();
+        final var curY = getValue();
         if (direction > 0) {
           return curY > 0 ? cellHeight : cellHeight + headerVertSep;
         } else {
@@ -588,23 +587,29 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   }
 
   int getXLeft(int col) {
-    int left = Math.max(0, (body.getWidth() - tableWidth) / 2);
-    int mid = left + inDim.width + headerHorizSep;
-    int inputs = table.getInputColumnCount();
-    if (col < inputs) return left + inDim.getX(col);
-    else return mid + outDim.getX(col - inputs);
+    final var left = Math.max(0, (body.getWidth() - tableWidth) / 2);
+    final var mid = left + inDim.width + headerHorizSep;
+    final var inputs = table.getInputColumnCount();
+    if (col < inputs) {
+      return left + inDim.getX(col);
+    } else {
+      return mid + outDim.getX(col - inputs);
+    }
   }
 
   int getXRight(int col) {
-    int left = Math.max(0, (body.getWidth() - tableWidth) / 2);
-    int mid = left + inDim.width + headerHorizSep;
-    int inputs = table.getInputColumnCount();
-    if (col < inputs) return left + inDim.getX(col) + inDim.cellWidth;
-    else return mid + outDim.getX(col - inputs) + outDim.cellWidth;
+    final var left = Math.max(0, (body.getWidth() - tableWidth) / 2);
+    final var mid = left + inDim.width + headerHorizSep;
+    final var inputs = table.getInputColumnCount();
+    if (col < inputs) {
+      return left + inDim.getX(col) + inDim.cellWidth;
+    } else {
+      return mid + outDim.getX(col - inputs) + outDim.cellWidth;
+    }
   }
 
   int getCellWidth(int col) {
-    int inputs = table.getInputColumnCount();
+    final var inputs = table.getInputColumnCount();
     return (col < inputs) ? inDim.cellWidth : outDim.cellWidth;
   }
 
@@ -612,11 +617,13 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return row * cellHeight;
   }
 
+  @Override
   void localeChanged() {
     computePreferredSize();
     repaint();
   }
 
+  @Override
   void updateTab() {
     editHandler.computeEnabled();
   }
@@ -635,39 +642,37 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      final var g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       if (!printView) {
         super.paintComponent(g);
         caret.paintBackground(g);
       }
 
-      int top = 0;
-      int left = Math.max(0, (canvasWidth - tableWidth) / 2);
-      int mid = left + inDim.width + headerHorizSep;
+      final var top = 0;
+      final var left = Math.max(0, (canvasWidth - tableWidth) / 2);
+      final var mid = left + inDim.width + headerHorizSep;
 
       g.setColor(Color.GRAY);
-      int lineX = left + inDim.width + headerHorizSep / 2;
+      final var lineX = left + inDim.width + headerHorizSep / 2;
       g.drawLine(lineX, top, lineX, top + bodyHeight);
 
       g.setFont(bodyFont);
-      FontMetrics fm = g.getFontMetrics();
+      final var fm = g.getFontMetrics();
       int y = top;
 
-      Rectangle clip = g.getClipBounds();
-      int firstRow = Math.max(0, (clip.y - y) / cellHeight);
-      int lastRow = Math.min(getRowCount(), 2 + (clip.y + clip.height - y) / cellHeight);
+      final var clip = g.getClipBounds();
+      final var firstRow = Math.max(0, (clip.y - y) / cellHeight);
+      final var lastRow = Math.min(getRowCount(), 2 + (clip.y + clip.height - y) / cellHeight);
       y += firstRow * cellHeight;
 
-      for (int row = firstRow; row < lastRow; row++) {
+      for (var row = firstRow; row < lastRow; row++) {
         inDim.paintRow(g, fm, left, y, row, true);
         outDim.paintRow(g, fm, mid, y, row, false);
         y += cellHeight;
       }
-      if (!printView)
-        caret.paintForeground(g);
+      if (!printView) caret.paintForeground(g);
     }
   }
 
@@ -681,20 +686,18 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
     public void paintComponent(Graphics g, boolean printView, int canvasWidth, int canvasHeight) {
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      final var g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      if (!printView)
-        super.paintComponent(g);
+      if (!printView) super.paintComponent(g);
 
-      int top = canvasHeight - cellHeight - headerVertSep;
-      int left = Math.max(0, (canvasWidth - tableWidth) / 2);
+      final var top = canvasHeight - cellHeight - headerVertSep;
+      final var left = Math.max(0, (canvasWidth - tableWidth) / 2);
 
       g.setColor(Color.GRAY);
-      int lineX = left + inDim.width + headerHorizSep / 2;
-      int lineY = top + cellHeight + headerVertSep / 2;
+      final var lineX = left + inDim.width + headerHorizSep / 2;
+      final var lineY = top + cellHeight + headerVertSep / 2;
       g.drawLine(left, lineY, left + tableWidth, lineY);
       g.drawLine(lineX, top, lineX, cellHeight);
 
@@ -713,7 +716,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   final EditHandler editHandler = new EditHandler() {
     @Override
     public void computeEnabled() {
-      boolean sel = caret.hasSelection();
+      final var sel = caret.hasSelection();
       setEnabled(LogisimMenuBar.CUT, sel);
       setEnabled(LogisimMenuBar.COPY, sel);
       setEnabled(LogisimMenuBar.PASTE, sel);
@@ -748,12 +751,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     @Override
     public void delete() {
       requestFocus();
-      Rectangle s = caret.getSelection();
-      int inputs = table.getInputColumnCount();
-      for (int c = s.x; c < s.x + s.width; c++) {
-        if (c < inputs)
-          continue; // todo: allow input row delete?
-        for (int r = s.y; r < s.y + s.height; r++) {
+      final var s = caret.getSelection();
+      final var inputs = table.getInputColumnCount();
+      for (var c = s.x; c < s.x + s.width; c++) {
+        if (c < inputs) continue; // todo: allow input row delete?
+        for (var r = s.y; r < s.y + s.height; r++) {
           table.setVisibleOutputEntry(r, c - inputs, Entry.DONT_CARE);
         }
       }
@@ -769,15 +771,13 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {
-          int width = tableWidth;
-          int height = headerHeight + bodyHeight;
-          return new Dimension(width, height);
+          return new Dimension(tableWidth, headerHeight + bodyHeight);
         }
 
         @Override
         public void paintExportImage(BufferedImage img, Graphics2D g) {
-          int width = img.getWidth();
-          int height = img.getHeight();
+          final var width = img.getWidth();
+          final var height = img.getHeight();
           g.setClip(0, 0, width, height);
           header.paintComponent(g, true, width, headerHeight);
           g.translate(0, headerHeight);
@@ -786,17 +786,17 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
         @Override
         public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
-          FontMetrics fm = g.getFontMetrics();
+          final var fm = g.getFontMetrics();
 
           // shrink horizontally to fit
-          double scale = 1.0;
+          var scale = 1.0;
           if (tableWidth > w) scale = w / tableWidth;
 
           // figure out how many pages we will need
-          int n = getRowCount();
-          double headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
-          int rowsPerPage = (int) ((h - headHeight) / (cellHeight * scale));
-          int numPages = (n + rowsPerPage - 1) / rowsPerPage;
+          final var n = getRowCount();
+          final var headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
+          final var rowsPerPage = (int) ((h - headHeight) / (cellHeight * scale));
+          final var numPages = (n + rowsPerPage - 1) / rowsPerPage;
           if (pageNum >= numPages) return Printable.NO_SUCH_PAGE;
 
           // g.drawRect(0, 0, (int)w-1, (int)h-1); // bage border
@@ -813,8 +813,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           header.paintComponent(g, true, (int) (w / scale), headerHeight);
           g.translate(0, headerHeight);
 
-          int heightY = cellHeight * rowsPerPage;
-          int topY = pageNum * heightY;
+          final var heightY = cellHeight * rowsPerPage;
+          final var topY = pageNum * heightY;
           g.translate(0, -topY);
           g.setClip(0, topY, (int) (w / scale), heightY);
           body.paintComponent(g, true, (int) (w / scale), bodyHeight);
