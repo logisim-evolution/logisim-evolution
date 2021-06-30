@@ -80,11 +80,6 @@ public class FPNegator extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    return false;
-  }
-
-  @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();
     painter.drawBounds();
