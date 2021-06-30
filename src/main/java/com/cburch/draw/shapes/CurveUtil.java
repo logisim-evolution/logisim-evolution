@@ -210,9 +210,9 @@ public class CurveUtil {
         double u = 2 * Math.sqrt(-p / 3);
         double v = Math.acos(-Math.sqrt(-27 / p3) * q / 2) / 3;
         return new double[] {
-                u * Math.cos(v) + offset,
-                u * Math.cos(v + 2 * Math.PI / 3) + offset,
-                u * Math.cos(v + 4 * Math.PI / 3) + offset
+          u * Math.cos(v) + offset,
+          u * Math.cos(v + 2 * Math.PI / 3) + offset,
+          u * Math.cos(v + 4 * Math.PI / 3) + offset
         };
       } else {
         // D zero
