@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -14,7 +14,7 @@
   <body>
   <div class="maindiv">
     <h1>
-      <img class="iconlibs" src="../../../../icons/transmis.gif" alt="#########"> <em>Transmission Gate</em>
+      <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" height=16 width=16> <em>Transmission Gate</em>
     </h1>
     <table>
       <tbody>
@@ -39,7 +39,7 @@
             <strong>Appearance:</strong>
           </td>
           <td valign="top">
-            <img class="notscal" src="../../../../img-libs/transmis.png" alt="#########">
+            <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" height="64" width="64">
           </td>
         </tr>
       </tbody>
@@ -66,7 +66,7 @@
               <em>source</em>
             </td>
             <td valign="middle" align="center">
-              <img src="../../../../img-libs/transmis.png" width="44" height="43" alt="#########">
+              <img class="appearancelibs"  src="../../../../img-libs/transmis.png" width="64" height="64" alt="#########">
             </td>
             <td valign="middle">
               <em>drain</em>
@@ -90,92 +90,96 @@
       The values at <em>n-gate</em> and <em>p-gate</em> are expected to be opposite to each other. If <em>p-gate</em> is 0 while <em>n-gate</em> is 1, then the value found at <em>source</em> is transmitted to <em>drain</em>. If <em>p-gate</em> is 1 while <em>p-gate</em> is 0, then the connection is
       broken, so the value at <em>drain</em> is left floating. In all other cases, <em>drain</em> receives an error output — unless <em>source</em> is floating, in which case <em>drain</em> is floating as well. This behavior is summarized by the following table.
     </p>
-    <center>
-      <table>
-        <tbody>
-          <tr>
-            <th>
-              <em>p-gate</em>
-            </th>
-            <th>
-              <em>n-gate</em>
-            </th>
-            <th>
-              <em>drain</em>
-            </th>
-          </tr>
-          <tr>
-            <td align="center">
-              0
-            </td>
-            <td align="center">
-              0
-            </td>
-            <td align="center">
-              X*
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              0
-            </td>
-            <td align="center">
-              1
-            </td>
-            <td align="center">
-              <em>source</em>
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              1
-            </td>
-            <td align="center">
-              0
-            </td>
-            <td align="center">
-              Z
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              1
-            </td>
-            <td align="center">
-              1
-            </td>
-            <td align="center">
-              X*
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              X/Z
-            </td>
-            <td align="center">
-              <em>any</em>
-            </td>
-            <td align="center">
-              X*
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              <em>any</em>
-            </td>
-            <td align="center">
-              X/Z
-            </td>
-            <td align="center">
-              X*
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p>
-        * <em>If <em>source</em> is Z, <em>drain</em> is Z; otherwise <em>drain</em> is X.</em>
+ <center>
+        &gt;
+        <table>
+          <tbody>
+            <tr>
+              <th style="border-bottom: 1px solid">
+                <em>p-gate</em>
+              </th>
+              <th style="border-bottom: 1px solid">
+                <em>n-gate</em>
+              </th>
+              <th style="border-bottom: 1px solid">
+                <em>drain</em>
+              </th>
+            </tr>
+            <tr>
+              <td style="color:#088A29" align="center">
+                0
+              </td>
+              <td style="color:#088A29" align="center">
+                0
+              </td>
+              <td align="center">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#088A29" align="center">
+                0
+              </td>
+              <td style="color:#00FF00" align="center">
+                1
+              </td>
+              <td align="center">
+                <em>source</em>
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#00FF00" align="center">
+                1
+              </td>
+              <td style="color:#088A29" align="center">
+                0
+              </td>
+              <td align="center">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#00FF00" align="center">
+                1
+              </td>
+              <td style="color:#00FF00" align="center">
+                1
+              </td>
+              <td align="center">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td align="center">
+                U/E
+              </td>
+              <td align="center">
+                <em>tout</em>
+              </td>
+              <td align="center">
+                *
+              </td>
+            </tr>
+            <tr>
+              <td align="center">
+                <em>tout</em>
+              </td>
+              <td align="center">
+                U/E
+              </td>
+              <td align="center">
+                *
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  <p>
+        * If <em>source</em> is High impedance, <em>drain</em> is High impedance otherwise <em>drain</em> is in error.
       </p>
-    </center>
+      <p>
+        <b class=note>Note:</b>Since Logisim uses the markers U (High impedance) and E (Error) I used the same in the illustrations rather than the more common Z (High impedance) and X (Error) in other documents
+      </p>
     <p>
       <em>If the Data Bits attribute is more than 1, each <em>gate</em> input is still a single bit, but the <em>gate</em> values are applied simultaneously to each of the <em>source</em> input's bits.</em>
     </p>

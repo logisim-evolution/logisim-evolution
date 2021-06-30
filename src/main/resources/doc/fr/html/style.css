@@ -27,8 +27,8 @@ kbd {
 
 /* For img in the text */
 img.intxt {
-	height:auto;
-	width:auto;
+	height:16;
+	width:16;
 	vertical-align:middle;
 	margin:2px;
 }
@@ -38,10 +38,16 @@ img.notscal {
 	width:auto;
 	vertical-align:middle;
 }
+img.icondocs {
+	height:32;
+	width:32;
+	vertical-align:middle;
+}
 
 img.iconlibs{
-	height:16px;
-	width:16px;
+	height:32;
+	width:32;
+	border:0;
 	vertical-align:middle;
 }
 /* For icon in the text */
@@ -213,8 +219,4 @@ margin-top:5px;
 }
 li  {
 margin-top:5px; 
-}
-
-p.blue {
-  color:#008000;
 }

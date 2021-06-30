@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-01-16T17:28:04.263000000">
+    <meta name="changed" content="2021-06-11T15:12:10:613000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class=maindiv>
+    <div class="maindiv">
       <h1>
         Substituer des librairies
       </h1>
@@ -20,7 +20,7 @@
         Supposons que nous ayons deux circuits Logisim censés faire la même chose. En tant qu'instructeur, vous avez peut-être demandé aux élèves de terminer une tâche: vous avez un fichier contenant votre solution et vous avez plusieurs fichiers d'élèves contenant leur travail. La tâche consistait à créer un additionneur à deux bits.
       </p>
       <p>
-        J'imagine que nous avons deux fichiers, nommés <tt><b>master.circ</b></tt> et <tt><b>query.circ</b></tt>. Chaque fichier contient un circuit nommé <b class=propertie>Adder2</b> (il est important que le nom du circuit à tester soit exactement le même), dont l'apparence est la suivante.
+        J'imagine que nous avons deux fichiers, nommés <tt><b>master.circ</b></tt> et <tt><b>query.circ</b></tt>. Chaque fichier contient un circuit nommé <b class="propertie">Adder2</b> (il est important que le nom du circuit à tester soit exactement le même), dont l'apparence est la suivante.
       </p>
         <table>
           <tbody>
@@ -46,7 +46,7 @@
         Comme vous pouvez le constater, le circuit maître utilise l'additionneur intégré de Logisim, tandis que le circuit de requête utilise un demi-additionneur et un additionneur complet, eux-mêmes composés de portes logiques. Aux fins de notre exemple, le circuit de requête a une erreur stupide: le report <var>carry</var> du demi-additionneur n'est pas connecté à l'additionneur complet.
       </p>
       <p>
-        Nous construisons notre circuit de test dans un fichier différent <tt><b>test.circ</b></tt>. Là, nous chargeons <tt><b>master.circ</b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Charger une Lirairie&nbsp;|</b>→ <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b> , et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que le résultat souhaité correspond à solution parfaite.
+        Nous construisons notre circuit de test dans un fichier différent <tt><b>test.circ</b></tt>. Ensuite, nous chargeons <tt><b>master.circ</b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b>→<b class=menu>|&nbsp;Charger une Lirairie&nbsp;|</b>→ <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b> , et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que le résultat souhaité correspond à solution parfaite.
       </p>
       <blockquote>
 	    <div class=forcode>
@@ -57,7 +57,7 @@
         Mais nous voulons exécuter le circuit en utilisant <tt><b>query.circ</b></tt> plutôt que <tt><b>master.circ</b></tt> comme bibliothèque chargée. Une approche naïve serait d'ouvrir Logisim et de charger adder-query.circ à la place de adder-master.circ ou encore vous pouvez simplement supprimer le fichier <tt><b>master.circ</b></tt> et renommer <tt><b>query.circ</b></tt> pour qu'il s'appelle <tt><b>master.circ</b></tt> . Ces deux approches fonctionnent, mais demandent beaucoup de manipulation pour tester les devoirs d'une classe par exemple. Heureusement Logisim inclut une option pratique <b class=porpertie>-sub</b> qui remplace temporairement un fichier par un autre pendant cette session; sans apporter de modifications sur le disque.
       </p>
       <blockquote>
-	   <div class=forcode>
+	   <div class="forcode">
         <tt>java -jar logisim-evolution.jar test.circ -tty table -sub master.circ query.circ</tt>
 		</div>
       </blockquote>

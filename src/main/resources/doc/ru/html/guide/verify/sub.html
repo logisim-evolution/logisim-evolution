@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<html>
+<html lang="ru">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2021-06-11T15:12:10:613000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>
@@ -22,8 +22,7 @@
       <p>
         Я представлю, что у нас есть два файла с именами <tt><b>adder-master.circ</b></tt> и <tt><b>adder-query.circ</b></tt>. Каждый файл содержит схему с названием <b class="propertie">2-bit adder</b> (важно, чтобы схема для проверки имела точно такое же название), эти схемы выглядят следующим образом.
       </p>
-      <blockquote>
-        <table>
+		<table>
           <tbody>
             <tr>
               <td>
@@ -43,12 +42,11 @@
             </tr>
           </tbody>
         </table>
-      </blockquote>
       <p>
         Как вы видите, эталонная схема использует встроенный в Logisim сумматор, а проверяемая схема использует две подсхемы, представляющие собой полусумматор и полный сумматор (которые в свою очередь построены из простых логических элементов). Для целей нашего примера проверяемая схема имеет глупую ошибку: бит <var>переноса</var> из полусумматора не соединён с полным сумматором.
       </p>
       <p>
-        Мы сохраняем нашу проверяющую схему в отдельный файл. Затем мы загружаем <tt><b>adder-master.circ</b></tt> как библиотеку Logisim (Проект &gt; Загрузить библиотеку &gt; Библиотека Logisim…), и добавляем двухбитный сумматор оттуда как подсхему. Мы могли бы выполнить эту схему непосредственно, чтобы получить желаемый результат для идеального решения.
+        Мы сохраняем нашу проверяющую схему в отдельный файл <tt><b>test.circ</b></tt>. Затем мы загружаем <tt><b>adder-master.circ</b></tt> как библиотеку Logisim <b class=menu>|&nbsp;Проект&nbsp;|</b>→<b class=menu>|&nbsp; Загрузить библиотеку&nbsp;|</b>→ <b class=menu>|&nbsp;Библиотека Logisim…&nbsp;|</b>, и добавляем двухбитный сумматор оттуда как подсхему. Мы могли бы выполнить эту схему непосредственно, чтобы получить желаемый результат для идеального решения.
       </p>
       <blockquote>
         <tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table</tt>
@@ -57,8 +55,12 @@
         Но мы хотим выполнить схему, используя как загруженную библиотеку <tt><b>adder-query.circ</b></tt> вместо <tt><b>adder-master.circ</b></tt>. Наивным подходом будет открыть Logisim и загрузить эту библиотеку; или вы можете просто удалить файл <tt><b>adder-master.circ</b></tt> и переименовать <tt><b>adder-query.circ</b></tt> в <tt><b>adder-master.circ</b></tt> вместо него. Но Logisim включает удобный параметр <b class="porpertie">-sub</b>, который временно заменяет один файл другим в ходе этой сессии - без каких-либо изменений на диске.
       </p>
       <blockquote>
+	  	   <div class="forcode">
         <tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ</tt>
-      </blockquote>Выходной файл, который будет сгенерирован таким образом, показан ниже. Конечно, он отличается от того, что мы видели в предыдущем разделе, потому что общая библиотека для схем <tt><b>adder2</b></tt> была заменена в тестовой схеме на ошибочную библиотеку <tt><b>query.circ</b></tt>.
+			</div>
+      </blockquote>
+	  <p>
+	  Выходной файл, который будет сгенерирован таким образом, показан ниже. Конечно, он отличается от того, что мы видели <a href="index.html">в предыдущем разделе</a>  , потому что общая библиотека для схем <tt><b>adder2</b></tt> была заменена в тестовой схеме на ошибочную библиотеку <tt><b>query.circ</b></tt>.
       <blockquote>
         <pre>00      00      0E0
 01      00      0E1
