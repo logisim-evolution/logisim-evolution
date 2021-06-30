@@ -175,13 +175,13 @@ class MenuEdit extends Menu {
         undo.setText(S.get("editCantUndoItem"));
         undo.setEnabled(false);
       } else {
-        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
+        undo.setText(S.get("editUndoItem", last.getName()));
         undo.setEnabled(true);
       }
 
       Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
       if (next != null) {
-        redo.setText(S.fmt("editRedoItem", next.getName()));
+        redo.setText(S.get("editRedoItem", next.getName()));
         redo.setEnabled(true);
       } else {
         redo.setText(S.get("editCantRedoItem"));

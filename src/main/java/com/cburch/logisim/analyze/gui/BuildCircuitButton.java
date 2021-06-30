@@ -205,7 +205,7 @@ class BuildCircuitButton extends JButton {
           int choice =
               OptionPane.showConfirmDialog(
                   parent,
-                  StringUtil.format(S.get("buildConfirmReplaceMessage"), name),
+                  S.get("buildConfirmReplaceMessage", name),
                   S.get("buildConfirmReplaceTitle"),
                   OptionPane.YES_NO_OPTION);
           if (choice != OptionPane.YES_OPTION) {

@@ -140,14 +140,14 @@ public class ProcessorReadElf {
       case FILE_OPEN_ERROR : return S.get("ProcReadElfErrorOpeningFile");
       case ELF_HEADER_ERROR : return elfHeader.getErrorString();
       case ARCHITECTURE_ERROR:
-        return S.fmt(
+        return S.get(
             "ProcReadElfArchError",
             elfHeader.getArchitectureString(
                 ElfHeader.getIntValue(elfHeader.getValue(ElfHeader.E_MACHINE))),
             elfHeader.getArchitectureString(architecture));
       case NO_EXECUTABLE_ERROR : return S.get("ProcReadElfNotExecutable");
       case ENDIAN_MISMATCH_ERROR:
-        return S.fmt(
+        return S.get(
             "ProcReadElfEndianMismatch",
             elfHeader.isLittleEndian() ? "little endian" : "big endian",
             elfHeader.isLittleEndian() ? "big endian" : "little endian");
@@ -159,7 +159,7 @@ public class ProcessorReadElf {
       case LOADABLE_SECTION_SIZE_ERROR : return S.get("ProcReadElfLoadableSectionSizeError");
       case NOT_SUPPORTED_YET_ERROR : return S.get("ProcReadElf64BitNotSupportedYet");
       case MEM_LOAD_ERROR:
-        return S.fmt(
+        return S.get(
             "ProcReadElfMemoryError", String.format("0x%08X", start), String.format("0x%08X", end));
     }
     return "BUG: Should not happen";

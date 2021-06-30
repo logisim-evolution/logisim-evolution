@@ -166,7 +166,7 @@ public class CsvInterpretor {
   private boolean checkEntries() {
     if (content.size() == 1) {
       OptionPane.showMessageDialog(
-          parent, S.fmt("CsvNoEntries", fileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
+          parent, S.get("CsvNoEntries", fileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     for (int row = 1; row < content.size(); row++) {
@@ -179,7 +179,7 @@ public class CsvInterpretor {
           if (entry == null || entry.length() != 1 || "01-xX".indexOf(entry.charAt(0)) < 0) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvInvalidEntry", row + 1, fileName, entry, col + 1),
+                S.get("CsvInvalidEntry", row + 1, fileName, entry, col + 1),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -196,7 +196,7 @@ public class CsvInterpretor {
       if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvDuplicatedVar", 1, fileName, name),
+            S.get("CsvDuplicatedVar", 1, fileName, name),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return true;
@@ -206,7 +206,7 @@ public class CsvInterpretor {
       if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvDuplicatedVar", 1, fileName, name),
+            S.get("CsvDuplicatedVar", 1, fileName, name),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return true;
@@ -219,7 +219,7 @@ public class CsvInterpretor {
     if (!SyntaxChecker.isVariableNameAcceptable(name, false)) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvIncorrectVarName", 1, fileName, name),
+          S.get("CsvIncorrectVarName", 1, fileName, name),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -235,7 +235,7 @@ public class CsvInterpretor {
       if (content.get(line).size() != nrOfEntries) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvIncorrectLine", line + 1, fileName, content.get(line).size(), nrOfEntries),
+            S.get("CsvIncorrectLine", line + 1, fileName, content.get(line).size(), nrOfEntries),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return false;
@@ -250,7 +250,7 @@ public class CsvInterpretor {
       if (field == null) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvIncorrectEmpty", 1, fileName, idx),
+            S.get("CsvIncorrectEmpty", 1, fileName, idx),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return false;
@@ -270,7 +270,7 @@ public class CsvInterpretor {
           if ("0123456789".indexOf(kar) < 0) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvIncorrectVarName", 1, fileName, field),
+                S.get("CsvIncorrectVarName", 1, fileName, field),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -283,7 +283,7 @@ public class CsvInterpretor {
           if (bitIndex >= sels.size() || !sels.get(bitIndex + 1)) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvIncorrectBitOrder", 1, fileName, name),
+                S.get("CsvIncorrectBitOrder", 1, fileName, name),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -291,7 +291,7 @@ public class CsvInterpretor {
           if (sels.get(bitIndex)) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvDuplicatedBit", 1, fileName, bitIndex, name),
+                S.get("CsvDuplicatedBit", 1, fileName, bitIndex, name),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -322,7 +322,7 @@ public class CsvInterpretor {
         if (nrOfBits <= 0) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvIncorrectVarName", 1, fileName, field),
+              S.get("CsvIncorrectVarName", 1, fileName, field),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -330,7 +330,7 @@ public class CsvInterpretor {
         if (idx + nrOfBits > nrOfEntries) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvNotEnoughEmpty", 1, fileName, field),
+              S.get("CsvNotEnoughEmpty", 1, fileName, field),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -339,7 +339,7 @@ public class CsvInterpretor {
           if (header.get(idx + x) != null) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvNotEnoughEmpty", 1, fileName, field),
+                S.get("CsvNotEnoughEmpty", 1, fileName, field),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -367,7 +367,7 @@ public class CsvInterpretor {
     if (!inOuSepDetected) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvNoSepFound", 1, fileName),
+          S.get("CsvNoSepFound", 1, fileName),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -375,7 +375,7 @@ public class CsvInterpretor {
     if (inputs.bits.isEmpty()) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvNoInputsFound", 1, fileName),
+          S.get("CsvNoInputsFound", 1, fileName),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -386,7 +386,7 @@ public class CsvInterpretor {
         if (!bit.get(x)) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvBitNotSpecified", 1, fileName, x, key),
+              S.get("CsvBitNotSpecified", 1, fileName, x, key),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -406,7 +406,7 @@ public class CsvInterpretor {
     } catch (FileNotFoundException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("cantReadMessage", file.getName()),
+          S.get("cantReadMessage", file.getName()),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
     }

@@ -487,8 +487,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       case P_Y:
         return S.get("rgbVideoY");
       case P_DATA:
-        final var attrs = getAttributeSet();
-        return S.fmt("rgbVideoData", attrs.getValue(COLOR_OPTION));
+        AttributeSet attrs = getAttributeSet();
+        return S.get("rgbVideoData", attrs.getValue(COLOR_OPTION));
       case P_RST:
         return S.get("rgbVideoRST");
       default:

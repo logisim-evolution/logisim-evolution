@@ -208,8 +208,8 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
         y += ROW_HEIGHT;
       }
     } else {
-       var str = S.fmt("ttyDesc", "" + rows, "" + cols);
-      final var fm = g.getFontMetrics();
+      var str = S.get("ttyDesc", "" + rows, "" + cols);
+      var fm = g.getFontMetrics();
       int strWidth = fm.stringWidth(str);
       if (strWidth + BORDER > bds.getWidth()) {
         str = S.get("ttyDescShort");

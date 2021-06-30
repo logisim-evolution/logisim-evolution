@@ -293,7 +293,14 @@ public class LocaleManager {
     return ret;
   }
 
-  /* kwalsh >> */
+  public String get(String key, Object... args) {
+    return String.format(get(key), args);
+  }
+
+  /**
+   * @Deprecated Use get(key, ...)
+   *
+   */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);
   }

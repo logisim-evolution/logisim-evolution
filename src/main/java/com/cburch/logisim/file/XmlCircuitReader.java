@@ -78,15 +78,15 @@ public class XmlCircuitReader extends CircuitTransaction {
     final var libName = elt.getAttribute("lib");
     final var lib = reader.findLibrary(libName);
     if (lib == null) {
-      throw new XmlReaderException(S.fmt("compUnknownError", "no-lib"));
+      throw new XmlReaderException(S.get("compUnknownError", "no-lib"));
     }
 
     final var tool = lib.getTool(name);
     if (!(tool instanceof AddTool)) {
       if (libName == null || libName.equals("")) {
-        throw new XmlReaderException(S.fmt("compUnknownError", name));
+        throw new XmlReaderException(S.get("compUnknownError", name));
       } else {
-        throw new XmlReaderException(S.fmt("compAbsentError", name, libName));
+        throw new XmlReaderException(S.get("compAbsentError", name, libName));
       }
     }
     final var source = ((AddTool) tool).getFactory();
@@ -103,13 +103,13 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     // Create component if location known
     if (locStr == null || locStr.equals("")) {
-      throw new XmlReaderException(S.fmt("compLocMissingError", source.getName()));
+      throw new XmlReaderException(S.get("compLocMissingError", source.getName()));
     } else {
       try {
         final var loc = Location.parse(locStr);
         return source.createComponent(loc, attrs);
       } catch (NumberFormatException e) {
-        throw new XmlReaderException(S.fmt("compLocInvalidError", source.getName(), locStr));
+        throw new XmlReaderException(S.get("compLocInvalidError", source.getName(), locStr));
       }
     }
   }
@@ -229,7 +229,7 @@ public class XmlCircuitReader extends CircuitTransaction {
             final var conflict = componentsAt.get(bds);
             if (conflict != null) {
               reader.addError(
-                  S.fmt(
+                  S.get(
                       "fileComponentOverlapError",
                       conflict.getFactory().getName() + conflict.getLocation(),
                       comp.getFactory().getName() + conflict.getLocation()),
@@ -277,14 +277,14 @@ public class XmlCircuitReader extends CircuitTransaction {
           final var m = AppearanceSvgReader.createShape(sub, null, dest);
           if (m == null) {
             reader.addError(
-                S.fmt("fileAppearanceNotFound", sub.getTagName()),
+                S.get("fileAppearanceNotFound", sub.getTagName()),
                 circData.circuit.getName() + "." + sub.getTagName());
           } else {
             shapes.add(m);
           }
         } catch (RuntimeException e) {
           reader.addError(
-              S.fmt("fileAppearanceError", sub.getTagName()),
+              S.get("fileAppearanceError", sub.getTagName()),
               circData.circuit.getName() + "." + sub.getTagName());
         }
       }

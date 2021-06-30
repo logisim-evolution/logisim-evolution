@@ -91,7 +91,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     void updateTable() {
       computePreferredSize();
       expand.setEnabled(getRowCount() < table.getRowCount());
-      count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
+      count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
       body.setSize(new Dimension(body.getWidth(), table.getRowCount() * cellHeight));
       repaint();
     }
@@ -100,7 +100,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     public void localeChanged() {
       expand.setText(S.get("tableExpand"));
       compact.setText(S.get("tableCompact"));
-      count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
+      count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
     }
   }
 
@@ -264,7 +264,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
   private final TightButton expand = new TightButton(S.get("tableExpand"));
   private final TightButton compact = new TightButton(S.get("tableCompact"));
-  private final JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
+  private final JLabel count = new JLabel(S.get("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private static class TightButton extends JButton {
     private static final long serialVersionUID = 1L;
@@ -364,7 +364,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.setActionCommand("expand");
 
     expand.setEnabled(getRowCount() < table.getRowCount());
-    count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
+    count.setText(S.get("tableRowsShown", getRowCount(), table.getRowCount()));
 
     final var layout = new GridBagLayout();
     setLayout(layout);

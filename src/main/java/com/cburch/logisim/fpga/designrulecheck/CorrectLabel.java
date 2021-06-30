@@ -64,7 +64,7 @@ public class CorrectLabel {
     for (int i = 0; i < Label.length(); i++) {
       if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
           && !Numbers.contains(Label.substring(i, i + 1))) {
-        return ErrorIdentifierString + S.fmt("IllegalChar", Label.substring(i, i + 1));
+        return ErrorIdentifierString + S.get("IllegalChar", Label.substring(i, i + 1));
       }
     }
     if (HDL.isVHDL()) {

@@ -497,7 +497,7 @@ public class ShiftRegister extends InstanceFactory {
           final var a = S.get("shiftRegisterLabel1");
           GraphicsUtil.drawCenteredText(g, a, x, y + h / 4);
         }
-        final var b = S.fmt("shiftRegisterLabel2", "" + len, "" + wid);
+        var b = S.get("shiftRegisterLabel2", "" + len, "" + wid);
         GraphicsUtil.drawCenteredText(g, b, x, y + 3 * h / 4);
       }
     }

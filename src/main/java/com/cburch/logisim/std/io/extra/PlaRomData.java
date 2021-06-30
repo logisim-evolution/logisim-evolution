@@ -139,7 +139,7 @@ public class PlaRomData implements InstanceData {
         OptionPane.showOptionDialog(
             null,
             panel,
-            S.fmt("PlaEditWindowTitel", getSizeString()),
+            S.get("PlaEditWindowTitel", getSizeString()),
             OptionPane.OK_CANCEL_OPTION,
             OptionPane.PLAIN_MESSAGE,
             null,

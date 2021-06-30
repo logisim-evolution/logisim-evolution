@@ -218,7 +218,7 @@ class LibraryManager {
         return desc.toDescriptor(loader);
       } else {
         throw new LoaderException(
-            StringUtil.format(S.get("fileDescriptorUnknownError"), lib.getDisplayName()));
+            S.get("fileDescriptorUnknownError", lib.getDisplayName()));
       }
     }
   }
@@ -255,7 +255,7 @@ class LibraryManager {
     // Otherwise we'll have to decode it.
     int sep = desc.indexOf(desc_sep);
     if (sep < 0) {
-      loader.showError(StringUtil.format(S.get("fileDescriptorError"), desc));
+      loader.showError(S.get("fileDescriptorError", desc));
       return null;
     }
     final var type = desc.substring(0, sep);
@@ -265,7 +265,7 @@ class LibraryManager {
       case "":
         final var ret = loader.getBuiltin().getLibrary(name);
         if (ret == null) {
-          loader.showError(StringUtil.format(S.get("fileBuiltinMissingError"), name));
+          loader.showError(S.get("fileBuiltinMissingError", name));
           return null;
         }
         return ret;
@@ -281,7 +281,7 @@ class LibraryManager {
         return loadJarLibrary(loader, toRead, className);
       }
       default:
-        loader.showError(StringUtil.format(S.get("fileTypeError"), type, desc));
+        loader.showError(S.get("fileTypeError", type, desc));
         return null;
     }
   }
@@ -306,7 +306,7 @@ class LibraryManager {
   public void reload(Loader loader, LoadedLibrary lib) {
     final var descriptor = invMap.get(lib);
     if (descriptor == null) {
-      loader.showError(StringUtil.format(S.get("unknownLibraryFileError"), lib.getDisplayName()));
+      loader.showError(S.get("unknownLibraryFileError", lib.getDisplayName()));
     } else {
       try {
         descriptor.setBase(loader, lib);

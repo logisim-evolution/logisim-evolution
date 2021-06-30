@@ -64,7 +64,7 @@ class NegateAttribute extends Attribute<Boolean> {
 
   @Override
   public String getDisplayName() {
-    var ret = StringUtil.format(S.get("gateNegateAttr"), "" + (index + 1));
+    String ret = S.get("gateNegateAttr", "" + (index + 1));
     if (side != null) {
       ret += " (" + side.toVerticalDisplayString() + ")";
     }

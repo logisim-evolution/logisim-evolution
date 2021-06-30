@@ -180,6 +180,7 @@ public class Loader implements LibraryLoader {
     return ref == null ? null : ref.getParentFile();
   }
 
+  @Override
   public String getDescriptor(Library lib) {
     return LibraryManager.instance.getDescriptor(this, lib);
   }
@@ -199,7 +200,7 @@ public class Loader implements LibraryLoader {
       OptionPane.showMessageDialog(parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
       final var chooser = createChooser();
       chooser.setFileFilter(filter);
-      chooser.setDialogTitle(StringUtil.format(S.get("fileLibraryMissingTitle"), file.getName()));
+      chooser.setDialogTitle(S.get("fileLibraryMissingTitle", file.getName()));
       int action = chooser.showDialog(parent, S.get("fileLibraryMissingButton"));
       if (action != JFileChooser.APPROVE_OPTION) {
         throw new LoaderException(S.get("fileLoadCanceledError"));
@@ -232,10 +233,10 @@ public class Loader implements LibraryLoader {
     try {
       retClass = loader.loadClass(className);
     } catch (ClassNotFoundException e) {
-      throw new LoadFailedException(StringUtil.format(S.get("jarClassNotFoundError"), className));
+      throw new LoadFailedException(S.get("jarClassNotFoundError", className));
     }
     if (!(Library.class.isAssignableFrom(retClass))) {
-      throw new LoadFailedException(StringUtil.format(S.get("jarClassNotLibraryError"), className));
+      throw new LoadFailedException(S.get("jarClassNotLibraryError", className));
     }
 
     // instantiate library
@@ -243,8 +244,7 @@ public class Loader implements LibraryLoader {
     try {
       ret = (Library) retClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
-      throw new LoadFailedException(
-          StringUtil.format(S.get("jarLibraryNotCreatedError"), className));
+      throw new LoadFailedException(S.get("jarLibraryNotCreatedError", className));
     }
     return ret;
   }
@@ -257,6 +257,7 @@ public class Loader implements LibraryLoader {
   //
   // Library methods
   //
+  @Override
   public Library loadLibrary(String desc) {
     return LibraryManager.instance.loadLibrary(this, desc);
   }
@@ -268,8 +269,7 @@ public class Loader implements LibraryLoader {
     final var actual = getSubstitution(request);
     for (final var fileOpening : filesOpening) {
       if (fileOpening.equals(actual)) {
-        throw new LoadFailedException(
-            StringUtil.format(S.get("logisimCircularError"), toProjectName(actual)));
+        throw new LoadFailedException(S.get("logisimCircularError", toProjectName(actual)));
       }
     }
 
@@ -278,8 +278,7 @@ public class Loader implements LibraryLoader {
     try {
       ret = LogisimFile.load(actual, this);
     } catch (IOException e) {
-      throw new LoadFailedException(
-          StringUtil.format(S.get("logisimLoadError"), toProjectName(actual), e.toString()));
+      throw new LoadFailedException(S.get("logisimLoadError", toProjectName(actual), e.toString()));
     } finally {
       filesOpening.pop();
     }
@@ -339,7 +338,7 @@ public class Loader implements LibraryLoader {
     if (reference != null) {
       OptionPane.showMessageDialog(
           parent,
-          StringUtil.format(S.get("fileCircularError"), reference.getDisplayName()),
+          S.get("fileCircularError", reference.getDisplayName()),
           S.get("fileSaveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -362,7 +361,7 @@ public class Loader implements LibraryLoader {
       if (dest.exists() && dest.length() == 0) dest.delete();
       OptionPane.showMessageDialog(
           parent,
-          StringUtil.format(S.get("fileSaveError"), e.toString()),
+          S.get("fileSaveError", e.toString()),
           S.get("fileSaveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -375,7 +374,7 @@ public class Loader implements LibraryLoader {
           if (dest.exists() && dest.length() == 0) dest.delete();
           OptionPane.showMessageDialog(
               parent,
-              StringUtil.format(S.get("fileSaveCloseError"), e.toString()),
+              S.get("fileSaveCloseError", e.toString()),
               S.get("fileSaveErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -411,6 +410,7 @@ public class Loader implements LibraryLoader {
     parent = value;
   }
 
+  @Override
   public void showError(String description) {
     if (!filesOpening.empty()) {
       final var top = filesOpening.peek();

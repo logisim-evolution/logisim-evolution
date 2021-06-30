@@ -372,7 +372,7 @@ public class VariableTab extends AnalyzerTab {
       for (int i = 1; i < text.length() && err == OK; i++) {
         final var c = text.charAt(i);
         if (!Character.isJavaIdentifierPart(c)) {
-          error.setText(S.fmt("variablePartError", "" + c));
+          error.setText(S.get("variablePartError", "" + c));
           err = BAD_NAME;
         }
       }
@@ -400,7 +400,7 @@ public class VariableTab extends AnalyzerTab {
     }
     if (err == OK || err == EMPTY) {
       if (data.bits.size() + w > data.getMaximumSize()) {
-        error.setText(StringUtil.format(S.get("variableMaximumError"), "" + data.getMaximumSize()));
+        error.setText(S.get("variableMaximumError", "" + data.getMaximumSize()));
         err = TOO_WIDE;
       } else {
         error.setText(" ");

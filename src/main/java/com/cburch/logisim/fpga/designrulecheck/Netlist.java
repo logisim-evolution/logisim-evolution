@@ -359,7 +359,7 @@ public class Netlist implements CircuitListener {
        * in the current implementation of logisim this should never
        * happen, but we leave it in
        */
-      Reporter.Report.AddFatalError(S.fmt("MultipleSheetSameName", MyCircuit.getName()));
+      Reporter.Report.AddFatalError(S.get("MultipleSheetSameName", MyCircuit.getName()));
       DRCStatus |= DRC_ERROR;
     } else {
       Sheetnames.add(MyCircuit.getName());
@@ -454,7 +454,7 @@ public class Netlist implements CircuitListener {
           }
           if (!CorrectLabel.IsCorrectLabel(
               comp.getFactory().getName(),
-              S.fmt("FoundBadComponent", comp.getFactory().getName(), MyCircuit.getName()))) {
+              S.get("FoundBadComponent", comp.getFactory().getName(), MyCircuit.getName()))) {
             DRCStatus |= DRC_ERROR;
           }
           SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
@@ -484,7 +484,7 @@ public class Netlist implements CircuitListener {
      * Okay we now know for sure that all elements are supported, lets build
      * the net list
      */
-    Reporter.Report.AddInfo(S.fmt("BuildingNetlistFor", MyCircuit.getName()));
+    Reporter.Report.AddInfo(S.get("BuildingNetlistFor", MyCircuit.getName()));
     if (!this.GenerateNetlist()) {
       this.clear();
       DRCStatus = DRC_ERROR;
@@ -584,7 +584,7 @@ public class Netlist implements CircuitListener {
               + LocalNrOfOutportBubles
               + LocalNrOfInOutBubles;
       if (ports == 0) {
-        Reporter.Report.AddFatalError(S.fmt("TopLevelNoIO", MyCircuit.getName()));
+        Reporter.Report.AddFatalError(S.get("TopLevelNoIO", MyCircuit.getName()));
         DRCStatus = DRC_ERROR;
         return DRCStatus | CommonDRCStatus;
       }
@@ -595,9 +595,8 @@ public class Netlist implements CircuitListener {
       }
     }
 
-    Reporter.Report.AddInfo(
-        S.fmt("CircuitInfoString", MyCircuit.getName(), NumberOfNets(), NumberOfBusses()));
-    Reporter.Report.AddInfo(S.fmt("DRCPassesString", MyCircuit.getName()));
+    Reporter.Report.AddInfo(S.get("CircuitInfoString", MyCircuit.getName(), NumberOfNets(), NumberOfBusses()));
+    Reporter.Report.AddInfo(S.get("DRCPassesString", MyCircuit.getName()));
     DRCStatus = DRC_PASSED;
     return DRCStatus | CommonDRCStatus;
   }
@@ -675,7 +674,7 @@ public class Netlist implements CircuitListener {
       curVal = progress.getValue();
       curStr = progress.getString();
       progress.setMaximum(7);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 1));
+      progress.setString(S.get("NetListBuild", CircuitName, 1));
     }
 
     wires.clear();
@@ -781,7 +780,7 @@ public class Netlist implements CircuitListener {
     }
     if (progress != null) {
       progress.setValue(1);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 2));
+      progress.setString(S.get("NetListBuild", CircuitName, 2));
     }
     /*
      * Now we check if an input pin is connected to an output and in case of
@@ -821,7 +820,7 @@ public class Netlist implements CircuitListener {
 
     if (progress != null) {
       progress.setValue(2);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 3));
+      progress.setString(S.get("NetListBuild", CircuitName, 3));
     }
     /*
      * Here we are going to process the tunnels and possible merging of the
@@ -877,7 +876,7 @@ public class Netlist implements CircuitListener {
     }
     if (progress != null) {
       progress.setValue(3);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 4));
+      progress.setString(S.get("NetListBuild", CircuitName, 4));
     }
 
     /* At this point all net segments are build. All tunnels have been removed.
@@ -1034,7 +1033,7 @@ public class Netlist implements CircuitListener {
 
     if (progress != null) {
       progress.setValue(4);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 5));
+      progress.setString(S.get("NetListBuild", CircuitName, 5));
     }
     /*
      * Finally we have to process the splitters to determine the bus
@@ -1130,7 +1129,7 @@ public class Netlist implements CircuitListener {
     }
     if (progress != null) {
       progress.setValue(5);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 6));
+      progress.setString(S.get("NetListBuild", CircuitName, 6));
     }
     /*
      * Now the complete netlist is created, we have to check that each
@@ -1167,7 +1166,7 @@ public class Netlist implements CircuitListener {
     }
     if (progress != null) {
       progress.setValue(6);
-      progress.setString(S.fmt("NetListBuild", CircuitName, 7));
+      progress.setString(S.get("NetListBuild", CircuitName, 7));
     }
 
     /*

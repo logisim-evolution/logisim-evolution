@@ -176,11 +176,11 @@ public class MenuSimulate extends Menu {
             (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001);
         final String freqHz =
             "" + ((small) ? (int) Math.round(supportedTickFrequency) : supportedTickFrequency);
-        result.add(StringUtil.format(S.get("simulateTickFreqItem"), freqHz));
+        result.add(S.get("simulateTickFreqItem", freqHz));
       } else {
         double kf = Math.round(supportedTickFrequency / 100) / 10.0;
         final var freqKhz = "" + ((kf == Math.round(kf)) ? (int) kf : kf);
-        result.add(StringUtil.format(S.get("simulateTickKFreqItem"), freqKhz));
+        result.add(S.get("simulateTickKFreqItem", freqKhz));
       }
     }
     return result;
@@ -462,11 +462,11 @@ public class MenuSimulate extends Menu {
       if (f < 1000) {
         var small = Math.abs(f - Math.round(f)) < 0.0001;
         final var freqHz = "" + (small ? (int) Math.round(f) : f);
-        setText(StringUtil.format(S.get("simulateTickFreqItem"), freqHz));
+        setText(S.get("simulateTickFreqItem", freqHz));
       } else {
         double kf = Math.round(f / 100) / 10.0;
         final var freqKhz = "" + ((kf == Math.round(kf)) ? (int) kf : kf);
-        setText(StringUtil.format(S.get("simulateTickKFreqItem"), freqKhz));
+        setText(S.get("simulateTickKFreqItem", freqKhz));
       }
     }
   }

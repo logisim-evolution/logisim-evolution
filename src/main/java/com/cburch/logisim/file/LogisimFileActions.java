@@ -186,7 +186,7 @@ public class LogisimFileActions {
                 final var Reponse =
                     OptionPane.showConfirmDialog(
                         null,
-                        S.fmt("FileMergeQuestion", circ.getName()),
+                        S.get("FileMergeQuestion", circ.getName()),
                         S.get("FileMergeTitle"),
                         OptionPane.YES_NO_OPTION);
                 if (Reponse == OptionPane.YES_OPTION) {
