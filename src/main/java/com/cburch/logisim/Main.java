@@ -96,10 +96,10 @@ public class Main {
   public static final String APP_URL = "https://github.com/logisim-evolution/";
 
   public static boolean ANALYZE = true;
-  public static boolean headless = false;
-  public static final boolean MacOS = MacCompatibility.isRunningOnMac();
+  public static boolean isHeadless = false;
+  public static final boolean isMacOS = MacCompatibility.isRunningOnMac();
 
   public static boolean hasGui() {
-    return !headless;
+    return !isHeadless;
   }
 }

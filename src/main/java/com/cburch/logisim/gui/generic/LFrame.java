@@ -106,7 +106,7 @@ public class LFrame extends JFrame implements WindowClosable {
     if (type == MAIN_WINDOW) {
       menubar = new LogisimMenuBar(this, p, p, p);
       setJMenuBar(menubar);
-    } else if (type == SUB_WINDOW || Main.MacOS) {
+    } else if (type == SUB_WINDOW || Main.isMacOS) {
       // use null project so there will be no Close, Save, etc.
       menubar = new LogisimMenuBar(this, null, p, enableSim ? p : null);
       setJMenuBar(menubar);

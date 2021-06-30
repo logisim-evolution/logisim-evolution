@@ -399,10 +399,12 @@ public class HexFile {
 
   private static FileFilter getFilter(String desc) {
     return new FileFilter() {
+      @Override
       public String getDescription() {
         return desc;
       }
 
+      @Override
       public boolean accept(File f) {
         return true;
       }
@@ -491,7 +493,7 @@ public class HexFile {
   }
 
   private static void randomTests(java.util.Random rng) throws Exception {
-    Main.headless = true;
+    Main.isHeadless = true;
     int addrSize = rng.nextInt(14) + 1;
     int wordSize = rng.nextInt(64) + 1;
     System.out.printf("Testing addrSize = %d, wordSize = %d\n", addrSize, wordSize);
@@ -860,18 +862,21 @@ public class HexFile {
           new JScrollPane(warnings) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public Dimension getMinimumSize() {
               Dimension d = super.getMaximumSize();
               d.height = scaled(60);
               return d;
             }
 
+            @Override
             public Dimension getPreferredSize() {
               Dimension d = super.getPreferredSize();
               d.height = scaled(80);
               return d;
             }
 
+            @Override
             public Dimension getMaximumSize() {
               Dimension d = super.getMaximumSize();
               d.height = scaled(120);
@@ -949,15 +954,18 @@ public class HexFile {
       return value;
     }
 
+    @Override
     public void okClicked() {
       value = true;
     }
 
+    @Override
     public void cancelClicked() {
       value = false;
     }
 
     private class MyListener implements ActionListener {
+      @Override
       public void actionPerformed(ActionEvent event) {
         setEnables();
         reader.tags.clear();
@@ -1167,7 +1175,7 @@ public class HexFile {
     }
 
     MemContents warnAndAsk(String errmsg) {
-      if (Main.headless) {
+      if (Main.isHeadless) {
         System.out.println(errmsg);
         System.out.println("Warnings:\n" + warnings.toString());
         return null;
@@ -1939,6 +1947,7 @@ public class HexFile {
       refresh();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent changeEvent) {
       String changeName = changeEvent.getPropertyName();
       if (changeName.equals(JFileChooser.FILE_FILTER_CHANGED_PROPERTY)) {

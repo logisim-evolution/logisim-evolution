@@ -52,7 +52,6 @@ import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.Gates;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -179,7 +178,7 @@ public class Startup implements AWTEventListener {
     for (String value : args) {
       if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
         isTty = true;
-        Main.headless = true;
+        Main.isHeadless = true;
       } else if (value.equals("-clearprefs") || value.equals("-clearprops")) {
         isClearPreferences = true;
       }
