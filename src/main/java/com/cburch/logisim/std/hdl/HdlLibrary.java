@@ -44,7 +44,7 @@ public class HdlLibrary extends Library {
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "HDL";
+  public static final String _ID = "HDL-IP";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(VhdlEntityComponent.class, S.getter("vhdlComponent"), new ArithmeticIcon("VHDL")),
