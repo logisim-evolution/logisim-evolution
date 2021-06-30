@@ -53,7 +53,7 @@ jobs:
   build:
     name: "Building application"
     needs: analyze_sources
-    if: analyze_sources.check.output.run_build == 'true'
+    if: needs.analyze_sources.check.output.run_build == 'true'
 
     runs-on: ubuntu-latest
 
