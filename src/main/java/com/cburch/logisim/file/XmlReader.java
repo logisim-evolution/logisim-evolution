@@ -131,7 +131,7 @@ class XmlReader {
 
       Library ret = libs.get(lib_name);
       if (ret == null) {
-        throw new XmlReaderException(StringUtil.format(S.get("libMissingError"), lib_name));
+        throw new XmlReaderException(S.get("libMissingError", lib_name));
       } else {
         return ret;
       }
@@ -209,7 +209,7 @@ class XmlReader {
             attrs.setValue(attr, val);
           } catch (NumberFormatException e) {
             if (messages == null) messages = new ArrayList<>();
-            messages.add(StringUtil.format(S.get("attrValueInvalidError"), attrVal, attrName));
+            messages.add(S.get("attrValueInvalidError", attrVal, attrName));
           }
         }
       }
@@ -238,7 +238,7 @@ class XmlReader {
         try {
           mods = InputEventUtil.fromString(mods_str);
         } catch (NumberFormatException e) {
-          loader.showError(StringUtil.format(S.get("mappingBadError"), mods_str));
+          loader.showError(S.get("mappingBadError", mods_str));
           continue;
         }
 
@@ -360,15 +360,12 @@ class XmlReader {
         try {
           AbstractCanvasObject m = AppearanceSvgReader.createShape(sub, pins, null);
           if (m == null) {
-            addError(
-                S.fmt("fileAppearanceNotFound", sub.getTagName()),
-                context + "." + sub.getTagName());
+            addError(S.get("fileAppearanceNotFound", sub.getTagName()), context + "." + sub.getTagName());
           } else {
             shapes.add(m);
           }
         } catch (RuntimeException e) {
-          addError(
-              S.fmt("fileAppearanceError", sub.getTagName()), context + "." + sub.getTagName());
+          addError(S.get("fileAppearanceError", sub.getTagName()), context + "." + sub.getTagName());
         }
       }
       if (!shapes.isEmpty()) {

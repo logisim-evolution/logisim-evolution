@@ -150,7 +150,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     } catch (FileNotFoundException e) {
       OptionPane.showMessageDialog(
           this,
-          S.fmt("cantReadMessage", file.getName()),
+          S.get("cantReadMessage", file.getName()),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       setVisible = false;

@@ -56,7 +56,7 @@ public class ModelTranslateAction extends ModelAction {
 
   @Override
   public String getName() {
-    return S.fmt("actionTranslate", getShapesName(moved));
+    return S.get("actionTranslate", getShapesName(moved));
   }
 
   @Override

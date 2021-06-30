@@ -217,7 +217,7 @@ public class AssemblerPanel extends JPanel
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("AsmPanErrorReadingFile", textFile.getName()),
+          S.get("AsmPanErrorReadingFile", textFile.getName()),
           parent.getParentTitle(),
           OptionPane.ERROR_MESSAGE);
       textFile = null;
@@ -252,7 +252,7 @@ public class AssemblerPanel extends JPanel
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("AsmPanErrorCreateFile", textFile.getName()),
+          S.get("AsmPanErrorCreateFile", textFile.getName()),
           parent.getParentTitle(),
           OptionPane.ERROR_MESSAGE);
     }
@@ -283,7 +283,7 @@ public class AssemblerPanel extends JPanel
 
   private void updateLineNumber() {
     Line.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
-    Line.setText(S.fmt("RV32imAsmLineIndicator", lineNumber, numberOfLines));
+    Line.setText(S.get("RV32imAsmLineIndicator", lineNumber, numberOfLines));
     Line.repaint();
   }
 

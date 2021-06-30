@@ -210,7 +210,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
         y += ROW_HEIGHT;
       }
     } else {
-      String str = S.fmt("ttyDesc", "" + rows, "" + cols);
+      String str = S.get("ttyDesc", "" + rows, "" + cols);
       FontMetrics fm = g.getFontMetrics();
       int strWidth = fm.stringWidth(str);
       if (strWidth + BORDER > bds.getWidth()) {

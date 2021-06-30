@@ -81,12 +81,12 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
   // used only for automated testing via command line arguments
   public static int doTestVector(Project proj, Circuit circuit, String vectorname) {
-    System.out.println(StringUtil.format(S.get("testLoadingVector"), vectorname));
+    System.out.println(S.get("testLoadingVector", vectorname));
     TestVector vec;
     try {
       vec = new TestVector(vectorname);
     } catch (Exception e) {
-      System.err.println(StringUtil.format(S.get("testLoadingFailed"), e.getMessage()));
+      System.err.println(S.get("testLoadingFailed", e.getMessage()));
       return -1;
     }
 
@@ -94,11 +94,11 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
     try {
       tester = new TestThread(proj, circuit, vec);
     } catch (TestException e) {
-      System.err.println(StringUtil.format(S.get("testSetupFailed"), e.getMessage()));
+      System.err.println(S.get("testSetupFailed", e.getMessage()));
       return -1;
     }
 
-    System.out.println(StringUtil.format(S.get("testRunning"), Integer.toString(vec.data.size())));
+    System.out.println(S.get("testRunning", Integer.toString(vec.data.size())));
 
     int numPass = 0;
     int numFail = 0;
@@ -109,12 +109,12 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         numPass++;
       } catch (FailException e) {
         System.out.println();
-        System.err.println(StringUtil.format(S.get("testFailed"), Integer.toString(i + 1)));
+        System.err.println(S.get("testFailed", Integer.toString(i + 1)));
         for (FailException e1 : e.getAll()) System.out.println("  " + e1.getMessage());
         numFail++;
       } catch (TestException e) {
         System.out.println();
-        System.err.println(StringUtil.format(S.get("testFailed"), (i + 1) + " " + e.getMessage()));
+        System.err.println(S.get("testFailed", (i + 1) + " " + e.getMessage()));
         numFail++;
       }
     }

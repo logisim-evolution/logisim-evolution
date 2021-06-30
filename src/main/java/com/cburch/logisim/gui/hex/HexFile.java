@@ -345,7 +345,7 @@ public class HexFile {
         int confirm =
             OptionPane.showConfirmDialog(
                 parent,
-                S.fmt("confirmOverwriteMessage", f.getName()),
+                S.get("confirmOverwriteMessage", f.getName()),
                 S.get("confirmOverwriteTitle"),
                 OptionPane.YES_NO_OPTION);
         if (confirm != OptionPane.YES_OPTION) return;
@@ -365,7 +365,7 @@ public class HexFile {
     try {
       out = new FileOutputStream(f);
     } catch (IOException e) {
-      throw new IOException(S.fmt("hexFileOpenError", e.getMessage()));
+      throw new IOException(S.get("hexFileOpenError", e.getMessage()));
     }
     out.write(headerForFormat(desc).getBytes(StandardCharsets.UTF_8));
     new HexWriter(out, src, desc).save();
@@ -1791,7 +1791,7 @@ public class HexFile {
           o.close();
         } catch (IOException ignored) {
         }
-        throw new IOException(S.fmt("hexFileWriteError", e.getMessage()));
+        throw new IOException(S.get("hexFileWriteError", e.getMessage()));
       } finally {
         if (cOut != null) cOut.close();
         bOut.close();

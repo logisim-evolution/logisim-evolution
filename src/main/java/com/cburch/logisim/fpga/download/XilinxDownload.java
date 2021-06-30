@@ -179,7 +179,7 @@ public class XilinxDownload implements VendorDownload {
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.Report.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
+        Reporter.Report.AddFatalError(S.get("XilinxOpenFailure", bitfile));
         return null;
       }
       File usbtmc = new File("/dev/usbtmc0");
@@ -240,7 +240,7 @@ public class XilinxDownload implements VendorDownload {
     Contents.add("setmode -bscan");
     if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
       if (BoardInfo.fpga.getFlashName() == null) {
-        Reporter.Report.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
+        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", BoardInfo.getBoardName()));
       }
       String FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
       String McsFile = ScriptPath + File.separator + mcs_file;

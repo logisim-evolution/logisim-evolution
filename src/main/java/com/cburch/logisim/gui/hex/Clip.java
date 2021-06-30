@@ -147,7 +147,7 @@ class Clip implements ClipboardOwner {
         int action =
             OptionPane.showConfirmDialog(
                 editor.getRootPane(),
-                S.fmt("hexPasteTooSmall", numWords, p1 - p0),
+                S.get("hexPasteTooSmall", numWords, p1 - p0),
                 S.get("hexPasteErrorTitle"),
                 OptionPane.OK_CANCEL_OPTION,
                 OptionPane.QUESTION_MESSAGE);
@@ -157,7 +157,7 @@ class Clip implements ClipboardOwner {
         int action =
             OptionPane.showConfirmDialog(
                 editor.getRootPane(),
-                S.fmt("hexPasteTooSmall", numWords, p1 - p0),
+                S.get("hexPasteTooSmall", numWords, p1 - p0),
                 S.get("hexPasteErrorTitle"),
                 OptionPane.OK_CANCEL_OPTION,
                 OptionPane.QUESTION_MESSAGE);

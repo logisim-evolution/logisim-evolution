@@ -70,7 +70,7 @@ public class BoardPainter {
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
     g.drawString(message, xpos, 200);
     message =
-        S.fmt("BoardPainterMsg3", BoardManipulator.IMAGE_WIDTH, BoardManipulator.IMAGE_HEIGHT);
+        S.get("BoardPainterMsg3", BoardManipulator.IMAGE_WIDTH, BoardManipulator.IMAGE_HEIGHT);
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
     g.drawString(message, xpos, (200 + (int) (1.5 * fm.getAscent())));
     message = S.get("BoardPainterMsg4");
@@ -79,7 +79,7 @@ public class BoardPainter {
     message = S.get("BoardPainterMsg5");
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
     g.drawString(message, xpos, (200 + (int) (4.5 * fm.getAscent())));
-    message = S.fmt("BoardPainterMsg6", bm.getWidth(), bm.getHeight());
+    message = S.get("BoardPainterMsg6", bm.getWidth(), bm.getHeight());
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
     g.drawString(message, xpos, (200 + (6 * fm.getAscent())));
   }
@@ -106,7 +106,7 @@ public class BoardPainter {
     g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
     g.drawRect(xpos, ypos, width, height);
     String val = constant ? S.get("BoardMapValue") : Integer.toString(value);
-    String txt = S.fmt("BoardMapConstant", val);
+    String txt = S.get("BoardMapConstant", val);
     g.setFont(AppPreferences.getScaledFont(g.getFont().deriveFont(Font.BOLD), scale));
     g.setColor(Color.BLUE);
     g.drawString(txt, xpos + height + (height >> 2), ypos + ydif2);

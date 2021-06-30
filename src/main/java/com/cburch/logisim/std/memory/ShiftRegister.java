@@ -503,7 +503,7 @@ public class ShiftRegister extends InstanceFactory {
           String a = S.get("shiftRegisterLabel1");
           GraphicsUtil.drawCenteredText(g, a, x, y + h / 4);
         }
-        String b = S.fmt("shiftRegisterLabel2", "" + len, "" + wid);
+        String b = S.get("shiftRegisterLabel2", "" + len, "" + wid);
         GraphicsUtil.drawCenteredText(g, b, x, y + 3 * h / 4);
       }
     }

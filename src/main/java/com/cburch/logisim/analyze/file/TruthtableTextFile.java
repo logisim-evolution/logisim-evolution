@@ -102,8 +102,8 @@ public class TruthtableTextFile {
       out.println(S.get("tableRemark1"));
       Circuit c = model.getCurrentCircuit();
       if (c != null)
-        out.println(S.fmt("tableRemark2", c.getName()));
-      out.println(S.fmt("tableRemark3", new Date()));
+        out.println(S.get("tableRemark2", c.getName()));
+      out.println(S.get("tableRemark3", new Date()));
       out.println();
       out.println(S.get("tableRemark4"));
       out.println();

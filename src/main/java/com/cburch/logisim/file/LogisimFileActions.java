@@ -134,13 +134,13 @@ public class LogisimFileActions {
               String ErrLoc = ToolNames.get(key);
               String[] ErrParts = ErrLoc.split("->");
               if (ErrParts.length > 1) {
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
+                SolStr = SolStr.concat(S.get("LibMergeFailure4", ErrParts[1]));
               } else {
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure3", key));
+                SolStr = SolStr.concat(S.get("LibMergeFailure3", key));
               }
               SolStr = SolStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-              SolStr = SolStr.concat(S.fmt("LibMergeFailure6", lib.getName()));
-              Error.put(SolStr, S.fmt("LibMergeFailure1", lib.getName(), key));
+              SolStr = SolStr.concat(S.get("LibMergeFailure6", lib.getName()));
+              Error.put(SolStr, S.get("LibMergeFailure1", lib.getName(), key));
             }
             cancontinue = false;
           }
@@ -167,10 +167,10 @@ public class LogisimFileActions {
               String[] ErrParts = ErrLoc.split("->");
               if (ErrParts.length > 1) {
                 String SolStr = S.get("LibMergeFailure2") + " a) ";
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
+                SolStr = SolStr.concat(S.get("LibMergeFailure4", ErrParts[1]));
                 SolStr = SolStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure8", circ.getName()));
-                Error.put(SolStr, S.fmt("LibMergeFailure7", key, ErrParts[1]));
+                SolStr = SolStr.concat(S.get("LibMergeFailure8", circ.getName()));
+                Error.put(SolStr, S.get("LibMergeFailure7", key, ErrParts[1]));
                 cancontinue = false;
               }
             }
@@ -187,7 +187,7 @@ public class LogisimFileActions {
                 int Reponse =
                     OptionPane.showConfirmDialog(
                         null,
-                        S.fmt("FileMergeQuestion", circ.getName()),
+                        S.get("FileMergeQuestion", circ.getName()),
                         S.get("FileMergeTitle"),
                         OptionPane.YES_NO_OPTION);
                 if (Reponse == OptionPane.YES_OPTION) {

@@ -303,7 +303,7 @@ public class Random extends InstanceFactory {
       }
     } else {
       a = S.get("randomLabel");
-      b = S.fmt("randomWidthLabel", "" + widthVal.getWidth());
+      b = S.get("randomWidthLabel", "" + widthVal.getWidth());
     }
 
     // draw boundary, label

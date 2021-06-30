@@ -103,7 +103,7 @@ public class Print {
     } catch (PrinterException e) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
-          StringUtil.format(S.get("printError"), e.toString()),
+          S.get("printError", e.toString()),
           S.get("printErrorTitle"),
           OptionPane.ERROR_MESSAGE);
     }

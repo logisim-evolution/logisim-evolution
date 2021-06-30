@@ -181,7 +181,7 @@ public class ProjectActions {
   }
 
   private static void displayException(Component parent, Exception ex) {
-    String msg = StringUtil.format(S.get("templateOpenError"), ex.toString());
+    String msg = S.get("templateOpenError", ex.toString());
     String ttl = S.get("templateOpenErrorTitle");
     OptionPane.showMessageDialog(parent, msg, ttl, OptionPane.ERROR_MESSAGE);
   }
@@ -246,7 +246,7 @@ public class ProjectActions {
       if (!ex.isShown()) {
         OptionPane.showMessageDialog(
             parent,
-            StringUtil.format(S.get("fileMergeError"), ex.toString()),
+            S.get("fileMergeError", ex.toString()),
             S.get("FileMergeErrorItem"),
             OptionPane.ERROR_MESSAGE);
       }
@@ -297,8 +297,7 @@ public class ProjectActions {
       proj.getFrame().toFront();
       loader = proj.getLogisimFile().getLoader();
       if (proj.isFileDirty()) {
-        String message =
-            StringUtil.format(S.get("openAlreadyMessage"), proj.getLogisimFile().getName());
+        String message = S.get("openAlreadyMessage", proj.getLogisimFile().getName());
         String[] options = {
           S.get("openAlreadyLoseChangesOption"),
           S.get("openAlreadyNewWindowOption"),
@@ -347,7 +346,7 @@ public class ProjectActions {
       if (!ex.isShown()) {
         OptionPane.showMessageDialog(
             parent,
-            StringUtil.format(S.get("fileOpenError"), ex.toString()),
+            S.get("fileOpenError", ex.toString()),
             S.get("fileOpenErrorTitle"),
             OptionPane.ERROR_MESSAGE);
       }
@@ -459,10 +458,10 @@ public class ProjectActions {
       } else {
         var ext = old.substring(ext0);
         var ttl = S.get("replaceExtensionTitle");
-        var msg = S.fmt("replaceExtensionMessage", ext);
+        var msg = S.get("replaceExtensionMessage", ext);
         Object[] options = {
-          S.fmt("replaceExtensionReplaceOpt", ext),
-          S.fmt("replaceExtensionAddOpt", Loader.LOGISIM_EXTENSION),
+          S.get("replaceExtensionReplaceOpt", ext),
+          S.get("replaceExtensionAddOpt", Loader.LOGISIM_EXTENSION),
           S.get("replaceExtensionKeepOpt")
         };
         var dlog = new JOptionPane(msg);

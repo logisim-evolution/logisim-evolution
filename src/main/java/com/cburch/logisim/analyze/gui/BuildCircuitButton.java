@@ -182,7 +182,7 @@ class BuildCircuitButton extends JButton {
         }
 
         if (!SyntaxChecker.isVariableNameAcceptable(name, true)) continue;
-        
+
         /* Check for name collisions with input and output names */
         HashSet<String> labels = new HashSet<>();
         for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
@@ -207,7 +207,7 @@ class BuildCircuitButton extends JButton {
           int choice =
               OptionPane.showConfirmDialog(
                   parent,
-                  StringUtil.format(S.get("buildConfirmReplaceMessage"), name),
+                  S.get("buildConfirmReplaceMessage", name),
                   S.get("buildConfirmReplaceTitle"),
                   OptionPane.YES_NO_OPTION);
           if (choice != OptionPane.YES_OPTION) {

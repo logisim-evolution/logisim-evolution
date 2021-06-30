@@ -57,7 +57,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
   private StatisticsDialog(JFrame parent, String circuitName, StatisticsTableModel model) {
     super(parent, true);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setTitle(S.fmt("statsDialogTitle", circuitName));
+    setTitle(S.get("statsDialogTitle", circuitName));
 
     var table = new StatisticsTable();
     TableSorter mySorter = new TableSorter(model, table.getTableHeader());

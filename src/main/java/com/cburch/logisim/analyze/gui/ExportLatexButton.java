@@ -78,7 +78,7 @@ public class ExportLatexButton extends JButton {
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("notFileMessage", file.getName()),
+            S.get("notFileMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -86,7 +86,7 @@ public class ExportLatexButton extends JButton {
       if (file.exists() && !file.canWrite()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("cantWriteMessage", file.getName()),
+            S.get("cantWriteMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -95,7 +95,7 @@ public class ExportLatexButton extends JButton {
         int confirm =
             OptionPane.showConfirmDialog(
                 parent,
-                S.fmt("confirmOverwriteMessage", file.getName()),
+                S.get("confirmOverwriteMessage", file.getName()),
                 S.get("confirmOverwriteTitle"),
                 OptionPane.YES_NO_OPTION);
         if (confirm != OptionPane.YES_OPTION) return;

@@ -123,8 +123,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuit().getName();
-    return StringUtil.format(S.get("testFrameTitle"), name, proj.getLogisimFile().getDisplayName());
+    var name = data == null ? "???" : data.getCircuit().getName();
+    return S.get("testFrameTitle", name, proj.getLogisimFile().getDisplayName());
   }
 
   Model getModel() {
@@ -184,7 +184,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         if (!file.exists() || !file.canRead() || file.isDirectory()) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileCannotReadMessage"), file.getName()),
+              S.get("fileCannotReadMessage", file.getName()),
               S.get("fileCannotReadTitle"),
               OptionPane.OK_OPTION);
           return;
@@ -200,13 +200,13 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         } catch (IOException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileCannotParseMessage"), file.getName(), e.getMessage()),
+              S.get("fileCannotParseMessage", file.getName(), e.getMessage()),
               S.get("fileCannotReadTitle"),
               OptionPane.OK_OPTION);
         } catch (TestException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileWrongPinsMessage"), file.getName(), e.getMessage()),
+              S.get("fileWrongPinsMessage", file.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
               OptionPane.OK_OPTION);
         }
@@ -216,7 +216,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         } catch (TestException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileWrongPinsMessage"), curFile.getName(), e.getMessage()),
+              S.get("fileWrongPinsMessage", curFile.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
               OptionPane.OK_OPTION);
         }
@@ -278,8 +278,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     }
 
     public void testResultsChanged(int numPass, int numFail) {
-      pass.setText(StringUtil.format(S.get("passMessage"), Integer.toString(numPass)));
-      fail.setText(StringUtil.format(S.get("failMessage"), Integer.toString(numFail)));
+      pass.setText(S.get("passMessage", Integer.toString(numPass)));
+      fail.setText(S.get("failMessage", Integer.toString(numFail)));
       finished = numPass + numFail;
     }
 
@@ -300,7 +300,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
 
     public void localeChanged() {
       String title = project.getLogisimFile().getDisplayName();
-      setText(StringUtil.format(S.get("testFrameMenuItem"), title));
+      setText(S.get("testFrameMenuItem", title));
     }
 
     public void projectChanged(ProjectEvent event) {
