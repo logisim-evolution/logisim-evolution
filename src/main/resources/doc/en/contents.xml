@@ -124,7 +124,7 @@
 			<tocitem target="wiring_tunnel" text="Tunnel" image="icon_tunnel" />
 			<tocitem target="wiring_pull" text="Pull Resistor" image="icon_pull" />
 			<tocitem target="wiring_clock" text="Clock" image="icon_clock" />
-			<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
+			<tocitem target="wiring_por" text="Power On Reset" image="icon_por" />
 			<tocitem target="wiring_constant" text="Constant" image="icon_constant" />
 			<tocitem target="wiring_const01" text="Power/Ground" image="icon_const01" />
 			<tocitem target="wiring_notconnect" text="Do not connect" image="icon_notconnect" />
