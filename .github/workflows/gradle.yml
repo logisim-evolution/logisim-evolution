@@ -5,6 +5,8 @@ name: "Build"
 
 on:
   push:
+    # No need to run on push to "develop" as there should not be any direct pushes.
+    # master is left just for emergency cases.
     branches: [ master ]
     # Run action only if we have anything changed in the following folders
     paths:
@@ -12,7 +14,6 @@ on:
 
   pull_request:
     branches: [ master, develop ]
-    # Run action only if we have anything changed in the following folders
     paths:
     - src/**
 
