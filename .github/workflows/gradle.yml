@@ -36,7 +36,7 @@ jobs:
     - name: "Processing changeset..."
       id: check
       run: |
-        gif diff --name-only HEAD^ HEAD > changes.txt
+        git diff --name-only HEAD^ HEAD > changes.txt
         found=""
         while IFS= read -r file; do
           if [[ "${file}" == src/* ]]; then
