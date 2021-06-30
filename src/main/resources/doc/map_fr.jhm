@@ -8,6 +8,7 @@
 	<mapID target="topic"               url="img-guide/helptree-page.gif" />
 	<mapID target="top"                 url="fr/html/guide/index.html" />
 
+
 <!-- Guide -->
 	<mapID target="guide"               url="fr/html/guide/index.html" />
 	<mapID target="tutorial"            url="fr/html/guide/tutorial/index.html" />
@@ -35,7 +36,7 @@
 	<mapID target="features_creating"   url="fr/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="fr/html/guide/feature/fet-splitting.html" />
 	<mapID target="features_colors"     url="fr/html/guide/feature/fet-colors.html" />
-	<mapID target="features_autolabel"  url="fr/html/guide/feature/fet-autolabel.html" />	
+	<mapID target="features_autolabel"  url="fr/html/guide/feature/fet-autolabel.html" />
 	<mapID target="features_matrix"     url="fr/html/guide/feature/fet-matrix.html" />
     <mapID target="mem_guide"           url="fr/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="fr/html/guide/mem/mem-poke.html" />
@@ -44,7 +45,7 @@
     <mapID target="mem_hex"             url="fr/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="fr/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="fr/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte"          url="fr/html/guide/mem/mem-v3byte.html"/>
+    <mapID target="mem_v3byte"          url="fr/html/guide/mem/mem-v3byte.html"/> 
     <mapID target="mem_binary"          url="fr/html/guide/mem/mem-vbinary.html"/>
     <mapID target="mem_ascii"           url="fr/html/guide/mem/mem-vascii.html"/>
 	<mapID target="analyze"             url="fr/html/guide/analyze/index.html" />
@@ -97,10 +98,10 @@
 	<mapID target="menu_printertab"     url="fr/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="fr/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="fr/html/guide/about/index.html" />
-	<mapID target="about_gpl_tr"        url="fr/html/guide/about/gpl-fr.html" />	
 	<mapID target="about_gpl"           url="gpl.html" />
+	
 <!-- for testing and validation -->	
-	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
+	<mapID target="test_hmlcss"         url="fr/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
 
 <!-- Librairie -->
@@ -158,11 +159,11 @@
 	<mapID target="io_7seg"             url="fr/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="fr/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="fr/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="fr/html/libs/io/tty.html" />
+	<mapID target="io_tty"              url="fr/html/libs/io/tty.html" />	
     <mapID target="io_Port_IO"          url="fr/html/libs/io/Port_io.html" />	
 	<mapID target="io_Repetar"          url="fr/html/libs/io/repetar.html" />	
-	<mapID target="io_videorvb"         url="fr/html/libs/io/videorvb.html" />	
-    <mapID target="tcl"                 url="fr/html/libs/tcl/index.html" />
+	<mapID target="io_videorvb"         url="fr/html/libs/io/videorvb.html" />
+	<mapID target="tcl"                 url="fr/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="fr/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="fr/html/libs/tcl/generic.html" />
     <mapID target="soc"                 url="fr/html/libs/soc/index.html" />
@@ -171,63 +172,72 @@
     <mapID target="assembler"           url="fr/html/libs/soc/assembler.html" />
     <mapID target="disassembler"        url="fr/html/libs/soc/disassembler.html" />
     <mapID target="socsimcontrol"       url="fr/html/libs/soc/socsimcontrol.html" />
-
+	
 <!-- Icon help tree -->
-	<mapID target="icon_poke"        url="icons/poke.png" />
-	<mapID target="icon_edit"        url="icons/select.png" />
-	<mapID target="icon_select"      url="icons/select.png" />
-	<mapID target="icon_wiring"      url="icons/wiring.gif" />
-	<mapID target="icon_text"        url="icons/text.png" />
-	<mapID target="icon_menu"        url="icons/menu.gif" />
-	<mapID target="icon_splitter"    url="icons/splitter.gif" />
-	<mapID target="icon_pin"         url="icons/pinInput.gif" />
-	<mapID target="icon_tunnel"      url="icons/tunnel.gif" />
-	<mapID target="icon_pull"        url="icons/pullshap.gif" />
-	<mapID target="icon_probe"       url="icons/probe.gif" />
-	<mapID target="icon_clock"       url="icons/clock.gif" />
-    <mapID target="icon_por"         url="icons/por.png"/>
-	<mapID target="icon_extender"    url="icons/extender.gif" />
-	<mapID target="icon_label"       url="icons/text.png" />
-	<mapID target="icon_constant"    url="icons/constant.gif" />
-	<mapID target="icon_const01"     url="icons/ground.gif" />
-	<mapID target="icon_transist"    url="icons/trans0.gif" />
-	<mapID target="icon_transmis"    url="icons/transmis.gif" />
-	<mapID target="icon_not"         url="icons/notGate.gif" />
-	<mapID target="icon_buffer"      url="icons/bufferGate.gif" />
-	<mapID target="icon_basic"       url="icons/andGate.gif" />
-	<mapID target="icon_xor"         url="icons/xorGate.gif" />
-	<mapID target="icon_controlled"  url="icons/controlledBuffer.gif" />
-	<mapID target="icon_mux"         url="icons/multiplexer.gif" />
-	<mapID target="icon_demux"       url="icons/demultiplexer.gif" />
-	<mapID target="icon_decoder"     url="icons/decoder.gif" />
-	<mapID target="icon_priencod"    url="icons/priencod.gif" />
-	<mapID target="icon_selector"    url="icons/bitSelector.gif" />
-	<mapID target="icon_adder"       url="icons/adder.gif" />
-	<mapID target="icon_subtractor"  url="icons/subtractor.gif" />
-	<mapID target="icon_multiplier"  url="icons/multiplier.gif" />
-	<mapID target="icon_divider"     url="icons/divider.gif" />
-	<mapID target="icon_negator"     url="icons/negator.gif" />
-	<mapID target="icon_comparator"  url="icons/comparator.gif" />
-	<mapID target="icon_shifter"     url="icons/shifter.gif" />
-	<mapID target="icon_bitadder"    url="icons/bitadder.gif" />
-	<mapID target="icon_bitfinder"   url="icons/bitfindr.gif" />
-	<mapID target="icon_flipflops"   url="icons/dFlipFlop.gif" />
-	<mapID target="icon_register"    url="icons/register.gif" />
-	<mapID target="icon_counter"     url="icons/counter.gif" />
-	<mapID target="icon_shiftreg"    url="icons/shiftreg.gif" />
-	<mapID target="icon_random"      url="icons/random.gif" />
-	<mapID target="icon_ram"         url="icons/ram.gif" />
-	<mapID target="icon_rom"         url="icons/rom.gif" />
-	<mapID target="icon_button"      url="icons/button.gif" />
-	<mapID target="icon_joystick"    url="icons/joystick.gif" />
-	<mapID target="icon_keyboard"    url="icons/keyboard.gif" />
-	<mapID target="icon_led"         url="icons/led.gif" />
-	<mapID target="icon_7seg"        url="icons/7seg.gif" />
-	<mapID target="icon_hexdig"      url="icons/hexdig.gif" />
-	<mapID target="icon_dotmat"      url="icons/dotmat.gif" />
-	<mapID target="icon_tty"         url="icons/tty.gif" />
-	<mapID target="icon_vhdl"        url="icons/vhdl.gif" />
+	<mapID target="icon_poke"        url="icons/1616/poke.png" />
+	<mapID target="icon_edit"        url="icons/1616/select.png" />
+	<mapID target="icon_select"      url="icons/1616/select.png" />
+	<mapID target="icon_wiring"      url="icons/1616/wiring.png" />
+	<mapID target="icon_text"        url="icons/1616/text.png" />
+	<mapID target="icon_menu"        url="icons/1616/menu.png" />
+	
+	<mapID target="icon_splitter"    url="icons/1616/splitter.png" />
+	<mapID target="icon_pin"         url="icons/1616/pininput.png" />
+	<mapID target="icon_probe"       url="icons/1616/probe.png" />
+	<mapID target="icon_tunnel"      url="icons/1616/tunnel.png" />
+	<mapID target="icon_pull"        url="icons/1616/anspull.png" />
+	<mapID target="icon_clock"       url="icons/1616/clock.png" />
+    <mapID target="icon_por"         url="icons/1616/por.png"/>
+	<mapID target="icon_constant"    url="icons/1616/constant.png" />	
+	<mapID target="icon_const01"     url="icons/1616/ground.png" />	
+	<mapID target="icon_notconnect"  url="icons/1616/notconnect.png" />	
+	<mapID target="icon_transist"    url="icons/1616/trans0.png" />
+	<mapID target="icon_transmis"    url="icons/1616/transmis.png" />	
+	<mapID target="icon_extender"    url="icons/1616/extender.png" />
+
+	<mapID target="icon_not"         url="icons/1616/ansnotgate.png" />
+	<mapID target="icon_buffer"      url="icons/1616/ansbuffergate.png" />
+	<mapID target="icon_basic"       url="icons/1616/ansandgate.png" />
+	<mapID target="icon_xor"         url="icons/1616/ansxorgate.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_pla"         url="icons/1616/pla0.png" />
+	
+	<mapID target="icon_mux"         url="icons/1616/multiplexer.png" />
+	<mapID target="icon_demux"       url="icons/1616/demultiplexer.png" />
+	<mapID target="icon_decoder"     url="icons/1616/decoder.png" />
+	<mapID target="icon_priencod"    url="icons/1616/priencod.png" />
+	<mapID target="icon_selector"    url="icons/1616/bitSelector.png" />
+	
+	<mapID target="icon_adder"       url="icons/1616/adder.png" />
+	<mapID target="icon_subtractor"  url="icons/1616/subtractor.png" />
+	<mapID target="icon_multiplier"  url="icons/1616/multiplier.png" />
+	<mapID target="icon_divider"     url="icons/1616/divider.png" />
+	<mapID target="icon_negator"     url="icons/1616/negator.png" />
+	<mapID target="icon_comparator"  url="icons/1616/comparator.png" />
+	<mapID target="icon_shifter"     url="icons/1616/shifter.png" />
+	<mapID target="icon_bitadder"    url="icons/1616/bitadder.png" />
+	<mapID target="icon_bitfinder"   url="icons/1616/bitfindr.png" />
+	
+	<mapID target="icon_flipflops"   url="icons/1616/dFlipFlop.gif" />
+	<mapID target="icon_register"    url="icons/1616/register.gif" />
+	<mapID target="icon_counter"     url="icons/1616/counter.gif" />
+	<mapID target="icon_shiftreg"    url="icons/1616/shiftreg.gif" />
+	<mapID target="icon_random"      url="icons/1616/random.gif" />
+	<mapID target="icon_ram"         url="icons/1616/ram.gif" />
+	<mapID target="icon_rom"         url="icons/1616/rom.gif" />
+	
+	<mapID target="icon_button"      url="icons/1616/button.gif" />
+	<mapID target="icon_joystick"    url="icons/1616/joystick.gif" />
+	<mapID target="icon_keyboard"    url="icons/1616/keyboard.gif" />
+	<mapID target="icon_led"         url="icons/1616/led.gif" />
+	<mapID target="icon_7seg"        url="icons/1616/7seg.png" />
+	<mapID target="icon_hexdig"      url="icons/1616/hexdig.gif" />
+	<mapID target="icon_dotmat"      url="icons/1616/dotmat.gif" />
+	<mapID target="icon_tty"         url="icons/1616/tty.gif" />
+	
+	<mapID target="icon_vhdl"        url="icons/1616/vhdl.gif" />
+    <mapID target="up_icon"          url="icons/1616/up.png"/>
+    <mapID target="socbus_icon"      url="icons/1616/socbus.png"/>
+	
 	<mapID target="test_hml_css"     url="testhtml/index.html" />
-    <mapID target="up_icon"          url="icons/up.png"/>
-    <mapID target="socbus_icon"      url="icons/socbus.png"/>
-</map>

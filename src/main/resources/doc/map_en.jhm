@@ -115,7 +115,7 @@
     <mapID target="wiring_por"          url="en/html/libs/wiring/poweronreset.html"/>	
 	<mapID target="wiring_constant"     url="en/html/libs/wiring/constant.html" />
 	<mapID target="wiring_const01"      url="en/html/libs/wiring/const01.html" />
-	<mapID target="wiring_notconnect"   url="en/html/libs/wiring/notcon.html" />
+	<mapID target="wiring_notconnect"   url="en/html/libs/wiring/notconnect.html" />
 	<mapID target="wiring_transist"     url="en/html/libs/wiring/transist.html" />
 	<mapID target="wiring_transmis"     url="en/html/libs/wiring/transmis.html" />
 	<mapID target="wiring_extender"     url="en/html/libs/wiring/extender.html" />
@@ -225,6 +225,7 @@
 	<mapID target="icon_random"      url="icons/1616/random.gif" />
 	<mapID target="icon_ram"         url="icons/1616/ram.gif" />
 	<mapID target="icon_rom"         url="icons/1616/rom.gif" />
+	
 	<mapID target="icon_button"      url="icons/1616/button.gif" />
 	<mapID target="icon_joystick"    url="icons/1616/joystick.gif" />
 	<mapID target="icon_keyboard"    url="icons/1616/keyboard.gif" />
@@ -233,8 +234,10 @@
 	<mapID target="icon_hexdig"      url="icons/1616/hexdig.gif" />
 	<mapID target="icon_dotmat"      url="icons/1616/dotmat.gif" />
 	<mapID target="icon_tty"         url="icons/1616/tty.gif" />
+	
 	<mapID target="icon_vhdl"        url="icons/1616/vhdl.gif" />
-	<mapID target="test_hml_css"     url="testhtml/index.html" />
     <mapID target="up_icon"          url="icons/1616/up.png"/>
     <mapID target="socbus_icon"      url="icons/1616/socbus.png"/>
+	
+	<mapID target="test_hml_css"     url="testhtml/index.html" />
 </map>
