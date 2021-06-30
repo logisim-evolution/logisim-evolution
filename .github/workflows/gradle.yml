@@ -64,14 +64,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: "Analyzing changes..."
-      id: src_check
-      run: |
-        gif diff --name-only HEAD^ HEAD > changes.txt
-        while IFS= read -r file; do
-            [[ "${file}" == src/* ]] && echo "::set-output name=run_build::true"
-        done < changes.txt
-
     - name: "Set up JDK"
       uses: actions/setup-java@v2
       with:
