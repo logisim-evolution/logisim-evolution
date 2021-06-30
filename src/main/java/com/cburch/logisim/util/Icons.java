@@ -39,9 +39,9 @@ import javax.swing.ImageIcon;
 
 public class Icons {
   public static ImageIcon getIcon(String name) {
-    java.net.URL url = Icons.class.getClassLoader().getResource(path + "/" + name);
+    final var url = Icons.class.getClassLoader().getResource(path + "/" + name);
     if (url == null) return null;
-    ImageIcon icon = new ImageIcon(url);
+    final var icon = new ImageIcon(url);
     icon.setImage(
         icon.getImage()
             .getScaledInstance(
@@ -58,9 +58,9 @@ public class Icons {
       return;
     }
 
-    Graphics2D g2 = (Graphics2D) g.create();
-    double cx = x + icon.getIconWidth() / 2.0;
-    double cy = y + icon.getIconHeight() / 2.0;
+    final var g2 = (Graphics2D) g.create();
+    final var cx = x + icon.getIconWidth() / 2.0;
+    final var cy = y + icon.getIconHeight() / 2.0;
     if (dir == Direction.WEST) {
       g2.rotate(Math.PI, cx, cy);
     } else if (dir == Direction.NORTH) {

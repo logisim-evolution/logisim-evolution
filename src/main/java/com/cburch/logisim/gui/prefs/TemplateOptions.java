@@ -168,7 +168,7 @@ class TemplateOptions extends OptionsPanel {
           } catch (IOException ex) {
             OptionPane.showMessageDialog(
                 getPreferencesFrame(),
-                StringUtil.format(S.get("templateErrorMessage"), ex.toString()),
+                S.get("templateErrorMessage", ex.toString()),
                 S.get("templateErrorTitle"),
                 OptionPane.ERROR_MESSAGE);
           } finally {

@@ -29,6 +29,8 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -54,8 +56,6 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.cburch.logisim.std.Strings.S;
-
 // TODO repropagate when rows/cols change
 
 public abstract class DotMatrixBase extends InstanceFactory {
@@ -74,7 +74,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
     @Override
     public Object clone() {
       try {
-        State ret = (State) super.clone();
+        final var ret = (State) super.clone();
         ret.grid = this.grid.clone();
         ret.persistTo = this.persistTo.clone();
         return ret;
@@ -84,8 +84,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
     }
 
     protected Value get(int row, int col, long curTick) {
-      int index = row * cols + col;
-      Value ret = grid[index];
+      final var index = row * cols + col;
+      var ret = grid[index];
       if (ret == Value.FALSE && persistTo[index] - curTick >= 0) {
         ret = Value.TRUE;
       }
@@ -93,11 +93,11 @@ public abstract class DotMatrixBase extends InstanceFactory {
     }
 
     protected void setColumn(int index, Value colVector, long persist) {
-      int gridloc = (rows - 1) * cols + index;
-      int stride = -cols;
-      Value[] vals = colVector.getAll();
-      for (int i = 0; i < vals.length; i++, gridloc += stride) {
-        Value val = vals[i];
+      var gridloc = (rows - 1) * cols + index;
+      final var stride = -cols;
+      final var vals = colVector.getAll();
+      for (var i = 0; i < vals.length; i++, gridloc += stride) {
+        final var val = vals[i];
         if (grid[gridloc] == Value.TRUE) {
           persistTo[gridloc] = persist - 1;
         }
@@ -109,11 +109,11 @@ public abstract class DotMatrixBase extends InstanceFactory {
     }
 
     protected void setRow(int index, Value rowVector, long persist) {
-      int gridloc = (index + 1) * cols - 1;
-      int stride = -1;
-      Value[] vals = rowVector.getAll();
-      for (int i = 0; i < vals.length; i++, gridloc += stride) {
-        Value val = vals[i];
+      var gridloc = (index + 1) * cols - 1;
+      final var stride = -1;
+      final var vals = rowVector.getAll();
+      for (var i = 0; i < vals.length; i++, gridloc += stride) {
+        final var val = vals[i];
         if (grid[gridloc] == Value.TRUE) {
           persistTo[gridloc] = persist - 1;
         }
@@ -125,14 +125,14 @@ public abstract class DotMatrixBase extends InstanceFactory {
     }
 
     protected void setSelect(Value rowVector, Value colVector, long persist) {
-      Value[] rowVals = rowVector.getAll();
-      Value[] colVals = colVector.getAll();
-      int gridloc = 0;
-      for (int i = rowVals.length - 1; i >= 0; i--) {
-        Value wholeRow = rowVals[i];
+      final var rowVals = rowVector.getAll();
+      final var colVals = colVector.getAll();
+      var gridloc = 0;
+      for (var i = rowVals.length - 1; i >= 0; i--) {
+        var wholeRow = rowVals[i];
         if (wholeRow == Value.TRUE) {
-          for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
-            Value val = colVals[colVals.length - 1 - j];
+          for (var j = colVals.length - 1; j >= 0; j--, gridloc++) {
+            final var val = colVals[colVals.length - 1 - j];
             if (grid[gridloc] == Value.TRUE) {
               persistTo[gridloc] = persist - 1;
             }
@@ -199,8 +199,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
 
   protected static ArrayList<String> GetLabels(int rows, int cols) {
-    ArrayList<String> result = new ArrayList<>();
-    for (int r = 0; r < rows; r++) for (int c = 0; c < cols; c++) result.add("Row" + r + "Col" + c);
+    final var result = new ArrayList<String>();
+    for (var r = 0; r < rows; r++) for (int c = 0; c < cols; c++) result.add("Row" + r + "Col" + c);
     return result;
   }
 
@@ -291,8 +291,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Object input = attrs.getValue(getAttributeInputType());
-    int cols = attrs.getValue(getAttributeColumns()).getWidth();
-    int rows = attrs.getValue(getAttributeRows()).getWidth();
+    final var cols = attrs.getValue(getAttributeColumns()).getWidth();
+    final var rows = attrs.getValue(getAttributeRows()).getWidth();
     if (input.equals(getAttributeItemColumn())) {
       return Bounds.create(
           -5 * scaleX, -10 * scaleY * rows, 10 * scaleX * cols, 10 * scaleY * rows);
@@ -308,11 +308,11 @@ public abstract class DotMatrixBase extends InstanceFactory {
   }
 
   protected State getState(InstanceState state) {
-    int rows = state.getAttributeValue(getAttributeRows()).getWidth();
-    int cols = state.getAttributeValue(getAttributeColumns()).getWidth();
-    long clock = state.getTickCount();
+    final var rows = state.getAttributeValue(getAttributeRows()).getWidth();
+    final var cols = state.getAttributeValue(getAttributeColumns()).getWidth();
+    final var clock = state.getTickCount();
 
-    State data = (State) state.getData();
+    var data = (State) state.getData();
     if (data == null) {
       data = new State(rows, cols, clock);
       state.setData(data);
@@ -333,8 +333,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
       updatePorts(instance);
       if (attr == getAttributeRows() || attr == getAttributeColumns()) {
-        int rows = instance.getAttributeValue(getAttributeRows()).getWidth();
-        int cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
+        final var rows = instance.getAttributeValue(getAttributeRows()).getWidth();
+        final var cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
         ComponentMapInformationContainer cm = instance.getAttributeValue(StdAttr.MAPINFO);
         cm.setNrOfOutports(rows * cols, GetLabels(rows, cols));
       }
@@ -350,8 +350,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
   }
 
   protected void drawPaddedSquare(Graphics g, int x, int y) {
-    final int paddingY = 2;
-    final int paddingX = 2;
+    final var paddingY = 2;
+    final var paddingX = 2;
     g.fillRect(
         x + (paddingX * scaleX),
         y + (paddingY * scaleY),
@@ -361,18 +361,18 @@ public abstract class DotMatrixBase extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Color onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
-    Color offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
-    AttributeOption shape = painter.getAttributeValue(getAttributeShape());
+    final var onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
+    final var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
+    final var shape = painter.getAttributeValue(getAttributeShape());
 
-    State data = getState(painter);
-    long ticks = painter.getTickCount();
-    Bounds bounds = painter.getBounds();
-    boolean showState = painter.getShowState();
-    Graphics g = painter.getGraphics();
+    final var data = getState(painter);
+    final var ticks = painter.getTickCount();
+    final var bounds = painter.getBounds();
+    final var showState = painter.getShowState();
+    final var g = painter.getGraphics();
 
-    int rows = data.rows;
-    int cols = data.cols;
+    final var rows = data.rows;
+    final var cols = data.cols;
 
     // If user wants port dots to be hug it would normally cover the component
     // so we draw ports first, then happily paint over it.
@@ -381,8 +381,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
     g.setColor(Color.DARK_GRAY);
     g.fillRect(bounds.getX(), bounds.getY(), cols * 10 * scaleX, rows * 10 * scaleY);
 
-    for (int j = 0; j < rows; j++) {
-      for (int i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      for (var i = 0; i < cols; i++) {
         int x = bounds.getX() + 10 * i * scaleX;
         int y = bounds.getY() + 10 * j * scaleY;
 
@@ -392,7 +392,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
           continue;
         }
 
-        Value val = data.get(j, i, ticks);
+        final var val = data.get(j, i, ticks);
         Color c;
         if (val == Value.TRUE) {
           c = onColor;
@@ -425,18 +425,18 @@ public abstract class DotMatrixBase extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     Object type = state.getAttributeValue(getAttributeInputType());
-    int rows = state.getAttributeValue(getAttributeRows()).getWidth();
-    int cols = state.getAttributeValue(getAttributeColumns()).getWidth();
-    long clock = state.getTickCount();
+    final var rows = state.getAttributeValue(getAttributeRows()).getWidth();
+    final var cols = state.getAttributeValue(getAttributeColumns()).getWidth();
+    final long clock = state.getTickCount();
     long persist = clock + state.getAttributeValue(ATTR_PERSIST);
 
-    State data = getState(state);
+    final var data = getState(state);
     if (getAttributeItemRow().equals(type)) {
-      for (int i = 0; i < rows; i++) {
+      for (var i = 0; i < rows; i++) {
         data.setRow(i, state.getPortValue(i), persist);
       }
     } else if (getAttributeItemColumn().equals(type)) {
-      for (int i = 0; i < cols; i++) {
+      for (var i = 0; i < cols; i++) {
         data.setColumn(i, state.getPortValue(i), persist);
       }
     } else if (getAttributeItemSelect().equals(type)) {
@@ -448,23 +448,22 @@ public abstract class DotMatrixBase extends InstanceFactory {
 
   protected void updatePorts(Instance instance) {
     Object input = instance.getAttributeValue(getAttributeInputType());
-    int rows = instance.getAttributeValue(getAttributeRows()).getWidth();
-    int cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
+    final var rows = instance.getAttributeValue(getAttributeRows()).getWidth();
+    final var cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
     Port[] ps;
     if (input == getAttributeItemColumn()) {
       ps = new Port[cols];
-      for (int i = 0; i < cols; i++) {
+      for (var i = 0; i < cols; i++) {
         ps[i] = new Port(10 * i, 0, Port.INPUT, rows);
       }
     } else if (input == getAttributeItemRow()) {
       ps = new Port[rows];
-      for (int i = 0; i < rows; i++) {
+      for (var i = 0; i < rows; i++) {
         ps[i] = new Port(0, 10 * i, Port.INPUT, cols);
       }
     } else {
       if (rows <= 1) {
-        ps =
-            new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
+        ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
       } else {
         ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows)};
       }

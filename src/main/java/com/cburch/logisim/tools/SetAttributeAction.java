@@ -31,10 +31,8 @@ package com.cburch.logisim.tools;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.CircuitTransaction;
-import com.cburch.logisim.circuit.CircuitTransactionResult;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringGetter;
@@ -61,25 +59,25 @@ public class SetAttributeAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    CircuitMutation xn = new CircuitMutation(circuit);
+    final var xn = new CircuitMutation(circuit);
     int len = values.size();
     oldValues.clear();
-    for (int i = 0; i < len; i++) {
-      Component comp = comps.get(i);
-      Attribute<Object> attr = attrs.get(i);
+    for (var i = 0; i < len; i++) {
+      final var comp = comps.get(i);
+      final var attr = attrs.get(i);
       Object value = values.get(i);
       if (circuit.contains(comp)) {
         oldValues.add(null);
         xn.set(comp, attr, value);
       } else {
-        AttributeSet compAttrs = comp.getAttributeSet();
+        final var compAttrs = comp.getAttributeSet();
         oldValues.add(compAttrs.getValue(attr));
         compAttrs.setValue(attr, value);
       }
     }
 
     if (!xn.isEmpty()) {
-      CircuitTransactionResult result = xn.execute();
+      final var result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
   }
@@ -95,7 +93,7 @@ public class SetAttributeAction extends Action {
 
   public void set(Component comp, Attribute<?> attr, Object value) {
     @SuppressWarnings("unchecked")
-    Attribute<Object> a = (Attribute<Object>) attr;
+    final var a = (Attribute<Object>) attr;
     comps.add(comp);
     attrs.add(a);
     values.add(value);
@@ -105,8 +103,8 @@ public class SetAttributeAction extends Action {
   public void undo(Project proj) {
     if (xnReverse != null) xnReverse.execute();
     for (int i = oldValues.size() - 1; i >= 0; i--) {
-      Component comp = comps.get(i);
-      Attribute<Object> attr = attrs.get(i);
+      final var comp = comps.get(i);
+      final var attr = attrs.get(i);
       Object value = oldValues.get(i);
       if (value != null) {
         comp.getAttributeSet().setValue(attr, value);

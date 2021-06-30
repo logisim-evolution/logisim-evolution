@@ -41,18 +41,14 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentUserEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
@@ -68,7 +64,7 @@ public class PokeTool extends Tool {
 
   private class Listener implements CircuitListener {
     public void circuitChanged(CircuitEvent event) {
-      Circuit circ = pokedCircuit;
+      final var circ = pokedCircuit;
       if (event.getCircuit() == circ
           && circ != null
           && (event.getAction() == CircuitEvent.ACTION_REMOVE
@@ -96,31 +92,31 @@ public class PokeTool extends Tool {
 
     @Override
     public void draw(Graphics g) {
-      Value v = canvas.getCircuitState().getValue(wire.getEnd0());
-      RadixOption radix1 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX1.get());
-      RadixOption radix2 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX2.get());
+      final var v = canvas.getCircuitState().getValue(wire.getEnd0());
+      var radix1 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX1.get());
+      var radix2 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX2.get());
       if (radix1 == null) radix1 = RadixOption.RADIX_2;
-      String vStr = radix1.toString(v);
+      var vStr = radix1.toString(v);
       if (radix2 != null && v.getWidth() > 1) {
         vStr += " / " + radix2.toString(v);
       }
 
-      FontMetrics fm = g.getFontMetrics();
+      final var fm = g.getFontMetrics();
       g.setColor(caretColor);
 
-      int margin = 2;
-      int w = fm.stringWidth(vStr) + 2 * margin;
-      int pad = 0;
+      var margin = 2;
+      var w = fm.stringWidth(vStr) + 2 * margin;
+      var pad = 0;
       if (w < 45) {
         pad = (45 - w) / 2;
         w = 45;
       }
-      int h = fm.getAscent() + fm.getDescent() + 2 * margin;
+      var h = fm.getAscent() + fm.getDescent() + 2 * margin;
 
-      Rectangle r = canvas.getViewableRect();
-      int dx = Math.max(0, w - (r.x + r.width - x));
-      int dxx1 = (dx > w / 2) ? -30 : 15; // offset of callout stem
-      int dxx2 = (dx > w / 2) ? -15 : 30; // offset of callout stem
+      final var r = canvas.getViewableRect();
+      var dx = Math.max(0, w - (r.x + r.width - x));
+      var dxx1 = (dx > w / 2) ? -30 : 15; // offset of callout stem
+      var dxx2 = (dx > w / 2) ? -15 : 30; // offset of callout stem
       if (y - 15 - h <= r.y) {
         // callout below cursor
         int xx = x - dx, yy = y + 15 + h; // bottom left corner of box
@@ -225,7 +221,7 @@ public class PokeTool extends Tool {
       canvas.getProject().repaintCanvas();
     } else {
       // move scrollpane dragging hand
-      Point m = canvas.getMousePosition();
+      final var m = canvas.getMousePosition();
       if (OldPosition == null || m == null) {
         OldPosition = m;
         return;
@@ -241,33 +237,32 @@ public class PokeTool extends Tool {
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     int x = e.getX();
     int y = e.getY();
-    Location loc = Location.create(x, y);
-    boolean dirty = false;
+    final var loc = Location.create(x, y);
+    var dirty = false;
     canvas.setHighlightedWires(WireSet.EMPTY);
     if (pokeCaret != null && !pokeCaret.getBounds(g).contains(loc)) {
       dirty = true;
       removeCaret(true);
     }
     if (pokeCaret == null) {
-      ComponentUserEvent event = new ComponentUserEvent(canvas, x, y);
-      Circuit circ = canvas.getCircuit();
-      for (Component c : circ.getAllContaining(loc, g)) {
+      final var event = new ComponentUserEvent(canvas, x, y);
+      final var circ = canvas.getCircuit();
+      for (final var c : circ.getAllContaining(loc, g)) {
         if (pokeCaret != null) break;
 
         if (c instanceof Wire) {
-          Caret caret =
-              new WireCaret(
+          final var caret = new WireCaret(
                   canvas, (Wire) c, x, y, canvas.getProject().getOptions().getAttributeSet());
           setPokedComponent(circ, c, caret);
           canvas.setHighlightedWires(circ.getWireSet((Wire) c));
         } else {
-          Pokable p = (Pokable) c.getFeature(Pokable.class);
+          final var p = (Pokable) c.getFeature(Pokable.class);
           if (p != null) {
-            Caret caret = p.getPokeCaret(event);
+            final var caret = p.getPokeCaret(event);
             setPokedComponent(circ, c, caret);
-            AttributeSet attrs = c.getAttributeSet();
+            final var attrs = c.getAttributeSet();
             if (attrs != null && attrs.getAttributes().size() > 0) {
-              Project proj = canvas.getProject();
+              final var proj = canvas.getProject();
               proj.getFrame().viewComponentAttributes(circ, c);
             }
           }
@@ -292,10 +287,10 @@ public class PokeTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Graphics2D g2 = (Graphics2D) c.getGraphics().create();
+    final var g2 = (Graphics2D) c.getGraphics().create();
     g2.translate(x, y);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
-    GeneralPath p = new GeneralPath();
+    final var p = new GeneralPath();
     p.moveTo(scale(6), scale(15));
     p.quadTo(scale(5), scale(10), scale(1), scale(7));
     p.quadTo(scale(2.5), scale(4), scale(4), scale(7));
@@ -320,11 +315,13 @@ public class PokeTool extends Tool {
   }
 
   private void removeCaret(boolean normal) {
-    Circuit circ = pokedCircuit;
-    Caret caret = pokeCaret;
+    final var caret = pokeCaret;
     if (caret != null) {
-      if (normal) caret.stopEditing();
-      else caret.cancelEditing();
+      final var circ = pokedCircuit;
+      if (normal)
+        caret.stopEditing();
+      else
+        caret.cancelEditing();
       circ.removeCircuitListener(listener);
       pokedCircuit = null;
       pokedComponent = null;

@@ -29,11 +29,9 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.Graphics;
 
 /**
  * TTL 74x10: triple 3-input NAND gate
@@ -71,8 +69,8 @@ public class Ttl7410 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
-    int LineOffset =
+    final var g = painter.getGraphics();
+    final var LineOffset =
         ((!isAND) & (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_SHAPED))) ? -4 : 0;
     if (isAND) {
       Drawgates.paintAnd(g, x + 45, y + 20, 10, 10, inverted);
@@ -83,9 +81,9 @@ public class Ttl7410 extends AbstractTtlGate {
       Drawgates.paintOr(g, x + 125, y + 20, 10, 10, inverted, false);
       Drawgates.paintOr(g, x + 105, y + 40, 10, 10, inverted, false);
     }
-    int offset = inverted ? 0 : -4;
-    int[] xpos = new int[] {x + 49 + offset, x + 50, x + 50};
-    int[] ypos = new int[] {y + 20, y + 20, y + AbstractTtlGate.pinheight};
+    final var offset = inverted ? 0 : -4;
+    var xpos = new int[] {x + 49 + offset, x + 50, x + 50};
+    var ypos = new int[] {y + 20, y + 20, y + AbstractTtlGate.pinheight};
     g.drawPolyline(xpos, ypos, 3);
     xpos[0] = x + 129 + offset;
     xpos[1] = xpos[2] = x + 130;
@@ -105,7 +103,7 @@ public class Ttl7410 extends AbstractTtlGate {
     ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 23, y + 23};
     g.drawPolyline(xpos, ypos, 3);
 
-    for (int i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
       xpos = new int[] {x + 70 + i * 20, x + 70 + i * 20, x + 115 + LineOffset};
       ypos = new int[] {y + AbstractTtlGate.pinheight, y + 23 - i * 3, y + 23 - i * 3};
       g.drawPolyline(xpos, ypos, 3);
@@ -117,7 +115,7 @@ public class Ttl7410 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val =
+    var val =
         (isAND)
             ? state.getPortValue(2).and(state.getPortValue(3).and(state.getPortValue(4)))
             : state.getPortValue(2).or(state.getPortValue(3).or(state.getPortValue(4)));

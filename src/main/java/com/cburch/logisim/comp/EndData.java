@@ -56,7 +56,7 @@ public class EndData {
   public boolean equals(Object other) {
     if (!(other instanceof EndData)) return false;
     if (other == this) return true;
-    EndData o = (EndData) other;
+    final var o = (EndData) other;
     return o.loc.equals(this.loc)
         && o.width.equals(this.width)
         && o.i_o == this.i_o

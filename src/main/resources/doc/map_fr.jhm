@@ -46,12 +46,13 @@
     <mapID target="mem_v3word"          url="fr/html/guide/mem/mem-v3word.html"/> 
     <mapID target="mem_v3byte"          url="fr/html/guide/mem/mem-v3byte.html"/>
     <mapID target="mem_binary"          url="fr/html/guide/mem/mem-vbinary.html"/>
-    <mapID target="mem_ascii"          url="fr/html/guide/mem/mem-vascii.html"/>
+    <mapID target="mem_ascii"           url="fr/html/guide/mem/mem-vascii.html"/>
 	<mapID target="analyze"             url="fr/html/guide/analyze/index.html" />
 	<mapID target="analyze_open"        url="fr/html/guide/analyze/ana-open.html" />
 	<mapID target="analyze_table"       url="fr/html/guide/analyze/ana-table.html" />
 	<mapID target="analyze_expr"        url="fr/html/guide/analyze/ana-expr.html" />
 	<mapID target="analyze_gen"         url="fr/html/guide/analyze/ana-gen.html" />
+    <mapID target="analyze_expimp"      url="fr/html/guide/analyze/ana-expimp.html" />
 	<mapID target="log"                 url="fr/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="fr/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="fr/html/guide/log/timetable.html" />
@@ -96,8 +97,8 @@
 	<mapID target="menu_printertab"     url="fr/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="fr/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="fr/html/guide/about/index.html" />
-	<mapID target="about_gpl"           url="gpl.html" />	
-	
+	<mapID target="about_gpl_tr"        url="fr/html/guide/about/gpl-fr.html" />	
+	<mapID target="about_gpl"           url="gpl.html" />
 <!-- for testing and validation -->	
 	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
@@ -172,11 +173,11 @@
     <mapID target="socsimcontrol"       url="fr/html/libs/soc/socsimcontrol.html" />
 
 <!-- Icon help tree -->
-	<mapID target="icon_poke"        url="img-guide/poke.png" />
-	<mapID target="icon_edit"        url="img-guide/select.png" />
-	<mapID target="icon_select"      url="img-guide/select.png" />
+	<mapID target="icon_poke"        url="icons/poke.png" />
+	<mapID target="icon_edit"        url="icons/select.png" />
+	<mapID target="icon_select"      url="icons/select.png" />
 	<mapID target="icon_wiring"      url="icons/wiring.gif" />
-	<mapID target="icon_text"        url="img-guide/text.png" />
+	<mapID target="icon_text"        url="icons/text.png" />
 	<mapID target="icon_menu"        url="icons/menu.gif" />
 	<mapID target="icon_splitter"    url="icons/splitter.gif" />
 	<mapID target="icon_pin"         url="icons/pinInput.gif" />
@@ -186,7 +187,7 @@
 	<mapID target="icon_clock"       url="icons/clock.gif" />
     <mapID target="icon_por"         url="icons/por.png"/>
 	<mapID target="icon_extender"    url="icons/extender.gif" />
-	<mapID target="icon_label"       url="img-guide/text.png" />
+	<mapID target="icon_label"       url="icons/text.png" />
 	<mapID target="icon_constant"    url="icons/constant.gif" />
 	<mapID target="icon_const01"     url="icons/ground.gif" />
 	<mapID target="icon_transist"    url="icons/trans0.gif" />

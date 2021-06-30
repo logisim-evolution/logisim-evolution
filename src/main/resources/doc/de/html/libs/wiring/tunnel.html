@@ -1,0 +1,84 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Tunnel</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/tunnel.gif" width="32" height="32">
+<em>Tunnel</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.5.0</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/tunnel.png" width="220" height="90"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>A <q>tunnel</q> acts like a wire in that it binds points together,
+but unlike a wire the connection is not explicitly drawn.
+This is helpful when you need to connect points far apart in the circuit
+and a network of wires would make the circuit much more ugly.
+The below illustration illustrates how this works.</p>
+
+<blockquote><img src="../../../../img-libs/tunnel-demo.png" width="204" height="86"></blockquote>
+
+<p>Here, all three tunnels have the same label, <em>a</em>, and so
+the three points to which the tunnels point are connected.
+(If one of the tunnels were labeled something else, like <em>b</em>,
+then it would be part of a different set of tunnels.)
+The controlled buffer at top emits a floating output
+since its lower input is 0.
+This normally leads the wire coming from the controlled buffer to be blue;
+but here it is dark green because the floating output combines
+through the tunnel with the 0 from the pin at bottom.
+If the control input into the buffer changes to 1,
+then the controlled buffer would feed 1 into the tunnel,
+which would combine with 0 from the pin at bottom to result in an error value; thus, we would then see red wires feeding through all three tunnels.</p>
+
+<h2>Pins</h2>
+
+<p>A tunnel has only one pin, whose bit width matches the tunnel's
+Data Bits attribute. This pin is neither an input nor an output —
+the matching tunnels are simply connected transparently.</p>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Ausrichtung</dt>
+<dd>The direction toward which the tunnel points.</dd>
+
+<dt>Data Bits</dt>
+<dd>The number of bits for the tunnel.</dd>
+
+<dt>Label</dt>
+<dd>The text within the label associated with the tunnel.
+This tunnel is connected to all other tunnels with exactly the same label.</dd>
+
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Allows the label associated with the tunnel to be edited.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

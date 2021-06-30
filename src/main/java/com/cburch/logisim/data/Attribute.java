@@ -75,10 +75,7 @@ public abstract class Attribute<V> {
   }
 
   public String toStandardString(V value) {
-    String oldString = value.toString();
-    String newString = oldString.replaceAll("[\u0000-\u001f]", "");
-    newString = newString.replaceAll("&#.*?;", "");
-    return newString;
+    return value.toString().replaceAll("[\u0000-\u001f]", "").replaceAll("&#.*?;", "");
   }
 
   public void setHidden(boolean val) {

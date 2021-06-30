@@ -56,10 +56,10 @@ public class SRFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
       Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("S", true, ComponentInfo, 0, Nets));
-      PortMap.putAll(GetNetMap("R", true, ComponentInfo, 1, Nets));
+      PortMap.putAll(GetNetMap("S", true, ComponentInfo, 0, nets));
+      PortMap.putAll(GetNetMap("R", true, ComponentInfo, 1, nets));
       return PortMap;
     }
 

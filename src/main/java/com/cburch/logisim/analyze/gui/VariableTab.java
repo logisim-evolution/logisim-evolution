@@ -62,11 +62,9 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
-import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DropMode;
-import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -74,7 +72,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.TransferHandler;
@@ -95,11 +92,12 @@ public class VariableTab extends AnalyzerTab {
   private final JLabel outputsLabel;
 
   private JTable ioTable(VariableList data, LogisimMenuBar menubar) {
-    final TableCellEditor ed1 = new SingleClickVarEditor(data);
-    final TableCellEditor ed2 = new DoubleClickVarEditor(data);
-    JTable table = new JTable(1, 1) {
+    final var ed1 = new SingleClickVarEditor(data);
+    final var ed2 = new DoubleClickVarEditor(data);
+    final var table = new JTable(1, 1) {
       private static final long serialVersionUID = 1L;
 
+      @Override
       public TableCellEditor getCellEditor(int row, int column) {
         return (row == getRowCount() - 1 ? ed1 : ed2);
       }
@@ -112,17 +110,17 @@ public class VariableTab extends AnalyzerTab {
     table.setDragEnabled(true);
     table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    TransferHandler ccp = new VarTransferHandler(table, data);
+    final var ccp = new VarTransferHandler(table, data);
     table.setTransferHandler(ccp);
     table.setDropMode(DropMode.INSERT_ROWS);
 
-    InputMap inputMap = table.getInputMap();
+    final var inputMap = table.getInputMap();
     for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
-      KeyStroke accel = menubar.getAccelerator(item);
+      final var accel = menubar.getAccelerator(item);
       inputMap.put(accel, item);
     }
 
-    ActionMap actionMap = table.getActionMap();
+    final var actionMap = table.getActionMap();
 
     actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
@@ -132,8 +130,9 @@ public class VariableTab extends AnalyzerTab {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
-            int idx = table.getSelectedRow();
+            var idx = table.getSelectedRow();
             if (idx < 0 || idx >= data.vars.size()) return;
             data.remove(data.vars.get(idx));
             if (idx >= data.vars.size()) idx = data.vars.size() - 1;
@@ -145,8 +144,9 @@ public class VariableTab extends AnalyzerTab {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
-            int idx = table.getSelectedRow();
+            final var idx = table.getSelectedRow();
             if (idx <= 0 || idx > data.vars.size() - 1) return;
             data.move(data.vars.get(idx), -1);
             table.changeSelection(idx - 1, 0, false, false);
@@ -157,8 +157,9 @@ public class VariableTab extends AnalyzerTab {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
-            int idx = table.getSelectedRow();
+            final var idx = table.getSelectedRow();
             if (idx < 0 || idx >= data.vars.size() - 1) return;
             data.move(data.vars.get(idx), +1);
             table.changeSelection(idx + 1, 0, false, false);
@@ -169,8 +170,9 @@ public class VariableTab extends AnalyzerTab {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
-            int idx = table.getSelectedRow();
+            final var idx = table.getSelectedRow();
             if (idx <= 0 || idx > data.vars.size() - 1) return;
             data.move(data.vars.get(idx), -idx);
             table.changeSelection(0, 0, false, false);
@@ -181,8 +183,9 @@ public class VariableTab extends AnalyzerTab {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
-            int idx = table.getSelectedRow();
+            final var idx = table.getSelectedRow();
             int end = data.vars.size() - 1;
             if (idx < 0 || idx >= data.vars.size() - 1) return;
             data.move(data.vars.get(idx), end - idx);
@@ -195,13 +198,12 @@ public class VariableTab extends AnalyzerTab {
   private JTable focus;
 
   private JScrollPane wrap(JTable table) {
-    JScrollPane scroll = new JScrollPane(table,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    scroll.setPreferredSize(
-        new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
+    final var scroll = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(60), AppPreferences.getScaled(100)));
     scroll.addMouseListener(
         new MouseAdapter() {
+          @Override
           public void mouseClicked(MouseEvent me) {
             table.changeSelection(table.getRowCount() - 1, 0, false, false);
             table.grabFocus();
@@ -210,12 +212,14 @@ public class VariableTab extends AnalyzerTab {
     scroll.setTransferHandler(table.getTransferHandler());
 
     table.addFocusListener(new FocusListener() {
+      @Override
       public void focusGained(FocusEvent e) {
         if (e.isTemporary()) return;
         focus = table;
         editHandler.computeEnabled();
       }
 
+      @Override
       public void focusLost(FocusEvent e) {
         if (e.isTemporary()) return;
         table.clearSelection();
@@ -292,9 +296,9 @@ public class VariableTab extends AnalyzerTab {
     }
 
     this.addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentShown(ComponentEvent e) {
-        if (focus != null)
-          focus.requestFocusInWindow();
+        if (focus != null) focus.requestFocusInWindow();
       }
     });
     editHandler.computeEnabled();
@@ -308,9 +312,9 @@ public class VariableTab extends AnalyzerTab {
 
   @Override
   void updateTab() {
-    var inputModel = (VariableTableModel) inputsTable.getModel();
+    final var inputModel = (VariableTableModel) inputsTable.getModel();
     inputModel.update();
-    var outputModel = (VariableTableModel) outputsTable.getModel();
+    final var outputModel = (VariableTableModel) outputsTable.getModel();
     outputModel.update();
   }
 
@@ -330,13 +334,13 @@ public class VariableTab extends AnalyzerTab {
   public static final int INVALID_CHARS = -7;
 
   public static int checkindex(String index) {
-    int length = index.length();
-    int pos = 0;
+    final var length = index.length();
+    var pos = 0;
     if (length < 2) return 0;
     if (index.charAt(pos++) != '[') return NO_START_PAR;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
     if (pos == 1) return NO_VALID_MSB_INDEX;
-    int msbIndex = Integer.parseInt(index.substring(1, pos));
+    final var msbIndex = Integer.parseInt(index.substring(1, pos));
     if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos) == ']') {
       pos++;
@@ -346,10 +350,10 @@ public class VariableTab extends AnalyzerTab {
     if (pos >= length - 2) return NO_VALID_INDEX_SEP;
     if (!index.startsWith("..", pos)) return NO_VALID_INDEX_SEP;
     pos += 2;
-    int curpos = pos;
+    final var curpos = pos;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
     if (pos == curpos) return NO_VALID_LSB_INDEX;
-    int lsbIndex = Integer.parseInt(index.substring(curpos, pos));
+    final var lsbIndex = Integer.parseInt(index.substring(curpos, pos));
     if (lsbIndex > msbIndex) return LSB_BIGGER_MSB;
     if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos++) != ']') return NO_FINAL_PAR;
@@ -358,7 +362,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   private int validateInput(VariableList data, Var oldVar, String text, int w) {
-    int err = OK;
+    var err = OK;
     if (text.length() == 0) {
       err = EMPTY;
     } else if (!Character.isJavaIdentifierStart(text.charAt(0))) {
@@ -366,15 +370,15 @@ public class VariableTab extends AnalyzerTab {
       err = BAD_NAME;
     } else {
       for (int i = 1; i < text.length() && err == OK; i++) {
-        char c = text.charAt(i);
+        final var c = text.charAt(i);
         if (!Character.isJavaIdentifierPart(c)) {
-          error.setText(S.fmt("variablePartError", "" + c));
+          error.setText(S.get("variablePartError", "" + c));
           err = BAD_NAME;
         }
       }
     }
     if (err == OK) {
-      String message = SyntaxChecker.getErrorMessage(text);
+      final var message = SyntaxChecker.getErrorMessage(text);
       if (message != null) {
         err = BAD_NAME;
         error.setText(message);
@@ -382,8 +386,11 @@ public class VariableTab extends AnalyzerTab {
     }
 
     if (err == OK && oldVar != null) {
-      if (oldVar.name.equals(text) && oldVar.width == w) err = UNCHANGED;
-      else if (oldVar.name.equals(text)) err = RESIZED;
+      if (oldVar.name.equals(text) && oldVar.width == w) {
+        err = UNCHANGED;
+      } else if (oldVar.name.equals(text)) {
+        err = RESIZED;
+      }
     }
     if (err == OK) {
       if (data.containsDuplicate(data, oldVar, text)) {
@@ -393,7 +400,7 @@ public class VariableTab extends AnalyzerTab {
     }
     if (err == OK || err == EMPTY) {
       if (data.bits.size() + w > data.getMaximumSize()) {
-        error.setText(StringUtil.format(S.get("variableMaximumError"), "" + data.getMaximumSize()));
+        error.setText(S.get("variableMaximumError", "" + data.getMaximumSize()));
         err = TOO_WIDE;
       } else {
         error.setText(" ");
@@ -411,8 +418,8 @@ public class VariableTab extends AnalyzerTab {
       new EditHandler() {
         @Override
         public void computeEnabled() {
-          final int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
-          final int i = (focus == null || focus.isEditing()) ? -1 : focus.getSelectedRow();
+          final var n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
+          final var i = (focus == null || focus.isEditing()) ? -1 : focus.getSelectedRow();
           setEnabled(LogisimMenuBar.CUT, true);
           setEnabled(LogisimMenuBar.COPY, true);
           setEnabled(LogisimMenuBar.PASTE, true);
@@ -429,13 +436,12 @@ public class VariableTab extends AnalyzerTab {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          Object action = e.getSource();
+          final var action = e.getSource();
           if (focus != null) focus.getActionMap().get(action).actionPerformed(null);
         }
       };
 
-  private static class VariableTableModel extends AbstractTableModel
-      implements VariableListListener {
+  private static class VariableTableModel extends AbstractTableModel implements VariableListListener {
     private static final long serialVersionUID = 1L;
     private final JTable table;
     private final VariableList list;
@@ -449,15 +455,16 @@ public class VariableTab extends AnalyzerTab {
       list.addVariableListListener(this);
     }
 
+    @Override
     public boolean isCellEditable(int row, int column) {
       return true;
     }
 
+    @Override
     public void setValueAt(Object obj, int row, int column) {
-      Var newVar = (Var) obj;
-      Var oldVar = (Var) getValueAt(row, column);
-      if (newVar == null || newVar.name.equals("") || newVar.equals(oldVar))
-        return;
+      final var newVar = (Var) obj;
+      final var oldVar = (Var) getValueAt(row, column);
+      if (newVar == null || newVar.name.equals("") || newVar.equals(oldVar)) return;
       if (row == listCopy.length) {
         list.add(newVar);
         table.changeSelection(row + 1, column, false, false);
@@ -468,33 +475,38 @@ public class VariableTab extends AnalyzerTab {
       table.grabFocus();
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
       if (row == listCopy.length)
         return empty;
       else if (row >= 0 && row < listCopy.length)
         return listCopy[row];
-      else
-        return null;
+      return null;
     }
 
+    @Override
     public int getColumnCount() {
       return 1;
     }
 
+    @Override
     public String getColumnName(int column) {
       return "";
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
       return Var.class;
     }
 
+    @Override
     public int getRowCount() {
       return listCopy.length + 1;
     }
 
+    @Override
     public void listChanged(VariableListEvent event) {
-      int oldSize = listCopy.length;
+      final var oldSize = listCopy.length;
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
@@ -544,12 +556,9 @@ public class VariableTab extends AnalyzerTab {
     @Override
     public Component getTableCellRendererComponent(JTable table,
         Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      boolean empty = value.toString().equals("");
-      if (empty)
-        value = S.get("variableClickToAdd");
-      JComponent c =
-          (JComponent)
-              super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      final var empty = value.toString().equals("");
+      if (empty) value = S.get("variableClickToAdd");
+      final var c = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       c.setFont(empty ? italic : plain);
       return c;
     }
@@ -564,7 +573,7 @@ public class VariableTab extends AnalyzerTab {
     @Override
     public Component getListCellRendererComponent(JList<?> list,
         Object w, int index, boolean isSelected, boolean cellHasFocus) {
-      String s = ((Integer) w) == 1 ? ("1 bit") : (w + " bits");
+      final var s = ((Integer) w) == 1 ? ("1 bit") : (w + " bits");
       return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
     }
   }
@@ -581,8 +590,8 @@ public class VariableTab extends AnalyzerTab {
             field.getBorder(),
             BorderFactory.createEmptyBorder(1, 3, 1, 3)));
       this.data = data;
-      int maxwidth = data.getMaximumSize();
-      var widths = new Integer[Math.min(maxwidth, 32)];
+      final var maxwidth = data.getMaximumSize();
+      final var widths = new Integer[Math.min(maxwidth, 32)];
       for (int i = 0; i < widths.length; i++) widths[i] = i + 1;
       width = new JComboBox<>(widths);
       width.setFocusable(false);
@@ -593,14 +602,13 @@ public class VariableTab extends AnalyzerTab {
 
     @Override
     public Object getCellEditorValue() {
-      var name = field.getText().trim();
-      int w = (Integer) width.getSelectedItem();
+      final var name = field.getText().trim();
+      final var w = (Integer) width.getSelectedItem();
       return new Var(name, w);
     }
 
     @Override
-    public Component getTableCellEditorComponent(
-        JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
       editing = (Var) value;
       field.setText(editing.name);
       width.setSelectedItem(editing.width);
@@ -618,9 +626,9 @@ public class VariableTab extends AnalyzerTab {
     }
 
     boolean ok() {
-      var oldVar = editing;
+      final var oldVar = editing;
       editing = null;
-      var text = field.getText().trim();
+      final var text = field.getText().trim();
       var name = "";
       var index = "";
       int w;
@@ -654,19 +662,15 @@ public class VariableTab extends AnalyzerTab {
       }
       if (oldVar == null || oldVar.name.equals("")) {
         // validate new name and width
-        int err = validateInput(data, null, name, w);
-        if (err == EMPTY)
-          return true; // do nothing, empty Var will be ignored in setValueAt()
-        if (err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE)
-          return false; // prevent loss of focus
+        final var err = validateInput(data, null, name, w);
+        if (err == EMPTY) return true; // do nothing, empty Var will be ignored in setValueAt()
+        if (err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE) return false; // prevent loss of focus
         return err == OK; // new Var will be added in setValueAt()
       } else {
         // validate replacement name and width
-        int err = validateInput(data, oldVar, name, w);
-        if (err == EMPTY || err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE)
-          return false; // prevent loss of focus
-        if (err == UNCHANGED)
-          return true; // do nothing, unchanged Var will be ignored in setValueAt()
+        final var err = validateInput(data, oldVar, name, w);
+        if (err == EMPTY || err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE) return false; // prevent loss of focus
+        if (err == UNCHANGED) return true; // do nothing, unchanged Var will be ignored in setValueAt()
         return err == OK || err == RESIZED; // modified Var will be created in setValueAt()
       } // should never happen
     }
@@ -683,13 +687,12 @@ public class VariableTab extends AnalyzerTab {
     public boolean isCellEditable(EventObject e) {
       if (super.isCellEditable(e)) {
         if (e instanceof MouseEvent) {
-          MouseEvent me = (MouseEvent) e;
+          final var me = (MouseEvent) e;
           return me.getClickCount() >= 2;
         }
         if (e instanceof KeyEvent) {
-          KeyEvent ke = (KeyEvent) e;
-          return (ke.getKeyCode() == KeyEvent.VK_F2
-              || ke.getKeyCode() == KeyEvent.VK_ENTER);
+          final var ke = (KeyEvent) e;
+          return (ke.getKeyCode() == KeyEvent.VK_F2 || ke.getKeyCode() == KeyEvent.VK_ENTER);
         }
       }
       return false;
@@ -716,6 +719,7 @@ public class VariableTab extends AnalyzerTab {
       this.data = data;
     }
 
+    @Override
     public boolean importData(TransferHandler.TransferSupport info) {
       String s;
       try {
@@ -724,10 +728,9 @@ public class VariableTab extends AnalyzerTab {
         return false;
       }
 
-      Var newVar = parse(s);
-      if (newVar == null)
-        return false;
-      int newIdx = data.vars.size();
+      final var newVar = parse(s);
+      if (newVar == null) return false;
+      var newIdx = data.vars.size();
       if (info.isDrop()) {
         try {
           JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
@@ -739,14 +742,14 @@ public class VariableTab extends AnalyzerTab {
       Var oldVar = null;
       int oldIdx;
       for (oldIdx = 0; oldIdx < data.vars.size(); oldIdx++) {
-        Var v = data.vars.get(oldIdx);
+        final var v = data.vars.get(oldIdx);
         if (v.name.equals(newVar.name)) {
           oldVar = v;
           break;
         }
       }
 
-      int err = validateInput(data, oldVar, newVar.name, newVar.width);
+      final var err = validateInput(data, oldVar, newVar.name, newVar.width);
       if (err == UNCHANGED) {
         pendingDelete = null;
         if (newIdx > oldIdx)
@@ -776,18 +779,21 @@ public class VariableTab extends AnalyzerTab {
       }
     }
 
+    @Override
     protected Transferable createTransferable(JComponent c) {
-      int row = table.getSelectedRow();
+      final var row = table.getSelectedRow();
       if (row < 0 || row >= data.vars.size())
         return null;
       pendingDelete = data.vars.get(row);
       return new StringSelection(pendingDelete.toString());
     }
 
+    @Override
     public int getSourceActions(JComponent c) {
       return COPY_OR_MOVE;
     }
 
+    @Override
     protected void exportDone(JComponent c, Transferable tdata, int action) {
       if (action == MOVE && pendingDelete != null) {
         data.remove(pendingDelete);
@@ -795,6 +801,7 @@ public class VariableTab extends AnalyzerTab {
       pendingDelete = null;
     }
 
+    @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
       return support.isDataFlavorSupported(DataFlavor.stringFlavor);
     }

@@ -81,7 +81,7 @@ public class ModelChangeAttributeAction extends ModelAction {
     if (a == null) {
       return S.get("actionChangeAttributes");
     } else {
-      return S.fmt("actionChangeAttribute", a.getDisplayName());
+      return S.get("actionChangeAttribute", a.getDisplayName());
     }
   }
 

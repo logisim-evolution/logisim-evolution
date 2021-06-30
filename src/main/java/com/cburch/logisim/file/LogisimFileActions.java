@@ -46,16 +46,13 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
-import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 public class LogisimFileActions {
   private static class AddCircuit extends Action {
@@ -105,145 +102,147 @@ public class LogisimFileActions {
   }
 
   private static class MergeFile extends Action {
-    private final ArrayList<Circuit> MergedCircuits = new ArrayList<>();
-    private final ArrayList<File> JarLibs = new ArrayList<>();
-    private final ArrayList<File> LogiLibs = new ArrayList<>();
+    private final ArrayList<Circuit> mergedCircuits = new ArrayList<>();
+    private final ArrayList<File> jarLibs = new ArrayList<>();
+    private final ArrayList<File> logiLibs = new ArrayList<>();
 
     MergeFile(LogisimFile mergelib, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<>();
-      HashSet<String> ToolList = new HashSet<>();
-      HashMap<String, String> Error = new HashMap<>();
-      boolean cancontinue = true;
-      for (Library lib : source.getLibraries()) {
-        LibraryTools.BuildLibraryList(lib, LibNames);
+      final var libNames = new HashMap<String, Library>();
+      final var toolList = new HashSet<String>();
+      final var errors = new HashMap<String, String>();
+      var canContinue = true;
+      for (final var lib : source.getLibraries()) {
+        LibraryTools.BuildLibraryList(lib, libNames);
       }
-      LibraryTools.BuildToolList(source, ToolList);
-      LibraryTools.RemovePresentLibraries(mergelib, LibNames, false);
+      LibraryTools.BuildToolList(source, toolList);
+      LibraryTools.RemovePresentLibraries(mergelib, libNames, false);
       if (LibraryTools.LibraryIsConform(
-          mergelib, new HashSet<>(), new HashSet<>(), Error)) {
+          mergelib, new HashSet<>(), new HashSet<>(), errors)) {
         /* Okay the library is now ready for merge */
-        for (Library lib : mergelib.getLibraries()) {
-          HashSet<String> NewToolList = new HashSet<>();
-          LibraryTools.BuildToolList(lib, NewToolList);
-          ArrayList<String> ret = LibraryTools.LibraryCanBeMerged(ToolList, NewToolList);
+        for (final var lib : mergelib.getLibraries()) {
+          final var newToolList = new HashSet<String>();
+          LibraryTools.BuildToolList(lib, newToolList);
+          final var ret = LibraryTools.LibraryCanBeMerged(toolList, newToolList);
           if (!ret.isEmpty()) {
-            String Location = "";
-            HashMap<String, String> ToolNames = LibraryTools.GetToolLocation(source, Location, ret);
-            for (String key : ToolNames.keySet()) {
-              String SolStr = S.get("LibMergeFailure2") + " a) ";
-              String ErrLoc = ToolNames.get(key);
-              String[] ErrParts = ErrLoc.split("->");
-              if (ErrParts.length > 1) {
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
+            final var Location = "";
+            final var toolNames = LibraryTools.GetToolLocation(source, Location, ret);
+            for (final var key : toolNames.keySet()) {
+              var solStr = S.get("LibMergeFailure2") + " a) ";
+              final var errLoc = toolNames.get(key);
+              final var errParts = errLoc.split("->");
+              if (errParts.length > 1) {
+                solStr = solStr.concat(S.get("LibMergeFailure4", errParts[1]));
               } else {
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure3", key));
+                solStr = solStr.concat(S.get("LibMergeFailure3", key));
               }
-              SolStr = SolStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-              SolStr = SolStr.concat(S.fmt("LibMergeFailure6", lib.getName()));
-              Error.put(SolStr, S.fmt("LibMergeFailure1", lib.getName(), key));
+              solStr = solStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
+              solStr = solStr.concat(S.get("LibMergeFailure6", lib.getName()));
+              errors.put(solStr, S.get("LibMergeFailure1", lib.getName(), key));
             }
-            cancontinue = false;
+            canContinue = false;
           }
-          String[] splits = mergelib.getLoader().getDescriptor(lib).split("#");
-          File TheFile = mergelib.getLoader().getFileFor(splits[1], null);
-          if (splits[0].equals("file")) LogiLibs.add(TheFile);
-          else if (splits[0].equals("jar")) JarLibs.add(TheFile);
+          final var splits = mergelib.getLoader().getDescriptor(lib).split("#");
+          final var TheFile = mergelib.getLoader().getFileFor(splits[1], null);
+          if (splits[0].equals("file"))
+            logiLibs.add(TheFile);
+          else if (splits[0].equals("jar"))
+            jarLibs.add(TheFile);
         }
-        if (!cancontinue) {
-          LibraryTools.ShowErrors(mergelib.getName(), Error);
-          LogiLibs.clear();
-          JarLibs.clear();
+        if (!canContinue) {
+          LibraryTools.ShowErrors(mergelib.getName(), errors);
+          logiLibs.clear();
+          jarLibs.clear();
           return;
         }
         /* Okay merged the missing libraries, now add the circuits */
-        for (Circuit circ : mergelib.getCircuits()) {
-          String CircName = circ.getName().toUpperCase();
-          if (ToolList.contains(CircName)) {
-            ArrayList<String> ret = new ArrayList<>();
-            ret.add(CircName);
-            HashMap<String, String> ToolNames = LibraryTools.GetToolLocation(source, "", ret);
-            for (String key : ToolNames.keySet()) {
-              String ErrLoc = ToolNames.get(key);
-              String[] ErrParts = ErrLoc.split("->");
-              if (ErrParts.length > 1) {
-                String SolStr = S.get("LibMergeFailure2") + " a) ";
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
-                SolStr = SolStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
-                SolStr = SolStr.concat(S.fmt("LibMergeFailure8", circ.getName()));
-                Error.put(SolStr, S.fmt("LibMergeFailure7", key, ErrParts[1]));
-                cancontinue = false;
+        for (final var circ : mergelib.getCircuits()) {
+          final var circName = circ.getName().toUpperCase();
+          if (toolList.contains(circName)) {
+            final var ret = new ArrayList<String>();
+            ret.add(circName);
+            final var toolNames = LibraryTools.GetToolLocation(source, "", ret);
+            for (final var key : toolNames.keySet()) {
+              final var errLoc = toolNames.get(key);
+              final var errParts = errLoc.split("->");
+              if (errParts.length > 1) {
+                var solStr = S.get("LibMergeFailure2") + " a) ";
+                solStr = solStr.concat(S.get("LibMergeFailure4", errParts[1]));
+                solStr = solStr.concat(" " + S.get("LibMergeFailure5") + " b) ");
+                solStr = solStr.concat(S.get("LibMergeFailure8", circ.getName()));
+                errors.put(solStr, S.get("LibMergeFailure7", key, errParts[1]));
+                canContinue = false;
               }
             }
-            if (cancontinue) {
-              Circuit circ1 = LibraryTools.getCircuitFromLibs(source, CircName);
+            if (canContinue) {
+              final var circ1 = LibraryTools.getCircuitFromLibs(source, circName);
               if (circ1 == null) {
                 OptionPane.showMessageDialog(
                     null,
                     "Fatal internal error: Cannot find a referenced circuit",
                     "LogosimFileAction:",
                     OptionPane.ERROR_MESSAGE);
-                cancontinue = false;
+                canContinue = false;
               } else if (!CircuitsAreEqual(circ1, circ)) {
-                int Reponse =
+                final var Reponse =
                     OptionPane.showConfirmDialog(
                         null,
-                        S.fmt("FileMergeQuestion", circ.getName()),
+                        S.get("FileMergeQuestion", circ.getName()),
                         S.get("FileMergeTitle"),
                         OptionPane.YES_NO_OPTION);
                 if (Reponse == OptionPane.YES_OPTION) {
-                  MergedCircuits.add(circ);
+                  mergedCircuits.add(circ);
                 }
               }
             }
           } else {
-            MergedCircuits.add(circ);
+            mergedCircuits.add(circ);
           }
         }
-        if (!cancontinue) {
-          LibraryTools.ShowErrors(mergelib.getName(), Error);
-          LogiLibs.clear();
-          JarLibs.clear();
-          MergedCircuits.clear();
+        if (!canContinue) {
+          LibraryTools.ShowErrors(mergelib.getName(), errors);
+          logiLibs.clear();
+          jarLibs.clear();
+          mergedCircuits.clear();
           return;
         }
-      } else LibraryTools.ShowErrors(mergelib.getName(), Error);
+      } else LibraryTools.ShowErrors(mergelib.getName(), errors);
     }
 
     private boolean CircuitsAreEqual(Circuit orig, Circuit newone) {
-      HashMap<Location, Component> origcomps = new HashMap<>();
-      HashMap<Location, Component> newcomps = new HashMap<>();
-      for (Component comp : orig.getWires()) {
-        origcomps.put(comp.getLocation(), comp);
+      final var origComps = new HashMap<Location, Component>();
+      final var newComps = new HashMap<Location, Component>();
+      for (final var comp : orig.getWires()) {
+        origComps.put(comp.getLocation(), comp);
       }
-      for (Component comp : orig.getNonWires()) {
-        origcomps.put(comp.getLocation(), comp);
+      for (final var comp : orig.getNonWires()) {
+        origComps.put(comp.getLocation(), comp);
       }
-      for (Component comp : newone.getWires()) {
-        newcomps.put(comp.getLocation(), comp);
+      for (final var comp : newone.getWires()) {
+        newComps.put(comp.getLocation(), comp);
       }
-      for (Component comp : newone.getNonWires()) {
-        newcomps.put(comp.getLocation(), comp);
+      for (final var comp : newone.getNonWires()) {
+        newComps.put(comp.getLocation(), comp);
       }
-      Iterator<Location> it = newcomps.keySet().iterator();
+      final var it = newComps.keySet().iterator();
       while (it.hasNext()) {
-        Location loc = it.next();
-        if (origcomps.containsKey(loc)) {
-          Component comp1 = newcomps.get(loc);
-          Component comp2 = newcomps.get(loc);
+        final var loc = it.next();
+        if (origComps.containsKey(loc)) {
+          final var comp1 = newComps.get(loc);
+          final var comp2 = newComps.get(loc);
           if (comp1.getFactory().getName().equals(comp2.getFactory().getName())) {
             if (comp1.getFactory().getName().equals("Wire")) {
-              Wire wir1 = (Wire) comp1;
-              Wire wir2 = (Wire) comp2;
+              final var wir1 = (Wire) comp1;
+              final var wir2 = (Wire) comp2;
               if (wir1.overlaps(wir2, true)) {
                 it.remove();
-                origcomps.remove(loc);
+                origComps.remove(loc);
               } else {
                 System.out.println("No Wire Overlap");
               }
             } else {
               if (comp1.getAttributeSet().equals(comp2.getAttributeSet())) {
                 it.remove();
-                origcomps.remove(loc);
+                origComps.remove(loc);
               } else {
                 System.out.println("Different component");
               }
@@ -251,17 +250,17 @@ public class LogisimFileActions {
           }
         }
       }
-      return origcomps.isEmpty() & newcomps.isEmpty();
+      return origComps.isEmpty() & newComps.isEmpty();
     }
 
     @Override
     public void doIt(Project proj) {
-      Loader loader = proj.getLogisimFile().getLoader();
+      final var loader = proj.getLogisimFile().getLoader();
       /* first we are going to merge the jar libraries */
-      for (File jarLib : JarLibs) {
+      for (final var jarLib : jarLibs) {
         String className = null;
-        try (JarFile jarFile = new JarFile(jarLib)) {
-          Manifest manifest = jarFile.getManifest();
+        try (final var jarFile = new JarFile(jarLib)) {
+          final var manifest = jarFile.getManifest();
           className = manifest.getMainAttributes().getValue("Library-Class");
         } catch (IOException e) {
           // if opening the JAR file failed, do nothing
@@ -278,37 +277,37 @@ public class LogisimFileActions {
           if (className == null)
             continue;
         }
-        Library lib = loader.loadJarLibrary(jarLib, className);
+        final var lib = loader.loadJarLibrary(jarLib, className);
         if (lib != null) {
           proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
         }
       }
-      JarLibs.clear();
+      jarLibs.clear();
       /* next we are going to load the logisimfile  libraries */
-      for (File logiLib : LogiLibs) {
-        Library put = loader.loadLogisimLibrary(logiLib);
+      for (final var logiLib : logiLibs) {
+        final var put = loader.loadLogisimLibrary(logiLib);
         if (put != null) {
           proj.doAction(LogisimFileActions.loadLibrary(put, proj.getLogisimFile()));
         }
       }
-      LogiLibs.clear();
+      logiLibs.clear();
       // this we are going to do in two steps, first add the circuits with inputs,
       // outputs and wires
-      for (Circuit circ : MergedCircuits) {
-        Circuit NewCirc = null;
-        boolean replace = false;
-        for (Circuit circs : proj.getLogisimFile().getCircuits())
+      for (final var circ : mergedCircuits) {
+        Circuit newCircuit = null;
+        var replace = false;
+        for (final var circs : proj.getLogisimFile().getCircuits())
           if (circs.getName().equalsIgnoreCase(circ.getName())) {
-            NewCirc = circs;
+            newCircuit = circs;
             replace = true;
           }
-        if (NewCirc == null) NewCirc = new Circuit(circ.getName(), proj.getLogisimFile(), proj);
-        CircuitMutation result = new CircuitMutation(NewCirc);
+        if (newCircuit == null) newCircuit = new Circuit(circ.getName(), proj.getLogisimFile(), proj);
+        final var result = new CircuitMutation(newCircuit);
         if (replace) result.clear();
-        for (Wire wir : circ.getWires()) {
+        for (final var wir : circ.getWires()) {
           result.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
         }
-        for (Component comp : circ.getNonWires()) {
+        for (final var comp : circ.getNonWires()) {
           if (comp.getFactory() instanceof Pin) {
             result.add(
                 Pin.FACTORY.createComponent(
@@ -317,38 +316,30 @@ public class LogisimFileActions {
         }
         if (!replace) {
           result.execute();
-          proj.doAction(LogisimFileActions.addCircuit(NewCirc));
+          proj.doAction(LogisimFileActions.addCircuit(newCircuit));
         } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
       }
-      HashMap<String, AddTool> AvailableTools = new HashMap<>();
-      LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
+      final var availableTools = new HashMap<String, AddTool>();
+      LibraryTools.BuildToolList(proj.getLogisimFile(), availableTools);
       /* in the second step we are going to add the rest of the contents */
-      for (Circuit circ : MergedCircuits) {
-        Circuit NewCirc = proj.getLogisimFile().getCircuit(circ.getName());
-        if (NewCirc != null) {
-          CircuitMutation result = new CircuitMutation(NewCirc);
-          for (Component comp : circ.getNonWires()) {
+      for (final var circ : mergedCircuits) {
+        final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
+        if (newCirc != null) {
+          final var result = new CircuitMutation(newCirc);
+          for (final var comp : circ.getNonWires()) {
             if (!(comp.getFactory() instanceof Pin)) {
-              AddTool current = AvailableTools.get(comp.getFactory().getName().toUpperCase());
+              final var current = availableTools.get(comp.getFactory().getName().toUpperCase());
               if (current != null) {
-                Component NewComp =
-                    current
-                        .getFactory()
-                        .createComponent(
-                            comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone());
-                result.add(NewComp);
+                result.add(current.getFactory().createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
               } else if (comp.getFactory().getName().equals("Text")) {
-                Component NewComp =
-                    Text.FACTORY.createComponent(
-                        comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone());
-                result.add(NewComp);
+                result.add(Text.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
               } else System.out.println("Not found:" + comp.getFactory().getName());
             }
           }
           result.execute();
         }
       }
-      MergedCircuits.clear();
+      mergedCircuits.clear();
     }
 
     @Override
@@ -366,49 +357,48 @@ public class LogisimFileActions {
   }
 
   private static class LoadLibraries extends Action {
-    private final ArrayList<Library> MergedLibs = new ArrayList<>();
+    private final ArrayList<Library> mergedLibs = new ArrayList<>();
 
     LoadLibraries(Library[] libs, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<>();
-      HashSet<String> ToolList = new HashSet<>();
-      HashMap<String, String> Error = new HashMap<>();
-      for (Library lib : source.getLibraries()) {
-        LibraryTools.BuildLibraryList(lib, LibNames);
+      final var libNames = new HashMap<String, Library>();
+      final var ToolList = new HashSet<String>();
+      final var errors = new HashMap<String, String>();
+      for (final var lib : source.getLibraries()) {
+        LibraryTools.BuildLibraryList(lib, libNames);
       }
       LibraryTools.BuildToolList(source, ToolList);
-      for (Library lib : libs) {
-        if (LibNames.containsKey(lib.getName().toUpperCase())) {
+      for (final var lib : libs) {
+        if (libNames.containsKey(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
               null,
               "\"" + lib.getName() + "\": " + S.get("LibraryAlreadyLoaded"),
               S.get("LibLoadErrors") + " " + lib.getName() + " !",
               OptionPane.WARNING_MESSAGE);
         } else {
-          LibraryTools.RemovePresentLibraries(lib, LibNames, false);
-          if (LibraryTools.LibraryIsConform(
-              lib, new HashSet<>(), new HashSet<>(), Error)) {
-            HashSet<String> AddedToolList = new HashSet<>();
-            LibraryTools.BuildToolList(lib, AddedToolList);
-            for (String tool : AddedToolList)
+          LibraryTools.RemovePresentLibraries(lib, libNames, false);
+          if (LibraryTools.LibraryIsConform(lib, new HashSet<>(), new HashSet<>(), errors)) {
+            final var addedToolList = new HashSet<String>();
+            LibraryTools.BuildToolList(lib, addedToolList);
+            for (final var tool : addedToolList)
               if (ToolList.contains(tool))
-                Error.put(tool, S.get("LibraryMultipleToolError"));
-            if (Error.keySet().isEmpty()) {
-              LibraryTools.BuildLibraryList(lib, LibNames);
-              ToolList.addAll(AddedToolList);
-              MergedLibs.add(lib);
+                errors.put(tool, S.get("LibraryMultipleToolError"));
+            if (errors.keySet().isEmpty()) {
+              LibraryTools.BuildLibraryList(lib, libNames);
+              ToolList.addAll(addedToolList);
+              mergedLibs.add(lib);
             } else
-              LibraryTools.ShowErrors(lib.getName(), Error);
+              LibraryTools.ShowErrors(lib.getName(), errors);
           } else
-            LibraryTools.ShowErrors(lib.getName(), Error);
+            LibraryTools.ShowErrors(lib.getName(), errors);
         }
       }
     }
 
     @Override
     public void doIt(Project proj) {
-      for (Library lib : MergedLibs) {
+      for (final var lib : mergedLibs) {
         if (lib instanceof LoadedLibrary) {
-          LoadedLibrary lib1 = (LoadedLibrary) lib;
+          final var lib1 = (LoadedLibrary) lib;
           if (lib1.getBase() instanceof LogisimFile) {
             repair(proj, lib1.getBase());
           }
@@ -420,48 +410,43 @@ public class LogisimFileActions {
     }
 
     private void repair(Project proj, Library lib) {
-      HashMap<String, AddTool> AvailableTools = new HashMap<>();
-      LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
+      final var availableTools = new HashMap<String, AddTool>();
+      LibraryTools.BuildToolList(proj.getLogisimFile(), availableTools);
       if (lib instanceof LogisimFile) {
-        LogisimFile ThisLib = (LogisimFile) lib;
-        for (Circuit circ : ThisLib.getCircuits()) {
-          for (Component tool : circ.getNonWires()) {
-            if (AvailableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
-              AddTool current = AvailableTools.get(tool.getFactory().getName().toUpperCase());
+        final var thisLib = (LogisimFile) lib;
+        for (final var circ : thisLib.getCircuits()) {
+          for (final var tool : circ.getNonWires()) {
+            if (availableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
+              final var current = availableTools.get(tool.getFactory().getName().toUpperCase());
               if (current != null) {
                 tool.setFactory(current.getFactory());
               } else if (tool.getFactory().getName().equals("Text")) {
-                Component NewComp = Text.FACTORY.createComponent(tool.getLocation(),
-                    (AttributeSet) tool.getAttributeSet().clone());
-                tool.setFactory(NewComp.getFactory());
+                final var newComp = Text.FACTORY.createComponent(tool.getLocation(), (AttributeSet) tool.getAttributeSet().clone());
+                tool.setFactory(newComp.getFactory());
               } else
                 System.out.println("Not found:" + tool.getFactory().getName());
             }
           }
         }
       }
-      for (Library libs : lib.getLibraries()) {
+      for (final var libs : lib.getLibraries()) {
         repair(proj, libs);
       }
     }
 
     @Override
     public boolean isModification() {
-      return MergedLibs.size() > 0;
+      return !mergedLibs.isEmpty();
     }
 
     @Override
     public String getName() {
-      if (MergedLibs.size() <= 1) {
-        return S.get("loadLibraryAction");
-      } else {
-        return S.get("loadLibrariesAction");
-      }
+      return (mergedLibs.size() <= 1) ? S.get("loadLibraryAction") : S.get("loadLibrariesAction");
     }
 
     @Override
     public void undo(Project proj) {
-      for (Library lib : MergedLibs) proj.getLogisimFile().removeLibrary(lib);
+      for (final var lib : mergedLibs) proj.getLogisimFile().removeLibrary(lib);
     }
   }
 
@@ -477,7 +462,7 @@ public class LogisimFileActions {
 
     @Override
     public Action append(Action other) {
-      MoveCircuit ret = new MoveCircuit(tool, ((MoveCircuit) other).toIndex);
+      final var ret = new MoveCircuit(tool, ((MoveCircuit) other).toIndex);
       ret.fromIndex = this.fromIndex;
       return ret.fromIndex == ret.toIndex ? null : ret;
     }
@@ -581,16 +566,16 @@ public class LogisimFileActions {
     }
 
     private void copyToolAttributes(Library srcLib, Library dstLib) {
-      for (Tool srcTool : srcLib.getTools()) {
-        AttributeSet srcAttrs = srcTool.getAttributeSet();
-        Tool dstTool = dstLib.getTool(srcTool.getName());
+      for (final var srcTool : srcLib.getTools()) {
+        final var srcAttrs = srcTool.getAttributeSet();
+        final var dstTool = dstLib.getTool(srcTool.getName());
         if (srcAttrs != null && dstTool != null) {
-          AttributeSet dstAttrs = dstTool.getAttributeSet();
+          final var dstAttrs = dstTool.getAttributeSet();
           for (Attribute<?> attrBase : srcAttrs.getAttributes()) {
             @SuppressWarnings("unchecked")
-            Attribute<Object> attr = (Attribute<Object>) attrBase;
-            Object srcValue = srcAttrs.getValue(attr);
-            Object dstValue = dstAttrs.getValue(attr);
+            final var attr = (Attribute<Object>) attrBase;
+            final var srcValue = srcAttrs.getValue(attr);
+            final var dstValue = dstAttrs.getValue(attr);
             if (!dstValue.equals(srcValue)) {
               dstAttrs.setValue(attr, srcValue);
               attrValues.add(new RevertAttributeValue(dstAttrs, attr, dstValue));
@@ -602,14 +587,14 @@ public class LogisimFileActions {
 
     @Override
     public void doIt(Project proj) {
-      LogisimFile src = ProjectActions.createNewFile(proj);
-      LogisimFile dst = proj.getLogisimFile();
+      final var src = ProjectActions.createNewFile(proj);
+      final var dst = proj.getLogisimFile();
 
       copyToolAttributes(src, dst);
-      for (Library srcLib : src.getLibraries()) {
-        Library dstLib = dst.getLibrary(srcLib.getName());
+      for (final var srcLib : src.getLibraries()) {
+        var dstLib = dst.getLibrary(srcLib.getName());
         if (dstLib == null) {
-          String desc = src.getLoader().getDescriptor(srcLib);
+          final var desc = src.getLoader().getDescriptor(srcLib);
           dstLib = dst.getLoader().loadLibrary(desc);
           proj.getLogisimFile().addLibrary(dstLib);
           if (libraries == null) libraries = new ArrayList<>();
@@ -618,7 +603,7 @@ public class LogisimFileActions {
         copyToolAttributes(srcLib, dstLib);
       }
 
-      Options newOpts = proj.getOptions();
+      final var newOpts = proj.getOptions();
       oldOpts = new Options();
       oldOpts.copyFrom(newOpts, dst);
       newOpts.copyFrom(src.getOptions(), dst);
@@ -633,12 +618,12 @@ public class LogisimFileActions {
     public void undo(Project proj) {
       proj.getOptions().copyFrom(oldOpts, proj.getLogisimFile());
 
-      for (RevertAttributeValue attrValue : attrValues) {
+      for (final var attrValue : attrValues) {
         attrValue.attrs.setValue(attrValue.attr, attrValue.value);
       }
 
       if (libraries != null) {
-        for (Library lib : libraries) {
+        for (final var lib : libraries) {
           proj.getLogisimFile().removeLibrary(lib);
         }
       }
@@ -679,23 +664,19 @@ public class LogisimFileActions {
 
     @Override
     public void doIt(Project proj) {
-      for (int i = libs.length - 1; i >= 0; i--) {
+      for (var i = libs.length - 1; i >= 0; i--) {
         proj.getLogisimFile().removeLibrary(libs[i]);
       }
     }
 
     @Override
     public String getName() {
-      if (libs.length == 1) {
-        return S.get("unloadLibraryAction");
-      } else {
-        return S.get("unloadLibrariesAction");
-      }
+      return (libs.length == 1) ? S.get("unloadLibraryAction") : S.get("unloadLibrariesAction");
     }
 
     @Override
     public void undo(Project proj) {
-      for (Library lib : libs) {
+      for (final var lib : libs) {
         proj.getLogisimFile().addLibrary(lib);
       }
     }

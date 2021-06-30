@@ -66,15 +66,15 @@ public class Ttl7413 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 125, y + 20, 10, 10, inverted);
     Drawgates.paintAnd(g, x + 105, y + 40, 10, 10, inverted);
-    int Offset = inverted ? 0 : -4;
-    g.drawLine(x + 129 + Offset, y + 20, x + 130, y + 20);
+    final var offset = inverted ? 0 : -4;
+    g.drawLine(x + 129 + offset, y + 20, x + 130, y + 20);
     g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 20);
-    g.drawLine(x + 109 + Offset, y + 40, x + 110, y + 40);
+    g.drawLine(x + 109 + offset, y + 40, x + 110, y + 40);
     g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 40);
-    for (int i = 0; i < 5; i++) {
+    for (var i = 0; i < 5; i++) {
       if (i != 2) {
         g.drawLine(
             x + 10 + i * 20,
@@ -90,7 +90,7 @@ public class Ttl7413 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val =
+    var val =
         state
             .getPortValue(0)
             .and(state.getPortValue(1).and(state.getPortValue(2).and(state.getPortValue(3))));

@@ -78,7 +78,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+      final var data = (InstanceDataSingleton) state.getData();
       int rgb = 0;
       if (data == null)
         return Value.createUnknown(bitwidth);
@@ -87,18 +87,18 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public static ArrayList<String> GetLabels() {
-    ArrayList<String> LabelNames = new ArrayList<>();
-    for (int i = 0; i < 3; i++) LabelNames.add("");
-    LabelNames.set(RED, "RED");
-    LabelNames.set(GREEN, "GREEN");
-    LabelNames.set(BLUE, "BLUE");
-    return LabelNames;
+  public static ArrayList<String> getLabels() {
+    final var labelNames = new ArrayList<String>();
+    for (var i = 0; i < 3; i++) labelNames.add("");
+    labelNames.set(RED, "RED");
+    labelNames.set(GREEN, "GREEN");
+    labelNames.set(BLUE, "BLUE");
+    return labelNames;
   }
 
   public static String getLabel(int id) {
-    if (id < 0 || id > GetLabels().size()) return "Undefined";
-    return GetLabels().get(id);
+    if (id < 0 || id > getLabels().size()) return "Undefined";
+    return getLabels().get(id);
   }
 
   public static final int RED = 0;
@@ -126,7 +126,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer(0, 3, 0, null, GetLabels(), null)
+          new ComponentMapInformationContainer(0, 3, 0, null, getLabels(), null)
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(true));
@@ -135,8 +135,8 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   private void updatePorts(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    Port[] ps = new Port[3];
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var ps = new Port[3];
     int cx = 0, cy = 0, dx = 0, dy = 0;
     if (facing == Direction.NORTH) {
       cy = 10;
@@ -197,27 +197,27 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
+    final var g = painter.getGraphics();
+    final var bds = painter.getBounds();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawOval(bds.getX() + 1, bds.getY() + 1, bds.getWidth() - 2, bds.getHeight() - 2);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
+    final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
-    Bounds bds = painter.getBounds().expand(-1);
+    final var bds = painter.getBounds().expand(-1);
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     if (painter.getShowState()) {
       Boolean activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
-      int mask = activ ? 0 : 7;
+      final var mask = activ ? 0 : 7;
       summ ^= mask;
-      int red = ((summ >> RED) & 1) * 0xFF;
-      int green = ((summ >> GREEN) & 1) * 0xFF;
-      int blue = ((summ >> BLUE) & 1) * 0xFF;
-      Color LedColor = new Color(red, green, blue);
+      final var red = ((summ >> RED) & 1) * 0xFF;
+      final var green = ((summ >> GREEN) & 1) * 0xFF;
+      final var blue = ((summ >> BLUE) & 1) * 0xFF;
+      final var LedColor = new Color(red, green, blue);
       g.setColor(LedColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
@@ -232,12 +232,12 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void propagate(InstanceState state) {
     int summary = 0;
-    for (int i = 0; i < 3; i++) {
-      Value val = state.getPortValue(i);
+    for (var i = 0; i < 3; i++) {
+      final var val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }
     Object value = summary;
-    InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+    final var data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));
     } else {

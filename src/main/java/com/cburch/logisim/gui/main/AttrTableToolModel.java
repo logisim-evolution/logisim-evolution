@@ -59,7 +59,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
   @Override
   public String getTitle() {
-    return S.fmt("toolAttrTitle", tool.getDisplayName());
+    return S.get("toolAttrTitle", tool.getDisplayName());
   }
 
   public Tool getTool() {

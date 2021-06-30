@@ -135,11 +135,11 @@ abstract public class Mem extends InstanceFactory {
   @Override
   protected void configureNewInstance(Instance instance) {
     configurePorts(instance);
-    Bounds bds = instance.getBounds();
-    int x = bds.getX() + bds.getWidth() / 2;
-    int y = bds.getY() - 2;
-    int halign = GraphicsUtil.H_CENTER;
-    int valign = GraphicsUtil.V_BOTTOM;
+    final var bds = instance.getBounds();
+    final var x = bds.getX() + bds.getWidth() / 2;
+    final var y = bds.getY() - 2;
+    final var halign = GraphicsUtil.H_CENTER;
+    final var valign = GraphicsUtil.V_BOTTOM;
     instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
   }
 
@@ -156,22 +156,21 @@ abstract public class Mem extends InstanceFactory {
 
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
-    if (key == MenuExtender.class) {
-      return new MemMenu(this, instance);
-    }
-    return super.getInstanceFeature(instance, key);
+    return (key == MenuExtender.class)
+        ? new MemMenu(this, instance)
+        : super.getInstanceFeature(instance, key);
   }
 
   protected static String GetSizeLabel(int NrAddressBits) {
-    String[] Labels = {"", "K", "M", "G", "T", "P", "E"};
-    int pass = 0;
-    int AddrBits = NrAddressBits;
-    while (AddrBits > 9) {
+    String[] labels = {"", "K", "M", "G", "T", "P", "E"};
+    var pass = 0;
+    var addrBits = NrAddressBits;
+    while (addrBits > 9) {
       pass++;
-      AddrBits -= 10;
+      addrBits -= 10;
     }
-    int size = 1 << AddrBits;
-    return size + Labels[pass];
+    int size = 1 << addrBits;
+    return size + labels[pass];
   }
 
   abstract MemState getState(Instance instance, CircuitState state);

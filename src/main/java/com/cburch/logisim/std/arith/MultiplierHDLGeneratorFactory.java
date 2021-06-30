@@ -53,11 +53,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("INP_A", NrOfBitsId);
-    Inputs.put("INP_B", NrOfBitsId);
-    Inputs.put("Cin", NrOfBitsId);
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put("INP_A", NrOfBitsId);
+    inputs.put("INP_B", NrOfBitsId);
+    inputs.put("Cin", NrOfBitsId);
+    return inputs;
   }
 
   @Override
@@ -119,47 +119,47 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Mult_lo", NrOfBitsId);
-    Outputs.put("Mult_hi", NrOfBitsId);
-    return Outputs;
+    final var outputs = new TreeMap<String, Integer>();
+    outputs.put("Mult_lo", NrOfBitsId);
+    outputs.put("Mult_hi", NrOfBitsId);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(NrOfBitsId, NrOfBitsStr);
-    Parameters.put(CalcBitsId, CalcBitsStr);
-    Parameters.put(UnsignedId, UnsignedStr);
-    return Parameters;
+    final var parameters = new TreeMap<Integer, String>();
+    parameters.put(NrOfBitsId, NrOfBitsStr);
+    parameters.put(CalcBitsId, CalcBitsStr);
+    parameters.put(UnsignedId, UnsignedStr);
+    return parameters;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var parameterMap = new TreeMap<String, Integer>();
+    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
         ComponentInfo.GetComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);
-    ParameterMap.put(NrOfBitsStr, NrOfBits);
-    ParameterMap.put(CalcBitsStr, 2 * NrOfBits);
-    ParameterMap.put(UnsignedStr, isUnsigned ? 1 : 0);
-    return ParameterMap;
+    parameterMap.put(NrOfBitsStr, nrOfBits);
+    parameterMap.put(CalcBitsStr, 2 * nrOfBits);
+    parameterMap.put(UnsignedStr, isUnsigned ? 1 : 0);
+    return parameterMap;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
-    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
-    PortMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
-    PortMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
+    portMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
+    portMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
+    portMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
+    portMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
+    return portMap;
   }
 
   @Override
@@ -169,11 +169,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_mult_result", CalcBitsId);
-    Wires.put("s_extended_Cin", CalcBitsId);
-    Wires.put("s_new_result", CalcBitsId);
-    return Wires;
+    final var wires = new TreeMap<String, Integer>();
+    wires.put("s_mult_result", CalcBitsId);
+    wires.put("s_extended_Cin", CalcBitsId);
+    wires.put("s_new_result", CalcBitsId);
+    return wires;
   }
 
   @Override

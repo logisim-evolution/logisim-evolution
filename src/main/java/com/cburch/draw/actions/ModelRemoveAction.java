@@ -56,7 +56,7 @@ public class ModelRemoveAction extends ModelAction {
 
   @Override
   public String getName() {
-    return S.fmt("actionRemove", getShapesName(removed.keySet()));
+    return S.get("actionRemove", getShapesName(removed.keySet()));
   }
 
   @Override

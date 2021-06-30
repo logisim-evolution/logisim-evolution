@@ -39,7 +39,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 public class Ttl74165 extends AbstractTtlGate {
@@ -79,23 +78,23 @@ public class Ttl74165 extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      boolean inside = false;
-      for (int i = 0; i < 8; i++) {
-        int dx = p.x - (40 + i * 10);
-        int dy = p.y - 30;
-        int d2 = dx * dx + dy * dy;
+      final var p = TTLGetTranslatedXY(state, e);
+      var inside = false;
+      for (var i = 0; i < 8; i++) {
+        final var dx = p.x - (40 + i * 10);
+        final var dy = p.y - 30;
+        final var d2 = dx * dx + dy * dy;
         inside |= (d2 < 4 * 4);
       }
       return inside;
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      for (int i = 0; i < 8; i++) {
-        int dx = p.x - (40 + i * 10);
-        int dy = p.y - 30;
-        int d2 = dx * dx + dy * dy;
+      final var p = TTLGetTranslatedXY(state, e);
+      for (var i = 0; i < 8; i++) {
+        final var dx = p.x - (40 + i * 10);
+        final var dy = p.y - 30;
+        final var d2 = dx * dx + dy * dy;
         if (d2 < 4 * 4) return 7 - i;
       }
       return 0;
@@ -110,12 +109,14 @@ public class Ttl74165 extends AbstractTtlGate {
     public void mouseReleased(InstanceState state, MouseEvent e) {
       if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
-        int index = getIndex(state, e);
+        final var index = getIndex(state, e);
         System.out.println(index);
-        ShiftRegisterData myState = (ShiftRegisterData) state.getData();
+        final var myState = (ShiftRegisterData) state.getData();
         if (myState == null) return;
-        if (myState.get(index).isFullyDefined()) myState.set(index, myState.get(index).not());
-        else myState.set(index, Value.createKnown(1, 0));
+        if (myState.get(index).isFullyDefined())
+          myState.set(index, myState.get(index).not());
+        else
+          myState.set(index, Value.createKnown(1, 0));
         state.fireInvalidated();
       }
       isPressed = false;
@@ -123,7 +124,7 @@ public class Ttl74165 extends AbstractTtlGate {
   }
 
   private ShiftRegisterData getData(InstanceState state) {
-    ShiftRegisterData data = (ShiftRegisterData) state.getData();
+    var data = (ShiftRegisterData) state.getData();
     if (data == null) {
       data = new ShiftRegisterData(BitWidth.ONE, 8);
       state.setData(data);
@@ -133,7 +134,7 @@ public class Ttl74165 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics2D g = (Graphics2D) painter.getGraphics();
+    final var g = (Graphics2D) painter.getGraphics();
     super.paintBase(painter, false, false);
     Drawgates.paintPortNames(
         painter,
@@ -149,12 +150,11 @@ public class Ttl74165 extends AbstractTtlGate {
 
   private void drawState(Graphics2D g, int x, int y, int height, ShiftRegisterData state) {
     if (state != null) {
-      for (int i = 0; i < 8; i++) {
+      for (var i = 0; i < 8; i++) {
         g.setColor(state.get(7 - i).getColor());
         g.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
         g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(
-            g, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
+        GraphicsUtil.drawCenteredText(g, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
       }
       g.setColor(Color.BLACK);
     }
@@ -162,8 +162,8 @@ public class Ttl74165 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    ShiftRegisterData data = getData(state);
-    boolean triggered = data.updateClock(state.getPortValue(1), StdAttr.TRIG_RISING);
+    final var data = getData(state);
+    final var triggered = data.updateClock(state.getPortValue(1), StdAttr.TRIG_RISING);
     if (triggered && state.getPortValue(13) != Value.TRUE) {
       if (state.getPortValue(0) == Value.FALSE) { // load
         data.clear();

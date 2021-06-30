@@ -37,7 +37,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -54,7 +53,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
@@ -63,7 +61,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   public static class Logger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
-      String ret = state.getAttributeValue(StdAttr.LABEL);
+      final var ret = state.getAttributeValue(StdAttr.LABEL);
       return ret != null && !ret.equals("") ? ret : null;
     }
 
@@ -74,7 +72,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      StateData s = (StateData) state.getData();
+      final var s = (StateData) state.getData();
       return s == null ? Value.FALSE : s.curValue;
     }
   }
@@ -83,7 +81,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      Location loc = state.getInstance().getLocation();
+      final var loc = state.getInstance().getLocation();
       int dx, dy;
       if (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
         dx = e.getX() - (loc.getX() - 20);
@@ -104,7 +102,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       if (isPressed && isInside(state, e)) {
-        StateData myState = (StateData) state.getData();
+        final var myState = (StateData) state.getData();
         if (myState == null) return;
 
         myState.curValue = myState.curValue.not();
@@ -115,9 +113,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
     @Override
     public void keyTyped(InstanceState state, KeyEvent e) {
-      int val = Character.digit(e.getKeyChar(), 16);
+      final var val = Character.digit(e.getKeyChar(), 16);
       if (val < 0) return;
-      StateData myState = (StateData) state.getData();
+      final var myState = (StateData) state.getData();
       if (myState == null) return;
       if (val == 0 && myState.curValue != Value.FALSE) {
         myState.curValue = Value.FALSE;
@@ -130,7 +128,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
-      StateData myState = (StateData) state.getData();
+      final var myState = (StateData) state.getData();
       if (myState == null) return;
       if (e.getKeyCode() == KeyEvent.VK_DOWN && myState.curValue != Value.FALSE) {
         myState.curValue = Value.FALSE;
@@ -182,7 +180,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   private void updatePorts(Instance instance) {
-    Port[] ps = new Port[numInputs + STD_PORTS];
+    final var ps = new Port[numInputs + STD_PORTS];
     if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       if (numInputs == 1) {
         ps[0] = new Port(-40, 20, Port.INPUT, 1);
@@ -224,20 +222,16 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(StdAttr.APPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return (attr.equals(StdAttr.APPEARANCE))
+        ? StdAttr.APPEAR_CLASSIC
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      return Bounds.create(-40, -10, 40, 40);
-    } else {
-      return Bounds.create(-10, 0, 60, 60);
-    }
+    return (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
+        ? Bounds.create(-40, -10, 40, 40)
+        : Bounds.create(-10, 0, 60, 60);
   }
 
   protected abstract Value computeValue(Value[] inputs, Value curValue);
@@ -249,7 +243,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     instance.setTextField(
         StdAttr.LABEL,
         StdAttr.LABEL_FONT,
@@ -261,25 +255,25 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    String[] Parts = this.getName().split(" ");
-    CompleteName.append(Parts[0].replace("-", "_").toUpperCase());
-    CompleteName.append("_");
+    final var completeName = new StringBuilder();
+    final var parts = this.getName().split(" ");
+    completeName.append(parts[0].replace("-", "_").toUpperCase());
+    completeName.append("_");
     if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER)) {
-      CompleteName.append("FlipFlop".toUpperCase());
+      completeName.append("FlipFlop".toUpperCase());
     } else {
       if (attrs.containsAttribute(StdAttr.TRIGGER)) {
         if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
             || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {
-          CompleteName.append("FlipFlop".toUpperCase());
+          completeName.append("FlipFlop".toUpperCase());
         } else {
-          CompleteName.append("Latch".toUpperCase());
+          completeName.append("Latch".toUpperCase());
         }
       } else {
-        CompleteName.append("FlipFlop".toUpperCase());
+        completeName.append("FlipFlop".toUpperCase());
       }
     }
-    return CompleteName.toString();
+    return completeName.toString();
   }
 
   //
@@ -297,12 +291,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   private void paintInstanceClassic(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
     painter.drawLabel();
     if (painter.getShowState()) {
-      Location loc = painter.getLocation();
-      StateData myState = (StateData) painter.getData();
+      final var loc = painter.getLocation();
+      final var myState = (StateData) painter.getData();
       if (myState != null) {
         int x = loc.getX();
         int y = loc.getY();
@@ -319,7 +313,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     painter.drawPort(n + 3, "0", Direction.SOUTH);
     painter.drawPort(n + 4, "1", Direction.SOUTH);
     g.setColor(Color.BLACK);
-    for (int i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
       painter.drawPort(i, getInputName(i), Direction.EAST);
     }
     painter.drawClock(n, Direction.EAST);
@@ -328,19 +322,19 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   private void paintInstanceEvolution(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawLabel();
-    Location loc = painter.getLocation();
+    final var loc = painter.getLocation();
     int x = loc.getX();
     int y = loc.getY();
-    
+
     // Draw outer rectangle
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, 40, 60);
-    
+
     // Draw info circle
     if (painter.getShowState()) {
-      StateData myState = (StateData) painter.getData();
+      final var myState = (StateData) painter.getData();
       if (myState != null) {
         g.setColor(myState.curValue.getColor());
         g.fillOval(x + 13, y + 23, 14, 14);
@@ -355,9 +349,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     painter.drawPort(n + 3, "R", Direction.SOUTH);
     painter.drawPort(n + 4, "S", Direction.NORTH);
     g.setColor(Color.BLACK);
-    
+
     // Draw input ports (J/K, S/R, D, T)
-    for (int i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
       GraphicsUtil.switchToWidth(g, GraphicsUtil.DATA_SINGLE_WIDTH);
       g.drawLine(x - 10, y + 10 + i * 20, x - 1, y + 10 + i * 20);
       painter.drawPort(i);
@@ -371,7 +365,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 48);
     }
-    
+
     // Draw regular/negated input
     if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_HIGH)) {
       GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
@@ -418,12 +412,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
       data.curValue = Value.TRUE;
     } else if (triggered /* && state.getPortValue(n + 5) != Value.FALSE */) {
       // Clock has triggered and flip-flop is enabled: Update the state
-      Value[] inputs = new Value[n];
-      for (int i = 0; i < n; i++) {
+      final var inputs = new Value[n];
+      for (var i = 0; i < n; i++) {
         inputs[i] = state.getPortValue(i);
       }
 
-      Value newVal = computeValue(inputs, data.curValue);
+      final var newVal = computeValue(inputs, data.curValue);
       if (newVal == Value.TRUE || newVal == Value.FALSE) {
         // changed |= data.curValue != newVal;
         data.curValue = newVal;

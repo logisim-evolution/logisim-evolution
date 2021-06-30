@@ -49,8 +49,8 @@ public class MessageBox {
   public void show() {
 
     if (description.contains("\n") || description.length() > 60) {
-      int lines = 1;
-      for (int pos = description.indexOf('\n');
+      var lines = 1;
+      for (var pos = description.indexOf('\n');
           pos >= 0;
           pos = description.indexOf('\n', pos + 1)) {
         lines++;
@@ -62,7 +62,7 @@ public class MessageBox {
       textArea.setText(description);
       textArea.setCaretPosition(0);
 
-      JScrollPane scrollPane = new JScrollPane(textArea);
+      final var scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(640, 480));
       OptionPane.showMessageDialog(null, scrollPane, title, type);
     } else {

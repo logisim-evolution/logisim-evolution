@@ -196,13 +196,13 @@ public class ProjectCircuitActions {
     if (numInputs > AnalyzerModel.MAX_INPUTS) {
       analyzeError(
           proj,
-          StringUtil.format(S.get("analyzeTooManyInputsError"), "" + AnalyzerModel.MAX_INPUTS));
+          S.get("analyzeTooManyInputsError", "" + AnalyzerModel.MAX_INPUTS));
       return;
     }
     if (numOutputs > AnalyzerModel.MAX_OUTPUTS) {
       analyzeError(
           proj,
-          StringUtil.format(S.get("analyzeTooManyOutputsError"), "" + AnalyzerModel.MAX_OUTPUTS));
+          S.get("analyzeTooManyOutputsError", "" + AnalyzerModel.MAX_OUTPUTS));
       return;
     }
 

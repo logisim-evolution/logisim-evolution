@@ -31,9 +31,7 @@ package com.cburch.logisim.analyze.gui;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.gui.generic.OptionPane;
-import java.awt.Rectangle;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
@@ -54,18 +52,18 @@ class TableTabClip implements ClipboardOwner {
       this.contents = contents;
     }
 
-    public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException {
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return this;
       } else if (flavor == DataFlavor.stringFlavor) {
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < headers.length; i++) {
+        final var buf = new StringBuilder();
+        for (var i = 0; i < headers.length; i++) {
           buf.append(headers[i]);
           buf.append(i == headers.length - 1 ? '\n' : '\t');
         }
-        for (String[] content : contents) {
-          for (int j = 0; j < content.length; j++) {
+        for (final var content : contents) {
+          for (var j = 0; j < content.length; j++) {
             buf.append(content[j]);
             buf.append(j == content.length - 1 ? '\n' : '\t');
           }
@@ -76,10 +74,12 @@ class TableTabClip implements ClipboardOwner {
       }
     }
 
+    @Override
     public DataFlavor[] getTransferDataFlavors() {
       return new DataFlavor[] {binaryFlavor, DataFlavor.stringFlavor};
     }
 
+    @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
       return flavor == binaryFlavor || flavor == DataFlavor.stringFlavor;
     }
@@ -94,27 +94,27 @@ class TableTabClip implements ClipboardOwner {
   }
 
   public boolean canPaste() {
-    Clipboard clip = table.getToolkit().getSystemClipboard();
-    Transferable xfer = clip.getContents(this);
+    final var clip = table.getToolkit().getSystemClipboard();
+    final var xfer = clip.getContents(this);
     return xfer.isDataFlavorSupported(binaryFlavor);
   }
 
   public void copy() {
-    Rectangle s = table.getCaret().getSelection();
+    final var s = table.getCaret().getSelection();
     if (s.width <= 0 || s.height <= 0) return;
-    TruthTable t = table.getTruthTable();
-    int inputs = t.getInputColumnCount();
-    String[] header = new String[s.width];
-    for (int c = s.x; c < s.x + s.width; c++) {
+    final var t = table.getTruthTable();
+    final var inputs = t.getInputColumnCount();
+    final var header = new String[s.width];
+    for (var c = s.x; c < s.x + s.width; c++) {
       if (c < inputs) {
         header[c - s.x] = t.getInputHeader(c);
       } else {
         header[c - s.x] = t.getOutputHeader(c - inputs);
       }
     }
-    String[][] contents = new String[s.height][s.width];
-    for (int r = s.y; r < s.y + s.height; r++) {
-      for (int c = s.x; c < s.x + s.width; c++) {
+    final var contents = new String[s.height][s.width];
+    for (var r = s.y; r < s.y + s.height; r++) {
+      for (var c = s.x; c < s.x + s.width; c++) {
         if (c < inputs) {
           contents[r - s.y][c - s.x] = t.getInputEntry(r, c).getDescription();
         } else {
@@ -127,10 +127,11 @@ class TableTabClip implements ClipboardOwner {
     clip.setContents(new Data(header, contents), this);
   }
 
+  @Override
   public void lostOwnership(Clipboard clip, Transferable transfer) {}
 
   public void paste() {
-    Clipboard clip = table.getToolkit().getSystemClipboard();
+    final var clip = table.getToolkit().getSystemClipboard();
     Transferable xfer;
     try {
       xfer = clip.getContents(this);
@@ -148,7 +149,7 @@ class TableTabClip implements ClipboardOwner {
     Entry[][] entries;
     if (xfer.isDataFlavorSupported(binaryFlavor)) {
       try {
-        Data data = (Data) xfer.getTransferData(binaryFlavor);
+        final var data = (Data) xfer.getTransferData(binaryFlavor);
         entries = new Entry[data.contents.length][];
         for (int i = 0; i < entries.length; i++) {
           Entry[] row = new Entry[data.contents[i].length];
@@ -162,15 +163,15 @@ class TableTabClip implements ClipboardOwner {
       }
     } else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
       try {
-        String buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
-        StringTokenizer lines = new StringTokenizer(buf, "\r\n");
+        final var buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
+        final var lines = new StringTokenizer(buf, "\r\n");
         String first;
         if (!lines.hasMoreTokens()) return;
         first = lines.nextToken();
-        StringTokenizer toks = new StringTokenizer(first, "\t,");
-        String[] headers = new String[toks.countTokens()];
-        Entry[] firstEntries = new Entry[headers.length];
-        boolean allParsed = true;
+        var toks = new StringTokenizer(first, "\t,");
+        final var headers = new String[toks.countTokens()];
+        final var firstEntries = new Entry[headers.length];
+        var allParsed = true;
         for (int i = 0; toks.hasMoreTokens(); i++) {
           headers[i] = toks.nextToken();
           firstEntries[i] = Entry.parse(headers[i]);
@@ -204,12 +205,12 @@ class TableTabClip implements ClipboardOwner {
           OptionPane.ERROR_MESSAGE);
       return;
     }
-    Rectangle s = table.getCaret().getSelection();
+    final var s = table.getCaret().getSelection();
     if (s.width <= 0 || s.height <= 0) return;
-    TruthTable model = table.getTruthTable();
-    int rows = model.getVisibleRowCount();
-    int inputs = model.getInputColumnCount();
-    int outputs = model.getOutputColumnCount();
+    final var model = table.getTruthTable();
+    final var rows = model.getVisibleRowCount();
+    final var inputs = model.getInputColumnCount();
+    final var outputs = model.getOutputColumnCount();
     if (s.width == 1 && s.height == 1) {
       if (s.y + entries.length > rows || s.x + entries[0].length > inputs + outputs) {
         OptionPane.showMessageDialog(

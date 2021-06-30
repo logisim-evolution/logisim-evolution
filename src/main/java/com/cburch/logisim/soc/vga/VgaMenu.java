@@ -117,7 +117,7 @@ public class VgaMenu implements ActionListener, MenuExtender {
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();
-      OptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
+      OptionPane.showMessageDialog(frame, S.get("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
 }

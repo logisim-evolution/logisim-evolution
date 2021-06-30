@@ -42,11 +42,11 @@ import java.util.ArrayList;
 class OddParityGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
-      Contents.add("");
-      return Contents;
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = new ArrayList<String>();
+      contents.addAll(GetParity(false, nrOfInputs, bitwidth > 1));
+      contents.add("");
+      return contents;
     }
   }
 
@@ -60,7 +60,7 @@ class OddParityGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = Expressions.xor(ret, inputs[i]);
     }

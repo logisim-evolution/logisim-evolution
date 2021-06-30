@@ -114,16 +114,16 @@ class XmlWriter {
 
   static final Comparator<Node> nodeComparator =
       (a, b) -> {
-        String na = a.getNodeName();
-        String nb = b.getNodeName();
-        int c = stringCompare(na, nb);
+        final var na = a.getNodeName();
+        final var nb = b.getNodeName();
+        var c = stringCompare(na, nb);
         if (c != 0) return c;
-        String ma = attrsToString(a.getAttributes());
-        String mb = attrsToString(b.getAttributes());
+        final var ma = attrsToString(a.getAttributes());
+        final var mb = attrsToString(b.getAttributes());
         c = stringCompare(ma, mb);
         if (c != 0) return c;
-        String va = a.getNodeValue();
-        String vb = b.getNodeValue();
+        final var va = a.getNodeValue();
+        final var vb = b.getNodeValue();
         c = stringCompare(va, vb);
         return c;
         // This can happen in some cases, e.g. two text components
@@ -154,7 +154,7 @@ class XmlWriter {
     //   - comp(s)
     //   - wire(s)
     if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar") && !name.equals("appear")) {
-      Node[] a = new Node[n];
+      final var a = new Node[n];
       for (int i = 0; i < n; i++) a[i] = children.item(i);
       Arrays.sort(a, nodeComparator);
       for (int i = 0; i < n; i++) top.insertBefore(a[i], null); // moves a[i] to end
@@ -167,25 +167,25 @@ class XmlWriter {
   static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
       throws ParserConfigurationException, TransformerException {
 
-    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    final var docFactory = DocumentBuilderFactory.newInstance();
+    final var docBuilder = docFactory.newDocumentBuilder();
 
-    Document doc = docBuilder.newDocument();
+    final var doc = docBuilder.newDocument();
     XmlWriter context;
     if (destFile != null) {
-      String dstFilePath = destFile.getAbsolutePath();
+      var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
     } else context = new XmlWriter(file, doc, loader);
 
     context.fromLogisimFile();
 
-    TransformerFactory tfFactory = TransformerFactory.newInstance();
+    final var tfFactory = TransformerFactory.newInstance();
     try {
       tfFactory.setAttribute("indent-number", 2);
     } catch (IllegalArgumentException ignored) {
     }
-    Transformer tf = tfFactory.newTransformer();
+    final var tf = tfFactory.newTransformer();
     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     tf.setOutputProperty(OutputKeys.INDENT, "yes");
     try {
@@ -232,12 +232,12 @@ class XmlWriter {
       if (attrs.isToSave(attr) && val != null) {
         Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
         if (dflt == null || !dflt.equals(val) || attr.equals(StdAttr.APPEARANCE)) {
-          Element a = doc.createElement("a");
+          final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
-          String value = attr.toStandardString(val);
+          var value = attr.toStandardString(val);
           if (attr.getName().equals("filePath") && outFilepath != null) {
-            Path outFP = Paths.get(outFilepath);
-            Path attrValP = Paths.get(value);
+            final var outFP = Paths.get(outFilepath);
+            final var attrValP = Paths.get(value);
             value = (outFP.relativize(attrValP)).toString();
             a.setAttribute("val", value);
           } else {
@@ -257,7 +257,7 @@ class XmlWriter {
     if (file.contains(source)) {
       return file;
     }
-    for (Library lib : file.getLibraries()) {
+    for (final var lib : file.getLibraries()) {
       if (lib.contains(source)) return lib;
     }
     return null;
@@ -267,21 +267,21 @@ class XmlWriter {
     if (libraryContains(file, tool)) {
       return file;
     }
-    for (Library lib : file.getLibraries()) {
+    for (final var lib : file.getLibraries()) {
       if (libraryContains(lib, tool)) return lib;
     }
     return null;
   }
 
   Element fromCircuit(Circuit circuit) {
-    Element ret = doc.createElement("circuit");
+    final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
     addAttributeSetContent(ret, circuit.getStaticAttributes(), null);
     if (!circuit.getAppearance().isDefaultAppearance()) {
-      Element appear = doc.createElement("appear");
+      final var appear = doc.createElement("appear");
       for (Object o : circuit.getAppearance().getObjectsFromBottom()) {
         if (o instanceof AbstractCanvasObject) {
-          Element elt = ((AbstractCanvasObject) o).toSvgElement(doc);
+          final var elt = ((AbstractCanvasObject) o).toSvgElement(doc);
           if (elt != null) {
             appear.appendChild(elt);
           }
@@ -289,15 +289,15 @@ class XmlWriter {
       }
       ret.appendChild(appear);
     }
-    for (Wire w : circuit.getWires()) {
-      ret.appendChild(fromWire(w));
+    for (final var wire : circuit.getWires()) {
+      ret.appendChild(fromWire(wire));
     }
-    for (Component comp : circuit.getNonWires()) {
-      Element elt = fromComponent(comp);
+    for (final var comp : circuit.getNonWires()) {
+      final var elt = fromComponent(comp);
       if (elt != null) ret.appendChild(elt);
     }
-    for (String board : circuit.getBoardMapNamestoSave()) {
-      Element elt = fromMap(circuit, board);
+    for (final var board : circuit.getBoardMapNamestoSave()) {
+      final var elt = fromMap(circuit, board);
       if (elt != null) ret.appendChild(elt);
     }
     return ret;
@@ -305,7 +305,7 @@ class XmlWriter {
 
   Element fromVhdl(VhdlContent vhdl) {
     vhdl.aboutToSave();
-    Element ret = doc.createElement("vhdl");
+    final var ret = doc.createElement("vhdl");
     ret.setAttribute("name", vhdl.getName());
     ret.setTextContent(vhdl.getContent());
     return ret;
@@ -315,38 +315,38 @@ class XmlWriter {
     Element ret = doc.createElement("boardmap");
     ret.setAttribute("boardname", boardName);
     for (String key : circ.getMapInfo(boardName).keySet()) {
-      Element Map = doc.createElement("mc");
-      CircuitMapInfo map = circ.getMapInfo(boardName).get(key);
-      if (map.isOldFormat()) {
-        Map.setAttribute("key", key);
-        if (map.isOpen()) {
-          Map.setAttribute(MapComponent.OPEN_KEY, MapComponent.OPEN_KEY);
-        } else if (map.isConst()) {
-          Map.setAttribute(MapComponent.CONSTANT_KEY, Long.toString(map.getConstValue()));
+      final var map = doc.createElement("mc");
+      final var mapInfo = circ.getMapInfo(boardName).get(key);
+      if (mapInfo.isOldFormat()) {
+        map.setAttribute("key", key);
+        if (mapInfo.isOpen()) {
+          map.setAttribute(MapComponent.OPEN_KEY, MapComponent.OPEN_KEY);
+        } else if (mapInfo.isConst()) {
+          map.setAttribute(MapComponent.CONSTANT_KEY, Long.toString(mapInfo.getConstValue()));
         } else {
-          BoardRectangle rect = map.getRectangle();
-          Map.setAttribute("valx", Integer.toString(rect.getXpos()));
-          Map.setAttribute("valy", Integer.toString(rect.getYpos()));
-          Map.setAttribute("valw", Integer.toString(rect.getWidth()));
-          Map.setAttribute("valh", Integer.toString(rect.getHeight()));
+          final var rect = mapInfo.getRectangle();
+          map.setAttribute("valx", Integer.toString(rect.getXpos()));
+          map.setAttribute("valy", Integer.toString(rect.getYpos()));
+          map.setAttribute("valw", Integer.toString(rect.getWidth()));
+          map.setAttribute("valh", Integer.toString(rect.getHeight()));
         }
       } else {
-        MapComponent nmap = map.getMap();
+        final var nmap = mapInfo.getMap();
         if (nmap != null)
-          nmap.getMapElement(Map);
+          nmap.getMapElement(map);
         else {
-          Map.setAttribute("key", key);
-          MapComponent.getComplexMap(Map, map);
+          map.setAttribute("key", key);
+          MapComponent.getComplexMap(map, mapInfo);
         }
       }
-      ret.appendChild(Map);
+      ret.appendChild(map);
     }
     return ret;
   }
 
   Element fromComponent(Component comp) {
-    ComponentFactory source = comp.getFactory();
-    Library lib = findLibrary(source);
+    final var source = comp.getFactory();
+    final var lib = findLibrary(source);
     String lib_name;
     if (lib == null) {
       loader.showError(source.getName() + " component not found");
@@ -362,11 +362,11 @@ class XmlWriter {
     }
     if (source.getName().equals("Text")) {
       /* check if the text element is empty, in this case we do not save */
-      String value = comp.getAttributeSet().getValue(Text.ATTR_TEXT);
+      final var value = comp.getAttributeSet().getValue(Text.ATTR_TEXT);
       if (value.isEmpty()) return null;
     }
 
-    Element ret = doc.createElement("comp");
+    final var ret = doc.createElement("comp");
     if (lib_name != null) ret.setAttribute("lib", lib_name);
     ret.setAttribute("name", source.getName());
     ret.setAttribute("loc", comp.getLocation().toString());
@@ -375,10 +375,10 @@ class XmlWriter {
   }
 
   Element fromLibrary(Library lib) {
-    Element ret = doc.createElement("lib");
+    final var ret = doc.createElement("lib");
     if (libs.containsKey(lib)) return null;
-    String name = "" + libs.size();
-    String desc = loader.getDescriptor(lib);
+    final var name = "" + libs.size();
+    final var desc = loader.getDescriptor(lib);
     if (desc == null) {
       loader.showError("library location unknown: " + lib.getName());
       return null;
@@ -387,9 +387,9 @@ class XmlWriter {
     ret.setAttribute("name", name);
     ret.setAttribute("desc", desc);
     for (Tool t : lib.getTools()) {
-      AttributeSet attrs = t.getAttributeSet();
+      final var attrs = t.getAttributeSet();
       if (attrs != null) {
-        Element toAdd = doc.createElement("tool");
+        final var toAdd = doc.createElement("tool");
         toAdd.setAttribute("name", t.getName());
         addAttributeSetContent(toAdd, attrs, t);
         if (toAdd.getChildNodes().getLength() > 0) {
@@ -401,7 +401,7 @@ class XmlWriter {
   }
 
   Element fromLogisimFile() {
-    Element ret = doc.createElement("project");
+    final var ret = doc.createElement("project");
     doc.appendChild(ret);
     ret.appendChild(
         doc.createTextNode(
@@ -410,13 +410,13 @@ class XmlWriter {
     ret.setAttribute("version", "1.0");
     ret.setAttribute("source", Main.VERSION.toString());
 
-    for (Library lib : file.getLibraries()) {
-      Element elt = fromLibrary(lib);
+    for (final var lib : file.getLibraries()) {
+      final var elt = fromLibrary(lib);
       if (elt != null) ret.appendChild(elt);
     }
 
     if (file.getMainCircuit() != null) {
-      Element mainElt = doc.createElement("main");
+      final var mainElt = doc.createElement("main");
       mainElt.setAttribute("name", file.getMainCircuit().getName());
       ret.appendChild(mainElt);
     }
@@ -425,23 +425,23 @@ class XmlWriter {
     ret.appendChild(fromMouseMappings());
     ret.appendChild(fromToolbarData());
 
-    for (Circuit circ : file.getCircuits()) {
+    for (final var circ : file.getCircuits()) {
       ret.appendChild(fromCircuit(circ));
     }
-    for (VhdlContent vhdl : file.getVhdlContents()) {
+    for (final var vhdl : file.getVhdlContents()) {
       ret.appendChild(fromVhdl(vhdl));
     }
     return ret;
   }
 
   Element fromMouseMappings() {
-    Element elt = doc.createElement("mappings");
-    MouseMappings map = file.getOptions().getMouseMappings();
-    for (Map.Entry<Integer, Tool> entry : map.getMappings().entrySet()) {
-      Integer mods = entry.getKey();
-      Tool tool = entry.getValue();
-      Element toolElt = fromTool(tool);
-      String mapValue = InputEventUtil.toString(mods);
+    final var elt = doc.createElement("mappings");
+    final var map = file.getOptions().getMouseMappings();
+    for (final var entry : map.getMappings().entrySet()) {
+      final var mods = entry.getKey();
+      final var tool = entry.getValue();
+      final var toolElt = fromTool(tool);
+      final var mapValue = InputEventUtil.toString(mods);
       toolElt.setAttribute("map", mapValue);
       elt.appendChild(toolElt);
     }
@@ -449,13 +449,13 @@ class XmlWriter {
   }
 
   Element fromOptions() {
-    Element elt = doc.createElement("options");
+    final var elt = doc.createElement("options");
     addAttributeSetContent(elt, file.getOptions().getAttributeSet(), null);
     return elt;
   }
 
   Element fromTool(Tool tool) {
-    Library lib = findLibrary(tool);
+    final var lib = findLibrary(tool);
     String lib_name;
     if (lib == null) {
       loader.showError(StringUtil.format("tool `%s' not found", tool.getDisplayName()));
@@ -470,7 +470,7 @@ class XmlWriter {
       }
     }
 
-    Element elt = doc.createElement("tool");
+    final var elt = doc.createElement("tool");
     if (lib_name != null) elt.setAttribute("lib", lib_name);
     elt.setAttribute("name", tool.getName());
     addAttributeSetContent(elt, tool.getAttributeSet(), tool);
@@ -478,9 +478,9 @@ class XmlWriter {
   }
 
   Element fromToolbarData() {
-    Element elt = doc.createElement("toolbar");
-    ToolbarData toolbar = file.getOptions().getToolbarData();
-    for (Tool tool : toolbar.getContents()) {
+    final var elt = doc.createElement("toolbar");
+    final var toolbar = file.getOptions().getToolbarData();
+    for (final var tool : toolbar.getContents()) {
       if (tool == null) {
         elt.appendChild(doc.createElement("sep"));
       } else {
@@ -491,14 +491,14 @@ class XmlWriter {
   }
 
   Element fromWire(Wire w) {
-    Element ret = doc.createElement("wire");
+    final var ret = doc.createElement("wire");
     ret.setAttribute("from", w.getEnd0().toString());
     ret.setAttribute("to", w.getEnd1().toString());
     return ret;
   }
 
   boolean libraryContains(Library lib, Tool query) {
-    for (Tool tool : lib.getTools()) {
+    for (final var tool : lib.getTools()) {
       if (tool.sharesSource(query)) return true;
     }
     return false;

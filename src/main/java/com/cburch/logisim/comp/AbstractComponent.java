@@ -38,19 +38,19 @@ public abstract class AbstractComponent implements Component {
   protected AbstractComponent() {}
 
   public boolean contains(Location pt) {
-    Bounds bds = getBounds();
+    final var bds = getBounds();
     if (bds == null) return false;
     return bds.contains(pt, 1);
   }
 
   public boolean contains(Location pt, Graphics g) {
-    Bounds bds = getBounds(g);
+    final var bds = getBounds(g);
     if (bds == null) return false;
     return bds.contains(pt, 1);
   }
 
   public boolean endsAt(Location pt) {
-    for (EndData data : getEnds()) {
+    for (final var data : getEnds()) {
       if (data.getLocation().equals(pt)) return true;
     }
     return false;

@@ -58,13 +58,13 @@ public class SevenSegmentShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    Color offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
-    Color onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
-    Color bgColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_BACKGROUND);
-    int x = bounds.getX();
-    int y = bounds.getY();
-    int w = bounds.getWidth();
-    int h = bounds.getHeight();
+    final var offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+    final var onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
+    final var bgColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_BACKGROUND);
+    final var x = bounds.getX();
+    final var y = bounds.getY();
+    final var w = bounds.getWidth();
+    final var h = bounds.getHeight();
     GraphicsUtil.switchToWidth(g, 1);
     if (bgColor.getAlpha() != 0) {
       g.setColor(bgColor);
@@ -73,15 +73,16 @@ public class SevenSegmentShape extends DynamicElement {
     g.setColor(Color.BLACK);
     g.drawRect(x, y, w, h);
     g.setColor(Color.DARK_GRAY);
-    int summ = 0, desired = 1;
+    var summ = 0;
+    var desired = 1;
     if (state != null) {
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       summ = (data == null ? 0 : (Integer) data.getValue());
-      Boolean activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       desired = activ == null || activ ? 1 : 0;
     }
     g.setColor(Color.DARK_GRAY);
-    for (int i = 0; i <= 7; i++) {
+    for (var i = 0; i <= 7; i++) {
       if (state != null) {
         g.setColor(((summ >> i) & 1) == desired ? onColor : offColor);
       }

@@ -44,8 +44,6 @@ import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.WeakHashMap;
 
@@ -143,12 +141,12 @@ abstract public class TclComponent extends InstanceFactory {
    */
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    FontMetrics metric = g.getFontMetrics();
+    final var g = painter.getGraphics();
+    var metric = g.getFontMetrics();
 
-    Bounds bds = painter.getBounds();
-    int x0 = bds.getX() + (bds.getWidth() / 2);
-    int y0 = bds.getY() + metric.getHeight() + 12;
+    final var bds = painter.getBounds();
+    final var x0 = bds.getX() + (bds.getWidth() / 2);
+    final var y0 = bds.getY() + metric.getHeight() + 12;
     GraphicsUtil.drawText(
         g,
         StringUtil.resizeString(getDisplayName(), metric, WIDTH),
@@ -157,7 +155,7 @@ abstract public class TclComponent extends InstanceFactory {
         GraphicsUtil.H_CENTER,
         GraphicsUtil.V_BOTTOM);
 
-    String glbLabel = painter.getAttributeValue(StdAttr.LABEL);
+    final var glbLabel = painter.getAttributeValue(StdAttr.LABEL);
     if (glbLabel != null) {
       Font font = g.getFont();
       g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
@@ -210,8 +208,7 @@ abstract public class TclComponent extends InstanceFactory {
      * doesn't change when you move the component when InstanceComponent
      * does.
      */
-    TclComponentData tclComponentData = TclComponentData.get(state);
-
+    final var tclComponentData = TclComponentData.get(state);
     tclComponentData.getTclWrapper().start();
 
     /*
@@ -222,11 +219,10 @@ abstract public class TclComponent extends InstanceFactory {
     if (tclComponentData.isConnected()) {
 
       /* Send port values to the TCL wrapper */
-      for (Port p : state.getInstance().getPorts()) {
-        int index = state.getPortIndex(p);
-        Value val = state.getPortValue(index);
-        String message =
-            p.getType() + ":" + p.getToolTip() + ":" + val.toBinaryString() + ":" + index;
+      for (final var p : state.getInstance().getPorts()) {
+        final var index = state.getPortIndex(p);
+        final var val = state.getPortValue(index);
+        final var message = p.getType() + ":" + p.getToolTip() + ":" + val.toBinaryString() + ":" + index;
 
         tclComponentData.send(message);
       }
@@ -257,16 +253,16 @@ abstract public class TclComponent extends InstanceFactory {
         && server_response.length() > 0
         && !server_response.equals("sync")) {
 
-      String[] parameters = server_response.split(":");
+      final var parameters = server_response.split(":");
 
       /* Skip if we receive crap, still better than an out of range */
       if (parameters.length < 2) continue;
 
-      String busValue = parameters[1];
-      int portId = Integer.parseInt(parameters[2]);
+      var busValue = parameters[1];
+      final var portId = Integer.parseInt(parameters[2]);
 
       // Expected response width
-      int width = state.getFactory().getPorts().get(portId).getFixedBitWidth().getWidth();
+      final var width = state.getFactory().getPorts().get(portId).getFixedBitWidth().getWidth();
 
       /*
        * If the received string is too long, cut the leftmost part to
@@ -278,14 +274,14 @@ abstract public class TclComponent extends InstanceFactory {
        * If the received value is not wide enough, complete with X on
        * the MSB
        */
-      Value[] vector_values = new Value[width];
-      for (int i = width - 1; i >= busValue.length(); i--) {
+      final var vector_values = new Value[width];
+      for (var i = width - 1; i >= busValue.length(); i--) {
         vector_values[i] = Value.UNKNOWN;
       }
 
       /* Transform char to Logisim Value */
-      int k = busValue.length() - 1;
-      for (char bit : busValue.toCharArray()) {
+      var k = busValue.length() - 1;
+      for (final var bit : busValue.toCharArray()) {
 
         try {
           switch (Character.getNumericValue(bit)) {

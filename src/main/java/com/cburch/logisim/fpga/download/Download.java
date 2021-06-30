@@ -227,11 +227,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         String error = download();
         if (error != null) Reporter.Report.AddFatalError(error);
       } catch (IOException e) {
-        Reporter.Report.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
+        Reporter.Report.AddFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
         e.printStackTrace();
       } catch (InterruptedException e) {
-        Reporter.Report.AddError(
-            S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+        Reporter.Report.AddError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       }
     }
     fireEvent(new ActionEvent(this, 1, "DownloadDone"));
@@ -256,12 +255,11 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
         return false;
       }
     } catch (IOException e) {
-      Reporter.Report.AddFatalError(S.fmt("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
+      Reporter.Report.AddFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(Vendor)));
       e.printStackTrace();
       return false;
     } catch (InterruptedException e) {
-      Reporter.Report.AddError(
-          S.fmt("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
+      Reporter.Report.AddError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(Vendor)));
       return false;
     }
     return true;
@@ -343,7 +341,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     isr.close();
     br.close();
     if (Executable.exitValue() != 0) {
-      return S.fmt("FPGAExecutionFailure", StageName);
+      return S.get("FPGAExecutionFailure", StageName);
     }
     return null;
   }
@@ -357,7 +355,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     }
     String Name = MyProject.getLogisimFile().getName();
     if (Name.contains(" ")) {
-      Reporter.Report.AddFatalError(S.fmt("FPGANameContainsSpaces", Name));
+      Reporter.Report.AddFatalError(S.get("FPGANameContainsSpaces", Name));
       return false;
     }
     /* Stage 1 Is design map able on Board */
@@ -394,7 +392,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       }
     }
     if (!MapDesignCheckIOs()) {
-      Reporter.Report.AddError(S.fmt("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
+      Reporter.Report.AddError(S.get("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
       return false;
     }
     /* Stage 3 HDL generation */
@@ -469,7 +467,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       return (String)
           OptionPane.showInputDialog(
               null,
-              S.fmt("FPGAMultipleBoards", devices.size()),
+              S.get("FPGAMultipleBoards", devices.size()),
               S.get("FPGABoardSelection"),
               OptionPane.QUESTION_MESSAGE,
               null,

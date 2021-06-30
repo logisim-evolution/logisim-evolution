@@ -52,7 +52,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Inputs.put("DataA", inputbits);
     Inputs.put("DataB", inputbits);
@@ -85,43 +85,42 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var map = new TreeMap<String, Integer>();
     int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Outputs.put("Result", outputbits);
-    Outputs.put("CarryOut", 1);
-    return Outputs;
+    map.put("Result", outputbits);
+    map.put("CarryOut", 1);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
+    final var map = new TreeMap<Integer, String>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (outputbits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
-    Parameters.put(ExtendedBitsId, ExtendedBitsStr);
-    return Parameters;
+    if (outputbits > 1) map.put(NrOfBitsId, NrOfBitsStr);
+    map.put(ExtendedBitsId, ExtendedBitsStr);
+    return map;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
+  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
+    final var map = new TreeMap<String, Integer>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    ParameterMap.put(ExtendedBitsStr, nrOfBits + 1);
-    if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
-    return ParameterMap;
+    map.put(ExtendedBitsStr, nrOfBits + 1);
+    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
+    return map;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    final var  portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Nets));
-    return PortMap;
+    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
+    portMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
+    portMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Nets));
+    portMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Nets));
+    return portMap;
   }
 
   @Override
@@ -131,11 +130,11 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_extended_dataA", ExtendedBitsId);
-    Wires.put("s_extended_dataB", ExtendedBitsId);
-    Wires.put("s_sum_result", ExtendedBitsId);
-    return Wires;
+    final var wires = new TreeMap<String, Integer>();
+    wires.put("s_extended_dataA", ExtendedBitsId);
+    wires.put("s_extended_dataB", ExtendedBitsId);
+    wires.put("s_sum_result", ExtendedBitsId);
+    return wires;
   }
 
   @Override

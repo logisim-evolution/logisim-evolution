@@ -139,21 +139,21 @@ public class DefaultHolyCrossAppearance {
     edge = new HashMap<>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
-    int MaxLeftLabelLength = 0;
-    int MaxRightLabelLength = 0;
+    var maxLeftLabelLength = 0;
+    var maxRightLabelLength = 0;
     for (Instance pin : pins) {
       Direction pinEdge;
-      String labelString = pin.getAttributeValue(StdAttr.LABEL);
-      int LabelWidth = textWidth(labelString);
+      final var labelString = pin.getAttributeValue(StdAttr.LABEL);
+      final var LabelWidth = textWidth(labelString);
       if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
         pinEdge = Direction.EAST;
-        if (LabelWidth > MaxRightLabelLength) {
-          MaxRightLabelLength = LabelWidth;
+        if (LabelWidth > maxRightLabelLength) {
+          maxRightLabelLength = LabelWidth;
         }
       } else {
         pinEdge = Direction.WEST;
-        if (LabelWidth > MaxLeftLabelLength) {
-          MaxLeftLabelLength = LabelWidth;
+        if (LabelWidth > maxLeftLabelLength) {
+          maxLeftLabelLength = LabelWidth;
         }
       }
       List<Instance> e = edge.get(pinEdge);
@@ -170,7 +170,7 @@ public class DefaultHolyCrossAppearance {
     int offsEast = computeOffset(numEast, numWest);
     int offsWest = computeOffset(numWest, numEast);
 
-    int width = 2 * LABEL_OUTSIDE + MaxLeftLabelLength + MaxRightLabelLength + LABEL_GAP;
+    int width = 2 * LABEL_OUTSIDE + maxLeftLabelLength + maxRightLabelLength + LABEL_GAP;
     width = Math.max(MIN_WIDTH, (width + 9) / 10 * 10);
 
     int height = PORT_GAP * maxHorz + TOP_MARGIN + BOTTOM_MARGIN;
@@ -194,7 +194,7 @@ public class DefaultHolyCrossAppearance {
     int rx = OFFS + (9 - (ax + 9) % 10);
     int ry = OFFS + (9 - (ay + 9) % 10);
 
-    Rectangle rect = new Rectangle(rx, ry, width, height);
+    final var rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     List<CanvasObject> ret = new ArrayList<>();
     ret.add(rect);
@@ -203,7 +203,7 @@ public class DefaultHolyCrossAppearance {
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + offsEast, 0, PORT_GAP, false);
 
     if (name != null && name.length() > 0) {
-      Text label = new Text(rx + width / 2, ry + TOP_TEXT_MARGIN, name);
+      final var label = new Text(rx + width / 2, ry + TOP_TEXT_MARGIN, name);
       label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
       label.getLabel().setVerticalAlignment(EditableLabel.TOP);
       label.getLabel().setColor(Color.BLACK);
@@ -225,13 +225,13 @@ public class DefaultHolyCrossAppearance {
       int y,
       int dx,
       int dy,
-      boolean LeftSide) {
+      boolean leftSide) {
     int halign;
-    Color color = Color.DARK_GRAY; // maybe GRAY instead?
+    final var color = Color.DARK_GRAY; // maybe GRAY instead?
     int ldx;
     for (Instance pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
-      if (LeftSide) {
+      if (leftSide) {
         ldx = LABEL_OUTSIDE;
         halign = EditableLabel.LEFT;
       } else {
@@ -240,13 +240,15 @@ public class DefaultHolyCrossAppearance {
       }
       Font pinFont = null;
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        String text = pin.getAttributeValue(StdAttr.LABEL);
+        final var text = pin.getAttributeValue(StdAttr.LABEL);
         if (text != null && text.length() > 0) {
-          Text label = new Text(x + ldx, y, text);
+          final var label = new Text(x + ldx, y, text);
           label.getLabel().setHorizontalAlignment(halign);
           label.getLabel().setVerticalAlignment(EditableLabel.MIDDLE);
           label.getLabel().setColor(color);
-          if (pinFont == null) pinFont = label.getLabel().getFont().deriveFont((float) 10);
+          if (pinFont == null) {
+            pinFont = label.getLabel().getFont().deriveFont((float) 10);
+          }
           label.getLabel().setFont(pinFont);
           dest.add(label);
         }

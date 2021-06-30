@@ -325,7 +325,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> InOuts = new TreeMap<>();
+    final var InOuts = new TreeMap<String, Integer>();
     int InOutBubbles = MyNetList.NumberOfInOutBubbles();
     if (InOutBubbles > 0) {
       if (InOutBubbles > 1) {

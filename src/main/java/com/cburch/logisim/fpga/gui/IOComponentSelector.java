@@ -54,7 +54,7 @@ public class IOComponentSelector implements ActionListener {
     diag.setLayout(new GridBagLayout());
     JButton button;
     for (String comp : FPGAIOInformationContainer.GetComponentTypes()) {
-      button = new JButton(S.fmt("FpgaBoardDefine", comp));
+      button = new JButton(S.get("FpgaBoardDefine", comp));
       button.setActionCommand(comp);
       button.addActionListener(this);
       c.gridy++;

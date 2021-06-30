@@ -52,6 +52,7 @@
 	<mapID target="analyze_table"       url="ru/html/guide/analyze/ana-table.html" />
 	<mapID target="analyze_expr"        url="ru/html/guide/analyze/ana-expr.html" />
 	<mapID target="analyze_gen"         url="ru/html/guide/analyze/ana-gen.html" />
+    <mapID target="analyze_expimp"      url="ru/html/guide/analyze/ana-expimp.html" />
 	<mapID target="log"                 url="ru/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="ru/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="ru/html/guide/log/timetable.html" />
@@ -96,6 +97,7 @@
 	<mapID target="menu_printertab"     url="ru/html/guide/menu/printertab.html" />
 	<mapID target="menu_assembly"       url="ru/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="ru/html/guide/about/index.html" />
+	<mapID target="about_gpl_tr"        url="ru/html/guide/about/gpl-ru.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
 
 <!-- Librairie -->
@@ -173,8 +175,8 @@
 
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="img-guide/poke.png" />
-	<mapID target="icon_edit"        url="img-guide/select.png" />
-	<mapID target="icon_select"      url="img-guide/select.png" />
+	<mapID target="icon_edit"        url="img-guide/toolselect.png" />
+	<mapID target="icon_select"      url="img-guide/toolselect.png" />
 	<mapID target="icon_wiring"      url="icons/wiring.gif" />
 	<mapID target="icon_text"        url="img-guide/text.png" />
 	<mapID target="icon_menu"        url="icons/menu.gif" />

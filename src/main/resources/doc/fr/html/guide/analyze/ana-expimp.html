@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2021-06-12T10:36:10.000000000">
+    <meta name="changed" content="2021-01-12T10:36:10.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Exporter / Importer la table
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Exporter / Importer la table
+      </h1>
+      <p>
+        Les deux boutons <b class="button">Importer table</b> et <b class="button">Exporter table</b> permettent de sauvegarder et respectivement de recharger une définition de table de vérité.
+      </p>
+      <p>
+        Les informations se retrouvent dans un fichier TEXT de ce format
+      </p>
+      <blockquote>
+        <pre>a b c_in | s c_out
+~~~~~~~~~~~~~~~~~~
+0 0  0   | 0   0  
+0 0  1   | 1   0  
+0 1  0   | 1   0  
+0 1  1   | 0   1  
+1 0  0   | 1   0  
+1 0  1   | 0   1  
+1 1  0   | 0   1  
+1 1  1   | 1   1</pre>
+      </blockquote>Les règles suivantes s'appliquent :
+      <ul>
+        <li>Tout ce qui suit un '#' est un commentaire et sera ignoré.
+        </li>
+        <li>Les lignes vides et les lignes de séparation (par exemple, ~~~~~~) sont ignorées.
+        </li>
+        <li>Gardez des noms de colonnes simples (pas d'espaces, de ponctuation, etc.).
+        </li>
+        <li>Nom[N..0]' indique une variable de N+1 bits, alors que 'Nom' par lui-même indique une variable de 1 bit.
+        </li>
+        <li>Vous pouvez utiliser 'x' ou '-' pour indiquer pour les bits d'entrée et de sortie à ignorer.
+        </li>
+        <li>Vous pouvez utiliser la notation binaire (par exemple, '10100011xxxx') ou la notation hexadécimale (par exemple,'C3x'). Logisim se chargera de déterminer laquelle est laquelle.
+        </li>
+      </ul>
+      <p>
+        Vous pouvez exporter la table dans un fichier, le modifier et le réimporter. Cela peut être un aide pratique pour des tables complexes.
+      </p>
+      <p>
+        <b>Suite:</b> <a href="ana-table.html#impexp">Editer la table de vérité</a>.
+      </p>
+    </div>
+  </body>
+</html>

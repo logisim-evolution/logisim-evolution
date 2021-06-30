@@ -46,7 +46,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class PriorityEncoder extends InstanceFactory {
   /**
@@ -80,11 +79,11 @@ public class PriorityEncoder extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction dir = attrs.getValue(StdAttr.FACING);
-    BitWidth select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
-    int inputs = 1 << select.getWidth();
-    int offs = -5 * inputs;
-    int len = 10 * inputs + 10;
+    final var dir = attrs.getValue(StdAttr.FACING);
+    final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
+    final var inputs = 1 << select.getWidth();
+    final var offs = -5 * inputs;
+    final var len = 10 * inputs + 10;
     if (dir == Direction.NORTH) {
       return Bounds.create(offs, 0, len, 40);
     } else if (dir == Direction.SOUTH) {
@@ -119,11 +118,11 @@ public class PriorityEncoder extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
+    final var g = painter.getGraphics();
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
 
     painter.drawBounds();
-    Bounds bds = painter.getBounds();
+    final var bds = painter.getBounds();
     g.setColor(Color.GRAY);
     int x0;
     int y0;
@@ -147,16 +146,15 @@ public class PriorityEncoder extends InstanceFactory {
     }
     GraphicsUtil.drawText(g, "0", x0, y0, halign, GraphicsUtil.V_BASELINE);
     g.setColor(Color.BLACK);
-    GraphicsUtil.drawCenteredText(
-        g, "Pri", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
+    GraphicsUtil.drawCenteredText(g, "Pri", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();
   }
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
-    int n = 1 << select.getWidth();
-    boolean enabled = state.getPortValue(n + EN_IN) != Value.FALSE;
+    final var select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    var n = 1 << select.getWidth();
+    final var enabled = state.getPortValue(n + EN_IN) != Value.FALSE;
 
     int out = -1;
     Value outDefault;
@@ -186,13 +184,13 @@ public class PriorityEncoder extends InstanceFactory {
 
   private void updatePorts(Instance instance) {
     Object dir = instance.getAttributeValue(StdAttr.FACING);
-    BitWidth select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
-    int n = 1 << select.getWidth();
-    Port[] ps = new Port[n + 4];
+    final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    var n = 1 << select.getWidth();
+    final var ps = new Port[n + 4];
     if (dir == Direction.NORTH || dir == Direction.SOUTH) {
       int x = -5 * n + 10;
       int y = dir == Direction.NORTH ? 40 : -40;
-      for (int i = 0; i < n; i++) {
+      for (var i = 0; i < n; i++) {
         ps[i] = new Port(x + 10 * i, y, Port.INPUT, 1);
       }
       ps[n + OUT] = new Port(0, 0, Port.OUTPUT, select.getWidth());
@@ -202,7 +200,7 @@ public class PriorityEncoder extends InstanceFactory {
     } else {
       int x = dir == Direction.EAST ? -40 : 40;
       int y = -5 * n + 10;
-      for (int i = 0; i < n; i++) {
+      for (var i = 0; i < n; i++) {
         ps[i] = new Port(x, y + 10 * i, Port.INPUT, 1);
       }
       ps[n + OUT] = new Port(0, 0, Port.OUTPUT, select.getWidth());
@@ -211,7 +209,7 @@ public class PriorityEncoder extends InstanceFactory {
       ps[n + GS] = new Port(0, 10, Port.OUTPUT, 1);
     }
 
-    for (int i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
       ps[i].setToolTip(S.getter("priorityEncoderInTip", "" + i));
     }
     ps[n + OUT].setToolTip(S.getter("priorityEncoderOutTip"));

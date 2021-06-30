@@ -44,7 +44,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.JInputDialog;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -109,7 +108,7 @@ public class PLATable {
     inSize = other.inSize;
     outSize = other.outSize;
     for (Row otherRow : other.rows) {
-      Row r = addTableRow();
+      final var r = addTableRow();
       r.copyFrom(otherRow);
     }
   }
@@ -137,7 +136,7 @@ public class PLATable {
   }
 
   public Row addTableRow() {
-    Row r = new Row(inSize, outSize);
+    final var r = new Row(inSize, outSize);
     rows.add(r);
     return r;
   }
@@ -146,24 +145,24 @@ public class PLATable {
     rows.remove(row);
   }
 
+  @Override
   public String toString() {
     return toStandardString();
   }
 
   public String toStandardString() {
-    StringBuilder ret = new StringBuilder();
-    for (Row r : rows) ret.append(r.toStandardString()).append("\n");
+    final var ret = new StringBuilder();
+    for (final var r : rows) ret.append(r.toStandardString()).append("\n");
     return ret.toString();
   }
 
   public static PLATable parse(String str) {
     PLATable tt = null;
-    for (String line : str.split("\n")) {
+    for (final var line : str.split("\n")) {
       try {
         tt = parseOneLine(tt, line);
       } catch (IOException e) {
-        OptionPane.showMessageDialog(
-            null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
       }
     }
     if (tt == null) tt = new PLATable(2, 2, "PLA");
@@ -172,14 +171,14 @@ public class PLATable {
 
   private static PLATable parseOneLine(PLATable tt, String line) throws IOException {
     line = line.trim();
-    int jj = line.indexOf("#");
+    final var jj = line.indexOf("#");
     String andBits, orBits, comment = "";
     if (jj >= 0) {
       comment = line.substring(jj + 1).trim();
       line = line.substring(0, jj).trim();
     }
     if (line.equals("")) return tt;
-    int ii = line.indexOf(" ");
+    final var ii = line.indexOf(" ");
     if (ii <= 0) throw new IOException("PLA row '" + line + "' is missing outputs.");
     andBits = line.substring(0, ii).trim();
     orBits = line.substring(ii + 1).trim();
@@ -190,15 +189,15 @@ public class PLATable {
     else if (orBits.length() != tt.outSize)
       throw new IOException(
           "PLA row '" + line + "' must have exactly " + tt.outSize + " output bits.");
-    Row r = tt.addTableRow();
-    for (int i = 0; i < andBits.length(); i++) {
-      char s = andBits.charAt(i);
+    final var r = tt.addTableRow();
+    for (var i = 0; i < andBits.length(); i++) {
+      final var s = andBits.charAt(i);
       if (s != ONE && s != ZERO && s != DONTCARE)
         throw new IOException("PLA row '" + line + "' contains invalid input bit '" + s + "'.");
       r.inBits[andBits.length() - i - 1] = s;
     }
-    for (int i = 0; i < orBits.length(); i++) {
-      char s = orBits.charAt(i);
+    for (var i = 0; i < orBits.length(); i++) {
+      final var s = orBits.charAt(i);
       if (s != ONE && s != ZERO)
         throw new IOException("PLA row '" + line + "' contains invalid output bit '" + s + "'.");
       r.outBits[orBits.length() - i - 1] = s;
@@ -216,7 +215,7 @@ public class PLATable {
     }
     PLATable tt = null;
     try {
-      String line = in.readLine();
+      var line = in.readLine();
       while (line != null) {
         tt = parseOneLine(tt, line);
         line = in.readLine();
@@ -254,14 +253,15 @@ public class PLATable {
   private static final char DONTCARE = 'x';
 
   public static class Row {
-    public char[] inBits, outBits;
+    public char[] inBits;
+    public char[] outBits;
     private String comment = "";
 
     public Row(int inSize, int outSize) {
       inBits = new char[inSize];
       outBits = new char[outSize];
-      for (int i = 0; i < inSize; i++) inBits[i] = ZERO;
-      for (int i = 0; i < outSize; i++) outBits[i] = ZERO;
+      for (var i = 0; i < inSize; i++) inBits[i] = ZERO;
+      for (var i = 0; i < outSize; i++) outBits[i] = ZERO;
     }
 
     public void copyFrom(Row other) {
@@ -290,9 +290,9 @@ public class PLATable {
 
     static char[] truncate(char[] b, int n) {
       if (b.length == n) return b;
-      char[] a = new char[n];
-      for (int i = 0; i < n && i < b.length; i++) a[i] = b[i];
-      for (int i = b.length; i < n; i++) a[i] = ZERO;
+      final var a = new char[n];
+      for (var i = 0; i < n && i < b.length; i++) a[i] = b[i];
+      for (var i = b.length; i < n; i++) a[i] = ZERO;
       return a;
     }
 
@@ -301,17 +301,17 @@ public class PLATable {
     }
 
     public String toStandardString() {
-      StringBuilder i = new StringBuilder();
+      final var i = new StringBuilder();
       for (char inBit : inBits) i.insert(0, inBit);
-      StringBuilder o = new StringBuilder();
+      final var o = new StringBuilder();
       for (char outBit : outBits) o.insert(0, outBit);
-      String ret = i + " " + o;
+      var ret = i + " " + o;
       if (!comment.trim().equals("")) ret += " # " + comment.trim();
       return ret;
     }
 
     boolean matches(long input) {
-      for (char bit : inBits) {
+      for (final var bit : inBits) {
         long b = input & 1;
         if ((bit == ONE && b != 1) || (bit == ZERO && b != 0)) return false;
         input = (input >> 1);
@@ -331,17 +331,16 @@ public class PLATable {
   }
 
   public long valueFor(long input) {
-    for (Row row : rows) if (row.matches(input)) return row.getOutput();
+    for (final var row : rows) if (row.matches(input)) return row.getOutput();
     return 0;
   }
 
   public String commentFor(long input) {
-    for (Row row : rows) if (row.matches(input)) return row.comment;
+    for (final var row : rows) if (row.matches(input)) return row.comment;
     return "n/a";
   }
 
   public static class EditorDialog extends JDialog implements JInputDialog {
-    /** */
     private static final long serialVersionUID = 1L;
 
     private static final float smallFont = 9.5f;
@@ -355,13 +354,13 @@ public class PLATable {
     public EditorDialog(Frame parent) {
       super(parent, S.get("plaEditorTitle"), true);
       setResizable(true);
-      Container cPane = super.getContentPane();
+      final var cPane = super.getContentPane();
       cPane.setLayout(new BorderLayout(5, 5));
 
       hdrPanel = new HeaderPanel();
       // Give header a vertical (but invisible) vertical scroll bar, to help
       // align with the lower panel.
-      JScrollPane header =
+      final var header =
           new JScrollPane(
               hdrPanel,
               JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -370,20 +369,24 @@ public class PLATable {
           .getVerticalScrollBar()
           .setUI(
               new BasicScrollBarUI() {
+                @Override
                 protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
 
+                @Override
                 protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
 
+                @Override
                 protected JButton createIncreaseButton(int orientation) {
                   return createZeroButton();
                 }
 
+                @Override
                 protected JButton createDecreaseButton(int orientation) {
                   return createZeroButton();
                 }
 
                 private JButton createZeroButton() {
-                  JButton jbutton = new JButton();
+                  final var jbutton = new JButton();
                   jbutton.setPreferredSize(new Dimension(0, 0));
                   jbutton.setMinimumSize(new Dimension(0, 0));
                   jbutton.setMaximumSize(new Dimension(0, 0));
@@ -394,7 +397,7 @@ public class PLATable {
       ttPanel = new TablePanel();
       ttScrollPanel = new JPanel();
       ttScrollPanel.add(ttPanel, BorderLayout.CENTER);
-      JScrollPane table =
+      final var table =
           new JScrollPane(
               ttScrollPanel,
               JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -419,6 +422,7 @@ public class PLATable {
       reset(true);
     }
 
+    @Override
     public Object getValue() {
       return oldTable;
     }
@@ -427,11 +431,11 @@ public class PLATable {
       hdrPanel.reset();
       ttPanel.reset();
       if (resize) {
-        Dimension d = hdrPanel.getPreferredSize();
-        int w = (int) d.getWidth() + 50;
-        int h = (int) d.getHeight() + 20 * newTable.rows.size() + 140;
-        int ww = Math.max(Math.min(w, 800), 300);
-        int hh = Math.max(Math.min(h, 500), 200);
+        final var d = hdrPanel.getPreferredSize();
+        final var w = (int) d.getWidth() + 50;
+        final var h = (int) d.getHeight() + 20 * newTable.rows.size() + 140;
+        final var ww = Math.max(Math.min(w, 800), 300);
+        final var hh = Math.max(Math.min(h, 500), 200);
         repack(new Dimension(AppPreferences.getScaled(ww), AppPreferences.getScaled(hh)));
       }
     }
@@ -462,15 +466,15 @@ public class PLATable {
     }
 
     void read() {
-      JFileChooser chooser = JFileChoosers.create();
+      final var chooser = JFileChoosers.create();
       chooser.setSelectedFile(new File(normalizeName(oldTable.label)));
       chooser.setDialogTitle(S.get("plaLoadDialogTitle"));
       chooser.setFileFilter(Loader.TXT_FILTER);
-      int choice = chooser.showOpenDialog(null);
+      final var choice = chooser.showOpenDialog(null);
       if (choice == JFileChooser.APPROVE_OPTION) {
-        File f = chooser.getSelectedFile();
+        final var f = chooser.getSelectedFile();
         try {
-          PLATable loaded = parse(f);
+          final var loaded = parse(f);
           newTable.copyFrom(loaded);
           reset(false);
         } catch (IOException e) {
@@ -481,13 +485,13 @@ public class PLATable {
     }
 
     void write() {
-      JFileChooser chooser = JFileChoosers.create();
+      final var chooser = JFileChoosers.create();
       chooser.setSelectedFile(new File(normalizeName(oldTable.label)));
       chooser.setDialogTitle(S.get("plaSaveDialogTitle"));
       chooser.setFileFilter(Loader.TXT_FILTER);
-      int choice = chooser.showSaveDialog(null);
+      final var choice = chooser.showSaveDialog(null);
       if (choice == JFileChooser.APPROVE_OPTION) {
-        File f = chooser.getSelectedFile();
+        final var f = chooser.getSelectedFile();
         try {
           newTable.save(f);
         } catch (IOException e) {
@@ -498,29 +502,24 @@ public class PLATable {
     }
 
     class ButtonPanel extends JPanel {
-      /** */
       private static final long serialVersionUID = 1L;
 
       public ButtonPanel(JDialog parent) {
-        JButton write = new JButton("Export");
-        write.addActionListener(
-            e -> write());
+        final var write = new JButton("Export");
+        write.addActionListener(e -> write());
         add(write);
 
-        JButton read = new JButton("Import");
-        read.addActionListener(
-            e -> read());
+        final var read = new JButton("Import");
+        read.addActionListener(e -> read());
         add(read);
 
-        JButton ok = new JButton("OK");
-        ok.addActionListener(
-            e -> close(true));
+        final var ok = new JButton("OK");
+        ok.addActionListener(e -> close(true));
         parent.getRootPane().setDefaultButton(ok);
         add(ok);
 
-        JButton cancel = new JButton("Cancel");
-        cancel.addActionListener(
-            e -> close(false));
+        final var cancel = new JButton("Cancel");
+        cancel.addActionListener(e -> close(false));
         add(cancel);
 
         parent
@@ -556,13 +555,13 @@ public class PLATable {
 
       void reset() {
         removeAll();
-        for (Row r : newTable.rows) add(new RowPanel(r));
+        for (final var r : newTable.rows) add(new RowPanel(r));
         add(new InsertRowPanel());
         add(Box.createVerticalGlue());
       }
 
       void addRow() {
-        Dimension prevSize = EditorDialog.this.getSize();
+        final var prevSize = EditorDialog.this.getSize();
         add(new RowPanel(newTable.addTableRow()), getComponentCount() - 2);
         repack(prevSize);
         vScrollModel.setValue(vScrollModel.getMaximum());
@@ -582,30 +581,29 @@ public class PLATable {
           super(new FlowLayout(FlowLayout.CENTER, 0, 0));
           this.row = r;
 
-          JButton rm = new JButton("Remove");
+          final var rm = new JButton("Remove");
           rm.setFont(AppPreferences.getScaledFont(rm.getFont().deriveFont(smallFont)));
-          rm.addActionListener(
-              e -> deleteRow(RowPanel.this));
+          rm.addActionListener(e -> deleteRow(RowPanel.this));
           rm.setMargin(new Insets(0, 0, 0, 0));
-          rm.setPreferredSize(
-              new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
+          rm.setPreferredSize(new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
           add(rm);
 
           int inSz = row.inBits.length;
           int outSz = row.outBits.length;
 
-          GridLayout layout = new GridLayout(1, 1 + inSz + 1 + Math.max(outSz, 2) + 1);
+          final var layout = new GridLayout(1, 1 + inSz + 1 + Math.max(outSz, 2) + 1);
           layout.setHgap(buttonHgap);
-          JPanel bitPanel = new JPanel(layout);
+          final var bitPanel = new JPanel(layout);
 
           bitPanel.add(new Box(BoxLayout.X_AXIS));
 
-          for (int i = inSz - 1; i >= 0; i--) {
-            final int ii = i;
+          for (var i = inSz - 1; i >= 0; i--) {
+            final var ii = i;
             bitPanel.add(
                 new BitStateButton(row.inBits[ii]) {
                   private static final long serialVersionUID = 1L;
 
+                  @Override
                   public char clicked() {
                     return row.changeInBit(ii);
                   }
@@ -614,13 +612,14 @@ public class PLATable {
 
           bitPanel.add(new Box(BoxLayout.X_AXIS));
 
-          for (int i = outSz; i < 2; i++) bitPanel.add(new Box(BoxLayout.X_AXIS));
-          for (int i = outSz - 1; i >= 0; i--) {
-            final int ii = i;
+          for (var i = outSz; i < 2; i++) bitPanel.add(new Box(BoxLayout.X_AXIS));
+          for (var i = outSz - 1; i >= 0; i--) {
+            final var ii = i;
             bitPanel.add(
                 new BitStateButton(row.outBits[ii]) {
                   private static final long serialVersionUID = 1L;
 
+                  @Override
                   public char clicked() {
                     return row.changeOutBit(ii);
                   }
@@ -631,9 +630,10 @@ public class PLATable {
 
           add(bitPanel);
 
-          final JTextField txt = new JTextField(null, row.comment, 10);
+          final var txt = new JTextField(null, row.comment, 10);
           txt.addKeyListener(
               new KeyAdapter() {
+                @Override
                 public void keyReleased(KeyEvent e) {
                   row.comment = txt.getText();
                 }
@@ -657,10 +657,9 @@ public class PLATable {
 
         public InsertRowPanel() {
           super(new FlowLayout(FlowLayout.CENTER));
-          JButton more = new JButton("Add Row");
+          final var more = new JButton("Add Row");
           more.setFont(AppPreferences.getScaledFont(more.getFont().deriveFont(smallFont)));
-          more.addActionListener(
-              e -> addRow());
+          more.addActionListener(e -> addRow());
           more.setMargin(new Insets(1, 20, 1, 20));
           add(more);
         }
@@ -668,7 +667,6 @@ public class PLATable {
     }
 
     class TopNumberPanel extends JPanel {
-      /** */
       private static final long serialVersionUID = 1L;
 
       TopNumberPanel(int inSz, int outSz) {
@@ -678,10 +676,10 @@ public class PLATable {
                 new Dimension(
                     AppPreferences.getScaled(75 + bs),
                     AppPreferences.getScaled(15)))); // space for remove button
-        Dimension dim = new Dimension(AppPreferences.getScaled(bs), AppPreferences.getScaled(15));
+        final var dim = new Dimension(AppPreferences.getScaled(bs), AppPreferences.getScaled(15));
 
-        for (int i = inSz - 1; i >= 0; i--) {
-          JLabel l = new JLabel("" + i, SwingConstants.CENTER);
+        for (var i = inSz - 1; i >= 0; i--) {
+          final var l = new JLabel("" + i, SwingConstants.CENTER);
           l.setFont(AppPreferences.getScaledFont(l.getFont().deriveFont(tinyFont)));
           l.setPreferredSize(dim);
           add(l);
@@ -689,9 +687,9 @@ public class PLATable {
 
         add(Box.createRigidArea(dim));
 
-        for (int i = outSz; i < 2; i++) add(Box.createRigidArea(dim));
-        for (int i = outSz - 1; i >= 0; i--) {
-          JLabel l = new JLabel("" + i, SwingConstants.CENTER);
+        for (var i = outSz; i < 2; i++) add(Box.createRigidArea(dim));
+        for (var i = outSz - 1; i >= 0; i--) {
+          final var l = new JLabel("" + i, SwingConstants.CENTER);
           l.setFont(AppPreferences.getScaledFont(l.getFont().deriveFont(tinyFont)));
           l.setPreferredSize(dim);
           add(l);
@@ -699,7 +697,7 @@ public class PLATable {
 
         add(Box.createRigidArea(dim));
 
-        JLabel c = new JLabel("comments");
+        final var c = new JLabel("comments");
         c.setFont(AppPreferences.getScaledFont(c.getFont().deriveFont(smallFont)));
         c.setPreferredSize(
             new Dimension(
@@ -723,14 +721,14 @@ public class PLATable {
                     AppPreferences.getScaled(75 + bs - Math.max(3 - inSz, 0) * bs),
                     AppPreferences.getScaled(15)))); // space for remove button
 
-        JLabel i = new JLabel("input", SwingConstants.RIGHT);
+        final var i = new JLabel("input", SwingConstants.RIGHT);
         i.setFont(AppPreferences.getScaledFont(i.getFont().deriveFont(smallFont)));
         i.setPreferredSize(
             new Dimension(
                 AppPreferences.getScaled(Math.max(inSz, 3) * bs), AppPreferences.getScaled(15)));
         add(i);
 
-        JLabel o = new JLabel("output", SwingConstants.RIGHT);
+        final var o = new JLabel("output", SwingConstants.RIGHT);
         o.setFont(AppPreferences.getScaledFont(o.getFont().deriveFont(smallFont)));
         o.setPreferredSize(
             new Dimension(
@@ -774,14 +772,17 @@ public class PLATable {
         add(text);
         addMouseListener(
             new MouseAdapter() {
+              @Override
               public void mousePressed(MouseEvent e) {
                 setBorder(clickBorder);
               }
 
+              @Override
               public void mouseReleased(MouseEvent e) {
                 setBorder(stdBorder);
               }
 
+              @Override
               public void mouseClicked(MouseEvent e) {
                 text.setText("" + clicked());
               }

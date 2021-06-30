@@ -40,9 +40,9 @@
 		</tocitem>
 	    <tocitem target="mem_guide" text="Composant mémoire">
 			<tocitem target="mem_poke" text="Memory poke" />
+			<tocitem target="mem_hex" text="Editeur hexadécimal" />			
 			<tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
 			<tocitem target="mem_filetabel" text="Panneau du fichier mémoire "/>
-			<tocitem target="mem_hex" text="Editeur Hexadecimal"/>
 			<tocitem target="mem_v2raw" text="Fichier v2raw" />
 			<tocitem target="mem_v3word" text="Fichier v3word"/>
 			<tocitem target="mem_v3byte" text="Fichier v3byte"/>
@@ -54,6 +54,7 @@
 			<tocitem target="analyze_table" text="Editer la table de vérité"/>
 			<tocitem target="analyze_expr" text="Créer des expressions"/>
 			<tocitem target="analyze_gen" text="Générer un circuit"/>
+			<tocitem target="analyze_expimp" text="Exporter / Importer la table"/>
 		</tocitem>
 		<tocitem target="log" text="Chronogramme">
 			<tocitem target="log_selection" text="Sélection des signaux"/>
@@ -70,17 +71,21 @@
 			<tocitem target="menu_edit" text="Menu éditer"/>
 			<tocitem target="menu_project" text="Menu projet"/>
 			<tocitem target="menu_simulate" text="Menu simulation"/>
+			<tocitem target="menu_fpga" text="Menu FPGA"/>
 			<tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
 			<tocitem target="menu_exportab" text="Exportation d'images "/>  
-		<tocitem target="menu_printertab" text="Imprimer "/>
+			<tocitem target="menu_printertab" text="Imprimer "/>
 			<tocitem target="menu_assembly" text="Assembly viewer"/>
 		</tocitem>
 		<tocitem target="prefs" text="Préférences de l'application">
-			<tocitem target="prefs_template" text="L'onglet modèle"/>
-			<tocitem target="prefs_intl" text="L'onglet international"/>
+			<tocitem target="prefs_template" text="L'onglet Modèle"/>
+			<tocitem target="prefs_intl" text="L'onglet International"/>
 			<tocitem target="prefs_window" text="L'onglet fenêtre"/>
-			<tocitem target="prefs_layout" text="L'onglet de présentation"/>
-			<tocitem target="prefs_exp" text="L'onglet expérimental"/>
+			<tocitem target="prefs_layout" text="L'onglet Présentation"/>
+<!--	<tocitem target="prefs_simulation" text="L'onglet simulation"/> -->
+			<tocitem target="prefs_exp" text="L'onglet Expérimental"/>
+<!--	<tocitem target="prefs_sofware" text="L'onglet Logicile tiers"/> -->
+<!--	<tocitem target="prefs_fpga" text="L'onglet FPGA Commander settings"/> -->
 			<tocitem target="prefs_cmdline" text="La ligne de commande"/>
 		</tocitem>
 		<tocitem target="opts" text="Options de projet">
@@ -93,12 +98,12 @@
 			<tocitem target="prop_oscillate" text="Erreurs oscillatoire"/>
 			<tocitem target="prop_shortcome" text="Limitations"/>
 		</tocitem>
-		<tocitem target="hdl-ip" text="HDL IP">
+<!--		<tocitem target="hdl-ip" text="HDL IP">
 			<tocitem target="hdl-ip_vhdlcomp" text="Entités VHDL" />
 			<tocitem target="hdl-ip_questa" text="Confugurer Questa Advanced Simulator" />
 			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
 			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
-		</tocitem>
+		</tocitem> -->
 		<tocitem target="jar" text="Librairies JAR">
 			<tocitem target="jar_incr" text="Ajout en codage de Gray"/>
 			<tocitem target="jar_library" text="Classe librairie"/>
@@ -181,16 +186,18 @@
 		<tocitem target="hdl" text="HDL-IP">
 			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
 		</tocitem>
-		<!-- TTL mega functions 
+<!-- 
+		TTL mega functions 
 		<tocitem target="ttl" text="TTL">
 			<tocitem target="ttl_xxxx" text="Bouton" image="ttl_xxxx" />
 		</tocitem>
-		-->
+-->
 		<tocitem target="tcl" text="TCL library">
 			  <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
 			  <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
 		</tocitem>
-		<!-- BFH mega functions 
+<!-- 
+		BFH mega functions 
 		<tocitem target="bfh" text="BFH mega functions">
 			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="bfh_*******" />
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
@@ -210,7 +217,6 @@
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
 		</tocitem>
-		
 <!--
 		<tocitem target="base" text="Base library">
 			<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />

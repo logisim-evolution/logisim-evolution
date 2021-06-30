@@ -28,23 +28,20 @@
 
 package com.cburch.logisim.std.memory;
 
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class CounterPoker extends RegisterPoker {
 
   @Override
   public void paint(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
-    BitWidth dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
-    int width = dataWidth == null ? 8 : dataWidth.getWidth();
-    int len = (width + 3) / 4;
+    final var bds = painter.getBounds();
+    final var dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
+    final var width = dataWidth == null ? 8 : dataWidth.getWidth();
+    final var len = (width + 3) / 4;
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     g.setColor(Color.RED);
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       if (len > 4) {

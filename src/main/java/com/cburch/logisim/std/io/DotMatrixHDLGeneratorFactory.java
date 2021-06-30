@@ -50,54 +50,56 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    var contents = new ArrayList<String>();
-    var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
-    var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
-    int rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
-    int cols = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+    final var contents = new ArrayList<String>();
+    final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
+    final var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
+    final var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
+    final var rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
+    final var cols = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
 
     contents.add("  ");
     if (colBased) {
-      for (int r = 0; r < rows; r++)
-        for (int c = 0; c < cols; c++) {
-          String colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
+      for (var r = 0; r < rows; r++)
+        for (var c = 0; c < cols; c++) {
+          final var colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
                                        : GetBusName(componentInfo, c, netlist);
           int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
           if (colName.isEmpty())
             contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                     + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
           else {
-            String Wire = (rows == 1) ? colName : colName + HDL.BracketOpen() + r + HDL.BracketClose();
+            final var wire = (rows == 1) ? colName : colName + HDL.BracketOpen() + r + HDL.BracketClose();
             contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + Wire + ";");
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
           }
         }
     } else if (rowBased) {
-      for (int r = 0; r < rows; r++) {
-        String rowName = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
+      for (var r = 0; r < rows; r++) {
+        final var rowName = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
                                      : GetBusName(componentInfo, r, netlist);
-        for (int c = 0; c < cols; c++) {
-          int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+        for (var c = 0; c < cols; c++) {
+          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
           if (rowName.isEmpty())
             contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                     + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
           else {
-            String Wire = (cols == 1) ? rowName : rowName + HDL.BracketOpen() + c + HDL.BracketClose();
+            final var wire = (cols == 1) ? rowName : rowName + HDL.BracketOpen() + c + HDL.BracketClose();
             contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + Wire + ";");
+                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
           }
         }
       }
     } else {
-      String rowName = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
-                                   : GetBusName(componentInfo, 1, netlist);
-      String colName = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
-                                   : GetBusName(componentInfo, 0, netlist);
-      boolean oneRow = (rows == 1);
-      boolean oneCol = (cols == 1);
+      var rowName = (rows == 1)
+              ? GetNetName(componentInfo, 1, true, netlist)
+              : GetBusName(componentInfo, 1, netlist);
+      var colName = (cols == 1)
+              ? GetNetName(componentInfo, 0, true, netlist)
+              : GetBusName(componentInfo, 0, netlist);
+      final var oneRow = (rows == 1);
+      final var oneCol = (cols == 1);
       if (HDL.isVHDL()) {
-        String indent = "   ";
+        var indent = "   ";
         if (!oneRow) {
           contents.add(indent + label + "_0 : FOR r IN " + (rows - 1) + " DOWNTO 0 GENERATE");
           indent  += "   ";
@@ -109,7 +111,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           colName += "(c)";
         }
 
-        String content = indent + HDLGeneratorFactory.LocalOutputBubbleBusname + "(";
+        var content = indent + HDLGeneratorFactory.LocalOutputBubbleBusname + "(";
 
         content += ((oneRow) ? "" : "r" + ((oneCol) ? "" : "*" + cols + "+"))
                     + ((oneCol) ? "" : "c")
@@ -128,7 +130,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
 
       } else {
-        String indent = "   ";
+        var indent = "   ";
         if (!oneRow || !oneCol) {
           contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) + ((oneCol) ? "" : label + "_c") + ";");
           contents.add(indent + "generate");
@@ -175,6 +177,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     return contents;
   }
+
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;

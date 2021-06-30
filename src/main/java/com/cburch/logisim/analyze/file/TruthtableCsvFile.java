@@ -34,10 +34,6 @@ import com.cburch.logisim.analyze.data.CsvInterpretor;
 import com.cburch.logisim.analyze.data.CsvParameter;
 import com.cburch.logisim.analyze.gui.CsvReadParameterDialog;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
-import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.analyze.model.VariableList;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -52,36 +48,36 @@ public class TruthtableCsvFile {
   public static final char DEFAULT_QUOTE = '"';
 
   public static void doSave(File file, AnalyzerModel model) throws IOException {
-    var inputs = model.getInputs();
-    var outputs = model.getOutputs();
+    final var inputs = model.getInputs();
+    final var outputs = model.getOutputs();
     if (inputs.vars.isEmpty() || outputs.vars.isEmpty()) return;
     try (PrintStream out = new PrintStream(file)) {
-      var tt = model.getTruthTable();
+      final var tt = model.getTruthTable();
       tt.compactVisibleRows();
-      for (int i = 0; i < inputs.vars.size(); i++) {
-        var cur = inputs.vars.get(i);
-        var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
+      for (var i = 0; i < inputs.vars.size(); i++) {
+        final var cur = inputs.vars.get(i);
+        final var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
         out.print(DEFAULT_QUOTE + name + DEFAULT_QUOTE + DEFAULT_SEPARATOR);
-        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
+        for (var j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
       }
       out.print(DEFAULT_QUOTE + "|" + DEFAULT_QUOTE);
-      for (int i = 0; i < outputs.vars.size(); i++) {
+      for (var i = 0; i < outputs.vars.size(); i++) {
         out.print(DEFAULT_SEPARATOR);
-        Var cur = outputs.vars.get(i);
-        var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
+        final var cur = outputs.vars.get(i);
+        final var name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
         out.print(DEFAULT_QUOTE + name + DEFAULT_QUOTE);
-        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
+        for (var j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
       }
       out.println();
-      for (int row = 0; row < tt.getVisibleRowCount(); row++) {
-        for (int i = 0; i < inputs.bits.size(); i++) {
-          var entry = tt.getVisibleInputEntry(row, i);
+      for (var row = 0; row < tt.getVisibleRowCount(); row++) {
+        for (var i = 0; i < inputs.bits.size(); i++) {
+          final var entry = tt.getVisibleInputEntry(row, i);
           out.print(entry.getDescription() + DEFAULT_SEPARATOR);
         }
         out.print(DEFAULT_QUOTE + "|" + DEFAULT_QUOTE);
-        for (int i = 0; i < outputs.bits.size(); i++) {
+        for (var i = 0; i < outputs.bits.size(); i++) {
           out.print(DEFAULT_SEPARATOR);
-          var entry = tt.getVisibleOutputEntry(row, i);
+          final var entry = tt.getVisibleOutputEntry(row, i);
           out.print(entry.getDescription());
         }
         out.println();
@@ -93,7 +89,7 @@ public class TruthtableCsvFile {
     final var param = new CsvParameter();
     new CsvReadParameterDialog(param, file, parentFrame);
     if (!param.isValid()) return;
-    var cin = new CsvInterpretor(file, param, parentFrame);
+    final var cin = new CsvInterpretor(file, param, parentFrame);
     cin.getTruthTable(model);
   }
 }

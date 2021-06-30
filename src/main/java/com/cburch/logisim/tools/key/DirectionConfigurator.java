@@ -53,7 +53,7 @@ public class DirectionConfigurator implements KeyConfigurator, Cloneable {
 
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
     if (event.getType() == KeyConfigurationEvent.KEY_PRESSED) {
-      KeyEvent e = event.getKeyEvent();
+      final var e = event.getKeyEvent();
       if (e.getModifiersEx() == modsEx) {
         Direction value = null;
         switch (e.getKeyCode()) {
@@ -68,6 +68,9 @@ public class DirectionConfigurator implements KeyConfigurator, Cloneable {
             break;
           case KeyEvent.VK_RIGHT:
             value = Direction.EAST;
+            break;
+          default:
+            // nothing
             break;
         }
         if (value != null) {

@@ -100,7 +100,7 @@ public class Button extends InstanceFactory {
     }
 
     private void setValue(InstanceState state, Value val) {
-      InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+      final var data = (InstanceDataSingleton) state.getData();
       if (data == null) {
         state.setData(new InstanceDataSingleton(val));
       } else {
@@ -173,27 +173,27 @@ public class Button extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int w = bds.getWidth();
-    int h = bds.getHeight();
+    final var bds = painter.getBounds();
+    var x = bds.getX();
+    var y = bds.getY();
+    final var w = bds.getWidth();
+    final var h = bds.getHeight();
 
     Value val;
     if (painter.getShowState()) {
-      InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
+      final var data = (InstanceDataSingleton) painter.getData();
       val = data == null ? Value.FALSE : (Value) data.getValue();
     } else {
       val = Value.FALSE;
     }
 
-    Color color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
+    var color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
     if (!painter.shouldDrawColor()) {
       int hue = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
       color = new Color(hue, hue, hue);
     }
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     int depress;
     if (val == Value.TRUE) {
       x += DEPTH;
@@ -209,7 +209,7 @@ public class Button extends InstanceFactory {
 
       Object facing = painter.getAttributeValue(StdAttr.FACING);
       if (facing == Direction.NORTH || facing == Direction.WEST) {
-        Location p = painter.getLocation();
+        final var p = painter.getLocation();
         int px = p.getX();
         int py = p.getY();
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
@@ -245,7 +245,7 @@ public class Button extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+    final var data = (InstanceDataSingleton) state.getData();
     Value val = data == null ? Value.FALSE : (Value) data.getValue();
     state.setPort(0, val, 1);
   }

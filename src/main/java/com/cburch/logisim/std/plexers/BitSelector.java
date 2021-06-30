@@ -50,7 +50,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class BitSelector extends InstanceFactory {
   /**
@@ -86,7 +85,7 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
+    final var CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(GROUP_ATTR).getWidth() > 1) CompleteName.append("_bus");
     return CompleteName.toString();
@@ -94,8 +93,8 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    Bounds base = Bounds.create(-30, -15, 30, 30);
+    final var facing = attrs.getValue(StdAttr.FACING);
+    final var base = Bounds.create(-30, -15, 30, 30);
     return base.rotate(Direction.EAST, facing, 0, 0);
   }
 
@@ -123,11 +122,11 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
+    final var g = painter.getGraphics();
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
 
     PlexersLibrary.drawTrapezoid(g, painter.getBounds(), facing, 9);
-    Bounds bds = painter.getBounds();
+    final var bds = painter.getBounds();
     g.setColor(Color.BLACK);
     GraphicsUtil.drawCenteredText(
         g, "Sel", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
@@ -136,9 +135,9 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    Value data = state.getPortValue(1);
-    Value select = state.getPortValue(2);
-    BitWidth groupBits = state.getAttributeValue(GROUP_ATTR);
+    final var data = state.getPortValue(1);
+    final var select = state.getPortValue(2);
+    final var groupBits = state.getAttributeValue(GROUP_ATTR);
     Value group;
     if (!select.isFullyDefined()) {
       group = Value.createUnknown(groupBits);
@@ -164,18 +163,18 @@ public class BitSelector extends InstanceFactory {
   }
 
   private void updatePorts(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
-    BitWidth group = instance.getAttributeValue(GROUP_ATTR);
-    int groups = (data.getWidth() + group.getWidth() - 1) / group.getWidth() - 1;
-    int selectBits = 1;
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var data = instance.getAttributeValue(StdAttr.WIDTH);
+    final var group = instance.getAttributeValue(GROUP_ATTR);
+    var groups = (data.getWidth() + group.getWidth() - 1) / group.getWidth() - 1;
+    var selectBits = 1;
     if (groups > 0) {
       while (groups != 1) {
         groups >>= 1;
         selectBits++;
       }
     }
-    BitWidth select = BitWidth.create(selectBits);
+    final var select = BitWidth.create(selectBits);
 
     Location inPt;
     Location selPt;
@@ -193,7 +192,7 @@ public class BitSelector extends InstanceFactory {
       selPt = Location.create(-10, 10);
     }
 
-    Port[] ps = new Port[3];
+    final var ps = new Port[3];
     ps[0] = new Port(0, 0, Port.OUTPUT, group.getWidth());
     ps[1] = new Port(inPt.getX(), inPt.getY(), Port.INPUT, data.getWidth());
     ps[2] = new Port(selPt.getX(), selPt.getY(), Port.INPUT, select.getWidth());

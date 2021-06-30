@@ -59,92 +59,92 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A", 1);
-    MyInputs.put("B", 1);
-    MyInputs.put("C", 1);
-    MyInputs.put("D", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A", 1);
+    map.put("B", 1);
+    map.put("C", 1);
+    map.put("D", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("O0", 1);
-    MyOutputs.put("O1", 1);
-    MyOutputs.put("O2", 1);
-    MyOutputs.put("O3", 1);
-    MyOutputs.put("O4", 1);
-    MyOutputs.put("O5", 1);
-    MyOutputs.put("O6", 1);
-    MyOutputs.put("O7", 1);
-    MyOutputs.put("O8", 1);
-    MyOutputs.put("O9", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("O0", 1);
+    map.put("O1", 1);
+    map.put("O2", 1);
+    map.put("O3", 1);
+    map.put("O4", 1);
+    map.put("O5", 1);
+    map.put("O6", 1);
+    map.put("O7", 1);
+    map.put("O8", 1);
+    map.put("O9", 1);
+    return map;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    String NOT = HDL.notOperator();
-    String AND = HDL.andOperator();
+  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    final var NOT = HDL.notOperator();
+    final var AND = HDL.andOperator();
     if (IsExes3) {
-      Contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
     } else if (IsGray) {
-      Contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
     } else {
-      Contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      Contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      Contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
+      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A", true, ComponentInfo, 13, Nets));
-    PortMap.putAll(GetNetMap("B", true, ComponentInfo, 12, Nets));
-    PortMap.putAll(GetNetMap("C", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("D", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("O0", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("O1", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("O2", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("O3", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("O4", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("O5", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("O6", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("O7", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("O8", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("O9", true, ComponentInfo, 9, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("A", true, comp, 13, nets));
+    map.putAll(GetNetMap("B", true, comp, 12, nets));
+    map.putAll(GetNetMap("C", true, comp, 11, nets));
+    map.putAll(GetNetMap("D", true, comp, 10, nets));
+    map.putAll(GetNetMap("O0", true, comp, 0, nets));
+    map.putAll(GetNetMap("O1", true, comp, 1, nets));
+    map.putAll(GetNetMap("O2", true, comp, 2, nets));
+    map.putAll(GetNetMap("O3", true, comp, 3, nets));
+    map.putAll(GetNetMap("O4", true, comp, 4, nets));
+    map.putAll(GetNetMap("O5", true, comp, 5, nets));
+    map.putAll(GetNetMap("O6", true, comp, 6, nets));
+    map.putAll(GetNetMap("O7", true, comp, 7, nets));
+    map.putAll(GetNetMap("O8", true, comp, 8, nets));
+    map.putAll(GetNetMap("O9", true, comp, 9, nets));
+    return map;
   }
 
   @Override

@@ -38,7 +38,7 @@ import java.awt.event.MouseEvent;
 public abstract class DynamicElementWithPoker extends DynamicElement {
 
   private boolean isPressed;
-  private Location AnchorPosition;
+  private Location anchorPosition;
 
   public DynamicElementWithPoker(Path p, Bounds b) {
     super(p, b);
@@ -55,29 +55,29 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
   }
 
   public void setAnchor(Location loc) {
-    AnchorPosition = loc;
+    anchorPosition = loc;
   }
 
   public Bounds getScreenBounds(InstanceState state) {
     Direction dir = state.getAttributeValue(StdAttr.FACING);
     Location loc = state.getInstance().getLocation();
     if (dir == Direction.EAST) {
-      int xpos = bounds.getX() - AnchorPosition.getX() + loc.getX();
-      int ypos = bounds.getY() - AnchorPosition.getY() + loc.getY();
+      int xpos = bounds.getX() - anchorPosition.getX() + loc.getX();
+      int ypos = bounds.getY() - anchorPosition.getY() + loc.getY();
       return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.WEST) {
-      int xpos = AnchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
-      int ypos = AnchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
+      int xpos = anchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
+      int ypos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
       return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.NORTH) {
-      int xpos = bounds.getY() - AnchorPosition.getY() + loc.getX();
-      int ypos = bounds.getX() - AnchorPosition.getX() - bounds.getWidth() + loc.getY();
+      int xpos = bounds.getY() - anchorPosition.getY() + loc.getX();
+      int ypos = bounds.getX() - anchorPosition.getX() - bounds.getWidth() + loc.getY();
       return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
     }
-    int xpos = AnchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
-    int ypos = bounds.getX() - AnchorPosition.getX() + loc.getY();
+    int xpos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
+    int ypos = bounds.getX() - anchorPosition.getX() + loc.getY();
     return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
   }
 

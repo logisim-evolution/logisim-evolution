@@ -46,86 +46,86 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A0", 1);
-    MyInputs.put("A1", 1);
-    MyInputs.put("A2", 1);
-    MyInputs.put("A3", 1);
-    MyInputs.put("B0", 1);
-    MyInputs.put("B1", 1);
-    MyInputs.put("B2", 1);
-    MyInputs.put("B3", 1);
-    MyInputs.put("AltBin", 1);
-    MyInputs.put("AeqBin", 1);
-    MyInputs.put("AgtBin", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A0", 1);
+    map.put("A1", 1);
+    map.put("A2", 1);
+    map.put("A3", 1);
+    map.put("B0", 1);
+    map.put("B1", 1);
+    map.put("B2", 1);
+    map.put("B3", 1);
+    map.put("AltBin", 1);
+    map.put("AeqBin", 1);
+    map.put("AgtBin", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("AltBout", 1);
-    MyOutputs.put("AeqBout", 1);
-    MyOutputs.put("AgtBout", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("AltBout", 1);
+    map.put("AeqBout", 1);
+    map.put("AgtBout", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("oppA", 4);
-    Wires.put("oppB", 4);
-    Wires.put("gt", 1);
-    Wires.put("eq", 1);
-    Wires.put("lt", 1);
-    Wires.put("CompIn", 3);
-    Wires.put("CompOut", 3);
-    return Wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("oppA", 4);
+    map.put("oppB", 4);
+    map.put("gt", 1);
+    map.put("eq", 1);
+    map.put("lt", 1);
+    map.put("CompIn", 3);
+    map.put("CompOut", 3);
+    return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   oppA   <= A3&A2&A1&A0;");
-    Contents.add("   oppB   <= B3&B2&B1&B0;");
-    Contents.add("   gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';");
-    Contents.add("   eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';");
-    Contents.add("   lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';");
-    Contents.add(" ");
-    Contents.add("   CompIn <= AgtBin&AltBin&AeqBin;");
-    Contents.add("   WITH (CompIn) SELECT CompOut <= ");
-    Contents.add("      \"100\" WHEN \"100\",");
-    Contents.add("      \"010\" WHEN \"010\",");
-    Contents.add("      \"000\" WHEN \"110\",");
-    Contents.add("      \"110\" WHEN \"000\",");
-    Contents.add("      \"001\" WHEN OTHERS;");
-    Contents.add(" ");
-    Contents.add("   AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);");
-    Contents.add("   AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);");
-    Contents.add("   AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   oppA   <= A3&A2&A1&A0;");
+    contents.add("   oppB   <= B3&B2&B1&B0;");
+    contents.add("   gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';");
+    contents.add("   eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';");
+    contents.add("   lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';");
+    contents.add(" ");
+    contents.add("   CompIn <= AgtBin&AltBin&AeqBin;");
+    contents.add("   WITH (CompIn) SELECT CompOut <= ");
+    contents.add("      \"100\" WHEN \"100\",");
+    contents.add("      \"010\" WHEN \"010\",");
+    contents.add("      \"000\" WHEN \"110\",");
+    contents.add("      \"110\" WHEN \"000\",");
+    contents.add("      \"001\" WHEN OTHERS;");
+    contents.add(" ");
+    contents.add("   AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);");
+    contents.add("   AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);");
+    contents.add("   AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);");
+    return contents;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A0", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("A3", true, ComponentInfo, 13, Nets));
-    PortMap.putAll(GetNetMap("B0", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 12, Nets));
-    PortMap.putAll(GetNetMap("B3", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("AltBin", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("AeqBin", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("AgtBin", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("AltBout", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("AeqBout", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("AgtBout", true, ComponentInfo, 4, Nets));
-    return PortMap;
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
+    final var ComponentInfo = (NetlistComponent) MapInfo;
+    map.putAll(GetNetMap("A0", true, ComponentInfo, 8, Nets));
+    map.putAll(GetNetMap("A1", true, ComponentInfo, 10, Nets));
+    map.putAll(GetNetMap("A2", true, ComponentInfo, 11, Nets));
+    map.putAll(GetNetMap("A3", true, ComponentInfo, 13, Nets));
+    map.putAll(GetNetMap("B0", true, ComponentInfo, 7, Nets));
+    map.putAll(GetNetMap("B1", true, ComponentInfo, 9, Nets));
+    map.putAll(GetNetMap("B2", true, ComponentInfo, 12, Nets));
+    map.putAll(GetNetMap("B3", true, ComponentInfo, 0, Nets));
+    map.putAll(GetNetMap("AltBin", true, ComponentInfo, 1, Nets));
+    map.putAll(GetNetMap("AeqBin", true, ComponentInfo, 2, Nets));
+    map.putAll(GetNetMap("AgtBin", true, ComponentInfo, 3, Nets));
+    map.putAll(GetNetMap("AltBout", true, ComponentInfo, 6, Nets));
+    map.putAll(GetNetMap("AeqBout", true, ComponentInfo, 5, Nets));
+    map.putAll(GetNetMap("AgtBout", true, ComponentInfo, 4, Nets));
+    return map;
   }
 
   @Override

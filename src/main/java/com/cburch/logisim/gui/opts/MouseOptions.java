@@ -207,7 +207,7 @@ class MouseOptions extends OptionsPanel {
       } else {
         g.setColor(Color.BLACK);
         label1 = S.get("mouseMapText");
-        label2 = StringUtil.format(S.get("mouseMapText2"), curTool.getDisplayName());
+        label2 = S.get("mouseMapText2", curTool.getDisplayName());
       }
       FontMetrics fm = g.getFontMetrics();
       int x1 = (sz.width - fm.stringWidth(label1)) / 2;

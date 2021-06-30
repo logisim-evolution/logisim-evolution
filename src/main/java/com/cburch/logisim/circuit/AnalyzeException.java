@@ -37,7 +37,7 @@ public class AnalyzeException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public CannotHandle(String reason) {
-      super(StringUtil.format(S.get("analyzeCannotHandleError"), reason));
+      super(S.get("analyzeCannotHandleError", reason));
     }
   }
 

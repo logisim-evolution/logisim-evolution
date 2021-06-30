@@ -56,15 +56,16 @@ public class LedShape extends DynamicElement {
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    int x = bounds.getX();
-    int y = bounds.getY();
-    int w = bounds.getWidth();
-    int h = bounds.getHeight();
-    int qx = loc.getX();
-    int qy = loc.getY();
-    double dx = qx - (x + 0.5 * w);
-    double dy = qy - (y + 0.5 * h);
-    double sum = (dx * dx) / (w * w) + (dy * dy) / (h * h);
+    final var x = bounds.getX();
+    final var y = bounds.getY();
+    final var w = bounds.getWidth();
+    final var h = bounds.getHeight();
+    final var qx = loc.getX();
+    final var qy = loc.getY();
+    final var dx = qx - (x + 0.5 * w);
+    final var dy = qy - (y + 0.5 * h);
+    final var sum = (dx * dx) / (w * w) + (dy * dy) / (h * h);
+
     return sum <= 0.25;
   }
 
@@ -78,22 +79,22 @@ public class LedShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    Color offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
-    Color onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
-    int x = bounds.getX() + 1;
-    int y = bounds.getY() + 1;
-    int w = bounds.getWidth() - 2;
-    int h = bounds.getHeight() - 2;
+    final var offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+    final var onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
+    final var x = bounds.getX() + 1;
+    final var y = bounds.getY() + 1;
+    final var w = bounds.getWidth() - 2;
+    final var h = bounds.getHeight() - 2;
     GraphicsUtil.switchToWidth(g, strokeWidth);
     if (state == null) {
       g.setColor(offColor);
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      Boolean activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       Object desired = activ ? Value.TRUE : Value.FALSE;
-      InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
-      Value val = data == null ? Value.FALSE : (Value) data.getValue();
+      final var data = (InstanceDataSingleton) getData(state);
+      final var val = data == null ? Value.FALSE : (Value) data.getValue();
       g.setColor(val == desired ? onColor : offColor);
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);

@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -46,68 +45,68 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("Enable", 1);
-    Inputs.put("Sel", attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
+    final var map = new TreeMap<String, Integer>();
+    map.put("Enable", 1);
+    map.put("Sel", attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
+    return map;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    int num_outputs = (1 << nr_of_select_bits);
-    String Space = " ";
-    for (int i = 0; i < num_outputs; i++) {
-      String binValue = IntToBin(i, nr_of_select_bits);
-      if (i == 10) Space = "";
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var numOutputs = (1 << nrOfSelectBits);
+    var space = " ";
+    for (var i = 0; i < numOutputs; i++) {
+      final var binValue = IntToBin(i, nrOfSelectBits);
+      if (i == 10) space = "";
       if (HDL.isVHDL()) {
-        Contents.add("   DecoderOut_" + i + Space + "<= '1' WHEN sel = " + binValue + " AND");
-        Contents.add(Space + "                             Enable = '1' ELSE '0';");
+        contents.add("   DecoderOut_" + i + space + "<= '1' WHEN sel = " + binValue + " AND");
+        contents.add(space + "                             Enable = '1' ELSE '0';");
       } else {
-        Contents.add(
+        contents.add(
             "   assign DecoderOut_"
                 + i
-                + Space
+                + space
                 + " = (Enable&(sel == "
                 + binValue
                 + ")) ? 1'b1 : 1'b0;");
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    for (int i = 0; i < (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth()); i++) {
-      Outputs.put("DecoderOut_" + i, 1);
+  public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
+    final var map = new TreeMap<String, Integer>();
+    for (var i = 0; i < (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth()); i++) {
+      map.put("DecoderOut_" + i, 1);
     }
-    return Outputs;
+    return map;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int nr_of_select_bits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    int select_input_index = (1 << nr_of_select_bits);
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    final var nrOfSelectBits =
+        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
-    for (int i = 0; i < select_input_index; i++)
-      PortMap.putAll(GetNetMap("DecoderOut_" + i, true, ComponentInfo, i, Nets));
+    for (var i = 0; i < selectInputIndex; i++)
+      map.putAll(GetNetMap("DecoderOut_" + i, true, comp, i, nets));
     // select..
-    PortMap.putAll(GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
+    map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (ComponentInfo.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
-      PortMap.putAll(GetNetMap("Enable", false, ComponentInfo, select_input_index + 1, Nets));
+    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
+      map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
-      PortMap.put("Enable", HDL.oneBit());
+      map.put("Enable", HDL.oneBit());
     }
-    return PortMap;
+    return map;
   }
 
   @Override

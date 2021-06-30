@@ -36,7 +36,6 @@ import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +56,12 @@ public final class Softwares {
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VLIB]);
       command.add("work");
 
-      ProcessBuilder vlibBuilder = new ProcessBuilder(command);
+      final var vlibBuilder = new ProcessBuilder(command);
       vlibBuilder.directory(tmpDir);
-      Process vlib = vlibBuilder.start();
+      final var vlib = vlibBuilder.start();
 
-      InputStream is = vlib.getInputStream();
-      InputStreamReader isr = new InputStreamReader(is);
+      final var is = vlib.getInputStream();
+      final var isr = new InputStreamReader(is);
       reader = new BufferedReader(isr);
 
       String line;
@@ -86,9 +85,10 @@ public final class Softwares {
   }
 
   public static String getQuestaPath(Component parent) {
-    String prefPath = AppPreferences.QUESTA_PATH.get();
-
-    if (!validatePath(prefPath, QUESTA)) if ((prefPath = setQuestaPath()) == null) return null;
+    var prefPath = AppPreferences.QUESTA_PATH.get();
+    if (!validatePath(prefPath, QUESTA))
+      if ((prefPath = setQuestaPath()) == null)
+        return null;
 
     return prefPath;
   }
@@ -96,10 +96,11 @@ public final class Softwares {
   private static String[] loadQuesta() {
     String[] questaProgs = {"vcom", "vsim", "vmap", "vlib"};
 
-    String osname = System.getProperty("os.name");
+    final var osname = System.getProperty("os.name");
     if (osname == null) throw new IllegalArgumentException("no os.name");
     else if (osname.toLowerCase().contains("windows"))
-      for (int i = 0; i < questaProgs.length; i++) questaProgs[i] += ".exe";
+      for (var i = 0; i < questaProgs.length; i++)
+        questaProgs[i] += ".exe";
 
     return questaProgs;
   }
@@ -111,13 +112,13 @@ public final class Softwares {
   public static String setQuestaPath(Component parent) {
     String path = null;
 
-    JFileChooser chooser = JFileChoosers.create();
+    final var chooser = JFileChoosers.create();
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     chooser.setDialogTitle(S.get("questaDialogTitle"));
     chooser.setApproveButtonText(S.get("questaDialogButton"));
     int action = chooser.showOpenDialog(parent);
     if (action == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final var file = chooser.getSelectedFile();
 
       try {
         path = file.getCanonicalPath();
@@ -151,8 +152,8 @@ public final class Softwares {
     if (software.equals(QUESTA)) programs = QUESTA_BIN;
     else return false;
 
-    for (String program : programs) {
-      File test = new File(FileUtil.correctPath(path) + program);
+    for (final var program : programs) {
+      final var test = new File(FileUtil.correctPath(path) + program);
       if (!test.exists())
         return false;
     }
@@ -163,7 +164,7 @@ public final class Softwares {
   public static int validateVhdl(String vhdl, StringBuffer title, StringBuffer result) {
     if (!AppPreferences.QUESTA_VALIDATION.get()) return SUCCESS;
 
-    String questaPath = getQuestaPath();
+    final var questaPath = getQuestaPath();
     BufferedReader reader = null;
     File tmp = null;
 
@@ -175,7 +176,7 @@ public final class Softwares {
 
     try {
       tmp = FileUtil.createTmpFile(vhdl, "tmp", ".vhd");
-      File tmpDir = new File(tmp.getParentFile().getCanonicalPath());
+      final var tmpDir = new File(tmp.getParentFile().getCanonicalPath());
 
       if (!createWorkLibrary(tmpDir, questaPath, result)) {
         title.insert(0, S.get("questaLibraryErrorTitle"));
@@ -193,12 +194,12 @@ public final class Softwares {
       command.add("work");
       command.add(tmp.getName());
 
-      ProcessBuilder questa = new ProcessBuilder(command);
+      final var questa = new ProcessBuilder(command);
       questa.directory(tmpDir);
       Process vcom = questa.start();
 
-      InputStream is = vcom.getInputStream();
-      InputStreamReader isr = new InputStreamReader(is);
+      final var is = vcom.getInputStream();
+      final var isr = new InputStreamReader(is);
       reader = new BufferedReader(isr);
 
       String line;

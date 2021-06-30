@@ -36,10 +36,12 @@ public class IteratorUtil {
   private static class EmptyIterator<E> implements Iterator<E> {
     private EmptyIterator() {}
 
+    @Override
     public boolean hasNext() {
       return false;
     }
 
+    @Override
     public E next() {
       throw new NoSuchElementException();
     }
@@ -58,10 +60,12 @@ public class IteratorUtil {
       this.next = next;
     }
 
+    @Override
     public boolean hasNext() {
       return cur.hasNext() || (next != null && next.hasNext());
     }
 
+    @Override
     public E next() {
       if (!cur.hasNext()) {
         if (next == null) throw new NoSuchElementException();

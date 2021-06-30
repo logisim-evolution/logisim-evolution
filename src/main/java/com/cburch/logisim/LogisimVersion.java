@@ -48,10 +48,10 @@ public class LogisimVersion {
    * @return LogisimVersion built from the string passed as parameter
    */
   public static LogisimVersion fromString(String versionString) {
-    String[] parts = versionString.split("\\.");
-    int major = 0;
-    int minor = 0;
-    int patch = 0;
+    final var parts = versionString.split("\\.");
+    var major = 0;
+    var minor = 0;
+    var patch = 0;
 
     if (versionString.isEmpty()) {
       return new LogisimVersion(major, minor, patch);
@@ -75,7 +75,7 @@ public class LogisimVersion {
    *     if equal, positive if newer.
    */
   public int compareTo(LogisimVersion other) {
-    int result = this.major - other.major;
+    var result = this.major - other.major;
 
     if (result == 0) {
       result = this.minor - other.minor;
@@ -90,9 +90,7 @@ public class LogisimVersion {
   /** Build the hash code starting from the version number. */
   @Override
   public int hashCode() {
-    int ret = major * 31 + minor;
-    ret = ret * 31 + patch;
-    return ret;
+    return (major * 31 + minor) * 31 + patch;
   }
 
   @Override

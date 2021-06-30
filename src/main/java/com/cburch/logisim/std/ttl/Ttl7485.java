@@ -60,16 +60,16 @@ public class Ttl7485 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    byte A0 = state.getPortValue(8) == Value.TRUE ? (byte) 1 : 0;
-    byte A1 = state.getPortValue(10) == Value.TRUE ? (byte) 2 : 0;
-    byte A2 = state.getPortValue(11) == Value.TRUE ? (byte) 4 : 0;
-    byte A3 = state.getPortValue(13) == Value.TRUE ? (byte) 8 : 0;
-    byte B0 = state.getPortValue(7) == Value.TRUE ? (byte) 1 : 0;
-    byte B1 = state.getPortValue(9) == Value.TRUE ? (byte) 2 : 0;
-    byte B2 = state.getPortValue(12) == Value.TRUE ? (byte) 4 : 0;
-    byte B3 = state.getPortValue(0) == Value.TRUE ? (byte) 8 : 0;
-    byte A = (byte) (A3 + A2 + A1 + A0);
-    byte B = (byte) (B3 + B2 + B1 + B0);
+    final var A0 = state.getPortValue(8) == Value.TRUE ? (byte) 1 : 0;
+    final var A1 = state.getPortValue(10) == Value.TRUE ? (byte) 2 : 0;
+    final var A2 = state.getPortValue(11) == Value.TRUE ? (byte) 4 : 0;
+    final var A3 = state.getPortValue(13) == Value.TRUE ? (byte) 8 : 0;
+    final var B0 = state.getPortValue(7) == Value.TRUE ? (byte) 1 : 0;
+    final var B1 = state.getPortValue(9) == Value.TRUE ? (byte) 2 : 0;
+    final var B2 = state.getPortValue(12) == Value.TRUE ? (byte) 4 : 0;
+    final var B3 = state.getPortValue(0) == Value.TRUE ? (byte) 8 : 0;
+    final var A = (byte) (A3 + A2 + A1 + A0);
+    final var B = (byte) (B3 + B2 + B1 + B0);
     if (A > B) {
       state.setPort(4, Value.TRUE, 1);
       state.setPort(5, Value.FALSE, 1);

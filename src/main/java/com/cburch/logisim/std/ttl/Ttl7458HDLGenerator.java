@@ -46,56 +46,56 @@ public class Ttl7458HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A0", 1);
-    MyInputs.put("B0", 1);
-    MyInputs.put("C0", 1);
-    MyInputs.put("D0", 1);
-    MyInputs.put("A1", 1);
-    MyInputs.put("B1", 1);
-    MyInputs.put("C1", 1);
-    MyInputs.put("D1", 1);
-    MyInputs.put("E1", 1);
-    MyInputs.put("F1", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A0", 1);
+    map.put("B0", 1);
+    map.put("C0", 1);
+    map.put("D0", 1);
+    map.put("A1", 1);
+    map.put("B1", 1);
+    map.put("C1", 1);
+    map.put("D1", 1);
+    map.put("E1", 1);
+    map.put("F1", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Y0", 1);
-    MyOutputs.put("Y1", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Y0", 1);
+    map.put("Y1", 1);
+    return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + "(A0" + HDL.andOperator() + "B0)"
+    final var contents = new ArrayList<String>();
+    contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + "(A0" + HDL.andOperator() + "B0)"
             + HDL.orOperator() + "(C0" + HDL.andOperator() + "D0);");
-    Contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + "(A1" + HDL.andOperator() + "B1"
+    contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + "(A1" + HDL.andOperator() + "B1"
             + HDL.andOperator() + "C1)" + HDL.orOperator() + "(D1" + HDL.andOperator() + "E1" + HDL.andOperator() + "F1);");
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A0", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("B0", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("C0", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("D0", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("Y0", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("C1", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("E1", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("F1", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("Y1", true, ComponentInfo, 6, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("A0", true, ComponentInfo, 1, nets));
+    map.putAll(GetNetMap("B0", true, ComponentInfo, 2, nets));
+    map.putAll(GetNetMap("C0", true, ComponentInfo, 3, nets));
+    map.putAll(GetNetMap("D0", true, ComponentInfo, 4, nets));
+    map.putAll(GetNetMap("Y0", true, ComponentInfo, 5, nets));
+    map.putAll(GetNetMap("A1", true, ComponentInfo, 0, nets));
+    map.putAll(GetNetMap("B1", true, ComponentInfo, 11, nets));
+    map.putAll(GetNetMap("C1", true, ComponentInfo, 10, nets));
+    map.putAll(GetNetMap("D1", true, ComponentInfo, 9, nets));
+    map.putAll(GetNetMap("E1", true, ComponentInfo, 8, nets));
+    map.putAll(GetNetMap("F1", true, ComponentInfo, 7, nets));
+    map.putAll(GetNetMap("Y1", true, ComponentInfo, 6, nets));
+    return map;
   }
 
   @Override
