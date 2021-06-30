@@ -49,7 +49,7 @@ jobs:
         if [[ "${found}" == "YES" ]]; then
           echo "::set-output name=run_build::true"
         else
-          echo "No changes in 'src/' folder. Build skipped"
+          echo "*** SKIPPED. No changes in 'src/' folder detected.
         fi
 
   build:
