@@ -1,6 +1,6 @@
 # This workflow will build a Java project with Gradle
 # Using lowest supported JDK 11 and highest available JDK 16.
-# For more information see: 
+# For more information see:
 #  https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
 name: "Build"
@@ -27,18 +27,20 @@ jobs:
   # building process if nothing has changed in specified paths (sources).
   #
   analyze_sources:
-    name: "Analyze commit"
-    outputs:
-      run_build: ${{ steps.src_check.outputs.run_build }}
+    name: "Need to build the application?"
     runs-on: ubuntu-latest
+
+    outputs:
+      run_build: ${{ steps.diff_check.outputs.run_build }}
+
     steps:
     # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v2
       with:
         fetch-depth: 2
 
-    - name: "Processing changeset..."
-      id: check
+    - name: "CHECKING IF BUILD STEP SHOULD RUN..."
+      id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
         found=""
@@ -49,15 +51,25 @@ jobs:
           fi
         done < changes.txt
         if [[ "${found}" == "YES" ]]; then
+          echo "Sources affected. Will try to build it."
           echo "::set-output name=run_build::true"
         else
-          echo "*** SKIPPED. No changes in 'src/' folder detected."
+          # Let's make the "Nah" result stand out in the logs.
+          echo "************************************************************"
+          echo "**                                                        **"
+          echo "**  NO NEED TO BUILD THE APPLICATION. BUILD STEP SKIPPED  **"
+          echo "**                                                        **"
+          echo "**  No changes in 'src/' folders detected.                **"
+          echo "**                                                        **"
+          echo "************************************************************"
+          echo "::set-output name=run_build::false"
         fi
 
   build:
     name: "Building application"
+
     needs: analyze_sources
-    if: needs.analyze_sources.check.output.run_build == 'true'
+    if: needs.analyze_sources.diff_check.output.run_build == 'true'
 
     runs-on: ubuntu-latest
 
