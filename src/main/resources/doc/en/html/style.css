@@ -49,6 +49,18 @@ img.appearancelibs{
 	width:64px;
 	vertical-align:middle;
 }
+img.appearancelibslarge{
+	height:64px;
+	width:128;
+	vertical-align:middle;
+
+}
+img.appearancelibshaut{
+	height:128;
+	width:64;
+	vertical-align:middle;
+
+}
 /* For icon in the text */
 img.icontxt{
 	height:16px;

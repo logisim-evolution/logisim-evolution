@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/hexdig.gif" alt="#########"> <em>Hex Digit Display</em>
+        <img class="iconlibs" src="../../../../icons/6464/hexdig.png" alt="#########"> <em>Hex Digit Display</em>
       </h1>
       <table>
         <tbody>
@@ -39,7 +39,8 @@
               <strong>Appearance:</strong>
             </td>
             <td valign="top">
-              <img class="notscal" src="../../../../img-libs/hexdig.png" alt="#########">
+              <img class="appearancelibs"  src="../../../../img-libs/hexdig.png" alt="#########" width="64" height="64"> 
+			  <img class="appearancelibs"  src="../../../../img-libs/hexdigoff.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
@@ -48,7 +49,7 @@
         Behavior
       </h2>
       <p>
-        Using a seven-segment display, shows the hexadecimal digit corresponding to the four-bit input. If any of the inputs are not 0/1 (either floating or error), then the display shows a dash ('-'). A separate one-bit input controls the display of the decimal point.
+        Using a seven-segment display, shows the hexadecimal digit corresponding to the four-bit input. If any of the inputs are not 0/1 (either floating or error), then the display shows a H ('H'). A separate one-bit input controls the display of the decimal point.
       </p>
       <h2>
         Pins
@@ -58,7 +59,7 @@
           South edge, first from left (input, bit width 4)
         </dt>
         <dd>
-          This input is interpreted as an unsigned four-bit number, and the corresponding hexadecimal digit is displayed. If any of the bits are floating or error, then a dash ('-') is displayed.
+          This input is interpreted as an unsigned four-bit number, and the corresponding hexadecimal digit is displayed. If any of the bits are floating or error, then a H ('H') is displayed.
         </dd>
         <dt>
           South edge, second from left (input, bit width 1)
