@@ -236,6 +236,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     if (dirty) canvas.repaint();
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == ok) {
@@ -263,6 +264,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class CompareByLocations implements Comparator<TreePath> {
+    @Override
     public int compare(TreePath a, TreePath b) {
       Object[] aa = a.getPath();
       Object[] bb = b.getPath();
@@ -285,6 +287,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       this.ic = ic;
     }
 
+    @Override
     public String toString() {
       String s = ic.getInstance().getAttributeValue(StdAttr.LABEL);
       Location loc = ic.getInstance().getLocation();
@@ -302,6 +305,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       this.circuit = c;
     }
 
+    @Override
     public String toString() {
       return (ic == null) ? S.get("showStateDialogNodeTitle", circuit.getName()) : super.toString();
     }
@@ -310,9 +314,9 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   private static class RefTreeNode extends DefaultMutableTreeNode {
     final Ref refData;
 
-    RefTreeNode (Object data) {
-      super(new CheckBoxNodeData(data.toString(),false));
-      refData = (data instanceof Ref) ? (Ref)data : null;
+    RefTreeNode(Object data) {
+      super(new CheckBoxNodeData(data.toString(), false));
+      refData = (data instanceof Ref) ? (Ref) data : null;
     }
   }
 }
