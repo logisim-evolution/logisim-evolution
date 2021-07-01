@@ -1,6 +1,6 @@
 # This workflow will build a Java project with Gradle
 # Using lowest supported JDK 11 and highest available JDK 16.
-# For more information see: 
+# For more information see:
 #  https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
 name: "Build"
@@ -28,9 +28,11 @@ jobs:
   #
   analyze_sources:
     name: "Analyze commit"
-    outputs:
-      run_build: ${{ steps.src_check.outputs.run_build }}
     runs-on: ubuntu-latest
+
+    outputs:
+      run_build: ${{ steps.diff_check.outputs.run_build }}
+
     steps:
     # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v2
@@ -38,7 +40,7 @@ jobs:
         fetch-depth: 2
 
     - name: "Processing changeset..."
-      id: check
+      id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
         found=""
@@ -52,12 +54,14 @@ jobs:
           echo "::set-output name=run_build::true"
         else
           echo "*** SKIPPED. No changes in 'src/' folder detected."
+          echo "::set-output name=run_build::false"
         fi
 
   build:
     name: "Building application"
+
     needs: analyze_sources
-    if: needs.analyze_sources.check.output.run_build == 'true'
+    if: needs.analyze_sources.diff_check.output.run_build == 'true'
 
     runs-on: ubuntu-latest
 
