@@ -39,7 +39,7 @@ jobs:
       with:
         fetch-depth: 2
 
-    - name: "CHECKING BUILD STEP IS NEEDED..."
+    - name: "CHECKING IF BUILD STEP SHOULD RUN..."
       id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
