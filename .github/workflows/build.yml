@@ -33,7 +33,7 @@ jobs:
       run_build: ${{ steps.diff_check.outputs.run_build }}
 
     steps:
-    - name "Install packages..."
+    - name: "Install packages..."
       run: sudo apt-get install sysvbanner
 
     # https://github.com/marketplace/actions/checkout
