@@ -28,7 +28,7 @@
 
 package com.cburch.logisim;
 
-/** 
+/**
  * Logisim-Evolution follows Semantic Versioning.
  * See https://semver.org/ for more details.
  */
@@ -101,4 +101,3 @@ public class LogisimVersion {
     return major + "." + minor + "." + patch;
   }
 }
-
