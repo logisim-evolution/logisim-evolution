@@ -13,7 +13,6 @@ on:
     branches: [ master, develop ]
 
 jobs:
-
   # I intentionally do not use "paths:" (as part of "push:"), i.e.
   #
   # on:
@@ -34,6 +33,9 @@ jobs:
       run_build: ${{ steps.diff_check.outputs.run_build }}
 
     steps:
+    - name "Install packages..."
+      run: apt install sysvbanner
+
     # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v2
       with:
@@ -51,17 +53,13 @@ jobs:
           fi
         done < changes.txt
         if [[ "${found}" == "YES" ]]; then
-          echo "Sources affected. Will try to build it."
+          banner BUILD IT
+          echo "Source changes detected. Building it!"
           echo "::set-output name=run_build::true"
         else
           # Let's make the "Nah" result stand out in the logs.
-          echo "************************************************************"
-          echo "**                                                        **"
-          echo "**  NO NEED TO BUILD THE APPLICATION. BUILD STEP SKIPPED  **"
-          echo "**                                                        **"
-          echo "**  No changes in 'src/' folders detected.                **"
-          echo "**                                                        **"
-          echo "************************************************************"
+          banner SKIP IT
+          echo "No changes in 'src/' folders detected."
           echo "::set-output name=run_build::false"
         fi
 
