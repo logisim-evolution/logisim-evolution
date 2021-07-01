@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - name "Install packages..."
-      run: apt install sysvbanner
+      run: sudo apt install sysvbanner
 
     # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v2
@@ -45,7 +45,7 @@ jobs:
       id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
-        found=""
+        found=
         while IFS= read -r file; do
           if [[ "${file}" == src/* ]]; then
             found="YES"
@@ -53,12 +53,12 @@ jobs:
           fi
         done < changes.txt
         if [[ "${found}" == "YES" ]]; then
-          banner BUILD IT
+          banner "BUILD APP"
           echo "Source changes detected. Building it!"
           echo "::set-output name=run_build::true"
         else
           # Let's make the "Nah" result stand out in the logs.
-          banner SKIP IT
+          banner "SKIP BUILD"
           echo "No changes in 'src/' folders detected."
           echo "::set-output name=run_build::false"
         fi
