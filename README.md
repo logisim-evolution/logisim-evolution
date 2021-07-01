@@ -25,7 +25,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
 
 ## Features ##
 
-`Logisim-evolution` is an completely free and [open-source](https://github.com/logisim-evolution) educational, cross-platform
+`Logisim-evolution` is a completely free and [open-source](https://github.com/logisim-evolution) educational, cross-platform
 software for designing and simulating digital logic circuits.
 
 Project highlights:
