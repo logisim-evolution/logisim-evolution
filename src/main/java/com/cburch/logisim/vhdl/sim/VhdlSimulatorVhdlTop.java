@@ -122,7 +122,7 @@ public class VhdlSimulatorVhdlTop {
           firstPort = false;
         }
         final var portName = vhdlEntityName + "_" + port.getName();
-        ports.append("\t\t").append(portName).append(" : ").append(port.getVhdlType()).append(" std_logic");
+        ports.append("    ").append(portName).append(" : ").append(port.getVhdlType()).append(" std_logic");
         int width = port.getWidth().getWidth();
         if (width > 1) {
           ports.append("_vector(").append(width - 1).append(" downto 0)");
@@ -132,10 +132,10 @@ public class VhdlSimulatorVhdlTop {
       /*
        * Create components
        */
-      components.append("\tcomponent ").append(vhdlEntityName);
+      components.append("  component ").append(vhdlEntityName);
       components.append(System.getProperty("line.separator"));
 
-      components.append("\t\tport (");
+      components.append("    port (");
       components.append(System.getProperty("line.separator"));
 
       firstComp = true;
@@ -147,7 +147,7 @@ public class VhdlSimulatorVhdlTop {
           firstComp = false;
         }
 
-        components.append("\t\t\t").append(port.getName()).append(" : ").append(port.getVhdlType())
+        components.append("      ").append(port.getName()).append(" : ").append(port.getVhdlType())
             .append(" std_logic");
 
         int width = port.getWidth().getWidth();
@@ -157,19 +157,19 @@ public class VhdlSimulatorVhdlTop {
       }
 
       components.append(System.getProperty("line.separator"));
-      components.append("\t\t);");
+      components.append("    );");
       components.append(System.getProperty("line.separator"));
 
-      components.append("\tend component ;");
+      components.append("  end component ;");
       components.append(System.getProperty("line.separator"));
 
-      components.append("\t");
+      components.append("  ");
       components.append(System.getProperty("line.separator"));
 
       /*
        * Create port map
        */
-      map.append("\t").append(vhdlEntityName).append("_map : ").append(vhdlEntityName).append(" port map (");
+      map.append("  ").append(vhdlEntityName).append("_map : ").append(vhdlEntityName).append(" port map (");
       map.append(System.getProperty("line.separator"));
 
       firstMap = true;
@@ -182,23 +182,23 @@ public class VhdlSimulatorVhdlTop {
           firstMap = false;
         }
 
-        map.append("\t\t").append(port.getName()).append(" => ").append(vhdlEntityName).append("_").append(port.getName());
+        map.append("    ").append(port.getName()).append(" => ").append(vhdlEntityName).append("_").append(port.getName());
       }
       map.append(System.getProperty("line.separator"));
-      map.append("\t);");
+      map.append("  );");
       map.append(System.getProperty("line.separator"));
-      map.append("\t");
+      map.append("  ");
       map.append(System.getProperty("line.separator"));
     }
 
     ports.append(System.getProperty("line.separator"));
-    ports.append("\t\t---------------------------");
+    ports.append("    ---------------------------");
     ports.append(System.getProperty("line.separator"));
 
-    components.append("\t---------------------------");
+    components.append("  ---------------------------");
     components.append(System.getProperty("line.separator"));
 
-    map.append("\t---------------------------");
+    map.append("  ---------------------------");
     map.append(System.getProperty("line.separator"));
 
     /*
