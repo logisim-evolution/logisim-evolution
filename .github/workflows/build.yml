@@ -27,7 +27,7 @@ jobs:
   # building process if nothing has changed in specified paths (sources).
   #
   analyze_sources:
-    name: "Analyze commit"
+    name: "Need to build the application?"
     runs-on: ubuntu-latest
 
     outputs:
@@ -39,7 +39,7 @@ jobs:
       with:
         fetch-depth: 2
 
-    - name: "Processing changeset..."
+    - name: "CHECKING BUILD STEP IS NEEDED..."
       id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
@@ -51,9 +51,17 @@ jobs:
           fi
         done < changes.txt
         if [[ "${found}" == "YES" ]]; then
+          echo "Sources affected. Will try to build it."
           echo "::set-output name=run_build::true"
         else
-          echo "*** SKIPPED. No changes in 'src/' folder detected."
+          # Let's make the "Nah" result stand out in the logs.
+          echo "************************************************************"
+          echo "**                                                        **"
+          echo "**  NO NEED TO BUILD THE APPLICATION. BUILD STEP SKIPPED  **"
+          echo "**                                                        **"
+          echo "**  No changes in 'src/' folders detected.                **"
+          echo "**                                                        **"
+          echo "************************************************************"
           echo "::set-output name=run_build::false"
         fi
 
