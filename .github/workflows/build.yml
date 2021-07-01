@@ -70,7 +70,7 @@ jobs:
     name: "Building application"
 
     needs: analyze_sources
-    if: steps.analyze_sources.diff_check.outputs.run_build == 'true'
+    if: ${{ needs.analyze_sources.diff_check.outputs.run_build == 'true' }}
 
     runs-on: ubuntu-latest
 
