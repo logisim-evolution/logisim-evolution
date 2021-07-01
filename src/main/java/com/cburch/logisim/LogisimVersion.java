@@ -98,3 +98,4 @@ public class LogisimVersion {
     return major + "." + minor + "." + patch;
   }
 }
+
