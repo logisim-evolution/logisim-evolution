@@ -44,6 +44,7 @@ jobs:
 
     - name: "CHECKING IF BUILD STEP SHOULD RUN..."
       run: |
+        git diff --name-only HEAD^ HEAD
         git diff --name-only HEAD^ HEAD > changes.txt
         found=
         while IFS= read -r file; do
