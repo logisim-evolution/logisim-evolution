@@ -57,7 +57,7 @@ public class RGBLedShape extends LedShape {
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      final var activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       final var data = (InstanceDataSingleton) getData(state);
       var summ = (data == null ? 0 : (Integer) data.getValue());
       final var mask = activ ? 0 : 7;

@@ -92,7 +92,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     super(_ID, S.getter("ttyComponent"));
     setAttributes(
         new Attribute[] {
-          ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND
+          ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, IoLibrary.ATTR_COLOR, IoLibrary.ATTR_BACKGROUND
         },
         new Object[] {
             8,
@@ -166,7 +166,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     final var bds = painter.getBounds();
     painter.drawClock(CK, Direction.EAST);
     if (painter.shouldDrawColor()) {
-      g.setColor(painter.getAttributeValue(Io.ATTR_BACKGROUND));
+      g.setColor(painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND));
       g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     }
     GraphicsUtil.switchToWidth(g, 2);
@@ -195,7 +195,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
       }
 
       g.setFont(DEFAULT_FONT);
-      g.setColor(painter.getAttributeValue(Io.ATTR_COLOR));
+      g.setColor(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
       final var fm = g.getFontMetrics();
       int x = bds.getX() + BORDER;
       int y = bds.getY() + BORDER + (ROW_HEIGHT + fm.getAscent()) / 2;

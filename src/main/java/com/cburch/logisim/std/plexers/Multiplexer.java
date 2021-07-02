@@ -91,21 +91,21 @@ public class Multiplexer extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          Plexers.ATTR_SIZE,
-          Plexers.ATTR_SELECT_LOC,
-          Plexers.ATTR_SELECT,
+          PlexersLibrary.ATTR_SIZE,
+          PlexersLibrary.ATTR_SELECT_LOC,
+          PlexersLibrary.ATTR_SELECT,
           StdAttr.WIDTH,
-          Plexers.ATTR_DISABLED,
-          Plexers.ATTR_ENABLE
+          PlexersLibrary.ATTR_DISABLED,
+          PlexersLibrary.ATTR_ENABLE
         },
         new Object[] {
-          Direction.EAST, Plexers.SIZE_WIDE, Plexers.SELECT_BOTTOM_LEFT,
-          Plexers.DEFAULT_SELECT, BitWidth.ONE, Plexers.DISABLED_ZERO,
-          Plexers.DEFAULT_ENABLE
+          Direction.EAST, PlexersLibrary.SIZE_WIDE, PlexersLibrary.SELECT_BOTTOM_LEFT,
+          PlexersLibrary.DEFAULT_SELECT, BitWidth.ONE, PlexersLibrary.DISABLED_ZERO,
+          PlexersLibrary.DEFAULT_ENABLE
         });
     setKeyConfigurator(
         JoinedConfigurator.create(
-            new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
+            new BitWidthConfigurator(PlexersLibrary.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setIcon(new PlexerIcon(false, false));
     setFacingAttribute(StdAttr.FACING);
@@ -119,7 +119,7 @@ public class Multiplexer extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == Plexers.ATTR_ENABLE) {
+    if (attr == PlexersLibrary.ATTR_ENABLE) {
       int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
@@ -132,16 +132,16 @@ public class Multiplexer extends InstanceFactory {
     final var completeName = new StringBuilder();
     completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) completeName.append("_bus");
-    completeName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    completeName.append("_").append(1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
     return completeName.toString();
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Object size = attrs.getValue(Plexers.ATTR_SIZE);
-    final var wide = size == Plexers.SIZE_WIDE;
+    Object size = attrs.getValue(PlexersLibrary.ATTR_SIZE);
+    final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var dir = attrs.getValue(StdAttr.FACING);
-    final var select = attrs.getValue(Plexers.ATTR_SELECT);
+    final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     final var inputs = 1 << select.getWidth();
     if (inputs == 2) {
       final var w = (wide ? 30 : 20);
@@ -159,7 +159,7 @@ public class Multiplexer extends InstanceFactory {
 
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
-    return (attrs.getValue(Plexers.ATTR_DISABLED) == Plexers.DISABLED_FLOATING);
+    return (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING);
   }
 
   @Override
@@ -171,47 +171,47 @@ public class Multiplexer extends InstanceFactory {
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING
-        || attr == Plexers.ATTR_SELECT_LOC
-        || attr == Plexers.ATTR_SELECT
-        || attr == Plexers.ATTR_SIZE) {
+        || attr == PlexersLibrary.ATTR_SELECT_LOC
+        || attr == PlexersLibrary.ATTR_SELECT
+        || attr == PlexersLibrary.ATTR_SIZE) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == StdAttr.WIDTH || attr == Plexers.ATTR_ENABLE) {
+    } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == Plexers.ATTR_DISABLED) {
+    } else if (attr == PlexersLibrary.ATTR_DISABLED) {
       instance.fireInvalidated();
     }
   }
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Object size = painter.getAttributeValue(Plexers.ATTR_SIZE);
+    Object size = painter.getAttributeValue(PlexersLibrary.ATTR_SIZE);
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
+    final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var bds = painter.getBounds();
     final var lean = (select.getWidth() == 1)
-            ? (size == Plexers.SIZE_NARROW ? 7 : 10)
-            : (size == Plexers.SIZE_NARROW ? 10 : 20);
-    Plexers.drawTrapezoid(painter.getGraphics(), bds, facing, lean);
+            ? (size == PlexersLibrary.SIZE_NARROW ? 7 : 10)
+            : (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
+    PlexersLibrary.drawTrapezoid(painter.getGraphics(), bds, facing, lean);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
-    Object size = painter.getAttributeValue(Plexers.ATTR_SIZE);
-    final var wide = size == Plexers.SIZE_WIDE;
+    Object size = painter.getAttributeValue(PlexersLibrary.ATTR_SIZE);
+    final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    final var enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    final var enable = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     int inputs = 1 << select.getWidth();
 
     // draw stubs for select/enable inputs that aren't on instance boundary
     GraphicsUtil.switchToWidth(g, 3);
     final var vertical = facing != Direction.NORTH && facing != Direction.SOUTH;
-    Object selectLoc = painter.getAttributeValue(Plexers.ATTR_SELECT_LOC);
-    final var selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
+    Object selectLoc = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    final var selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
     final var oddside = (vertical == (selMult < 0));
     int dx, dy;
     if (wide) {
@@ -272,10 +272,10 @@ public class Multiplexer extends InstanceFactory {
     // draw the trapezoid, "MUX" string, the individual ports
     g.setColor(Color.BLACK);
     final var lean = (inputs == 2)
-            ? (size == Plexers.SIZE_NARROW ? 7 : 10)
-            : (size == Plexers.SIZE_NARROW ? 10 : 20);
-    Plexers.drawTrapezoid(g, bds, facing, lean);
-    if (size == Plexers.SIZE_WIDE)
+            ? (size == PlexersLibrary.SIZE_NARROW ? 7 : 10)
+            : (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
+    PlexersLibrary.drawTrapezoid(g, bds, facing, lean);
+    if (size == PlexersLibrary.SIZE_WIDE)
       GraphicsUtil.drawCenteredText(g, "MUX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();
   }
@@ -283,14 +283,14 @@ public class Multiplexer extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     final var data = state.getAttributeValue(StdAttr.WIDTH);
-    final var select = state.getAttributeValue(Plexers.ATTR_SELECT);
-    final var enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    final var enable = state.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     final var inputs = 1 << select.getWidth();
     final var en = enable ? state.getPortValue(inputs + 1) : Value.TRUE;
     Value out;
     if (en == Value.FALSE) {
-      Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-      final var base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
+      Object opt = state.getAttributeValue(PlexersLibrary.ATTR_DISABLED);
+      final var base = opt == PlexersLibrary.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
       out = Value.repeat(base, data.getWidth());
     } else if (en == Value.ERROR && state.isPortConnected(inputs + 1)) {
       out = Value.createError(data);
@@ -304,28 +304,28 @@ public class Multiplexer extends InstanceFactory {
         out = Value.createUnknown(data);
       }
     }
-    state.setPort(inputs + (enable ? 2 : 1), out, Plexers.DELAY);
+    state.setPort(inputs + (enable ? 2 : 1), out, PlexersLibrary.DELAY);
   }
 
   private void updatePorts(Instance instance) {
-    Object size = instance.getAttributeValue(Plexers.ATTR_SIZE);
-    final var wide = size == Plexers.SIZE_WIDE;
+    Object size = instance.getAttributeValue(PlexersLibrary.ATTR_SIZE);
+    final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var dir = instance.getAttributeValue(StdAttr.FACING);
     final var vertical = dir != Direction.NORTH && dir != Direction.SOUTH;
-    Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
-    final var botLeft = selectLoc == Plexers.SELECT_BOTTOM_LEFT;
+    Object selectLoc = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    final var botLeft = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT;
     final var selMult = botLeft ? 1 : -1;
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
-    final var select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    final var enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
 
     final var inputs = 1 << select.getWidth();
     final var ps = new Port[inputs + (enable ? 3 : 2)];
     Location sel;
     int w, s;
     if (inputs == 2) {
-      w = (size == Plexers.SIZE_NARROW ? 20 : 30);
-      s = (size == Plexers.SIZE_NARROW ? 10 : 20);
+      w = (size == PlexersLibrary.SIZE_NARROW ? 20 : 30);
+      s = (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
       Location end0;
       Location end1;
       if (dir == Direction.WEST) {
@@ -348,8 +348,8 @@ public class Multiplexer extends InstanceFactory {
       ps[0] = new Port(end0.getX(), end0.getY(), Port.INPUT, data.getWidth());
       ps[1] = new Port(end1.getX(), end1.getY(), Port.INPUT, data.getWidth());
     } else {
-      w = (size == Plexers.SIZE_NARROW ? 20 : 40);
-      s = (size == Plexers.SIZE_NARROW ? 10 : 20);
+      w = (size == PlexersLibrary.SIZE_NARROW ? 20 : 40);
+      s = (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
       var dx = -(inputs / 2) * 10;
       var ddx = 10;
       var dy = -(inputs / 2) * 10;

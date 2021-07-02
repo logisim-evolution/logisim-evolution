@@ -1,0 +1,96 @@
+# This workflow will build a Java project with Gradle
+# Using lowest supported JDK 11 and highest available JDK 16.
+# For more information see:
+#  https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: "Build"
+on:
+  push:
+    # No need to run on push to "develop" as there should not be any direct pushes.
+    # master is left just for emergency cases.
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+
+  # I intentionally do not use "paths:" (as part of "push:"), i.e.
+  #
+  # on:
+  #   push:
+  #     branches: [ master ]
+  #     paths:
+  #     - src/**
+  #
+  # It's because that can cause confusion why there's no build action triggered on specific
+  # PR, so to avoid this this action is intentionally always triggered, but it will skip
+  # building process if nothing has changed in specified paths (sources).
+  #
+  analyze_sources:
+    name: "Need to build the application?"
+    runs-on: ubuntu-latest
+
+    outputs:
+      run_build: ${{ steps.diff_check.outputs.run_build }}
+
+    steps:
+    # https://github.com/marketplace/actions/checkout
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: "CHECKING IF BUILD STEP SHOULD RUN..."
+      id: diff_check
+      run: |
+        git diff --name-only HEAD^ HEAD > changes.txt
+        found=""
+        while IFS= read -r file; do
+          if [[ "${file}" == src/* ]]; then
+            found="YES"
+            break
+          fi
+        done < changes.txt
+        if [[ "${found}" == "YES" ]]; then
+          echo "Sources affected. Will try to build it."
+          echo "::set-output name=run_build::true"
+        else
+          # Let's make the "Nah" result stand out in the logs.
+          echo "************************************************************"
+          echo "**                                                        **"
+          echo "**  NO NEED TO BUILD THE APPLICATION. BUILD STEP SKIPPED  **"
+          echo "**                                                        **"
+          echo "**  No changes in 'src/' folders detected.                **"
+          echo "**                                                        **"
+          echo "************************************************************"
+          echo "::set-output name=run_build::false"
+        fi
+
+  build:
+    name: "Building application"
+
+    needs: analyze_sources
+    if: needs.analyze_sources.diff_check.output.run_build == 'true'
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [ 11, 16 ]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: "Set up JDK"
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'adopt'
+
+    - name: "Grant execute permission for gradlew"
+      run: |
+       chmod +x gradlew
+       chmod +x gradle/wrapper/gradle-wrapper.jar
+
+    - name: "Build with Gradle"
+      run: ./gradlew build -x checkstyleMain -x checkstyleTest
+

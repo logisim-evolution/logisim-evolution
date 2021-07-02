@@ -9,7 +9,7 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,5 @@ jobs:
       uses: ruzickap/action-my-markdown-linter@v1
       with:
         exclude: "LICENSE.md"
-        search_paths: **/*.md
         config_file: .markdownlint.yaml
 

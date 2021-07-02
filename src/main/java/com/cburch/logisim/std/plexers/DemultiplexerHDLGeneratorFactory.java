@@ -52,7 +52,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     map.put("DemuxIn", NrOfBits);
     map.put("Enable", 1);
     map.put("Sel", nr_of_select_bits);
@@ -63,7 +63,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
     var space = "  ";
-    final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var numOutputs = (1 << nrOfSelectBits);
     for (var i = 0; i < numOutputs; i++) {
       if (i == 10) {
@@ -94,7 +94,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    final var nrOfSelectBits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     for (var i = 0; i < (1 << nrOfSelectBits); i++) {
       map.put("DemuxOut_" + i, nrOfBits);
     }
@@ -124,7 +124,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
+        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all outputs of demultiplexer
     for (var i = 0; i < selectInputIndex; i++)
@@ -132,7 +132,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     // now select..
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(Plexers.ATTR_ENABLE)) {
+    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE)) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

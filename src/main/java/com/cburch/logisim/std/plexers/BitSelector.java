@@ -116,7 +116,7 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Plexers.drawTrapezoid(
+    PlexersLibrary.drawTrapezoid(
         painter.getGraphics(), painter.getBounds(), painter.getAttributeValue(StdAttr.FACING), 9);
   }
 
@@ -125,7 +125,7 @@ public class BitSelector extends InstanceFactory {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
 
-    Plexers.drawTrapezoid(g, painter.getBounds(), facing, 9);
+    PlexersLibrary.drawTrapezoid(g, painter.getBounds(), facing, 9);
     final var bds = painter.getBounds();
     g.setColor(Color.BLACK);
     GraphicsUtil.drawCenteredText(
@@ -159,7 +159,7 @@ public class BitSelector extends InstanceFactory {
         group = Value.create(bits);
       }
     }
-    state.setPort(0, group, Plexers.DELAY);
+    state.setPort(0, group, PlexersLibrary.DELAY);
   }
 
   private void updatePorts(Instance instance) {

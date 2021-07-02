@@ -44,7 +44,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
 import java.util.List;
 
-public class Plexers extends Library {
+public class PlexersLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -175,7 +175,7 @@ public class Plexers extends Library {
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Plexers.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(PlexersLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

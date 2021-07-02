@@ -98,7 +98,7 @@ public class Joystick extends InstanceFactory {
       final var x1 = x - 15 + dx;
       final var y1 = y + 5 + dy;
       g.drawLine(x0, y0, x1, y1);
-      final var ballColor = painter.getAttributeValue(Io.ATTR_COLOR);
+      final var ballColor = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
       Joystick.drawBall(g, x1, y1, ballColor, true);
     }
 
@@ -156,7 +156,7 @@ public class Joystick extends InstanceFactory {
 
   public Joystick() {
     super(_ID, S.getter("joystickComponent"));
-    setAttributes(new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
+    setAttributes(new Attribute[] {ATTR_WIDTH, IoLibrary.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
     setIcon(new JoystickIcon());
@@ -183,7 +183,7 @@ public class Joystick extends InstanceFactory {
     final var g = painter.getGraphics();
     g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
     g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
-    drawBall(g, x - 15, y + 5, painter.getAttributeValue(Io.ATTR_COLOR), painter.shouldDrawColor());
+    drawBall(g, x - 15, y + 5, painter.getAttributeValue(IoLibrary.ATTR_COLOR), painter.shouldDrawColor());
     painter.drawPorts();
   }
 

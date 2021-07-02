@@ -424,8 +424,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
       }
     }
 
-    state.setPort(n + 1, data.curValue, Memory.DELAY);
-    state.setPort(n + 2, data.curValue.not(), Memory.DELAY);
+    state.setPort(n + 1, data.curValue, MemoryLibrary.DELAY);
+    state.setPort(n + 2, data.curValue.not(), MemoryLibrary.DELAY);
   }
 
   @Override

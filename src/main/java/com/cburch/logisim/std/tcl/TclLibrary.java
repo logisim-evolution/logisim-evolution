@@ -26,35 +26,46 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.ttl;
+package com.cburch.logisim.std.tcl;
 
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.prefs.AppPreferences;
+import static com.cburch.logisim.std.Strings.S;
 
-public class TTLRegisterData extends ClockState implements InstanceData {
+import com.cburch.logisim.tools.FactoryDescription;
+import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.Tool;
+import java.util.List;
 
-  private Value value;
-  private final BitWidth bits;
+public class TclLibrary extends Library {
 
-  public TTLRegisterData(BitWidth width) {
-    value =
-        (AppPreferences.Memory_Startup_Unknown.get())
-            ? Value.createUnknown(width)
-            : Value.createKnown(width, 0);
-    bits = width;
+  /**
+   * Unique identifier of the library, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all libraries.
+   */
+  public static final String _ID = "TCL";
+
+  private static final FactoryDescription[] DESCRIPTIONS = {
+    new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
+    new FactoryDescription(TclGeneric.class, S.getter("tclGeneric"), "tcl.gif"),
+  };
+
+  private List<Tool> tools = null;
+
+  @Override
+  public String getDisplayName() {
+    return S.get("tclLibrary");
   }
 
-  public void setValue(Value value) {
-    this.value = value;
+  @Override
+  public List<Tool> getTools() {
+    if (tools == null) {
+      tools = FactoryDescription.getTools(TclLibrary.class, DESCRIPTIONS);
+    }
+    return tools;
   }
 
-  public Value getValue() {
-    return value;
-  }
-
-  public BitWidth getWidth() {
-    return bits;
+  public boolean removeLibrary(String Name) {
+    return false;
   }
 }

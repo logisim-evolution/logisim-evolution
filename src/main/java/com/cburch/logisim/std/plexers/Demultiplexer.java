@@ -65,25 +65,25 @@ public class Demultiplexer extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          Plexers.ATTR_SELECT_LOC,
-          Plexers.ATTR_SELECT,
+          PlexersLibrary.ATTR_SELECT_LOC,
+          PlexersLibrary.ATTR_SELECT,
           StdAttr.WIDTH,
-          Plexers.ATTR_TRISTATE,
-          Plexers.ATTR_DISABLED,
-          Plexers.ATTR_ENABLE
+          PlexersLibrary.ATTR_TRISTATE,
+          PlexersLibrary.ATTR_DISABLED,
+          PlexersLibrary.ATTR_ENABLE
         },
         new Object[] {
           Direction.EAST,
-          Plexers.SELECT_BOTTOM_LEFT,
-          Plexers.DEFAULT_SELECT,
+          PlexersLibrary.SELECT_BOTTOM_LEFT,
+          PlexersLibrary.DEFAULT_SELECT,
           BitWidth.ONE,
-          Plexers.DEFAULT_TRISTATE,
-          Plexers.DISABLED_ZERO,
-          Plexers.DEFAULT_ENABLE
+          PlexersLibrary.DEFAULT_TRISTATE,
+          PlexersLibrary.DISABLED_ZERO,
+          PlexersLibrary.DEFAULT_ENABLE
         });
     setKeyConfigurator(
         JoinedConfigurator.create(
-            new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
+            new BitWidthConfigurator(PlexersLibrary.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setFacingAttribute(StdAttr.FACING);
     setIcon(new PlexerIcon(true, false));
@@ -98,12 +98,12 @@ public class Demultiplexer extends InstanceFactory {
   @Override
   public boolean contains(Location loc, AttributeSet attrs) {
     final var facing = attrs.getValue(StdAttr.FACING).reverse();
-    return Plexers.contains(loc, getOffsetBounds(attrs), facing);
+    return PlexersLibrary.contains(loc, getOffsetBounds(attrs), facing);
   }
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == Plexers.ATTR_ENABLE) {
+    if (attr == PlexersLibrary.ATTR_ENABLE) {
       int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
       return newer >= 0;
     } else {
@@ -116,14 +116,14 @@ public class Demultiplexer extends InstanceFactory {
     final var completeName = new StringBuilder();
     completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) completeName.append("_bus");
-    completeName.append("_").append(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth());
+    completeName.append("_").append(1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
     return completeName.toString();
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     final var facing = attrs.getValue(StdAttr.FACING);
-    final var select = attrs.getValue(Plexers.ATTR_SELECT);
+    final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     final var outputs = 1 << select.getWidth();
     final var bds = (outputs == 2)
             ? Bounds.create(0, -25, 30, 50)
@@ -133,8 +133,8 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
-    return (attrs.getValue(Plexers.ATTR_TRISTATE)
-        || (attrs.getValue(Plexers.ATTR_DISABLED) == Plexers.DISABLED_FLOATING));
+    return (attrs.getValue(PlexersLibrary.ATTR_TRISTATE)
+        || (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING));
   }
 
   @Override
@@ -145,12 +145,12 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT_LOC || attr == Plexers.ATTR_SELECT) {
+    if (attr == StdAttr.FACING || attr == PlexersLibrary.ATTR_SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == StdAttr.WIDTH || attr == Plexers.ATTR_ENABLE) {
+    } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {
       updatePorts(instance);
-    } else if (attr == Plexers.ATTR_TRISTATE || attr == Plexers.ATTR_DISABLED) {
+    } else if (attr == PlexersLibrary.ATTR_TRISTATE || attr == PlexersLibrary.ATTR_DISABLED) {
       instance.fireInvalidated();
     }
   }
@@ -158,25 +158,25 @@ public class Demultiplexer extends InstanceFactory {
   @Override
   public void paintGhost(InstancePainter painter) {
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
+    final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var bds = painter.getBounds();
 
     if (select.getWidth() == 1) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
-        Plexers.drawTrapezoid(
+        PlexersLibrary.drawTrapezoid(
             painter.getGraphics(),
             Bounds.create(bds.getX(), bds.getY() + 5, bds.getWidth(), bds.getHeight() - 10),
             facing.reverse(),
             10);
       } else {
-        Plexers.drawTrapezoid(
+        PlexersLibrary.drawTrapezoid(
             painter.getGraphics(),
             Bounds.create(bds.getX() + 5, bds.getY(), bds.getWidth() - 10, bds.getHeight()),
             facing.reverse(),
             10);
       }
     } else {
-      Plexers.drawTrapezoid(painter.getGraphics(), bds, facing.reverse(), 20);
+      PlexersLibrary.drawTrapezoid(painter.getGraphics(), bds, facing.reverse(), 20);
     }
   }
 
@@ -185,15 +185,15 @@ public class Demultiplexer extends InstanceFactory {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    final var select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-    final var enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    final var enable = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     final var outputs = 1 << select.getWidth();
 
     // draw select and enable inputs
     GraphicsUtil.switchToWidth(g, 3);
     final var vertical = facing == Direction.NORTH || facing == Direction.SOUTH;
-    Object selectLoc = painter.getAttributeValue(Plexers.ATTR_SELECT_LOC);
-    final var selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
+    Object selectLoc = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    final var selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
     final var dx = vertical ? selMult : 0;
     final var dy = vertical ? 0 : -selMult;
     if (outputs == 2) { // draw select wire
@@ -245,20 +245,20 @@ public class Demultiplexer extends InstanceFactory {
     g.setColor(Color.BLACK);
     if (outputs == 2) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
-        Plexers.drawTrapezoid(
+        PlexersLibrary.drawTrapezoid(
             g,
             Bounds.create(bds.getX(), bds.getY() + 5, bds.getWidth(), bds.getHeight() - 10),
             facing.reverse(),
             10);
       } else {
-        Plexers.drawTrapezoid(
+        PlexersLibrary.drawTrapezoid(
             g,
             Bounds.create(bds.getX() + 5, bds.getY(), bds.getWidth() - 10, bds.getHeight()),
             facing.reverse(),
             10);
       }
     } else {
-      Plexers.drawTrapezoid(g, bds, facing.reverse(), 20);
+      PlexersLibrary.drawTrapezoid(g, bds, facing.reverse(), 20);
     }
     GraphicsUtil.drawCenteredText(
         g, "DMX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
@@ -269,9 +269,9 @@ public class Demultiplexer extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
-    BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
-    Boolean threeState = state.getAttributeValue(Plexers.ATTR_TRISTATE);
-    boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
+    BitWidth select = state.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    Boolean threeState = state.getAttributeValue(PlexersLibrary.ATTR_TRISTATE);
+    boolean enable = state.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     int outputs = 1 << select.getWidth();
     Value en = enable ? state.getPortValue(outputs + 1) : Value.TRUE;
 
@@ -285,8 +285,8 @@ public class Demultiplexer extends InstanceFactory {
     int outIndex = -1; // the special output
     Value out = null;
     if (en == Value.FALSE) {
-      Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-      Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
+      Object opt = state.getAttributeValue(PlexersLibrary.ATTR_DISABLED);
+      Value base = opt == PlexersLibrary.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
       others = Value.repeat(base, data.getWidth());
     } else if (en == Value.ERROR && state.isPortConnected(outputs + 1)) {
       others = Value.createError(data);
@@ -304,20 +304,20 @@ public class Demultiplexer extends InstanceFactory {
 
     // now propagate them
     for (var i = 0; i < outputs; i++) {
-      state.setPort(i, i == outIndex ? out : others, Plexers.DELAY);
+      state.setPort(i, i == outIndex ? out : others, PlexersLibrary.DELAY);
     }
   }
 
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
-    Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
+    Object selectLoc = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
-    final var select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-    final var enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
+    final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
+    final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     var outputs = 1 << select.getWidth();
     final var ps = new Port[outputs + (enable ? 3 : 2)];
     Location sel;
-    int selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
+    int selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
     if (outputs == 2) {
       Location end0;
       Location end1;

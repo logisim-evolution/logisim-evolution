@@ -58,9 +58,9 @@ public class SevenSegmentShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    final var offColor = path.leaf().getAttributeSet().getValue(Io.ATTR_OFF_COLOR);
-    final var onColor = path.leaf().getAttributeSet().getValue(Io.ATTR_ON_COLOR);
-    final var bgColor = path.leaf().getAttributeSet().getValue(Io.ATTR_BACKGROUND);
+    final var offColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+    final var onColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
+    final var bgColor = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_BACKGROUND);
     final var x = bounds.getX();
     final var y = bounds.getY();
     final var w = bounds.getWidth();
@@ -78,7 +78,7 @@ public class SevenSegmentShape extends DynamicElement {
     if (state != null) {
       InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
       summ = (data == null ? 0 : (Integer) data.getValue());
-      final var activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
       desired = activ == null || activ ? 1 : 0;
     }
     g.setColor(Color.DARK_GRAY);

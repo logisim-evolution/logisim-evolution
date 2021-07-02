@@ -67,7 +67,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     ensureSegments();
     final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
-    final var active = painter.getAttributeValue(Io.ATTR_ACTIVE);
+    final var active = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
     int desired = active == null || active ? 1 : 0;
 
     final var bds = painter.getBounds();
@@ -75,9 +75,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     final var y = bds.getY();
 
     final var g = painter.getGraphics();
-    final var onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-    final var offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
-    final var bgColor = painter.getAttributeValue(Io.ATTR_BACKGROUND);
+    final var onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
+    final var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
+    final var bgColor = painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND);
     if (painter.shouldDrawColor() && bgColor.getAlpha() != 0) {
       g.setColor(bgColor);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
@@ -155,10 +155,10 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     super(_ID, S.getter("sevenSegmentComponent"));
     setAttributes(
         new Attribute[] {
-          Io.ATTR_ON_COLOR,
-          Io.ATTR_OFF_COLOR,
-          Io.ATTR_BACKGROUND,
-          Io.ATTR_ACTIVE,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
+          IoLibrary.ATTR_BACKGROUND,
+          IoLibrary.ATTR_ACTIVE,
           ATTR_DP,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
@@ -169,7 +169,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
         new Object[] {
           new Color(240, 0, 0),
           DEFAULT_OFF,
-          Io.DEFAULT_BACKGROUND,
+          IoLibrary.DEFAULT_BACKGROUND,
           Boolean.TRUE,
           Boolean.TRUE,
           "",
@@ -210,7 +210,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public boolean ActiveOnHigh(AttributeSet attrs) {
-    return attrs.getValue(Io.ATTR_ACTIVE);
+    return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
   public static void computeTextField(Instance instance) {

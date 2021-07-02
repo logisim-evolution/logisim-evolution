@@ -49,7 +49,7 @@ import com.cburch.logisim.gui.menu.ProjectLibraryActions;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -77,7 +77,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
       proj.setTool(lastSelected);
     } else {
       for (Library sub : proj.getLogisimFile().getLibraries()) {
-        if (sub instanceof Base) {
+        if (sub instanceof BaseLibrary) {
           Tool tool = sub.getTool(EditTool._ID);
           if (tool != null) {
             proj.setTool(tool);

@@ -40,7 +40,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Io extends Library {
+public class IoLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files. Do NOT change as it will
    * prevent project files from loading.
@@ -89,7 +89,7 @@ public class Io extends Library {
   public List<Tool> getTools() {
     if (tools == null) {
       tools = new ArrayList<>();
-      tools.addAll(FactoryDescription.getTools(Io.class, DESCRIPTIONS));
+      tools.addAll(FactoryDescription.getTools(IoLibrary.class, DESCRIPTIONS));
       tools.add(new AddTool(Video.factory));
     }
     return tools;
