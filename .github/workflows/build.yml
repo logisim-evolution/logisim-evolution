@@ -84,11 +84,8 @@ jobs:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
 
-    - name: "Grant execute permission for gradlew"
-      run: |
-       chmod +x gradlew
-       chmod +x gradle/wrapper/gradle-wrapper.jar
-
     - name: "Build with Gradle"
-      run: ./gradlew build -x checkstyleMain -x checkstyleTest
+      run: |
+       chmod +x gradlew chmod +x gradle/wrapper/gradle-wrapper.jar
+       ./gradlew build -x checkstyleMain -x checkstyleTest
 
