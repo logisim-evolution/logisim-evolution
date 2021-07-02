@@ -84,7 +84,7 @@ public class IntToFP extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("I→FP", 2));
 
-    Port[] ps = new Port[3];
+    final var ps = new Port[3];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
@@ -96,7 +96,7 @@ public class IntToFP extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.GRAY);
@@ -108,19 +108,19 @@ public class IntToFP extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    BitWidth dataWidthIn = state.getAttributeValue(StdAttr.WIDTH);
-    BitWidth dataWidthOut = state.getAttributeValue(StdAttr.FP_WIDTH);
-    boolean unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
+    final var dataWidthIn = state.getAttributeValue(StdAttr.WIDTH);
+    final var dataWidthOut = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
 
     // compute outputs
-    Value a = state.getPortValue(IN);
-    BigInteger a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
+    final var a = state.getPortValue(IN);
+    final var a_val = extend(dataWidthIn.getWidth(), a.toLongValue(), unsigned);
 
-    double out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
-    Value out = dataWidthOut.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
+    final var out = dataWidthOut.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
 
     // propagate them
-    int delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;
+    final var delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;
     state.setPort(OUT, out, delay);
     state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
   }

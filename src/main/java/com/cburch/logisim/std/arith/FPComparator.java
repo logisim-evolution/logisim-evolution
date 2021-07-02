@@ -73,7 +73,7 @@ public class FPComparator extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u2276"));
 
-    Port[] ps = new Port[6];
+    final var ps = new Port[6];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[GT] = new Port(0, -10, Port.OUTPUT, 1);
@@ -104,7 +104,7 @@ public class FPComparator extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.GRAY);
@@ -115,9 +115,9 @@ public class FPComparator extends InstanceFactory {
     painter.drawPort(LT, "<", Direction.WEST);
     painter.drawPort(ERR);
 
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.BLACK);
     g.drawLine(x-35, y-15, x-35, y+5);
@@ -129,17 +129,17 @@ public class FPComparator extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
 
     // compute outputs
-    Value a = state.getPortValue(IN0);
-    Value b = state.getPortValue(IN1);
+    final var a = state.getPortValue(IN0);
+    final var b = state.getPortValue(IN1);
 
-    double a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
-    double b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
+    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
+    final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
 
     // propagate them
-    int delay = (dataWidth.getWidth() + 2) * PER_DELAY;
+    final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
     state.setPort(GT, Value.createKnown(1, a_val > b_val ? 1 : 0), delay);
     state.setPort(EQ, Value.createKnown(1, a_val == b_val ? 1 : 0), delay);
     state.setPort(LT, Value.createKnown(1, a_val < b_val ? 1 : 0), delay);

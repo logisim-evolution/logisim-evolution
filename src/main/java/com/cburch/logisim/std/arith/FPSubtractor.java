@@ -69,7 +69,7 @@ public class FPSubtractor extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("-"));
 
-    Port[] ps = new Port[4];
+    final var ps = new Port[4];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.FP_WIDTH);
@@ -83,7 +83,7 @@ public class FPSubtractor extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.GRAY);
@@ -92,9 +92,9 @@ public class FPSubtractor extends InstanceFactory {
     painter.drawPort(OUT);
     painter.drawPort(ERR);
 
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.BLACK);
     g.drawLine(x - 15, y, x - 5, y);
@@ -108,21 +108,20 @@ public class FPSubtractor extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var dataWidth = state.getAttributeValue(StdAttr.FP_WIDTH);
 
     // compute outputs
-    Value a = state.getPortValue(IN0);
-    Value b = state.getPortValue(IN1);
+    final var a = state.getPortValue(IN0);
+    final var b = state.getPortValue(IN1);
 
-    double a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
-    double b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
+    final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
+    final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
 
-    double out_val = a_val - b_val;
-
-    Value out = dataWidth.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out_val = a_val - b_val;
+    final var out = dataWidth.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
 
     // propagate them
-    int delay = (dataWidth.getWidth() + 2) * PER_DELAY;
+    final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;
     state.setPort(OUT, out, delay);
     state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(out_val) ? 1 : 0), delay);
   }

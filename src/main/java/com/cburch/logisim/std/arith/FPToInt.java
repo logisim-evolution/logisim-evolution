@@ -85,7 +85,7 @@ public class FPToInt extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("FP→I", 2));
 
-    Port[] ps = new Port[3];
+    final var ps = new Port[3];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.FP_WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
     ps[ERR] = new Port(-20, 20, Port.OUTPUT, 1);
@@ -97,7 +97,7 @@ public class FPToInt extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.GRAY);
@@ -109,14 +109,13 @@ public class FPToInt extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     // get attributes
-    BitWidth dataWidthIn = state.getAttributeValue(StdAttr.FP_WIDTH);
-    BitWidth dataWidthOut = state.getAttributeValue(StdAttr.WIDTH);
-    AttributeOption roundMode = state.getAttributeValue(MODE_ATTRIBUTE);
+    final var dataWidthIn = state.getAttributeValue(StdAttr.FP_WIDTH);
+    final var dataWidthOut = state.getAttributeValue(StdAttr.WIDTH);
+    final var roundMode = state.getAttributeValue(MODE_ATTRIBUTE);
 
     // compute outputs
-    Value a = state.getPortValue(IN);
-
-    double a_val = dataWidthIn.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
+    final var a = state.getPortValue(IN);
+    final var a_val = dataWidthIn.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
 
     long out_val;
   
@@ -125,10 +124,10 @@ public class FPToInt extends InstanceFactory {
     else if (roundMode.getValue().equals("round")) out_val = (long) Math.round(a_val);
     else out_val = (long) a_val;
 
-    Value out = Value.createKnown(dataWidthOut, out_val);
+    final var out = Value.createKnown(dataWidthOut, out_val);
 
     // propagate them
-    int delay = (dataWidthOut.getWidth() + 2) * PER_DELAY;
+    final var delay = (dataWidthOut.getWidth() + 2) * PER_DELAY;
     state.setPort(OUT, out, delay);
     state.setPort(ERR, Value.createKnown(BitWidth.create(1), Double.isNaN(a_val) ? 1 : 0), delay);
   }
