@@ -276,13 +276,13 @@ public class Pin extends InstanceFactory {
       super();
       this.state = state;
       pinState = getState(state);
-      Value value = pinState.intendedValue;
+      final var value = pinState.intendedValue;
       bitWidth = value.getWidth();
-      PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+      final var attrs = (PinAttributes) state.getAttributeSet();
       tristate = (attrs.threeState && attrs.pull == PULL_NONE);
 
       setTitle(S.get("PinEnterFloat"));
-      GridBagConstraints gbc = new GridBagConstraints();
+      final var gbc = new GridBagConstraints();
       ok = new JButton(S.get("PinOkay"));
       cancel = new JButton(S.get("PinCancel"));
       ok.addActionListener(
@@ -309,7 +309,7 @@ public class Pin extends InstanceFactory {
           .addDocumentListener(
               new DocumentListener() {
                 public void insertUpdate(DocumentEvent e) {
-                  String s = text.getText();
+                  final var s = text.getText();
                   if (isEditValid(s)) {
                     text.setBackground(VALID_COLOR);
                     ok.setEnabled(true);
@@ -346,7 +346,7 @@ public class Pin extends InstanceFactory {
     }
 
     public void accept() {
-      String s = text.getText();
+      final var s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
         if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
@@ -588,7 +588,7 @@ public class Pin extends InstanceFactory {
         dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
         dialog.setVisible(true);
       } else if (radix == RadixOption.RADIX_FLOAT) {
-        EditFloat dialog = new EditFloat(state);
+        final var dialog = new EditFloat(state);
         dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
         dialog.setVisible(true);
       } else {
