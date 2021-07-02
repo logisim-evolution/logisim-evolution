@@ -72,7 +72,7 @@ jobs:
         echo
 
   build:
-    name: "Building application"
+    name: "Building application ${{ needs.analyze_sources.outputs.run_build }}"
 
     needs: analyze_sources
     if: ${{ needs.analyze_sources.outputs.run_build == 'true' }}
