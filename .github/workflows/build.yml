@@ -12,73 +12,71 @@ on:
   pull_request:
     branches: [ master, develop ]
 
-jobs:
+# I intentionally do not use "paths:" (as part of "push:"), i.e.
+#
+# on:
+#   push:
+#     branches: [ master ]
+#     paths:
+#     - src/**
+#
+# It's because that can cause confusion why there's no build action triggered on specific
+# PR, so to avoid this this action is intentionally always triggered, however it is now split
+# into sub-jobs. One is trying to figure out if build is really needed and the other is building
+# if first said it should so.
 
-  # I intentionally do not use "paths:" (as part of "push:"), i.e.
-  #
-  # on:
-  #   push:
-  #     branches: [ master ]
-  #     paths:
-  #     - src/**
-  #
-  # It's because that can cause confusion why there's no build action triggered on specific
-  # PR, so to avoid this this action is intentionally always triggered, but it will skip
-  # building process if nothing has changed in specified paths (sources).
-  #
+jobs:
   analyze_sources:
-    name: "Need to build the application?"
+    name: "Do we need to build the application?"
     runs-on: ubuntu-latest
 
     outputs:
-      run_build: ${{ steps.diff_check.outputs.run_build }}
+      run_build: ${{ steps.git_check.outputs.run_build }}
 
     steps:
-    # https://github.com/marketplace/actions/checkout
-    - uses: actions/checkout@v2
+    - name: "Install packages..."
+      run: sudo apt-get install sysvbanner
+
+      # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
       with:
         fetch-depth: 2
 
-    - name: "CHECKING IF BUILD STEP SHOULD RUN..."
-      id: diff_check
+    - name: "WILL BUILD STEP BE RUN?"
+      id: git_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
-        found=""
+        found="no"
         while IFS= read -r file; do
           if [[ "${file}" == src/* ]]; then
-            found="YES"
+            found="yes"
             break
           fi
         done < changes.txt
-        if [[ "${found}" == "YES" ]]; then
-          echo "Sources affected. Will try to build it."
-          echo "::set-output name=run_build::true"
-        else
-          # Let's make the "Nah" result stand out in the logs.
-          echo "************************************************************"
-          echo "**                                                        **"
-          echo "**  NO NEED TO BUILD THE APPLICATION. BUILD STEP SKIPPED  **"
-          echo "**                                                        **"
-          echo "**  No changes in 'src/' folders detected.                **"
-          echo "**                                                        **"
-          echo "************************************************************"
-          echo "::set-output name=run_build::false"
-        fi
 
+        echo "::set-output name=run_build::${found}"
+        echo -e "\n******************************************************************\n"
+        banner "${found}"
+        echo -e "\n******************************************************************\n"
+
+
+  # Build step.
   build:
-    name: "Building application"
-
-    needs: analyze_sources
-    if: needs.analyze_sources.diff_check.output.run_build == 'true'
-
+    name: "Gradle builder"
     runs-on: ubuntu-latest
+
+    # Will run only if analyze_sources said so.
+    needs: analyze_sources
+    if: needs.analyze_sources.outputs.run_build == 'yes'
 
     strategy:
       matrix:
         java-version: [ 11, 16 ]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
 
     - name: "Set up JDK"
       uses: actions/setup-java@v2
