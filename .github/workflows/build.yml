@@ -43,6 +43,7 @@ jobs:
         fetch-depth: 2
 
     - name: "CHECKING IF BUILD STEP SHOULD RUN..."
+      id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD
         git diff --name-only HEAD^ HEAD > changes.txt
@@ -71,11 +72,20 @@ jobs:
         echo "*****************************************************************************"
         echo
 
+
+
+  echo_vara:
+    name: "ECHO"
+    env:
+        FOO: ${{ toJSON(needs.analyze_sources.outputs) }}
+    run: |
+      echo "FOO: ${FOO}"
+
   build:
-    name: "Building application ${{ needs.analyze_sources.outputs.run_build }}"
+    name: "Building application"
 
     needs: analyze_sources
-    if: ${{ needs.analyze_sources.outputs.run_build == 'true' }}
+    if: needs.analyze_sources.outputs.run_build == 'true'
 
     runs-on: ubuntu-latest
 
