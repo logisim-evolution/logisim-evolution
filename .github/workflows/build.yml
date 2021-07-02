@@ -43,28 +43,22 @@ jobs:
       with:
         fetch-depth: 2
 
-    - name: "CHECKING IF BUILD STEP SHOULD RUN..."
+    - name: "WILL BUILD STEP BE RUN?"
       id: git_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
-        found=
+        found="no"
         while IFS= read -r file; do
           if [[ "${file}" == src/* ]]; then
-            found="YES"
+            found="yes"
             break
           fi
         done < changes.txt
-        echo -e "\n*****************************************************************************\n"
-        if [[ "${found}" == "YES" ]]; then
-          echo "Source changes detected. Will run build step."
-          echo "::set-output name=run_build::true"
-        else
-          # Let's make the "Nah" result stand out in the logs.
-          banner "SKIP BUILD"
-          echo "No changes in 'src/' folders detected."
-          echo "::set-output name=run_build::false"
-        fi
-        echo -e "\n*****************************************************************************\n"
+
+        echo "::set-output name=run_build::${found}"
+        echo -e "\n******************************************************************\n"
+        banner "${found}"
+        echo -e "\n******************************************************************\n"
 
 
   # Build step.
@@ -74,7 +68,7 @@ jobs:
 
     # Will run only if analyze_sources said so.
     needs: analyze_sources
-    if: needs.analyze_sources.outputs.run_build == 'true'
+    if: needs.analyze_sources.outputs.run_build == 'yes'
 
     strategy:
       matrix:
