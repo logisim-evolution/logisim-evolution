@@ -79,6 +79,7 @@ jobs:
     env:
         FOO: ${{ toJSON(needs.analyze_sources.outputs) }}
     steps:
+    - name: debug
       run: |
         echo "FOO: ${FOO}"
 
