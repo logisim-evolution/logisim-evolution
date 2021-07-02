@@ -66,25 +66,20 @@ jobs:
         fi
         echo -e "\n*****************************************************************************\n"
 
-    - name: "ECHO"
-      if: ${{ always() }}
-      run: |
-        echo "FOO: ${{ toJSON(steps.diff_check.outputs) }}"
-
     - name: "Set up JDK"
-      if: ${{ steps.diff_check.run_build == 'true' }}
+      if: ${{ steps.diff_check.run_build == true }}
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
 
     - name: "Grant execute permission for gradlew"
-      if: ${{ steps.diff_check.run_build == 'true' }}
+      if: ${{ steps.diff_check.run_build == true }}
       run: |
        chmod +x gradlew
        chmod +x gradle/wrapper/gradle-wrapper.jar
 
     - name: "Build with Gradle"
-      if: ${{ steps.diff_check.run_build == 'true' }}
+      if: ${{ steps.diff_check.run_build == true }}
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
