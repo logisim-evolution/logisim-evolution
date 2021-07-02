@@ -78,8 +78,9 @@ jobs:
     name: "ECHO"
     env:
         FOO: ${{ toJSON(needs.analyze_sources.outputs) }}
-    run: |
-      echo "FOO: ${FOO}"
+    steps:
+      run: |
+        echo "FOO: ${FOO}"
 
   build:
     name: "Building application"
