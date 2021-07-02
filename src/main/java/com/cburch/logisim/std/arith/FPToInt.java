@@ -32,7 +32,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -46,7 +45,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class FPToInt extends InstanceFactory {
   /**
