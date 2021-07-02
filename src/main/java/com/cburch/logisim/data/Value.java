@@ -557,16 +557,12 @@ public class Value {
   }
 
   public float toFloatValue() {
-    if (error != 0) return Float.NaN;
-    if (unknown != 0) return Float.NaN;
-    if (width != 32) return Float.NaN;
+    if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
     return Float.intBitsToFloat((int) value);
   }
 
   public double toDoubleValue() {
-    if (error != 0) return Double.NaN;
-    if (unknown != 0) return Double.NaN;
-    if (width != 64) return Double.NaN;
+    if (error != 0 || unknown != 0 || width != 64) return Double.NaN;
     return Double.longBitsToDouble(value);
   }
 
