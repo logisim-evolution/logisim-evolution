@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 
 def getKeys(path):
     keys = []
@@ -14,6 +14,7 @@ def getKeys(path):
             keys.append(words[0])
     return keys
 
+
 def getTrans(path):
     trans = {}
     with open(path, 'r', encoding="utf8") as file:
@@ -28,6 +29,7 @@ def getTrans(path):
                 continue
             trans[words[0].strip()] = '='.join(words[1:]).strip()
     return trans
+
 
 def writeFile(path, keys, trans):
     lines = []
@@ -48,16 +50,18 @@ def writeFile(path, keys, trans):
     return c
         
         
+showMissing = False     # output number of missing translations
 path = "../src/main/resources/resources/logisim/strings/"
 files = ("analyze","circuit", "data", "draw", "file", "fpga", "gui", "hdl", "proj", "soc", "std", "tools", "util")
 langs = ("de", "el", "es", "fr", "pt", "ru", "it", "nl", "ja", "pl")
 
 for file in files:
-#    print(file)
-    keys = getKeys(path + file +'/'+file+".properties")
+    filePath = path + file +'/'+file
+    if showMissing:
+        print(file + ':')
+    keys = getKeys(filePath + ".properties")
     for lang in langs:
-#        print(' ' + lang)
-        trans = getTrans(path + file +'/'+file+'_'+lang+".properties")
-        missing = writeFile(path + file +'/'+file+'_'+lang+".properties", keys, trans)
-#        print("  " + str(missing))
-#    print('')
+        trans = getTrans(filePath+'_'+lang+".properties")
+        missing = writeFile(filePath+'_'+lang+".properties", keys, trans)
+        if showMissing and missing > 0:
+            print("  " + lang + ": " + str(missing))
