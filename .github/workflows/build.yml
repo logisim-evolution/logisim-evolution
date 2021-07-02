@@ -71,9 +71,6 @@ jobs:
       run: |
         echo "FOO: ${{ toJSON(steps.diff_check.outputs) }}"
 
-    - name: "Building application"
-      if: ${{ steps.diff_check.run_build == 'true' }}
-
     - name: "Set up JDK"
       if: ${{ steps.diff_check.run_build == 'true' }}
       uses: actions/setup-java@v2
