@@ -85,3 +85,5 @@ jobs:
       if: steps.diff_check.run_build == 'true'
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
+    - name: FOO
+      run: echo "FOO"
