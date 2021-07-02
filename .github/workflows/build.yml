@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
+      # Map a step output to a job output
       run_build: ${{ steps.diff_check.outputs.run_build }}
 
     steps:
@@ -42,7 +43,6 @@ jobs:
         fetch-depth: 2
 
     - name: "CHECKING IF BUILD STEP SHOULD RUN..."
-      id: diff_check
       run: |
         git diff --name-only HEAD^ HEAD > changes.txt
         found=
@@ -52,9 +52,12 @@ jobs:
             break
           fi
         done < changes.txt
+        echo
+        echo "*****************************************************************************"
+        echo
+
         if [[ "${found}" == "YES" ]]; then
-          banner "BUILD APP"
-          echo "Source changes detected. Building it!"
+          echo "Source changes detected. Will run build step."
           echo "::set-output name=run_build::true"
         else
           # Let's make the "Nah" result stand out in the logs.
@@ -63,11 +66,15 @@ jobs:
           echo "::set-output name=run_build::false"
         fi
 
+        echo
+        echo "*****************************************************************************"
+        echo
+
   build:
     name: "Building application"
 
     needs: analyze_sources
-    if: ${{ needs.analyze_sources.diff_check.outputs.run_build == 'true' }}
+    if: ${{ needs.analyze_sources.outputs.run_build == 'true' }}
 
     runs-on: ubuntu-latest
 
