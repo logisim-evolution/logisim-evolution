@@ -73,6 +73,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Will run only if analyze_sources said so.
+    needs: analyze_sources
     if: needs.analyze_sources.outputs.run_build == 'true'
 
     strategy:
