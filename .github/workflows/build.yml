@@ -29,15 +29,15 @@ jobs:
     name: "Need to build the application?"
     runs-on: ubuntu-latest
 
-    outputs:
-      # Map a step output to a job output
-      run_build: ${{ steps.diff_check.outputs.run_build }}
+    strategy:
+      matrix:
+        java-version: [ 11, 16 ]
 
     steps:
     - name: "Install packages..."
       run: sudo apt-get install sysvbanner
 
-    # https://github.com/marketplace/actions/checkout
+      # https://github.com/marketplace/actions/checkout
     - uses: actions/checkout@v2
       with:
         fetch-depth: 2
@@ -54,10 +54,7 @@ jobs:
             break
           fi
         done < changes.txt
-        echo
-        echo "*****************************************************************************"
-        echo
-
+        echo -e "\n*****************************************************************************\n"
         if [[ "${found}" == "YES" ]]; then
           echo "Source changes detected. Will run build step."
           echo "::set-output name=run_build::true"
@@ -67,48 +64,30 @@ jobs:
           echo "No changes in 'src/' folders detected."
           echo "::set-output name=run_build::false"
         fi
+        echo -e "\n*****************************************************************************\n"
 
-        echo
-        echo "*****************************************************************************"
-        echo
-
-
-
-  echo_vara:
-    name: "ECHO"
-    env:
-        FOO: ${{ toJSON(needs.analyze_sources.outputs) }}
-    steps:
-    - name: debug
+    - name: "ECHO"
+      if: ${{ always() }}
       run: |
-        echo "FOO: ${FOO}"
+        echo "FOO: ${{ toJSON(steps.diff_check.outputs) }}"
 
-  build:
-    name: "Building application"
-
-    needs: analyze_sources
-    if: needs.analyze_sources.outputs.run_build == 'true'
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        java-version: [ 11, 16 ]
-
-    steps:
-    - uses: actions/checkout@v2
+    - name: "Building application"
+      if: ${{ steps.diff_check.run_build == 'true' }}
 
     - name: "Set up JDK"
+      if: ${{ steps.diff_check.run_build == 'true' }}
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
 
     - name: "Grant execute permission for gradlew"
+      if: ${{ steps.diff_check.run_build == 'true' }}
       run: |
        chmod +x gradlew
        chmod +x gradle/wrapper/gradle-wrapper.jar
 
     - name: "Build with Gradle"
+      if: ${{ steps.diff_check.run_build == 'true' }}
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
