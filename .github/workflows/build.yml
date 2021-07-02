@@ -45,7 +45,6 @@ jobs:
     - name: "CHECKING IF BUILD STEP SHOULD RUN..."
       id: diff_check
       run: |
-        git diff --name-only HEAD^ HEAD
         git diff --name-only HEAD^ HEAD > changes.txt
         found=
         while IFS= read -r file; do
@@ -67,19 +66,22 @@ jobs:
         echo -e "\n*****************************************************************************\n"
 
     - name: "Set up JDK"
-      if: ${{ steps.diff_check.run_build == true }}
+      id: setup_jdk
+      if: steps.diff_check.run_build == 'true'
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'adopt'
 
     - name: "Grant execute permission for gradlew"
-      if: ${{ steps.diff_check.run_build == true }}
+      id: grant_x
+      if: steps.diff_check.run_build == 'true'
       run: |
        chmod +x gradlew
        chmod +x gradle/wrapper/gradle-wrapper.jar
 
     - name: "Build with Gradle"
-      if: ${{ steps.diff_check.run_build == true }}
+      id: run_gradle
+      if: steps.diff_check.run_build == 'true'
       run: ./gradlew build -x checkstyleMain -x checkstyleTest
 
