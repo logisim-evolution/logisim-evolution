@@ -32,7 +32,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("com.formdev:flatlaf:1.2")
-    implementation("org.apache.xmlgraphics:batik-swing:1.14")
+
+    // NOTE: Be aware of reported issues with Eclipse and Batik
+    // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
+    // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
