@@ -9,7 +9,7 @@ Designed by Marcin Orlowski <http://MarcinOrlowski.com>
 ## SVG files ##
 
 * `logisim-evolution-logo-src.svg` - main logo project file
-* 'logisim-evolution-logo.svg` - derrived from main project file with all texts converted to paths.
+* 'logisim-evolution-logo.svg` - derived from main project file with all texts converted to paths.
 
 NOTE: to properly render `logisim-evolution-logo-src.svg` (be it in-app, on webpage etc) you must
 have all the used fonts installed on target machine or your renderer/browser substitute fonts
