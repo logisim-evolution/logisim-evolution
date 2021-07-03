@@ -35,7 +35,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -45,6 +47,8 @@ public class About {
   static final int PANEL_WIDTH = 600;
   static final int LOGO_HEIGHT = 200;
   static final int SCROLLER_HEIGHT = 200;
+
+  private static final String LOGO_IMG = "resources/logisim/img/logisim-evolution-logo.png";
 
   private About() {}
 
@@ -83,8 +87,8 @@ public class About {
       setBackground(Color.WHITE);
       addAncestorListener(this);
 
-      var logo = new AppLogo();
-      logo.setBounds(0, PADDING, prefWidth, LOGO_HEIGHT);
+      final var logo = new JLabel(new ImageIcon(getClass().getClassLoader().getResource(LOGO_IMG)));
+      logo.setBounds(0, 20, prefWidth, LOGO_HEIGHT);
       add(logo);
 
       if (includeCredits) {

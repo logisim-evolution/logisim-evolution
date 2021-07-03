@@ -1,4 +1,4 @@
-[![Logisim-evolution](src/main/resources/resources/logisim/img/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
+[![Logisim-evolution](artwork/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
 
 ---
 
