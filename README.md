@@ -40,8 +40,8 @@ Project highlights:
 * Supports [multiple languages](docs/docs.md#translations),
 * and more!
 
-[![Logisim-evolution](docs/img/logisim-evolution-01-small.webp)](docs/pics.md)
-[![Logisim-evolution](docs/img/logisim-evolution-02-small.webp)](docs/pics.md)
+[![Logisim-evolution](docs/img/logisim-evolution-01-small.png)](docs/pics.md)
+[![Logisim-evolution](docs/img/logisim-evolution-02-small.png)](docs/pics.md)
 
 ---
 
