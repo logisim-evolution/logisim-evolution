@@ -57,14 +57,14 @@ public class RGBLedShape extends LedShape {
       g.fillOval(x, y, w, h);
       g.setColor(DynamicElement.COLOR);
     } else {
-      Boolean activ = path.leaf().getAttributeSet().getValue(Io.ATTR_ACTIVE);
-      InstanceDataSingleton data = (InstanceDataSingleton) getData(state);
-      int summ = (data == null ? 0 : (Integer) data.getValue());
-      int mask = activ ? 0 : 7;
+      final var activ = path.leaf().getAttributeSet().getValue(IoLibrary.ATTR_ACTIVE);
+      final var data = (InstanceDataSingleton) getData(state);
+      var summ = (data == null ? 0 : (Integer) data.getValue());
+      final var mask = activ ? 0 : 7;
       summ ^= mask;
-      int red = ((summ >> RGBLed.RED) & 1) * 0xFF;
-      int green = ((summ >> RGBLed.GREEN) & 1) * 0xFF;
-      int blue = ((summ >> RGBLed.BLUE) & 1) * 0xFF;
+      final var red = ((summ >> RGBLed.RED) & 1) * 0xFF;
+      final var green = ((summ >> RGBLed.GREEN) & 1) * 0xFF;
+      final var blue = ((summ >> RGBLed.BLUE) & 1) * 0xFF;
       g.setColor(new Color(red, green, blue));
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);

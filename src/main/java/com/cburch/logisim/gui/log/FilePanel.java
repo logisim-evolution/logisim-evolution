@@ -166,7 +166,7 @@ class FilePanel extends LogPanel {
         if (file.exists() && (!file.canWrite() || file.isDirectory())) {
           OptionPane.showMessageDialog(
               getLogFrame(),
-              StringUtil.format(S.get("fileCannotWriteMessage"), file.getName()),
+              S.get("fileCannotWriteMessage", file.getName()),
               S.get("fileCannotWriteTitle"),
               OptionPane.OK_OPTION);
           return;
@@ -178,7 +178,7 @@ class FilePanel extends LogPanel {
           int option =
               OptionPane.showOptionDialog(
                   getLogFrame(),
-                  StringUtil.format(S.get("fileExistsMessage"), file.getName()),
+                  S.get("fileExistsMessage", file.getName()),
                   S.get("fileExistsTitle"),
                   0,
                   OptionPane.QUESTION_MESSAGE,

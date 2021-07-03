@@ -26,45 +26,35 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.library;
+package com.cburch.logisim.std.ttl;
 
-import static com.cburch.logisim.std.Strings.S;
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.prefs.AppPreferences;
 
-import com.cburch.logisim.tools.FactoryDescription;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-import java.util.List;
+public class TtlRegisterData extends ClockState implements InstanceData {
 
-public class BFHPraktika extends Library {
-  /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
-   *
-   * Identifier value must MUST be unique string among all libraries.
-   */
-  public static final String _ID = "BFH-Praktika";
+  private Value value;
+  private final BitWidth bits;
 
-  private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(bin2bcd.class, S.getter("Bin2BCD")),
-    new FactoryDescription(bcd2sevenseg.class, S.getter("BCD2SevenSegment")),
-  };
-
-  private List<Tool> tools = null;
-
-  @Override
-  public String getDisplayName() {
-    return S.get("BFHMegaFunctions");
+  public TtlRegisterData(BitWidth width) {
+    value =
+        (AppPreferences.Memory_Startup_Unknown.get())
+            ? Value.createUnknown(width)
+            : Value.createKnown(width, 0);
+    bits = width;
   }
 
-  @Override
-  public List<Tool> getTools() {
-    if (tools == null) {
-      tools = FactoryDescription.getTools(BFHPraktika.class, DESCRIPTIONS);
-    }
-    return tools;
+  public void setValue(Value value) {
+    this.value = value;
   }
 
-  public boolean removeLibrary(String Name) {
-    return false;
+  public Value getValue() {
+    return value;
+  }
+
+  public BitWidth getWidth() {
+    return bits;
   }
 }

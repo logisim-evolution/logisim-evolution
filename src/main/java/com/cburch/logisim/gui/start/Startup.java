@@ -48,8 +48,8 @@ import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.gates.Gates;
+import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
@@ -357,9 +357,9 @@ public class Startup implements AWTEventListener {
         }
         ret.templFile = new File(args[i]);
         if (!ret.templFile.exists()) {
-          logger.error("{}", StringUtil.format(S.get("templateMissingError"), args[i]));
+          logger.error("{}", S.get("templateMissingError", args[i]));
         } else if (!ret.templFile.canRead()) {
-          logger.error("{}", StringUtil.format(S.get("templateCannotReadError"), args[i]));
+          logger.error("{}", S.get("templateCannotReadError", args[i]));
         }
       } else if (arg.equals("-nosplash")) {
         ret.showSplash = false;
@@ -492,7 +492,7 @@ public class Startup implements AWTEventListener {
   }
 
   private static void printUsage() {
-    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName()));
+    System.err.println(S.get("argUsage", Startup.class.getName()));
     System.err.println();
     System.err.println(S.get("argOptionHeader"));
     String[] opts = {
@@ -651,8 +651,8 @@ public class Startup implements AWTEventListener {
     }
     Loader templLoader = new Loader(monitor);
     int count =
-        templLoader.getBuiltin().getLibrary(Base._ID).getTools().size()
-            + templLoader.getBuiltin().getLibrary(Gates._ID).getTools().size();
+        templLoader.getBuiltin().getLibrary(BaseLibrary._ID).getTools().size()
+            + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
       logger.error("FATAL ERROR - no components");

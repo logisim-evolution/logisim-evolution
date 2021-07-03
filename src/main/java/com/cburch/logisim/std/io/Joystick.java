@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.JoystickIcon;
 import com.cburch.logisim.instance.InstanceData;
@@ -61,9 +60,9 @@ public class Joystick extends InstanceFactory {
   public static class Poker extends InstancePoker {
     @Override
     public void mouseDragged(InstanceState state, MouseEvent e) {
-      Location loc = state.getInstance().getLocation();
-      int cx = loc.getX() - 15;
-      int cy = loc.getY() + 5;
+      final var loc = state.getInstance().getLocation();
+      final var cx = loc.getX() - 15;
+      final var cy = loc.getY() + 5;
       updateState(state, e.getX() - cx, e.getY() - cy);
     }
 
@@ -79,32 +78,32 @@ public class Joystick extends InstanceFactory {
 
     @Override
     public void paint(InstancePainter painter) {
-      State state = (State) painter.getData();
+      var state = (State) painter.getData();
       if (state == null) {
         state = new State(0, 0);
         painter.setData(state);
       }
-      Location loc = painter.getLocation();
-      int x = loc.getX();
-      int y = loc.getY();
-      Graphics g = painter.getGraphics();
+      final var loc = painter.getLocation();
+      final var x = loc.getX();
+      final var y = loc.getY();
+      final var g = painter.getGraphics();
       g.setColor(Color.WHITE);
       g.fillRect(x - 20, y, 10, 10);
       GraphicsUtil.switchToWidth(g, 3);
       g.setColor(Color.BLACK);
-      int dx = state.xPos;
-      int dy = state.yPos;
-      int x0 = x - 15 + (dx > 5 ? 1 : dx < -5 ? -1 : 0);
-      int y0 = y + 5 + (dy > 5 ? 1 : dy < 0 ? -1 : 0);
-      int x1 = x - 15 + dx;
-      int y1 = y + 5 + dy;
+      final var dx = state.xPos;
+      final var dy = state.yPos;
+      final var x0 = x - 15 + (dx > 5 ? 1 : dx < -5 ? -1 : 0);
+      final var y0 = y + 5 + (dy > 5 ? 1 : dy < 0 ? -1 : 0);
+      final var x1 = x - 15 + dx;
+      final var y1 = y + 5 + dy;
       g.drawLine(x0, y0, x1, y1);
-      Color ballColor = painter.getAttributeValue(Io.ATTR_COLOR);
+      final var ballColor = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
       Joystick.drawBall(g, x1, y1, ballColor, true);
     }
 
     private void updateState(InstanceState state, int dx, int dy) {
-      State s = (State) state.getData();
+      var s = (State) state.getData();
       if (dx < -14) dx = -14;
       if (dy < -14) dy = -14;
       if (dx > 14) dx = 14;
@@ -157,8 +156,7 @@ public class Joystick extends InstanceFactory {
 
   public Joystick() {
     super(_ID, S.getter("joystickComponent"));
-    setAttributes(
-        new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
+    setAttributes(new Attribute[] {ATTR_WIDTH, IoLibrary.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
     setIcon(new JoystickIcon());
@@ -171,27 +169,27 @@ public class Joystick extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRoundRect(-30, -10, 30, 30, 8, 8);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
 
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
     g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
-    drawBall(g, x - 15, y + 5, painter.getAttributeValue(Io.ATTR_COLOR), painter.shouldDrawColor());
+    drawBall(g, x - 15, y + 5, painter.getAttributeValue(IoLibrary.ATTR_COLOR), painter.shouldDrawColor());
     painter.drawPorts();
   }
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth bits = state.getAttributeValue(ATTR_WIDTH);
+    final var bits = state.getAttributeValue(ATTR_WIDTH);
     int dx;
     int dy;
     State s = (State) state.getData();

@@ -78,11 +78,11 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     final var circuit = canvas.getCircuit();
-    setTitle(S.fmt("showStateDialogTitle", circuit.getName()));
+    setTitle(S.get("showStateDialogTitle", circuit.getName()));
 
     root = enumerate(circuit, null);
     if (root == null) {
-      root = new RefTreeNode(S.fmt("showStateDialogEmptyNode", circuit.getName()));
+      root = new RefTreeNode(S.get("showStateDialogEmptyNode", circuit.getName()));
     }
     tree = new CheckBoxTree(root);
     tree.setCheckingPaths(getPaths());
@@ -236,6 +236,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     if (dirty) canvas.repaint();
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == ok) {
@@ -263,6 +264,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   }
 
   private static class CompareByLocations implements Comparator<TreePath> {
+    @Override
     public int compare(TreePath a, TreePath b) {
       Object[] aa = a.getPath();
       Object[] bb = b.getPath();
@@ -285,6 +287,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       this.ic = ic;
     }
 
+    @Override
     public String toString() {
       String s = ic.getInstance().getAttributeValue(StdAttr.LABEL);
       Location loc = ic.getInstance().getLocation();
@@ -302,18 +305,18 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       this.circuit = c;
     }
 
+    @Override
     public String toString() {
-      if (ic == null) return S.fmt("showStateDialogNodeTitle", circuit.getName());
-      else return super.toString();
+      return (ic == null) ? S.get("showStateDialogNodeTitle", circuit.getName()) : super.toString();
     }
   }
 
   private static class RefTreeNode extends DefaultMutableTreeNode {
     final Ref refData;
 
-    RefTreeNode (Object data) {
-      super(new CheckBoxNodeData(data.toString(),false));
-      refData = (data instanceof Ref) ? (Ref)data : null;
+    RefTreeNode(Object data) {
+      super(new CheckBoxNodeData(data.toString(), false));
+      refData = (data instanceof Ref) ? (Ref) data : null;
     }
   }
 }

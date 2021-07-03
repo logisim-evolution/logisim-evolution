@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.file;
 
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.SelectTool;
@@ -76,8 +75,8 @@ public class MouseMappings {
     cache_mods = -1;
     this.map.clear();
     for (Integer mods : other.map.keySet()) {
-      Tool srcTool = other.map.get(mods);
-      Tool dstTool = file.findTool(srcTool);
+      final var srcTool = other.map.get(mods);
+      var dstTool = file.findTool(srcTool);
       if (dstTool != null) {
         dstTool = dstTool.cloneTool();
         AttributeSets.copy(srcTool.getAttributeSet(), dstTool.getAttributeSet());
@@ -138,38 +137,31 @@ public class MouseMappings {
   // package-protected methods
   //
   void replaceAll(Map<Tool, Tool> toolMap) {
-    boolean changed = false;
-    for (Map.Entry<Integer, Tool> entry : map.entrySet()) {
-      Integer key = entry.getKey();
-      Tool tool = entry.getValue();
-      if (tool instanceof AddTool) {
-        ComponentFactory factory = ((AddTool) tool).getFactory();
-        if (toolMap.containsKey(factory)) {
-          changed = true;
-          Tool newTool = toolMap.get(factory);
-          if (newTool == null) {
-            map.remove(key);
-          } else {
-            Tool clone = newTool.cloneTool();
-            LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-            map.put(key, clone);
-          }
-        }
-      } else {
-        if (toolMap.containsKey(tool)) {
-          changed = true;
-          Tool newTool = toolMap.get(tool);
-          if (newTool == null) {
-            map.remove(key);
-          } else {
-            Tool clone = newTool.cloneTool();
-            LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-            map.put(key, clone);
-          }
-        }
-      }
+    var changed = false;
+    for (final var entry : map.entrySet()) {
+      final var key = entry.getKey();
+      final var tool = entry.getValue();
+      final var searchFor = (tool instanceof AddTool) ? ((AddTool) tool).getFactory() : tool;
+      changed |= replaceInMap(toolMap, tool, searchFor, key);
     }
     if (changed) fireMouseMappingsChanged();
+  }
+
+  private boolean replaceInMap(Map<Tool, Tool> toolMap, Tool tool, Object searchFor, Integer key) {
+    var changed = false;
+    if (toolMap.containsKey(searchFor)) {
+      changed = true;
+      final var newTool = toolMap.get(searchFor);
+      if (newTool == null) {
+        map.remove(searchFor);
+      } else {
+        final var clone = newTool.cloneTool();
+        LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
+        map.put(key, clone);
+      }
+    }
+
+    return changed;
   }
 
   public void setToolFor(int mods, Tool tool) {
@@ -201,7 +193,7 @@ public class MouseMappings {
   }
 
   public boolean usesToolFromSource(Tool query) {
-    for (Tool tool : map.values()) {
+    for (final var tool : map.values()) {
       if (tool.sharesSource(query)) {
         return true;
       }

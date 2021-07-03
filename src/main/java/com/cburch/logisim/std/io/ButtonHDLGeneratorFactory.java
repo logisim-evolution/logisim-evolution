@@ -39,27 +39,23 @@ import java.util.ArrayList;
 public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
-      if (ComponentInfo.EndIsConnected(i)) {
-        String map = "   "
+  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+    final var contents = new ArrayList<String>();
+    for (int i = 0; i < componentInfo.NrOfEnds(); i++) {
+      if (componentInfo.EndIsConnected(i)) {
+        contents.add(
+            "   "
                 + HDL.assignPreamble()
-                + GetNetName(ComponentInfo, i, true, Nets)
+                + GetNetName(componentInfo, i, true, nets)
                 + HDL.assignOperator()
                 + HDLGeneratorFactory.LocalInputBubbleBusname
                 + HDL.BracketOpen()
-                + (ComponentInfo.GetLocalBubbleInputStartId() + i)
+                + (componentInfo.GetLocalBubbleInputStartId() + i)
                 + HDL.BracketClose()
-                + ";";
-        Contents.add(map);
+                + ";");
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override

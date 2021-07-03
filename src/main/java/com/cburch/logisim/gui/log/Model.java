@@ -772,12 +772,13 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   }
 
   public static String formatDuration(long t) {
-    if (t < 1000 || (t % 100) != 0) return S.fmt("nsFormat", String.format("%d", t));
+    if (t < 1000 || (t % 100) != 0) return S.get("nsFormat", String.format("%d", t));
     else if (t < 1000000 || (t % 100000) != 0)
-      return S.fmt("usFormat", String.format("%.1f", t / 1000.0));
+      return S.get("usFormat", String.format("%.1f", t / 1000.0));
     else if (t < 100000000 || (t % 100000000) != 0)
-      return S.fmt("msFormat", String.format("%.1f", t / 1000000.0));
-    else return S.fmt("sFormat", String.format("%.1f", t / 1000000000.0));
+      return S.get("msFormat", String.format("%.1f", t / 1000000.0));
+    else
+      return S.get("sFormat", String.format("%.1f", t / 1000000000.0));
   }
 
   public void setRadix(SignalInfo s, RadixOption value) {

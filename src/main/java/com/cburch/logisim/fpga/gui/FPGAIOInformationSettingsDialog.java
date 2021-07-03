@@ -93,7 +93,7 @@ public class FPGAIOInformationSettingsDialog {
         offset = (i / 16) * 2;
         c.gridy = oldY;
       }
-      JLabel LocText = new JLabel(S.fmt("FpgaIoLocation", PinLabels.get(i)));
+      JLabel LocText = new JLabel(S.get("FpgaIoLocation", PinLabels.get(i)));
       c.gridx = 0 + offset;
       c.gridy++;
       pinPanel.add(LocText, c);
@@ -357,7 +357,7 @@ public class FPGAIOInformationSettingsDialog {
     }
 
     if (!IOComponentTypes.InOutComponentSet.contains(MyType)) {
-      JLabel ActiveText = new JLabel(S.fmt("FpgaIoActivity", MyType));
+      JLabel ActiveText = new JLabel(S.get("FpgaIoActivity", MyType));
       c.gridy++;
       c.gridx = 0;
       contents.add(ActiveText, c);
@@ -409,7 +409,7 @@ public class FPGAIOInformationSettingsDialog {
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
-                S.fmt(
+                S.get(
                     "FpgaIoPinLoc",
                     IOComponentTypes.getInputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
@@ -422,7 +422,7 @@ public class FPGAIOInformationSettingsDialog {
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
-                S.fmt(
+                S.get(
                     "FpgaIoPinLoc",
                     IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
@@ -435,7 +435,7 @@ public class FPGAIOInformationSettingsDialog {
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
-                S.fmt(
+                S.get(
                     "FpgaIoPinLoc",
                     IOComponentTypes.getIOLabel(NrOfPins.get(INPUT_ID), i, MyType)));
             break;
@@ -451,19 +451,19 @@ public class FPGAIOInformationSettingsDialog {
                 correct = false;
                 switch (i) {
                   case 0 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoXpos"),
+                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoXpos"),
                                   rectLocations.get(i).getText()));
                            break;
                   case 1 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoYpos"),
+                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoYpos"),
                                   rectLocations.get(i).getText()));
                            break;
                   case 2 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoWidth"),
+                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoWidth"),
                                   rectLocations.get(i).getText()));
                             break;
                   default : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.fmt("FpgaIoIntError", S.get("FpgaIoHeight"),
+                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoHeight"),
                                   rectLocations.get(i).getText()));
                             break;
                 }

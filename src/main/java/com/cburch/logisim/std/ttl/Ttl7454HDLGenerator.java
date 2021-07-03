@@ -46,49 +46,49 @@ public class Ttl7454HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A", 1);
-    MyInputs.put("B", 1);
-    MyInputs.put("C", 1);
-    MyInputs.put("D", 1);
-    MyInputs.put("E", 1);
-    MyInputs.put("F", 1);
-    MyInputs.put("G", 1);
-    MyInputs.put("H", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A", 1);
+    map.put("B", 1);
+    map.put("C", 1);
+    map.put("D", 1);
+    map.put("E", 1);
+    map.put("F", 1);
+    map.put("G", 1);
+    map.put("H", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Y", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Y", 1);
+    return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   " + HDL.assignPreamble() + "Y" + HDL.assignOperator() + HDL.notOperator()
+    final var contents = new ArrayList<String>();
+    contents.add("   " + HDL.assignPreamble() + "Y" + HDL.assignOperator() + HDL.notOperator()
             + "((A" + HDL.andOperator() + "B)" + HDL.orOperator() + "(C" + HDL.andOperator() + "D)" + HDL.orOperator()
             + "(E" + HDL.andOperator() + "F)" + HDL.orOperator() + "(G" + HDL.andOperator() + "H));");
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("B", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("C", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("D", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("E", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("F", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("G", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("H", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("Y", true, ComponentInfo, 5, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var ComponentInfo = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("A", true, ComponentInfo, 0, nets));
+    map.putAll(GetNetMap("B", true, ComponentInfo, 8, nets));
+    map.putAll(GetNetMap("C", true, ComponentInfo, 1, nets));
+    map.putAll(GetNetMap("D", true, ComponentInfo, 2, nets));
+    map.putAll(GetNetMap("E", true, ComponentInfo, 3, nets));
+    map.putAll(GetNetMap("F", true, ComponentInfo, 4, nets));
+    map.putAll(GetNetMap("G", true, ComponentInfo, 6, nets));
+    map.putAll(GetNetMap("H", true, ComponentInfo, 7, nets));
+    map.putAll(GetNetMap("Y", true, ComponentInfo, 5, nets));
+    return map;
   }
 
   @Override
@@ -104,6 +104,6 @@ public class Ttl7454HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND));
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

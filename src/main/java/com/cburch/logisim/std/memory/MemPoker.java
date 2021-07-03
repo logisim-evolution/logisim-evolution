@@ -32,9 +32,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.proj.Project;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -42,15 +40,15 @@ public class MemPoker extends InstancePoker {
   private static class AddrPoker extends MemPoker {
     @Override
     public Bounds getBounds(InstancePainter painter) {
-      MemState data = (MemState) painter.getData();
+      final var data = (MemState) painter.getData();
       return data.getBounds(-1, painter.getBounds());
     }
 
     @Override
     public void keyTyped(InstanceState state, KeyEvent e) {
-      char c = e.getKeyChar();
-      int val = Character.digit(e.getKeyChar(), 16);
-      MemState data = (MemState) state.getData();
+      final var c = e.getKeyChar();
+      final var val = Character.digit(e.getKeyChar(), 16);
+      final var data = (MemState) state.getData();
       if (val >= 0) {
         long newScroll = (data.getScroll() * 16 + val) & (data.getLastAddress());
         data.setScroll(newScroll);
@@ -67,7 +65,7 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
-      MemState data = (MemState) state.getData();
+      final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
         data.setScroll(data.getScroll() - data.GetNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -85,8 +83,8 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void paint(InstancePainter painter) {
-      Bounds bds = getBounds(painter);
-      Graphics g = painter.getGraphics();
+      final var bds = getBounds(painter);
+      final var g = painter.getGraphics();
       g.setColor(Color.RED);
       g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLACK);
@@ -104,7 +102,7 @@ public class MemPoker extends InstancePoker {
 
       Object attrs = state.getInstance().getAttributeSet();
       if (attrs instanceof RomAttributes) {
-        Project proj = state.getProject();
+        final var proj = state.getProject();
         if (proj != null) {
           ((RomAttributes) attrs).setProject(proj);
         }
@@ -113,16 +111,16 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public Bounds getBounds(InstancePainter painter) {
-      MemState data = (MemState) painter.getData();
-      Bounds inBounds = painter.getInstance().getBounds();
+      final var data = (MemState) painter.getData();
+      final var inBounds = painter.getInstance().getBounds();
       return data.getDataBounds(data.getCursor(), inBounds);
     }
 
     @Override
     public void keyTyped(InstanceState state, KeyEvent e) {
-      char c = e.getKeyChar();
-      int val = Character.digit(e.getKeyChar(), 16);
-      MemState data = (MemState) state.getData();
+      final var c = e.getKeyChar();
+      final var val = Character.digit(e.getKeyChar(), 16);
+      final var data = (MemState) state.getData();
       if (val >= 0) {
         curValue = curValue * 16 + val;
         data.getContents().set(data.getCursor(), curValue);
@@ -140,7 +138,7 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void keyPressed(InstanceState state, KeyEvent e) {
-      MemState data = (MemState) state.getData();
+      final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
         moveTo(data, data.getCursor() - data.GetNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -167,9 +165,9 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void paint(InstancePainter painter) {
-      Bounds bds = getBounds(painter);
+      final var bds = getBounds(painter);
       if (bds == null || bds == Bounds.EMPTY_BOUNDS) return;
-      Graphics g = painter.getGraphics();
+      final var g = painter.getGraphics();
       g.setColor(Color.RED);
       g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLACK);
@@ -177,7 +175,7 @@ public class MemPoker extends InstancePoker {
 
     @Override
     public void stopEditing(InstanceState state) {
-      MemState data = (MemState) state.getData();
+      final var data = (MemState) state.getData();
       data.setCursor(-1);
     }
   }
@@ -191,8 +189,8 @@ public class MemPoker extends InstancePoker {
 
   @Override
   public boolean init(InstanceState state, MouseEvent event) {
-    Bounds bds = state.getInstance().getBounds();
-    MemState data = (MemState) state.getData();
+    final var bds = state.getInstance().getBounds();
+    final var data = (MemState) state.getData();
     long addr = data.getAddressAt(event.getX() - bds.getX(), event.getY() - bds.getY());
 
     // See if outside box

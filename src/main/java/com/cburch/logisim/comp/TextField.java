@@ -31,7 +31,6 @@ package com.cburch.logisim.comp;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -74,15 +73,15 @@ public class TextField {
   }
 
   public void draw(Graphics g) {
-    Font old = g.getFont();
+    final var old = g.getFont();
     if (font != null) g.setFont(font);
 
-    int x = this.x;
-    int y = this.y;
-    FontMetrics fm = g.getFontMetrics();
-    int width = fm.stringWidth(text);
-    int ascent = fm.getAscent();
-    int descent = fm.getDescent();
+    var x = this.x;
+    var y = this.y;
+    final var fm = g.getFontMetrics();
+    final var width = fm.stringWidth(text);
+    final var ascent = fm.getAscent();
+    final var descent = fm.getDescent();
     switch (halign) {
       case TextField.H_CENTER:
         x -= width / 2;
@@ -114,20 +113,19 @@ public class TextField {
   }
 
   public void fireTextChanged(TextFieldEvent e) {
-    for (TextFieldListener l : new ArrayList<>(listeners)) {
+    for (final var l : new ArrayList<>(listeners)) {
       l.textChanged(e);
     }
   }
 
   public Bounds getBounds(Graphics g) {
-    int x = this.x;
-    int y = this.y;
-    FontMetrics fm;
-    if (font == null) fm = g.getFontMetrics();
-    else fm = g.getFontMetrics(font);
-    int width = fm.stringWidth(text);
-    int ascent = fm.getAscent();
-    int descent = fm.getDescent();
+    var x = this.x;
+    var y = this.y;
+    final var fm = (font == null) ? g.getFontMetrics() : g.getFontMetrics(font);
+    final var width = fm.stringWidth(text);
+    final var ascent = fm.getAscent();
+    final var descent = fm.getDescent();
+
     switch (halign) {
       case TextField.H_CENTER:
         x -= width / 2;
@@ -138,6 +136,7 @@ public class TextField {
       default:
         break;
     }
+
     switch (valign) {
       case TextField.V_TOP:
         y += ascent;
@@ -229,7 +228,7 @@ public class TextField {
   //
   public void setText(String text) {
     if (!text.equals(this.text)) {
-      TextFieldEvent e = new TextFieldEvent(this, this.text, text);
+      final var e = new TextFieldEvent(this, this.text, text);
       this.text = text;
       fireTextChanged(e);
     }

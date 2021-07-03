@@ -53,7 +53,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class Random extends InstanceFactory {
   /**
@@ -67,7 +66,7 @@ public class Random extends InstanceFactory {
   public static class Logger extends InstanceLogger {
     @Override
     public String getLogName(InstanceState state, Object option) {
-      String ret = state.getAttributeValue(StdAttr.LABEL);
+      final var ret = state.getAttributeValue(StdAttr.LABEL);
       return ret != null && !ret.equals("") ? ret : null;
     }
 
@@ -78,9 +77,9 @@ public class Random extends InstanceFactory {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+      var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
       if (dataWidth == null) dataWidth = BitWidth.create(0);
-      StateData data = (StateData) state.getData();
+      final var data = (StateData) state.getData();
       if (data == null) return Value.createKnown(dataWidth, 0);
       return Value.createKnown(dataWidth, data.value);
     }
@@ -99,26 +98,26 @@ public class Random extends InstanceFactory {
     private long initSeed;
     private long curSeed;
     private int value;
-    private long ResetValue;
-    private Value OldReset;
+    private long resetValue;
+    private Value oldReset;
 
     public StateData(Object seed) {
-      ResetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
+      resetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
       this.value = (int) this.initSeed;
-      OldReset = Value.UNKNOWN;
+      oldReset = Value.UNKNOWN;
     }
 
     public void PropagateReset(Value Reset, Object seed) {
-      if (OldReset == Value.FALSE && Reset == Value.TRUE) {
-        ResetValue = getRandomSeed(seed);
+      if (oldReset == Value.FALSE && Reset == Value.TRUE) {
+        resetValue = getRandomSeed(seed);
       }
-      OldReset = Reset;
+      oldReset = Reset;
     }
 
     public void reset(Object seed) {
-      this.initSeed = ResetValue;
-      this.curSeed = ResetValue;
-      this.value = (int) ResetValue;
+      this.initSeed = resetValue;
+      this.curSeed = resetValue;
+      this.value = (int) resetValue;
     }
 
     private long getRandomSeed(Object seed) {
@@ -200,7 +199,7 @@ public class Random extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     instance.setTextField(
         StdAttr.LABEL,
         StdAttr.LABEL_FONT,
@@ -211,7 +210,7 @@ public class Random extends InstanceFactory {
   }
 
   private void updatePorts(Instance instance) {
-    Port[] ps = new Port[4];
+    final var ps = new Port[4];
     if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       ps[OUT] = new Port(40, 20, Port.OUTPUT, StdAttr.WIDTH);
       ps[CK] = new Port(10, 40, Port.INPUT, 1);
@@ -239,7 +238,7 @@ public class Random extends InstanceFactory {
   }
 
   private void DrawControl(InstancePainter painter, int xpos, int ypos, int NrOfBits) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawLine(xpos + 10, ypos, xpos + 70, ypos);
     g.drawLine(xpos + 10, ypos, xpos + 10, ypos + 60);
@@ -248,15 +247,13 @@ public class Random extends InstanceFactory {
     g.drawLine(xpos + 60, ypos + 60, xpos + 70, ypos + 60);
     g.drawLine(xpos + 20, ypos + 60, xpos + 20, ypos + 70);
     g.drawLine(xpos + 60, ypos + 60, xpos + 60, ypos + 70);
-    String Name = "RNG" + NrOfBits;
-    GraphicsUtil.drawText(
-        g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
+    final var Name = "RNG" + NrOfBits;
+    GraphicsUtil.drawText(g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
     g.drawLine(xpos, ypos + 30, xpos + 10, ypos + 30);
     GraphicsUtil.drawText(g, "R", xpos + 20, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(RST);
     g.drawLine(xpos, ypos + 40, xpos + 10, ypos + 40);
-    GraphicsUtil.drawText(
-        g, "EN", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(g, "EN", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(NXT);
     painter.drawClockSymbol(xpos + 10, ypos + 50);
     GraphicsUtil.switchToWidth(g, 2);
@@ -270,11 +267,11 @@ public class Random extends InstanceFactory {
   }
 
   private void DrawData(InstancePainter painter, int xpos, int ypos, int NrOfBits, int Value) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(xpos, ypos, 80, 20);
     if (painter.getShowState()) {
-      String str = StringUtil.toHexString(NrOfBits, Value);
+      final var str = StringUtil.toHexString(NrOfBits, Value);
       GraphicsUtil.drawCenteredText(g, str, xpos + 40, ypos + 10);
     }
     painter.drawPort(OUT);
@@ -282,28 +279,28 @@ public class Random extends InstanceFactory {
   }
 
   private void paintInstanceClassic(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
-    StateData state = (StateData) painter.getData();
-    BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
-    int width = widthVal == null ? 8 : widthVal.getWidth();
+    final var g = painter.getGraphics();
+    final var bds = painter.getBounds();
+    final var state = (StateData) painter.getData();
+    final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+    final var width = widthVal == null ? 8 : widthVal.getWidth();
 
     // determine text to draw in label
     String a;
     String b = null;
     if (painter.getShowState()) {
       int val = state == null ? 0 : state.value;
-      String str = StringUtil.toHexString(width, val);
+      final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
       } else {
-        int split = str.length() - 4;
+        final var split = str.length() - 4;
         a = str.substring(0, split);
         b = str.substring(split);
       }
     } else {
       a = S.get("randomLabel");
-      b = S.fmt("randomWidthLabel", "" + widthVal.getWidth());
+      b = S.get("randomWidthLabel", "" + widthVal.getWidth());
     }
 
     // draw boundary, label
@@ -312,8 +309,10 @@ public class Random extends InstanceFactory {
     painter.drawLabel();
 
     // draw input and output ports
-    if (b == null) painter.drawPort(OUT, "Q", Direction.WEST);
-    else painter.drawPort(OUT);
+    if (b == null)
+      painter.drawPort(OUT, "Q", Direction.WEST);
+    else
+      painter.drawPort(OUT);
     g.setColor(Color.GRAY);
     painter.drawPort(RST, "0", Direction.SOUTH);
     painter.drawPort(NXT, S.get("memEnableLabel"), Direction.EAST);
@@ -322,24 +321,21 @@ public class Random extends InstanceFactory {
 
     // draw contents
     if (b == null) {
-      GraphicsUtil.drawText(
-          g, a, bds.getX() + 20, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(g, a, bds.getX() + 20, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     } else {
-      GraphicsUtil.drawText(
-          g, a, bds.getX() + 20, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-      GraphicsUtil.drawText(
-          g, b, bds.getX() + 20, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(g, a, bds.getX() + 20, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(g, b, bds.getX() + 20, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     }
   }
 
   private void paintInstanceEvolution(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    StateData state = (StateData) painter.getData();
-    int val = state == null ? 0 : state.value;
-    BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
-    int width = widthVal == null ? 8 : widthVal.getWidth();
+    final var bds = painter.getBounds();
+    final var x = bds.getX();
+    final var y = bds.getY();
+    final var state = (StateData) painter.getData();
+    final var val = state == null ? 0 : state.value;
+    final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+    final var width = widthVal == null ? 8 : widthVal.getWidth();
 
     painter.drawLabel();
     DrawControl(painter, x, y, width);
@@ -366,15 +362,15 @@ public class Random extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    StateData data = (StateData) state.getData();
+    var data = (StateData) state.getData();
     if (data == null) {
       data = new StateData(state.getAttributeValue(ATTR_SEED));
       state.setData(data);
     }
 
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    boolean triggered = data.updateClock(state.getPortValue(CK), triggerType);
+    final var triggered = data.updateClock(state.getPortValue(CK), triggerType);
 
     data.PropagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED));
     if (state.getPortValue(RST) == Value.TRUE) {

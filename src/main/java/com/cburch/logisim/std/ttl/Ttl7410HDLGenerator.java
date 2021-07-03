@@ -59,57 +59,57 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("A0", 1);
-    MyInputs.put("B0", 1);
-    MyInputs.put("C0", 1);
-    MyInputs.put("A1", 1);
-    MyInputs.put("B1", 1);
-    MyInputs.put("C1", 1);
-    MyInputs.put("A2", 1);
-    MyInputs.put("B2", 1);
-    MyInputs.put("C2", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("A0", 1);
+    map.put("B0", 1);
+    map.put("C0", 1);
+    map.put("A1", 1);
+    map.put("B1", 1);
+    map.put("C1", 1);
+    map.put("A2", 1);
+    map.put("B2", 1);
+    map.put("C2", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("Y0", 1);
-    MyOutputs.put("Y1", 1);
-    MyOutputs.put("Y2", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("Y0", 1);
+    map.put("Y1", 1);
+    map.put("Y2", 1);
+    return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    String Inv = Inverted ? HDL.notOperator() : "";
-    String Func = andgate ? HDL.andOperator() : HDL.orOperator();
-    Contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
-    Contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv + " (A1 " + Func + " B1 " + Func + " C1);");
-    Contents.add("   " + HDL.assignPreamble() + "Y2" + HDL.assignOperator() + Inv + " (A2 " + Func + " B2 " + Func + " C2);");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    final var Inv = Inverted ? HDL.notOperator() : "";
+    final var Func = andgate ? HDL.andOperator() : HDL.orOperator();
+    contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
+    contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv + " (A1 " + Func + " B1 " + Func + " C1);");
+    contents.add("   " + HDL.assignPreamble() + "Y2" + HDL.assignOperator() + Inv + " (A2 " + Func + " B2 " + Func + " C2);");
+    return contents;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("A0", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("B0", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("C0", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("Y0", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("C1", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("Y1", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("A2", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("B2", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("C2", true, ComponentInfo, 7, Nets));
-    PortMap.putAll(GetNetMap("Y2", true, ComponentInfo, 6, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    map.putAll(GetNetMap("A0", true, componentInfo, 0, nets));
+    map.putAll(GetNetMap("B0", true, componentInfo, 1, nets));
+    map.putAll(GetNetMap("C0", true, componentInfo, 11, nets));
+    map.putAll(GetNetMap("Y0", true, componentInfo, 10, nets));
+    map.putAll(GetNetMap("A1", true, componentInfo, 2, nets));
+    map.putAll(GetNetMap("B1", true, componentInfo, 3, nets));
+    map.putAll(GetNetMap("C1", true, componentInfo, 4, nets));
+    map.putAll(GetNetMap("Y1", true, componentInfo, 5, nets));
+    map.putAll(GetNetMap("A2", true, componentInfo, 9, nets));
+    map.putAll(GetNetMap("B2", true, componentInfo, 8, nets));
+    map.putAll(GetNetMap("C2", true, componentInfo, 7, nets));
+    map.putAll(GetNetMap("Y2", true, componentInfo, 6, nets));
+    return map;
   }
 
   @Override
@@ -125,6 +125,6 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND));
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

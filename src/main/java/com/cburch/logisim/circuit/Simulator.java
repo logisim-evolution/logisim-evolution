@@ -33,7 +33,6 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.log.ClockSource;
 import com.cburch.logisim.gui.log.ComponentSelector;
-import com.cburch.logisim.gui.log.SignalInfo;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
@@ -321,12 +320,12 @@ public class Simulator {
       // System.out.printf("%d nudge %s tick %s prop %s step %s\n", cnt++, doNudge, doTick, doProp,
       // doStep);
 
-      boolean oops = false;
-      boolean osc = false;
-      boolean ticked = false;
-      boolean stepped = false;
-      boolean propagated = false;
-      boolean hasClocks = true;
+      var oops = false;
+      var osc = false;
+      var ticked = false;
+      var stepped = false;
+      var propagated = false;
+      var hasClocks = true;
 
       if (doReset)
         try {
@@ -348,8 +347,8 @@ public class Simulator {
         try {
           propagated = doProp;
           // todo: need to fire events in here for chrono fine grained
-          Listener p = sim.getPropagationListener();
-          Event evt = p == null ? null : new Event(sim, false, false, false);
+          final var p = sim.getPropagationListener();
+          final var evt = p == null ? null : new Event(sim, false, false, false);
           stepPoints.clear();
           if (prop != null)
             propagated |=
@@ -372,7 +371,7 @@ public class Simulator {
 
       osc = prop != null && prop.isOscillating();
 
-      boolean clockDied = false;
+      var clockDied = false;
       synchronized (this) {
         _oops = oops;
         if (osc) {
@@ -484,15 +483,15 @@ public class Simulator {
 
   // called from simThread, but probably should not be
   private void _fireSimulatorReset() {
-    Event e = new Event(this, false, false, false);
-    for (Listener l : copyListeners())
+    final var e = new Event(this, false, false, false);
+    for (final var l : copyListeners())
       l.simulatorReset(e);
   }
 
   //called from simThread, but probably should not be
   private void _firePropagationCompleted(boolean t, boolean s, boolean p) {
-    Event e = new Event(this, t, s, p);
-    for (Listener l : copyListeners())
+    final var e = new Event(this, t, s, p);
+    for (final var l : copyListeners())
       l.propagationCompleted(e);
   }
 
@@ -505,7 +504,7 @@ public class Simulator {
   // called from simThread, but probably should not be
   private Listener getPropagationListener() {
     Listener p = null;
-    for (Listener l : copyListeners()) {
+    for (final var l : copyListeners()) {
       if (l.wantProgressEvents()) {
         if (p != null)
           throw new IllegalStateException("only one chronogram listener supported");
@@ -519,8 +518,8 @@ public class Simulator {
   // called only from gui thread, but need copy here anyway because listeners
   // can add/remove from listeners list?
   private void fireSimulatorStateChanged() {
-    Event e = new Event(this, false, false, false);
-    for (Listener l : copyListeners())
+    final var e = new Event(this, false, false, false);
+    for (final var l : copyListeners())
       l.simulatorStateChanged(e);
   }
 
@@ -538,7 +537,7 @@ public class Simulator {
   }
 
   public CircuitState getCircuitState() {
-    Propagator prop = simThread.getPropagator();
+    final var prop = simThread.getPropagator();
     return prop == null ? null : prop.getRootState();
   }
 
@@ -597,19 +596,19 @@ public class Simulator {
   }
 
   private boolean ensureClocks() {
-    CircuitState cs = getCircuitState();
+    final var cs = getCircuitState();
     if (cs == null)
       return false;
     if (cs.hasKnownClocks())
       return true;
-    Circuit circ = cs.getCircuit();
-    ArrayList<SignalInfo> clocks = ComponentSelector.findClocks(circ);
+    final var circ = cs.getCircuit();
+    final var clocks = ComponentSelector.findClocks(circ);
     if (clocks != null && clocks.size() >= 1) {
       cs.markKnownClocks();
       return true;
     }
 
-    Component clk = ClockSource.doClockDriverDialog(circ);
+    final var clk = ClockSource.doClockDriverDialog(circ);
     if (clk == null)
       return false;
     if (!cs.setTemporaryClock(clk))

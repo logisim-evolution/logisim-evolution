@@ -396,7 +396,7 @@ public class AlteraDownload implements VendorDownload {
     Reporter.Report.print("==> " + S.get("AlteraFlash"));
     Reporter.Report.print("==>");
     if (!new File(SandboxPath + JicFile).exists()) {
-      Reporter.Report.AddError(S.fmt("AlteraFlashError", JicFile));
+      Reporter.Report.AddError(S.get("AlteraFlashError", JicFile));
       return false;
     }
     List<String> command = new ArrayList<>();
@@ -440,7 +440,7 @@ public class AlteraDownload implements VendorDownload {
     Reporter.Report.print("==> " + S.get("AlteraProgSof"));
     Reporter.Report.print("==>");
     if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.Report.AddError(S.fmt("AlteraProgSofError", ProgrammerSofFile));
+      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
     List<String> command = new ArrayList<>();

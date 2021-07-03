@@ -52,12 +52,12 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Inputs.put("DataA", inputbits);
-    Inputs.put("DataB", inputbits);
-    Inputs.put("BorrowIn", 1);
-    return Inputs;
+    inputs.put("DataA", inputbits);
+    inputs.put("DataB", inputbits);
+    inputs.put("BorrowIn", 1);
+    return inputs;
   }
 
   @Override
@@ -88,43 +88,42 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var outputs = new TreeMap<String, Integer>();
     int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Outputs.put("Result", outputbits);
-    Outputs.put("BorrowOut", 1);
-    return Outputs;
+    outputs.put("Result", outputbits);
+    outputs.put("BorrowOut", 1);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
+    final var params = new TreeMap<Integer, String>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (outputbits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
-    Parameters.put(ExtendedBitsId, ExtendedBitsStr);
-    return Parameters;
+    if (outputbits > 1) params.put(NrOfBitsId, NrOfBitsStr);
+    params.put(ExtendedBitsId, ExtendedBitsStr);
+    return params;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(
-      Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    ParameterMap.put(ExtendedBitsStr, nrOfBits + 1);
-    if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
-    return ParameterMap;
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    final var parameterMap = new TreeMap<String, Integer>();
+    int nrOfBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    parameterMap.put(ExtendedBitsStr, nrOfBits + 1);
+    if (nrOfBits > 1) parameterMap.put(NrOfBitsStr, nrOfBits);
+    return parameterMap;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("BorrowIn", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("BorrowOut", true, ComponentInfo, 4, Nets));
-    return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    final var ComponentInfo = (NetlistComponent) MapInfo;
+    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
+    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
+    portMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
+    portMap.putAll(GetNetMap("BorrowIn", true, ComponentInfo, 3, Nets));
+    portMap.putAll(GetNetMap("BorrowOut", true, ComponentInfo, 4, Nets));
+    return portMap;
   }
 
   @Override
@@ -134,14 +133,14 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var wires = new TreeMap<String, Integer>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    Wires.put("s_extended_dataA", ExtendedBitsId);
-    Wires.put("s_extended_dataB", ExtendedBitsId);
-    Wires.put("s_inverted_dataB", (outputbits > 1) ? NrOfBitsId : 1);
-    Wires.put("s_sum_result", ExtendedBitsId);
-    Wires.put("s_carry", 1);
-    return Wires;
+    wires.put("s_extended_dataA", ExtendedBitsId);
+    wires.put("s_extended_dataB", ExtendedBitsId);
+    wires.put("s_inverted_dataB", (outputbits > 1) ? NrOfBitsId : 1);
+    wires.put("s_sum_result", ExtendedBitsId);
+    wires.put("s_carry", 1);
+    return wires;
   }
 
   @Override

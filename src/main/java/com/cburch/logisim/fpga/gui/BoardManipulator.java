@@ -415,7 +415,7 @@ public class BoardManipulator extends JPanel
           image = null;
           OptionPane.showMessageDialog(
               this,
-              S.fmt("BoardManipLoadError", file.getName()),
+              S.get("BoardManipLoadError", file.getName()),
               S.get("BoardManipLoad"),
               OptionPane.ERROR_MESSAGE);
         }

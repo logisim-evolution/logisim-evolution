@@ -48,115 +48,115 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<>();
-    MyInputs.put("nCLR", 1);
-    MyInputs.put("CLK", 1);
-    MyInputs.put("Tick", 1);
-    MyInputs.put("D1", 1);
-    MyInputs.put("D2", 1);
-    MyInputs.put("D3", 1);
-    MyInputs.put("D4", 1);
-    return MyInputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("nCLR", 1);
+    map.put("CLK", 1);
+    map.put("Tick", 1);
+    map.put("D1", 1);
+    map.put("D2", 1);
+    map.put("D3", 1);
+    map.put("D4", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
-    MyOutputs.put("nQ1", 1);
-    MyOutputs.put("Q1", 1);
-    MyOutputs.put("nQ2", 1);
-    MyOutputs.put("Q2", 1);
-    MyOutputs.put("nQ3", 1);
-    MyOutputs.put("Q3", 1);
-    MyOutputs.put("nQ4", 1);
-    MyOutputs.put("Q4", 1);
-    return MyOutputs;
+    final var map = new TreeMap<String, Integer>();
+    map.put("nQ1", 1);
+    map.put("Q1", 1);
+    map.put("nQ2", 1);
+    map.put("Q2", 1);
+    map.put("nQ3", 1);
+    map.put("Q3", 1);
+    map.put("nQ4", 1);
+    map.put("Q4", 1);
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("CurState", 4);
-    Wires.put("NextState", 4);
-    return Wires;
+    final var map = new TreeMap<String, Integer>();
+    map.put("CurState", 4);
+    map.put("NextState", 4);
+    return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   NextState <= CurState WHEN tick = '0' ELSE");
-    Contents.add("                D4&D3&D2&D1;");
-    Contents.add(" ");
-    Contents.add("   dffs : PROCESS( CLK , nCLR ) IS");
-    Contents.add("      BEGIN");
-    Contents.add("         IF (nCLR = '0') THEN CurState <= \"0000\";");
-    Contents.add("         ELSIF (rising_edge(CLK)) THEN");
-    Contents.add("            CurState <= NextState;");
-    Contents.add("         END IF;");
-    Contents.add("      END PROCESS dffs;");
-    Contents.add(" ");
-    Contents.add("   nQ1 <= NOT(CurState(0));");
-    Contents.add("   Q1  <= CurState(0);");
-    Contents.add("   nQ2 <= NOT(CurState(1));");
-    Contents.add("   Q2  <= CurState(1);");
-    Contents.add("   nQ3 <= NOT(CurState(2));");
-    Contents.add("   Q3  <= CurState(2);");
-    Contents.add("   nQ4 <= NOT(CurState(3));");
-    Contents.add("   Q4  <= CurState(3);");
-    return Contents;
+    final var contents = new ArrayList<String>();
+    contents.add("   NextState <= CurState WHEN tick = '0' ELSE");
+    contents.add("                D4&D3&D2&D1;");
+    contents.add(" ");
+    contents.add("   dffs : PROCESS( CLK , nCLR ) IS");
+    contents.add("      BEGIN");
+    contents.add("         IF (nCLR = '0') THEN CurState <= \"0000\";");
+    contents.add("         ELSIF (rising_edge(CLK)) THEN");
+    contents.add("            CurState <= NextState;");
+    contents.add("         END IF;");
+    contents.add("      END PROCESS dffs;");
+    contents.add(" ");
+    contents.add("   nQ1 <= NOT(CurState(0));");
+    contents.add("   Q1  <= CurState(0);");
+    contents.add("   nQ2 <= NOT(CurState(1));");
+    contents.add("   Q2  <= CurState(1);");
+    contents.add("   nQ3 <= NOT(CurState(2));");
+    contents.add("   Q3  <= CurState(2);");
+    contents.add("   nQ4 <= NOT(CurState(3));");
+    contents.add("   Q4  <= CurState(3);");
+    return contents;
   }
 
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    boolean GatedClock = false;
-    boolean HasClock = true;
-    int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
-      Reporter.Report.AddSevereWarning("Component \"TTL74165\" in circuit \"" + Nets.getCircuitName()
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    var gatedClock = false;
+    var hasClock = true;
+    int clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
+    if (!comp.EndIsConnected(clockPinIndex)) {
+      Reporter.Report.AddSevereWarning("Component \"TTL74165\" in circuit \"" + nets.getCircuitName()
               + "\" has no clock connection");
-      HasClock = false;
+      hasClock = false;
     }
-    String ClockNetName = GetClockNetName(ComponentInfo, ClockPinIndex, Nets);
-    if (ClockNetName.isEmpty()) {
-      GatedClock = true;
+    final var clockNetName = GetClockNetName(comp, clockPinIndex, nets);
+    if (clockNetName.isEmpty()) {
+      gatedClock = true;
     }
-    if (!HasClock) {
-      PortMap.put("CLK", "'0'");
-      PortMap.put("Tick", "'0'");
-    } else if (GatedClock) {
-      PortMap.put("Tick", "'1'");
-      PortMap.put("CLK", GetNetName(ComponentInfo, ClockPinIndex, true, Nets));
+    if (!hasClock) {
+      map.put("CLK", "'0'");
+      map.put("Tick", "'0'");
+    } else if (gatedClock) {
+      map.put("Tick", "'1'");
+      map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
     } else {
-      if (Nets.RequiresGlobalClockConnection()) {
-        PortMap.put("Tick", "'1'");
+      if (nets.RequiresGlobalClockConnection()) {
+        map.put("Tick", "'1'");
       } else {
-        PortMap.put(
+        map.put(
             "Tick",
-            ClockNetName
+            clockNetName
                 + "("
                 + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                 + ")");
       }
-      PortMap.put(
+      map.put(
           "CLK",
-          ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+          clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
     }
-    PortMap.putAll(GetNetMap("nCLR", true, ComponentInfo, 0, Nets));
-    PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 1, Nets));
-    PortMap.putAll(GetNetMap("nQ1", true, ComponentInfo, 2, Nets));
-    PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 3, Nets));
-    PortMap.putAll(GetNetMap("D2", true, ComponentInfo, 4, Nets));
-    PortMap.putAll(GetNetMap("nQ2", true, ComponentInfo, 5, Nets));
-    PortMap.putAll(GetNetMap("Q2", true, ComponentInfo, 6, Nets));
-    PortMap.putAll(GetNetMap("Q3", true, ComponentInfo, 8, Nets));
-    PortMap.putAll(GetNetMap("nQ3", true, ComponentInfo, 9, Nets));
-    PortMap.putAll(GetNetMap("D3", true, ComponentInfo, 10, Nets));
-    PortMap.putAll(GetNetMap("D4", true, ComponentInfo, 11, Nets));
-    PortMap.putAll(GetNetMap("nQ4", true, ComponentInfo, 12, Nets));
-    PortMap.putAll(GetNetMap("Q4", true, ComponentInfo, 13, Nets));
-    return PortMap;
+    map.putAll(GetNetMap("nCLR", true, comp, 0, nets));
+    map.putAll(GetNetMap("Q1", true, comp, 1, nets));
+    map.putAll(GetNetMap("nQ1", true, comp, 2, nets));
+    map.putAll(GetNetMap("D1", true, comp, 3, nets));
+    map.putAll(GetNetMap("D2", true, comp, 4, nets));
+    map.putAll(GetNetMap("nQ2", true, comp, 5, nets));
+    map.putAll(GetNetMap("Q2", true, comp, 6, nets));
+    map.putAll(GetNetMap("Q3", true, comp, 8, nets));
+    map.putAll(GetNetMap("nQ3", true, comp, 9, nets));
+    map.putAll(GetNetMap("D3", true, comp, 10, nets));
+    map.putAll(GetNetMap("D4", true, comp, 11, nets));
+    map.putAll(GetNetMap("nQ4", true, comp, 12, nets));
+    map.putAll(GetNetMap("Q4", true, comp, 13, nets));
+    return map;
   }
 
   @Override
@@ -172,6 +172,6 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TTL.VCC_GND) && HDL.isVHDL());
+    return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());
   }
 }

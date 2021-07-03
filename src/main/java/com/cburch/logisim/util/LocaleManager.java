@@ -52,6 +52,7 @@ public class LocaleManager {
       this.key = key;
     }
 
+    @Override
     public String toString() {
       return source.get(key);
     }
@@ -66,6 +67,7 @@ public class LocaleManager {
       this.arg = arg;
     }
 
+    @Override
     public String toString() {
       return source.fmt(key, arg);
     }
@@ -79,6 +81,7 @@ public class LocaleManager {
       this.arg = arg;
     }
 
+    @Override
     public String toString() {
       return source.fmt(key, arg.toString());
     }
@@ -101,10 +104,10 @@ public class LocaleManager {
     } catch (MissingResourceException e) {
       return null;
     }
-    StringTokenizer toks = new StringTokenizer(val, "/");
+    final var toks = new StringTokenizer(val, "/");
     while (toks.hasMoreTokens()) {
-      String tok = toks.nextToken().trim();
-      char c = '\0';
+      final var tok = toks.nextToken().trim();
+      var c = '\0';
       String s = null;
       if (tok.length() == 1) {
         c = tok.charAt(0);
@@ -122,7 +125,7 @@ public class LocaleManager {
   }
 
   private static void fireLocaleChanged() {
-    for (LocaleListener l : listeners) {
+    for (final var l : listeners) {
       l.localeChanged();
     }
   }
@@ -141,17 +144,17 @@ public class LocaleManager {
   private static String replaceAccents(String src, HashMap<Character, String> repl) {
     // find first non-standard character - so we can avoid the
     // replacement process if possible
-    int i = 0;
-    int n = src.length();
+    var i = 0;
+    var n = src.length();
     for (; i < n; i++) {
-      char ci = src.charAt(i);
+      final var ci = src.charAt(i);
       if (ci < 32 || ci >= 127) break;
     }
     if (i == n) return src;
 
     // ok, we'll have to consider replacing accents
     char[] cs = src.toCharArray();
-    StringBuilder ret = new StringBuilder(src.substring(0, i));
+    final var ret = new StringBuilder(src.substring(0, i));
     for (int j = i; j < cs.length; j++) {
       char cj = cs[j];
       if (cj < 32 || cj >= 127) {
@@ -177,8 +180,7 @@ public class LocaleManager {
     UIManager.put("FileChooser.homeFolderToolTipText", S.get("LMhomeFolderToolTipText"));
     UIManager.put("FileChooser.newFolderToolTipText", S.get("LMnewFolderToolTipText"));
     UIManager.put("FileChooser.listViewButtonToolTipText", S.get("LMlistViewButtonToolTipText"));
-    UIManager.put(
-        "FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
+    UIManager.put("FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
     UIManager.put("FileChooser.fileNameHeaderText", S.get("LMfileNameHeaderText"));
     UIManager.put("FileChooser.fileSizeHeaderText", S.get("LMfileSizeHeaderText"));
     UIManager.put("FileChooser.fileTypeHeaderText", S.get("LMfileTypeHeaderText"));
@@ -191,8 +193,7 @@ public class LocaleManager {
     UIManager.put("FileChooser.saveButtonText", S.get("LMsaveButtonText"));
     UIManager.put("FileChooser.saveButtonToolTipText", S.get("LMsaveButtonToolTipText"));
     UIManager.put("FileChooser.directoryOpenButtonText", S.get("LMdirectoryOpenButtonText"));
-    UIManager.put(
-        "FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
+    UIManager.put("FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
     UIManager.put("FileChooser.cancelButtonText", S.get("LMcancelButtonText"));
     UIManager.put("FileChooser.cancelButtonToolTipText", S.get("LMcancelButtonToolTipText"));
     UIManager.put("FileChooser.newFolderErrorText", S.get("LMnewFolderErrorText"));
@@ -205,13 +206,13 @@ public class LocaleManager {
   }
 
   public static void setLocale(Locale loc) {
-    Locale cur = getLocale();
+    final var cur = getLocale();
     if (!loc.equals(cur)) {
-      Locale[] opts = S.getLocaleOptions();
+      final var opts = S.getLocaleOptions();
       Locale select = null;
       Locale backup = null;
       String locLang = loc.getLanguage();
-      for (Locale opt : opts) {
+      for (final var opt : opts) {
         if (select == null && opt.equals(loc)) {
           select = opt;
         }
@@ -225,7 +226,7 @@ public class LocaleManager {
 
       curLocale = select;
       Locale.setDefault(select);
-      for (LocaleManager man : managers) {
+      for (final var man : managers) {
         man.loadDefault();
       }
       repl = replaceAccents ? fetchReplaceAccents() : null;
@@ -235,7 +236,7 @@ public class LocaleManager {
   }
 
   public static void setReplaceAccents(boolean value) {
-    HashMap<Character, String> newRepl = value ? fetchReplaceAccents() : null;
+    final var newRepl = value ? fetchReplaceAccents() : null;
     replaceAccents = value;
     repl = newRepl;
     fireLocaleChanged();
@@ -271,9 +272,9 @@ public class LocaleManager {
   }
 
   public JComponent createLocaleSelector() {
-    Locale[] locales = getLocaleOptions();
+    var locales = getLocaleOptions();
     if (locales == null || locales.length == 0) {
-      Locale cur = getLocale();
+      var cur = getLocale();
       if (cur == null) cur = new Locale("en");
       locales = new Locale[] {cur};
     }
@@ -287,12 +288,19 @@ public class LocaleManager {
     } catch (MissingResourceException e) {
       ret = key;
     }
-    HashMap<Character, String> repl = LocaleManager.repl;
+    final var repl = LocaleManager.repl;
     if (repl != null) ret = replaceAccents(ret, repl);
     return ret;
   }
 
-  /* kwalsh >> */
+  public String get(String key, Object... args) {
+    return String.format(get(key), args);
+  }
+
+  /**
+   * @Deprecated Use get(key, ...)
+   *
+   */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);
   }
@@ -306,10 +314,10 @@ public class LocaleManager {
     }
     if (locs == null) return new Locale[] {};
 
-    ArrayList<Locale> retl = new ArrayList<>();
+    final var retl = new ArrayList<Locale>();
     StringTokenizer toks = new StringTokenizer(locs);
     while (toks.hasMoreTokens()) {
-      String f = toks.nextToken();
+      final var f = toks.nextToken();
       String language;
       String country;
       if (f.length() >= 2) {
@@ -365,7 +373,7 @@ public class LocaleManager {
   }
 
   private void loadLocale(Locale loc) {
-    String bundleName = dirName + "/strings/" + fileStart + "/" + fileStart;
+    final var bundleName = dirName + "/strings/" + fileStart + "/" + fileStart;
     locale = ResourceBundle.getBundle(bundleName, loc);
   }
 }

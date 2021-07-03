@@ -49,8 +49,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 
 public class Tty extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -94,7 +92,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     super(_ID, S.getter("ttyComponent"));
     setAttributes(
         new Attribute[] {
-          ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND
+          ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, IoLibrary.ATTR_COLOR, IoLibrary.ATTR_BACKGROUND
         },
         new Object[] {
             8,
@@ -105,7 +103,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
         });
     setIcon(new TtyIcon());
 
-    Port[] ps = new Port[4];
+    final var ps = new Port[4];
     ps[CLR] = new Port(20, 10, Port.INPUT, 1);
     ps[CK] = new Port(0, 0, Port.INPUT, 1);
     ps[WE] = new Port(10, 10, Port.INPUT, 1);
@@ -124,19 +122,19 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    int rows = getRowCount(attrs.getValue(ATTR_ROWS));
-    int cols = getColumnCount(attrs.getValue(ATTR_COLUMNS));
-    int width = 2 * BORDER + cols * COL_WIDTH;
-    int height = 2 * BORDER + rows * ROW_HEIGHT;
+    final var rows = getRowCount(attrs.getValue(ATTR_ROWS));
+    final var cols = getColumnCount(attrs.getValue(ATTR_COLUMNS));
+    var width = 2 * BORDER + cols * COL_WIDTH;
     if (width < 30) width = 30;
+    var height = 2 * BORDER + rows * ROW_HEIGHT;
     if (height < 30) height = 30;
     return Bounds.create(0, 10 - height, width, height);
   }
 
   private TtyState getTtyState(InstanceState state) {
-    int rows = getRowCount(state.getAttributeValue(ATTR_ROWS));
-    int cols = getColumnCount(state.getAttributeValue(ATTR_COLUMNS));
-    TtyState ret = (TtyState) state.getData();
+    final var rows = getRowCount(state.getAttributeValue(ATTR_ROWS));
+    final var cols = getColumnCount(state.getAttributeValue(ATTR_COLUMNS));
+    var ret = (TtyState) state.getData();
     if (ret == null) {
       ret = new TtyState(rows, cols);
       state.setData(ret);
@@ -155,20 +153,20 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
-    Bounds bds = painter.getBounds();
+    final var bds = painter.getBounds();
     g.drawRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    boolean showState = painter.getShowState();
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
+    final var showState = painter.getShowState();
+    final var g = painter.getGraphics();
+    final var bds = painter.getBounds();
     painter.drawClock(CK, Direction.EAST);
     if (painter.shouldDrawColor()) {
-      g.setColor(painter.getAttributeValue(Io.ATTR_BACKGROUND));
+      g.setColor(painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND));
       g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     }
     GraphicsUtil.switchToWidth(g, 2);
@@ -180,16 +178,16 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     painter.drawPort(WE);
     painter.drawPort(IN);
 
-    int rows = getRowCount(painter.getAttributeValue(ATTR_ROWS));
-    int cols = getColumnCount(painter.getAttributeValue(ATTR_COLUMNS));
+    final var rows = getRowCount(painter.getAttributeValue(ATTR_ROWS));
+    final var cols = getColumnCount(painter.getAttributeValue(ATTR_COLUMNS));
 
     if (showState) {
-      String[] rowData = new String[rows];
+      final var rowData = new String[rows];
       int curRow;
       int curCol;
-      TtyState state = getTtyState(painter);
+      final var state = getTtyState(painter);
       synchronized (state) {
-        for (int i = 0; i < rows; i++) {
+        for (var i = 0; i < rows; i++) {
           rowData[i] = state.getRowString(i);
         }
         curRow = state.getCursorRow();
@@ -197,21 +195,21 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
       }
 
       g.setFont(DEFAULT_FONT);
-      g.setColor(painter.getAttributeValue(Io.ATTR_COLOR));
-      FontMetrics fm = g.getFontMetrics();
+      g.setColor(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
+      final var fm = g.getFontMetrics();
       int x = bds.getX() + BORDER;
       int y = bds.getY() + BORDER + (ROW_HEIGHT + fm.getAscent()) / 2;
-      for (int i = 0; i < rows; i++) {
+      for (var i = 0; i < rows; i++) {
         g.drawString(rowData[i], x, y);
         if (i == curRow) {
-          int x0 = x + fm.stringWidth(rowData[i].substring(0, curCol));
+          final var x0 = x + fm.stringWidth(rowData[i].substring(0, curCol));
           g.drawLine(x0, y - fm.getAscent(), x0, y);
         }
         y += ROW_HEIGHT;
       }
     } else {
-      String str = S.fmt("ttyDesc", "" + rows, "" + cols);
-      FontMetrics fm = g.getFontMetrics();
+      var str = S.get("ttyDesc", "" + rows, "" + cols);
+      var fm = g.getFontMetrics();
       int strWidth = fm.stringWidth(str);
       if (strWidth + BORDER > bds.getWidth()) {
         str = S.get("ttyDescShort");
@@ -226,30 +224,27 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void propagate(InstanceState circState) {
     Object trigger = circState.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    TtyState state = getTtyState(circState);
-    Value clear = circState.getPortValue(CLR);
-    Value clock = circState.getPortValue(CK);
-    Value enable = circState.getPortValue(WE);
-    Value in = circState.getPortValue(IN);
+    final var state = getTtyState(circState);
+    final var clear = circState.getPortValue(CLR);
+    final var clock = circState.getPortValue(CK);
+    final var enable = circState.getPortValue(WE);
+    final var in = circState.getPortValue(IN);
 
     synchronized (state) {
-      Value lastClock = state.setLastClock(clock);
+      final var lastClock = state.setLastClock(clock);
       if (clear == Value.TRUE) {
         state.clear();
       } else if (enable != Value.FALSE) {
-        boolean go;
-        if (trigger == StdAttr.TRIG_FALLING) {
-          go = lastClock == Value.TRUE && clock == Value.FALSE;
-        } else {
-          go = lastClock == Value.FALSE && clock == Value.TRUE;
-        }
+        final var go = (trigger == StdAttr.TRIG_FALLING)
+                ? lastClock == Value.TRUE && clock == Value.FALSE
+                : lastClock == Value.FALSE && clock == Value.TRUE;
         if (go) state.add(in.isFullyDefined() ? (char) in.toLongValue() : '?');
       }
     }
   }
 
   public void sendToStdout(InstanceState state) {
-    TtyState tty = getTtyState(state);
+    final var tty = getTtyState(state);
     tty.setSendStdout(true);
   }
 

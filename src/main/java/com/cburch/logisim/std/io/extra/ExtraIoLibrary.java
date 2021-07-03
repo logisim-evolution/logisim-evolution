@@ -26,52 +26,58 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.arith;
+package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Arithmetic extends Library {
+public class ExtraIoLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "Arithmetic";
+  public static final String _ID = "Input/Output-Extra";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(Adder.class, S.getter("adderComponent"), "adder.gif"),
-    new FactoryDescription(Subtractor.class, S.getter("subtractorComponent"), "subtractor.gif"),
-    new FactoryDescription(Multiplier.class, S.getter("multiplierComponent"), "multiplier.gif"),
-    new FactoryDescription(Divider.class, S.getter("dividerComponent"), "divider.gif"),
-    new FactoryDescription(Negator.class, S.getter("negatorComponent"), "negator.gif"),
-    new FactoryDescription(Comparator.class, S.getter("comparatorComponent"), "comparator.gif"),
-    new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
-    new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
-    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
+    new FactoryDescription(Switch.class, S.getter("switchComponent"), "switch.gif"),
+    new FactoryDescription(Buzzer.class, S.getter("buzzerComponent"), "buzzer.gif"),
+    new FactoryDescription(Slider.class, S.getter("Slider"), "slider.gif"),
+    new FactoryDescription(DigitalOscilloscope.class, S.getter("DigitalOscilloscopeComponent"), "digitaloscilloscope.gif"),
+    new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent"), "plarom.gif"),
   };
 
   private List<Tool> tools = null;
+  private final Tool[] ADD_TOOLS = {
+    // new AddTool(ProgrammableGenerator.FACTORY), /* TODO: Broken component, fix */
+  };
 
   @Override
   public String getDisplayName() {
-    return S.get("arithmeticLibrary");
+    return S.get("input.output.extra");
   }
 
   @Override
-  public List<Tool> getTools() {
-    if (tools == null) {
-      tools = FactoryDescription.getTools(Arithmetic.class, DESCRIPTIONS);
-    }
-    return tools;
+  public boolean removeLibrary(String name) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
-  public boolean removeLibrary(String Name) {
-    return false;
+  @Override
+  public List<? extends Tool> getTools() {
+    if (tools == null) {
+      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
+      ret.addAll(Arrays.asList(ADD_TOOLS));
+      ret.addAll(FactoryDescription.getTools(ExtraIoLibrary.class, DESCRIPTIONS));
+      tools = ret;
+    }
+    return tools;
   }
 }

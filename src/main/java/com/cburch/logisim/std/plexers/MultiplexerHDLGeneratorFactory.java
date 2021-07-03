@@ -49,132 +49,128 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    for (int i = 0; i < (1 << nr_of_select_bits); i++)
-      Inputs.put("MuxIn_" + i, NrOfBits);
-    Inputs.put("Enable", 1);
-    Inputs.put("Sel", nr_of_select_bits);
-    return Inputs;
+  public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
+    final var map = new TreeMap<String, Integer>();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    for (var i = 0; i < (1 << nrOfSelectBits); i++)
+      map.put("MuxIn_" + i, nrOfBits);
+    map.put("Enable", 1);
+    map.put("Sel", nrOfSelectBits);
+    return map;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add("   make_mux : PROCESS( Enable,");
-      for (int i = 0; i < (1 << nr_of_select_bits); i++)
-        Contents.add("                       MuxIn_" + i + ",");
-      Contents.add("                       Sel )");
-      Contents.add("   BEGIN");
-      Contents.add("      IF (Enable = '0') THEN");
+      contents.add("   make_mux : PROCESS( Enable,");
+      for (var i = 0; i < (1 << nrOfSelectBits); i++)
+        contents.add("                       MuxIn_" + i + ",");
+      contents.add("                       Sel )");
+      contents.add("   BEGIN");
+      contents.add("      IF (Enable = '0') THEN");
       if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
-        Contents.add("         MuxOut <= (OTHERS => '0');");
-      else Contents.add("         MuxOut <= '0';");
-      Contents.add("                        ELSE");
-      Contents.add("         CASE (Sel) IS");
-      for (int i = 0; i < (1 << nr_of_select_bits) - 1; i++)
-        Contents.add(
+        contents.add("         MuxOut <= (OTHERS => '0');");
+      else contents.add("         MuxOut <= '0';");
+      contents.add("                        ELSE");
+      contents.add("         CASE (Sel) IS");
+      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
+        contents.add(
             "            WHEN "
-                + IntToBin(i, nr_of_select_bits)
+                + IntToBin(i, nrOfSelectBits)
                 + " => MuxOut <= MuxIn_"
                 + i
                 + ";");
-      Contents.add(
+      contents.add(
           "            WHEN OTHERS  => MuxOut <= MuxIn_"
-              + ((1 << nr_of_select_bits) - 1)
+              + ((1 << nrOfSelectBits) - 1)
               + ";");
-      Contents.add("         END CASE;");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS make_mux;");
+      contents.add("         END CASE;");
+      contents.add("      END IF;");
+      contents.add("   END PROCESS make_mux;");
     } else {
-      Contents.add("   assign MuxOut = s_selected_vector;");
-      Contents.add("");
-      Contents.add("   always @(*)");
-      Contents.add("   begin");
-      Contents.add("      if (~Enable) s_selected_vector <= 0;");
-      Contents.add("      else case (Sel)");
-      for (int i = 0; i < (1 << nr_of_select_bits) - 1; i++) {
-        Contents.add("         " + IntToBin(i, nr_of_select_bits) + ":");
-        Contents.add("            s_selected_vector <= MuxIn_" + i + ";");
+      contents.add("   assign MuxOut = s_selected_vector;");
+      contents.add("");
+      contents.add("   always @(*)");
+      contents.add("   begin");
+      contents.add("      if (~Enable) s_selected_vector <= 0;");
+      contents.add("      else case (Sel)");
+      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
+        contents.add("         " + IntToBin(i, nrOfSelectBits) + ":");
+        contents.add("            s_selected_vector <= MuxIn_" + i + ";");
       }
-      Contents.add("         default:");
-      Contents.add(
+      contents.add("         default:");
+      contents.add(
           "            s_selected_vector <= MuxIn_"
-              + ((1 << nr_of_select_bits) - 1)
+              + ((1 << nrOfSelectBits) - 1)
               + ";");
-      Contents.add("      endcase");
-      Contents.add("   end");
+      contents.add("      endcase");
+      contents.add("   end");
     }
-    return Contents;
+    return contents;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
+    final var map = new TreeMap<String, Integer>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Outputs.put("MuxOut", NrOfBits);
-    return Outputs;
+    map.put("MuxOut", NrOfBits);
+    return map;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (NrOfBits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
-    return Parameters;
+    final var map = new TreeMap<Integer, String>();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+    if (nrOfBits > 1) map.put(NrOfBitsId, NrOfBitsStr);
+    return map;
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int NrOfBits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (NrOfBits > 1) ParameterMap.put(NrOfBitsStr, NrOfBits);
-    return ParameterMap;
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    final var map = new TreeMap<String, Integer>();
+    final var nrOfBits =
+        componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
+    return map;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int nr_of_select_bits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(Plexers.ATTR_SELECT).getWidth();
-    int select_input_index = (1 << nr_of_select_bits);
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return map;
+    final var comp = (NetlistComponent) mapInfo;
+    final var nrOfSelectBits = comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all inputs of multiplexer
-    for (int i = 0; i < select_input_index; i++)
-      PortMap.putAll(
-          GetNetMap(
-              "MuxIn_" + i, true, ComponentInfo, i, Nets));
+    for (var i = 0; i < selectInputIndex; i++)
+      map.putAll(GetNetMap("MuxIn_" + i, true, comp, i, nets));
     // now select..
-    PortMap.putAll(
-        GetNetMap("Sel", true, ComponentInfo, select_input_index, Nets));
+    map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (ComponentInfo.GetComponent()
+    if (comp.GetComponent()
         .getAttributeSet()
-        .getValue(Plexers.ATTR_ENABLE)) {
-      PortMap.putAll(
+        .getValue(PlexersLibrary.ATTR_ENABLE)) {
+      map.putAll(
           GetNetMap(
-              "Enable", false, ComponentInfo, select_input_index + 1, Nets));
+              "Enable", false, comp, selectInputIndex + 1, nets));
     } else {
-      PortMap.put("Enable", HDL.oneBit());
-      select_input_index--; // decrement pin index because enable doesn't exist...
+      map.put("Enable", HDL.oneBit());
+      selectInputIndex--; // decrement pin index because enable doesn't exist...
     }
     // finally output
-    PortMap.putAll(GetNetMap("MuxOut", true, ComponentInfo, select_input_index + 2, Nets));
-    return PortMap;
+    map.putAll(GetNetMap("MuxOut", true, comp, selectInputIndex + 2, nets));
+    return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    if (HDL.isVerilog()) Regs.put("s_selected_vector", NrOfBits);
-    return Regs;
+    final var map = new TreeMap<String, Integer>();
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
+    return map;
   }
 
   @Override

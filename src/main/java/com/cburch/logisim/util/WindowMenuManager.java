@@ -33,21 +33,21 @@ import java.util.List;
 
 class WindowMenuManager {
   public static void addManager(WindowMenuItemManager manager) {
-    for (WindowMenu menu : menus) {
+    for (final var menu : menus) {
       manager.createMenuItem(menu);
     }
     managers.add(manager);
   }
 
   public static void addMenu(WindowMenu menu) {
-    for (WindowMenuItemManager manager : managers) {
+    for (final var manager : managers) {
       manager.createMenuItem(menu);
     }
     menus.add(menu);
   }
 
   private static void enableAll() {
-    for (WindowMenu menu : menus) {
+    for (final var menu : menus) {
       menu.computeEnabled();
     }
   }
@@ -63,7 +63,7 @@ class WindowMenuManager {
   // TODO frames should call removeMenu when they're destroyed
 
   public static void removeManager(WindowMenuItemManager manager) {
-    for (WindowMenu menu : menus) {
+    for (final var menu : menus) {
       manager.removeMenuItem(menu);
     }
     managers.remove(manager);
@@ -72,17 +72,21 @@ class WindowMenuManager {
   static void setCurrentManager(WindowMenuItemManager value) {
     if (value == currentManager) return;
 
-    boolean doEnable = (currentManager == null) != (value == null);
-    if (currentManager == null) setNullItems(false);
-    else currentManager.setSelected(false);
+    final var doEnable = (currentManager == null) != (value == null);
+    if (currentManager == null)
+      setNullItems(false);
+    else
+      currentManager.setSelected(false);
     currentManager = value;
-    if (currentManager == null) setNullItems(true);
-    else currentManager.setSelected(true);
+    if (currentManager == null)
+      setNullItems(true);
+    else
+      currentManager.setSelected(true);
     if (doEnable) enableAll();
   }
 
   private static void setNullItems(boolean value) {
-    for (WindowMenu menu : menus) {
+    for (final var menu : menus) {
       menu.setNullItemSelected(value);
     }
   }

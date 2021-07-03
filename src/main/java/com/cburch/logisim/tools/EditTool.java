@@ -31,7 +31,6 @@ package com.cburch.logisim.tools;
 import static com.cburch.logisim.tools.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Wire;
@@ -48,7 +47,6 @@ import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -122,13 +120,13 @@ public class EditTool extends Tool {
    * There is some duplication code here. The function attemptReface
    * can be merged with this one */
   private void attemptRotate(Canvas canvas, KeyEvent e) {
-    final Circuit circuit = canvas.getCircuit();
-    final Selection sel = canvas.getSelection();
-    SetAttributeAction act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
-    for (Component comp : sel.getComponents()) {
+    final var circuit = canvas.getCircuit();
+    final var sel = canvas.getSelection();
+    final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
+    for (final var comp : sel.getComponents()) {
       if (!(comp instanceof Wire)) {
-        Attribute<Direction> attr = getFacingAttribute(comp);
-        Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
+        final var attr = getFacingAttribute(comp);
+        var d = comp.getAttributeSet().getValue(StdAttr.FACING);
         if (d != null) {
           d = d.getRight();
           if (attr != null) {
@@ -145,12 +143,12 @@ public class EditTool extends Tool {
 
   private void attemptReface(Canvas canvas, final Direction facing, KeyEvent e) {
     if (e.getModifiersEx() == 0) {
-      final Circuit circuit = canvas.getCircuit();
-      final Selection sel = canvas.getSelection();
-      SetAttributeAction act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
-      for (Component comp : sel.getComponents()) {
+      final var circuit = canvas.getCircuit();
+      final var sel = canvas.getSelection();
+      final var act = new SetAttributeAction(circuit, S.getter("selectionRefaceAction"));
+      for (final var comp : sel.getComponents()) {
         if (!(comp instanceof Wire)) {
-          Attribute<Direction> attr = getFacingAttribute(comp);
+          final var attr = getFacingAttribute(comp);
           if (attr != null) {
             act.set(comp, attr, facing);
           }
@@ -168,18 +166,18 @@ public class EditTool extends Tool {
     current = select;
     canvas.getSelection().setSuppressHandles(null);
     cache.clear();
-    Circuit circ = canvas.getCircuit();
+    final var circ = canvas.getCircuit();
     if (circ != null) circ.removeCircuitListener(listener);
     canvas.getSelection().removeListener(listener);
   }
 
   @Override
   public void draw(Canvas canvas, ComponentDrawContext context) {
-    Location loc = wireLoc;
+    final var loc = wireLoc;
     if (loc != NULL_LOCATION && current != wiring) {
-      int x = loc.getX();
-      int y = loc.getY();
-      Graphics g = context.getGraphics();
+      final var x = loc.getX();
+      final var y = loc.getY();
+      final var g = context.getGraphics();
       g.setColor(Value.TRUE_COLOR);
       GraphicsUtil.switchToWidth(g, 2);
       g.drawOval(x - 5, y - 5, 10, 10);
@@ -220,7 +218,7 @@ public class EditTool extends Tool {
   }
 
   private Attribute<Direction> getFacingAttribute(Component comp) {
-    AttributeSet attrs = comp.getAttributeSet();
+    final var attrs = comp.getAttributeSet();
     Object key = ComponentFactory.FACING_ATTRIBUTE_KEY;
     Attribute<?> a = (Attribute<?>) comp.getFactory().getFeature(key, attrs);
     @SuppressWarnings("unchecked")
@@ -244,12 +242,12 @@ public class EditTool extends Tool {
   }
 
   private boolean isClick(MouseEvent e) {
-    int px = pressX;
+    final var px = pressX;
     if (px < 0) {
       return false;
     } else {
-      int dx = e.getX() - px;
-      int dy = e.getY() - pressY;
+      final var dx = e.getX() - px;
+      final var dy = e.getY() - pressY;
       if (dx * dx + dy * dy <= 4) {
         return true;
       } else {
@@ -260,27 +258,27 @@ public class EditTool extends Tool {
   }
 
   private boolean isWiringPoint(Canvas canvas, Location loc, int modsEx) {
-    boolean wiring = (modsEx & MouseEvent.ALT_DOWN_MASK) == 0;
-    boolean select = !wiring;
+    final var wiring = (modsEx & MouseEvent.ALT_DOWN_MASK) == 0;
+    final var select = !wiring;
 
     if (canvas != null && canvas.getSelection() != null) {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
-        for (Component c : sel) {
+        for (final var c : sel) {
           if (c instanceof Wire) {
-            Wire w = (Wire) c;
+            final var w = (Wire) c;
             if (w.contains(loc) && !w.endsAt(loc)) return select;
           }
         }
       }
     }
 
-    Circuit circ = canvas.getCircuit();
+    final var circ = canvas.getCircuit();
     if (circ == null) return false;
-    Collection<? extends Component> at = circ.getComponents(loc);
+    final var at = circ.getComponents(loc);
     if (at != null && at.size() > 0) return wiring;
 
-    for (Wire w : circ.getWires()) {
+    for (final var w : circ.getWires()) {
       if (w.contains(loc)) {
         return wiring;
       }
@@ -297,7 +295,7 @@ public class EditTool extends Tool {
       case KeyEvent.VK_BACK_SPACE:
       case KeyEvent.VK_DELETE:
         if (!canvas.getSelection().isEmpty()) {
-          Action act = SelectionActions.clear(canvas.getSelection());
+          final var act = SelectionActions.clear(canvas.getSelection());
           canvas.getProject().doAction(act);
           e.consume();
         } else {
@@ -305,7 +303,7 @@ public class EditTool extends Tool {
         }
         break;
       case KeyEvent.VK_INSERT:
-        Action act = SelectionActions.duplicate(canvas.getSelection());
+        final var act = SelectionActions.duplicate(canvas.getSelection());
         canvas.getProject().doAction(act);
         e.consume();
         break;
@@ -384,17 +382,17 @@ public class EditTool extends Tool {
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     canvas.requestFocusInWindow();
-    boolean wire = updateLocation(canvas, e);
-    Location oldWireLoc = wireLoc;
+    var wire = updateLocation(canvas, e);
+    final var oldWireLoc = wireLoc;
     wireLoc = NULL_LOCATION;
     lastX = Integer.MIN_VALUE;
     if (wire) {
       current = wiring;
-      Selection sel = canvas.getSelection();
-      Circuit circ = canvas.getCircuit();
-      Collection<Component> selected = sel.getAnchoredComponents();
+      final var sel = canvas.getSelection();
+      final var circ = canvas.getCircuit();
+      final var selected = sel.getAnchoredComponents();
       ArrayList<Component> suppress = null;
-      for (Wire w : circ.getWires()) {
+      for (final var w : circ.getWires()) {
         if (selected.contains(w)) {
           if (w.contains(oldWireLoc)) {
             if (suppress == null) suppress = new ArrayList<>();
@@ -413,7 +411,7 @@ public class EditTool extends Tool {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    boolean click = isClick(e) && current == wiring;
+    final var click = isClick(e) && current == wiring;
     canvas.getSelection().setSuppressHandles(null);
     current.mouseReleased(canvas, g, e);
     if (click) {
@@ -436,7 +434,7 @@ public class EditTool extends Tool {
     current = select;
     lastCanvas = canvas;
     cache.clear();
-    Circuit circ = canvas.getCircuit();
+    final var circ = canvas.getCircuit();
     if (circ != null) circ.addCircuitListener(listener);
     canvas.getSelection().addListener(listener);
     select.select(canvas);
@@ -448,17 +446,17 @@ public class EditTool extends Tool {
   }
 
   private boolean updateLocation(Canvas canvas, int mx, int my, int mods) {
-    int snapx = Canvas.snapXToGrid(mx);
-    int snapy = Canvas.snapYToGrid(my);
-    int dx = mx - snapx;
-    int dy = my - snapy;
-    boolean isEligible = dx * dx + dy * dy < 36;
+    var snapx = Canvas.snapXToGrid(mx);
+    var snapy = Canvas.snapYToGrid(my);
+    final var dx = mx - snapx;
+    final var dy = my - snapy;
+    var isEligible = dx * dx + dy * dy < 36;
     if ((mods & MouseEvent.ALT_DOWN_MASK) != 0) isEligible = true;
     if (!isEligible) {
       snapx = -1;
       snapy = -1;
     }
-    boolean modsSame = lastMods == mods;
+    final var modsSame = lastMods == mods;
     lastCanvas = canvas;
     lastRawX = mx;
     lastRawY = my;
@@ -466,7 +464,7 @@ public class EditTool extends Tool {
     if (lastX == snapx && lastY == snapy && modsSame) { // already computed
       return wireLoc != NULL_LOCATION;
     } else {
-      Location snap = Location.create(snapx, snapy);
+      final var snap = Location.create(snapx, snapy);
       if (modsSame) {
         Object o = cache.get(snap);
         if (o != null) {
@@ -482,7 +480,7 @@ public class EditTool extends Tool {
         cache.clear();
       }
 
-      Location oldWireLoc = wireLoc;
+      final var oldWireLoc = wireLoc;
       boolean ret = isEligible && isWiringPoint(canvas, snap, mods);
       wireLoc = ret ? snap : NULL_LOCATION;
       cache.put(snap, ret);

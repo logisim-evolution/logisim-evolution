@@ -49,23 +49,20 @@ public class ReplacementMap {
   private final HashMap<Component, HashSet<Component>> inverse;
 
   public ReplacementMap() {
-    this(
-        new HashMap<>(), new HashMap<>());
+    this(new HashMap<>(), new HashMap<>());
   }
 
   public ReplacementMap(Component oldComp, Component newComp) {
-    this(
-        new HashMap<>(), new HashMap<>());
-    HashSet<Component> oldSet = new HashSet<>(3);
+    this(new HashMap<>(), new HashMap<>());
+    final var oldSet = new HashSet<Component>(3);
     oldSet.add(oldComp);
-    HashSet<Component> newSet = new HashSet<>(3);
+    final var newSet = new HashSet<Component>(3);
     newSet.add(newComp);
     map.put(oldComp, newSet);
     inverse.put(newComp, oldSet);
   }
 
-  private ReplacementMap(
-      HashMap<Component, HashSet<Component>> map, HashMap<Component, HashSet<Component>> inverse) {
+  private ReplacementMap(HashMap<Component, HashSet<Component>> map, HashMap<Component, HashSet<Component>> inverse) {
     this.map = map;
     this.inverse = inverse;
   }
@@ -79,9 +76,9 @@ public class ReplacementMap {
 
   void append(ReplacementMap next) {
     for (Map.Entry<Component, HashSet<Component>> e : next.map.entrySet()) {
-      Component b = e.getKey();
-      HashSet<Component> cs = e.getValue(); // what b is replaced by
-      HashSet<Component> as = this.inverse.remove(b); // what was replaced
+      final var b = e.getKey();
+      final var cs = e.getValue(); // what b is replaced by
+      var as = this.inverse.remove(b); // what was replaced
       // to get b
       if (as == null) { // b pre-existed replacements so
         as = new HashSet<>(3); // we say it replaces itself.
@@ -89,14 +86,14 @@ public class ReplacementMap {
       }
 
       for (Component a : as) {
-        HashSet<Component> aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
+        final var aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
         // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
 
       for (Component c : cs) {
-        HashSet<Component> cSrc = this.inverse.get(c); // should always
+        var cSrc = this.inverse.get(c); // should always
         // be null
         if (cSrc == null) {
           cSrc = new HashSet<>(as.size());
@@ -107,9 +104,9 @@ public class ReplacementMap {
     }
 
     for (Map.Entry<Component, HashSet<Component>> e : next.inverse.entrySet()) {
-      Component c = e.getKey();
+      final var c = e.getKey();
       if (!inverse.containsKey(c)) {
-        HashSet<Component> bs = e.getValue();
+        final var bs = e.getValue();
         if (!bs.isEmpty()) {
           logger.error("Internal error: component replaced but not represented");
         }
@@ -147,22 +144,22 @@ public class ReplacementMap {
   }
 
   public void print(PrintStream out) {
-    boolean found = false;
-    for (Component a : getRemovals()) {
+    var found = false;
+    for (final var comp : getRemovals()) {
       if (!found) out.println("  removals:");
       found = true;
-      out.println("    " + a.toString());
-      for (Component b : map.get(a))
+      out.println("    " + comp.toString());
+      for (final var b : map.get(comp))
         out.println("     `--> " + b.toString());
     }
     if (!found) out.println("  removals: none");
 
     found = false;
-    for (Component b : getAdditions()) {
+    for (final var b : getAdditions()) {
       if (!found) out.println("  additions:");
       found = true;
       out.println("    " + b.toString());
-      for (Component a : inverse.get(b))
+      for (final var a : inverse.get(b))
         out.println("     ^-- " + a.toString());
     }
     if (!found) out.println("  additions: none");
@@ -172,11 +169,11 @@ public class ReplacementMap {
     if (frozen)
       throw new IllegalStateException("cannot change map after frozen");
 
-    HashSet<Component> oldBs = map.computeIfAbsent(a, k -> new HashSet<Component>(bs.size()));
+    final var oldBs = map.computeIfAbsent(a, k -> new HashSet<>(bs.size()));
     oldBs.addAll(bs);
 
-    for (Component b : bs) {
-      HashSet<Component> oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
+    for (final var b : bs) {
+      final var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
       oldAs.add(a);
     }
   }
@@ -195,9 +192,10 @@ public class ReplacementMap {
     inverse.clear();
   }
 
+  @Override
   public String toString() {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    try (PrintStream p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
+    final var out = new ByteArrayOutputStream();
+    try (final var p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
       print(p);
     } catch (Exception ignored) {
     }

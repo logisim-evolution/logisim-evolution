@@ -43,7 +43,7 @@ import com.cburch.logisim.tools.WiringTool;
 import java.util.Arrays;
 import java.util.List;
 
-public class Base extends Library {
+public class BaseLibrary extends Library {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -56,7 +56,7 @@ public class Base extends Library {
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
 
-  public Base() {
+  public BaseLibrary() {
     setHidden();
     WiringTool wiring = new WiringTool();
 

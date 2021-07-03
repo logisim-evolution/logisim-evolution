@@ -55,8 +55,8 @@ public class Projects {
 
     @Override
     public void windowClosed(WindowEvent event) {
-      Frame frame = (Frame) event.getSource();
-      Project proj = frame.getProject();
+      final var frame = (Frame) event.getSource();
+      final var proj = frame.getProject();
 
       if (frame == proj.getFrame()) {
         projectRemoved(proj, frame, this);
@@ -68,7 +68,7 @@ public class Projects {
 
     @Override
     public void windowClosing(WindowEvent event) {
-      Frame frame = (Frame) event.getSource();
+      final var frame = (Frame) event.getSource();
       if ((frame.getExtendedState() & Frame.ICONIFIED) == 0) {
         mostRecentFrame = frame;
         try {
@@ -80,8 +80,8 @@ public class Projects {
 
     @Override
     public void windowOpened(WindowEvent event) {
-      Frame frame = (Frame) event.getSource();
-      Project proj = frame.getProject();
+      final var frame = (Frame) event.getSource();
+      final var proj = frame.getProject();
 
       if (frame == proj.getFrame() && !openProjects.contains(proj)) {
         openProjects.add(proj);
@@ -103,12 +103,12 @@ public class Projects {
   }
 
   public static Project findProjectFor(File query) {
-    for (Project proj : openProjects) {
-      Loader loader = proj.getLogisimFile().getLoader();
+    for (final var proj : openProjects) {
+      final var loader = proj.getLogisimFile().getLoader();
       if (loader == null) {
         continue;
       }
-      File f = loader.getMainFile();
+      final var f = loader.getMainFile();
       if (query.equals(f)) {
         return proj;
       }
@@ -139,10 +139,10 @@ public class Projects {
   }
 
   public static Frame getTopFrame() {
-    Frame ret = mostRecentFrame;
+    var ret = mostRecentFrame;
     if (ret == null) {
       Frame backup = null;
-      for (Project proj : openProjects) {
+      for (final var proj : openProjects) {
         Frame frame = proj.getFrame();
         if (ret == null) {
           ret = frame;
@@ -185,18 +185,18 @@ public class Projects {
 
     // locate the window
     Point lowest = null;
-    for (Project p : openProjects) {
-      Frame f = p.getFrame();
+    for (final var p : openProjects) {
+      final var f = p.getFrame();
       if (f == null) {
         continue;
       }
-      Point loc = p.getFrame().getLocation();
+      final var loc = p.getFrame().getLocation();
       if (lowest == null || loc.y > lowest.y) {
         lowest = loc;
       }
     }
     if (lowest != null) {
-      Dimension sz = frame.getToolkit().getScreenSize();
+      final var sz = frame.getToolkit().getScreenSize();
       int x = Math.min(lowest.x + 20, sz.width - 200);
       int y = Math.min(lowest.y + 20, sz.height - 200);
       if (x < 0) {
@@ -216,7 +216,7 @@ public class Projects {
   }
 
   public static boolean windowNamed(String name) {
-    for (Project proj : openProjects) {
+    for (final var proj : openProjects) {
       if (proj.getLogisimFile().getName().equals(name)) {
         return true;
       }

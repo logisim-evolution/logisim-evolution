@@ -28,18 +28,15 @@
 
 package com.cburch.logisim.circuit;
 
-import com.cburch.logisim.circuit.appear.CircuitPins;
-import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 
 public abstract class CircuitTransaction {
   public static final Integer READ_ONLY = 1;
   public static final Integer READ_WRITE = 2;
 
   public final CircuitTransactionResult execute() {
-    CircuitMutatorImpl mutator = new CircuitMutatorImpl();
-    Map<Circuit, Lock> locks = CircuitLocker.acquireLocks(this, mutator);
+    final var mutator = new CircuitMutatorImpl();
+    final var locks = CircuitLocker.acquireLocks(this, mutator);
     CircuitTransactionResult result;
     try {
       try {
@@ -48,9 +45,9 @@ public abstract class CircuitTransaction {
         System.out.println("*** Circuit Lock Bug Diagnostics ***");
         System.out.println("This thread: " + Thread.currentThread());
         System.out.println("owns " + locks.size() + " locks, as follows:");
-        for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
-          Circuit circuit = entry.getKey();
-          Lock lock = entry.getValue();
+        for (final var entry : locks.entrySet()) {
+          final var circuit = entry.getKey();
+          final var lock = entry.getValue();
           System.out.printf(
               "  circuit \"%s\" [lock serial: %d] with lock %s\n",
               circuit.getName(), circuit.getLocker().getSerialNumber(), lock);
@@ -70,23 +67,23 @@ public abstract class CircuitTransaction {
       // updated to reflect the changes - this needs to happen before
       // wires are repaired because it could lead to some wires being
       // split
-      Collection<Circuit> modified = mutator.getModifiedCircuits();
-      for (Circuit circuit : modified) {
-        CircuitMutatorImpl circMutator = circuit.getLocker().getMutator();
+      final var modified = mutator.getModifiedCircuits();
+      for (final var circuit : modified) {
+        final var circMutator = circuit.getLocker().getMutator();
         if (circMutator == mutator) {
-          CircuitPins pins = circuit.getAppearance().getCircuitPins();
-          ReplacementMap repl = mutator.getReplacementMap(circuit);
+          final var repl = mutator.getReplacementMap(circuit);
           if (repl != null) {
+            final var pins = circuit.getAppearance().getCircuitPins();
             pins.transactionCompleted(repl);
           }
         }
       }
 
       // Now go through each affected circuit and repair its wires
-      for (Circuit circuit : modified) {
-        CircuitMutatorImpl circMutator = circuit.getLocker().getMutator();
+      for (final var circuit : modified) {
+        final var circMutator = circuit.getLocker().getMutator();
         if (circMutator == mutator) {
-          WireRepair repair = new WireRepair(circuit);
+          final var repair = new WireRepair(circuit);
           repair.run(mutator);
         } else {
           // this is a transaction executed within a transaction -
@@ -96,7 +93,7 @@ public abstract class CircuitTransaction {
       }
 
       result = new CircuitTransactionResult(mutator);
-      for (Circuit circuit : result.getModifiedCircuits()) {
+      for (final var circuit : result.getModifiedCircuits()) {
         circuit.fireEvent(CircuitEvent.TRANSACTION_DONE, result);
       }
     } finally {

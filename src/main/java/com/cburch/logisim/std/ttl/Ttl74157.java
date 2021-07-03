@@ -84,10 +84,10 @@ public class Ttl74157 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     // As tooltips can be longer than what can fit as pin name while painting IC internals,
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
-    final int maxLabelLength = 4;
-    ArrayList<String> names = new ArrayList<>();
-    for (String name : portnames) {
-      String[] tmp = name.split("\\s+");
+    final var maxLabelLength = 4;
+    final var names = new ArrayList<String>();
+    for (final var name : portnames) {
+      final var tmp = name.split("\\s+");
       names.add((tmp[0].length() <= maxLabelLength) ? tmp[0] : tmp[0].substring(0, maxLabelLength));
     }
     super.paintBase(painter, true, false);
@@ -101,12 +101,12 @@ public class Ttl74157 extends AbstractTtlGate {
   }
 
   protected Value computeState(InstanceState state, byte inA, byte inB) {
-    final boolean strobe = state.getPortValue(mapPort(STROBE)) == Value.TRUE;
-    final boolean select = state.getPortValue(mapPort(SELECT)) == Value.TRUE;
-    final boolean A = state.getPortValue(mapPort(inA)) == Value.TRUE;
-    final boolean B = state.getPortValue(mapPort(inB)) == Value.TRUE;
+    final var strobe = state.getPortValue(mapPort(STROBE)) == Value.TRUE;
+    final var select = state.getPortValue(mapPort(SELECT)) == Value.TRUE;
+    final var A = state.getPortValue(mapPort(inA)) == Value.TRUE;
+    final var B = state.getPortValue(mapPort(inB)) == Value.TRUE;
 
-    boolean Y = strobe ? false : (select ? B : A);
+    var Y = strobe ? false : (select ? B : A);
     if (this.invertOutput) Y = !Y;
 
     return Y ? Value.TRUE : Value.FALSE;

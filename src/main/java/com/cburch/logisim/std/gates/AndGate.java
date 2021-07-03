@@ -45,26 +45,26 @@ import java.util.ArrayList;
 class AndGate extends AbstractGate {
   private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public boolean GetFloatingValue(boolean is_inverted) {
-      return is_inverted;
+    public boolean GetFloatingValue(boolean isInverted) {
+      return isInverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       var contents = new ArrayList<String>();
       var oneLine = new StringBuilder();
       oneLine.append("   ")
           .append(HDL.assignPreamble())
           .append("Result")
           .append(HDL.assignOperator());
-      int TabWidth = oneLine.length();
-      boolean first = true;
-      for (int i = 0; i < nr_of_inputs; i++) {
+      final var tabWidth = oneLine.length();
+      var first = true;
+      for (int i = 0; i < nrOfInputs; i++) {
         if (!first) {
           oneLine.append(HDL.andOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
-          while (oneLine.length() < TabWidth) {
+          while (oneLine.length() < tabWidth) {
             oneLine.append(" ");
           }
         } else {
@@ -88,8 +88,8 @@ class AndGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
-    for (int i = 1; i < numInputs; i++) {
+    var ret = inputs[0];
+    for (var i = 1; i < numInputs; i++) {
       ret = Expressions.and(ret, inputs[i]);
     }
     return ret;
@@ -122,14 +122,14 @@ class AndGate extends AbstractGate {
   }
 
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int ystart = negateSize >> 1;
-    int yend = iconSize - ystart;
-    int rad = (yend - ystart) >> 1;
-    int xstart = 0;
-    int xend = iconSize - negateSize - rad;
-    int[] xp = new int[] {xend, xstart, xstart, xend};
-    int[] yp = new int[] {ystart, ystart, yend, yend};
-    AffineTransform af = g.getTransform();
+    final var ystart = negateSize >> 1;
+    final var yend = iconSize - ystart;
+    final var rad = (yend - ystart) >> 1;
+    final var xstart = 0;
+    final var xend = iconSize - negateSize - rad;
+    final var xp = new int[] {xend, xstart, xstart, xend};
+    final var yp = new int[] {ystart, ystart, yend, yend};
+    final var af = g.getTransform();
     g.translate(borderSize, borderSize);
     g.drawPolyline(xp, yp, 4);
     GraphicsUtil.drawCenteredArc(g, xend, iconSize >> 1, rad, -90, 180);

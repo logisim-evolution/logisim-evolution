@@ -41,7 +41,7 @@ public abstract class Library {
   }
 
   public boolean containsFromSource(Tool query) {
-    for (Tool tool : getTools()) {
+    for (final var tool : getTools()) {
       if (tool.sharesSource(query)) {
         return true;
       }
@@ -65,7 +65,7 @@ public abstract class Library {
   }
 
   public Library getLibrary(String name) {
-    for (Library lib : getLibraries()) {
+    for (final var lib : getLibraries()) {
       if (lib.getName().equals(name)) {
         return lib;
       }
@@ -76,7 +76,7 @@ public abstract class Library {
   public abstract boolean removeLibrary(String name);
 
   public Tool getTool(String name) {
-    for (Tool tool : getTools()) {
+    for (final var tool : getTools()) {
       if (tool.getName().equals(name)) {
         return tool;
       }
@@ -88,7 +88,7 @@ public abstract class Library {
 
   public int indexOf(ComponentFactory query) {
     int index = -1;
-    for (Tool obj : getTools()) {
+    for (final var obj : getTools()) {
       index++;
       if (obj instanceof AddTool) {
         AddTool tool = (AddTool) obj;

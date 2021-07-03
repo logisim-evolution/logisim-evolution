@@ -65,19 +65,19 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   static void drawBase(InstancePainter painter, boolean DrawPoint) {
     ensureSegments();
-    InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
+    final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
-    Boolean active = painter.getAttributeValue(Io.ATTR_ACTIVE);
+    final var active = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
     int desired = active == null || active ? 1 : 0;
 
-    Bounds bds = painter.getBounds();
-    int x = bds.getX() + 5;
-    int y = bds.getY();
+    final var bds = painter.getBounds();
+    final var x = bds.getX() + 5;
+    final var y = bds.getY();
 
-    Graphics g = painter.getGraphics();
-    Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-    Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
-    Color bgColor = painter.getAttributeValue(Io.ATTR_BACKGROUND);
+    final var g = painter.getGraphics();
+    final var onColor = painter.getAttributeValue(IoLibrary.ATTR_ON_COLOR);
+    final var offColor = painter.getAttributeValue(IoLibrary.ATTR_OFF_COLOR);
+    final var bgColor = painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND);
     if (painter.shouldDrawColor() && bgColor.getAlpha() != 0) {
       g.setColor(bgColor);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
@@ -117,17 +117,17 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   public static ArrayList<String> GetLabels() {
-    ArrayList<String> LabelNames = new ArrayList<>();
-    for (int i = 0; i < 8; i++) LabelNames.add("");
-    LabelNames.set(Segment_A, "Segment_A");
-    LabelNames.set(Segment_B, "Segment_B");
-    LabelNames.set(Segment_C, "Segment_C");
-    LabelNames.set(Segment_D, "Segment_D");
-    LabelNames.set(Segment_E, "Segment_E");
-    LabelNames.set(Segment_F, "Segment_F");
-    LabelNames.set(Segment_G, "Segment_G");
-    LabelNames.set(DP, "DecimalPoint");
-    return LabelNames;
+    final var labelNames = new ArrayList<String>();
+    for (int i = 0; i < 8; i++) labelNames.add("");
+    labelNames.set(Segment_A, "Segment_A");
+    labelNames.set(Segment_B, "Segment_B");
+    labelNames.set(Segment_C, "Segment_C");
+    labelNames.set(Segment_D, "Segment_D");
+    labelNames.set(Segment_E, "Segment_E");
+    labelNames.set(Segment_F, "Segment_F");
+    labelNames.set(Segment_G, "Segment_G");
+    labelNames.set(DP, "DecimalPoint");
+    return labelNames;
   }
 
   public static String getOutputLabel(int id) {
@@ -155,10 +155,10 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     super(_ID, S.getter("sevenSegmentComponent"));
     setAttributes(
         new Attribute[] {
-          Io.ATTR_ON_COLOR,
-          Io.ATTR_OFF_COLOR,
-          Io.ATTR_BACKGROUND,
-          Io.ATTR_ACTIVE,
+          IoLibrary.ATTR_ON_COLOR,
+          IoLibrary.ATTR_OFF_COLOR,
+          IoLibrary.ATTR_BACKGROUND,
+          IoLibrary.ATTR_ACTIVE,
           ATTR_DP,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
@@ -169,7 +169,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
         new Object[] {
           new Color(240, 0, 0),
           DEFAULT_OFF,
-          Io.DEFAULT_BACKGROUND,
+          IoLibrary.DEFAULT_BACKGROUND,
           Boolean.TRUE,
           Boolean.TRUE,
           "",
@@ -184,8 +184,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   private void updatePorts(Instance instance) {
-    boolean hasDp = instance.getAttributeValue(ATTR_DP);
-    Port[] ps = new Port[hasDp ? 8 : 7];
+    final var hasDp = instance.getAttributeValue(ATTR_DP);
+    final var ps = new Port[hasDp ? 8 : 7];
     ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);
     ps[Segment_B] = new Port(30, 0, Port.INPUT, 1);
     ps[Segment_C] = new Port(20, 60, Port.INPUT, 1);
@@ -210,14 +210,14 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public boolean ActiveOnHigh(AttributeSet attrs) {
-    return attrs.getValue(Io.ATTR_ACTIVE);
+    return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
   public static void computeTextField(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
     Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     int x = bds.getX() + bds.getWidth() / 2;
     int y = bds.getY() + bds.getHeight() / 2;
     int halign = GraphicsUtil.H_CENTER;
@@ -283,14 +283,14 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public void propagate(InstanceState state) {
-    int summary = 0;
-    int max = state.getAttributeValue(ATTR_DP) ? 8 : 7;
-    for (int i = 0; i < max; i++) {
+    var summary = 0;
+    final var max = state.getAttributeValue(ATTR_DP) ? 8 : 7;
+    for (var i = 0; i < max; i++) {
       Value val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }
     Object value = summary;
-    InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+    final var data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));
     } else {

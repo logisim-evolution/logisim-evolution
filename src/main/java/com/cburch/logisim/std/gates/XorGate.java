@@ -46,12 +46,12 @@ import java.util.ArrayList;
 class XorGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       ArrayList<String> Contents = new ArrayList<>();
-      if (is_one_hot) {
-        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1));
+      if (isOneHot) {
+        Contents.addAll(GetOneHot(false, nrOfInputs, bitwidth > 1));
       } else {
-        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
+        Contents.addAll(GetParity(false, nrOfInputs, bitwidth > 1));
       }
       Contents.add("");
       return Contents;

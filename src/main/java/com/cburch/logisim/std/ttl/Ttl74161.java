@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.std.ttl;
 
+import static com.cburch.logisim.data.Value.FALSE_COLOR;
+import static com.cburch.logisim.data.Value.TRUE_COLOR;
+
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -36,12 +39,9 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
-
-import static com.cburch.logisim.data.Value.FALSE_COLOR;
-import static com.cburch.logisim.data.Value.TRUE_COLOR;
 
 public class Ttl74161 extends AbstractTtlGate {
     /**
@@ -95,20 +95,20 @@ public class Ttl74161 extends AbstractTtlGate {
         boolean isPressed = true;
 
         private boolean isInside(InstanceState state, MouseEvent e) {
-            Point p = TTLGetTranslatedXY(state, e);
-            boolean inside = false;
-            for (int i = 0; i < 4; i++) {
-                int dx = p.x - (56 + i * 10);
-                int dy = p.y - 30;
-                int d2 = dx * dx + dy * dy;
+            final var p = TTLGetTranslatedXY(state, e);
+            var inside = false;
+            for (var i = 0; i < 4; i++) {
+                final var dx = p.x - (56 + i * 10);
+                final var dy = p.y - 30;
+                final var d2 = dx * dx + dy * dy;
                 inside |= (d2 < 4 * 4);
             }
             return inside;
         }
 
         private int getIndex(InstanceState state, MouseEvent e) {
-            Point p = TTLGetTranslatedXY(state, e);
-            for (int i = 0; i < 4; i++) {
+            final var p = TTLGetTranslatedXY(state, e);
+            for (var i = 0; i < 4; i++) {
                 int dx = p.x - (56 + i * 10);
                 int dy = p.y - 30;
                 int d2 = dx * dx + dy * dy;
@@ -124,11 +124,11 @@ public class Ttl74161 extends AbstractTtlGate {
 
         @Override
         public void mouseReleased(InstanceState state, MouseEvent e) {
-            if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
+            if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
             if (isPressed && isInside(state, e)) {
                 int index = getIndex(state, e);
 
-                Point p = TTLGetTranslatedXY(state, e);
+                final var p = TTLGetTranslatedXY(state, e);
                 System.out.print("x=");
                 System.out.print(p.x);
                 System.out.print(",y=");
@@ -137,10 +137,10 @@ public class Ttl74161 extends AbstractTtlGate {
                 System.out.print(index);
                 System.out.println(index);
 
-                TTLRegisterData data = (TTLRegisterData) state.getData();
+                final var data = (TtlRegisterData) state.getData();
                 if (data == null) return;
-                long current = data.getValue().toLongValue();
-                long bitValue = 1 << index;
+                var current = data.getValue().toLongValue();
+                final long bitValue = 1 << index;
                 current ^= bitValue;
                 data.setValue(Value.createKnown(4, current));
                 state.fireInvalidated();
@@ -149,10 +149,10 @@ public class Ttl74161 extends AbstractTtlGate {
         }
     }
 
-    private TTLRegisterData getData(InstanceState state) {
-        TTLRegisterData data = (TTLRegisterData) state.getData();
+    private TtlRegisterData getData(InstanceState state) {
+        var data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
         return data;
@@ -160,7 +160,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
     @Override
     public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-        Graphics2D g = (Graphics2D) painter.getGraphics();
+        final var g = (Graphics2D) painter.getGraphics();
         super.paintBase(painter, false, false);
         Drawgates.paintPortNames(
                 painter,
@@ -170,15 +170,15 @@ public class Ttl74161 extends AbstractTtlGate {
                 new String[]{
                         "nClr", "Clk", "A", "B", "C", "D", "EnP", "nLD", "EnT", "Qd", "Qc", "Qb", "Qa", "RC0"
                 });
-        TTLRegisterData data = (TTLRegisterData) painter.getData();
+        TtlRegisterData data = (TtlRegisterData) painter.getData();
         drawState(g, x, y, height, data);
     }
 
-    private void drawState(Graphics2D g, int x, int y, int height, TTLRegisterData state) {
+    private void drawState(Graphics2D g, int x, int y, int height, TtlRegisterData state) {
         if (state != null) {
             long value = state.getValue().toLongValue();
-            for (int i = 0; i < 4; i++) {
-                boolean isSetBitValue = (value & (1 << (3 - i))) != 0;
+            for (var i = 0; i < 4; i++) {
+                final var isSetBitValue = (value & (1 << (3 - i))) != 0;
                 g.setColor(isSetBitValue ? TRUE_COLOR : FALSE_COLOR);
                 g.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
                 g.setColor(Color.WHITE);
@@ -192,13 +192,13 @@ public class Ttl74161 extends AbstractTtlGate {
     @Override
     public void ttlpropagate(InstanceState state) {
 
-        TTLRegisterData data = (TTLRegisterData) state.getData();
+        TtlRegisterData data = (TtlRegisterData) state.getData();
         if (data == null) {
-            data = new TTLRegisterData(BitWidth.create(4));
+            data = new TtlRegisterData(BitWidth.create(4));
             state.setData(data);
         }
 
-        boolean triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
+        final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
         if (triggered) {
 
             Value nClear = state.getPortValue(PORT_INDEX_nCLR);
@@ -227,10 +227,10 @@ public class Ttl74161 extends AbstractTtlGate {
 
         }
 
-        Value vA = data.getValue().get(0);
-        Value vB = data.getValue().get(1);
-        Value vC = data.getValue().get(2);
-        Value vD = data.getValue().get(3);
+        final var vA = data.getValue().get(0);
+        final var vB = data.getValue().get(1);
+        final var vC = data.getValue().get(2);
+        final var vD = data.getValue().get(3);
 
         state.setPort(PORT_INDEX_QA, vA, 1);
         state.setPort(PORT_INDEX_QB, vB, 1);

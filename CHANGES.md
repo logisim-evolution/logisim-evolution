@@ -1,5 +1,9 @@
+[![Logisim-evolution](artwork/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
+
+# Changes #
+
 * @dev (????-??-??)
-  * Introducing project logo 
+  * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
   * Made pins' tooltips more descriptive for 74161.
@@ -15,9 +19,8 @@
   * Replace DarkLaf with FlatLaf for better compatibility.
   * Adds "Rotate Left" context menu action.
   * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
-  * Project "Dirty" state is now also refrected in window title with "*" marker.
+  * Project's "Dirty" (unsaved) state is now also reflected by adding `*` marker to the window title.
   * Tons of code cleanup and internal improvements.
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
-

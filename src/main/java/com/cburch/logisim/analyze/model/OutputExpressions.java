@@ -31,86 +31,89 @@ package com.cburch.logisim.analyze.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class OutputExpressions {
   private class MyListener implements VariableListListener, TruthTableListener {
 
+    @Override
     public void rowsChanged(TruthTableEvent event) {}
 
+    @Override
     public void cellsChanged(TruthTableEvent event) {
-      String output = model.getOutputs().bits.get(event.getColumn());
+      final var output = model.getOutputs().bits.get(event.getColumn());
       invalidate(output, false);
     }
 
     private void inputsChanged(VariableListEvent event) {
-      Var v = event.getVariable();
-      int type = event.getType();
+      final var v = event.getVariable();
+      final var type = event.getType();
       if (type == VariableListEvent.ALL_REPLACED && !outputData.isEmpty()) {
         outputData.clear();
         fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
       } else if (type == VariableListEvent.REMOVE) {
-        for (String input : v) {
-          for (String output : outputData.keySet()) {
-            OutputData data = getOutputData(output, false);
+        for (final var input : v) {
+          for (final var output : outputData.keySet()) {
+            final var data = getOutputData(output, false);
             if (data != null) data.removeInput(input);
           }
         }
       } else if (type == VariableListEvent.REPLACE) {
-        Var newVar = model.getInputs().vars.get(event.getIndex());
-        for (String output : outputData.keySet()) {
+        final var newVar = model.getInputs().vars.get(event.getIndex());
+        for (final var output : outputData.keySet()) {
           for (int b = 0; b < v.width && b < newVar.width; b++) {
-            OutputData data = getOutputData(output, false);
+            final var data = getOutputData(output, false);
             if (data != null) data.replaceInput(v.bitName(b), newVar.bitName(b));
           }
           for (int b = newVar.width; b < v.width; b++) {
-            OutputData data = getOutputData(output, false);
+            final var data = getOutputData(output, false);
             if (data != null) data.removeInput(v.bitName(b));
           }
           if (v.width < newVar.width) {
-            OutputData data = getOutputData(output, false);
+            final var data = getOutputData(output, false);
             if (data != null) data.invalidate(false, false);
           }
         }
       } else if (type == VariableListEvent.MOVE || type == VariableListEvent.ADD) {
-        for (String output : outputData.keySet()) {
-          OutputData data = getOutputData(output, false);
+        for (final var output : outputData.keySet()) {
+          final var data = getOutputData(output, false);
           if (data != null) data.invalidate(false, false);
         }
       }
     }
 
+    @Override
     public void listChanged(VariableListEvent event) {
       if (event.getSource() == model.getInputs()) inputsChanged(event);
       else outputsChanged(event);
     }
 
     private void outputsChanged(VariableListEvent event) {
-      int type = event.getType();
+      final var type = event.getType();
       if (type == VariableListEvent.ALL_REPLACED && !outputData.isEmpty()) {
         outputData.clear();
         fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
       } else if (type == VariableListEvent.REMOVE) {
-        for (String bit : event.getVariable()) outputData.remove(bit);
+        for (final var bit : event.getVariable()) outputData.remove(bit);
       } else if (type == VariableListEvent.REPLACE) {
         Var oldVar = event.getVariable();
         Var newVar = model.getOutputs().vars.get(event.getIndex());
-        for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
-          String oldName = oldVar.bitName(b);
-          String newName = newVar.bitName(b);
+        for (var b = 0; b < oldVar.width && b < newVar.width; b++) {
+          final var oldName = oldVar.bitName(b);
+          final var newName = newVar.bitName(b);
           if (outputData.containsKey(oldName)) {
             OutputData toMove = outputData.remove(oldName);
             toMove.output = newName;
             outputData.put(newName, toMove);
           }
         }
-        for (int b = newVar.width; b < oldVar.width; b++) {
+        for (var b = newVar.width; b < oldVar.width; b++) {
           outputData.remove(oldVar.bitName(b));
         }
       }
     }
 
+    @Override
     public void structureChanged(TruthTableEvent event) {}
   }
 
@@ -158,25 +161,25 @@ public class OutputExpressions {
       if (invalidating) return;
       invalidating = true;
       try {
-        List<Implicant> oldImplicants = minimalImplicants;
-        Expression oldMinExpr = minimalExpr;
+        final var oldImplicants = minimalImplicants;
+        final var oldMinExpr = minimalExpr;
         minimalImplicants = Implicant.computeMinimal(format, model, output);
         minimalExpr = Implicant.toExpression(format, model, minimalImplicants);
-        boolean minChanged = !implicantsSame(oldImplicants, minimalImplicants);
+        final var minChanged = !implicantsSame(oldImplicants, minimalImplicants);
 
         if (!updatingTable) {
           // see whether the expression is still consistent with the
           // truth table
-          TruthTable table = model.getTruthTable();
-          Entry[] outputColumn = computeColumn(model.getTruthTable(), expr);
-          int outputIndex = model.getOutputs().bits.indexOf(output);
-          Entry[] currentColumn = table.getOutputColumn(outputIndex);
+          final var table = model.getTruthTable();
+          final var outputColumn = computeColumn(model.getTruthTable(), expr);
+          final var outputIndex = model.getOutputs().bits.indexOf(output);
+          final var currentColumn = table.getOutputColumn(outputIndex);
           if (!columnsMatch(currentColumn, outputColumn)
               || isAllUndefined(outputColumn)
               || formatChanged) {
             // if not, then we need to change the expression to
             // maintain consistency
-            boolean exprChanged = expr != oldMinExpr || minChanged;
+            final var exprChanged = expr != oldMinExpr || minChanged;
             expr = minimalExpr;
             if (exprChanged) {
               exprString = null;
@@ -208,7 +211,7 @@ public class OutputExpressions {
         exprString = null; // invalidate it so it recomputes
       }
       if (expr != null) {
-        Expression oldExpr = expr;
+        final var oldExpr = expr;
         Expression newExpr;
         if (oldExpr == oldMinExpr) {
           newExpr = getMinimalExpression();
@@ -247,8 +250,8 @@ public class OutputExpressions {
       exprString = newExprString;
 
       if (expr != minimalExpr) { // for efficiency to avoid recomputation
-        Entry[] values = computeColumn(model.getTruthTable(), expr);
-        int outputColumn = model.getOutputs().bits.indexOf(output);
+        final var values = computeColumn(model.getTruthTable(), expr);
+        final var outputColumn = model.getOutputs().bits.indexOf(output);
         updatingTable = true;
         try {
           model.getTruthTable().setOutputColumn(outputColumn, values);
@@ -270,9 +273,9 @@ public class OutputExpressions {
 
   private static boolean columnsMatch(Entry[] a, Entry[] b) {
     if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
+    for (var i = 0; i < a.length; i++) {
       if (a[i] != b[i]) {
-        boolean bothDefined =
+        final var bothDefined =
             (a[i] == Entry.ZERO || a[i] == Entry.ONE) && (b[i] == Entry.ZERO || b[i] == Entry.ONE);
         if (bothDefined) return false;
       }
@@ -281,15 +284,15 @@ public class OutputExpressions {
   }
 
   private static Entry[] computeColumn(TruthTable table, Expression expr) {
-    int rows = table.getRowCount();
-    int cols = table.getInputColumnCount();
-    Entry[] values = new Entry[rows];
+    final var rows = table.getRowCount();
+    final var cols = table.getInputColumnCount();
+    final var values = new Entry[rows];
     if (expr == null) {
       Arrays.fill(values, Entry.DONT_CARE);
     } else {
-      Assignments assn = new Assignments();
-      for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+      final var assn = new Assignments();
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
           assn.put(table.getInputHeader(j), TruthTable.isInputSet(i, j, cols));
         }
         values[i] = expr.evaluate(assn) ? Entry.ONE : Entry.ZERO;
@@ -306,18 +309,18 @@ public class OutputExpressions {
     } else if (a.size() != b.size()) {
       return false;
     } else {
-      Iterator<Implicant> ait = a.iterator();
-      for (Implicant bi : b) {
+      final var ait = a.iterator();
+      for (final var bImplicant : b) {
         if (!ait.hasNext()) return false; // should never happen
-        Implicant ai = ait.next();
-        if (!ai.equals(bi)) return false;
+        final var ai = ait.next();
+        if (!ai.equals(bImplicant)) return false;
       }
       return true;
     }
   }
 
   private static boolean isAllUndefined(Entry[] a) {
-    for (Entry entry : a) {
+    for (final var entry : a) {
       if (entry == Entry.ZERO || entry == Entry.ONE)
         return false;
     }
@@ -358,7 +361,7 @@ public class OutputExpressions {
   }
 
   private void fireModelChanged(int type, String variable, Object data) {
-    OutputExpressionsEvent event = new OutputExpressionsEvent(model, type, variable, data);
+    final var event = new OutputExpressionsEvent(model, type, variable, data);
     for (OutputExpressionsListener l : listeners) {
       l.expressionChanged(event);
     }
@@ -414,7 +417,7 @@ public class OutputExpressions {
 
   private OutputData getOutputData(String output, boolean create) {
     if (output == null) throw new IllegalArgumentException("null output name");
-    OutputData ret = outputData.get(output);
+    var ret = outputData.get(output);
     if (ret == null && create) {
       if (!model.getOutputs().bits.contains(output)) {
         throw new IllegalArgumentException("unrecognized output " + output);
@@ -426,7 +429,7 @@ public class OutputExpressions {
   }
 
   private void invalidate(String output, boolean formatChanged) {
-    OutputData data = getOutputData(output, false);
+    final var data = getOutputData(output, false);
     if (data != null) {
       if (!allowUpdates) {
         outputData.remove(output);
@@ -437,7 +440,7 @@ public class OutputExpressions {
   }
 
   public boolean isExpressionMinimal(String output) {
-    OutputData data = getOutputData(output, false);
+    final var data = getOutputData(output, false);
     return data == null || data.isExpressionMinimal();
   }
 
@@ -455,7 +458,7 @@ public class OutputExpressions {
   }
 
   public void setMinimizedFormat(String output, int format) {
-    int oldFormat = getMinimizedFormat(output);
+    final var oldFormat = getMinimizedFormat(output);
     if (format != oldFormat) {
       getOutputData(output, true).setMinimizedFormat(format);
       invalidate(output, true);

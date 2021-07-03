@@ -40,29 +40,28 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class OrGate extends AbstractGate {
   private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      var contents = new ArrayList<String>();
-      var oneLine = new StringBuilder();
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = new ArrayList<String>();
+      final var oneLine = new StringBuilder();
       oneLine
           .append("   ")
           .append(HDL.assignPreamble())
           .append("Result")
           .append(HDL.assignOperator());
-      int TabWidth = oneLine.length();
-      boolean first = true;
-      for (int i = 0; i < nr_of_inputs; i++) {
+      final var tabWidth = oneLine.length();
+      var first = true;
+      for (int i = 0; i < nrOfInputs; i++) {
         if (!first) {
           oneLine.append(HDL.orOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
-          while (oneLine.length() < TabWidth) {
+          while (oneLine.length() < tabWidth) {
             oneLine.append(" ");
           }
         } else {
@@ -87,8 +86,8 @@ class OrGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
-    for (int i = 1; i < numInputs; i++) {
+    var ret = inputs[0];
+    for (var i = 1; i < numInputs; i++) {
       ret = Expressions.or(ret, inputs[i]);
     }
     return ret;
@@ -120,19 +119,18 @@ class OrGate extends AbstractGate {
     paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
 
-  protected static void paintIconANSI(
-      Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int ystart = negateSize >> 1;
-    int yend = iconSize - ystart;
-    int xstart = 0;
-    int xend = iconSize - negateSize;
-    GeneralPath shape = new GeneralPath();
+  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+    final var ystart = negateSize >> 1;
+    final var yend = iconSize - ystart;
+    final var xstart = 0;
+    final var xend = iconSize - negateSize;
+    final var shape = new GeneralPath();
     shape.moveTo(xend, iconSize >> 1);
     shape.quadTo((2 * xend) / 3, ystart, xstart, ystart);
     shape.quadTo(xend / 3, iconSize >> 1, xstart, yend);
     shape.quadTo((2 * xend) / 3, yend, xend, iconSize >> 1);
     shape.closePath();
-    AffineTransform af = g.getTransform();
+    final var af = g.getTransform();
     g.translate(borderSize, borderSize);
     g.draw(shape);
     paintIconPins(g, iconSize, borderSize, negateSize, inverted, false);

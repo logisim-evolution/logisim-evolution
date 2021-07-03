@@ -38,7 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +117,7 @@ public class TclWrapper {
 
     /* Create the TCL process */
     ProcessBuilder builder;
-    List<String> command = new ArrayList<>();
+    final var command = new ArrayList<String>();
 
     command.add("tclsh");
     command.add(TCL_PATH + "tcl_wrapper.tcl");
@@ -150,11 +149,10 @@ public class TclWrapper {
     new Thread(
         () -> {
           /* Through this we can get the process output */
-          BufferedReader reader =
-              new BufferedReader(new InputStreamReader(process.getInputStream()));
+          final var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
           String line;
           try {
-            StringBuilder errorMessage = new StringBuilder();
+            final var errorMessage = new StringBuilder();
 
             /* Here we check that the wrapper has correctly started */
             while ((line = reader.readLine()) != null) {
@@ -189,11 +187,9 @@ public class TclWrapper {
               }
             }
 
-            MessageBox userInfoBox =
-                new MessageBox(
+            final var userInfoBox = new MessageBox(
                     "Error starting TCL wrapper", errorMessage.toString(), OptionPane.ERROR_MESSAGE);
             userInfoBox.show();
-
           } catch (IOException e) {
             e.printStackTrace();
           }

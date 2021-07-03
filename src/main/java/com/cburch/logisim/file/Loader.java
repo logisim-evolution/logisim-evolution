@@ -114,14 +114,14 @@ public class Loader implements LibraryLoader {
   }
 
   private static File determineBackupName(File base) {
-    File dir = base.getParentFile();
-    String name = base.getName();
+    final var dir = base.getParentFile();
+    var name = base.getName();
     if (name.endsWith(LOGISIM_EXTENSION)) {
       name = name.substring(0, name.length() - LOGISIM_EXTENSION.length());
     }
-    for (int i = 1; i <= 20; i++) {
-      String ext = i == 1 ? ".bak" : (".bak" + i);
-      File candidate = new File(dir, name + ext);
+    for (var i = 1; i <= 20; i++) {
+      final var ext = i == 1 ? ".bak" : (".bak" + i);
+      final var candidate = new File(dir, name + ext);
       if (!candidate.exists()) return candidate;
     }
     return null;
@@ -176,15 +176,11 @@ public class Loader implements LibraryLoader {
 
   // used here and in LibraryManager only, also in MemMenu
   public File getCurrentDirectory() {
-    File ref;
-    if (!filesOpening.empty()) {
-      ref = filesOpening.peek();
-    } else {
-      ref = mainFile;
-    }
+    final var ref = (!filesOpening.empty()) ? filesOpening.peek() : mainFile;
     return ref == null ? null : ref.getParentFile();
   }
 
+  @Override
   public String getDescriptor(Library lib) {
     return LibraryManager.instance.getDescriptor(this, lib);
   }
@@ -194,18 +190,17 @@ public class Loader implements LibraryLoader {
   //
   File getFileFor(String name, FileFilter filter) {
     // Determine the actual file name.
-    File file = new File(name);
+    var file = new File(name);
     if (!file.isAbsolute()) {
-      File currentDirectory = getCurrentDirectory();
+      final var currentDirectory = getCurrentDirectory();
       if (currentDirectory != null) file = new File(currentDirectory, name);
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      OptionPane.showMessageDialog(
-          parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
-      JFileChooser chooser = createChooser();
+      OptionPane.showMessageDialog(parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
+      final var chooser = createChooser();
       chooser.setFileFilter(filter);
-      chooser.setDialogTitle(StringUtil.format(S.get("fileLibraryMissingTitle"), file.getName()));
+      chooser.setDialogTitle(S.get("fileLibraryMissingTitle", file.getName()));
       int action = chooser.showDialog(parent, S.get("fileLibraryMissingButton"));
       if (action != JFileChooser.APPROVE_OPTION) {
         throw new LoaderException(S.get("fileLoadCanceledError"));
@@ -223,25 +218,25 @@ public class Loader implements LibraryLoader {
   }
 
   private File getSubstitution(File source) {
-    File ret = substitutions.get(source);
+    final var ret = substitutions.get(source);
     return ret == null ? source : ret;
   }
 
   Library loadJarFile(File request, String className) throws LoadFailedException {
-    File actual = getSubstitution(request);
+    final var actual = getSubstitution(request);
 
     // Anyway, here's the line for this new version:
-    ZipClassLoader loader = new ZipClassLoader(actual);
+    final var loader = new ZipClassLoader(actual);
 
     // load library class from loader
     Class<?> retClass;
     try {
       retClass = loader.loadClass(className);
     } catch (ClassNotFoundException e) {
-      throw new LoadFailedException(StringUtil.format(S.get("jarClassNotFoundError"), className));
+      throw new LoadFailedException(S.get("jarClassNotFoundError", className));
     }
     if (!(Library.class.isAssignableFrom(retClass))) {
-      throw new LoadFailedException(StringUtil.format(S.get("jarClassNotLibraryError"), className));
+      throw new LoadFailedException(S.get("jarClassNotLibraryError", className));
     }
 
     // instantiate library
@@ -249,20 +244,20 @@ public class Loader implements LibraryLoader {
     try {
       ret = (Library) retClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
-      throw new LoadFailedException(
-          StringUtil.format(S.get("jarLibraryNotCreatedError"), className));
+      throw new LoadFailedException(S.get("jarLibraryNotCreatedError", className));
     }
     return ret;
   }
 
   public Library loadJarLibrary(File file, String className) {
-    File actual = getSubstitution(file);
+    final var actual = getSubstitution(file);
     return LibraryManager.instance.loadJarLibrary(this, actual, className);
   }
 
   //
   // Library methods
   //
+  @Override
   public Library loadLibrary(String desc) {
     return LibraryManager.instance.loadLibrary(this, desc);
   }
@@ -271,11 +266,10 @@ public class Loader implements LibraryLoader {
   // methods for LibraryManager
   //
   LogisimFile loadLogisimFile(File request) throws LoadFailedException {
-    File actual = getSubstitution(request);
-    for (File fileOpening : filesOpening) {
+    final var actual = getSubstitution(request);
+    for (final var fileOpening : filesOpening) {
       if (fileOpening.equals(actual)) {
-        throw new LoadFailedException(
-            StringUtil.format(S.get("logisimCircularError"), toProjectName(actual)));
+        throw new LoadFailedException(S.get("logisimCircularError", toProjectName(actual)));
       }
     }
 
@@ -284,8 +278,7 @@ public class Loader implements LibraryLoader {
     try {
       ret = LogisimFile.load(actual, this);
     } catch (IOException e) {
-      throw new LoadFailedException(
-          StringUtil.format(S.get("logisimLoadError"), toProjectName(actual), e.toString()));
+      throw new LoadFailedException(S.get("logisimLoadError", toProjectName(actual), e.toString()));
     } finally {
       filesOpening.pop();
     }
@@ -294,8 +287,8 @@ public class Loader implements LibraryLoader {
   }
 
   public Library loadLogisimLibrary(File file) {
-    File actual = getSubstitution(file);
-    LoadedLibrary ret = LibraryManager.instance.loadLogisimLibrary(this, actual);
+    final var actual = getSubstitution(file);
+    final var ret = LibraryManager.instance.loadLogisimLibrary(this, actual);
     if (ret != null) {
       LogisimFile retBase = (LogisimFile) ret.getBase();
       showMessages(retBase);
@@ -305,7 +298,7 @@ public class Loader implements LibraryLoader {
 
   public LogisimFile openLogisimFile(File file) throws LoadFailedException {
     try {
-      LogisimFile ret = loadLogisimFile(file);
+      final var ret = loadLogisimFile(file);
       if (ret != null) setMainFile(file);
       else throw new LoadFailedException("File could not be opened");
       showMessages(ret);
@@ -341,18 +334,18 @@ public class Loader implements LibraryLoader {
   }
 
   public boolean save(LogisimFile file, File dest) {
-    Library reference = LibraryManager.instance.findReference(file, dest);
+    final var reference = LibraryManager.instance.findReference(file, dest);
     if (reference != null) {
       OptionPane.showMessageDialog(
           parent,
-          StringUtil.format(S.get("fileCircularError"), reference.getDisplayName()),
+          S.get("fileCircularError", reference.getDisplayName()),
           S.get("fileSaveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
       return false;
     }
 
-    File backup = determineBackupName(dest);
-    boolean backupCreated = backup != null && dest.renameTo(backup);
+    final var backup = determineBackupName(dest);
+    final var backupCreated = backup != null && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
     try {
@@ -360,7 +353,7 @@ public class Loader implements LibraryLoader {
       file.write(fwrite, this, dest);
       file.setName(toProjectName(dest));
 
-      File oldFile = getMainFile();
+      final var oldFile = getMainFile();
       setMainFile(dest);
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
@@ -368,7 +361,7 @@ public class Loader implements LibraryLoader {
       if (dest.exists() && dest.length() == 0) dest.delete();
       OptionPane.showMessageDialog(
           parent,
-          StringUtil.format(S.get("fileSaveError"), e.toString()),
+          S.get("fileSaveError", e.toString()),
           S.get("fileSaveErrorTitle"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -381,7 +374,7 @@ public class Loader implements LibraryLoader {
           if (dest.exists() && dest.length() == 0) dest.delete();
           OptionPane.showMessageDialog(
               parent,
-              StringUtil.format(S.get("fileSaveCloseError"), e.toString()),
+              S.get("fileSaveCloseError", e.toString()),
               S.get("fileSaveErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -417,32 +410,30 @@ public class Loader implements LibraryLoader {
     parent = value;
   }
 
+  @Override
   public void showError(String description) {
     if (!filesOpening.empty()) {
-      File top = filesOpening.peek();
-      String init = toProjectName(top) + ":";
-      if (description.contains("\n")) {
-        description = init + "\n" + description;
-      } else {
-        description = init + " " + description;
-      }
+      final var top = filesOpening.peek();
+      final var init = toProjectName(top) + ":";
+      final var sep = description.contains("\n") ? "\n" : " ";
+      description = init + sep + description;
     }
 
     if (description.contains("\n") || description.length() > 60) {
-      int lines = 1;
-      for (int pos = description.indexOf('\n');
+      var lines = 1;
+      for (var pos = description.indexOf('\n');
           pos >= 0;
           pos = description.indexOf('\n', pos + 1)) {
         lines++;
       }
       lines = Math.max(4, Math.min(lines, 7));
 
-      JTextArea textArea = new JTextArea(lines, 60);
+      final var textArea = new JTextArea(lines, 60);
       textArea.setEditable(false);
       textArea.setText(description);
       textArea.setCaretPosition(0);
 
-      JScrollPane scrollPane = new JScrollPane(textArea);
+      final var scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(350, 150));
       OptionPane.showMessageDialog(
           parent, scrollPane, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
@@ -454,36 +445,33 @@ public class Loader implements LibraryLoader {
 
   private void showMessages(LogisimFile source) {
     if (source == null) return;
-    String message = source.getMessage();
+    var message = source.getMessage();
     while (message != null) {
-      OptionPane.showMessageDialog(
-          parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
+      OptionPane.showMessageDialog(parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
       message = source.getMessage();
     }
   }
 
   private String toProjectName(File file) {
-    String ret = file.getName();
-    if (ret.endsWith(LOGISIM_EXTENSION)) {
-      return ret.substring(0, ret.length() - LOGISIM_EXTENSION.length());
-    } else {
-      return ret;
-    }
+    final var ret = file.getName();
+
+    return (ret.endsWith(LOGISIM_EXTENSION))
+        ? ret.substring(0, ret.length() - LOGISIM_EXTENSION.length())
+        : ret;
   }
 
   public String vhdlImportChooser(Component window) {
-    JFileChooser chooser = createChooser();
+    final var chooser = createChooser();
     chooser.setFileFilter(Loader.VHDL_FILTER);
     chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenDialog"));
-    int returnVal = chooser.showOpenDialog(window);
+    final var returnVal = chooser.showOpenDialog(window);
     if (returnVal != JFileChooser.APPROVE_OPTION) return null;
-    File selected = chooser.getSelectedFile();
+    final var selected = chooser.getSelectedFile();
     if (selected == null) return null;
     try {
       return HdlFile.load(selected);
     } catch (IOException e) {
-      OptionPane.showMessageDialog(
-          window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
       return null;
     }
   }

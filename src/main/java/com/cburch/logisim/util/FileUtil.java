@@ -43,21 +43,18 @@ public class FileUtil {
     else return path + File.separator;
   }
 
-  public static File createTmpFile(String content, String prefix, String suffix)
-      throws IOException {
-    File tmp = File.createTempFile(prefix, suffix);
+  public static File createTmpFile(String content, String prefix, String suffix) throws IOException {
+    final var tmp = File.createTempFile(prefix, suffix);
 
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(tmp))) {
+    try (final var out = new BufferedWriter(new FileWriter(tmp))) {
       out.write(content, 0, content.length());
     }
-
     return tmp;
   }
 
   public static byte[] getBytes(InputStream is) throws IOException {
-
     int len;
-    int size = 1024;
+    var size = 1024;
     byte[] buf;
 
     if (is instanceof ByteArrayInputStream) {
@@ -65,7 +62,7 @@ public class FileUtil {
       buf = new byte[size];
       len = is.read(buf, 0, size);
     } else {
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      final var bos = new ByteArrayOutputStream();
       buf = new byte[size];
       while ((len = is.read(buf, 0, size)) != -1) bos.write(buf, 0, len);
       buf = bos.toByteArray();

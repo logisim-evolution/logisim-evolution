@@ -68,7 +68,7 @@ public class ModelAddAction extends ModelAction {
 
   @Override
   public String getName() {
-    return S.fmt("actionAdd", getShapesName(added));
+    return S.get("actionAdd", getShapesName(added));
   }
 
   @Override

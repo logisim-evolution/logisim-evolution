@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.tcl;
+package com.cburch.logisim.std.arith;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -35,32 +35,46 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
-public class Tcl extends Library {
-
+public class ArithmeticLibrary extends Library {
   /**
    * Unique identifier of the library, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
    *
    * Identifier value must MUST be unique string among all libraries.
    */
-  public static final String _ID = "TCL";
+  public static final String _ID = "Arithmetic";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(TclConsoleReds.class, S.getter("tclConsoleReds"), "tcl.gif"),
-    new FactoryDescription(TclGeneric.class, S.getter("tclGeneric"), "tcl.gif"),
+    new FactoryDescription(Adder.class, S.getter("adderComponent"), "adder.gif"),
+    new FactoryDescription(Subtractor.class, S.getter("subtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(Multiplier.class, S.getter("multiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(Divider.class, S.getter("dividerComponent"), "divider.gif"),
+    new FactoryDescription(Negator.class, S.getter("negatorComponent"), "negator.gif"),
+    new FactoryDescription(Comparator.class, S.getter("comparatorComponent"), "comparator.gif"),
+    new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
+    new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
+    new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
+    new FactoryDescription(FPAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
+    new FactoryDescription(FPSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(FPMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(FPDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
+    new FactoryDescription(FPNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
+    new FactoryDescription(FPComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
+    new FactoryDescription(FPToInt.class, S.getter("fpToIntComponent")),
+    new FactoryDescription(IntToFP.class, S.getter("intToFPComponent")),
   };
 
   private List<Tool> tools = null;
 
   @Override
   public String getDisplayName() {
-    return S.get("tclLibrary");
+    return S.get("arithmeticLibrary");
   }
 
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      tools = FactoryDescription.getTools(Tcl.class, DESCRIPTIONS);
+      tools = FactoryDescription.getTools(ArithmeticLibrary.class, DESCRIPTIONS);
     }
     return tools;
   }

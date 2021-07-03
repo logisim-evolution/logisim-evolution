@@ -44,7 +44,7 @@ class WindowMenuItem extends JRadioButtonMenuItem {
   }
 
   public void actionPerformed(ActionEvent event) {
-    JFrame frame = getJFrame();
+    final var frame = getJFrame();
     frame.setExtendedState(Frame.NORMAL);
     frame.setVisible(true);
     frame.toFront();

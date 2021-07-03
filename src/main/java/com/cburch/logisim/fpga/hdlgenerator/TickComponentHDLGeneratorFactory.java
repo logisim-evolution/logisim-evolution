@@ -139,10 +139,10 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(ReloadValueId, ReloadValueStr);
-    Parameters.put(NrOfCounterBitsId, NrOfCounterBitsStr);
-    return Parameters;
+    final var map = new TreeMap<Integer, String>();
+    map.put(ReloadValueId, ReloadValueStr);
+    map.put(NrOfCounterBitsId, NrOfCounterBitsStr);
+    return map;
   }
 
   @Override

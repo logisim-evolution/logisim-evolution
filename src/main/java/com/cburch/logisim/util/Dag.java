@@ -30,7 +30,6 @@ package com.cburch.logisim.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Dag {
@@ -54,8 +53,8 @@ public class Dag {
   public boolean addEdge(Object srcData, Object dstData) {
     if (!canFollow(dstData, srcData)) return false;
 
-    Node src = createNode(srcData);
-    Node dst = createNode(dstData);
+    final var src = createNode(srcData);
+    final var dst = createNode(dstData);
     if (src.succs.add(dst)) ++dst.numPreds; // add since not already present
     return true;
   }
@@ -64,16 +63,16 @@ public class Dag {
     if (base == query) return false;
 
     // mark all as unvisited
-    for (Node n : nodes.values()) {
+    for (final var n : nodes.values()) {
       n.mark = false; // will become true once reached
     }
 
     // Search starting at query: If base is found, then it follows
     // the query already, and so query cannot follow base.
-    LinkedList<Node> fringe = new LinkedList<>();
+    final var fringe = new LinkedList<Node>();
     fringe.add(query);
     while (!fringe.isEmpty()) {
-      Node n = fringe.removeFirst();
+      final var n = fringe.removeFirst();
       for (Node next : n.succs) {
         if (!next.mark) {
           if (next == base) return false;
@@ -86,8 +85,8 @@ public class Dag {
   }
 
   public boolean canFollow(Object query, Object base) {
-    Node queryNode = findNode(query);
-    Node baseNode = findNode(base);
+    final var queryNode = findNode(query);
+    final var baseNode = findNode(base);
     if (baseNode == null || queryNode == null) {
       return !base.equals(query);
     } else {
@@ -96,7 +95,7 @@ public class Dag {
   }
 
   private Node createNode(Object data) {
-    Node ret = findNode(data);
+    var ret = findNode(data);
     if (ret != null) return ret;
     if (data == null) return null;
 
@@ -111,19 +110,19 @@ public class Dag {
   }
 
   public boolean hasPredecessors(Object data) {
-    Node from = findNode(data);
+    final var from = findNode(data);
     return from != null && from.numPreds != 0;
   }
 
   public boolean hasSuccessors(Object data) {
-    Node to = findNode(data);
+    final var to = findNode(data);
     return to != null && !to.succs.isEmpty();
   }
 
   public boolean removeEdge(Object srcData, Object dstData) {
     // returns true if the edge could be removed
-    Node src = findNode(srcData);
-    Node dst = findNode(dstData);
+    final var src = findNode(srcData);
+    final var dst = findNode(dstData);
     if (src == null || dst == null) return false;
     if (!src.succs.remove(dst)) return false;
 
@@ -134,11 +133,11 @@ public class Dag {
   }
 
   public void removeNode(Object data) {
-    Node n = findNode(data);
+    final var n = findNode(data);
     if (n == null) return;
 
-    for (Iterator<Node> it = n.succs.iterator(); it.hasNext(); ) {
-      Node succ = it.next();
+    for (final var it = n.succs.iterator(); it.hasNext(); ) {
+      final var succ = it.next();
       --(succ.numPreds);
       if (succ.numPreds == 0 && succ.succs.isEmpty()) it.remove();
     }

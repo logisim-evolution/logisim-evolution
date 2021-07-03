@@ -57,6 +57,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
     modelChanged(null, getModel());
   }
 
+  @Override
   public void changeColumnValueRadix(int i) {
     if (i == 0) return;
     TestVector vec = getModel().getVector();
@@ -74,16 +75,19 @@ class TestPanel extends JPanel implements ValueTable.Model {
     table.modelChanged();
   }
 
+  @Override
   public int getColumnCount() {
     TestVector vec = getModel().getVector();
     return vec == null ? 0 : vec.columnName.length + 1;
   }
 
+  @Override
   public String getColumnName(int i) {
     TestVector vec = getModel().getVector();
     return i == 0 ? S.get("statusHeader") : vec.columnName[i - 1];
   }
 
+  @Override
   public int getColumnValueRadix(int i) {
     TestVector vec = getModel().getVector();
     return i == 0 ? 0 : vec.columnRadix[i - 1];
@@ -91,6 +95,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
 
   // ValueTable.Model implementation
 
+  @Override
   public BitWidth getColumnValueWidth(int i) {
     TestVector vec = getModel().getVector();
     return i == 0 ? null : vec.columnWidth[i - 1];
@@ -100,39 +105,38 @@ class TestPanel extends JPanel implements ValueTable.Model {
     return testFrame.getModel();
   }
 
+  @Override
   public int getRowCount() {
     TestVector vec = getModel().getVector();
     return vec == null ? 0 : vec.data.size();
   }
 
+  @Override
   public void getRowData(int firstRow, int numRows, ValueTable.Cell[][] rowData) {
     Model model = getModel();
     TestException[] results = model.getResults();
-    int numPass = model.getPass();
-    int numFail = model.getFail();
-    TestVector vec = model.getVector();
+    var numPass = model.getPass();
+    var numFail = model.getFail();
+    final var vec = model.getVector();
     int columns = vec.columnName.length;
-    String[] msg = new String[columns];
-    Value[] altdata = new Value[columns];
-    String passMsg = S.get("passStatus");
-    String failMsg = S.get("failStatus");
+    final var msg = new String[columns];
+    final var altdata = new Value[columns];
+    final var passMsg = S.get("passStatus");
+    final var failMsg = S.get("failStatus");
 
-    for (int i = firstRow; i < firstRow + numRows; i++) {
-      int row = model.sortedIndex(i);
-      Value[] data = vec.data.get(row);
+    for (var i = firstRow; i < firstRow + numRows; i++) {
+      final var row = model.sortedIndex(i);
+      final var data = vec.data.get(row);
       String rowmsg = null;
       String status = null;
-      boolean failed = false;
+      var failed = false;
       if (row < numPass + numFail) {
-        TestException err = results[row];
+        final var err = results[row];
         if (err instanceof FailException) {
           failed = true;
-          for (FailException e : ((FailException) err).getAll()) {
-            int col = e.getColumn();
-            msg[col] =
-                StringUtil.format(
-                    S.get("expectedValueMessage"),
-                    e.getExpected().toDisplayString(getColumnValueRadix(col + 1)));
+          for (final var e : ((FailException) err).getAll()) {
+            var col = e.getColumn();
+            msg[col] = S.get("expectedValueMessage", e.getExpected().toDisplayString(getColumnValueRadix(col + 1)));
             altdata[col] = e.getComputed();
           }
         } else if (err != null) {
@@ -145,7 +149,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
       rowData[i - firstRow][0] =
           new ValueTable.Cell(status, rowmsg != null ? failColor : null, null, rowmsg);
 
-      for (int col = 0; col < columns; col++) {
+      for (var col = 0; col < columns; col++) {
         rowData[i - firstRow][col + 1] =
             new ValueTable.Cell(
                 altdata[col] != null ? altdata[col] : data[col],
@@ -170,12 +174,15 @@ class TestPanel extends JPanel implements ValueTable.Model {
 
   private class MyListener implements ModelListener {
 
+    @Override
     public void testingChanged() {}
 
+    @Override
     public void testResultsChanged(int numPass, int numFail) {
       table.dataChanged();
     }
 
+    @Override
     public void vectorChanged() {
       table.modelChanged();
     }

@@ -37,7 +37,6 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.instance.Instance;
@@ -53,7 +52,6 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -71,7 +69,7 @@ public class PortIO extends InstanceFactory {
 
   public static ArrayList<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
-    for (int i = 0; i < size; i++) {
+    for (var i = 0; i < size; i++) {
       LabelNames.add("pin_" + (i + 1));
     }
     return LabelNames;
@@ -85,11 +83,11 @@ public class PortIO extends InstanceFactory {
 
     public PortState(int size) {
       this.size = size;
-      int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+      final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
       pin = new Value[nBus];
       usr = new Value[nBus];
-      for (int i = 0; i < nBus; i++) {
-        int n = (Math.min(size, BitWidth.MAXWIDTH));
+      for (var i = 0; i < nBus; i++) {
+        final var n = (Math.min(size, BitWidth.MAXWIDTH));
         pin[i] = Value.createUnknown(BitWidth.create(n));
         usr[i] = Value.createUnknown(BitWidth.create(n));
         size -= n;
@@ -97,13 +95,13 @@ public class PortIO extends InstanceFactory {
     }
 
     public void resize(int sz) {
-      int nBus = (((sz - 1) / BitWidth.MAXWIDTH) + 1);
+      final var nBus = (((sz - 1) / BitWidth.MAXWIDTH) + 1);
       if (nBus != (((size - 1) / BitWidth.MAXWIDTH) + 1)) {
         pin = Arrays.copyOf(pin, nBus);
         usr = Arrays.copyOf(usr, nBus);
       }
-      for (int i = 0; i < nBus; i++) {
-        int n = (Math.min(sz, BitWidth.MAXWIDTH));
+      for (var i = 0; i < nBus; i++) {
+        final var n = (Math.min(sz, BitWidth.MAXWIDTH));
         if (pin[i] == null)
           pin[i] = Value.createUnknown(BitWidth.create(n));
         else
@@ -117,9 +115,9 @@ public class PortIO extends InstanceFactory {
     }
 
     public void toggle(int i) {
-      int n = i / BitWidth.MAXWIDTH;
+      final var n = i / BitWidth.MAXWIDTH;
       i = i % BitWidth.MAXWIDTH;
-      Value v = usr[n].get(i);
+      var v = usr[n].get(i);
       if (v == Value.UNKNOWN)
         v = Value.FALSE;
       else if (v == Value.FALSE)
@@ -134,14 +132,13 @@ public class PortIO extends InstanceFactory {
     }
 
     public Color getColor(int i) {
-      Value v = get(i);
-      return (v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor());
-    }
+      final var v = get(i);
+      return (v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor());    }
 
     @Override
     public Object clone() {
       try {
-        PortState other = (PortState) super.clone();
+        final var other = (PortState) super.clone();
         other.pin = Arrays.copyOf(pin, pin.length);
         other.usr = Arrays.copyOf(usr, usr.length);
         return other;
@@ -154,19 +151,16 @@ public class PortIO extends InstanceFactory {
   public static class PortPoker extends InstancePoker {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      Location loc = state.getInstance().getLocation();
-      int cx = e.getX() - loc.getX() - 7 + 2;
-      int cy = e.getY() - loc.getY() - 25 + 2;
-      if (cx < 0 || cy < 0)
-        return;
-      int i = cx / 10;
-      int j = cy / 10;
-      if (j > 1)
-        return;
-      int n = 2 * i + j;
-      PortState data = getState(state);
-      if (n < 0 || n >= data.size)
-        return;
+      final var loc = state.getInstance().getLocation();
+      final var cx = e.getX() - loc.getX() - 7 + 2;
+      final var cy = e.getY() - loc.getY() - 25 + 2;
+      if (cx < 0 || cy < 0) return;
+      final var i = cx / 10;
+      final var j = cy / 10;
+      if (j > 1) return;
+      final var n = 2 * i + j;
+      final var data = getState(state);
+      if (n < 0 || n >= data.size) return;
       data.toggle(n);
       state.getInstance().fireInvalidated();
     }
@@ -236,12 +230,12 @@ public class PortIO extends InstanceFactory {
   }
 
   private void updatePorts(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    AttributeOption dir = instance.getAttributeValue(ATTR_DIR);
-    int size = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var dir = instance.getAttributeValue(ATTR_DIR);
+    final var size = instance.getAttributeValue(ATTR_SIZE).getWidth();
     // logisim max bus size is BitWidth.MAXWIDTH, so use multiple buses if needed
-    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
-    int nPorts = -1;
+    final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+    var nPorts = -1;
     if (dir == INPUT || dir == OUTPUT)
       nPorts = nBus;
     else if (dir == INOUTME)
@@ -249,9 +243,12 @@ public class PortIO extends InstanceFactory {
     else if (dir == INOUTSE)
       nPorts = 2 * nBus + 1;
     Port[] ps = new Port[nPorts];
-    int p = 0;
+    var p = 0;
 
-    int x = 0, y = 0, dx = 0, dy = 0;
+    var x = 0;
+    var y = 0;
+    var dx = 0;
+    var dy = 0;
     if (facing == Direction.NORTH)
       dy = -10;
     else if (facing == Direction.SOUTH)
@@ -271,11 +268,11 @@ public class PortIO extends InstanceFactory {
       x += dx;
       y += dy;
     }
-    int n = size;
-    int i = 0;
+    var n = size;
+    var i = 0;
     while (n > 0) {
-      int e = (Math.min(n, BitWidth.MAXWIDTH));
-      String range = "[" + i + "..." + (i + e - 1) + "]";
+      final var e = Math.min(n, BitWidth.MAXWIDTH);
+      final var range = "[" + i + "..." + (i + e - 1) + "]";
       if (dir == INOUTME) {
         ps[p] = new Port(x - dy, y + dx, Port.INPUT, e);
         ps[p].setToolTip(S.getter("pioOutEnables", range));
@@ -296,7 +293,7 @@ public class PortIO extends InstanceFactory {
     n = size;
     i = 0;
     while (n > 0) {
-      int e = (Math.min(n, BitWidth.MAXWIDTH));
+      final var e = Math.min(n, BitWidth.MAXWIDTH);
       String range = "[" + i + "..." + (i + e - 1) + "]";
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.OUTPUT, e);
@@ -313,8 +310,8 @@ public class PortIO extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    int n = attrs.getValue(ATTR_SIZE).getWidth();
+    final var facing = attrs.getValue(StdAttr.FACING);
+    var n = attrs.getValue(ATTR_SIZE).getWidth();
     if (n < 8)
       n = 8;
     return Bounds.create(0, 0, 10 + n / 2 * 10, 50).rotate(Direction.EAST, facing, 0, 0);
@@ -330,11 +327,11 @@ public class PortIO extends InstanceFactory {
       instance.computeLabelTextField(Instance.AVOID_BOTTOM);
       ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
       if (map != null) {
-        int nrPins = instance.getAttributeValue(ATTR_SIZE).getWidth();
-        int inputs = 0;
-        int outputs = 0;
-        int ios = 0;
-        ArrayList<String> labels = GetLabels(nrPins);
+        final var nrPins = instance.getAttributeValue(ATTR_SIZE).getWidth();
+        var inputs = 0;
+        var outputs = 0;
+        var ios = 0;
+        final var labels = GetLabels(nrPins);
         if (instance.getAttributeValue(ATTR_DIR) == INPUT) {
           inputs = nrPins;
         } else if (instance.getAttributeValue(ATTR_DIR) == OUTPUT) {
@@ -351,16 +348,16 @@ public class PortIO extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
 
-    Bounds bds = painter.getBounds().rotate(Direction.EAST, facing, 0, 0);
-    int w = bds.getWidth();
-    int h = bds.getHeight();
-    int x = painter.getLocation().getX();
-    int y = painter.getLocation().getY();
-    Graphics g = painter.getGraphics();
+    final var bds = painter.getBounds().rotate(Direction.EAST, facing, 0, 0);
+    final var w = bds.getWidth();
+    final var h = bds.getHeight();
+    final var x = painter.getLocation().getX();
+    final var y = painter.getLocation().getY();
+    final var g = painter.getGraphics();
     g.translate(x, y);
-    double rotate = 0.0;
+    var rotate = 0.0;
     if (facing != Direction.EAST) {
       rotate = -facing.toRadians();
       ((Graphics2D) g).rotate(rotate);
@@ -375,24 +372,24 @@ public class PortIO extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
     g.drawPolyline(bx, by, 7);
 
-    int size = painter.getAttributeValue(ATTR_SIZE).getWidth();
-    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+    final var size = painter.getAttributeValue(ATTR_SIZE).getWidth();
+    final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     if (!painter.getShowState()) {
       g.setColor(Color.LIGHT_GRAY);
-      for (int i = 0; i < size; i++)
+      for (var i = 0; i < size; i++)
         g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
     }  else {
       PortState data = getState(painter);
-      for (int i = 0; i < size; i++) {
+      for (var i = 0; i < size; i++) {
         g.setColor(data.getColor(i));
         g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
       }
     }
     g.setColor(Color.BLACK);
     AttributeOption dir = painter.getAttributeValue(ATTR_DIR);
-    int px = ((dir == INOUTSE || dir == INOUTME) ? 0 : 10);
-    int py = 0;
-    for (int p = 0; p < nBus; p++) {
+    var px = ((dir == INOUTSE || dir == INOUTME) ? 0 : 10);
+    final var py = 0;
+    for (var p = 0; p < nBus; p++) {
       if (dir == INOUTSE) {
         GraphicsUtil.switchToWidth(g, 3);
         if (p == 0) {
@@ -419,7 +416,7 @@ public class PortIO extends InstanceFactory {
       }
     }
 
-    for (int p = 0; p < nBus; p++) {
+    for (var p = 0; p < nBus; p++) {
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         GraphicsUtil.switchToWidth(g, 3);
         g.drawLine(px, py, px, py + 5);
@@ -442,8 +439,8 @@ public class PortIO extends InstanceFactory {
   }
 
   private static PortState getState(InstanceState state) {
-    int size = state.getAttributeValue(ATTR_SIZE).getWidth();
-    PortState data = (PortState) state.getData();
+    final var size = state.getAttributeValue(ATTR_SIZE).getWidth();
+    var data = (PortState) state.getData();
     if (data == null) {
       data = new PortState(size);
       state.setData(data);
@@ -456,23 +453,23 @@ public class PortIO extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    AttributeOption dir = state.getAttributeValue(ATTR_DIR);
-    int size = state.getAttributeValue(ATTR_SIZE).getWidth();
-    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+    final var dir = state.getAttributeValue(ATTR_DIR);
+    final var size = state.getAttributeValue(ATTR_SIZE).getWidth();
+    final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
 
-    PortState data = getState(state);
+    final var data = getState(state);
 
     if (dir == OUTPUT) {
-      for (int i = 0; i < nBus; i++) {
+      for (var i = 0; i < nBus; i++) {
         data.pin[i] = state.getPortValue(i);
       }
     } else if (dir == INPUT) {
-      for (int i = 0; i < nBus; i++) {
+      for (var i = 0; i < nBus; i++) {
         data.pin[i] = data.usr[i];
         state.setPort(i, data.pin[i], DELAY);
       }
     } else if (dir == INOUTSE) {
-      Value en = state.getPortValue(0);
+      final var en = state.getPortValue(0);
       // pindata = usrdata + en.controls(indata)
       // where "+" resolves like:
       //     Z 0 1 E
@@ -480,15 +477,15 @@ public class PortIO extends InstanceFactory {
       // Z | Z 0 1 E
       // 0 | 0 0 E E
       // 1 | 1 E 1 E
-      for (int i = 0; i < nBus; i++) {
-        Value in = state.getPortValue(i + 1);
+      for (var i = 0; i < nBus; i++) {
+        final var in = state.getPortValue(i + 1);
         data.pin[i] = data.usr[i].combine(en.controls(in));
         state.setPort(1 + nBus + i, data.pin[i], DELAY);
       }
     } else if (dir == INOUTME) {
-      for (int i = 0; i < nBus; i++) {
-        Value en = state.getPortValue(i * 2);
-        Value in = state.getPortValue(i * 2 + 1);
+      for (var i = 0; i < nBus; i++) {
+        final var en = state.getPortValue(i * 2);
+        final var in = state.getPortValue(i * 2 + 1);
         data.pin[i] = data.usr[i].combine(en.controls(in));
         state.setPort(2 * nBus + i, data.pin[i], DELAY);
       }
