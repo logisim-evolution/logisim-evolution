@@ -101,6 +101,9 @@ public class PokeTool extends Tool {
         vStr += " / " + radix2.toString(v);
       }
 
+      if (v.getWidth() == 32 || v.getWidth() == 64) {
+        vStr += " / " + RadixOption.RADIX_FLOAT.toString(v);
+      }
       final var fm = g.getFontMetrics();
       g.setColor(caretColor);
 

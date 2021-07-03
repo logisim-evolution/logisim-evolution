@@ -54,6 +54,14 @@ public class ArithmeticLibrary extends Library {
     new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
     new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
     new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
+    new FactoryDescription(FPAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
+    new FactoryDescription(FPSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(FPMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(FPDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
+    new FactoryDescription(FPNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
+    new FactoryDescription(FPComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
+    new FactoryDescription(FPToInt.class, S.getter("fpToIntComponent")),
+    new FactoryDescription(IntToFP.class, S.getter("intToFPComponent")),
   };
 
   private List<Tool> tools = null;

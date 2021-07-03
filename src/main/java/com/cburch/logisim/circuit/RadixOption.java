@@ -330,6 +330,27 @@ public abstract class RadixOption extends AttributeOption {
     }
   }
 
+  private static class RadixFloat extends RadixOption {
+    private RadixFloat() {
+      super("float", S.getter("radixFloat"));
+    }
+
+    @Override
+    public int getMaxLength(BitWidth width) {
+      return width.getWidth() == 64 ? 24 : 12;
+    }
+
+    @Override
+    public String toString(Value value) {
+      return value.getWidth() == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue());
+    }
+
+    @Override
+    public String GetIndexChar() {
+      return "f";
+    }
+  }
+
   public static RadixOption decode(String value) {
     for (final var opt : OPTIONS) {
       if (value.equals(opt.saveName)) {
@@ -348,8 +369,10 @@ public abstract class RadixOption extends AttributeOption {
 
   public static final RadixOption RADIX_16 = new Radix16();
 
+  public static final RadixOption RADIX_FLOAT = new RadixFloat();
+
   public static final RadixOption[] OPTIONS = {
-    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16
+    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16, RADIX_FLOAT
   };
 
   public static final Attribute<RadixOption> ATTRIBUTE = Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
