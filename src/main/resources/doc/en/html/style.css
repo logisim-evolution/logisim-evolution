@@ -5,8 +5,28 @@ java-help supports version 1 of CSS
 */
 
 
-/* For img icone in the text  */
+/* For page  */
+div.maindiv {
+	max-width:560px;
+	border:solid 0px;
+	background-color:#FFFFFF;
 }
+
+/* div  for the tiny code in the pages */
+div.codediv {
+	max-width:660px;
+	border:solid 0px;
+}
+/* div for the code in the pages */
+div.forcode{
+	text-indent:-20px;
+}
+
+div.AttributesListe {
+	margin-left:20;
+}
+
+/* For for the keyboard keys  (not used) */
 kbd {
 	background-color: #eee;
 	border-radius: 3px;
@@ -29,6 +49,7 @@ img.intxt {
 	vertical-align:middle;
 	margin:2px;
 }
+/* For img in bullet */
 img.inbullet {
 	height:32;
 	width:32;
@@ -43,58 +64,44 @@ img.notscal {
 	vertical-align:middle;
 }
 
+/* For img icon of the library cards  */
 img.iconlibs{
 	height:32px;
 	width:32px;
 	vertical-align:middle;
 }
+/* For img apparence of the library cards  */
 img.appearancelibs{
 	height:64px;
 	width:64px;
 	vertical-align:middle;
 }
+/* For img apparence large of the library cards  */
 img.appearancelibslarge{
 	height:64px;
 	width:128;
 	vertical-align:middle;
 
 }
+/* For img apparence upper of the library cards  */
 img.appearancelibshaut{
 	height:128;
 	width:64;
 	vertical-align:middle;
 
 }
+
 /* For icon in the text */
 img.icontxt{
 	height:16px;
 	width:16px;
 	vertical-align:middle;
 }
-/* For spaces, page background */
-div.maindiv {
-	max-width:560px;
-	border:solid 0px;
-	background-color:#FFFFFF;
-}
 
-div.codediv {
-	max-width:660px;
-	border:solid 0px;
-}
-
-div.leftdiv {
-   position:relative; 
-   float:left; 
-   max-width:160px;
-   border:solid 0px;   
-}
 div.twodiv{
 	display:inline-block;
 }
-div.forcode{
-	text-indent:-20px;
-}
+
 a {
 	color:#00137f;
 }
@@ -112,10 +119,12 @@ h2 {
 h3{
 	color:#00137f;
 }
+
 var {
 	color:#0025ff;
 	font-weight:bold;
 }
+
 tt {
 	font-size:110%;
 }
