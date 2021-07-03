@@ -6,9 +6,6 @@ java-help supports version 1 of CSS
 
 
 /* For img icone in the text  */
-img {
-    height:auto;
-	width:90%;
 }
 kbd {
 	background-color: #eee;
@@ -32,6 +29,13 @@ img.intxt {
 	vertical-align:middle;
 	margin:2px;
 }
+img.inbullet {
+	height:32;
+	width:32;
+	vertical-align:middle;
+	margin:2px;
+}
+
 /* For Img not scal */
 img.notscal {
 	height:auto;

@@ -178,10 +178,13 @@
 			<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 			<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 			<tocitem target="io_tty" text="TTY" image="icon_tty" />
-			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
+<!-- not documented 
+     		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
 			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
 			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
+-->	
 		</tocitem>
+<!-- not documented 
 		<tocitem target="ttl" text="TTL">
 			<tocitem target="ttl_xxxx" text="TTL" image="icon_ttl" />
 		</tocitem>
@@ -208,7 +211,7 @@
 			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
 		</tocitem>
 		
-<!--
+
 		<tocitem target="base" text="Base library">
 			<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
 			<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />
