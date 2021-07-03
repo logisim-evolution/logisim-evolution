@@ -1,0 +1,6 @@
+This path is the documentation icon repository.
+The "todelete" path is for obsolete icons.
+6464 path for icons format 6464
+1616 path for icons format 1616 use in text
+svgwithbackground     contains icons in svg mode  experimental  06.2021 
+svgwithoutbackground  contains icons in svg mode  experimental  06.2021
