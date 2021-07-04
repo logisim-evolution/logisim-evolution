@@ -32,7 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.LFrame;
@@ -41,11 +40,9 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.TableLayout;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,7 +62,7 @@ public class OptionsFrame extends LFrame.Dialog {
     super(project);
     project.addLibraryListener(myListener);
     project.addProjectListener(event -> {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
         computeTitle();
       }
@@ -78,13 +75,12 @@ public class OptionsFrame extends LFrame.Dialog {
           new RevertPanel(this)
         };
     tabbedPane = new JTabbedPane();
-    for (OptionsPanel panel : panels) {
+    for (final var panel : panels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
 
-    Container contents = getContentPane();
-    tabbedPane.setPreferredSize(
-        new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
+    final var contents = getContentPane();
+    tabbedPane.setPreferredSize(new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(300)));
     contents.add(tabbedPane, BorderLayout.CENTER);
 
     LocaleManager.addLocaleListener(myListener);
@@ -94,9 +90,9 @@ public class OptionsFrame extends LFrame.Dialog {
   }
 
   private void computeTitle() {
-    LogisimFile file = project.getLogisimFile();
-    String name = file == null ? "???" : file.getName();
-    String title = S.get("optionsFrameTitle", name);
+    final var file = project.getLogisimFile();
+    final var name = (file == null) ? "???" : file.getName();
+    final var title = S.get("optionsFrameTitle", name);
     setTitle(title);
   }
 
@@ -124,7 +120,7 @@ public class OptionsFrame extends LFrame.Dialog {
     public RevertPanel(OptionsFrame window) {
       super(window);
       setLayout(new TableLayout(1));
-      JPanel buttonPanel = new JPanel();
+      final var buttonPanel = new JPanel();
       buttonPanel.add(revert);
       revert.addActionListener(myListener);
       add(buttonPanel);
@@ -146,8 +142,9 @@ public class OptionsFrame extends LFrame.Dialog {
     }
 
     private class MyListener implements ActionListener {
+      @Override
       public void actionPerformed(ActionEvent event) {
-        Object src = event.getSource();
+        final var src = event.getSource();
         if (src == revert) {
           getProject().doAction(LogisimFileActions.revertDefaults());
         }
@@ -156,6 +153,7 @@ public class OptionsFrame extends LFrame.Dialog {
   }
 
   private class MyListener implements LibraryListener, LocaleListener {
+    @Override
     public void libraryChanged(LibraryEvent event) {
       if (event.getAction() == LibraryEvent.SET_NAME) {
         computeTitle();
@@ -163,9 +161,10 @@ public class OptionsFrame extends LFrame.Dialog {
       }
     }
 
+    @Override
     public void localeChanged() {
       computeTitle();
-      for (int i = 0; i < panels.length; i++) {
+      for (var i = 0; i < panels.length; i++) {
         tabbedPane.setTitleAt(i, panels[i].getTitle());
         tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
         panels[i].localeChanged();
@@ -184,8 +183,9 @@ public class OptionsFrame extends LFrame.Dialog {
       return OptionsFrame.this;
     }
 
+    @Override
     public void localeChanged() {
-      String title = project.getLogisimFile().getDisplayName();
+      final var title = project.getLogisimFile().getDisplayName();
       setText(S.get("optionsFrameMenuItem", title));
     }
   }
