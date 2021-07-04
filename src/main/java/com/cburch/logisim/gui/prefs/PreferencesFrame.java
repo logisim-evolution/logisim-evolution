@@ -37,7 +37,6 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -49,7 +48,7 @@ public class PreferencesFrame extends LFrame.Dialog {
   private final MyListener myListener = new MyListener();
   private final OptionsPanel[] panels;
   private final JTabbedPane tabbedPane;
-  private int FpgaTabIdx = -1;
+  private int fpgaTabIdx = -1;
 
   private PreferencesFrame() {
     super(null);
@@ -67,14 +66,14 @@ public class PreferencesFrame extends LFrame.Dialog {
         };
     tabbedPane = new JTabbedPane();
     int intlIndex = -1;
-    for (int index = 0; index < panels.length; index++) {
-      OptionsPanel panel = panels[index];
+    for (var index = 0; index < panels.length; index++) {
+      final var panel = panels[index];
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
       if (panel instanceof IntlOptions) intlIndex = index;
-      if (panel instanceof FPGAOptions) FpgaTabIdx = index;
+      if (panel instanceof FPGAOptions) fpgaTabIdx = index;
     }
 
-    Container contents = getContentPane();
+    final var contents = getContentPane();
     contents.add(new JScrollPane(tabbedPane), BorderLayout.CENTER);
 
     if (intlIndex >= 0) tabbedPane.setSelectedIndex(intlIndex);
@@ -89,19 +88,19 @@ public class PreferencesFrame extends LFrame.Dialog {
   }
 
   public static void showPreferences() {
-    JFrame frame = MENU_MANAGER.getJFrame(true, null);
+    final var frame = MENU_MANAGER.getJFrame(true, null);
     frame.setVisible(true);
   }
 
   public static void showFPGAPreferences() {
-    PreferencesFrame frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
+    final var frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
     frame.setFpgaTab();
     frame.setVisible(true);
   }
 
   public void setFpgaTab() {
-    if (FpgaTabIdx < 0) return;
-    tabbedPane.setSelectedIndex(FpgaTabIdx);
+    if (fpgaTabIdx < 0) return;
+    tabbedPane.setSelectedIndex(fpgaTabIdx);
   }
 
   private static class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
@@ -124,12 +123,14 @@ public class PreferencesFrame extends LFrame.Dialog {
       return window;
     }
 
+    @Override
     public void localeChanged() {
       setText(S.get("preferencesFrameMenuItem"));
     }
   }
 
   private class MyListener implements LocaleListener {
+    @Override
     public void localeChanged() {
       setTitle(S.get("preferencesFrameTitle"));
       for (int i = 0; i < panels.length; i++) {
