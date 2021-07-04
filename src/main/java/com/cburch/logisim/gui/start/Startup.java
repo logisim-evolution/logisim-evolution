@@ -174,9 +174,9 @@ public class Startup implements AWTEventListener {
 
   public static Startup parseArgs(String[] args) {
     // see whether we'll be using any graphics
-    boolean isTty = false;
-    boolean isClearPreferences = false;
-    for (String value : args) {
+    var isTty = false;
+    var isClearPreferences = false;
+    for (final var value : args) {
       if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
         isTty = true;
         Main.headless = true;
@@ -195,7 +195,7 @@ public class Startup implements AWTEventListener {
       AppPreferences.handleGraphicsAcceleration();
     }
 
-    Startup ret = new Startup(isTty);
+    final var ret = new Startup(isTty);
     startupTemp = ret;
     if (!isTty) {
       registerHandler();
@@ -206,18 +206,18 @@ public class Startup implements AWTEventListener {
     }
 
     // parse arguments
-    for (int i = 0; i < args.length; i++) {
-      String arg = args[i];
+    for (var i = 0; i < args.length; i++) {
+      final var arg = args[i];
       if (arg.equals("-tty")) {
         if (i + 1 < args.length) {
           i++;
-          String[] fmts = args[i].split(",");
+          final var fmts = args[i].split(",");
           if (fmts.length == 0) {
             logger.error("{}", S.get("ttyFormatError"));
           }
-          for (String s : fmts) {
-            String fmt = s.trim();
-            int val = parseTtyFormat(fmt);
+          for (final var s : fmts) {
+            final var fmt = s.trim();
+            final var val = parseTtyFormat(fmt);
             if (val == 0)
               logger.error("{}", S.get("ttyFormatError"));
             else
@@ -229,8 +229,8 @@ public class Startup implements AWTEventListener {
         }
       } else if (arg.equals("-sub")) {
         if (i + 2 < args.length) {
-          File a = new File(args[i + 1]);
-          File b = new File(args[i + 2]);
+          final var a = new File(args[i + 1]);
+          final var b = new File(args[i + 2]);
           if (ret.substitutions.containsKey(a)) {
             logger.error("{}", S.get("argDuplicateSubstitutionError"));
             return null;
@@ -273,7 +273,7 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String a = args[i];
+        final var a = args[i];
         if (a.equals("shaped")) {
           AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
         } else if (a.equals("rectangular")) {
@@ -287,18 +287,19 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String[] wxh = args[i].split("[xX]");
+        final var wxh = args[i].split("[xX]");
         if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
           logger.error("{}", S.get("argGeometryError"));
           System.exit(1);
         }
-        int p = wxh[1].indexOf('+', 1);
+        final var p = wxh[1].indexOf('+', 1);
         String loc = null;
-        int x = 0, y = 0;
+        var x = 0;
+        var y = 0;
         if (p >= 0) {
           loc = wxh[1].substring(p + 1);
           wxh[1] = wxh[1].substring(0, p);
-          String[] xy = loc.split("\\+");
+          final var xy = loc.split("\\+");
           if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
             logger.error("{}", S.get("argGeometryError"));
             System.exit(1);
@@ -311,7 +312,8 @@ public class Startup implements AWTEventListener {
             System.exit(1);
           }
         }
-        int w = 0, h = 0;
+        var w = 0;
+        var h = 0;
         try {
           w = Integer.parseInt(wxh[0]);
           h = Integer.parseInt(wxh[1]);
@@ -337,7 +339,7 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String a = args[i];
+        final var a = args[i];
         if (a.equals("yes")) {
           AppPreferences.ACCENTS_REPLACE.setBoolean(false);
         } else if (a.equals("no")) {
@@ -407,6 +409,7 @@ public class Startup implements AWTEventListener {
               ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
             } catch (NumberFormatException ignored) {
+              // do nothing
             }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
@@ -518,7 +521,7 @@ public class Startup implements AWTEventListener {
       "argTestImplement",
       "argCircuitOption",
     };
-    for (String opt : opts) {
+    for (final var opt : opts) {
       System.err.println("   " + S.get(opt));
     }
 
@@ -530,8 +533,8 @@ public class Startup implements AWTEventListener {
   }
 
   private static void setLocale(String lang) {
-    Locale[] opts = S.getLocaleOptions();
-    for (Locale locale : opts) {
+    final var opts = S.getLocaleOptions();
+    for (final var locale : opts) {
       if (lang.equals(locale.toString())) {
         LocaleManager.setLocale(locale);
         return;
@@ -540,7 +543,7 @@ public class Startup implements AWTEventListener {
     logger.warn("{}", S.get("invalidLocaleError"));
     logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
 
-    for (Locale opt : opts) {
+    for (final var opt : opts) {
       logger.warn("   {}", opt.toString());
     }
     System.exit(-1);
@@ -556,7 +559,7 @@ public class Startup implements AWTEventListener {
 
   private void doPrintFile(File file) {
     if (initialized) {
-      Project toPrint = ProjectActions.doOpen(null, null, file);
+      final var toPrint = ProjectActions.doOpen(null, null, file);
       Print.doPrint(toPrint);
       toPrint.getFrame().dispose();
     } else {
@@ -649,8 +652,8 @@ public class Startup implements AWTEventListener {
     if (showSplash) {
       monitor.setProgress(SplashScreen.LIBRARIES);
     }
-    Loader templLoader = new Loader(monitor);
-    int count =
+    final var templLoader = new Loader(monitor);
+    final var count =
         templLoader.getBuiltin().getLibrary(BaseLibrary._ID).getTools().size()
             + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     if (count < 0) {
@@ -695,16 +698,16 @@ public class Startup implements AWTEventListener {
 
     // load file
     if (filesToOpen.isEmpty()) {
-      Project proj = ProjectActions.doNew(monitor);
+      final var proj = ProjectActions.doNew(monitor);
       proj.setStartupScreen(true);
       if (showSplash) {
         monitor.close();
       }
     } else {
-      int numOpened = 0;
-      boolean first = true;
+      var numOpened = 0;
+      var first = true;
       Project proj;
-      for (File fileToOpen : filesToOpen) {
+      for (final var fileToOpen : filesToOpen) {
         try {
           if (testVector != null) {
             proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
@@ -717,7 +720,7 @@ public class Startup implements AWTEventListener {
             ProjectActions.doSave(proj, new File(testCircPathOutput));
           } else if (testCircuitPathInput != null) {
             /* Testing test bench*/
-            TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
+            final var testB = new TestBench(testCircuitPathInput, monitor, substitutions);
 
             if (testB.startTestBench()) {
               System.out.println("Test bench pass\n");
@@ -744,7 +747,7 @@ public class Startup implements AWTEventListener {
       if (numOpened == 0) System.exit(-1);
     }
 
-    for (File fileToPrint : filesToPrint) {
+    for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);
     }
 
@@ -754,7 +757,7 @@ public class Startup implements AWTEventListener {
   }
 
   private boolean HasIcon(Component comp) {
-    boolean result = false;
+    var result = false;
     if (comp instanceof JOptionPane) {
       for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
     } else if (comp instanceof JPanel) {
@@ -768,9 +771,9 @@ public class Startup implements AWTEventListener {
   @Override
   public void eventDispatched(AWTEvent event) {
     if (event instanceof ContainerEvent) {
-      ContainerEvent containerEvent = (ContainerEvent) event;
+      final var containerEvent = (ContainerEvent) event;
       if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
-        Component container = containerEvent.getChild();
+        final var container = containerEvent.getChild();
         if ((container instanceof JButton)
             || (container instanceof JCheckBox)
             || (container instanceof JComboBox)
@@ -799,7 +802,7 @@ public class Startup implements AWTEventListener {
           }
         }
         if (container instanceof JOptionPane) {
-          JOptionPane pane = (JOptionPane) container;
+          final var pane = (JOptionPane) container;
           if (HasIcon(pane)) {
             switch (pane.getMessageType()) {
               case OptionPane.ERROR_MESSAGE:

@@ -128,9 +128,9 @@ public class SplashScreen extends JWindow {
   public void setVisible(boolean value) {
     if (value) {
       pack();
-      Dimension dim = getToolkit().getScreenSize();
-      int x = (int) (dim.getWidth() - getWidth()) / 2;
-      int y = (int) (dim.getHeight() - getHeight()) / 2;
+      final var dim = getToolkit().getScreenSize();
+      final var x = (int) (dim.getWidth() - getWidth()) / 2;
+      final var y = (int) (dim.getHeight() - getHeight()) / 2;
       setLocation(x, y);
     }
     super.setVisible(value);
