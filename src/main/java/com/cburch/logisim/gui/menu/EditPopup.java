@@ -54,7 +54,7 @@ public abstract class EditPopup extends JPopupMenu {
 
   private boolean add(LogisimMenuItem item, String display) {
     if (shouldShow(item)) {
-      JMenuItem menu = new JMenuItem(display);
+      final var menu = new JMenuItem(display);
       items.put(item, menu);
       menu.setEnabled(isEnabled(item));
       menu.addActionListener(listener);
@@ -68,7 +68,7 @@ public abstract class EditPopup extends JPopupMenu {
   protected abstract void fire(LogisimMenuItem item);
 
   protected void initialize() {
-    boolean x = false;
+    var x = false;
     x |= add(LogisimMenuBar.CUT, S.get("editCutItem"));
     x |= add(LogisimMenuBar.COPY, S.get("editCopyItem"));
     if (x) {
@@ -101,9 +101,10 @@ public abstract class EditPopup extends JPopupMenu {
   protected abstract boolean shouldShow(LogisimMenuItem item);
 
   private class Listener implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
-      for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
+      final var source = e.getSource();
+      for (final var entry : items.entrySet()) {
         if (entry.getValue() == source) {
           fire(entry.getKey());
           return;

@@ -60,7 +60,7 @@ public abstract class EditHandler {
   public abstract void computeEnabled();
 
   protected void setEnabled(LogisimMenuItem action, boolean value) {
-    Listener l = listener;
+    final var l = listener;
     if (l != null) {
       l.enableChanged(this, action, value);
     }
@@ -71,7 +71,7 @@ public abstract class EditHandler {
   }
 
   public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
+    final var src = e.getSource();
     if (src == LogisimMenuBar.CUT) cut();
     else if (src == LogisimMenuBar.COPY) copy();
     else if (src == LogisimMenuBar.PASTE) paste();
