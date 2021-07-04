@@ -32,7 +32,6 @@ import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Desktop;
-import java.io.File;
 
 class MacOsAdapter {
 
@@ -48,44 +47,37 @@ class MacOsAdapter {
     if (listenersAdded || !MacCompatibility.isRunningOnMac()) {
       return;
     }
+
     if (Desktop.isDesktopSupported()) {
       listenersAdded = true;
-      Desktop dt = Desktop.getDesktop();
+      final var dt = Desktop.getDesktop();
       try {
-        dt.setAboutHandler(
-            e -> About.showAboutDialog(null));
-      } catch (Exception ignored) {
-      }
-      try {
+        dt.setAboutHandler(e -> About.showAboutDialog(null));
         dt.setQuitHandler(
             (e, response) -> {
               ProjectActions.doQuit();
               response.performQuit();
             });
-      } catch (Exception ignored) {
-      }
-      try {
-        dt.setPreferencesHandler(
-            e -> PreferencesFrame.showPreferences());
-      } catch (Exception ignored) {
-      }
-      try {
+        dt.setQuitHandler(
+            (e, response) -> {
+              ProjectActions.doQuit();
+              response.performQuit();
+            });
+        dt.setPreferencesHandler(e -> PreferencesFrame.showPreferences());
         dt.setPrintFileHandler(
             e -> {
-              for (File f : e.getFiles()) {
+              for (final var f : e.getFiles()) {
                 Startup.doPrint(f);
               }
             });
-      } catch (Exception ignored) {
-      }
-      try {
         dt.setOpenFileHandler(
             e -> {
-              for (File f : e.getFiles()) {
+              for (final var f : e.getFiles()) {
                 Startup.doOpen(f);
               }
             });
-      } catch (Exception ignored) {
+      } catch (Exception ex) {
+        // do nothing
       }
     }
   }
