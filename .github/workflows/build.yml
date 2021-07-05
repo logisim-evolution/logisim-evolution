@@ -11,26 +11,14 @@ on:
   pull_request:
     branches: [ master, develop ]
 
-# I intentionally do not use "paths:" (as part of "push:"), i.e.
-#
-# on:
-#   push:
-#     branches: [ master ]
-#     paths:
-#     - src/**
-#
-# It's because that can cause confusion why there's no build action triggered on specific
-# PR, so to avoid this this action is intentionally always triggered, however it is now split
-# into sub-jobs. One is trying to figure out if build is really needed and the other is building
-# if first said it should so.
-
 jobs:
   analyze_sources:
     name: "Do we need to build the application?"
     runs-on: ubuntu-latest
 
     outputs:
-      run_build: ${{ steps.git_check.outputs.run_build }}
+      # Export 'filter' step check result so next step can use it.
+      run_build: ${{ steps.filter.outputs.src }}
 
     steps:
     - name: "Install packages..."
@@ -39,35 +27,36 @@ jobs:
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
       uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/paths-changes-filter
+    - name: "Look for changes in monitored locations"
+      uses: dorny/paths-filter@v2
+      id: filter
       with:
-        fetch-depth: 2
+        filters: |
+          src:
+            - 'src/**/*.flex'
+            - 'src/**/*.java'
+            - 'src/**/*.properties'
+            - '*.gradle*'
 
     - name: "WILL BUILD STEP BE RUN?"
-      id: git_check
       run: |
-        git diff --name-only HEAD^ HEAD > changes.txt
-        found="no"
-        while IFS= read -r file; do
-          if [[ "${file}" == src/* ]]; then
-            found="yes"
-            break
-          fi
-        done < changes.txt
-
+        found="NO"
+        [[ ${{ steps.filter.outputs.src == 'true' }} ]] && found="YES"
         echo "::set-output name=run_build::${found}"
         echo -e "\n******************************************************************\n"
         banner "${found}"
         echo -e "\n******************************************************************\n"
-
 
   # Build step.
   build:
     name: "Gradle builder"
     runs-on: ubuntu-latest
 
-    # Will run only if analyze_sources said so.
+    # Will run only if analyze_sources determined it is needed.
     needs: analyze_sources
-    if: needs.analyze_sources.outputs.run_build == 'yes'
+    if: needs.analyze_sources.outputs.run_build == 'true'
 
     strategy:
       matrix:
@@ -86,6 +75,5 @@ jobs:
 
     - name: "Build with Gradle"
       run: |
-       chmod +x gradlew gradle/wrapper/gradle-wrapper.jar
+       chmod +x gradlew
        ./gradlew build -x checkstyleMain -x checkstyleTest
-
