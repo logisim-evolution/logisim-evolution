@@ -43,7 +43,7 @@ jobs:
     - name: "WILL BUILD STEP BE RUN?"
       run: |
         found="NO"
-        [[ ${{ steps.filter.outputs.src == 'true' }} ]] && found="YES"
+        [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
         echo "::set-output name=run_build::${found}"
         echo -e "\n******************************************************************\n"
         banner "${found}"
