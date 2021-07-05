@@ -38,7 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LogisimVersionTest {
-
     private LogisimVersion older;
     private LogisimVersion newer;
     private LogisimVersion newerToo;
