@@ -19,7 +19,7 @@ jobs:
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_checkstyle: ${{ steps.filter.outputs.src }}
-      changed_files": ${{ steps.filter.outputs.src_files }}
+      changed_files: ${{ steps.filter.outputs.src_files }}
 
     steps:
     - name: "Install packages..."
