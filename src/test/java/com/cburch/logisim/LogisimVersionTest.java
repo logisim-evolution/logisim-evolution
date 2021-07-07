@@ -49,7 +49,9 @@ public class LogisimVersionTest {
     newerToo = new LogisimVersion(1, 2, 4);
   }
 
-  /** Test method for {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}. */
+  /**
+   * Test method for {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}.
+   */
   @Test
   public void testFromString() {
     assertNotNull(LogisimVersion.fromString("1.2.3"));
@@ -71,7 +73,9 @@ public class LogisimVersionTest {
     assertTrue(newer.compareTo(older) > 0);
   }
 
-  /** Test method for {@link com.cburch.logisim.LogisimVersion#equals(java.lang.Object)}. */
+  /**
+   * Test method for {@link com.cburch.logisim.LogisimVersion#equals(java.lang.Object)}.
+   */
   @Test
   public void testEqualsObject() {
     assertEquals(older, older);
