@@ -61,13 +61,11 @@ jobs:
     needs: analyze_sources
     if: needs.analyze_sources.outputs.run_checkstyle == 'true'
 
-    # Checkstyle is painful to be used from command line as apparently its deves never learnt
-    # to use one (see radiculous comments https://github.com/checkstyle/checkstyle/issues/8418)
-    # So some trickery have to be done to convince Checkstyle to do what we want as we use
-    # built-in "Google Checks" style with just some exceptions. Unfortunately you cannot just
-    # make it use these checks w/o having own config XML that re-defines it, which is pointless
-    # as suppressions are only thing we want to maintain (and to not care if Checkstyle's config
-    # format changed or not).
+    # Checkstyle is painful to use from command line as apparently its deves never
+    # learnt to use one (see funny comments about CLI being "hackers' tool" :)
+    # https://github.com/checkstyle/checkstyle/issues/8418). So trickery have to
+    # be done to convince Checkstyle to work as we want it, which means use built-in
+    # "Google Checks" style with just some exceptions. 
 
     steps:
     - name: "Install packages..."
@@ -87,17 +85,17 @@ jobs:
         locate_jar checkstyle
         if [[ -z "${found_jar}" ]]; then
           echo "checkstyle.jar not found."
-          exit 1
+          exit 100
         fi
 
         unzip -d . "${found_jar}" google_checks.xml
 
         # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
         # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
-        # and that should be sufficient.
+        # (as it looks for it in CWD) and that should be sufficient.
         ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
 
-        # Let's lint...
+        # Let's lint eventually...
         checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
 
         # Output file always contains "Starting audit..." and "Audit done." messages. How 'clever' is that?!
@@ -107,7 +105,7 @@ jobs:
         cnt="$(strings output.txt | wc -l)"
         if [[ "${cnt}" -gt 0 ]]; then
           echo "*********************************************************"
-          echo "* Style guide guide violations found: ${cnd}!"
+          echo "* FIXME! Code style guide violations found: ${cnd}"
           echo "*"
           echo "* For more information about used code style guile see:"
           echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
@@ -117,3 +115,4 @@ jobs:
         else
           echo "Looks good. No style guide violations found."
         fi
+
