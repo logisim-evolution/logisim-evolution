@@ -100,7 +100,15 @@ jobs:
         cnt="$(wc -l output.txt | awk '{print $1}')"
         # text output always contains "Starting audit..." and "Audit done." messages. How clever is that?!
         if [[ "${cnt}" -gt 2 ]]; then
-            cat output.txt
-            exit 1
+          echo "*********************************************************"
+          echo "* Affected source files do not follow code style guide!"
+          echo "*"
+          echo "* For more information about code style guile see:"
+          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
+          echo "*"
+          echo "*********************************************************"
+          cat output.txt
+          echo "*********************************************************"
+          exit 1
         fi
 
