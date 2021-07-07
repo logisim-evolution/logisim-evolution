@@ -61,12 +61,9 @@ jobs:
     needs: analyze_sources
     if: needs.analyze_sources.outputs.run_checkstyle == 'true'
 
-    # Checkstyle is painful to use from command line as apparently its deves
-    # never learnt to use one (see funny comments about CLI being "hackers'
-    # tool" :) https://github.com/checkstyle/checkstyle/issues/8418). So some
-    # trickery have to be done to convince Checkstyle to work as we want it,
-    # which means use built-in "Google Checks" style with just some exceptions.
     # TODO: we may want to use checkstyle.jar directly, skipping cli wrapper
+    # that would let us use most recent version, but would also require downloading
+    # such instead of installing packaged version via apt.
 
     steps:
     - name: "Install packages..."
