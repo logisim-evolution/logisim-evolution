@@ -91,6 +91,7 @@ jobs:
         fi
 
         unzip -d . "${found_jar}" google_checks.xml
+
         # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
         # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
         # and that should be sufficient.
@@ -103,7 +104,7 @@ jobs:
         sed -i 's/^Starting audit...$//; s/^Audit done.$//' output.txt
 
         # Used `strings` to strip empty lines
-        cnt="$(strings output.txt | wc -l"
+        cnt="$(strings output.txt | wc -l)"
         if [[ "${cnt}" -gt 0 ]]; then
           echo "*********************************************************"
           echo "* Style guide guide violations found: ${cnd}!"
