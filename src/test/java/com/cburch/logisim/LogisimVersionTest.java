@@ -67,7 +67,7 @@ public class LogisimVersionTest {
    */
   @Test
   public void testCompareTo() {
-     assertTrue(older.compareTo(newer) < 0);
+    assertTrue(older.compareTo(newer) < 0);
     assertEquals(0, newer.compareTo(newer));
     assertEquals(0, newer.compareTo(newerToo));
     assertTrue(newer.compareTo(older) > 0);

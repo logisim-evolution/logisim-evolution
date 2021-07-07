@@ -96,19 +96,23 @@ jobs:
         # and that should be sufficient.
         ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
 
+        # Let's lint...
         checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
-        cnt="$(wc -l output.txt | awk '{print $1}')"
-        # text output always contains "Starting audit..." and "Audit done." messages. How clever is that?!
-        if [[ "${cnt}" -gt 2 ]]; then
+
+        # Output file always contains "Starting audit..." and "Audit done." messages. How 'clever' is that?!
+        sed -i 's/^Starting audit...$//; s/^Audit done.$//' output.txt
+
+        # Used `strings` to strip empty lines
+        cnt="$(strings output.txt | wc -l"
+        if [[ "${cnt}" -gt 0 ]]; then
           echo "*********************************************************"
-          echo "* Affected source files do not follow code style guide!"
+          echo "* Style guide guide violations found: ${cnd}!"
           echo "*"
-          echo "* For more information about code style guile see:"
+          echo "* For more information about used code style guile see:"
           echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
-          echo "*"
           echo "*********************************************************"
           cat output.txt
-          echo "*********************************************************"
           exit 1
+        else
+          echo "Looks good. No style guide violations found."
         fi
-
