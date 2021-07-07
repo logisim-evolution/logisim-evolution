@@ -1,0 +1,119 @@
+# This workflow will build check Java sources using Checkstyle linter.
+#
+# By design, it is expected to only analyse files affected by given pull request,
+# and not the whole source tree.
+#
+# Marcin Orlowski
+
+name: "Checkstyle"
+on:
+  push:
+    # No need to run on push to "develop" as there should not be any direct pushes.
+    # master is left just for emergency cases.
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  analyze_sources:
+    name: "Is there anything to lint?"
+    runs-on: ubuntu-latest
+
+    outputs:
+      # Export 'filter' step check result so next step can use it.
+      run_checkstyle: ${{ steps.filter.outputs.src }}
+      # These are source files matching our filter  that are affected by the PR.
+      changed_files: ${{ steps.filter.outputs.src_files }}
+
+    steps:
+    - name: "Install packages..."
+      run: sudo apt-get install sysvbanner
+
+      # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/paths-changes-filter
+    - name: "Look for changes that matters for us..."
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        list-files: 'escape'
+        filters: |
+          src:
+            - 'src/**/*.java'
+
+    - name: "WILL JAVA LINT STEP BE RUN?"
+      run: |
+        found="NO"
+        [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
+        echo "::set-output name=run_checkstyle::${found}"
+        echo -e "\n****************************************\n"
+        banner "${found}"
+        echo -e "****************************************"
+
+  # Build step.
+  checkstyle:
+    name: "Code style linter"
+    runs-on: ubuntu-latest
+
+    # Will run only if analyze_sources determined it is needed.
+    needs: analyze_sources
+    if: needs.analyze_sources.outputs.run_checkstyle == 'true'
+
+    # Checkstyle is painful to be used from command line as apparently its deves never learnt
+    # to use one (see radiculous comments https://github.com/checkstyle/checkstyle/issues/8418)
+    # So some trickery have to be done to convince Checkstyle to do what we want as we use
+    # built-in "Google Checks" style with just some exceptions. Unfortunately you cannot just
+    # make it use these checks w/o having own config XML that re-defines it, which is pointless
+    # as suppressions are only thing we want to maintain (and to not care if Checkstyle's config
+    # format changed or not).
+
+    steps:
+    - name: "Install packages..."
+      run: sudo apt-get install checkstyle unzip libcommons-cli-java
+
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+    - name: "Lint changed files"
+      # We need bash here as java-wrappers.sh may not work with other shells.
+      shell: bash
+      run: |
+        echo "Using $(checkstyle --version)"
+
+        # Find where checkstyle.jar lives and get built-in google_checks.xml config out of it.
+        source /usr/lib/java-wrappers/java-wrappers.sh
+        locate_jar checkstyle
+        if [[ -z "${found_jar}" ]]; then
+          echo "checkstyle.jar not found."
+          exit 1
+        fi
+
+        unzip -d . "${found_jar}" google_checks.xml
+
+        # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
+        # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
+        # and that should be sufficient.
+        ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
+
+        # Let's lint...
+        checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
+
+        # Output file always contains "Starting audit..." and "Audit done." messages. How 'clever' is that?!
+        sed -i 's/^Starting audit...$//; s/^Audit done.$//' output.txt
+
+        # Used `strings` to strip empty lines
+        cnt="$(strings output.txt | wc -l)"
+        if [[ "${cnt}" -gt 0 ]]; then
+          echo "*********************************************************"
+          echo "* Style guide guide violations found: ${cnd}!"
+          echo "*"
+          echo "* For more information about used code style guile see:"
+          echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
+          echo "*********************************************************"
+          cat output.txt
+          exit 1
+        else
+          echo "Looks good. No style guide violations found."
+        fi
