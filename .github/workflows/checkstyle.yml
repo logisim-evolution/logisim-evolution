@@ -71,7 +71,7 @@ jobs:
 
     steps:
     - name: "Install packages..."
-      run: sudo apt-get install checkstyle unzip
+      run: sudo apt-get install checkstyle unzip libcommons-cli-java
 
     - name: "Checkout sources"
       uses: actions/checkout@v2
