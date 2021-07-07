@@ -38,51 +38,43 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LogisimVersionTest {
-    private LogisimVersion older;
-    private LogisimVersion newer;
-    private LogisimVersion newerToo;
+  private LogisimVersion older;
+  private LogisimVersion newer;
+  private LogisimVersion newerToo;
 
-    @Before
-    public void setUp() {
-        older = new LogisimVersion(1, 2, 3);
-        newer = new LogisimVersion(1, 2, 4);
-        newerToo = new LogisimVersion(1, 2, 4);
-    }
+  @Before
+  public void setUp() {
+    older = new LogisimVersion(1, 2, 3);
+    newer = new LogisimVersion(1, 2, 4);
+    newerToo = new LogisimVersion(1, 2, 4);
+  }
 
-    /**
-     * Test method for
-     * {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}.
-     */
-    @Test
-    public void testFromString() {
-        assertNotNull(LogisimVersion.fromString("1.2.3"));
-        assertEquals("1.2.3", LogisimVersion.fromString("1.2.3").toString());
+  /** Test method for {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}. */
+  @Test
+  public void testFromString() {
+    assertNotNull(LogisimVersion.fromString("1.2.3"));
+    assertEquals("1.2.3", LogisimVersion.fromString("1.2.3").toString());
 
-		// Should return a new object
-		assertNotSame(LogisimVersion.fromString("1.2.3"), LogisimVersion.fromString("1.2.3"));
-	}
+    // Should return a new object
+    assertNotSame(LogisimVersion.fromString("1.2.3"), LogisimVersion.fromString("1.2.3"));
+  }
 
-	/**
-	 * Test method for
-	 * {@link com.cburch.logisim.LogisimVersion#compareTo(com.cburch.logisim.LogisimVersion)}
-	 * .
-	 */
-    @Test
-    public void testCompareTo() {
-        assertTrue(older.compareTo(newer) < 0);
-        assertEquals(0, newer.compareTo(newer));
-        assertEquals(0, newer.compareTo(newerToo));
-        assertTrue(newer.compareTo(older) > 0);
-    }
+  /**
+   * Test method for {@link
+   * com.cburch.logisim.LogisimVersion#compareTo(com.cburch.logisim.LogisimVersion)} .
+   */
+  @Test
+  public void testCompareTo() {
+    assertTrue(older.compareTo(newer) < 0);
+    assertEquals(0, newer.compareTo(newer));
+    assertEquals(0, newer.compareTo(newerToo));
+    assertTrue(newer.compareTo(older) > 0);
+  }
 
-    /**
-     * Test method for
-     * {@link com.cburch.logisim.LogisimVersion#equals(java.lang.Object)}.
-     */
-    @Test
-    public void testEqualsObject() {
-        assertEquals(older, older);
-        assertNotEquals(older, newer);
-    }
-
+  /** Test method for {@link com.cburch.logisim.LogisimVersion#equals(java.lang.Object)}. */
+  @Test
+  public void testEqualsObject() {
+    assertEquals(older, older);
+    assertNotEquals(older, newer);
+  }
 }
