@@ -97,7 +97,15 @@ jobs:
         ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
 
         # Let's try to lint all the altered files
-        for file in ${{ needs.analyze_sources.outputs.changed_files }}; do
-          checkstyle -c google_checks.xml "${file}"
-        done
+#        for file in ${{ needs.analyze_sources.outputs.changed_files }}; do
+#          checkstyle -c google_checks.xml "${file}"
+#        done
+
+        checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
+        cnt="$(wc -l output.txt | awk '{print $1}')"
+        # text output always contains "Starting audit..." and "Audit done." messages. How clever is that?!
+        if [[ "${cnt}" -gt 2 ]]; then
+            cat output.txt
+            exit 1
+        fi
 
