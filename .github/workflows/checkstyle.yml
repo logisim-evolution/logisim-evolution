@@ -96,14 +96,15 @@ jobs:
         # Let's lint eventually...
         checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
 
-        # Output file always contains "Starting audit..." and "Audit done." messages. How 'clever' is that?!
+        # Contrary to XML output, plain text is always polluted by "Starting audit..." and "Audit done." messages.
+        # Let's get rid of them.
         sed -i 's/^Starting audit...$//; s/^Audit done.$//' output.txt
 
-        # Used `strings` to strip empty lines
+        # The `strings` tool is used to filter out empty lines.
         cnt="$(strings output.txt | wc -l)"
         if [[ "${cnt}" -gt 0 ]]; then
           echo "*********************************************************"
-          echo "* FIXME! Code style guide violations found: ${cnd}"
+          echo "* FIXME! Code style guide violations found: ${cnt}"
           echo "*"
           echo "* For more information about used code style guile see:"
           echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
