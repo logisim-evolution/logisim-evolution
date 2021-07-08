@@ -78,6 +78,9 @@ jobs:
       run: |
         echo "Using $(checkstyle --version)"
 
+        declare -r REPORT_FILE="output.txt"
+        declare -r CHECKS_FILE="google_checks.xml"
+
         # Find where checkstyle.jar lives and get built-in google_checks.xml config out of it.
         source /usr/lib/java-wrappers/java-wrappers.sh
         locate_jar checkstyle
@@ -86,7 +89,7 @@ jobs:
           exit 100
         fi
 
-        unzip -d . "${found_jar}" google_checks.xml
+        unzip -d . "${found_jar}" "${CHECKS_FILE}"
 
         # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
         # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
@@ -94,22 +97,21 @@ jobs:
         ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
 
         # Let's lint eventually...
-        checkstyle -o output.txt -c google_checks.xml ${{ needs.analyze_sources.outputs.changed_files }}
+        checkstyle -o "${REPORT_FILE}" -c "${CHECKS_FILE}" ${{ needs.analyze_sources.outputs.changed_files }}
 
-        # Contrary to XML output, plain text is always polluted by "Starting audit..." and "Audit done." messages.
-        # Let's get rid of them.
-        sed -i 's/^Starting audit...$//; s/^Audit done.$//' output.txt
+        # Plain output always contains "Starting audit..." and "Audit done." lines. Let's remove them.
+        sed -i 's/^Starting audit...$//; s/^Audit done.$//' "${REPORT_FILE}"
 
         # The `strings` tool is used to filter out empty lines.
-        cnt="$(strings output.txt | wc -l)"
+        cnt="$(strings "${REPORT_FILE}" | wc -l)"
         if [[ "${cnt}" -gt 0 ]]; then
           echo "*********************************************************"
-          echo "* FIXME! Code style guide violations found: ${cnt}"
+          echo "* FIXME! Code style guide violations detected: ${cnt}"
           echo "*"
           echo "* For more information about used code style guile see:"
           echo "* https://github.com/logisim-evolution/logisim-evolution/blob/develop/docs/style.md"
           echo "*********************************************************"
-          cat output.txt
+          cat "${REPORT_FILE}"
           exit 1
         else
           echo "Looks good. No style guide violations found."
