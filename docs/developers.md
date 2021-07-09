@@ -20,7 +20,8 @@
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 11, so to build it from sources you need JDK 11 (or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)). To build
+`Logisim-evolution` is written in Java 11, so to build it from sources you need JDK 11
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)). To build
 platform specific packages, JDK 14+ is required. We recommend using JDK 16 for your development work with `Logisim-evolution`.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
@@ -69,8 +70,8 @@ you need any Java runtime environment (JRE or JDK) v11 or newer, and then type:
 java -jar logisim-evolution-<version>-all.jar
 ```
 
-You can also generate a platform-specific installer, which gets saved in `build/dist`. This feature requires using JDK or OpenJDK 14 or
-newer. Packages can be built by running the `jpackage` task:
+You can also generate a platform-specific installer, which gets saved in `build/dist`.
+This feature requires using JDK or OpenJDK 14 or newer. Packages can be built by running the `jpackage` task:
 
 ```bash
 ./gradlew jpackage
@@ -85,14 +86,16 @@ To see all available tasks run: `./gradlew tasks --all`
 
 ## Testing development code ##
 
-`Logisim-evolution` is often updated. The [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
-is the place where all the work on next release happens. Once the code reaches the point it is ready for the next public release, it will
-be merged into the [`master` branch](https://github.com/logisim-evolution/logisim-evolution/tree/master) and released. But if you want
-to contribute, or even just see what we are currently working on, checkout the `develop` branch and build `Logisim-evolution` from
-source as described above.
+`Logisim-evolution` is often updated.
+The [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
+is the place where all the work on next release happens.
+Once the code reaches the point it is ready for the next public release, it will
+be merged into the [`master` branch](https://github.com/logisim-evolution/logisim-evolution/tree/master) and released.
+But if you want to contribute, or even just see what we are currently working on, checkout the `develop` branch
+and build `Logisim-evolution` from source as described above.
 
-**If you see any issues or have any ideas for improvement, please [create a ticket](https://github.com/logisim-evolution/logisim-evolution/issues)
-to make `Logisim-evolution` better!**
+**If you see any issues or have any ideas for improvement, please
+[create a ticket](https://github.com/logisim-evolution/logisim-evolution/issues) to make `Logisim-evolution` better!**
 
 ---
 
@@ -100,8 +103,10 @@ to make `Logisim-evolution` better!**
 
 If you want to contribute to Logisim-evolution, this is how to do it:
 
-* Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on [project GitHub page](https://github.com/logisim-evolution/logisim-evolution).
-* Fix the bugs you want to fix on your local fork in the [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop).
+* Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on the
+  [project GitHub page](https://github.com/logisim-evolution/logisim-evolution).
+* Fix the bugs you want to fix on your local fork in the
+  [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop).
 * Add the features you want to add on your local fork.
 * Add/modify the documentation/language support on your local fork.
 
@@ -113,6 +118,6 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 * On the right hand side select your branch, for example: *base: bugfixes*
 * On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on
   the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as
-  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code of the latest stable
-  release!)
+  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code
+  of the latest stable release!)
 * Make sure that there are no conflicts reported.

@@ -27,7 +27,8 @@ creates a completely new config using a copy from the Checkstyle source archive.
 Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
 * Go to `Settings -> Plugins`.
-* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) (by Jamie Shiell) from the Marketplace.
+* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) (by Jamie Shiell)
+  from the Marketplace.
 
 ## Editing built-in config ##
 
