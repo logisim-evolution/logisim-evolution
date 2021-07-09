@@ -23,7 +23,7 @@
         Pour l'exemple, nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une porte AND.
       </p>
       <p align="center">
-        <img class=notscal src="../../../../img-guide/vector-test.png" alt="#########">
+        <img class="notscal" src="../../../../img-guide/vector-test.png" alt="#########">
       </p>
       <p>
         Le fichier de test ressemble à ceci.
@@ -37,7 +37,7 @@
 </pre>
       </blockquote>
       <p>
-        Pour lancer le test, sélectionnez le menu <b class=menu>|&nbsp; Simulation &nbsp;|</b>→<b class=menu>|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class=button>"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat.
+        Pour lancer le test, sélectionnez le menu <b class=menu>|&nbsp; Simulation &nbsp;|</b>→<b class=menu>|&nbsp; Vecteur de test &nbsp;|</b> puis utilisez le bouton <b class="button">"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat.
       </p>
       <p align="center">
         <img src="../../../img-guide/vector-result.png" alt="#########">
@@ -49,7 +49,7 @@
         Le format de fichier des vecteurs est simple. La première ligne contient les entêtes de colonnes qui correspondent au nom des signaux. Si la largeur de bit est plus grande que 1 alors il est nécessaire de le spécifier entre des crochets. Exemple <tt>C[8]</tt>. Les données de chaque situation de test sont dans les lignes suivantes. Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire.
       </p>
       <p>
-        Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimales, octal, binaire ou décimal signé. Les valeurs hexadécimal doivent avoir le préfixe <b><tt>&lt; tt=""&gt;</tt></b>. Les valeurs octales doivent avoir le préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéro en tête et peuvent avoir un signe négatif.
+        Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimales, octal, binaire ou décimal signé. Les valeurs hexadécimal doivent avoir le préfixe <b><tt>"0x"</tt></b>. Les valeurs octales doivent avoir le préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéro en tête et peuvent avoir un signe négatif.
       </p>
       <p>
         Voici un exemple de fichier vectoriel de test:
