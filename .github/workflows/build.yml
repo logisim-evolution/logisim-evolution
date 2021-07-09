@@ -86,6 +86,6 @@ jobs:
 
     - name: "Build with Gradle"
       run: |
-       chmod +x gradlew chmod +x gradle/wrapper/gradle-wrapper.jar
+       chmod +x gradlew gradle/wrapper/gradle-wrapper.jar
        ./gradlew build -x checkstyleMain -x checkstyleTest
 
