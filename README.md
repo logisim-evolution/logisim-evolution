@@ -67,7 +67,8 @@ include the Java runtime and do not require it to be installed separately:
   using [MacPorts](https://www.macports.org/) (by typing `sudo port install logisim-evolution`)
   or via [Homebrew](https://brew.sh/) (by typing `brew install --cask logisim-evolution`).
 
-The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases) is also available and can be run on any system with a Java 11 or newer runtime installed.
+The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
+is also available and can be run on any system with a Java 11 or newer runtime installed.
 
 ---
 
