@@ -23,13 +23,13 @@ projects and the development has been [officially stopped](http://www.cburch.com
 In the meantime, people from a group of Swiss higher education institutions ([Haute École Spécialisée Bernoise](http://www.bfh.ch)
 , [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch),
 and [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch)) started developing a version of Logisim that
-fitted their courses by integrating several new tools, e.g., a chronogram, the possibility to test the schematics directly on an
+fit their courses by integrating several new tools, e.g., a chronogram, the possibility to test the schematics directly on an
 electronic board, TCL/TK consoles, …
 
 We have decided to release this new Logisim version under the name `Logisim-evolution` to highlight the large number of changes that
 were made.
 
-**We actively seek the contribution of the community!**
+**We actively seek the [contributions](developers.md#how-to-contribute) of the community!**
 
 ## External reads ##
 
@@ -52,9 +52,9 @@ will be stored in the new format.
 
 # Translations #
 
-`Logisim-evolution` is built with multi-language support, which means we put our best that all messages and texts you see on the
+`Logisim-evolution` is built with multi-language support, which means we have done our best to ensure all messages and texts you see on the
 screeen can be translated. Many of them were automatically translated using [DeepL](https://www.deepl.com/). If you should find
-bizarre translations, please do not hesitate to correct them in the corresponding property files and to make a pull request!
+bizarre translations, please do not hesitate to [correct them](docs/developers.md) in the corresponding property files and to make a pull request!
 
 ---
 

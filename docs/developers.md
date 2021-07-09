@@ -20,19 +20,19 @@
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 11, so to build it from sources you need JDK 11 (or equivalent, i.e. OpenJDK). To build
-Linux packages, JDK 14+ is required. We recommend using JDK 16 for your development works with `Logisim-evolution`.
+`Logisim-evolution` is written in Java 11, so to build it from sources you need JDK 11 (or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)). To build
+platform specific packages, JDK 14+ is required. We recommend using JDK 16 for your development work with `Logisim-evolution`.
 
-**NOTE:** ensure your `$JAVA_HOME` enviromental variable points proper JDK version.
+**NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
 ## Gradle ##
 
-`Logisim-evolution` uses [Gradle](https://gradle.org) as build system, which means it can be easily imported into most modern IDEs
-that supports it, incl. [Eclipse](https://www.eclipse.org) and [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+`Logisim-evolution` uses the [Gradle](https://gradle.org) build system, which means it can be easily imported into modern IDEs
+that support it, including [Eclipse](https://www.eclipse.org) and [IntelliJ IDEA](https://www.jetbrains.com/idea/).
 
 ## Import project into IDE ##
 
-How to import Gradle project:
+How to import a Gradle project:
 
 * [How to import Gradle project into Eclipse](https://www.eclipse.org/community/eclipse_newsletter/2018/february/buildship.php),
 * [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
@@ -40,8 +40,8 @@ How to import Gradle project:
 
 ## Building from sources ##
 
-To build and run `Logisim-evolution` application invoke `Gradle` build system and pass specified task name as argument.
-`Logisim-evolution` comes with Gradle wrapper script, which can be invoked as `./gradlew <ARGS>` on Linux or macOS, and
+To build and run the `Logisim-evolution` application, invoke the `Gradle` build system and pass a task name as an argument.
+`Logisim-evolution` comes with a Gradle wrapper script, which can be invoked as `./gradlew <ARGS>` on Linux or macOS, and
 `gradlew <ARGS>` on Windows.
 
 To build and run on Linux and macOS:
@@ -62,15 +62,15 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ./gradlew shadowJar
 ```
 
-which will create `logisim-evolution-<version>-all.jar` in `build/libs/` folder. To use this package
-you need any Java runtime environments (JRE or JDK) v11 or newer, and then type:
+which will create `logisim-evolution-<version>-all.jar` in `build/libs/`. To use this package
+you need any Java runtime environment (JRE or JDK) v11 or newer, and then type:
 
 ```bash
 java -jar logisim-evolution-<version>-all.jar
 ```
 
-You can also generate a platform-specific installer, which gets saved in `build/dist`. This feature requires using OpenJDK 14 or
-newer. Packages can be built by running `jpackage` task:
+You can also generate a platform-specific installer, which gets saved in `build/dist`. This feature requires using JDK or OpenJDK 14 or
+newer. Packages can be built by running the `jpackage` task:
 
 ```bash
 ./gradlew jpackage
@@ -81,17 +81,17 @@ newer. Packages can be built by running `jpackage` task:
 > installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html)
 > for more details of tool requirements.
 
-To see all available tasks `./gradlew tasks --all`
+To see all available tasks run: `./gradlew tasks --all`
 
 ## Testing development code ##
 
-`Logisim-evolution` is often updated, the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
-is the place where all the works on next release happen. Once the code reach the point it's ready for next public release, it will
-be merged into [`master` branch](https://github.com/logisim-evolution/logisim-evolution/tree/master) and released. But if you want
-to contribute, or even just see what we are currently working on just checkout the `develop` and build `Logisim-evolution` from
+`Logisim-evolution` is often updated. The [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
+is the place where all the work on next release happens. Once the code reaches the point it is ready for the next public release, it will
+be merged into the [`master` branch](https://github.com/logisim-evolution/logisim-evolution/tree/master) and released. But if you want
+to contribute, or even just see what we are currently working on, checkout the `develop` branch and build `Logisim-evolution` from
 source as described above.
 
-**If you see any issues or got improvement ideas, please [create a ticket](https://github.com/logisim-evolution/logisim-evolution/issues)
+**If you see any issues or have any ideas for improvement, please [create a ticket](https://github.com/logisim-evolution/logisim-evolution/issues)
 to make `Logisim-evolution` better!**
 
 ---
@@ -101,11 +101,11 @@ to make `Logisim-evolution` better!**
 If you want to contribute to Logisim-evolution, this is how to do it:
 
 * Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on [project GitHub page](https://github.com/logisim-evolution/logisim-evolution).
-* Fix the bugs you want to fix on your local fork.
+* Fix the bugs you want to fix on your local fork in the [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop).
 * Add the features you want to add on your local fork.
 * Add/modify the documentation/language support on your local fork.
 
-Once it is running without bugs on your local fork request a *Pull request* by:
+Once it is running without bugs on your local fork, request a *Pull request* by:
 
 * Go to the *Pull request*-tab and click the button *New pull request*.
 * Click on *compare across forks*.
