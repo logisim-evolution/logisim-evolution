@@ -40,7 +40,7 @@
                 &nbsp;
               </td>
               <td>
-                Permets d'activer la simulation ou de la stopper. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation enclenchée&nbsp;|</b> </a><b class=tkeybd>Ctrl-E</b>
+                Permets d'activer la simulation ou de la stopper. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation enclenchée&nbsp;|</b> </a><b class="tkeybd">Ctrl-E</b>
               </td>
             </tr>
             <tr>
@@ -51,7 +51,7 @@
                 &nbsp;
               </td>
               <td>
-                Permets d'avancer d'un tic dans la simulation. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation pas-à-pas&nbsp;|</b> </a><b class=tkeybd>Ctrl-I</b>
+                Permets d'avancer d'un tic dans la simulation. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Simulation pas-à-pas&nbsp;|</b> </a><b class="tkeybd">Ctrl-I</b>
               </td>
             </tr>
             <tr>
@@ -63,7 +63,7 @@
                 &nbsp;
               </td>
               <td>
-                Active ou désactive l'horloge sélectionée. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;tics activés&nbsp;|</b> </a><b class=tkeybd>Ctrl-K</b>
+                Active ou désactive l'horloge sélectionée. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;tics activés&nbsp;|</b> </a><b class="tkeybd">Ctrl-K</b>
               </td>
             </tr>
             <tr>
@@ -74,7 +74,7 @@
                 &nbsp;
               </td>
               <td>
-                Avance d'une demi-période l'horloge sélectionée. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tic demi-cycle&nbsp;|</b> </a><b class=tkeybd>Ctrl-T</b>
+                Avance d'une demi-période l'horloge sélectionée. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tic demi-cycle&nbsp;|</b> </a><b class="tkeybd">Ctrl-T</b>
               </td>
             </tr>
             <tr>
@@ -83,14 +83,14 @@
               </td>
               <td></td>
               <td>
-                Avance d'une période ou d'une demi-période l'horloge <var>clk</var>. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tic Cycle complet&nbsp;|</b> </a><b class=tkeybd>F9</b>
+                Avance d'une période ou d'une demi-période l'horloge <var>clk</var>. Équivalente du menu <b class=menu>|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class=menu>|&nbsp;Tic Cycle complet&nbsp;|</b> </a><b class="tkeybd">F9</b>
               </td>
             </tr>
           </tbody>
         </table>
       </blockquote>
       <p>
-        <b>La zone d'affichage</b> Sur la droite trois colonnes: la première présente une icône du type de signal (bus ou simple) puis nous avons le nom et enfin la valeur du signal sous le curseur (la ligne rouge dans le graphe). Il est possible de déplacer le curseur à l'aide de la souris, il suffit de cliquer et déplacer. Un <b class=tkeybd>clic-droit</b> sur la ligne d'un signal de type bus affiche un menu contextuel avec deux options:
+        <b>La zone d'affichage</b> Sur la droite trois colonnes: la première présente une icône du type de signal (bus ou simple) puis nous avons le nom et enfin la valeur du signal sous le curseur (la ligne rouge dans le graphe). Il est possible de déplacer le curseur à l'aide de la souris, il suffit de cliquer et déplacer. Un <b class="tkeybd">clic-droit</b> sur la ligne d'un signal de type bus affiche un menu contextuel avec deux options:
       </p>
       <ul>
         <li>
@@ -105,10 +105,10 @@
       </p>
       <ul>
         <li>
-          <b class=button>Chager fichier</b> Charge et affiche le résultat depuis un fichier préalablement sauvegardé. Cela ne permet pas de paramétrer la simulation.
+          <b class="button">Chager fichier</b> Charge et affiche le résultat depuis un fichier préalablement sauvegardé. Cela ne permet pas de paramétrer la simulation.
         </li>
         <li>
-          <b class=button>Exporter...</b> Exporte les données dans un fichier text. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde. Le format du fichier est simple. La première ligne contient le nom des colonnes séparées par une tabulation. La seconde ligne présente le signal et l'échelle de temps si elle a été sélectionnée. Les lignes suivantes présente la valeur ses signaux séparés par une tabulation. La troisième ligne est l'initialisation puis chaque ligne représente un demi-cyle de l'horloge <var>sysclk</var>.
+          <b class="button">Exporter...</b> Exporte les données dans un fichier text. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde. Le format du fichier est simple. La première ligne contient le nom des colonnes séparées par une tabulation. La seconde ligne présente le signal et l'échelle de temps si elle a été sélectionnée. Les lignes suivantes présente la valeur ses signaux séparés par une tabulation. La troisième ligne est l'initialisation puis chaque ligne représente un demi-cyle de l'horloge <var>sysclk</var>.
           <pre>sysclk     X       a       b       c       
 clk:X:1:Hz
 0       11      0       0       0       
@@ -122,7 +122,7 @@ clk:X:1:Hz
 </pre>
         </li>
         <li>
-          <b class=button>Exporter image :</b>Exporte le chronogramme dans une image de type png. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde.
+          <b class="button">Exporter image :</b>Exporte le chronogramme dans une image de type png. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde.
         </li>
       </ul>
       <p>

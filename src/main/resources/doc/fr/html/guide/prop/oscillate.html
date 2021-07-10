@@ -9,7 +9,7 @@
     <title>
       Erreurs oscillatoires 
     </title>
-    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class=maindiv>
@@ -20,13 +20,13 @@
         L'algorithme de propagation, qui fonctionne normalement en silence sans aucun problème, devient très visible lorsque vous créez un circuit qui oscille.
       </p>
       <p align="center">
-         <img class=notscal src="../../../../img-guide/prop-oscillate-before.png" alt="#########">
+         <img class="notscal" src="../../../../img-guide/prop-oscillate-before.png" alt="#########">
       </p>
       <p>
         Ce circuit est actuellement dans un état stable. Mais si vous changez l'entrée à 1, le circuit entrera effectivement dans une boucle infinie. Après un certain temps, Logisim abandonnera simplement et vous montrera un message "Oscillation apparente" vous indiquant qu'il croit que le circuit oscille.
       </p>
       <p align="center">
-        <img class=notscal src="../../../img-guide/prop-oscillate-error.png" alt="#########">
+        <img class="notscal" src="../../../img-guide/prop-oscillate-error.png" alt="#########">
       </p>
       <p>
         Il affichera les valeurs qu'il a au moment où il abandonne. Ces valeurs auront l'air erronées - dans cette capture d'écran, la porte ET émet 1 bien qu'une de ses entrées soit 0, mais il se peut que la porte NON ait une entrée 1 et une sortie 1.

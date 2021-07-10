@@ -183,11 +183,20 @@ table {
  border-style:solid; 
  border-color:black;
  }
+ 
 td { 
  border-width:0px 0px 1px;
  border-style:solid; 
  border-color:black;
  }
+
+img.tabl {
+	height: 20%;
+	width: 20%;
+	border:0;
+}
+ 
+ 
 /* for font test */
 font.px8 {
 	font-size: 8px;

@@ -23,7 +23,7 @@
         For the example we will test the circuit below. This circuit gives the results of five logical functions from two inputs. It has an error the bottom NAND gate should be an AND port.
       </p>
       <p align="center">
-        <img class=notscal src="../../../../img-guide/vector-test.png" alt="#########">
+        <img class="notscal" src="../../../../img-guide/vector-test.png" alt="#########">
       </p>
       <p>
         The vector test file looks like this.<br>
@@ -37,7 +37,7 @@
 </pre>
       </blockquote>
       <p>
-        To start the test, select the menu <b class=menu>|&nbsp; Simulate &nbsp;|</b>→<b class=menu>|&nbsp; Test Vector &nbsp;|</b> then use the button <b class=button>Load Vector</b>. Select the file of vectors that you have built. The simulation is executed immediately and a table is displayed with the result.
+        To start the test, select the menu <b class=menu>|&nbsp; Simulate &nbsp;|</b>→<b class=menu>|&nbsp; Test Vector &nbsp;|</b> then use the button <b class="button">Load Vector</b>. Select the file of vectors that you have built. The simulation is executed immediately and a table is displayed with the result.
       </p>
       <p align="center">
         <img src="../../../img-guide/vector-result.png" alt="#########">
@@ -49,7 +49,7 @@
         The file format is simple. The first line contains column headers that correspond to the names of the signals. If the bit width is greater than 1 then it is necessary to specify it in square brackets. Example <tt>C[8]</tt>. The data for each test situation is in the following lines. Blank lines are ignored. Anything following a "#" character is a comment.
       </p>
       <p>
-        The remaining rows list each value separated by a space or tab. Values can be in hexadecimal, octal, binary, or signed decimal. The hexadecimal values must have the prefix <b><tt>&lt; tt=""&gt;</tt></b>. Octal values must have the prefix <b><tt>"0o"</tt></b>. inary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.
+        The remaining rows list each value separated by a space or tab. Values can be in hexadecimal, octal, binary, or signed decimal. The hexadecimal values must have the prefix <b><tt>"0x"</tt></b>. Octal values must have the prefix <b><tt>"0o"</tt></b>. inary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.
       </p>
       <p>
         Here is an example of a test vector file:

@@ -115,7 +115,7 @@
     <mapID target="wiring_por"          url="en/html/libs/wiring/poweronreset.html"/>	
 	<mapID target="wiring_constant"     url="en/html/libs/wiring/constant.html" />
 	<mapID target="wiring_const01"      url="en/html/libs/wiring/const01.html" />
-	<mapID target="wiring_notconnect"   url="en/html/libs/wiring/notcon.html" />
+	<mapID target="wiring_notconnect"   url="en/html/libs/wiring/notconnect.html" />
 	<mapID target="wiring_transist"     url="en/html/libs/wiring/transist.html" />
 	<mapID target="wiring_transmis"     url="en/html/libs/wiring/transmis.html" />
 	<mapID target="wiring_extender"     url="en/html/libs/wiring/extender.html" />
@@ -176,59 +176,86 @@
 	<mapID target="icon_poke"        url="icons/1616/poke.png" />
 	<mapID target="icon_edit"        url="icons/1616/select.png" />
 	<mapID target="icon_select"      url="icons/1616/select.png" />
-	<mapID target="icon_wiring"      url="icons/1616/wiring.gif" />
+	<mapID target="icon_wiring"      url="icons/1616/wiring.png" />
 	<mapID target="icon_text"        url="icons/1616/text.png" />
-	<mapID target="icon_menu"        url="icons/1616/menu.gif" />
-	<mapID target="icon_splitter"    url="icons/1616/splitter.gif" />
-	<mapID target="icon_pin"         url="icons/1616/pinInput.gif" />
-	<mapID target="icon_tunnel"      url="icons/1616/tunnel.gif" />
-	<mapID target="icon_pull"        url="icons/1616/pullshap.gif" />
-	<mapID target="icon_probe"       url="icons/1616/probe.gif" />
-	<mapID target="icon_clock"       url="icons/1616/clock.gif" />
+	<mapID target="icon_menu"        url="icons/1616/menu.png" />
+	
+	<mapID target="icon_splitter"    url="icons/1616/splitter.png" />
+	<mapID target="icon_pin"         url="icons/1616/pininput.png" />
+	<mapID target="icon_probe"       url="icons/1616/probe.png" />
+	<mapID target="icon_tunnel"      url="icons/1616/tunnel.png" />
+	<mapID target="icon_pull"        url="icons/1616/anspull.png" />
+	<mapID target="icon_clock"       url="icons/1616/clock.png" />
     <mapID target="icon_por"         url="icons/1616/por.png"/>
-	<mapID target="icon_extender"    url="icons/1616/extender.gif" />
-	<mapID target="icon_label"       url="icons/1616/text.png" />
-	<mapID target="icon_constant"    url="icons/1616/constant.gif" />
-	<mapID target="icon_const01"     url="icons/1616/ground.gif" />
-	<mapID target="icon_notconnect1" url="icons/1616/notconnect.png" />	
-	<mapID target="icon_transist"    url="icons/1616/trans0.gif" />
-	<mapID target="icon_transmis"    url="icons/1616/transmis.gif" />
-	<mapID target="icon_not"         url="icons/1616/notGate.gif" />
-	<mapID target="icon_buffer"      url="icons/1616/bufferGate.gif" />
-	<mapID target="icon_basic"       url="icons/1616/andGate.gif" />
-	<mapID target="icon_xor"         url="icons/1616/xorGate.gif" />
-	<mapID target="icon_controlled"  url="icons/1616/controlledBuffer.gif" />
-	<mapID target="icon_mux"         url="icons/1616/multiplexer.gif" />
-	<mapID target="icon_demux"       url="icons/1616/demultiplexer.gif" />
-	<mapID target="icon_decoder"     url="icons/1616/decoder.gif" />
-	<mapID target="icon_priencod"    url="icons/1616/priencod.gif" />
-	<mapID target="icon_selector"    url="icons/1616/bitSelector.gif" />
-	<mapID target="icon_adder"       url="icons/1616/adder.gif" />
-	<mapID target="icon_subtractor"  url="icons/1616/subtractor.gif" />
-	<mapID target="icon_multiplier"  url="icons/1616/multiplier.gif" />
-	<mapID target="icon_divider"     url="icons/1616/divider.gif" />
-	<mapID target="icon_negator"     url="icons/1616/negator.gif" />
-	<mapID target="icon_comparator"  url="icons/1616/comparator.gif" />
-	<mapID target="icon_shifter"     url="icons/1616/shifter.gif" />
-	<mapID target="icon_bitadder"    url="icons/1616/bitadder.gif" />
-	<mapID target="icon_bitfinder"   url="icons/1616/bitfindr.gif" />
-	<mapID target="icon_flipflops"   url="icons/1616/dFlipFlop.gif" />
-	<mapID target="icon_register"    url="icons/1616/register.gif" />
-	<mapID target="icon_counter"     url="icons/1616/counter.gif" />
-	<mapID target="icon_shiftreg"    url="icons/1616/shiftreg.gif" />
-	<mapID target="icon_random"      url="icons/1616/random.gif" />
-	<mapID target="icon_ram"         url="icons/1616/ram.gif" />
-	<mapID target="icon_rom"         url="icons/1616/rom.gif" />
-	<mapID target="icon_button"      url="icons/1616/button.gif" />
-	<mapID target="icon_joystick"    url="icons/1616/joystick.gif" />
-	<mapID target="icon_keyboard"    url="icons/1616/keyboard.gif" />
-	<mapID target="icon_led"         url="icons/1616/led.gif" />
+	<mapID target="icon_constant"    url="icons/1616/constant.png" />	
+	<mapID target="icon_const01"     url="icons/1616/ground.png" />	
+	<mapID target="icon_notconnect"  url="icons/1616/notconnect.png" />	
+	<mapID target="icon_transist"    url="icons/1616/trans0.png" />
+	<mapID target="icon_transmis"    url="icons/1616/transmis.png" />	
+	<mapID target="icon_extender"    url="icons/1616/extender.png" />
+
+	<mapID target="icon_not"         url="icons/1616/ansnotgate.png" />
+	<mapID target="icon_buffer"      url="icons/1616/ansbuffergate.png" />
+	<mapID target="icon_basic"       url="icons/1616/ansandgate.png" />
+	<mapID target="icon_xor"         url="icons/1616/ansxorgate.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_controlled"  url="icons/1616/anscontrolledbuffer.png" />
+	<mapID target="icon_pla"         url="icons/1616/pla0.png" />
+	
+	<mapID target="icon_mux"         url="icons/1616/multiplexer.png" />
+	<mapID target="icon_demux"       url="icons/1616/demultiplexer.png" />
+	<mapID target="icon_decoder"     url="icons/1616/decoder.png" />
+	<mapID target="icon_priencod"    url="icons/1616/priencod.png" />
+	<mapID target="icon_selector"    url="icons/1616/bitselector.png" />
+	
+	<mapID target="icon_adder"       url="icons/1616/adder.png" />
+	<mapID target="icon_subtractor"  url="icons/1616/subtractor.png" />
+	<mapID target="icon_multiplier"  url="icons/1616/multiplier.png" />
+	<mapID target="icon_divider"     url="icons/1616/divider.png" />
+	<mapID target="icon_negator"     url="icons/1616/negator.png" />
+	<mapID target="icon_comparator"  url="icons/1616/comparator.png" />
+	<mapID target="icon_shifter"     url="icons/1616/shifter.png" />
+	<mapID target="icon_bitadder"    url="icons/1616/bitadder.png" />
+	<mapID target="icon_bitfinder"   url="icons/1616/bitfindr.png" />
+	
+	<mapID target="icon_flipflops"   url="icons/1616/dflipflop.png" />
+	<mapID target="icon_register"    url="icons/1616/register.png" />
+	<mapID target="icon_counter"     url="icons/1616/counter.png" />
+	<mapID target="icon_shiftreg"    url="icons/1616/shiftreg.png" />
+	<mapID target="icon_random"      url="icons/1616/random.png" />
+	<mapID target="icon_ram"         url="icons/1616/ram.png" />
+	<mapID target="icon_rom"         url="icons/1616/rom.png" />
+	
+	<mapID target="icon_button"      url="icons/1616/button.png" />
+	<mapID target="icon_dipswitch"   url="icons/1616/dipswitch.png" />
+	<mapID target="icon_joystick"    url="icons/1616/joystick.png" />
+	<mapID target="icon_keyboard"    url="icons/1616/keyboard.png" />
+	<mapID target="icon_led"         url="icons/1616/led.png" />
+	<mapID target="icon_rvbled"      url="icons/1616/rgbled.png" />
 	<mapID target="icon_7seg"        url="icons/1616/7seg.png" />
-	<mapID target="icon_hexdig"      url="icons/1616/hexdig.gif" />
-	<mapID target="icon_dotmat"      url="icons/1616/dotmat.gif" />
-	<mapID target="icon_tty"         url="icons/1616/tty.gif" />
-	<mapID target="icon_vhdl"        url="icons/1616/vhdl.gif" />
-	<mapID target="test_hml_css"     url="testhtml/index.html" />
+	<mapID target="icon_hexdig"      url="icons/1616/hexdig.png" />
+	<mapID target="icon_dotmat"      url="icons/1616/dotmat.png" />
+	<mapID target="icon_tty"         url="icons/1616/tty.png" />
+	<mapID target="icon_Port_IO"     url="icons/1616/portio.png" />
+	<mapID target="icon_repetar"     url="icons/1616/repetar.png" />
+	<mapID target="icon_videorvb"    url="icons/1616/rgbvideo.png" />	
+
+	<mapID target="icon_ttl"         url="icons/1616/ttl.png" />	
+	<mapID target="icon_reds_console" url="icons/1616/tcl.png" />	
+	<mapID target="icon_generic"     url="icons/1616/tcl.png" />	
+	<mapID target="icon_binbcd"      url="icons/1616/bfh.png" />	
+	<mapID target="icon_bcdtoseven"  url="icons/1616/bfh.png" />	
+	<mapID target="icon_switch"      url="icons/1616/switch.png" />	
+	<mapID target="icon_buzzer"      url="icons/1616/buzzer.png" />	
+	<mapID target="icon_slider"      url="icons/1616/slider.png" />	
+	<mapID target="icon_digitalscope"    url="icons/1616/digitalscope.png" />	
+	<mapID target="icon_pla2"        url="icons/1616/pla2.png" />	
+	<mapID target="up_icon"          url="icons/1616/rgbvideo.png" />	
+	<mapID target="socbus_icon"      url="icons/1616/rgbvideo.png" />		
+
+	<mapID target="icon_vhdl"        url="icons/1616/vhdl.png" />
     <mapID target="up_icon"          url="icons/1616/up.png"/>
     <mapID target="socbus_icon"      url="icons/1616/socbus.png"/>
+	
+
 </map>

@@ -14,7 +14,11 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/dFlipFlop.gif" align="middle" alt="#########"> <img class="iconlibs" src="../../../../icons/tFlipFlop.gif" align="middle" alt="#########"> <img class="iconlibs" src="../../../../icons/jkFlipFlop.gif" align="middle" alt="#########"> <img class="iconlibs" src="../../../../icons/srFlipFlop.gif" align="middle" alt="#########"> <em>D/T/J-K/S-R Flip-Flop</em>
+        <img class="iconlibs" src="../../../../icons/6464/dflipflop.png" alt="#########" width="32" height="32">
+		<img class="iconlibs" src="../../../../icons/6464/tflipflop.png"alt="#########" width="32" height="32">
+		<img class="iconlibs" src="../../../../icons/6464/jkflipflop.png" alt="#########" width="32" height="32">
+		<img class="iconlibs" src="../../../../icons/6464/srflipflop.png" alt="#########" width="32" height="32">
+		<em> D/T/J-K/S-R Flip-Flop</em>
       </h1>
       <table>
         <tbody>
@@ -38,9 +42,63 @@
             <td valign="top">
               <strong>Appearance:</strong>
             </td>
-            <td valign="top">
-              <img class="notscal" src="../../../../img-libs/flipflops.png"alt="#########">
+           <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th width="50">
+                      D
+                    </th>
+                    <th width="50">
+                      T
+                    </th>
+                    <th width="50">
+                      J-K
+                    </th>
+                    <th width="50">
+                      S-R
+                    </th>
+                  </tr>
+                  <tr>
+                    <td valign="middle" align="left">
+                      Logisim:
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ldflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ltflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ljkflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lsrflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td valign="middle" align="left">
+                      Evolution:
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/hdflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/htflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/hjkflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/hsrflipflops.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
+          </tr>
+        </tbody>
+      </table>
           </tr>
         </tbody>
       </table>
@@ -317,13 +375,7 @@
           Asynchronous reset: When 0 or undefined, this input has no effect. As long as it is 1, the flip-flop's value is pinned to 0. This occurs asynchronously - that is, without regard to the current clock input value. As long as this is 1, the other inputs have no effect.
         </dd>
         <dt>
-          South edge, center end (input, bit width 1)
-        </dt>
-        <dd>
-          Enable: When this is 0, clock triggers are ignored. The current bit continues to appear on the output. The clock triggers are enabled when this input is 1 or undefined.
-        </dd>
-        <dt>
-          South edge, west end (input, bit width 1)
+          South edge, west end or Nort edge (input, bit width 1)
         </dt>
         <dd>
           Asynchronous set: When 1 or undefined, this input has no effect. When 1, the flip-flop's value is pinned to 1. This occurs asynchronously - that is, without regard to the current clock input value. As long as this input is 1, the other inputs have no effect, except for the asynchronous reset input, which has priority.
@@ -350,6 +402,13 @@
         </dt>
         <dd>
           The font with which to render the label.
+        </dd>
+		 <dt>
+          Appaerance
+        </dt>
+        <dd>
+          Classic Logisim : Presents flipflops as the legacy of logisim
+		  Logisim-HolyCross / Logsim-Evolutions : New presentation of flipflops in the IEC way
         </dd>
       </dl>
       <h2>

@@ -12,137 +12,190 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-  <div class="maindiv">
-    <h1>
-       <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32"> 
-       <img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32"> 
-	   <em>Pin</em>
-    </h1>
-    <table>
-      <tbody>
-        <tr>
-          <td>
-            <strong>Library:</strong>
-          </td>
-          <td>
-            <a href="index.html">Wiring</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>Introduced:</strong>
-          </td>
-          <td>
-            2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)
-          </td>
-        </tr>
-        <tr>
-          <td valign="top">
-            <strong>Appearance:</strong>
-          </td>
-          <td valign="top">
-            <img class="notscal" src="../../../../img-libs/pin.png" alt="#########">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <h2>
-      Behavior
-    </h2>
-    <p>
-      A pin is an output or an input to a circuit, depending on the value of its Output? attribute. In drawing a pin, Logisim represents output pins using a circle or rounded rectangle, and input pins are represented using squares or rectangles. In either case, the individual bits of the value
-      being sent or received is displayed within the component (except within printer view, when the component only says how many bits wide the pin is).
-    </p>
-    <p>
-      A pin is a convenient component for interacting with a circuit, and beginning Logisim users need not use them in any other way. But a user building a circuit using several subcircuits (as described in the <a class=refguide href="../../guide/subcirc/index.html">Subcircuits</a>' section of the </a> section of the <a href="../index.html">User guide</a>. will use pins also to specify the interface between a circuit and a subcircuit. In particular, a circuit layout's pin components define the pins that appear on the subcircuit component when the layout is used within another circuit. In such a circuit, the values sent and received
-      to those locations on the subcircuit component are tied to the pins within the subcircuit layout.
-    </p>
-    <h2>
-      Pins
-    </h2>
-    <p>
-      A pin component has only one pin, which will be an input to the component if the pin is an output pin, and it will be an output to the component if the pin is an input pin. In either case, its bit width matches the Data Bits attribute, and its location is specified by the Facing attribute.
-    </p>
-    <h2>
-      Attributes
-    </h2>
-    <p>
-      When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, the arrow keys alter its <q>Facing</q> attribute, and Alt with an arrow key alters its <q>Label Location</q> attribute.
-    </p>
-    <dl>
-      <dt>
-        Facing
-      </dt>
-      <dd>
-        The side of the component where its input/output pin should be.
-      </dd>
-      <dt>
-        Output?
-      </dt>
-      <dd>
-        Specifies whether the component is an output pin or an input pin. <b class=note>Note :</b> If the pin component is an input pin, then the pin that acts as its interface within the circuit will be an output, and vice versa.)
-      </dd>
-      <dt>
-        Data Bits
-      </dt>
-      <dd>
-        The number of bits for the value that the pin handles.
-      </dd>
-      <dt>
-        Three-state?
-      </dt>
-      <dd>
-        For an input pin, this configures whether the user can instruct the pin to emit unspecified (i.e., floating) values. The attribute deals with the user interface only; it does not have any effect on how the pin behaves when the circuit layout is used as a subcircuit. For an output pin, the
-        attribute has no effect.
-      </dd>
-      <dt>
-        Pull Behavior
-      </dt>
-      <dd>
-        For an input pin, the attribute specifies how floating values should be treated when received as an input, perhaps from a circuit using the layout as a subcircuit. With "unchanged," the floating values are sent into the layout as floating values; with "pull up," they are converted into 1
-        values before being sent into the circuit layout; and with "pull down," they are converted into 0 values before being sent into the circuit layout.
-      </dd>
-      <dt>
-        Label
-      </dt>
-      <dd>
-        The text within the label associated with the component.
-      </dd>
-      <dt>
-        Label Location
-      </dt>
-      <dd>
-        The location of the label relative to the component.
-      </dd>
-      <dt>
-        Label Font
-      </dt>
-      <dd>
-        The font with which to render the label.
-      </dd>
-    </dl>
-    <h2>
-      Poke Tool Behavior
-    </h2>
-    <p>
-      Clicking an output pin has no effect, although the pin's attributes will be displayed.
-    </p>
-    <p>
-      Clicking an input pin will toggle the bit that is clicked. If it is a three-state pin, then the corresponding bit will rotate between the three states.
-    </p>
-    <p>
-      If, however, the user is viewing the state of a subcircuit as described in the `<a href="../../guide/subcirc/sub-debug.html">Debugging Subcircuits</a>' of the <em>User's Guide</em>, then the pin's value is pinned to whatever value the subcircuit is receiving from the containing circuit. The
-      user cannot change the value without breaking this link between the subcircuit's state and the containing circuit's state, and Logisim will prompt the user to verify that breaking this link is actually desired.
-    </p>
-    <h2>
-      Text Tool Behavior
-    </h2>
-    <p>
-      Allows the label associated with the component to be edited.
-    </p>
-    <p>
-      <a href="../index.html">Back to <em>Library Reference</em></a>
-    </p>
-	</div>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/pininput.png" alt="#########" width="32" height="32"> <img class="iconlibs" src="../../../../icons/6464/pinoutput.png" alt="#########" width="32" height="32"> <em> Pin</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Wiring</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+			  <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan=2>
+                      Evolution
+                    </th>
+                    <th colspan=2>
+                      Classic
+                    </th>
+                    <th >
+                    </th>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      Pin in:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      Pin out:
+                    </th>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        A pin is an output or an input to a circuit, depending on the value of its Output? attribute. In drawing a pin, Logisim represents output pins using a circle or rounded rectangle, and input pins are represented using squares or rectangles. In either case, the individual bits of the value being sent or received is displayed within the component (except within printer view, when the component only says how many bits wide the pin is).
+      </p>
+      <p>
+        A pin is a convenient component for interacting with a circuit, and beginning Logisim users need not use them in any other way. But a user building a circuit using several subcircuits (as described in the <a class="refguide" href="../../guide/subcirc/index.html">Subcircuits</a>' section of the section of the <a href="../index.html">User guide</a>. will use pins also to specify the interface between a circuit and a subcircuit. In particular, a circuit layout's pin components define the pins that appear on the subcircuit component when the layout is used within another circuit. In such a circuit, the values sent and received to those locations on the subcircuit component are tied to the pins within the subcircuit layout.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        A pin component has only one pin, which will be an input to the component if the pin is an output pin, and it will be an output to the component if the pin is an input pin. In either case, its bit width matches the Data Bits attribute, and its location is specified by the Facing attribute.
+      </p>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute, the arrow keys alter its <q>Facing</q> attribute, and Alt with an arrow key alters its <q>Label Location</q> attribute.
+      </p>
+      <dl>
+        <dt>
+          <b class="propertie">&nbsp;Facing</b>
+        </dt>
+        <dd>
+          The side of the component where its input/output pin should be.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Output?</b>
+        </dt>
+        <dd>
+          Specifies whether the component is an output pin or an input pin. <b class="note">Note :</b> If the pin component is an input pin, then the pin that acts as its interface within the circuit will be an output, and vice versa.)
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Data Bits</b>
+        </dt>
+        <dd>
+          The number of bits for the value that the pin handles.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Three-state?</b>
+        </dt>
+        <dd>
+          For an input pin, this configures whether the user can instruct the pin to emit unspecified (i.e., floating) values. The attribute deals with the user interface only; it does not have any effect on how the pin behaves when the circuit layout is used as a subcircuit. For an output pin, the attribute has no effect.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Pull Behavior</b>
+        </dt>
+        <dd>
+          For an input pin, the attribute specifies how floating values should be treated when received as an input, perhaps from a circuit using the layout as a subcircuit. With "unchanged," the floating values are sent into the layout as floating values; with "pull up," they are converted into 1 values before being sent into the circuit layout; and with "pull down," they are converted into 0 values before being sent into the circuit layout.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Label</b>
+        </dt>
+        <dd>
+          The text within the label associated with the component.
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Label Font</b>
+        </dt>
+        <dd>
+          The font with which to render the label.
+        </dd>
+		 <dt>
+          <b class="propertie">&nbsp;Radix</b>
+        </dt>
+        <dd>
+          Allows you to define the base in which the values will be represented.<br>
+		  Example for 1010 in binary<br>
+			&emsp;Binary&emsp;: <b>1010</b><br>
+			&emsp;Octal&emsp;: <b>12</b><br>
+			&emsp;Signed decimal&emsp;: <b>-6</b><br>
+			&emsp;Unsigned deciaml&emsp;: <b>10</b><br>
+			&emsp;Hexadecimal&emsp;: <b>A</b><br>
+        </dd>
+        <dt>
+          <b class="propertie">&nbsp;Appearence</b>
+        </dt>
+        <dd>
+          There are two types of appearance, CLassic Logisim and Arrow Shapes. See the examples at the top of the page
+        </dd>
+      </dl>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        Clicking an output pin has no effect, although the pin's attributes will be displayed.
+      </p>
+      <p>
+        Clicking an input pin will toggle the bit that is clicked. If it is a three-state pin, then the corresponding bit will rotate between the three states.
+      </p>
+      <p>
+        If, however, the user is viewing the state of a subcircuit as described in the `<a href="../../guide/subcirc/sub-debug.html">Debugging Subcircuits</a>' of the <em>User's Guide</em>, then the pin's value is pinned to whatever value the subcircuit is receiving from the containing circuit. The user cannot change the value without breaking this link between the subcircuit's state and the containing circuit's state, and Logisim will prompt the user to verify that breaking this link is actually desired.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        Allows the label associated with the component to be edited.
+      </p>
+      <p>
+        <a href="../index.html">Back to <em>Library Reference</em></a>
+      </p>
+    </div>
   </body>
 </html>
