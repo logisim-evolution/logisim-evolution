@@ -56,8 +56,8 @@ public class OpenSaveIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    var discCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
-    Bounds bds = getScaled(2, 2, 12, 12);
+    final var discCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
+    var bds = getScaled(2, 2, 12, 12);
     g2.setColor(discCol);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.YELLOW);
@@ -91,6 +91,9 @@ public class OpenSaveIcon extends BaseIcon {
           ypoints[i] = AppPreferences.getScaled(Arrowdown[i * 2 + 1]);
         }
         g2.fillPolygon(xpoints, ypoints, 7);
+        break;
+      default:
+        // do nothing. should not really happen.
         break;
     }
   }

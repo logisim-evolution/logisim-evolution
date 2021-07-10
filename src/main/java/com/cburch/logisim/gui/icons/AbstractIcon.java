@@ -29,6 +29,8 @@
 package com.cburch.logisim.gui.icons;
 
 /**
+ * Base class for animated icons.
+ *
  * @deprecated Extend BaseIcon class instead.
  */
 public abstract class AbstractIcon extends BaseIcon {

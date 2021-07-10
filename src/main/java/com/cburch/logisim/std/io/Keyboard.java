@@ -291,7 +291,7 @@ public class Keyboard extends InstanceFactory {
         py[2] = y1 + 3;
         g.drawPolyline(px, py, 3);
       } else if (key == '\n') {
-        int y1 = ys - 3;
+        final var y1 = ys - 3;
         px[0] = w1;
         py[0] = ys - asc;
         px[1] = w1;
