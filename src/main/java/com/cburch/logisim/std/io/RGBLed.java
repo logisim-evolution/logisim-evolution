@@ -65,6 +65,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   public static class Logger extends InstanceLogger {
     static final BitWidth bitwidth = BitWidth.create(3);
+
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
@@ -136,7 +137,10 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var ps = new Port[3];
-    int cx = 0, cy = 0, dx = 0, dy = 0;
+    int cx = 0;
+    int cy = 0;
+    int dx = 0;
+    int dy = 0;
     if (facing == Direction.NORTH) {
       cy = 10;
       dx = 10;
