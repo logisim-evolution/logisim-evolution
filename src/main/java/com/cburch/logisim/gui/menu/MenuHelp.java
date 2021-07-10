@@ -41,7 +41,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
-import java.net.URL;
 import java.util.Locale;
 import javax.help.HelpSet;
 import javax.help.JHelp;
@@ -86,7 +85,7 @@ class MenuHelp extends JMenu implements ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
+    final var src = e.getSource();
     if (guide.equals(src)) {
       showHelp("guide");
     } else if (tutorial.equals(src)) {
@@ -113,9 +112,9 @@ class MenuHelp extends JMenu implements ActionListener {
       helpUrl = "doc/doc_en.hs";
     }
     if (helpSet == null || helpFrame == null || !helpUrl.equals(helpSetUrl)) {
-      var loader = MenuHelp.class.getClassLoader();
+      final var loader = MenuHelp.class.getClassLoader();
       try {
-        var hsUrl = HelpSet.findHelpSet(loader, helpUrl);
+        final var hsUrl = HelpSet.findHelpSet(loader, helpUrl);
         if (hsUrl == null) {
           disableHelp();
           OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpNotFoundError"));
@@ -142,7 +141,6 @@ class MenuHelp extends JMenu implements ActionListener {
         disableHelp();
         e.printStackTrace();
         OptionPane.showMessageDialog(menubar.getParentFrame(), S.get("helpUnavailableError"));
-        return;
       }
     }
   }

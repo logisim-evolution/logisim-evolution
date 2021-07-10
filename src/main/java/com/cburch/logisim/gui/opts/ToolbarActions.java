@@ -124,7 +124,7 @@ class ToolbarActions {
     @Override
     public Action append(Action other) {
       if (other instanceof MoveTool) {
-        MoveTool o = (MoveTool) other;
+        final var o = (MoveTool) other;
         if (this.toolbar == o.toolbar && this.dest == o.oldpos) {
           // TODO if (this.oldpos == o.dest) return null;
           return new MoveTool(toolbar, this.oldpos, o.dest);
@@ -146,7 +146,7 @@ class ToolbarActions {
     @Override
     public boolean shouldAppendTo(Action other) {
       if (other instanceof MoveTool) {
-        MoveTool o = (MoveTool) other;
+        final var o = (MoveTool) other;
         return this.toolbar == o.toolbar && o.dest == this.oldpos;
       } else {
         return false;

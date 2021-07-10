@@ -144,7 +144,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void addActionListener(LogisimMenuItem which, ActionListener l) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.addActionListener(l);
   }
 
@@ -153,18 +153,18 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void doAction(LogisimMenuItem which) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     item.actionPerformed(new ActionEvent(item, ActionEvent.ACTION_PERFORMED, which.toString()));
   }
 
   public KeyStroke getAccelerator(LogisimMenuItem which) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     return item == null ? null : item.getAccelerator();
   }
 
   void fireEnableChanged() {
-    ChangeEvent e = new ChangeEvent(this);
-    for (ChangeListener listener : enableListeners) {
+    final var e = new ChangeEvent(this);
+    for (final var listener : enableListeners) {
       listener.stateChanged(e);
     }
   }
@@ -192,7 +192,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public boolean isEnabled(LogisimMenuItem item) {
-    MenuItem menuItem = menuItems.get(item);
+    final var menuItem = menuItems.get(item);
     return menuItem != null && menuItem.isEnabled();
   }
 
@@ -201,7 +201,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void removeActionListener(LogisimMenuItem which, ActionListener l) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.removeActionListener(l);
   }
 
@@ -214,7 +214,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void setEnabled(LogisimMenuItem which, boolean value) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.setEnabled(value);
   }
 
@@ -223,6 +223,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   private class MyListener implements LocaleListener {
+    @Override
     public void localeChanged() {
       file.localeChanged();
       edit.localeChanged();

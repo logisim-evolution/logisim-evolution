@@ -31,9 +31,7 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.MacCompatibility;
@@ -41,7 +39,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
@@ -64,16 +61,14 @@ class MenuFile extends Menu implements ActionListener {
     this.menubar = menubar;
     openRecent = new OpenRecent(menubar);
 
-    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
 
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
-    close.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
-    saveAs.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
     print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
@@ -97,7 +92,7 @@ class MenuFile extends Menu implements ActionListener {
       add(quit);
     }
 
-    Project proj = menubar.getSaveProject();
+    final var proj = menubar.getSaveProject();
     newi.addActionListener(this);
     open.addActionListener(this);
     if (proj == null) {
@@ -117,18 +112,17 @@ class MenuFile extends Menu implements ActionListener {
     quit.addActionListener(this);
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
-    Project proj = menubar.getSaveProject();
-    Project baseProj = menubar.getBaseProject();
+    final var src = e.getSource();
+    final var proj = menubar.getSaveProject();
+    final var baseProj = menubar.getBaseProject();
     if (src == newi) {
       ProjectActions.doNew(baseProj);
     } else if (src == merge) {
       ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      Project newProj =
-          ProjectActions.doOpen(
-              baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      final var newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
       if (newProj != null
           && proj != null
           && !proj.isFileDirty()
@@ -136,12 +130,11 @@ class MenuFile extends Menu implements ActionListener {
         proj.getFrame().dispose();
       }
     } else if (src == close && proj != null) {
-      int result = 0;
-      Frame frame = proj.getFrame();
+      var result = 0;
+      final var frame = proj.getFrame();
       if (proj.isFileDirty()) {
         /* Must use hardcoded strings here, because the string management is rotten */
-        String message =
-            "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
+        final var message = "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
         String[] options = {"Save", "Discard", "Cancel"};
         result =
             OptionPane.showOptionDialog(
@@ -163,8 +156,8 @@ class MenuFile extends Menu implements ActionListener {
       // opening one if this was the last opened window.
       if (result != 2) {
         // Get the list of open projects
-        List<Project> pl = Projects.getOpenProjects();
-        if (pl.size() == 1) {
+        final var projectList = Projects.getOpenProjects();
+        if (projectList.size() == 1) {
           // Since we have a single window open, before closing the
           // current project open a new empty one
           ProjectActions.doNew(proj);

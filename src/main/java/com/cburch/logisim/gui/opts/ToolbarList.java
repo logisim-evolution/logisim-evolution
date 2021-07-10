@@ -76,18 +76,14 @@ class ToolbarList extends JList {
       Component ret;
       Icon icon;
       if (value instanceof Tool) {
-        Tool t = (Tool) value;
-        ret =
-            super.getListCellRendererComponent(
-                list, t.getDisplayName(), index, isSelected, cellHasFocus);
+        final var t = (Tool) value;
+        ret = super.getListCellRendererComponent(list, t.getDisplayName(), index, isSelected, cellHasFocus);
         icon = new ToolIcon(t);
       } else if (value == null) {
         ret = super.getListCellRendererComponent(list, "---", index, isSelected, cellHasFocus);
         icon = null;
       } else {
-        ret =
-            super.getListCellRendererComponent(
-                list, value.toString(), index, isSelected, cellHasFocus);
+        ret = super.getListCellRendererComponent(list, value.toString(), index, isSelected, cellHasFocus);
         icon = null;
       }
       if (ret instanceof JLabel) {
@@ -104,43 +100,51 @@ class ToolbarList extends JList {
       this.tool = tool;
     }
 
+    @Override
     public int getIconHeight() {
       return 20;
     }
 
+    @Override
     public int getIconWidth() {
       return 20;
     }
 
+    @Override
     public void paintIcon(Component comp, Graphics g, int x, int y) {
-      var gfxNew = g.create();
+      final var gfxNew = g.create();
       tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gfxNew), x + 2, y + 2);
       gfxNew.dispose();
     }
   }
 
-  private class Model extends AbstractListModel
-      implements ToolbarListener, AttributeListener, PropertyChangeListener {
+  private class Model extends AbstractListModel implements ToolbarListener, AttributeListener, PropertyChangeListener {
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       repaint();
     }
 
+    @Override
     public Object getElementAt(int index) {
       return base.get(index);
     }
 
+    @Override
     public int getSize() {
       return base.size();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.GATE_SHAPE.isSource(event)) {
         repaint();
       }
     }
 
+    @Override
     public void toolbarChanged() {
       fireContentsChanged(this, 0, getSize());
     }

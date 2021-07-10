@@ -44,8 +44,8 @@ class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final PrefBoolean[] checks;
   private final PrefOptionList afterAdd;
-  private final PrefOptionList DefaultAppear;
-  private final PrefOptionList PrefPinAppearance;
+  private final PrefOptionList defaultAppearance;
+  private final PrefOptionList prefPinAppearance;
   private PrefOptionList radix1;
   private PrefOptionList radix2;
 
@@ -70,18 +70,16 @@ class LayoutOptions extends OptionsPanel {
               AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
         };
 
-    for (int i = 0; i < 2; i++) {
-      RadixOption[] opts = RadixOption.OPTIONS;
-      PrefOption[] items = new PrefOption[opts.length];
-      for (int j = 0; j < RadixOption.OPTIONS.length; j++) {
+    for (var i = 0; i < 2; i++) {
+      final var opts = RadixOption.OPTIONS;
+      final var items = new PrefOption[opts.length];
+      for (var j = 0; j < RadixOption.OPTIONS.length; j++) {
         items[j] = new PrefOption(opts[j].getSaveString(), opts[j].getDisplayGetter());
       }
       if (i == 0) {
-        radix1 =
-            new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1, S.getter("layoutRadix1"), items);
+        radix1 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1, S.getter("layoutRadix1"), items);
       } else {
-        radix2 =
-            new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, S.getter("layoutRadix2"), items);
+        radix2 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, S.getter("layoutRadix2"), items);
       }
     }
     afterAdd =
@@ -93,7 +91,7 @@ class LayoutOptions extends OptionsPanel {
                   AppPreferences.ADD_AFTER_UNCHANGED, S.getter("layoutAddAfterUnchanged")),
               new PrefOption(AppPreferences.ADD_AFTER_EDIT, S.getter("layoutAddAfterEdit"))
             });
-    DefaultAppear =
+    defaultAppearance =
         new PrefOptionList(
             AppPreferences.DefaultAppearance,
             S.getter("layoutDefaultApearance"),
@@ -107,7 +105,7 @@ class LayoutOptions extends OptionsPanel {
             });
 
     // How connection pins should be drawn like
-    PrefPinAppearance =
+    prefPinAppearance =
         new PrefOptionList(
             AppPreferences.PinAppearance,
             S.getter("layoutPinAppearance"),
@@ -122,20 +120,20 @@ class LayoutOptions extends OptionsPanel {
                   AppPreferences.PIN_APPEAR_DOT_BIGGER, S.getter("layoutPinAppearanceDotBigger"))
             });
 
-    JPanel panel = new JPanel(new TableLayout(2));
-    panel.add(DefaultAppear.getJLabel());
-    panel.add(DefaultAppear.getJComboBox());
+    final var panel = new JPanel(new TableLayout(2));
+    panel.add(defaultAppearance.getJLabel());
+    panel.add(defaultAppearance.getJComboBox());
     panel.add(afterAdd.getJLabel());
     panel.add(afterAdd.getJComboBox());
     panel.add(radix1.getJLabel());
     panel.add(radix1.getJComboBox());
     panel.add(radix2.getJLabel());
     panel.add(radix2.getJComboBox());
-    panel.add(PrefPinAppearance.getJLabel());
-    panel.add(PrefPinAppearance.getJComboBox());
+    panel.add(prefPinAppearance.getJLabel());
+    panel.add(prefPinAppearance.getJComboBox());
 
     setLayout(new TableLayout(1));
-    for (PrefBoolean check : checks) {
+    for (final var check : checks) {
       add(check);
     }
     add(panel);
@@ -153,25 +151,23 @@ class LayoutOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (PrefBoolean check : checks) {
+    for (final var check : checks) {
       check.localeChanged();
     }
     radix1.localeChanged();
     radix2.localeChanged();
     afterAdd.localeChanged();
-    DefaultAppear.localeChanged();
+    defaultAppearance.localeChanged();
   }
 
 
   private static class MyListener implements PreferenceChangeListener {
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-      boolean update = evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier());
+      final var update = evt.getKey().equals(AppPreferences.PinAppearance.getIdentifier());
       if (update) {
         for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
       }
     }
   }
-
-
 }

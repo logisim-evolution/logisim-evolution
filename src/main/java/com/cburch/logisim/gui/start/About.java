@@ -77,8 +77,8 @@ public class About {
     public AboutPanel(boolean includeCredits) {
       setLayout(null);
 
-      int prefWidth = PANEL_WIDTH + 2 * PADDING;
-      int prefHeight = LOGO_HEIGHT + 2 * PADDING;
+      final var prefWidth = PANEL_WIDTH + 2 * PADDING;
+      var prefHeight = LOGO_HEIGHT + 2 * PADDING;
       if (includeCredits) {
         prefHeight += SCROLLER_HEIGHT;
       }

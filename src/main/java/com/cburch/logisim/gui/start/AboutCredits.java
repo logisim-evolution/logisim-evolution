@@ -93,19 +93,18 @@ class AboutCredits extends JComponent {
       lines.initialize(getGraphics(), getWidth(), getHeight());
     }
 
-    int height = getHeight();
-    int maxOffsetY = lines.totalScrollLinesHeight + height;
-    int offsetY =
-        ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
-    int yPos = offsetY - height;
+    final var height = getHeight();
+    final var maxOffsetY = lines.totalScrollLinesHeight + height;
+    final var offsetY = ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
+    final var yPos = offsetY - height;
 
     for (final var line : lines) {
-      int y = line.startY - yPos;
+      final var y = line.startY - yPos;
       // do not attempt to draw line contents if it'd be outside of visible area anyway
       if ((y < -line.displayHeight) && (y > height + line.displayHeight)) continue;
 
       // Drawing of each line is kept outside its class for performance reasons.
-      Class cls = line.getClass();
+      final var cls = line.getClass();
       if (cls.equals(ImgLine.class)) {
         g.drawImage(line.img.getImage(), line.x, y, this);
       } else if (cls.equals(TextLine.class)) {
@@ -220,7 +219,7 @@ class AboutCredits extends JComponent {
       super.init(g, displayAreaWidth, displayAreaHeight, currentY);
 
       // total padding around image top/bottom
-      int padding = 20;
+      final var padding = 20;
       displayHeight = img.getIconHeight();
       displayWidth = img.getIconWidth();
       startY = currentY + (padding / 2);
@@ -262,8 +261,8 @@ class AboutCredits extends JComponent {
       }
 
       if (color != null) {
-        int alpha = displayAreaHeight / 4;
-        var derrived = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+        final var alpha = displayAreaHeight / 4;
+        final var derrived = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
         paint = new GradientPaint(0.0f, 0.0f, derrived, 0.0f, alpha, color);
       }
     }

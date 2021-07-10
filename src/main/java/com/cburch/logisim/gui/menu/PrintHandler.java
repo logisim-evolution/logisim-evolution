@@ -66,14 +66,14 @@ public abstract class PrintHandler implements Printable {
   }
 
   public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
+    final var src = e.getSource();
     if (src == LogisimMenuBar.PRINT) print();
     else if (src == LogisimMenuBar.EXPORT_IMAGE) exportImage();
   }
 
   public void print() {
-    var format = new PageFormat();
-    var job = PrinterJob.getPrinterJob();
+    final var format = new PageFormat();
+    final var job = PrinterJob.getPrinterJob();
     job.setPrintable(this, format);
     if (!job.printDialog()) return;
     try {
@@ -89,9 +89,9 @@ public abstract class PrintHandler implements Printable {
 
   @Override
   public int print(Graphics pg, PageFormat pf, int pageNum) {
-    double imWidth = pf.getImageableWidth();
-    double imHeight = pf.getImageableHeight();
-    Graphics2D g = (Graphics2D) pg;
+    final var imWidth = pf.getImageableWidth();
+    final var imHeight = pf.getImageableHeight();
+    final var g = (Graphics2D) pg;
     g.translate(pf.getImageableX(), pf.getImageableY());
     return print(g, pf, pageNum, imWidth, imHeight);
   }
@@ -106,20 +106,22 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
       ExportImage.getFilter(ExportImage.FORMAT_SVG)
     };
-    var chooser = JFileChoosers.createSelected(getLastExported());
+    final var chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
-    for (ImageFileFilter ff : filters) chooser.addChoosableFileFilter(ff);
+    for (final var ff : filters) {
+      chooser.addChoosableFileFilter(ff);
+    }
     chooser.setFileFilter(filters[0]);
     chooser.setDialogTitle(S.get("exportImageFileSelect"));
 
-    int returnVal =
+    final var returnVal =
         chooser.showDialog(
             KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
             S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     var dest = chooser.getSelectedFile();
     FileFilter ff = null;
-    for (ImageFileFilter filter : filters) {
+    for (final var filter : filters) {
       if (filter.accept(dest)) ff = filter;
     }
     if (ff == null) ff = chooser.getFileFilter();
@@ -132,7 +134,7 @@ public abstract class PrintHandler implements Printable {
     }
     setLastExported(dest);
     if (dest.exists()) {
-      int confirm =
+      final var confirm =
           OptionPane.showConfirmDialog(
               KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
               S.get("confirmOverwriteMessage"),
@@ -140,7 +142,7 @@ public abstract class PrintHandler implements Printable {
               OptionPane.YES_NO_OPTION);
       if (confirm != OptionPane.YES_OPTION) return;
     }
-    int fmt =
+    final var fmt =
         (ff == filters[0]
             ? ExportImage.FORMAT_PNG
             : ff == filters[1]
@@ -152,18 +154,16 @@ public abstract class PrintHandler implements Printable {
   }
 
   public void exportImage(File dest, int fmt) {
-    var d = getExportImageSize();
+    final var d = getExportImageSize();
     if (d == null && showErr("couldNotCreateImage")) return;
 
-    Graphics base;
-    Graphics gr;
-    BufferedImage img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
-    if (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) base = new TikZWriter();
-    else base = img.getGraphics();
-    gr = base.create();
+    final var img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
+    final var base = (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) ? new TikZWriter() : img.getGraphics();
+    final var gr = base.create();
+
     try {
       if (!(gr instanceof Graphics2D) && showErr("couldNotCreateImage")) return;
-      Graphics2D g = (Graphics2D) gr;
+      final var g = (Graphics2D) gr;
       g.setColor(Color.white);
       g.fillRect(0, 0, d.width, d.height);
       g.setColor(Color.black);
@@ -207,7 +207,7 @@ public abstract class PrintHandler implements Printable {
   public abstract void paintExportImage(BufferedImage img, Graphics2D g);
 
   private boolean showErr(String key) {
-    Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+    final Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
     OptionPane.showMessageDialog(parent, S.get("couldNotCreateImage"));
     return true;
   }
