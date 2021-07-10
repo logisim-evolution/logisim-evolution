@@ -54,7 +54,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class RGBLed extends InstanceFactory implements DynamicElementProvider {
+public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -105,7 +105,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   public static final int GREEN = 1;
   public static final int BLUE = 2;
 
-  public RGBLed() {
+  public RgbLed() {
     super(_ID, S.getter("RGBledComponent"));
     setAttributes(
         new Attribute[] {

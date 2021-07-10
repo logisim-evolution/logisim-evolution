@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.data;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.RGBLed;
+import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import java.util.EnumSet;
 
@@ -140,7 +140,7 @@ public enum IOComponentTypes {
       case SevenSegment:
         return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
       case RGBLED:
-        return RGBLed.getLabel(id);
+        return RgbLed.getLabel(id);
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
       default:
