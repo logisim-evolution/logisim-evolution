@@ -18,6 +18,7 @@ The following institutions/people actively contributed to `Logisim-evolution`:
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland,
 * Theldo Cruz Franqueira - Pontifícia Universidade Católica de Minas Gerais - Brazil,
 * Moshe Berman - Brooklyn College - USA,
+* David H. Hutchens - Millersville University - Pennsylvania, USA
 
 If you feel that your name should be in this list, please feel free
 to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues).
