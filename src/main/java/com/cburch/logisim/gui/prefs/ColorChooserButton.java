@@ -29,7 +29,7 @@
 package com.cburch.logisim.gui.prefs;
 
 import com.bric.colorpicker.ColorPickerDialog;
-import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.gui.icons.BaseIcon;
 import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.Color;
 import java.awt.Frame;

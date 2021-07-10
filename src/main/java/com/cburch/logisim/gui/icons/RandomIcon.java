@@ -29,40 +29,28 @@
 package com.cburch.logisim.gui.icons;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class CounterIcon extends BaseIcon {
-
-  private int state = 1;
+public class RandomIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
+    // zero count, so 4 means 5 on a dice face.
+    final int state = 4;
+
     g2.setColor(Color.BLACK);
-    g2.fillRect(scale(1), 0, scale(6), scale(16));
-    g2.fillRect(scale(9), 0, scale(6), scale(16));
-    g2.drawRect(scale(1), 0, scale(6), scale(16));
-    g2.drawRect(scale(9), 0, scale(6), scale(16));
-    Font f = g2.getFont().deriveFont(scale((float) 6));
-    int tens = state / 10;
-    int ones = state % 10;
-    g2.setColor(Color.WHITE);
-    for (int i = -1; i < 2; i++) {
-      int val = Math.abs((ones + i) % 10);
-      char c = (char) ('0' + val);
-      TextLayout t = new TextLayout(Character.toString(c), f, g2.getFontRenderContext());
-      float x = scale((float) 11.5) - (float) t.getBounds().getCenterX();
-      float y = scale((float) (8.5 + i * 7)) - (float) t.getBounds().getCenterY();
-      t.draw(g2, x, y);
+    g2.drawRoundRect(0, 0, scale(16), scale(16), scale(5), scale(5));
+    if (state == 1 || state > 2) g2.fillOval(scale(2), scale(2), scale(3), scale(3));
+    if (state == 5) {
+      g2.fillOval(scale(2), scale(6), scale(3), scale(3));
+      g2.fillOval(scale(10), scale(6), scale(3), scale(3));
     }
-    for (int i = -1; i < 2; i++) {
-      int val = Math.abs((tens + i) % 10);
-      char c = (char) ('0' + val);
-      TextLayout t = new TextLayout(Character.toString(c), f, g2.getFontRenderContext());
-      float x = scale((float) 3.5) - (float) t.getBounds().getCenterX();
-      float y = scale((float) (8.5 + i * 7)) - (float) t.getBounds().getCenterY();
-      t.draw(g2, x, y);
+    if (state == 0 || state == 4 || state == 2) g2.fillOval(scale(6), scale(6), scale(3), scale(3));
+    if (state > 1) {
+      g2.fillOval(scale(2), scale(10), scale(3), scale(3));
+      g2.fillOval(scale(10), scale(2), scale(3), scale(3));
     }
+    if (state > 2 || state == 1) g2.fillOval(scale(10), scale(10), scale(3), scale(3));
   }
 }

@@ -39,7 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.gui.icons.LEDIcon;
+import com.cburch.logisim.gui.icons.LedIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -51,7 +51,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -129,7 +128,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           new ComponentMapInformationContainer(0, 3, 0, null, getLabels(), null)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new LEDIcon(true));
+    setIcon(new LedIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setInstanceLogger(Logger.class);
   }
@@ -250,6 +249,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     return true;
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new RGBLedShape(x, y, path);
   }

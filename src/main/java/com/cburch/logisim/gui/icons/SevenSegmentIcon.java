@@ -33,30 +33,18 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class SevenSegmentIcon extends AnimatedIcon {
+public class SevenSegmentIcon extends BaseIcon {
 
   private final boolean isHexDisplay;
-  private int state;
 
   public SevenSegmentIcon(boolean isHexDisplay) {
     this.isHexDisplay = isHexDisplay;
-    state = (isHexDisplay) ? -1 : 3;
-  }
-
-  @Override
-  public void animationUpdate() {
-    state++;
-    state %= isHexDisplay ? 16 : 10;
-  }
-
-  @Override
-  public void resetToStatic() {
-    state = isHexDisplay ? -1 : 3;
   }
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    int segson = HexDigit.getSegs(state);
+    // see HexDigit.getSegs()
+    int segson = HexDigit.getSegs(isHexDisplay ? 10 : 7);
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.WHITE);
     g2.fillRect(scale(2), 0, scale(10), scale(16));

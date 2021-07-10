@@ -33,58 +33,29 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class DipswitchIcon extends AnimatedIcon {
-
-  private int state = 0;
-
-  @Override
-  public void animationUpdate() {
-    state = (state + 1) & 3;
-  }
-
-  @Override
-  public void resetToStatic() {
-    state = 0;
-  }
+public class DipswitchIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLUE);
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
-    final int w = scale(8);
-    final int h = scale(5);
+    final var w = scale(8);
+    final var h = scale(5);
     g2.setColor(Color.WHITE);
     Font f = g2.getFont().deriveFont((float) (getIconWidth() / 2.5));
     TextLayout t = new TextLayout("1", f, g2.getFontRenderContext());
-    t.draw(
-        g2,
+    t.draw(g2,
         (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
         (float) (getIconHeight() / 4 - t.getBounds().getCenterY()));
     t = new TextLayout("2", f, g2.getFontRenderContext());
-    t.draw(
-        g2,
+    t.draw(g2,
         (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
         (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
     g2.fillRect(scale(2), scale(2), w, h);
     g2.fillRect(scale(2), scale(9), w, h);
     g2.setColor(Color.gray);
-    int x1;
-    int x2;
-    switch (state) {
-      case 0:
-        x1 = x2 = scale(2);
-        break;
-      case 1:
-        x1 = scale(2) + w >> 1;
-        x2 = scale(2);
-        break;
-      case 3:
-        x2 = scale(2) + w >> 1;
-        x1 = scale(2);
-        break;
-      default:
-        x1 = x2 = scale(2) + w >> 1;
-    }
+    final var x1 = scale(2) + w >> 1;
+    final var x2 = scale(2);
     g2.fillRect(x1, scale(2), w >> 1, h);
     g2.fillRect(x2, scale(9), w >> 1, h);
   }
