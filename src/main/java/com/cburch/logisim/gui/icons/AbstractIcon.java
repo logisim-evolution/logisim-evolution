@@ -28,45 +28,9 @@
 
 package com.cburch.logisim.gui.icons;
 
-import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import javax.swing.Icon;
+/**
+ * @deprecated Extend BaseIcon class instead.
+ */
+public abstract class AbstractIcon extends BaseIcon {
 
-public abstract class AbstractIcon implements Icon {
-
-  public static int scale(int v) {
-    return AppPreferences.getScaled(v);
-  }
-
-  public static double scale(double v) {
-    return AppPreferences.getScaled(v);
-  }
-
-  public static float scale(float v) {
-    return AppPreferences.getScaled(v);
-  }
-
-  @Override
-  public void paintIcon(Component c, Graphics g, int x, int y) {
-    Graphics2D g2 = (Graphics2D) g.create();
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
-    g2.translate(x, y);
-    paintIcon(g2);
-    g2.dispose();
-  }
-
-  protected abstract void paintIcon(Graphics2D g2);
-
-  @Override
-  public int getIconWidth() {
-    return AppPreferences.getIconSize();
-  }
-
-  @Override
-  public int getIconHeight() {
-    return AppPreferences.getIconSize();
-  }
 }

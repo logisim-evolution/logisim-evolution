@@ -36,7 +36,7 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
 
-public class FlipFlopIcon extends AbstractIcon {
+public class FlipFlopIcon extends BaseIcon {
 
   public static final int D_FLIPFLOP = 0;
   public static final int T_FLIPFLOP = 1;

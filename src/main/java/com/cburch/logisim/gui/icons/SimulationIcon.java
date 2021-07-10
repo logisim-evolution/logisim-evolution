@@ -32,7 +32,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class SimulationIcon extends AbstractIcon {
+public class SimulationIcon extends BaseIcon {
 
   public static final int SIM_PLAY = 0;
   public static final int SIM_PAUSE = 1;

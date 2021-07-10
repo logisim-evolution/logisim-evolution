@@ -34,7 +34,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class ArithmeticIcon extends AbstractIcon {
+public class ArithmeticIcon extends BaseIcon {
 
   private final String opp;
   private boolean invalid;

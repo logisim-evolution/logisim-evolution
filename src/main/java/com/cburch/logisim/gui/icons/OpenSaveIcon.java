@@ -33,7 +33,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class OpenSaveIcon extends AbstractIcon {
+public class OpenSaveIcon extends BaseIcon {
 
   public static final int FILE_OPEN = 0;
   public static final int FILE_SAVE = 1;

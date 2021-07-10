@@ -70,7 +70,7 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
     }
   }
 
-  private class ColorIcon extends AbstractIcon {
+  private class ColorIcon extends BaseIcon {
     @Override
     protected void paintIcon(Graphics2D g2) {
       g2.setColor(new Color(myMonitor.get()));

@@ -32,7 +32,7 @@ import com.cburch.logisim.data.Value;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
-public class PlexerIcon extends AbstractIcon {
+public class PlexerIcon extends BaseIcon {
 
   private static final int[] xpos = {4, 4, 10, 10};
   private static final int[] ypos = {0, 14, 9, 5};
