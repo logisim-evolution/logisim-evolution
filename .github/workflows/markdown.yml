@@ -1,6 +1,6 @@
 # Runs markdownlint on all *.md files
 
-name: "Markdown Lint"
+name: "MD Lint"
 
 on:
   push:
