@@ -55,7 +55,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class RGBLed extends InstanceFactory implements DynamicElementProvider {
+public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -66,6 +66,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   public static class Logger extends InstanceLogger {
     static final BitWidth bitwidth = BitWidth.create(3);
+
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
@@ -105,7 +106,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   public static final int GREEN = 1;
   public static final int BLUE = 2;
 
-  public RGBLed() {
+  public RgbLed() {
     super(_ID, S.getter("RGBledComponent"));
     setAttributes(
         new Attribute[] {
@@ -137,7 +138,10 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var ps = new Port[3];
-    int cx = 0, cy = 0, dx = 0, dy = 0;
+    var cx = 0;
+    var cy = 0;
+    var dx = 0;
+    var dy = 0;
     if (facing == Direction.NORTH) {
       cy = 10;
       dx = 10;
@@ -250,6 +254,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     return true;
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new RGBLedShape(x, y, path);
   }

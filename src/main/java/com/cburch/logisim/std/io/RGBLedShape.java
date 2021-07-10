@@ -62,9 +62,9 @@ public class RGBLedShape extends LedShape {
       var summ = (data == null ? 0 : (Integer) data.getValue());
       final var mask = activ ? 0 : 7;
       summ ^= mask;
-      final var red = ((summ >> RGBLed.RED) & 1) * 0xFF;
-      final var green = ((summ >> RGBLed.GREEN) & 1) * 0xFF;
-      final var blue = ((summ >> RGBLed.BLUE) & 1) * 0xFF;
+      final var red = ((summ >> RgbLed.RED) & 1) * 0xFF;
+      final var green = ((summ >> RgbLed.GREEN) & 1) * 0xFF;
+      final var blue = ((summ >> RgbLed.BLUE) & 1) * 0xFF;
       g.setColor(new Color(red, green, blue));
       g.fillOval(x, y, w, h);
       g.setColor(Color.darkGray);
