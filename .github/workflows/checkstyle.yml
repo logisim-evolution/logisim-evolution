@@ -16,7 +16,7 @@ on:
 
 jobs:
   analyze_sources:
-    name: "Is there anything to lint?"
+    name: "Is there any Java source code to lint?"
     runs-on: ubuntu-latest
 
     outputs:
