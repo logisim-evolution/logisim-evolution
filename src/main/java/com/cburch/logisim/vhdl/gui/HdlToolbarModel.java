@@ -40,7 +40,6 @@ import com.cburch.logisim.vhdl.base.HdlModelListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -128,13 +127,19 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   }
 
   @Override
-  public void aboutToSave(HdlModel source) {}
+  public void aboutToSave(HdlModel source) {
+    // dummy
+  }
 
   @Override
-  public void displayChanged(HdlModel source) {}
+  public void displayChanged(HdlModel source) {
+    // dummy
+  }
 
   @Override
-  public void appearanceChanged(HdlModel source) {}
+  public void appearanceChanged(HdlModel source) {
+    // dummy
+  }
 
   private class HdlToolbarItem implements ToolbarItem {
     final Icon icon;
@@ -149,15 +154,18 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
 
     @Override
     public Dimension getDimension(Object orientation) {
-      if (icon == null) return new Dimension(16, 16);
-      final var w = icon.getIconWidth();
-      final var h = icon.getIconHeight();
-      return new Dimension(w, h + 2);
+      var w = 16;
+      var h = 16;
+      if (icon != null) {
+        w = icon.getIconWidth();
+        h = icon.getIconHeight() + 2;
+      }
+      return new Dimension(w, h);
     }
 
     @Override
     public String getToolTip() {
-      return (toolTip == null ? null : toolTip.toString());
+      return toolTip == null ? null : toolTip.toString();
     }
 
     @Override
@@ -168,8 +176,7 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
     @Override
     public void paintIcon(Component destination, Graphics gfx) {
       if (!isSelectable() && gfx instanceof Graphics2D) {
-        Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-        ((Graphics2D) gfx).setComposite(c);
+        ((Graphics2D) gfx).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
       }
 
       if (icon == null) {

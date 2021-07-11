@@ -128,7 +128,9 @@ class TableTabClip implements ClipboardOwner {
   }
 
   @Override
-  public void lostOwnership(Clipboard clip, Transferable transfer) {}
+  public void lostOwnership(Clipboard clip, Transferable transfer) {
+    // dummy
+  }
 
   public void paste() {
     final var clip = table.getToolkit().getSystemClipboard();
@@ -152,8 +154,8 @@ class TableTabClip implements ClipboardOwner {
         final var data = (Data) xfer.getTransferData(binaryFlavor);
         entries = new Entry[data.contents.length][];
         for (int i = 0; i < entries.length; i++) {
-          Entry[] row = new Entry[data.contents[i].length];
-          for (int j = 0; j < row.length; j++) {
+          final var row = new Entry[data.contents[i].length];
+          for (var j = 0; j < row.length; j++) {
             row[j] = Entry.parse(data.contents[i][j]);
           }
           entries[i] = row;
@@ -177,18 +179,18 @@ class TableTabClip implements ClipboardOwner {
           firstEntries[i] = Entry.parse(headers[i]);
           allParsed = allParsed && firstEntries[i] != null;
         }
-        int rows = lines.countTokens();
+        var rows = lines.countTokens();
         if (allParsed) rows++;
         entries = new Entry[rows][];
-        int cur = 0;
+        var cur = 0;
         if (allParsed) {
           entries[0] = firstEntries;
           cur++;
         }
         while (lines.hasMoreTokens()) {
           toks = new StringTokenizer(lines.nextToken(), "\t");
-          Entry[] ents = new Entry[toks.countTokens()];
-          for (int i = 0; toks.hasMoreTokens(); i++) {
+          final var ents = new Entry[toks.countTokens()];
+          for (var i = 0; toks.hasMoreTokens(); i++) {
             ents[i] = Entry.parse(toks.nextToken());
           }
           entries[cur] = ents;
@@ -230,8 +232,8 @@ class TableTabClip implements ClipboardOwner {
         return;
       }
     }
-    for (int r = 0; r < entries.length; r++) {
-      for (int c = 0; c < entries[0].length; c++) {
+    for (var r = 0; r < entries.length; r++) {
+      for (var c = 0; c < entries[0].length; c++) {
         if (s.x + c >= inputs) {
           model.setVisibleOutputEntry(s.y + r, s.x + c - inputs, entries[r][c]);
         }

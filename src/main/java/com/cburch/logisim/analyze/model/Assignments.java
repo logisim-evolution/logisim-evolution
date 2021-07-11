@@ -34,8 +34,6 @@ import java.util.Map;
 class Assignments {
   private final Map<String, Boolean> map = new HashMap<>();
 
-  public Assignments() {}
-
   public boolean get(String variable) {
     final var value = map.get(variable);
     return value != null && value;

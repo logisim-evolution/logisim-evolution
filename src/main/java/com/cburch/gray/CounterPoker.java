@@ -28,15 +28,12 @@
 
 package com.cburch.gray;
 
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -46,7 +43,9 @@ import java.awt.event.MouseEvent;
  * and that it must be a subclass of InstancePoker in the com.cburch.logisim.instance package.
  */
 public class CounterPoker extends InstancePoker {
-  public CounterPoker() {}
+  public CounterPoker() {
+    // dummy
+  }
 
   /** Determines whether the location the mouse was pressed should result in initiating a poke. */
   @Override
@@ -60,14 +59,14 @@ public class CounterPoker extends InstancePoker {
   @Override
   public void keyTyped(InstanceState state, KeyEvent e) {
     // convert it to a hex digit; if it isn't a hex digit, abort.
-    int val = Character.digit(e.getKeyChar(), 16);
-    BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+    final var val = Character.digit(e.getKeyChar(), 16);
+    final var width = state.getAttributeValue(StdAttr.WIDTH);
     if (val < 0 || (val & width.getMask()) != val) return;
 
     // compute the next value
-    CounterData cur = CounterData.get(state, width);
-    long newVal = (cur.getValue().toLongValue() * 16 + val) & width.getMask();
-    Value newValue = Value.createKnown(width, newVal);
+    final var cur = CounterData.get(state, width);
+    final var newVal = (cur.getValue().toLongValue() * 16 + val) & width.getMask();
+    final var newValue = Value.createKnown(width, newVal);
     cur.setValue(newValue);
     state.fireInvalidated();
 
@@ -84,16 +83,14 @@ public class CounterPoker extends InstancePoker {
    */
   @Override
   public void paint(InstancePainter painter) {
-    Bounds bds = painter.getBounds();
-    BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    int len = (width.getWidth() + 3) / 4;
+    final var bds = painter.getBounds();
+    final var len = (painter.getAttributeValue(StdAttr.WIDTH).getWidth() + 3) / 4;
 
-    Graphics g = painter.getGraphics();
-    g.setColor(Color.RED);
-    int wid = 7 * len + 2; // width of caret rectangle
-    int ht = 16; // height of caret rectangle
-    g.drawRect(
-        bds.getX() + (bds.getWidth() - wid) / 2, bds.getY() + (bds.getHeight() - ht) / 2, wid, ht);
-    g.setColor(Color.BLACK);
+    final var gfx = painter.getGraphics();
+    gfx.setColor(Color.RED);
+    final var width = 7 * len + 2; // width of caret rectangle
+    final var height = 16; // height of caret rectangle
+    gfx.drawRect(bds.getX() + (bds.getWidth() - width) / 2, bds.getY() + (bds.getHeight() - height) / 2, width, height);
+    gfx.setColor(Color.BLACK);
   }
 }

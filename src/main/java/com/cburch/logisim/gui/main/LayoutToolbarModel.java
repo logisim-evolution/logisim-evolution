@@ -144,7 +144,9 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     // AttributeListener methods
     //
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // dummy
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -156,7 +158,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     @Override
     public void projectChanged(ProjectEvent e) {
-      int act = e.getAction();
+      final var act = e.getAction();
       if (act == ProjectEvent.ACTION_SET_TOOL) {
         fireToolbarAppearanceChanged();
       } else if (act == ProjectEvent.ACTION_SET_FILE) {
@@ -166,7 +168,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
           data.removeToolbarListener(this);
           data.removeToolAttributeListener(this);
         }
-        LogisimFile file = (LogisimFile) e.getData();
+        final var file = (LogisimFile) e.getData();
         if (file != null) {
           final var data = file.getOptions().getToolbarData();
           data.addToolbarListener(this);
@@ -204,9 +206,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
     @Override
     public Dimension getDimension(Object orientation) {
-      return new Dimension(
-          AppPreferences.getIconSize() + 2 * AppPreferences.IconBorder,
-          AppPreferences.getIconSize() + 2 * AppPreferences.IconBorder);
+      final var pad = 2 * AppPreferences.IconBorder;
+      return new Dimension(AppPreferences.getIconSize() + pad, AppPreferences.getIconSize() + pad);
     }
 
     @Override
