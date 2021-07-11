@@ -5,7 +5,7 @@
 #
 # Marcin Orlowski
 
-name: "Checkstyle"
+name: "Code style"
 on:
   push:
     # No need to run on push to "develop" as there should not be any direct pushes.
@@ -16,7 +16,7 @@ on:
 
 jobs:
   analyze_sources:
-    name: "Is there anything to lint?"
+    name: "Is there any Java source code to lint?"
     runs-on: ubuntu-latest
 
     outputs:
@@ -94,7 +94,10 @@ jobs:
         # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
         # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
         # (as it looks for it in CWD) and that should be sufficient.
-        ln -s config/checkstyle/suppressions.xml checkstyle-suppressions.xml
+        supp_file="config/checkstyle/suppressions-dev.xml"
+        # safe fall back to non-dev file if -dev version is removed
+        [[ -f "${supp_file}" ]] || supp_file="config/checkstyle/suppressions.xml"
+        ln -s "${supp_file}" checkstyle-suppressions.xml
 
         # Let's lint eventually...
         checkstyle -o "${REPORT_FILE}" -c "${CHECKS_FILE}" ${{ needs.analyze_sources.outputs.changed_files }}

@@ -8,6 +8,7 @@
     <suppress checks="MissingJavadocType"/>
     <suppress checks="JavadocParagraph"/>
     <suppress checks="NeedBraces"/>
+    <suppress checks="LineLength"/>
 
     <suppress checks="LocalVariableName"/>
     <suppress checks="ParameterName"/>
@@ -26,7 +27,6 @@
     <suppress checks="SummaryJavadoc"/>
     <suppress checks="OverloadMethodsDeclarationOrder"/>
     <suppress checks="CustomImportOrder"/>
-    <suppress checks="LineLength"/>
     <suppress checks="SingleLineJavadoc"/>
     <suppress checks="FallThrough"/>
 
