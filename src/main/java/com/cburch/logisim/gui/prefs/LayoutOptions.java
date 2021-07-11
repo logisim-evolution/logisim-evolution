@@ -157,9 +157,7 @@ class LayoutOptions extends OptionsPanel {
     radix1.localeChanged();
     radix2.localeChanged();
     afterAdd.localeChanged();
-    DefaultAppear.localeChanged();
-    PrefPinAppearance.localeChanged();
-
+    defaultAppearance.localeChanged();
   }
 
 

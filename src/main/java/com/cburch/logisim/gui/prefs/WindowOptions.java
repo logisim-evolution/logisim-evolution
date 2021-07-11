@@ -67,16 +67,14 @@ class WindowOptions extends OptionsPanel {
   private JPanel previewPanel;
   private int index = 0;
 
-  private final ColorChooserButton CanvasBgColor;
-  private final JLabel CanvasBgColorTitle;
-  private final ColorChooserButton GridBgColor;
-  private final JLabel GridBgColorTitle;
-  private final ColorChooserButton GridDotColor;
-  private final JLabel GridDotColorTitle;
-  private final ColorChooserButton GridZoomedDotColor;
-  private final JLabel GridZoomedDotColorTitle;
-  private final JButton gridColorsResetButton;
-  private final JButton but;
+  private final ColorChooserButton canvasBgColor;
+  private final JLabel canvasBgColorTitle;
+  private final ColorChooserButton gridBgColor;
+  private final JLabel gridBgColorTitle;
+  private final ColorChooserButton gridDotColor;
+  private final JLabel gridDotColorTitle;
+  private final ColorChooserButton gridZoomedDotColor;
+  private final JLabel gridZoomedDotColorTitle;
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
@@ -125,8 +123,7 @@ class WindowOptions extends OptionsPanel {
     panel.add(gridZoomedDotColorTitle);
     panel.add(gridZoomedDotColor);
 
-
-    gridColorsResetButton = new JButton();
+    final var gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);
     gridColorsResetButton.setActionCommand(cmdResetGridColors);
     gridColorsResetButton.setText(S.get("windowGridColorsReset"));
@@ -179,7 +176,7 @@ class WindowOptions extends OptionsPanel {
     initThemePreviewer();
 
     setLayout(new TableLayout(1));
-    but = new JButton();
+    final var but = new JButton();
     but.addActionListener(listener);
     but.setActionCommand("reset");
     but.setText(S.get("windowToolbarReset"));
@@ -229,10 +226,8 @@ class WindowOptions extends OptionsPanel {
     toolbarPlacement.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
-    Importanta.setText(S.get("windowToolbarPleaserestart"));
-    Importantb.setText(S.get("windowToolbarImportant"));
-    gridColorsResetButton.setText(S.get("windowGridColorsReset"));
-    but.setText(S.get("windowToolbarReset"));
+    importantA.setText(S.get("windowToolbarPleaserestart"));
+    importantB.setText(S.get("windowToolbarImportant"));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {
