@@ -45,7 +45,7 @@ public class LedMatrixIcon extends BaseIcon {
     final var yint = 1;
     for (var i = 0; i < 4; i++)
       for (var j = 0; j < 4; j++) {
-        g2.setColor((i == xint) && (j == yint) ? Color.GREEN.darker() : Color.GREEN.brighter().brighter());
+        g2.setColor((i == xint) && (j == yint) ? Color.RED.darker() : Color.GREEN.darker());
         g2.fillOval(scale(2 + i * 3), scale(2 + j * 3), scale(3), scale(3));
       }
   }
