@@ -39,5 +39,5 @@ public interface ToolbarItem {
 
   boolean isSelectable();
 
-  void paintIcon(Component destination, Graphics g);
+  void paintIcon(Component destination, Graphics gfx);
 }

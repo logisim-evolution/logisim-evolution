@@ -35,5 +35,5 @@ public interface ToolbarClickableItem extends ToolbarItem {
 
   void clicked();
 
-  void paintPressedIcon(Component destination, Graphics g);
+  void paintPressedIcon(Component destination, Graphics gfx);
 }

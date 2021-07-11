@@ -31,7 +31,6 @@ package com.cburch.draw.tools;
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.icons.DrawLineIcon;
-import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.LineUtil;
@@ -62,14 +61,12 @@ public class LineTool extends AbstractTool {
   }
 
   static Location snapTo4Cardinals(Location from, int mx, int my) {
-    int px = from.getX();
-    int py = from.getY();
+    final var px = from.getX();
+    final var py = from.getY();
     if (mx != px && my != py) {
-      if (Math.abs(my - py) < Math.abs(mx - px)) {
-        return Location.create(mx, py);
-      } else {
-        return Location.create(px, my);
-      }
+      return (Math.abs(my - py) < Math.abs(mx - px))
+          ? Location.create(mx, py)
+          : Location.create(px, my);
     }
     return Location.create(mx, my); // should never happen
   }
@@ -77,8 +74,8 @@ public class LineTool extends AbstractTool {
   @Override
   public void draw(Canvas canvas, Graphics g) {
     if (active) {
-      Location start = mouseStart;
-      Location end = mouseEnd;
+      final var start = mouseStart;
+      final var end = mouseEnd;
       g.setColor(Color.GRAY);
       g.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
     }
@@ -101,7 +98,7 @@ public class LineTool extends AbstractTool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    int code = e.getKeyCode();
+    final var code = e.getKeyCode();
     if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_CONTROL)) {
       updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
     }
@@ -119,9 +116,9 @@ public class LineTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-    int mods = e.getModifiersEx();
+    var x = e.getX();
+    var y = e.getY();
+    final var mods = e.getModifiersEx();
     if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
       x = canvas.snapX(x);
       y = canvas.snapY(y);
@@ -139,14 +136,14 @@ public class LineTool extends AbstractTool {
   public void mouseReleased(Canvas canvas, MouseEvent e) {
     if (active) {
       updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
-      Location start = mouseStart;
-      Location end = mouseEnd;
+      final var start = mouseStart;
+      final var end = mouseEnd;
       CanvasObject add = null;
       if (!start.equals(end)) {
         active = false;
-        CanvasModel model = canvas.getModel();
+        final var model = canvas.getModel();
         Location[] ends = {start, end};
-        List<Location> locs = UnmodifiableList.create(ends);
+        final var locs = UnmodifiableList.create(ends);
         add = attrs.applyTo(new Poly(false, locs));
         add.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
         canvas.doAction(new ModelAddAction(model, add));
@@ -168,17 +165,12 @@ public class LineTool extends AbstractTool {
 
   private void updateMouse(Canvas canvas, int mx, int my, int mods) {
     if (active) {
-      boolean shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-      Location newEnd;
-      if (shift) {
-        newEnd = LineUtil.snapTo8Cardinals(mouseStart, mx, my);
-      } else {
-        newEnd = Location.create(mx, my);
-      }
+      final var shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
+      var newEnd = (shift) ? LineUtil.snapTo8Cardinals(mouseStart, mx, my) : Location.create(mx, my);
 
       if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
-        int x = newEnd.getX();
-        int y = newEnd.getY();
+        var x = newEnd.getX();
+        var y = newEnd.getY();
         x = canvas.snapX(x);
         y = canvas.snapY(y);
         newEnd = Location.create(x, y);

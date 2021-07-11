@@ -73,27 +73,21 @@ public class Curve extends FillableCanvasObject {
       type = DrawAttr.PAINT_STROKE_FILL;
     }
     if (type != DrawAttr.PAINT_FILL) {
-      int stroke = getStrokeWidth();
-      double[] q = toArray(loc);
-      double[] p0 = toArray(this.p0);
-      double[] p1 = toArray(this.p1);
-      double[] p2 = toArray(this.p2);
-      double[] p = CurveUtil.findNearestPoint(q, p0, p1, p2);
+      final var stroke = getStrokeWidth();
+      final var q = toArray(loc);
+      final var p0 = toArray(this.p0);
+      final var p1 = toArray(this.p1);
+      final var p2 = toArray(this.p2);
+      final var p = CurveUtil.findNearestPoint(q, p0, p1, p2);
       if (p == null) return false;
 
-      int thr;
-      if (type == DrawAttr.PAINT_STROKE) {
-        thr = Math.max(Line.ON_LINE_THRESH, stroke / 2);
-      } else {
-        thr = stroke / 2;
-      }
+      final var thr = (type == DrawAttr.PAINT_STROKE) ? Math.max(Line.ON_LINE_THRESH, stroke / 2) : stroke / 2;
       if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) {
         return true;
       }
     }
     if (type != DrawAttr.PAINT_STROKE) {
-      QuadCurve2D curve = getCurve(null);
-      return curve.contains(loc.getX(), loc.getY());
+      return getCurve(null).contains(loc.getX(), loc.getY());
     }
     return false;
   }
@@ -113,9 +107,8 @@ public class Curve extends FillableCanvasObject {
   }
 
   private QuadCurve2D getCurve(HandleGesture gesture) {
-    Handle[] p = getHandleArray(gesture);
-    return new QuadCurve2D.Double(
-        p[0].getX(), p[0].getY(), p[1].getX(), p[1].getY(), p[2].getX(), p[2].getY());
+    final var p = getHandleArray(gesture);
+    return new QuadCurve2D.Double(p[0].getX(), p[0].getY(), p[1].getX(), p[1].getY(), p[2].getX(), p[2].getY());
   }
 
   public QuadCurve2D getCurve2D() {
@@ -197,7 +190,7 @@ public class Curve extends FillableCanvasObject {
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof Curve) {
-      Curve that = (Curve) other;
+      final var that = (Curve) other;
       return this.p0.equals(that.p0)
           && this.p1.equals(that.p1)
           && this.p2.equals(that.p2)
@@ -218,7 +211,7 @@ public class Curve extends FillableCanvasObject {
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
-    Handle[] hs = getHandleArray(gesture);
+    final var hs = getHandleArray(gesture);
     Handle ret = null;
     if (!hs[0].getLocation().equals(p0)) {
       p0 = hs[0].getLocation();
@@ -238,7 +231,7 @@ public class Curve extends FillableCanvasObject {
 
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
-    QuadCurve2D curve = getCurve(gesture);
+    final var curve = getCurve(gesture);
     if (setForFill(g)) {
       ((Graphics2D) g).fill(curve);
     }

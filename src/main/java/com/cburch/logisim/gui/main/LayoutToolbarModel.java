@@ -70,7 +70,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     buildContents();
 
     // set up listeners
-    ToolbarData data = proj.getOptions().getToolbarData();
+    final var data = proj.getOptions().getToolbarData();
     data.addToolbarListener(myListener);
     data.addToolAttributeListener(myListener);
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
@@ -78,7 +78,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   }
 
   private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool) {
-    for (ToolbarItem item : items) {
+    for (final var item : items) {
       if (item instanceof ToolItem) {
         if (tool == ((ToolItem) item).tool) {
           return item;
@@ -89,15 +89,15 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   }
 
   private void buildContents() {
-    List<ToolbarItem> oldItems = items;
-    List<ToolbarItem> newItems = new ArrayList<>();
-    ToolbarData data = proj.getLogisimFile().getOptions().getToolbarData();
-    for (Tool tool : data.getContents()) {
+    final var oldItems = items;
+    final var newItems = new ArrayList<ToolbarItem>();
+    final var data = proj.getLogisimFile().getOptions().getToolbarData();
+    for (final var tool : data.getContents()) {
       if (tool == null) {
         newItems.add(new ToolbarSeparator(4));
       } else {
         if (tool instanceof AddTool) tool.registerParent(frame.getToolbar());
-        ToolbarItem i = findItem(oldItems, tool);
+        final var i = findItem(oldItems, tool);
         newItems.add(Objects.requireNonNullElseGet(i, () -> new ToolItem(tool)));
       }
     }
@@ -113,7 +113,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   @Override
   public boolean isSelected(ToolbarItem item) {
     if (item instanceof ToolItem) {
-      Tool tool = ((ToolItem) item).tool;
+      final var tool = ((ToolItem) item).tool;
       return tool == proj.getTool();
     } else {
       return false;
@@ -123,7 +123,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   @Override
   public void itemSelected(ToolbarItem item) {
     if (item instanceof ToolItem) {
-      Tool tool = ((ToolItem) item).tool;
+      final var tool = ((ToolItem) item).tool;
       proj.setTool(tool);
     }
   }
@@ -143,8 +143,10 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     // AttributeListener methods
     //
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       fireToolbarAppearanceChanged();
     }
@@ -152,20 +154,21 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     // ProjectListener methods
     //
+    @Override
     public void projectChanged(ProjectEvent e) {
       int act = e.getAction();
       if (act == ProjectEvent.ACTION_SET_TOOL) {
         fireToolbarAppearanceChanged();
       } else if (act == ProjectEvent.ACTION_SET_FILE) {
-        LogisimFile old = (LogisimFile) e.getOldData();
+        final var old = (LogisimFile) e.getOldData();
         if (old != null) {
-          ToolbarData data = old.getOptions().getToolbarData();
+          final var data = old.getOptions().getToolbarData();
           data.removeToolbarListener(this);
           data.removeToolAttributeListener(this);
         }
         LogisimFile file = (LogisimFile) e.getData();
         if (file != null) {
-          ToolbarData data = file.getOptions().getToolbarData();
+          final var data = file.getOptions().getToolbarData();
           data.addToolbarListener(this);
           data.addToolAttributeListener(this);
         }
@@ -176,6 +179,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     // PropertyChangeListener method
     //
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.GATE_SHAPE.isSource(event)) {
         fireToolbarAppearanceChanged();
@@ -185,6 +189,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     // ToolbarListener methods
     //
+    @Override
     public void toolbarChanged() {
       buildContents();
     }
@@ -197,36 +202,40 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       this.tool = tool;
     }
 
+    @Override
     public Dimension getDimension(Object orientation) {
       return new Dimension(
           AppPreferences.getIconSize() + 2 * AppPreferences.IconBorder,
           AppPreferences.getIconSize() + 2 * AppPreferences.IconBorder);
     }
 
+    @Override
     public String getToolTip() {
-      String ret = tool.getDescription();
-      int index = 1;
-      for (ToolbarItem item : items) {
+      var ret = tool.getDescription();
+      var index = 1;
+      for (final var item : items) {
         if (item == this) break;
         if (item instanceof ToolItem) ++index;
       }
       if (index <= 10) {
         if (index == 10) index = 0;
-        int mask = frame.getToolkit().getMenuShortcutKeyMaskEx();
+        final var mask = frame.getToolkit().getMenuShortcutKeyMaskEx();
         ret += " (" + InputEventUtil.toKeyDisplayString(mask) + "-" + index + ")";
       }
       return ret;
     }
 
+    @Override
     public boolean isSelectable() {
       return true;
     }
 
-    public void paintIcon(Component destination, Graphics g) {
+    @Override
+    public void paintIcon(Component destination, Graphics gfx) {
       // draw halo
       if (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
-        g.setColor(Canvas.HALO_COLOR);
-        g.fillRect(
+        gfx.setColor(Canvas.HALO_COLOR);
+        gfx.fillRect(
             AppPreferences.IconBorder,
             AppPreferences.IconBorder,
             AppPreferences.getIconSize(),
@@ -234,9 +243,9 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       }
 
       // draw tool icon
-      g.setColor(Color.BLACK);
-      var gfxCopy = g.create();
-      var c = new ComponentDrawContext(destination, null, null, g, gfxCopy);
+      gfx.setColor(Color.BLACK);
+      final var gfxCopy = gfx.create();
+      final var c = new ComponentDrawContext(destination, null, null, gfx, gfxCopy);
       tool.paintIcon(c, AppPreferences.IconBorder, AppPreferences.IconBorder);
       gfxCopy.dispose();
     }
