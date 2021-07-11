@@ -77,7 +77,9 @@ class WindowOptions extends OptionsPanel {
   private final JLabel GridDotColorTitle;
   private final ColorChooserButton GridZoomedDotColor;
   private final JLabel GridZoomedDotColorTitle;
-
+  
+  private final JButton gridColorsResetButton;
+  private final JButton but;
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
 
@@ -125,7 +127,7 @@ class WindowOptions extends OptionsPanel {
     panel.add(GridZoomedDotColorTitle);
     panel.add(GridZoomedDotColor);
 
-    JButton gridColorsResetButton = new JButton();
+    gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);
     gridColorsResetButton.setActionCommand(cmdResetGridColors);
     gridColorsResetButton.setText(S.get("windowGridColorsReset"));
@@ -180,7 +182,7 @@ class WindowOptions extends OptionsPanel {
     initThemePreviewer();
 
     setLayout(new TableLayout(1));
-    JButton but = new JButton();
+    but = new JButton();
     but.addActionListener(listener);
     but.setActionCommand("reset");
     but.setText(S.get("windowToolbarReset"));
@@ -232,6 +234,8 @@ class WindowOptions extends OptionsPanel {
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     Importanta.setText(S.get("windowToolbarPleaserestart"));
     Importantb.setText(S.get("windowToolbarImportant"));
+    gridColorsResetButton.setText(S.get("windowGridColorsReset"));
+    but.setText(S.get("windowToolbarReset"));
   }
 
   private class SettingsChangeListener implements ChangeListener, ActionListener {
