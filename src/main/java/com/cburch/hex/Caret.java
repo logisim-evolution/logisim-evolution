@@ -240,6 +240,9 @@ public class Caret {
           if (cursor >= rows * cols) setDot(cursor - rows * cols, shift);
           else if (cursor >= cols) setDot(cursor % cols, shift);
           break;
+
+        default:
+          // do nothing
       }
     }
 

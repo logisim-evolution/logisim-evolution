@@ -113,6 +113,9 @@ class TableTabCaret {
           TruthTable model = table.getTruthTable();
           model.expandVisibleRows();
           break;
+        default:
+          // do nothing
+          break;
       }
     }
 
@@ -369,8 +372,7 @@ class TableTabCaret {
     @Override
     public void mousePressed(MouseEvent e) {
       table.requestFocus();
-      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0)
-      {
+      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
         mouseDragged(e);
       } else {
         setCursor(pointAt(e), pointNear(e));

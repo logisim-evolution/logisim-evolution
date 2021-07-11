@@ -533,6 +533,7 @@ class ExpressionTab extends AnalyzerTab {
           final var dl = (JTable.DropLocation) info.getDropLocation();
           idx = dl.getRow();
         } catch (ClassCastException ignored) {
+          // do nothing
         }
       } else {
         idx = table.getSelectedRow();
