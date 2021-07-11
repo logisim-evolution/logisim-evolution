@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.opts;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.file.ToolbarData;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.tools.AddTool;
@@ -70,8 +69,8 @@ class ToolbarOptions extends OptionsPanel {
 
     list = new ToolbarList(getOptions().getToolbarData());
 
-    TableLayout middleLayout = new TableLayout(1);
-    JPanel middle = new JPanel(middleLayout);
+    final var middleLayout = new TableLayout(1);
+    final var middle = new JPanel(middleLayout);
     middle.add(addTool);
     middle.add(addSeparator);
     middle.add(moveUp);
@@ -88,8 +87,8 @@ class ToolbarOptions extends OptionsPanel {
     list.addListSelectionListener(listener);
     listener.computeEnabled();
 
-    var gridbag = new GridBagLayout();
-    var gbc = new GridBagConstraints();
+    final var gridbag = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     setLayout(gridbag);
     final var explorerPane =
         new JScrollPane(
@@ -139,8 +138,9 @@ class ToolbarOptions extends OptionsPanel {
 
   private class Listener
       implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
+      final var src = event.getSource();
       if (src == addTool) {
         doAddTool(explorer.getSelectedTool().cloneTool());
       } else if (src == addSeparator) {
@@ -159,13 +159,14 @@ class ToolbarOptions extends OptionsPanel {
     }
 
     private void computeEnabled() {
-      int index = list.getSelectedIndex();
+      final var index = list.getSelectedIndex();
       addTool.setEnabled(explorer.getSelectedTool() != null);
       moveUp.setEnabled(index > 0);
       moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
       remove.setEnabled(index >= 0);
     }
 
+    @Override
     public void deleteRequested(ProjectExplorer.Event event) {}
 
     private void doAddTool(Tool tool) {
@@ -175,33 +176,38 @@ class ToolbarOptions extends OptionsPanel {
     }
 
     private void doMove(int delta) {
-      int oldIndex = list.getSelectedIndex();
-      int newIndex = oldIndex + delta;
-      ToolbarData data = getOptions().getToolbarData();
+      final var oldIndex = list.getSelectedIndex();
+      final var newIndex = oldIndex + delta;
+      final var data = getOptions().getToolbarData();
       if (oldIndex >= 0 && newIndex >= 0 && newIndex < data.size()) {
         getProject().doAction(ToolbarActions.moveTool(data, oldIndex, newIndex));
         list.setSelectedIndex(newIndex);
       }
     }
 
+    @Override
     public void doubleClicked(ProjectExplorer.Event event) {
-      Object target = event.getTarget();
+      final var target = event.getTarget();
       if (target instanceof ProjectExplorerToolNode) {
-        Tool tool = ((ProjectExplorerToolNode) target).getValue();
+        final var tool = ((ProjectExplorerToolNode) target).getValue();
         doAddTool(tool);
       }
     }
 
+    @Override
     public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
 
+    @Override
     public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
 
+    @Override
     public void selectionChanged(ProjectExplorer.Event event) {
       computeEnabled();
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
       computeEnabled();
     }

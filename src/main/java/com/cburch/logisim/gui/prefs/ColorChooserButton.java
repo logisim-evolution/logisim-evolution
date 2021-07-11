@@ -63,9 +63,9 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    JButton but = (JButton) e.getSource();
+    final var but = (JButton) e.getSource();
     if (but.getIcon() instanceof ColorIcon) {
-      ColorIcon i = (ColorIcon) but.getIcon();
+      final var i = (ColorIcon) but.getIcon();
       i.update(frame);
     }
   }
@@ -78,8 +78,8 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
     }
 
     public void update(Frame frame) {
-      Color col = new Color(myMonitor.get());
-      Color newCol = ColorPickerDialog.showDialog(frame, col, false);
+      var col = new Color(myMonitor.get());
+      final var newCol = ColorPickerDialog.showDialog(frame, col, false);
       if (newCol == null) return;
       if (!newCol.equals(col)) {
         col = newCol;

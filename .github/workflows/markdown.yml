@@ -15,10 +15,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # https://github.com/marketplace/actions/paths-changes-filter
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          docs:
+            - 'docs/**'
+            - '**/*.md'
+
     # https://github.com/marketplace/actions/my-markdown-linter
     - name: "Running markdown linter..."
       uses: ruzickap/action-my-markdown-linter@v1
+      if: steps.filter.outputs.docs == 'true'
       with:
         exclude: "LICENSE.md"
         config_file: .markdownlint.yaml
-

@@ -50,9 +50,10 @@ class MenuItemHelper implements ActionListener {
     this.listeners = new ArrayList<>();
   }
 
+  @Override
   public void actionPerformed(ActionEvent event) {
     if (!listeners.isEmpty()) {
-      ActionEvent e =
+      final var e =
           new ActionEvent(
               menuItem,
               event.getID(),

@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import javax.swing.JFrame;
 
 public class WindowManagers {
@@ -56,20 +55,20 @@ public class WindowManagers {
   private WindowManagers() {}
 
   private static void computeListeners() {
-    List<Project> nowOpen = Projects.getOpenProjects();
+    final var nowOpen = Projects.getOpenProjects();
 
-    HashSet<Project> closed = new HashSet<>(projectMap.keySet());
+    final var closed = new HashSet<Project>(projectMap.keySet());
     nowOpen.forEach(closed::remove);
-    for (Project proj : closed) {
-      ProjectManager manager = projectMap.get(proj);
+    for (final var proj : closed) {
+      final var manager = projectMap.get(proj);
       manager.frameClosed(manager.getJFrame(false, null));
       projectMap.remove(proj);
     }
 
-    HashSet<Project> opened = new LinkedHashSet<>(nowOpen);
+    final var opened = new LinkedHashSet<Project>(nowOpen);
     opened.removeAll(projectMap.keySet());
-    for (Project proj : opened) {
-      ProjectManager manager = new ProjectManager(proj);
+    for (final var proj : opened) {
+      final var manager = new ProjectManager(proj);
       projectMap.put(proj, manager);
     }
   }
@@ -85,6 +84,7 @@ public class WindowManagers {
   }
 
   private static class MyListener implements PropertyChangeListener {
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
       computeListeners();
     }
@@ -107,12 +107,14 @@ public class WindowManagers {
       return proj.getFrame();
     }
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       if (event.getAction() == LibraryEvent.SET_NAME) {
         setText((String) event.getData());
       }
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
         setText(proj.getLogisimFile().getName());

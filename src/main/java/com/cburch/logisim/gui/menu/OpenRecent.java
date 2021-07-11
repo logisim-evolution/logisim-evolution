@@ -31,9 +31,7 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -62,12 +60,14 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
     if (file == null) {
       return S.get("fileOpenRecentNoChoices");
     } else {
+
       String ret;
       try {
         ret = file.getCanonicalPath();
       } catch (IOException e) {
         ret = file.toString();
       }
+
       if (ret.length() <= MAX_ITEM_LENGTH) {
         return ret;
       } else {
@@ -83,13 +83,14 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 
   void localeChanged() {
     setText(S.get("fileOpenRecentItem"));
-    for (RecentItem item : recentItems) {
+    for (final var item : recentItems) {
       if (item.file == null) {
         item.setText(S.get("fileOpenRecentNoChoices"));
       }
     }
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
     if (event.getPropertyName().equals(AppPreferences.RECENT_PROJECTS)) {
       renewItems();
@@ -97,17 +98,16 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
   }
 
   private void renewItems() {
-    for (int index = recentItems.size() - 1; index >= 0; index--) {
-      RecentItem item = recentItems.get(index);
-      remove(item);
+    for (var index = recentItems.size() - 1; index >= 0; index--) {
+      remove(recentItems.get(index));
     }
     recentItems.clear();
 
-    List<File> files = AppPreferences.getRecentFiles();
+    final var files = AppPreferences.getRecentFiles();
     if (files.isEmpty()) {
       recentItems.add(new RecentItem(null));
     } else {
-      for (File file : files) {
+      for (final var file : files) {
         recentItems.add(new RecentItem(file));
       }
     }
@@ -128,20 +128,18 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
       addActionListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
-      Project proj = menubar.getSaveProject();
-      Project baseProj = menubar.getBaseProject();
-      Component parent =
-          baseProj != null ? baseProj.getFrame().getCanvas() : menubar.getParentFrame();
-      Project newProj = ProjectActions.doOpen(parent, baseProj, file);
+      final var proj = menubar.getSaveProject();
+      final var baseProj = menubar.getBaseProject();
+      final var parent =
+          (baseProj != null) ? baseProj.getFrame().getCanvas() : menubar.getParentFrame();
+      final var newProj = ProjectActions.doOpen(parent, baseProj, file);
       // If the current project hasn't been touched and has no file associated
       // with it (i.e. is entirely blank), and the new file was opened
       // successfully, then go ahead and close the old blank window.
       // todo: and has no subwindows or dialogs open?
-      if (newProj != null
-          && proj != null
-          && !proj.isFileDirty()
-          && proj.getLogisimFile().getLoader().getMainFile() == null) {
+      if (newProj != null && proj != null && !proj.isFileDirty() && proj.getLogisimFile().getLoader().getMainFile() == null) {
         proj.getFrame().dispose();
       }
     }

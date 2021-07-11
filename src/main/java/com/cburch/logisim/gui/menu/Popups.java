@@ -33,8 +33,6 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
-import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.main.StatisticsDialog;
 import com.cburch.logisim.proj.Project;
@@ -105,8 +103,8 @@ public class Popups {
       add(remove);
       remove.addActionListener(this);
 
-      boolean canChange = proj.getLogisimFile().contains(circuit);
-      LogisimFile file = proj.getLogisimFile();
+      final var canChange = proj.getLogisimFile().contains(circuit);
+      final var file = proj.getLogisimFile();
       if (circuit == proj.getCurrentCircuit()) {
         if (proj.getFrame().getEditorView().equals(Frame.EDIT_APPEARANCE)) {
           editAppearance.setEnabled(false);
@@ -115,12 +113,12 @@ public class Popups {
         }
       }
       main.setEnabled(canChange && file.getMainCircuit() != circuit);
-      remove.setEnabled(
-          canChange && file.getCircuitCount() > 1 && proj.getDependencies().canRemove(circuit));
+      remove.setEnabled(canChange && file.getCircuitCount() > 1 && proj.getDependencies().canRemove(circuit));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
+      final var source = e.getSource();
       if (source == editLayout) {
         proj.setCurrentCircuit(circuit);
         proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
@@ -161,8 +159,9 @@ public class Popups {
       remove.setEnabled(canChange && proj.getDependencies().canRemove(vhdl));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
+      final var source = e.getSource();
       if (source == edit) {
         proj.setCurrentHdlModel(vhdl);
       } else if (source == remove) {
@@ -191,13 +190,13 @@ public class Popups {
       reload.setEnabled(isTop && lib instanceof LoadedLibrary);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == unload) {
         ProjectLibraryActions.doUnloadLibrary(proj, lib);
       } else if (src == reload) {
-        Loader loader = proj.getLogisimFile().getLoader();
-        loader.reload((LoadedLibrary) lib);
+        proj.getLogisimFile().getLoader().reload((LoadedLibrary) lib);
       }
     }
   }
@@ -230,8 +229,9 @@ public class Popups {
       add(load);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == add) {
         ProjectCircuitActions.doAddCircuit(proj);
       } else if (src == vhdl) {

@@ -33,13 +33,11 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -58,16 +56,16 @@ class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final PrefBoolean[] checks;
   private final PrefOptionList toolbarPlacement;
-  private final ZoomSlider ZoomValue;
+  private final ZoomSlider zoomValue;
   private final JLabel lookfeelLabel;
-  private final JLabel ZoomLabel;
-  private final JLabel Importanta;
-  private final JTextArea Importantb;
+  private final JLabel zoomLabel;
+  private final JLabel importantA;
+  private final JTextArea importantB;
   private final JPanel previewContainer;
-  private final JComboBox<String> LookAndFeel;
-  private final LookAndFeelInfo[] LFInfos;
+  private final JComboBox<String> lookAndFeel;
+  private final LookAndFeelInfo[] lookAndFeelInfos;
   private JPanel previewPanel;
-  private int Index = 0;
+  private int index = 0;
 
   private final ColorChooserButton CanvasBgColor;
   private final JLabel CanvasBgColorTitle;
@@ -77,9 +75,9 @@ class WindowOptions extends OptionsPanel {
   private final JLabel GridDotColorTitle;
   private final ColorChooserButton GridZoomedDotColor;
   private final JLabel GridZoomedDotColorTitle;
-  
   private final JButton gridColorsResetButton;
   private final JButton but;
+
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
 
@@ -105,27 +103,28 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
 
-    JPanel panel = new JPanel(new TableLayout(2));
+    final var panel = new JPanel(new TableLayout(2));
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
 
 
-    CanvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
-    CanvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
-    panel.add(CanvasBgColorTitle);
-    panel.add(CanvasBgColor);
-    GridBgColorTitle = new JLabel(S.get("windowGridBgColor"));
-    GridBgColor = new ColorChooserButton(window, AppPreferences.GRID_BG_COLOR);
-    panel.add(GridBgColorTitle);
-    panel.add(GridBgColor);
-    GridDotColorTitle = new JLabel(S.get("windowGridDotColor"));
-    GridDotColor = new ColorChooserButton(window, AppPreferences.GRID_DOT_COLOR);
-    panel.add(GridDotColorTitle);
-    panel.add(GridDotColor);
-    GridZoomedDotColorTitle = new JLabel(S.get("windowGridZoomedDotColor"));
-    GridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
-    panel.add(GridZoomedDotColorTitle);
-    panel.add(GridZoomedDotColor);
+    canvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
+    canvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
+    panel.add(canvasBgColorTitle);
+    panel.add(canvasBgColor);
+    gridBgColorTitle = new JLabel(S.get("windowGridBgColor"));
+    gridBgColor = new ColorChooserButton(window, AppPreferences.GRID_BG_COLOR);
+    panel.add(gridBgColorTitle);
+    panel.add(gridBgColor);
+    gridDotColorTitle = new JLabel(S.get("windowGridDotColor"));
+    gridDotColor = new ColorChooserButton(window, AppPreferences.GRID_DOT_COLOR);
+    panel.add(gridDotColorTitle);
+    panel.add(gridDotColor);
+    gridZoomedDotColorTitle = new JLabel(S.get("windowGridZoomedDotColor"));
+    gridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
+    panel.add(gridZoomedDotColorTitle);
+    panel.add(gridZoomedDotColor);
+
 
     gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);
@@ -137,45 +136,43 @@ class WindowOptions extends OptionsPanel {
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
 
-    Importanta = new JLabel(S.get("windowToolbarPleaserestart"));
-    Importanta.setFont(Importanta.getFont().deriveFont(Font.ITALIC));
-    panel.add(Importanta);
+    importantA = new JLabel(S.get("windowToolbarPleaserestart"));
+    importantA.setFont(importantA.getFont().deriveFont(Font.ITALIC));
+    panel.add(importantA);
 
-    Importantb = new JTextArea(S.get("windowToolbarImportant"));
-    Importantb.setFont(Importantb.getFont().deriveFont(Font.ITALIC));
-    panel.add(Importantb);
+    importantB = new JTextArea(S.get("windowToolbarImportant"));
+    importantB.setFont(importantB.getFont().deriveFont(Font.ITALIC));
+    panel.add(importantB);
 
-    ZoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
-    ZoomValue =
-        new ZoomSlider(
-            JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
+    zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
+    zoomValue = new ZoomSlider(JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
 
-    panel.add(ZoomLabel);
-    panel.add(ZoomValue);
-    ZoomValue.addChangeListener(listener);
+    panel.add(zoomLabel);
+    panel.add(zoomValue);
+    zoomValue.addChangeListener(listener);
 
     panel.add(new JLabel(" "));
     panel.add(new JLabel(" "));
 
-    int index = 0;
-    LookAndFeel = new JComboBox<>();
-    LookAndFeel.setSize(50, 20);
+    var index = 0;
+    lookAndFeel = new JComboBox<>();
+    lookAndFeel.setSize(50, 20);
 
-    LFInfos = UIManager.getInstalledLookAndFeels();
-    for (LookAndFeelInfo info : LFInfos) {
-      LookAndFeel.insertItemAt(info.getName(), index);
+    lookAndFeelInfos = UIManager.getInstalledLookAndFeels();
+    for (final var info : lookAndFeelInfos) {
+      lookAndFeel.insertItemAt(info.getName(), index);
       if (info.getClassName().equals(AppPreferences.LookAndFeel.get())) {
-        LookAndFeel.setSelectedIndex(index);
-        Index = index;
+        lookAndFeel.setSelectedIndex(index);
+        this.index = index;
       }
       index++;
     }
     lookfeelLabel = new JLabel(S.get("windowToolbarLookandfeel"));
     panel.add(lookfeelLabel);
-    panel.add(LookAndFeel);
-    LookAndFeel.addActionListener(listener);
+    panel.add(lookAndFeel);
+    lookAndFeel.addActionListener(listener);
 
-    JLabel previewLabel = new JLabel(S.get("windowToolbarPreview"));
+    final var previewLabel = new JLabel(S.get("windowToolbarPreview"));
     panel.add(previewLabel);
     previewContainer = new JPanel();
     panel.add(previewContainer);
@@ -187,7 +184,7 @@ class WindowOptions extends OptionsPanel {
     but.setActionCommand("reset");
     but.setText(S.get("windowToolbarReset"));
     add(but);
-    for (PrefBoolean check : checks) {
+    for (final var check : checks) {
       add(check);
     }
     add(panel);
@@ -226,11 +223,11 @@ class WindowOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (PrefBoolean check : checks) {
+    for (final var check : checks) {
       check.localeChanged();
     }
     toolbarPlacement.localeChanged();
-    ZoomLabel.setText(S.get("windowToolbarZoomfactor"));
+    zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
     Importanta.setText(S.get("windowToolbarPleaserestart"));
     Importantb.setText(S.get("windowToolbarImportant"));
@@ -242,12 +239,12 @@ class WindowOptions extends OptionsPanel {
 
     @Override
     public void stateChanged(ChangeEvent e) {
-      JSlider source = (JSlider) e.getSource();
+      final var source = (JSlider) e.getSource();
       if (!source.getValueIsAdjusting()) {
         int value = source.getValue();
         AppPreferences.SCALE_FACTOR.set((double) value / 100.0);
-        List<Project> nowOpen = Projects.getOpenProjects();
-        for (Project proj : nowOpen) {
+        final var nowOpen = Projects.getOpenProjects();
+        for (final var proj : nowOpen) {
           proj.getFrame().revalidate();
           proj.getFrame().repaint();
         }
@@ -256,25 +253,25 @@ class WindowOptions extends OptionsPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (e.getSource().equals(LookAndFeel)) {
-        if (LookAndFeel.getSelectedIndex() != Index) {
-          Index = LookAndFeel.getSelectedIndex();
-          AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
+      if (e.getSource().equals(lookAndFeel)) {
+        if (lookAndFeel.getSelectedIndex() != index) {
+          index = lookAndFeel.getSelectedIndex();
+          AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
           initThemePreviewer();
         }
       } else if (e.getActionCommand().equals(cmdResetWindowLayout)) {
         AppPreferences.resetWindow();
-        List<Project> nowOpen = Projects.getOpenProjects();
-        for (Project proj : nowOpen) {
+        final var nowOpen = Projects.getOpenProjects();
+        for (final var proj : nowOpen) {
           proj.getFrame().resetLayout();
           proj.getFrame().revalidate();
           proj.getFrame().repaint();
         }
       } else if (e.getActionCommand().equals(cmdResetGridColors)) {
         //        AppPreferences.resetWindow();
-        List<Project> nowOpen = Projects.getOpenProjects();
+        final var nowOpen = Projects.getOpenProjects();
         AppPreferences.setDefaultGridColors();
-        for (Project proj : nowOpen) {
+        for (final var proj : nowOpen) {
           proj.getFrame().repaint();
         }
       }

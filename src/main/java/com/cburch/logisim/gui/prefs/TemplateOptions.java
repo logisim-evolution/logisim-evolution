@@ -37,7 +37,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.Template;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -67,7 +66,7 @@ class TemplateOptions extends OptionsPanel {
   public TemplateOptions(PreferencesFrame window) {
     super(window);
 
-    ButtonGroup bgroup = new ButtonGroup();
+    final var bgroup = new ButtonGroup();
     bgroup.add(plain);
     bgroup.add(empty);
     bgroup.add(custom);
@@ -79,8 +78,8 @@ class TemplateOptions extends OptionsPanel {
     templateButton.addActionListener(myListener);
     myListener.computeEnabled();
 
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    final var gridbag = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     setLayout(gridbag);
     gbc.weightx = 1.0;
     gbc.gridx = 0;
@@ -97,7 +96,7 @@ class TemplateOptions extends OptionsPanel {
     gbc.gridwidth = 1;
     gbc.gridy = 3;
     gbc.gridx = GridBagConstraints.RELATIVE;
-    JPanel strut = new JPanel();
+    final var strut = new JPanel();
     strut.setMinimumSize(new Dimension(50, 1));
     strut.setPreferredSize(new Dimension(50, 1));
     gbc.weightx = 0.0;
@@ -145,21 +144,22 @@ class TemplateOptions extends OptionsPanel {
   }
 
   private class MyListener implements ActionListener, PropertyChangeListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
+      final var src = event.getSource();
       if (src == templateButton) {
-        JFileChooser chooser = JFileChoosers.create();
+        final var chooser = JFileChoosers.create();
         chooser.setDialogTitle(S.get("selectDialogTitle"));
         chooser.setApproveButtonText(S.get("selectDialogButton"));
         int action = chooser.showOpenDialog(getPreferencesFrame());
         if (action == JFileChooser.APPROVE_OPTION) {
-          File file = chooser.getSelectedFile();
+          final var file = chooser.getSelectedFile();
           FileInputStream reader = null;
           InputStream reader2 = null;
           try {
-            Loader loader = new Loader(getPreferencesFrame());
+            final var loader = new Loader(getPreferencesFrame());
             reader = new FileInputStream(file);
-            Template template = Template.create(reader);
+            final var template = Template.create(reader);
             reader2 = template.createStream();
             LogisimFile.load(reader2, loader); // to see if OK
             AppPreferences.setTemplateFile(file, template);
@@ -183,7 +183,7 @@ class TemplateOptions extends OptionsPanel {
           }
         }
       } else {
-        int value = AppPreferences.TEMPLATE_UNKNOWN;
+        var value = AppPreferences.TEMPLATE_UNKNOWN;
         if (plain.isSelected()) value = AppPreferences.TEMPLATE_PLAIN;
         else if (empty.isSelected()) value = AppPreferences.TEMPLATE_EMPTY;
         else if (custom.isSelected()) value = AppPreferences.TEMPLATE_CUSTOM;
@@ -197,10 +197,11 @@ class TemplateOptions extends OptionsPanel {
       templateField.setEnabled(custom.isSelected());
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
-      String prop = event.getPropertyName();
+      final var prop = event.getPropertyName();
       if (prop.equals(AppPreferences.TEMPLATE_TYPE)) {
-        int value = AppPreferences.getTemplateType();
+        final var value = AppPreferences.getTemplateType();
         plain.setSelected(value == AppPreferences.TEMPLATE_PLAIN);
         empty.setSelected(value == AppPreferences.TEMPLATE_EMPTY);
         custom.setSelected(value == AppPreferences.TEMPLATE_CUSTOM);

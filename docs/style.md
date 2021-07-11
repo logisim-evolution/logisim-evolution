@@ -15,59 +15,60 @@
 # Coding style #
 
 `Logisim-evolution` uses `Google Java Style` code style as provided with the `CodeStyle`
-static anaylyzer tool, with a few checks disabled as specified in `suppressions.xml`
+static anaylyzer tool, with a few checks disabled as specified in the `suppressions.xml`
 config file.
 
 # Checking code style with InteliJ IDEA #
 
-As we use suppression config file, you can set up InteliJ's Checkstyle plugin in
-two way - one adds our suppressions to built-in "Google Checks" config, other
-creates compltely new config using copy from Checkstyle source archive.
+As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
+two ways - one adds our suppressions to the built-in "Google Checks" config, the other
+creates a completely new config using a copy from the Checkstyle source archive.
 
-In both ways you need to install `CheckStyle-IDEA` plugin first:
+Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
-* Go to `Settings -> Plugins`,
-* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) (by Jamie Shiell) from the Marketplace,
+* Go to `Settings -> Plugins`.
+* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) (by Jamie Shiell)
+  from the Marketplace.
 
 ## Editing built-in config ##
 
-Edit existing Google Checks configuration:
+Edit the existing Google Checks configuration:
 
-* Open `Tools -> Checkstyle` plugin settings,
-* Activate `Google Checks` configuration,
-* Now highlight `Google Checks` row and click `Pen` icon above the list to edit it
-* Look for `org.checkstyle.google.suppressionfilter.config` named property and set its
-  value to `config/checkstyle/suppressions.xml`
-* Click `Finish`
-* From now on you can run CheckStyle using `Checkstyle` command or directly from CheckStyle tab
-* Ensure `Rules:` shown in the scan result window read `Google Checks`
+* Open the `Tools -> Checkstyle` plugin settings.
+* Activate the `Google Checks` configuration.
+* Highlight the `Google Checks` row and click the `Pen` icon above the list to edit it.
+* Look for the `org.checkstyle.google.suppressionfilter.config` named property and set its
+  value to `config/checkstyle/suppressions.xml`.
+* Click `Finish`.
+* You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
+* Ensure `Rules:`, shown in the scan result window, reads `Google Checks`.
 
 ## Using cloned config ##
 
 You can configure InteliJ's CheckStyle plugin to behave exactly as we configure it:
 
-* Open `Tools -> Checkstyle` plugin settings.
-* Select `Checkstyle version` to your liking.
-* Go to [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look
-  for release matching selected `Checkstyle version` and download source archive.
-* Unpack it and copy out `src/main/resources/google_checks.xml` file to Logisim's `config/checkstyle/`.
-* Go back to plugin configuration and add new "Configuration file":
-  * Click `+` icon,
-  * Set description to `Logisim-evolution`,
-  * Select `Use a local Checkstyle file`,
-  * Click `Browse` and point to `config/checkstyle/google_checks.xml` file,
-  * Enable `Store relative to project location` and click `Next`,
-  * On `Property` table look for property named `org.checkstyle.google.suppressionfilter.config`
-    and set the value to `config/checkstyle/suppressions.xml` and click `Next,
-  * Click "Finish",
-* From now on you can run CheckStyle using `Checkstyle` command or directly from CheckStyle tab,
-* Ensure `Rules:` shown in the scan result window read `Logisim-evolution`.
+* Open the `Tools -> Checkstyle` plugin settings.
+* Set the `Checkstyle version` to your liking.
+* Go to the [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look
+  for a release matching the selected `Checkstyle version` and download the source archive.
+* Unpack it and copy out the `src/main/resources/google_checks.xml` file to Logisim's `config/checkstyle/`.
+* Go back to the plugin configuration and add a new "Configuration file":
+  * Click the `+` icon.
+  * Set the description to `Logisim-evolution`.
+  * Select `Use a local Checkstyle file`.
+  * Click `Browse` and point to the `config/checkstyle/google_checks.xml` file.
+  * Enable `Store relative to project location` and click `Next`.
+  * On the `Property` table, look for a property named `org.checkstyle.google.suppressionfilter.config`.
+    Set the value to `config/checkstyle/suppressions.xml` and click `Next.
+  * Click "Finish".
+* You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
+* Ensure `Rules:`, shown in the scan result window, reads `Logisim-evolution`.
 
 ---
 
 # Using Gradle plugin #
 
-CheckStyle is also plugged into project's Gradle and exposes `checkstyleMain` and `checkstyleTest` tasks:
+CheckStyle is also plugged into the project's Gradle build system and provides the `checkstyleMain` and `checkstyleTest` tasks:
 
 ```bash
 $ ./gradlew checkstyleMain

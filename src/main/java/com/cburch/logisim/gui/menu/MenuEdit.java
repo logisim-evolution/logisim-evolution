@@ -30,11 +30,8 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.proj.Action;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -74,10 +71,8 @@ class MenuEdit extends Menu {
     selall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask));
     raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
     lower.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask));
-    raiseTop.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
-    lowerBottom.setAccelerator(
-        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    raiseTop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    lowerBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
 
     add(undo);
     add(redo);
@@ -98,7 +93,7 @@ class MenuEdit extends Menu {
     add(addCtrl);
     add(remCtrl);
 
-    Project proj = menubar.getSaveProject();
+    final var proj = menubar.getSaveProject();
     if (proj != null) {
       proj.addProjectListener(myListener);
       undo.addActionListener(myListener);
@@ -159,18 +154,20 @@ class MenuEdit extends Menu {
 
   private class MyListener implements ProjectListener, ActionListener {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      Project proj = menubar.getSaveProject();
+      final var src = e.getSource();
+      final var proj = menubar.getSaveProject();
       if (src == undo && proj != null)
         proj.undoAction();
       else if (src == redo && proj != null)
         proj.redoAction();
     }
 
+    @Override
     public void projectChanged(ProjectEvent e) {
-      Project proj = menubar.getSaveProject();
-      Action last = proj == null ? null : proj.getLastAction();
+      final var proj = menubar.getSaveProject();
+      final var last = (proj != null) ? proj.getLastAction() : null;
       if (last == null) {
         undo.setText(S.get("editCantUndoItem"));
         undo.setEnabled(false);
@@ -179,7 +176,7 @@ class MenuEdit extends Menu {
         undo.setEnabled(true);
       }
 
-      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
+      final var next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
       if (next != null) {
         redo.setText(S.get("editRedoItem", next.getName()));
         redo.setEnabled(true);
