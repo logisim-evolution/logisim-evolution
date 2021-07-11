@@ -28,58 +28,33 @@
 
 package com.cburch.draw.icons;
 
-import com.cburch.logisim.gui.icons.AnimatedIcon;
+import com.cburch.logisim.gui.icons.BaseIcon;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class DrawCurveIcon extends AnimatedIcon {
-
-  private int states = 5;
+public class DrawCurveIcon extends BaseIcon {
 
   @Override
-  @SuppressWarnings("fallthrough")
-  protected void paintIcon(Graphics2D g2) {
-    int wh = scale(3);
-    g2.setStroke(new BasicStroke(scale(1)));
-    g2.setColor(Color.GRAY);
-    switch (states) {
-      case 5:
-      case 4:
-        g2.drawRect(scale(9), scale(0), wh, wh);
-        // fall through
-      case 3:
-        g2.setStroke(new BasicStroke(scale(2)));
-        if (states > 4) {
-          g2.setColor(Color.BLUE.darker());
-          GeneralPath p = new GeneralPath();
-          p.moveTo(scale(1), scale(5));
-          p.quadTo(scale(10), scale(1), scale(14), scale(14));
-          g2.draw(p);
-        } else {
-          g2.setColor(Color.DARK_GRAY);
-          g2.drawLine(scale(1), scale(6), scale(14), scale(14));
-        }
-        // fall through
-      case 2:
-        g2.setColor(Color.GRAY);
-        g2.setStroke(new BasicStroke(scale(1)));
-        g2.drawRect(scale(13), scale(13), wh, wh);
-        // fall through
-      case 1:
-        g2.drawRect(scale(0), scale(5), wh, wh);
-    }
-  }
+  protected void paintIcon(Graphics2D gfx) {
+    final var wh = scale(3);
+    gfx.setStroke(new BasicStroke(scale(1)));
+    gfx.setColor(Color.GRAY);
 
-  @Override
-  public void animationUpdate() {
-    states++;
-    states %= 6;
-  }
+    gfx.drawRect(scale(9), scale(0), wh, wh);
 
-  @Override
-  public void resetToStatic() {
-    states = 5;
+    gfx.setStroke(new BasicStroke(scale(2)));
+    gfx.setColor(Color.BLUE.darker());
+
+    final var p = new GeneralPath();
+    p.moveTo(scale(1), scale(5));
+    p.quadTo(scale(10), scale(1), scale(14), scale(14));
+    gfx.draw(p);
+
+    gfx.setColor(Color.GRAY);
+    gfx.setStroke(new BasicStroke(scale(1)));
+    gfx.drawRect(scale(13), scale(13), wh, wh);
+    gfx.drawRect(scale(0), scale(5), wh, wh);
   }
 }

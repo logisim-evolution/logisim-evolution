@@ -51,8 +51,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   private final Canvas canvas;
   private final List<ToolbarItem> items;
 
-  public AppearanceToolbarModel(
-      AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
+  public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool showStateTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;
 
     AbstractTool[] tools = {
@@ -67,11 +66,11 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
       new PolyTool(true, attrs),
     };
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
-    for (AbstractTool tool : tools) {
+    final var rawItems = new ArrayList<ToolbarItem>();
+    for (final var tool : tools) {
       rawItems.add(new ToolbarToolItem(tool));
     }
-    rawItems.add(ssTool);
+    rawItems.add(showStateTool);
     items = Collections.unmodifiableList(rawItems);
     canvas.addPropertyChangeListener(Canvas.TOOL_PROPERTY, this);
   }
@@ -105,6 +104,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
     }
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent e) {
     String prop = e.getPropertyName();
     if (Canvas.TOOL_PROPERTY.equals(prop)) {
