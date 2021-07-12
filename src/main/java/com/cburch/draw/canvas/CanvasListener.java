@@ -38,10 +38,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.List;
 
-class CanvasListener
-    implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
+class CanvasListener implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
   private final Canvas canvas;
   private CanvasTool tool;
 
@@ -55,7 +53,7 @@ class CanvasListener
   }
 
   public void setTool(CanvasTool value) {
-    CanvasTool oldValue = tool;
+    final var oldValue = tool;
     if (value != oldValue) {
       tool = value;
       if (oldValue != null) oldValue.toolDeselected(canvas);
@@ -69,17 +67,17 @@ class CanvasListener
   }
 
   private void handlePopupTrigger(MouseEvent e) {
-    Location loc = Location.create(e.getX(), e.getY());
-    List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
+    final var loc = Location.create(e.getX(), e.getY());
+    final var objects = canvas.getModel().getObjectsFromTop();
     CanvasObject clicked = null;
-    for (CanvasObject o : objects) {
+    for (final var o : objects) {
       if (o.contains(loc, false)) {
         clicked = o;
         break;
       }
     }
     if (clicked == null) {
-      for (CanvasObject o : objects) {
+      for (final var o : objects) {
         if (o.contains(loc, true)) {
           clicked = o;
           break;
@@ -93,25 +91,33 @@ class CanvasListener
     return (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0;
   }
 
+  @Override
   public void keyPressed(KeyEvent e) {
     if (tool != null) tool.keyPressed(canvas, e);
   }
 
+  @Override
   public void keyReleased(KeyEvent e) {
     if (tool != null) tool.keyReleased(canvas, e);
   }
 
+  @Override
   public void keyTyped(KeyEvent e) {
     if (tool != null) tool.keyTyped(canvas, e);
   }
 
+  @Override
   public void modelChanged(CanvasModelEvent event) {
     canvas.getSelection().modelChanged(event);
     canvas.repaint();
   }
 
-  public void mouseClicked(MouseEvent e) {}
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    // dummy
+  }
 
+  @Override
   public void mouseDragged(MouseEvent e) {
     if (isButton1(e)) {
       if (tool != null) tool.mouseDragged(canvas, e);
@@ -120,18 +126,22 @@ class CanvasListener
     }
   }
 
+  @Override
   public void mouseEntered(MouseEvent e) {
     if (tool != null) tool.mouseEntered(canvas, e);
   }
 
+  @Override
   public void mouseExited(MouseEvent e) {
     if (tool != null) tool.mouseExited(canvas, e);
   }
 
+  @Override
   public void mouseMoved(MouseEvent e) {
     if (tool != null) tool.mouseMoved(canvas, e);
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     canvas.requestFocus();
     if (e.isPopupTrigger()) {
@@ -141,6 +151,7 @@ class CanvasListener
     }
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     if (e.isPopupTrigger()) {
       if (tool != null) tool.cancelMousePress(canvas);

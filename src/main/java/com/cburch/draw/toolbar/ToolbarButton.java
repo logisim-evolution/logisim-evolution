@@ -63,7 +63,7 @@ class ToolbarButton extends JComponent implements MouseListener {
 
   @Override
   public Dimension getPreferredSize() {
-    Dimension dim = item.getDimension(toolbar.getOrientation());
+    final var dim = item.getDimension(toolbar.getOrientation());
     dim.width += 2 * BORDER;
     dim.height += 2 * BORDER;
     return dim;
@@ -74,20 +74,29 @@ class ToolbarButton extends JComponent implements MouseListener {
     return item.getToolTip();
   }
 
-  public void mouseClicked(MouseEvent e) {}
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    // dummy
+  }
 
-  public void mouseEntered(MouseEvent e) {}
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    // dummy
+  }
 
+  @Override
   public void mouseExited(MouseEvent e) {
     toolbar.setPressed(null);
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     if (item != null && (item.isSelectable() || (item instanceof ToolbarClickableItem))) {
       toolbar.setPressed(this);
     }
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     if (toolbar.getPressed() == this) {
       toolbar.setPressed(null);

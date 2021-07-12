@@ -37,7 +37,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SvgCreator {
-  private SvgCreator() {}
+  private SvgCreator() {
+    // dummy
+  }
 
   public static boolean colorMatches(Color a, Color b) {
     return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();

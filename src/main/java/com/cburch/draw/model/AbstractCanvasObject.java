@@ -37,7 +37,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Objects;
@@ -55,22 +54,27 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     listeners = new EventSourceWeakSupport<>();
   }
 
+  @Override
   public void addAttributeListener(AttributeListener l) {
     listeners.add(l);
   }
 
+  @Override
   public Handle canDeleteHandle(Location loc) {
     return null;
   }
 
+  @Override
   public Handle canInsertHandle(Location desired) {
     return null;
   }
 
+  @Override
   public boolean canMoveHandle(Handle handle) {
     return false;
   }
 
+  @Override
   public boolean canRemove() {
     return true;
   }
@@ -86,12 +90,15 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
   }
 
+  @Override
   public abstract boolean contains(Location loc, boolean assumeFilled);
 
+  @Override
   public boolean containsAttribute(Attribute<?> attr) {
     return getAttributes().contains(attr);
   }
 
+  @Override
   public Handle deleteHandle(Handle handle) {
     throw new UnsupportedOperationException("deleteHandle");
   }
@@ -103,6 +110,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
   }
 
+  @Override
   public Attribute<?> getAttribute(String name) {
     for (Attribute<?> attr : getAttributes()) {
       if (attr.getName().equals(name)) return attr;
@@ -111,68 +119,82 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   // methods required by AttributeSet interface
+  @Override
   public abstract List<Attribute<?>> getAttributes();
 
+  @Override
   public AttributeSet getAttributeSet() {
     return this;
   }
 
+  @Override
   public abstract Bounds getBounds();
 
+  @Override
   public abstract String getDisplayName();
 
+  @Override
   public String getDisplayNameAndLabel() {
     return getDisplayName();
   }
 
+  @Override
   public abstract List<Handle> getHandles(HandleGesture gesture);
 
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    int x = bds.getX();
-    int y = bds.getY();
-    int w = bds.getWidth();
-    int h = bds.getHeight();
-    for (int i = 0; i < GENERATE_RANDOM_TRIES; i++) {
-      Location loc = Location.create(x + rand.nextInt(w), y + rand.nextInt(h));
+    final var x = bds.getX();
+    final var y = bds.getY();
+    final var w = bds.getWidth();
+    final var h = bds.getHeight();
+    for (var i = 0; i < GENERATE_RANDOM_TRIES; i++) {
+      final var loc = Location.create(x + rand.nextInt(w), y + rand.nextInt(h));
       if (contains(loc, false)) return loc;
     }
     return null;
   }
 
+  @Override
   public abstract <V> V getValue(Attribute<V> attr);
 
+  @Override
   public void insertHandle(Handle desired, Handle previous) {
     throw new UnsupportedOperationException("insertHandle");
   }
 
+  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return false;
   }
 
+  @Override
   public boolean isToSave(Attribute<?> attr) {
     return true;
   }
 
+  @Override
   public abstract boolean matches(CanvasObject other);
 
+  @Override
   public abstract int matchesHashCode();
 
+  @Override
   public Handle moveHandle(HandleGesture gesture) {
     throw new UnsupportedOperationException("moveHandle");
   }
 
+  @Override
   public boolean overlaps(CanvasObject other) {
-    Bounds a = this.getBounds();
-    Bounds b = other.getBounds();
-    Bounds c = a.intersect(b);
-    Random rand = new Random();
+    final var a = this.getBounds();
+    final var b = other.getBounds();
+    final var c = a.intersect(b);
+    final var rand = new Random();
     if (c.getWidth() == 0 || c.getHeight() == 0) {
       return false;
     } else if (other instanceof AbstractCanvasObject) {
       AbstractCanvasObject that = (AbstractCanvasObject) other;
-      for (int i = 0; i < OVERLAP_TRIES; i++) {
+      for (var i = 0; i < OVERLAP_TRIES; i++) {
         if (i % 2 == 0) {
-          Location loc = this.getRandomPoint(c, rand);
+          final var loc = this.getRandomPoint(c, rand);
           if (loc != null && that.contains(loc, false)) return true;
         } else {
           Location loc = that.getRandomPoint(c, rand);
@@ -181,28 +203,30 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
       }
       return false;
     } else {
-      for (int i = 0; i < OVERLAP_TRIES; i++) {
-        Location loc = this.getRandomPoint(c, rand);
+      for (var i = 0; i < OVERLAP_TRIES; i++) {
+        final var loc = this.getRandomPoint(c, rand);
         if (loc != null && other.contains(loc, false)) return true;
       }
       return false;
     }
   }
 
+  @Override
   public abstract void paint(Graphics g, HandleGesture gesture);
 
+  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
   }
 
   protected boolean setForFill(Graphics g) {
-    List<Attribute<?>> attrs = getAttributes();
+    final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
       Object value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_STROKE) return false;
     }
 
-    Color color = getValue(DrawAttr.FILL_COLOR);
+    final var color = getValue(DrawAttr.FILL_COLOR);
     if (color != null && color.getAlpha() == 0) {
       return false;
     } else {
@@ -212,15 +236,15 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   protected boolean setForStroke(Graphics g) {
-    List<Attribute<?>> attrs = getAttributes();
+    final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
       Object value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_FILL) return false;
     }
 
-    Integer width = getValue(DrawAttr.STROKE_WIDTH);
+    final var width = getValue(DrawAttr.STROKE_WIDTH);
     if (width != null && width > 0) {
-      Color color = getValue(DrawAttr.STROKE_COLOR);
+      final var color = getValue(DrawAttr.STROKE_COLOR);
       if (color != null && color.getAlpha() == 0) {
         return false;
       } else {
@@ -233,17 +257,19 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
   }
 
+  @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException("setReadOnly");
   }
 
+  @Override
   public final <V> void setValue(Attribute<V> attr, V value) {
     Object old = getValue(attr);
-    boolean same = Objects.equals(old, value);
+    final var same = Objects.equals(old, value);
     if (!same) {
       updateValue(attr, value);
-      AttributeEvent e = new AttributeEvent(this, attr, value, old);
-      for (AttributeListener listener : listeners) {
+      final var e = new AttributeEvent(this, attr, value, old);
+      for (final var listener : listeners) {
         listener.attributeValueChanged(e);
       }
     }
@@ -251,6 +277,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   public abstract Element toSvgElement(Document doc);
 
+  @Override
   public abstract void translate(int dx, int dy);
 
   protected abstract void updateValue(Attribute<?> attr, Object value);

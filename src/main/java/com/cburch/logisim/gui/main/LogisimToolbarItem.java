@@ -71,6 +71,7 @@ public class LogisimToolbarItem implements ToolbarItem {
     }
   }
 
+  @Override
   public Dimension getDimension(Object orientation) {
     if (icon == null) {
       return new Dimension(
@@ -83,6 +84,7 @@ public class LogisimToolbarItem implements ToolbarItem {
     }
   }
 
+  @Override
   public String getToolTip() {
     if (toolTip != null) {
       return toolTip.toString();
@@ -95,26 +97,28 @@ public class LogisimToolbarItem implements ToolbarItem {
     this.toolTip = toolTip;
   }
 
+  @Override
   public boolean isSelectable() {
     return menu != null && menu.isEnabled(action);
   }
 
-  public void paintIcon(Component destination, Graphics g) {
-    if (!isSelectable() && g instanceof Graphics2D) {
+  @Override
+  public void paintIcon(Component destination, Graphics gfx) {
+    if (!isSelectable() && gfx instanceof Graphics2D) {
       Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-      ((Graphics2D) g).setComposite(c);
+      ((Graphics2D) gfx).setComposite(c);
     }
 
     if (icon == null) {
       int simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
-      g.setColor(new Color(255, 128, 128));
-      g.fillRect(simple, simple, 2 * simple, 2 * simple);
-      g.setColor(Color.BLACK);
-      g.drawLine(simple, simple, 3 * simple, 3 * simple);
-      g.drawLine(simple, 3 * simple, 3 * simple, simple);
-      g.drawRect(simple, simple, 2 * simple, 2 * simple);
+      gfx.setColor(new Color(255, 128, 128));
+      gfx.fillRect(simple, simple, 2 * simple, 2 * simple);
+      gfx.setColor(Color.BLACK);
+      gfx.drawLine(simple, simple, 3 * simple, 3 * simple);
+      gfx.drawLine(simple, 3 * simple, 3 * simple, simple);
+      gfx.drawRect(simple, simple, 2 * simple, 2 * simple);
     } else {
-      icon.paintIcon(destination, g, 0, 1);
+      icon.paintIcon(destination, gfx, 0, 1);
     }
   }
 

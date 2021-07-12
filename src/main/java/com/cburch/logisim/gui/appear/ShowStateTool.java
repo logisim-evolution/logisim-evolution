@@ -52,18 +52,22 @@ public class ShowStateTool implements ToolbarClickableItem {
     pressed = new ShowStateIcon(true);
   }
 
+  @Override
   public Dimension getDimension(Object orientation) {
     return new Dimension(icon.getIconWidth() + 8, icon.getIconHeight() + 8);
   }
 
+  @Override
   public String getToolTip() {
     return "Select state to be shown";
   }
 
+  @Override
   public boolean isSelectable() {
     return false;
   }
 
+  @Override
   public void clicked() {
     ShowStateDialog w = new ShowStateDialog(view.getFrame(), canvas);
     Point p = view.getFrame().getLocation();
@@ -72,11 +76,13 @@ public class ShowStateTool implements ToolbarClickableItem {
     w.setVisible(true);
   }
 
-  public void paintIcon(java.awt.Component destination, Graphics g) {
-    icon.paintIcon(destination, g, 4, 4);
+  @Override
+  public void paintIcon(java.awt.Component destination, Graphics gfx) {
+    icon.paintIcon(destination, gfx, 4, 4);
   }
 
-  public void paintPressedIcon(java.awt.Component destination, Graphics g) {
-    pressed.paintIcon(destination, g, 4, 4);
+  @Override
+  public void paintPressedIcon(java.awt.Component destination, Graphics gfx) {
+    pressed.paintIcon(destination, gfx, 4, 4);
   }
 }

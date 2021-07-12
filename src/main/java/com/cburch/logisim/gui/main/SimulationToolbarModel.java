@@ -32,7 +32,6 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.draw.toolbar.AbstractToolbarModel;
 import com.cburch.draw.toolbar.ToolbarItem;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.gui.icons.SimulationIcon;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MenuListener;
@@ -44,8 +43,7 @@ import javax.swing.event.ChangeListener;
 
 public class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
   private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
-  private static final SimulationIcon EnableDisableIcon =
-      new SimulationIcon(SimulationIcon.SIM_ENABLE);
+  private static final SimulationIcon EnableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);
   private final Project project;
   private final LogisimToolbarItem simRunToggle;
   private final LogisimToolbarItem simStep;
@@ -112,10 +110,11 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
     }
   }
 
+  @Override
   public void stateChanged(ChangeEvent e) {
-    Simulator sim = project.getSimulator();
-    boolean running = sim != null && sim.isAutoPropagating();
-    boolean ticking = sim != null && sim.isAutoTicking();
+    final var sim = project.getSimulator();
+    final var running = sim != null && sim.isAutoPropagating();
+    final var ticking = sim != null && sim.isAutoTicking();
     if (running) {
       RunToggleIcon.setType(SimulationIcon.SIM_PAUSE);
       simRunToggle.setToolTip(S.getter("simulateStopTip"));

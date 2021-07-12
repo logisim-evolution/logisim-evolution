@@ -36,16 +36,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 public class ZOrder {
-  private ZOrder() {}
+  private ZOrder() {
+    // dummy
+  }
 
   private static int getIndex(CanvasObject query, List<CanvasObject> objs) {
-    int index = -1;
-    for (CanvasObject o : objs) {
+    var index = -1;
+    for (final var o : objs) {
       index++;
       if (o == query) return index;
     }
@@ -53,28 +54,22 @@ public class ZOrder {
   }
 
   // returns first object above query in the z-order that overlaps query
-  public static CanvasObject getObjectAbove(
-      CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+  public static CanvasObject getObjectAbove(CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
     return getPrevious(query, model.getObjectsFromTop(), model, ignore);
   }
 
   // returns first object below query in the z-order that overlaps query
-  public static CanvasObject getObjectBelow(
-      CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+  public static CanvasObject getObjectBelow(CanvasObject query, CanvasModel model, Collection<? extends CanvasObject> ignore) {
     return getPrevious(query, model.getObjectsFromBottom(), model, ignore);
   }
 
-  private static CanvasObject getPrevious(
-      CanvasObject query,
-      List<CanvasObject> objs,
-      CanvasModel model,
-      Collection<? extends CanvasObject> ignore) {
-    int index = getIndex(query, objs);
+  private static CanvasObject getPrevious(CanvasObject query, List<CanvasObject> objs, CanvasModel model, Collection<? extends CanvasObject> ignore) {
+    var index = getIndex(query, objs);
     if (index > 0) {
-      Set<CanvasObject> set = toSet(model.getObjectsOverlapping(query));
-      ListIterator<CanvasObject> it = objs.listIterator(index);
+      final var set = toSet(model.getObjectsOverlapping(query));
+      final var it = objs.listIterator(index);
       while (it.hasPrevious()) {
-        CanvasObject o = it.previous();
+        final var o = it.previous();
         if (set.contains(o) && !ignore.contains(o))
           return o;
       }
@@ -87,17 +82,15 @@ public class ZOrder {
     return getIndex(query, model.getObjectsFromBottom());
   }
 
-  public static Map<CanvasObject, Integer> getZIndex(
-      Collection<? extends CanvasObject> query, CanvasModel model) {
+  public static Map<CanvasObject, Integer> getZIndex(Collection<? extends CanvasObject> query, CanvasModel model) {
     // returns 0 for bottommost element, large number for topmost, ordered
     // from the bottom up.
     if (query == null) return Collections.emptyMap();
 
-    Set<? extends CanvasObject> querySet = toSet(query);
-    Map<CanvasObject, Integer> ret;
-    ret = new LinkedHashMap<>(query.size());
-    int z = -1;
-    for (CanvasObject o : model.getObjectsFromBottom()) {
+    final var querySet = toSet(query);
+    final var ret = new LinkedHashMap<CanvasObject, Integer>(query.size());
+    var z = -1;
+    for (final var o : model.getObjectsFromBottom()) {
       z++;
       if (querySet.contains(o)) {
         ret.put(o, z);
@@ -106,18 +99,15 @@ public class ZOrder {
     return ret;
   }
 
-  public static <E extends CanvasObject> List<E> sortBottomFirst(
-      Collection<E> objects, CanvasModel model) {
+  public static <E extends CanvasObject> List<E> sortBottomFirst(Collection<E> objects, CanvasModel model) {
     return sortXFirst(objects, model, model.getObjectsFromTop());
   }
 
-  public static <E extends CanvasObject> List<E> sortTopFirst(
-      Collection<E> objects, CanvasModel model) {
+  public static <E extends CanvasObject> List<E> sortTopFirst(Collection<E> objects, CanvasModel model) {
     return sortXFirst(objects, model, model.getObjectsFromBottom());
   }
 
-  private static <E extends CanvasObject> List<E> sortXFirst(
-      Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
+  private static <E extends CanvasObject> List<E> sortXFirst(Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
     Set<E> set = toSet(objects);
     List<E> ret = new ArrayList<>(objects.size());
     for (CanvasObject o : objs) {

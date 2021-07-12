@@ -30,7 +30,6 @@ package com.cburch.draw.tools;
 
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
-import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
@@ -55,71 +54,70 @@ abstract class RectangularTool extends AbstractTool {
   private Bounds computeBounds(Canvas canvas, int mx, int my, int mods) {
     lastMouseX = mx;
     lastMouseY = my;
-    if (!active) {
+
+    if (!active) return Bounds.EMPTY_BOUNDS;
+
+    final var start = dragStart;
+    var x0 = start.getX();
+    var y0 = start.getY();
+    var x1 = mx;
+    var y1 = my;
+    if (x0 == x1 && y0 == y1) {
       return Bounds.EMPTY_BOUNDS;
-    } else {
-      Location start = dragStart;
-      int x0 = start.getX();
-      int y0 = start.getY();
-      int x1 = mx;
-      int y1 = my;
-      if (x0 == x1 && y0 == y1) {
-        return Bounds.EMPTY_BOUNDS;
-      }
-
-      boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
-      if (ctrlDown) {
-        x0 = canvas.snapX(x0);
-        y0 = canvas.snapY(y0);
-        x1 = canvas.snapX(x1);
-        y1 = canvas.snapY(y1);
-      }
-
-      boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
-      boolean shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-      if (altDown) {
-        if (shiftDown) {
-          int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-          x1 = x0 + r;
-          y1 = y0 + r;
-          x0 -= r;
-          y0 -= r;
-        } else {
-          x0 = x0 - (x1 - x0);
-          y0 = y0 - (y1 - y0);
-        }
-      } else {
-        if (shiftDown) {
-          int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-          y1 = y1 < y0 ? y0 - r : y0 + r;
-          x1 = x1 < x0 ? x0 - r : x0 + r;
-        }
-      }
-
-      int x = x0;
-      int y = y0;
-      int w = x1 - x0;
-      int h = y1 - y0;
-      if (w < 0) {
-        x = x1;
-        w = -w;
-      }
-      if (h < 0) {
-        y = y1;
-        h = -h;
-      }
-      return Bounds.create(x, y, w, h);
     }
+
+    final var ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
+    if (ctrlDown) {
+      x0 = canvas.snapX(x0);
+      y0 = canvas.snapY(y0);
+      x1 = canvas.snapX(x1);
+      y1 = canvas.snapY(y1);
+    }
+
+    final var altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
+    final var shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
+    if (altDown) {
+      if (shiftDown) {
+        final var r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
+        x1 = x0 + r;
+        y1 = y0 + r;
+        x0 -= r;
+        y0 -= r;
+      } else {
+        x0 = x0 - (x1 - x0);
+        y0 = y0 - (y1 - y0);
+      }
+    } else {
+      if (shiftDown) {
+        final var r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
+        y1 = y1 < y0 ? y0 - r : y0 + r;
+        x1 = x1 < x0 ? x0 - r : x0 + r;
+      }
+    }
+
+    var x = x0;
+    var y = y0;
+    var w = x1 - x0;
+    var h = y1 - y0;
+    if (w < 0) {
+      x = x1;
+      w = -w;
+    }
+    if (h < 0) {
+      y = y1;
+      h = -h;
+    }
+    return Bounds.create(x, y, w, h);
   }
 
   public abstract CanvasObject createShape(int x, int y, int w, int h);
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
-    Bounds bds = currentBounds;
+  public void draw(Canvas canvas, Graphics gfx) {
+    final var bds = currentBounds;
     if (active && bds != null && bds != Bounds.EMPTY_BOUNDS) {
-      g.setColor(Color.GRAY);
-      drawShape(g, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      gfx.setColor(Color.GRAY);
+      drawShape(gfx, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
   }
 
@@ -134,9 +132,8 @@ abstract class RectangularTool extends AbstractTool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    int code = e.getKeyCode();
-    if (active
-        && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
+    final var code = e.getKeyCode();
+    if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
       updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
     }
   }
@@ -165,13 +162,13 @@ abstract class RectangularTool extends AbstractTool {
   @Override
   public void mouseReleased(Canvas canvas, MouseEvent e) {
     if (active) {
-      Bounds oldBounds = currentBounds;
-      Bounds bds = computeBounds(canvas, e.getX(), e.getY(), e.getModifiersEx());
+      final var oldBounds = currentBounds;
+      final var bds = computeBounds(canvas, e.getX(), e.getY(), e.getModifiersEx());
       currentBounds = Bounds.EMPTY_BOUNDS;
       active = false;
       CanvasObject add = null;
       if (bds.getWidth() != 0 && bds.getHeight() != 0) {
-        CanvasModel model = canvas.getModel();
+        final var model = canvas.getModel();
         add = createShape(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
         canvas.doAction(new ModelAddAction(model, add));
         repaintArea(canvas, oldBounds.add(bds));
@@ -192,14 +189,14 @@ abstract class RectangularTool extends AbstractTool {
 
   @Override
   public void toolDeselected(Canvas canvas) {
-    Bounds bds = currentBounds;
+    final var bds = currentBounds;
     active = false;
     repaintArea(canvas, bds);
   }
 
   private void updateMouse(Canvas canvas, int mx, int my, int mods) {
-    Bounds oldBounds = currentBounds;
-    Bounds bds = computeBounds(canvas, mx, my, mods);
+    final var oldBounds = currentBounds;
+    final var bds = computeBounds(canvas, mx, my, mods);
     if (!bds.equals(oldBounds)) {
       currentBounds = bds;
       repaintArea(canvas, oldBounds.add(bds));

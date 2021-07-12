@@ -40,7 +40,6 @@ import com.cburch.logisim.vhdl.base.HdlModelListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -64,7 +63,7 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public HdlToolbarModel(Project proj, HdlContentView editor) {
     this.editor = editor;
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
+    final var rawItems = new ArrayList<ToolbarItem>();
     hdlImport = new HdlToolbarItem(new HdlIcon(HDL_IMPORT), HDL_IMPORT, S.getter("hdlOpenButton"));
     hdlExport = new HdlToolbarItem(new HdlIcon(HDL_EXPORT), HDL_EXPORT, S.getter("hdlSaveButton"));
     hdlValidate = new HdlToolbarItem(new HdlIcon(HDL_VALIDATE), HDL_VALIDATE, S.getter("validateButton"));
@@ -102,18 +101,21 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
       case HDL_VALIDATE:
         editor.doValidate();
         break;
+      default:
+        // nothing to do here
+        break;
     }
   }
 
   boolean isEnabled(String action) {
-    if (action.equals(HDL_VALIDATE)) return validateEnabled;
-    else return true;
+    return (action.equals(HDL_VALIDATE)) ? validateEnabled : true;
   }
 
   void setDirty(boolean dirty) {
-    if (validateEnabled == dirty) return;
-    validateEnabled = dirty;
-    fireToolbarContentsChanged();
+    if (validateEnabled != dirty) {
+      validateEnabled = dirty;
+      fireToolbarContentsChanged();
+    }
   }
 
   @Override
@@ -125,13 +127,19 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   }
 
   @Override
-  public void aboutToSave(HdlModel source) {}
+  public void aboutToSave(HdlModel source) {
+    // dummy
+  }
 
   @Override
-  public void displayChanged(HdlModel source) {}
+  public void displayChanged(HdlModel source) {
+    // dummy
+  }
 
   @Override
-  public void appearanceChanged(HdlModel source) {}
+  public void appearanceChanged(HdlModel source) {
+    // dummy
+  }
 
   private class HdlToolbarItem implements ToolbarItem {
     final Icon icon;
@@ -144,36 +152,42 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
       this.toolTip = toolTip;
     }
 
+    @Override
     public Dimension getDimension(Object orientation) {
-      if (icon == null) return new Dimension(16, 16);
-      int w = icon.getIconWidth();
-      int h = icon.getIconHeight();
-      return new Dimension(w, h + 2);
+      var w = 16;
+      var h = 16;
+      if (icon != null) {
+        w = icon.getIconWidth();
+        h = icon.getIconHeight() + 2;
+      }
+      return new Dimension(w, h);
     }
 
+    @Override
     public String getToolTip() {
-      return (toolTip == null ? null : toolTip.toString());
+      return toolTip == null ? null : toolTip.toString();
     }
 
+    @Override
     public boolean isSelectable() {
       return isEnabled(action);
     }
 
-    public void paintIcon(Component destination, Graphics g) {
-      if (!isSelectable() && g instanceof Graphics2D) {
-        Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-        ((Graphics2D) g).setComposite(c);
+    @Override
+    public void paintIcon(Component destination, Graphics gfx) {
+      if (!isSelectable() && gfx instanceof Graphics2D) {
+        ((Graphics2D) gfx).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
       }
 
       if (icon == null) {
-        g.setColor(new Color(255, 128, 128));
-        g.fillRect(4, 4, 8, 8);
-        g.setColor(Color.BLACK);
-        g.drawLine(4, 4, 12, 12);
-        g.drawLine(4, 12, 12, 4);
-        g.drawRect(4, 4, 8, 8);
+        gfx.setColor(new Color(255, 128, 128));
+        gfx.fillRect(4, 4, 8, 8);
+        gfx.setColor(Color.BLACK);
+        gfx.drawLine(4, 4, 12, 12);
+        gfx.drawLine(4, 12, 12, 4);
+        gfx.drawRect(4, 4, 8, 8);
       } else {
-        icon.paintIcon(destination, g, 0, 1);
+        icon.paintIcon(destination, gfx, 0, 1);
       }
     }
   }
