@@ -197,7 +197,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet dest) {
     VhdlEntityAttributes attr = (VhdlEntityAttributes) dest;
     attr.content = content; // .clone();
-    // 	attr.label = unchanged;
+    // attr.label = unchanged;
     attr.labelFont = labelFont;
     attr.labelVisible = labelVisible;
     attr.facing = facing;

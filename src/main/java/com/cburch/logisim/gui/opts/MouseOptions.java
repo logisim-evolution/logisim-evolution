@@ -312,9 +312,6 @@ class MouseOptions extends OptionsPanel {
       }
     }
 
-    @Override
-    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
-
     //
     // Explorer.Listener methods
     //

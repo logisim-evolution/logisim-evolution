@@ -236,7 +236,9 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     return portList;
   }
 
-  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {}
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    // dummy implementation
+  }
 
   private boolean isClassOk(Class<?> sub, Class<?> sup) {
     boolean isSub = sup.isAssignableFrom(sub);

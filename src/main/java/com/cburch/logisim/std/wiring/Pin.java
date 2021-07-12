@@ -321,7 +321,9 @@ public class Pin extends InstanceFactory {
                 }
 
                 @Override
-                public void changedUpdate(DocumentEvent e) {}
+                public void changedUpdate(DocumentEvent e) {
+                  // do nothing
+                }
               });
 
       gbc.gridx = 0;
@@ -347,9 +349,9 @@ public class Pin extends InstanceFactory {
       final var s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
-            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) ||
-            s.equals("???")) {
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+            || s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           double val;
@@ -369,12 +371,14 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
-          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
-      if (s.toLowerCase().equals("nan") ||
-	      s.toLowerCase().equals("inf") ||
-		  s.toLowerCase().equals("+inf") ||
-		  s.toLowerCase().equals("-inf")) return true;
+      if (tristate
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+              || s.equals("???"))) return true;
+      if (s.toLowerCase().equals("nan")
+          || s.toLowerCase().equals("inf")
+          || s.toLowerCase().equals("+inf")
+          || s.toLowerCase().equals("-inf")) return true;
 
       try {
         Double.parseDouble(s);

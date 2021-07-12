@@ -255,19 +255,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     }
 
     @Override
-    public void simulatorReset(Simulator.Event e) {
-      // ? curModel.propagationCompleted();
-    }
-
-    @Override
-    public void propagationCompleted(Simulator.Event e) {
-      // curModel.propagationCompleted();
-    }
-
-    @Override
-    public void simulatorStateChanged(Simulator.Event e) {}
-
-    @Override
     public void testingChanged() {
       if (getModel().isRunning() && !getModel().isPaused()) {
         run.setEnabled(false);
@@ -288,9 +275,6 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       fail.setText(S.get("failMessage", Integer.toString(numFail)));
       finished = numPass + numFail;
     }
-
-    @Override
-    public void vectorChanged() {}
   }
 
   private class WindowMenuManager extends WindowMenuItemManager

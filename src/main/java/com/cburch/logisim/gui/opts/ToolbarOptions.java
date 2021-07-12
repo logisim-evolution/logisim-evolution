@@ -196,9 +196,6 @@ class ToolbarOptions extends OptionsPanel {
     }
 
     @Override
-    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
-
-    @Override
     public void selectionChanged(ProjectExplorer.Event event) {
       computeEnabled();
     }
