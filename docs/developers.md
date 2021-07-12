@@ -21,7 +21,7 @@
 ## Requirements ##
 
 `Logisim-evolution` is written in Java 14, so to build it from sources you need JDK 14
-(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) or newer. 
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) or newer.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
