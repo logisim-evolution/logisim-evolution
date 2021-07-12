@@ -955,7 +955,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
 
     @Override
-    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+      // do nothing
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
@@ -1158,7 +1160,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     boolean zoomButtonVisible = false;
     Color zoomButtonColor = defaultzoomButtonColor;
 
-    MyViewport() {}
+    MyViewport() {
+      // dummy
+    }
 
     void clearArrows() {
       isNorth = false;

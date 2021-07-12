@@ -186,7 +186,9 @@ public class SelectionPanel extends LogPanel {
     }
 
     @Override
-    public void okClicked() {}
+    public void okClicked() {
+      // do nothing
+    }
   }
 
   public static void doDialog(LogFrame logFrame) {

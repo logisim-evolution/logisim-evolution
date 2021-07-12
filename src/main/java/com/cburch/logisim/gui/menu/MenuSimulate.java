@@ -430,7 +430,9 @@ public class MenuSimulate extends Menu {
     }
 
     @Override
-    public void stateChanged(ChangeEvent e) {}
+    public void stateChanged(ChangeEvent e) {
+      // do nothing
+    }
   }
 
   private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {

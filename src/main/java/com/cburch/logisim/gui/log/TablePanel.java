@@ -210,7 +210,9 @@ class TablePanel extends LogPanel {
       // dummy, private
     }
 
-    void update() {}
+    void update() {
+      // do nothing
+    }
 
     @Override
     public void modeChanged(Model.Event event) {
