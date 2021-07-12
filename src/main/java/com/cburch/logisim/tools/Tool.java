@@ -52,7 +52,9 @@ public abstract class Tool implements AttributeDefaultProvider {
     return this;
   }
 
-  public void deselect(Canvas canvas) {}
+  public void deselect(Canvas canvas) {
+    // dummy implementation
+  }
 
   public void draw(Canvas canvas, ComponentDrawContext context) {
     draw(context);
@@ -60,7 +62,9 @@ public abstract class Tool implements AttributeDefaultProvider {
 
   // This was the draw method until 2.0.4 - As of 2.0.5, you should
   // use the other draw method.
-  public void draw(ComponentDrawContext context) {}
+  public void draw(ComponentDrawContext context) {
+    // dummy implementation
+  }
 
   public AttributeSet getAttributeSet() {
     return null;
@@ -87,7 +91,7 @@ public abstract class Tool implements AttributeDefaultProvider {
    * Returns Tool unique ID as defined in its _ID constant.
    *
    * For each tool extending this class, define
-   *    public static final String _ID = "<UNIQUE ID>"
+   *    public static final String _ID = "UNIQUE ID"
    *
    * @return unique ID of the tool
    */
@@ -104,31 +108,57 @@ public abstract class Tool implements AttributeDefaultProvider {
     return false;
   }
 
-  public void keyPressed(Canvas canvas, KeyEvent e) {}
+  public void keyPressed(Canvas canvas, KeyEvent e) {
+    // dummy implementation
+  }
 
-  public void keyReleased(Canvas canvas, KeyEvent e) {}
+  public void keyReleased(Canvas canvas, KeyEvent e) {
+    // dummy implementation
+  }
 
-  public void keyTyped(Canvas canvas, KeyEvent e) {}
+  public void keyTyped(Canvas canvas, KeyEvent e) {
+    // dummy implementation
+  }
 
-  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
+    // dummy implementation
+  }
 
-  public void paintIcon(ComponentDrawContext c, int x, int y) {}
+  public void paintIcon(ComponentDrawContext c, int x, int y) {
+    // dummy implementation
+  }
 
-  public void registerParent(java.awt.Component parent) {}
+  public void registerParent(java.awt.Component parent) {
+    // dummy implementation
+  }
 
-  public void select(Canvas canvas) {}
+  public void select(Canvas canvas) {
+    // dummy implementation
+  }
 
-  public void setAttributeSet(AttributeSet attrs) {}
+  public void setAttributeSet(AttributeSet attrs) {
+    // dummy implementation
+  }
 
   public boolean sharesSource(Tool other) {
     return this == other;
