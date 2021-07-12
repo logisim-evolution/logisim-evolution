@@ -63,7 +63,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ProjectCircuitActions {
-  private ProjectCircuitActions() {}
+  private ProjectCircuitActions() {
+    // dummy, private
+  }
 
   private static void analyzeError(Project proj, String message) {
     OptionPane.showMessageDialog(proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
