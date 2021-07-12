@@ -57,7 +57,7 @@ public abstract class AbstractTool extends CanvasTool {
   public void cancelMousePress(Canvas canvas) {}
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {}
+  public void draw(Canvas canvas, Graphics gfx) {}
 
   public abstract List<Attribute<?>> getAttributes();
 

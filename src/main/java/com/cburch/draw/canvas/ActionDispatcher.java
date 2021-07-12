@@ -31,5 +31,7 @@ package com.cburch.draw.canvas;
 import com.cburch.draw.undo.Action;
 
 public interface ActionDispatcher {
-  void doAction(Action action);
+  default void doAction(Action action) {
+    // dummy implementation
+  }
 }

@@ -96,6 +96,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     return -1;
   }
 
+  @Override
   public void center() {}
 
   private void computeSize(boolean immediate) {
@@ -194,6 +195,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     return grid;
   }
 
+  @Override
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
@@ -202,18 +204,22 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     return proj;
   }
 
+  @Override
   public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
     return canvasPane.supportScrollableBlockIncrement(visibleRect, orientation, direction);
   }
 
+  @Override
   public boolean getScrollableTracksViewportHeight() {
     return false;
   }
 
+  @Override
   public boolean getScrollableTracksViewportWidth() {
     return false;
   }
 
+  @Override
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
     return canvasPane.supportScrollableUnitIncrement(visibleRect, orientation, direction);
   }
@@ -259,6 +265,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     super.processMouseMotionEvent(e);
   }
 
+  @Override
   public void recomputeSize() {
     computeSize(true);
     repaint();
@@ -289,6 +296,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   //
   // CanvasPaneContents methods
   //
+  @Override
   public void setCanvasPane(CanvasPane value) {
     canvasPane = value;
     computeSize(true);
@@ -363,10 +371,12 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   private class Listener implements CanvasModelListener, PropertyChangeListener {
+    @Override
     public void modelChanged(CanvasModelEvent event) {
       computeSize(false);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       String prop = evt.getPropertyName();
       if (prop.equals(GridPainter.ZOOM_PROPERTY)) {

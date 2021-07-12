@@ -30,6 +30,9 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
@@ -44,10 +47,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,9 +57,9 @@ import javax.swing.KeyStroke;
 
 class TableTabCaret {
   private class Listener
-      implements MouseListener,
-          MouseMotionListener,
-          KeyListener,
+      implements BaseMouseListenerContract,
+          BaseMouseMotionListenerContract,
+          BaseKeyListenerContract,
           FocusListener,
           TruthTableListener,
           ActionListener {
@@ -158,9 +158,6 @@ class TableTabCaret {
           break;
       }
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
 
     @Override
     public void keyTyped(KeyEvent e) {

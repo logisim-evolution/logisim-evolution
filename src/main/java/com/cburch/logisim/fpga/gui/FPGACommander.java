@@ -146,7 +146,7 @@ public class FPGACommander
   }
 
   @Override
-  public void simulatorReset(Simulator.Event e) { }
+  public void simulatorReset(Simulator.Event e) {}
 
   @Override
   public void circuitChanged(CircuitEvent event) {

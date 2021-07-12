@@ -26,33 +26,41 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.util;
+package com.cburch.contracts;
 
-import java.util.HashMap;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class UniquelyNamedThread extends Thread {
-
-  private static final Object lock = new Object();
-  private static final HashMap<String, Integer> lastID = new HashMap<>();
-
-  private static String nextName(String prefix) {
-    int id = 0;
-    synchronized (lock) {
-      final var i = lastID.get(prefix);
-      if (i != null) id = i + 1;
-      lastID.put(prefix, id);
-    }
-    return prefix + "-" + id;
+/**
+ * Dummy implementation of java.awt.event.MouseListener interface. The main purpose of this
+ * interface is to provide default (empty) implementation of interface methods as, unfortunately
+ * JDKs interfaces do not come with default implementation even they easily could. Implementing this
+ * interface instead of the parent one allows skipping the need of implementing all, even unneeded,
+ * methods. That's saves some efforts and reduces overall LOC.
+ */
+public interface BaseMouseListenerContract extends MouseListener {
+  @Override
+  default void mouseClicked(MouseEvent mouseEvent) {
+    // dummy implementation
   }
 
-  // private UniquelyNamedThread() {}
-  // private UniquelyNamedThread(Runnable runnable) {}
-
-  public UniquelyNamedThread(String prefix) {
-    super(nextName(prefix));
+  @Override
+  default void mousePressed(MouseEvent mouseEvent) {
+    // dummy implementation
   }
 
-  public UniquelyNamedThread(Runnable runnable, String prefix) {
-    super(runnable, nextName(prefix));
+  @Override
+  default void mouseReleased(MouseEvent mouseEvent) {
+    // dummy implementation
+  }
+
+  @Override
+  default void mouseEntered(MouseEvent mouseEvent) {
+    // dummy implementation
+  }
+
+  @Override
+  default void mouseExited(MouseEvent mouseEvent) {
+    // dummy implementation
   }
 }

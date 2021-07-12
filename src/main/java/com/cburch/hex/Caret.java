@@ -28,6 +28,9 @@
 
 package com.cburch.hex;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -39,10 +42,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -78,6 +78,7 @@ public class Caret {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {}
         };
     String nullKey = "null";
@@ -165,15 +166,18 @@ public class Caret {
     }
   }
 
-  private class Listener implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
+  private class Listener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, FocusListener {
+    @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void focusLost(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
       int cols = hex.getMeasures().getColumnCount();
       int rows;
@@ -238,8 +242,7 @@ public class Caret {
       }
     }
 
-    public void keyReleased(KeyEvent e) {}
-
+    @Override
     public void keyTyped(KeyEvent e) {
       int mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
@@ -273,8 +276,7 @@ public class Caret {
       }
     }
 
-    public void mouseClicked(MouseEvent e) {}
-
+    @Override
     public void mouseDragged(MouseEvent e) {
       Measures measures = hex.getMeasures();
       long loc = measures.toAddress(e.getX(), e.getY());
@@ -284,12 +286,7 @@ public class Caret {
       // component
     }
 
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mouseMoved(MouseEvent e) {}
-
+    @Override
     public void mousePressed(MouseEvent e) {
       Measures measures = hex.getMeasures();
       long loc = measures.toAddress(e.getX(), e.getY());
@@ -297,6 +294,7 @@ public class Caret {
       if (!hex.isFocusOwner()) hex.requestFocus();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       mouseDragged(e);
     }

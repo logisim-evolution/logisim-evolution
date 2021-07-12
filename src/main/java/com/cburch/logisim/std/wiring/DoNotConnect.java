@@ -94,7 +94,7 @@ public class DoNotConnect extends InstanceFactory {
   }
 
   @Override
-  public void propagate(InstanceState state) { }
+  public void propagate(InstanceState state) {}
 
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {

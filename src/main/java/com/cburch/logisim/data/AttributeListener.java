@@ -29,7 +29,11 @@
 package com.cburch.logisim.data;
 
 public interface AttributeListener {
-  void attributeListChanged(AttributeEvent e);
+  default void attributeListChanged(AttributeEvent e) {
+    // dummy implementation
+  }
 
-  void attributeValueChanged(AttributeEvent e);
+  default void attributeValueChanged(AttributeEvent e) {
+    // dummy implementation
+  }
 }

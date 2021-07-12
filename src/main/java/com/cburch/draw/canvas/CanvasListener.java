@@ -28,20 +28,19 @@
 
 package com.cburch.draw.canvas;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Location;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 
-class CanvasListener
-    implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
+class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, CanvasModelListener {
   private final Canvas canvas;
   private CanvasTool tool;
 
@@ -93,25 +92,28 @@ class CanvasListener
     return (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0;
   }
 
+  @Override
   public void keyPressed(KeyEvent e) {
     if (tool != null) tool.keyPressed(canvas, e);
   }
 
+  @Override
   public void keyReleased(KeyEvent e) {
     if (tool != null) tool.keyReleased(canvas, e);
   }
 
+  @Override
   public void keyTyped(KeyEvent e) {
     if (tool != null) tool.keyTyped(canvas, e);
   }
 
+  @Override
   public void modelChanged(CanvasModelEvent event) {
     canvas.getSelection().modelChanged(event);
     canvas.repaint();
   }
 
-  public void mouseClicked(MouseEvent e) {}
-
+  @Override
   public void mouseDragged(MouseEvent e) {
     if (isButton1(e)) {
       if (tool != null) tool.mouseDragged(canvas, e);
@@ -120,18 +122,22 @@ class CanvasListener
     }
   }
 
+  @Override
   public void mouseEntered(MouseEvent e) {
     if (tool != null) tool.mouseEntered(canvas, e);
   }
 
+  @Override
   public void mouseExited(MouseEvent e) {
     if (tool != null) tool.mouseExited(canvas, e);
   }
 
+  @Override
   public void mouseMoved(MouseEvent e) {
     if (tool != null) tool.mouseMoved(canvas, e);
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     canvas.requestFocus();
     if (e.isPopupTrigger()) {
@@ -141,6 +147,7 @@ class CanvasListener
     }
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     if (e.isPopupTrigger()) {
       if (tool != null) tool.cancelMousePress(canvas);

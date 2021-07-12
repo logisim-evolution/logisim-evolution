@@ -30,6 +30,8 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.logisim.analyze.data.ExpressionRenderData;
 import com.cburch.logisim.analyze.data.KMapGroups;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
@@ -57,8 +59,6 @@ import java.awt.RenderingHints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -68,8 +68,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.JPanel;
 
-public class KarnaughMapPanel extends JPanel
-    implements MouseMotionListener, MouseListener, Entry.EntryChangedListener {
+public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerContract, BaseMouseListenerContract, Entry.EntryChangedListener {
   private class MyListener implements OutputExpressionsListener, TruthTableListener {
 
     @Override
@@ -1037,9 +1036,6 @@ public class KarnaughMapPanel extends JPanel
   }
 
   @Override
-  public void mouseDragged(MouseEvent e) {}
-
-  @Override
   public void mouseMoved(MouseEvent e) {
     if (kMapArea == null) return;
     final var posX = e.getX();
@@ -1094,18 +1090,6 @@ public class KarnaughMapPanel extends JPanel
       tt.setOutputEntry(row, col, Entry.DONT_CARE);
     }
   }
-
-  @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
 
   @Override
   public void entryDesriptionChanged() {

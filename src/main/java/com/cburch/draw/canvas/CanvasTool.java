@@ -37,7 +37,7 @@ public abstract class CanvasTool {
   /** This is because a popup menu may result from the subsequent mouse release. */
   public void cancelMousePress(Canvas canvas) {}
 
-  public void draw(Canvas canvas, Graphics g) {}
+  public void draw(Canvas canvas, Graphics gfx) {}
 
   public abstract Cursor getCursor(Canvas canvas);
 

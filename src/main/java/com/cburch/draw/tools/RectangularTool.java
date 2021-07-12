@@ -115,11 +115,11 @@ abstract class RectangularTool extends AbstractTool {
   public abstract CanvasObject createShape(int x, int y, int w, int h);
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     Bounds bds = currentBounds;
     if (active && bds != null && bds != Bounds.EMPTY_BOUNDS) {
-      g.setColor(Color.GRAY);
-      drawShape(g, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      gfx.setColor(Color.GRAY);
+      drawShape(gfx, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
   }
 

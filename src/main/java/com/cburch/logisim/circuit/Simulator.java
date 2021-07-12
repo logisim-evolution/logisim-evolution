@@ -71,17 +71,25 @@ public class Simulator {
   }
 
   public interface Listener {
-    void simulatorReset(Event e);
+    default void simulatorReset(Event e) {
+      // dummy implementation
+    }
 
     default boolean wantProgressEvents() {
       return false;
     }
 
-    default void propagationInProgress(Event e) {}
+    default void propagationInProgress(Event e) {
+      // dummy implementation
+    }
 
-    void propagationCompleted(Event e);
+    default void propagationCompleted(Event e) {
+      // dummy implementation
+    }
 
-    void simulatorStateChanged(Event e);
+    default void simulatorStateChanged(Event e) {
+      // dummy implementation
+    }
   }
 
   // This thread keeps track of the current stepPoints (when running in step
@@ -438,7 +446,7 @@ public class Simulator {
 
     try {
       simThread.setPriority(simThread.getPriority() - 1);
-    } catch (IllegalArgumentException | SecurityException ignored) { }
+    } catch (IllegalArgumentException | SecurityException ignored) {}
 
     simThread.start();
 

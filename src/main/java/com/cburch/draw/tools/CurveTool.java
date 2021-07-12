@@ -69,14 +69,14 @@ public class CurveTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
-    g.setColor(Color.GRAY);
+  public void draw(Canvas canvas, Graphics gfx) {
+    gfx.setColor(Color.GRAY);
     switch (state) {
       case ENDPOINT_DRAG:
-        g.drawLine(end0.getX(), end0.getY(), end1.getX(), end1.getY());
+        gfx.drawLine(end0.getX(), end0.getY(), end1.getX(), end1.getY());
         break;
       case CONTROL_DRAG:
-        ((Graphics2D) g).draw(curCurve.getCurve2D());
+        ((Graphics2D) gfx).draw(curCurve.getCurve2D());
         break;
       default:
         break;

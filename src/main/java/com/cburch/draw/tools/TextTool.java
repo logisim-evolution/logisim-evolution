@@ -115,7 +115,7 @@ public class TextTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     // actually, there's nothing to do here - it's handled by the field
   }
 
@@ -200,6 +200,7 @@ public class TextTool extends AbstractTool {
   private class CancelListener extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       cancelText(curCanvas);
     }
@@ -208,10 +209,12 @@ public class TextTool extends AbstractTool {
   private class FieldListener extends AbstractAction implements AttributeListener {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       commitText(curCanvas);
     }
 
+    @Override
     public void attributeListChanged(AttributeEvent e) {
       Text cur = curText;
       if (cur != null) {
@@ -221,6 +224,7 @@ public class TextTool extends AbstractTool {
       }
     }
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       attributeListChanged(e);
     }

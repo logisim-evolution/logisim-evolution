@@ -530,7 +530,7 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     @Override
-    protected void exportDone(JComponent c, Transferable tdata, int action) { }
+    protected void exportDone(JComponent c, Transferable tdata, int action) {}
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
@@ -559,7 +559,7 @@ class MinimizedTab extends AnalyzerTab {
   static class ImageSelection implements Transferable {
     private Image image;
 
-    public ImageSelection() { }
+    public ImageSelection() {}
 
     public void setImage(Image image) {
       this.image = image;

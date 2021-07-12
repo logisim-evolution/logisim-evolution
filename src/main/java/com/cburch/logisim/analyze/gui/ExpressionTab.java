@@ -575,7 +575,7 @@ class ExpressionTab extends AnalyzerTab {
     }
 
     @Override
-    protected void exportDone(JComponent c, Transferable tdata, int action) { }
+    protected void exportDone(JComponent c, Transferable tdata, int action) {}
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
