@@ -97,7 +97,9 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   @Override
-  public void center() {}
+  public void center() {
+    // do nothing
+  }
 
   private void computeSize(boolean immediate) {
     hidePopup();

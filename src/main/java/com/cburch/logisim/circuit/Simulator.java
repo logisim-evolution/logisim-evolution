@@ -446,7 +446,9 @@ public class Simulator {
 
     try {
       simThread.setPriority(simThread.getPriority() - 1);
-    } catch (IllegalArgumentException | SecurityException ignored) {}
+    } catch (IllegalArgumentException | SecurityException ignored) {
+      // dummy implementation
+    }
 
     simThread.start();
 

@@ -63,7 +63,9 @@ class PropagationPoints {
   private final HashSet<Entry<Location>> data =  new HashSet<>();
   private final HashSet<Entry<Component>> pendingInputs =  new HashSet<>();
 
-  PropagationPoints() {}
+  PropagationPoints() {
+    // dummy implementation
+  }
 
   void addPendingInput(CircuitState state, Component comp) {
     pendingInputs.add(new Entry<>(state, comp));
