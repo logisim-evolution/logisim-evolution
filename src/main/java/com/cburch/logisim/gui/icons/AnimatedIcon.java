@@ -38,8 +38,10 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 /**
- * @deprecated AnimatedIcon class is deprecated and will be removed in next release. Icons MUST now extend AbstractIcon class.
+ * @deprecated AnimatedIcon class is deprecated and will be removed in next release. Icons MUST now
+ *     extend BaseIcon class instead.
  */
+@Deprecated
 public abstract class AnimatedIcon implements Icon, AnimationListener {
 
   public AnimatedIcon() {

@@ -36,6 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
+/**
+ * @deprecated This class will be removed soon.
+ */
+@Deprecated
 public class AnimationTimer extends TimerTask implements PropertyChangeListener {
 
   private final List<AnimationListener> listeners;
