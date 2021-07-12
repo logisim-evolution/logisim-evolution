@@ -72,12 +72,12 @@ public class LineTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     if (active) {
       final var start = mouseStart;
       final var end = mouseEnd;
-      g.setColor(Color.GRAY);
-      g.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
+      gfx.setColor(Color.GRAY);
+      gfx.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
     }
   }
 

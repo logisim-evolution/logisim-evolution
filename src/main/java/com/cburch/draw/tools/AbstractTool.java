@@ -59,7 +59,7 @@ public abstract class AbstractTool extends CanvasTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     // dummy
   }
 

@@ -86,9 +86,9 @@ public class PolyTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     if (active) {
-      g.setColor(Color.GRAY);
+      gfx.setColor(Color.GRAY);
       int size = locations.size();
       final var xs = new int[size];
       final var ys = new int[size];
@@ -97,10 +97,10 @@ public class PolyTool extends AbstractTool {
         xs[i] = loc.getX();
         ys[i] = loc.getY();
       }
-      g.drawPolyline(xs, ys, size);
+      gfx.drawPolyline(xs, ys, size);
       final var lastX = xs[xs.length - 1];
       final var lastY = ys[ys.length - 1];
-      g.fillOval(lastX - 2, lastY - 2, 4, 4);
+      gfx.fillOval(lastX - 2, lastY - 2, 4, 4);
     }
   }
 

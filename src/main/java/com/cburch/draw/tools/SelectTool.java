@@ -107,7 +107,7 @@ public class SelectTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     final var selection = canvas.getSelection();
     final var action = curAction;
 
@@ -134,7 +134,7 @@ public class SelectTool extends AbstractTool {
     if (drawHandles) {
       // unscale the coordinate system so that the stroke width isn't scaled
       var zoom = 1.0;
-      final var gfxCopy = g.create();
+      final var gfxCopy = gfx.create();
       if (gfxCopy instanceof Graphics2D) {
         zoom = canvas.getZoomFactor();
         if (zoom != 1.0) {
@@ -208,15 +208,15 @@ public class SelectTool extends AbstractTool {
           // make the region that's not being selected darker
           final var w = canvas.getWidth();
           final var h = canvas.getHeight();
-          g.setColor(RECT_SELECT_BACKGROUND);
-          g.fillRect(0, 0, w, y0);
-          g.fillRect(0, y0, x0, y1 - y0);
-          g.fillRect(x1, y0, w - x1, y1 - y0);
-          g.fillRect(0, y1, w, h - y1);
+          gfx.setColor(RECT_SELECT_BACKGROUND);
+          gfx.fillRect(0, 0, w, y0);
+          gfx.fillRect(0, y0, x0, y1 - y0);
+          gfx.fillRect(x1, y0, w - x1, y1 - y0);
+          gfx.fillRect(0, y1, w, h - y1);
 
           // now draw the rectangle
-          g.setColor(Color.GRAY);
-          g.drawRect(x0, y0, x1 - x0, y1 - y0);
+          gfx.setColor(Color.GRAY);
+          gfx.drawRect(x0, y0, x1 - x0, y1 - y0);
         }
         break;
       default:
