@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
@@ -72,12 +73,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 public class Nios2State implements SocUpSimulationStateListener, SocProcessorInterface {
 
-  public class ProcessorState extends JPanel
-      implements InstanceData,
-          Cloneable,
-          ComponentDataGuiProvider,
-          WindowListener,
-          SocUpStateInterface {
+  public class ProcessorState extends JPanel implements InstanceData, Cloneable, ComponentDataGuiProvider, BaseWindowListenerContract, SocUpStateInterface {
     private static final int STATUS_RSIE = 1 << 23;
     private static final int STATUS_PIE = 1;
     private static final long serialVersionUID = 1L;
@@ -160,10 +156,12 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       return entryPoint;
     }
 
+    @Override
     public boolean programLoaded() {
       return programLoaded;
     }
 
+    @Override
     public JPanel getAsmWindow() {
       return bPanel;
     }
@@ -227,14 +225,17 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       lastClock = clock;
     }
 
+    @Override
     public int getProgramCounter() {
       return pc;
     }
 
+    @Override
     public SocUpSimulationState getSimState() {
       return simState;
     }
 
+    @Override
     public void SimButtonPressed() {
       simState.buttonPressed();
     }
@@ -250,6 +251,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       return registers[index - 1];
     }
 
+    @Override
     public String getRegisterValueHex(int index) {
       if (RegisterIsValid(index))
         return String.format("0x%08X", getRegisterValue(index));
@@ -351,8 +353,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         OptionPane.showMessageDialog(
             null,
             trans.getErrorMessage(),
-            SocSupport.getMasterName(cState, Nios2State.this.getName())
-                + S.get("RV32imFetchTransaction"),
+            SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         return;
@@ -369,8 +370,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         OptionPane.showMessageDialog(
             null,
             S.get("RV32imFetchInvalidInstruction"),
-            SocSupport.getMasterName(cState, Nios2State.this.getName())
-                + S.get("RV32imFetchTransaction"),
+            SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         instrTrace.addFirst(new TraceInfo(pc, instruction, S.get("RV32imFetchInvInstrAsm"), true));
@@ -387,8 +387,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         OptionPane.showMessageDialog(
             null,
             s.toString(),
-            SocSupport.getMasterName(cState, Nios2State.this.getName())
-                + S.get("RV32imFetchTransaction"),
+            SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         trace.setError();
@@ -402,6 +401,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       if (visible) repaint();
     }
 
+    @Override
     public ProcessorState clone() {
       try {
         return (ProcessorState) super.clone();
@@ -424,8 +424,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       CpuDrawSupport.drawHexReg(g, 380, 0, scale, estatus, S.get("Nios2Estatus"), true);
       CpuDrawSupport.drawHexReg(g, 485, 0, scale, bstatus, S.get("Nios2Bstatus"), true);
       CpuDrawSupport.drawTrace(g, 170, 40, scale, this);
-      if (nrOfIrqs > 0)
+      if (nrOfIrqs > 0) {
         CpuDrawSupport.drawIRQs(g, 0, 500, scale, nrOfIrqs, ipending, ienable);
+      }
     }
 
     @Override
@@ -433,68 +434,79 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       SocUpMenuProvider.SOCUPMENUPROVIDER.deregisterCpuState(this, myInstance);
     }
 
+    @Override
     public void windowOpened(WindowEvent e) {
       repaint();
       visible = true;
     }
 
+    @Override
     public void windowClosing(WindowEvent e) {
       visible = false;
     }
 
-    public void windowClosed(WindowEvent e) {}
-
+    @Override
     public void windowIconified(WindowEvent e) {
       visible = false;
     }
 
+    @Override
     public void windowDeiconified(WindowEvent e) {
       repaint();
       visible = true;
     }
 
+    @Override
     public void windowActivated(WindowEvent e) {
       visible = true;
     }
 
-    public void windowDeactivated(WindowEvent e) {}
-
+    @Override
     public int getLastRegisterWritten() {
       return lastRegisterWritten;
     }
 
+    @Override
     public String getRegisterAbiName(int index) {
       return registerABINames[index];
     }
 
+    @Override
     public String getRegisterNormalName(int index) {
       return "r" + index;
     }
 
+    @Override
     public LinkedList<TraceInfo> getTraces() {
       return instrTrace;
     }
 
+    @Override
     public WindowListener getWindowListener() {
       return this;
     }
 
+    @Override
     public JPanel getStatePanel() {
       return this;
     }
 
+    @Override
     public String getProcessorType() {
       return "Nios2s";
     }
 
+    @Override
     public AssemblerInterface getAssembler() {
       return ASSEMBLER;
     }
 
+    @Override
     public SocProcessorInterface getProcessorInterface() {
       return myInstance.getAttributeValue(Nios2Attributes.NIOS2_STATE);
     }
 
+    @Override
     public int getElfType() {
       return ElfHeader.EM_INTEL_NIOS2;
     }
@@ -681,8 +693,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   @Override
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo,
-          ElfSectionHeader sectInfo) {
+  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
     int entry = (int) entryPoint;
     if (attachedBus != null && attachedBus.getComponent() != null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
@@ -713,7 +724,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   public int getEntryPoint(CircuitState cState) {
     if (cState != null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-      if (comp == null) return 0;
+      if (comp != null) return 0;
       return ((ProcessorState) cState.getData(comp)).getEntryPoint();
     }
     return 0;

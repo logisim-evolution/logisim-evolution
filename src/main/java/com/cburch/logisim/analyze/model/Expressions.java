@@ -29,6 +29,10 @@
 package com.cburch.logisim.analyze.model;
 
 public class Expressions {
+  private Expressions() {
+    // dummy, private
+  }
+
   private static class And extends Binary {
     And(Expression a, Expression b) {
       super(a, b);
@@ -345,5 +349,4 @@ public class Expressions {
     return new Variable(name);
   }
 
-  private Expressions() {}
 }

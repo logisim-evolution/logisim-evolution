@@ -34,35 +34,59 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public interface Caret {
-  // listener methods
-  void addCaretListener(CaretListener e);
-
-  void cancelEditing();
-
-  // finishing
-  void commitText(String text);
-
-  void draw(Graphics g);
-
   Bounds getBounds(Graphics g);
 
   // query/Graphics methods
   String getText();
 
-  void keyPressed(KeyEvent e);
+  // listener methods
+  default void addCaretListener(CaretListener e) {
+    // dummy implementation
+  }
 
-  void keyReleased(KeyEvent e);
+  default void cancelEditing() {
+    // dummy implementation
+  }
 
-  void keyTyped(KeyEvent e);
+  // finishing
+  default void commitText(String text) {
+    // dummy implementation
+  }
 
-  void mouseDragged(MouseEvent e);
+  default void draw(Graphics g) {
+    // dummy implementation
+  }
+
+  default void keyPressed(KeyEvent e) {
+    // dummy implementation
+  }
+
+  default void keyReleased(KeyEvent e) {
+    // dummy implementation
+  }
+
+  default void keyTyped(KeyEvent e) {
+    // dummy implementation
+  }
+
+  default void mouseDragged(MouseEvent e) {
+    // dummy implementation
+  }
 
   // events to handle
-  void mousePressed(MouseEvent e);
+  default void mousePressed(MouseEvent e) {
+    // dummy implementation
+  }
 
-  void mouseReleased(MouseEvent e);
+  default void mouseReleased(MouseEvent e) {
+    // dummy implementation
+  }
 
-  void removeCaretListener(CaretListener e);
+  default void removeCaretListener(CaretListener e) {
+    // dummy implementation
+  }
 
-  void stopEditing();
+  default void stopEditing() {
+    // dummy implementation
+  }
 }

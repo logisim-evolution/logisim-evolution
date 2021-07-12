@@ -31,14 +31,22 @@ package com.cburch.logisim.vhdl.base;
 public interface HdlModelListener {
 
   /** Called when the content of the given model has been set. */
-  void contentSet(HdlModel source);
+  default void contentSet(HdlModel source) {
+    // dummy implementation
+  }
 
   /** Called when the content of the given model is about to be saved. */
-  void aboutToSave(HdlModel source);
+  default void aboutToSave(HdlModel source) {
+    // dummy implementation
+  }
 
   /** Called when the vhdl appearance has changed. */
-  void appearanceChanged(HdlModel source);
+  default void appearanceChanged(HdlModel source) {
+    // dummy implementation
+  }
 
   /** Called when the vhdl icon or name has changed. */
-  void displayChanged(HdlModel source);
+  default void displayChanged(HdlModel source) {
+    // dummy implementation
+  }
 }

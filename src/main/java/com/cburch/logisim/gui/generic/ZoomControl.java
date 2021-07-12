@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.main.Canvas;
@@ -191,7 +192,7 @@ public class ZoomControl extends JPanel {
     }
   }
 
-  private class GridIcon extends JComponent implements MouseListener, PropertyChangeListener {
+  private class GridIcon extends JComponent implements BaseMouseListenerContract, PropertyChangeListener {
     private static final long serialVersionUID = 1L;
     boolean state = true;
 
@@ -209,18 +210,6 @@ public class ZoomControl extends JPanel {
     public String getToolTipText(MouseEvent e) {
       return S.get("zoomShowGrid");
     }
-
-    public void mouseClicked(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mousePressed(MouseEvent e) {
-      if (model != null) model.setShowGrid(!state);
-    }
-
-    public void mouseReleased(MouseEvent e) {}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -254,6 +243,7 @@ public class ZoomControl extends JPanel {
       g.drawLine(xoff + xdim, yoff + ydim, xoff + xdim, yoff + ydim - three);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       update();
     }
@@ -274,14 +264,17 @@ public class ZoomControl extends JPanel {
       super(nearestZoomOption(), 0, 0, model.getZoomOptions().length - 1);
     }
 
+    @Override
     public int getValue() {
       return nearestZoomOption();
     }
 
+    @Override
     public void setValue(int i) {
       zoomTo(i);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       fireStateChanged();
     }
@@ -305,16 +298,19 @@ public class ZoomControl extends JPanel {
     }
 
     protected class ZoomMouseListener extends MouseAdapter {
+      @Override
       public void mouseEntered(MouseEvent ev) {
         setBorderPainted(true);
       }
 
+      @Override
       public void mouseExited(MouseEvent ev) {
         setBorderPainted(false);
       }
     }
 
     protected class ZoomActionListener implements ActionListener {
+      @Override
       public void actionPerformed(ActionEvent e) {
         if (out) zoomOut();
         else zoomIn();
@@ -329,6 +325,7 @@ public class ZoomControl extends JPanel {
       super(zoomString(), SwingConstants.CENTER);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
       update();
     }

@@ -29,9 +29,15 @@
 package com.cburch.logisim.comp;
 
 public interface ComponentListener {
-  void componentInvalidated(ComponentEvent e);
+  default void componentInvalidated(ComponentEvent e) {
+    // dummy implementation
+  }
 
-  void endChanged(ComponentEvent e);
+  default void endChanged(ComponentEvent e) {
+    // dummy implementation
+  }
 
-  void LabelChanged(ComponentEvent e);
+  default void LabelChanged(ComponentEvent e) {
+    // dummy implementation
+  }
 }

@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.soc.gui;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.comp.Component;
@@ -41,7 +42,6 @@ import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
@@ -52,7 +52,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 public class TraceWindowTableModel extends AbstractTableModel
-    implements MouseListener,
+    implements BaseMouseListenerContract,
         SocBusStateInfo.SocBusStateListener,
         ComponentListener,
         CircuitListener {
@@ -199,24 +199,6 @@ public class TraceWindowTableModel extends AbstractTableModel
       }
     }
   }
-
-  @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
-
-  @Override
-  public void componentInvalidated(ComponentEvent e) {}
-
-  @Override
-  public void endChanged(ComponentEvent e) {}
 
   @Override
   public void LabelChanged(ComponentEvent e) {

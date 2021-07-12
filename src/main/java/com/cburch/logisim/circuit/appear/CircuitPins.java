@@ -47,8 +47,7 @@ import java.util.Set;
 
 public class CircuitPins {
   private class MyComponentListener implements ComponentListener, AttributeListener {
-    public void attributeListChanged(AttributeEvent e) {}
-
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       Attribute<?> attr = e.getAttribute();
       if (attr == StdAttr.FACING || attr == StdAttr.LABEL || attr == Pin.ATTR_TYPE) {
@@ -56,10 +55,7 @@ public class CircuitPins {
       }
     }
 
-    public void componentInvalidated(ComponentEvent e) {}
-
-    public void LabelChanged(ComponentEvent e) {}
-
+    @Override
     public void endChanged(ComponentEvent e) {
       appearanceManager.updatePorts();
     }

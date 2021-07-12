@@ -180,10 +180,12 @@ public class SelectionPanel extends LogPanel {
       pack();
     }
 
+    @Override
     public void cancelClicked() {
       okClicked();
     }
 
+    @Override
     public void okClicked() {}
   }
 

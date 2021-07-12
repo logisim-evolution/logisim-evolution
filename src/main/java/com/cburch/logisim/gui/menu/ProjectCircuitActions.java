@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseWindowFocusListenerContract;
 import com.cburch.logisim.analyze.gui.Analyzer;
 import com.cburch.logisim.analyze.gui.AnalyzerManager;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
@@ -53,7 +54,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -307,14 +307,11 @@ public class ProjectCircuitActions {
     pane.setInitialValue(field);
     final var dlog = pane.createDialog(frame, title);
     dlog.addWindowFocusListener(
-        new WindowFocusListener() {
+        new BaseWindowFocusListenerContract() {
           @Override
           public void windowGainedFocus(WindowEvent arg0) {
             field.requestFocus();
           }
-
-          @Override
-          public void windowLostFocus(WindowEvent arg0) {}
         });
 
     field.selectAll();

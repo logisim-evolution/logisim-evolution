@@ -28,9 +28,9 @@
 
 package com.cburch.draw.gui;
 
+import com.cburch.contracts.BaseSelectionListenerContract;
 import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
-import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
@@ -137,15 +137,17 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
   }
 
-  private class Listener implements SelectionListener, AttributeListener {
+  private class Listener implements BaseSelectionListenerContract, AttributeListener {
     //
     // AttributeSet listener
     //
+    @Override
     public void attributeListChanged(AttributeEvent e) {
       // show selection attributes
       computeAttributeList(selected.keySet());
     }
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       if (selected.containsKey(e.getSource())) {
         @SuppressWarnings("unchecked")
@@ -189,6 +191,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     //
     // SelectionListener
     //
+    @Override
     public void selectionChanged(SelectionEvent ex) {
       Map<AttributeSet, CanvasObject> oldSel = selected;
       Map<AttributeSet, CanvasObject> newSel = new HashMap<>();

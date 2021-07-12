@@ -32,7 +32,6 @@ import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.actions.ModelEditTextAction;
 import com.cburch.draw.actions.ModelRemoveAction;
 import com.cburch.draw.canvas.Canvas;
-import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.Text;
 import com.cburch.draw.util.EditableLabelField;
@@ -43,16 +42,13 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.icons.TextIcon;
 import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.Icon;
-import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 
 public class TextTool extends AbstractTool {
@@ -71,16 +67,16 @@ public class TextTool extends AbstractTool {
     field = new EditableLabelField();
 
     fieldListener = new FieldListener();
-    InputMap fieldInput = field.getInputMap();
+    final var fieldInput = field.getInputMap();
     fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "commit");
     fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
-    ActionMap fieldAction = field.getActionMap();
+    final var fieldAction = field.getActionMap();
     fieldAction.put("commit", fieldListener);
     fieldAction.put("cancel", new CancelListener());
   }
 
   private void cancelText(Canvas canvas) {
-    Text cur = curText;
+    final var cur = curText;
     if (cur != null) {
       curText = null;
       cur.removeAttributeListener(fieldListener);
@@ -91,9 +87,9 @@ public class TextTool extends AbstractTool {
   }
 
   private void commitText(Canvas canvas) {
-    Text cur = curText;
-    boolean isNew = isTextNew;
-    String newText = field.getText();
+    final var cur = curText;
+    final var isNew = isTextNew;
+    final var newText = field.getText();
     if (cur == null) {
       return;
     }
@@ -105,7 +101,7 @@ public class TextTool extends AbstractTool {
         canvas.doAction(new ModelAddAction(canvas.getModel(), cur));
       }
     } else {
-      String oldText = cur.getText();
+      final var oldText = cur.getText();
       if (newText.equals("")) {
         canvas.doAction(new ModelRemoveAction(canvas.getModel(), cur));
       } else if (!oldText.equals(newText)) {
@@ -141,11 +137,11 @@ public class TextTool extends AbstractTool {
     }
 
     Text clicked = null;
-    boolean found = false;
-    int mx = e.getX();
-    int my = e.getY();
-    Location mloc = Location.create(mx, my);
-    for (CanvasObject o : canvas.getModel().getObjectsFromTop()) {
+    var found = false;
+    final var mx = e.getX();
+    final var my = e.getY();
+    final var mloc = Location.create(mx, my);
+    for (final var o : canvas.getModel().getObjectsFromTop()) {
       if (o instanceof Text && o.contains(mloc, true)) {
         clicked = (Text) o;
         found = true;
@@ -163,11 +159,11 @@ public class TextTool extends AbstractTool {
     field.setText(clicked.getText());
     canvas.add(field);
 
-    Point fieldLoc = field.getLocation();
-    double zoom = canvas.getZoomFactor();
+    final var fieldLoc = field.getLocation();
+    final var zoom = canvas.getZoomFactor();
     fieldLoc.x = (int) Math.round(mx * zoom - fieldLoc.x);
     fieldLoc.y = (int) Math.round(my * zoom - fieldLoc.y);
-    int caret = field.viewToModel2D(fieldLoc);
+    final var caret = field.viewToModel2D(fieldLoc);
     if (caret >= 0) {
       field.setCaretPosition(caret);
     }
@@ -191,9 +187,9 @@ public class TextTool extends AbstractTool {
 
   @Override
   public void zoomFactorChanged(Canvas canvas) {
-    Text t = curText;
-    if (t != null) {
-      t.getLabel().configureTextField(field, canvas.getZoomFactor());
+    final var text = curText;
+    if (text != null) {
+      text.getLabel().configureTextField(field, canvas.getZoomFactor());
     }
   }
 
@@ -216,7 +212,7 @@ public class TextTool extends AbstractTool {
 
     @Override
     public void attributeListChanged(AttributeEvent e) {
-      Text cur = curText;
+      final var cur = curText;
       if (cur != null) {
         double zoom = curCanvas.getZoomFactor();
         cur.getLabel().configureTextField(field, zoom);

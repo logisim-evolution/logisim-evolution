@@ -313,23 +313,28 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   static class ScrollablePanel extends JPanel implements Scrollable {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
 
+    @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
       return 10;
     }
 
+    @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
       return ((orientation == SwingConstants.VERTICAL) ? visibleRect.height : visibleRect.width)
           - 10;
     }
 
+    @Override
     public boolean getScrollableTracksViewportWidth() {
       return true;
     }
 
+    @Override
     public boolean getScrollableTracksViewportHeight() {
       return false;
     }
@@ -391,12 +396,14 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       verifier = new TimeVerifier(suffix);
     }
 
+    @Override
     protected JTextField createEditorComponent() {
       JTextField f = super.createEditorComponent();
       f.setInputVerifier(verifier);
       return f;
     }
 
+    @Override
     public Object getItem() {
       return verifier.matched ? verifier.value * verifier.scale : null;
     }
@@ -698,17 +705,6 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
   // Other than mode, which can spontaneously move from CLOCK to STEP, we don't
   // care about any other changes to the model.
-  @Override
-  public void signalsReset(Model.Event event) {}
-
-  @Override
-  public void signalsExtended(Model.Event event) {}
-
-  @Override
-  public void filePropertyChanged(Model.Event event) {}
-
-  @Override
-  public void selectionChanged(Model.Event event) {}
 
   @Override
   public void modeChanged(Model.Event event) {
@@ -721,7 +717,4 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       if (discipline == clockDisciplines[i])
         clockDiscipline.setSelectedItem(clockDisciplineNames[i]);
   }
-
-  @Override
-  public void historyLimitChanged(Model.Event event) {}
 }

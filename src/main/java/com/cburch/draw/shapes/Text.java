@@ -58,13 +58,12 @@ public class Text extends AbstractCanvasObject {
   }
 
   public Text(int x, int y, String text) {
-    this(
-        x, y, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.BLACK);
+    this(x, y, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.BLACK);
   }
 
   @Override
   public Text clone() {
-    Text ret = (Text) super.clone();
+    final var ret = (Text) super.clone();
     ret.label = this.label.clone();
     return ret;
   }
@@ -90,11 +89,11 @@ public class Text extends AbstractCanvasObject {
   }
 
   public List<Handle> getHandles() {
-    Bounds bds = getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int w = bds.getWidth();
-    int h = bds.getHeight();
+    final var bds = getBounds();
+    final var x = bds.getX();
+    final var y = bds.getY();
+    final var w = bds.getWidth();
+    final var h = bds.getHeight();
     return UnmodifiableList.create(
         new Handle[] {
           new Handle(this, x, y),

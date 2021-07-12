@@ -64,17 +64,29 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static class Event {}
 
   public interface Listener {
-    void signalsReset(Event event);
+    default void signalsReset(Event event) {
+      // dummy implementation
+    }
 
-    void signalsExtended(Event event);
+    default void signalsExtended(Event event) {
+      // dummy implementation
+    }
 
-    void filePropertyChanged(Event event);
+    default void filePropertyChanged(Event event) {
+      // dummy implementation
+    }
 
-    void selectionChanged(Event event);
+    default void selectionChanged(Event event) {
+      // dummy implementation
+    }
 
-    void modeChanged(Event event);
+    default void modeChanged(Event event) {
+      // dummy implementation
+    }
 
-    void historyLimitChanged(Event event);
+    default void historyLimitChanged(Event event) {
+      // dummy implementation
+    }
   }
 
   final CircuitState circuitState;

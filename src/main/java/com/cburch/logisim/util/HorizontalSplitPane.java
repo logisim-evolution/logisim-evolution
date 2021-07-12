@@ -28,24 +28,23 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.contracts.BaseLayoutManagerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 public class HorizontalSplitPane extends JPanel {
-  abstract static class Dragbar extends JComponent implements MouseListener, MouseMotionListener {
+  abstract static class Dragbar extends JComponent implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
     private static final long serialVersionUID = 1L;
     private boolean dragging = false;
     private int curValue;
@@ -57,8 +56,7 @@ public class HorizontalSplitPane extends JPanel {
 
     abstract int getDragValue(MouseEvent e);
 
-    public void mouseClicked(MouseEvent e) {}
-
+    @Override
     public void mouseDragged(MouseEvent e) {
       if (dragging) {
         int newValue = getDragValue(e);
@@ -66,12 +64,7 @@ public class HorizontalSplitPane extends JPanel {
       }
     }
 
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mouseMoved(MouseEvent e) {}
-
+    @Override
     public void mousePressed(MouseEvent e) {
       if (!dragging) {
         curValue = getDragValue(e);
@@ -80,6 +73,7 @@ public class HorizontalSplitPane extends JPanel {
       }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       if (dragging) {
         dragging = false;
@@ -125,9 +119,8 @@ public class HorizontalSplitPane extends JPanel {
     }
   }
 
-  private class MyLayout implements LayoutManager {
-    public void addLayoutComponent(String name, Component comp) {}
-
+  private class MyLayout implements BaseLayoutManagerContract {
+    @Override
     public void layoutContainer(Container parent) {
       final var in = parent.getInsets();
       final var maxWidth = parent.getWidth() - (in.left + in.right);
@@ -151,6 +144,7 @@ public class HorizontalSplitPane extends JPanel {
       dragbar.setBounds(in.left, in.top + split - DRAG_TOLERANCE, maxWidth, 2 * DRAG_TOLERANCE);
     }
 
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
       if (fraction <= 0.0) return comp1.getMinimumSize();
       if (fraction >= 1.0) return comp0.getMinimumSize();
@@ -162,6 +156,7 @@ public class HorizontalSplitPane extends JPanel {
           in.top + d0.height + d1.height + in.bottom);
     }
 
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
       if (fraction <= 0.0) return comp1.getPreferredSize();
       if (fraction >= 1.0) return comp0.getPreferredSize();
@@ -172,8 +167,6 @@ public class HorizontalSplitPane extends JPanel {
           in.left + Math.max(d0.width, d1.width) + in.right,
           in.top + d0.height + d1.height + in.bottom);
     }
-
-    public void removeLayoutComponent(Component comp) {}
   }
 
   private static final long serialVersionUID = 1L;

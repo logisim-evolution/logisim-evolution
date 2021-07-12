@@ -47,8 +47,6 @@ public class DefaultClassicAppearance {
 
   private static final int OFFS = 50;
 
-  public DefaultClassicAppearance() {}
-
   public static List<CanvasObject> build(Collection<Instance> pins) {
     Map<Direction, List<Instance>> edge;
     edge = new HashMap<>();
@@ -153,8 +151,7 @@ public class DefaultClassicAppearance {
     return maxOffs + 10 * ((maxThis - numFacing) / 2);
   }
 
-  private static void placePins(
-      List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
+  private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
     for (Instance pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
       x += dx;

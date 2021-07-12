@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Parser;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
@@ -65,6 +64,7 @@ public class Analyzer extends LFrame.SubWindow {
   private final AnalyzerMenuListener menuListener;
 
   private class MyChangeListener implements ChangeListener {
+    @Override
     public void stateChanged(ChangeEvent e) {
 
       Object selected = tabbedPane.getSelectedComponent();
@@ -87,6 +87,7 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   private class MyLocaleListener implements LocaleListener {
+    @Override
     public void localeChanged() {
       Analyzer.this.setTitle(S.get("analyzerWindowTitle"));
       tabbedPane.setTitleAt(IO_TAB, S.get("inputsOutputsTab"));
@@ -113,12 +114,17 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   private class TableListener implements TruthTableListener {
+    @Override
     public void rowsChanged(TruthTableEvent event) {
       update();
     }
 
-    public void cellsChanged(TruthTableEvent event) {}
+    @Override
+    public void cellsChanged(TruthTableEvent event) {
+      // dummy
+    }
 
+    @Override
     public void structureChanged(TruthTableEvent event) {
       update();
     }
@@ -144,7 +150,7 @@ public class Analyzer extends LFrame.SubWindow {
       for (String s : args[1].split(",")) outputs.add(Var.parse(s));
       model.setVariables(inputs, outputs);
     }
-    for (int i = 2; i < args.length; i++) {
+    for (var i = 2; i < args.length; i++) {
       final var s = args[i];
       final var idx = s.indexOf('=');
       if (idx >= 0) {
@@ -237,6 +243,7 @@ public class Analyzer extends LFrame.SubWindow {
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     pane.addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentResized(ComponentEvent event) {
         final var width = pane.getViewport().getWidth();
         comp.setSize(new Dimension(width, comp.getHeight()));
@@ -307,6 +314,7 @@ public class Analyzer extends LFrame.SubWindow {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ignored) {
+          // do nothing
         }
         if (!alreadyFinished) setVisible(true);
         return worker.get();

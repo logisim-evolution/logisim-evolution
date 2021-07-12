@@ -30,6 +30,7 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.hdl.HdlFile;
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
@@ -63,10 +64,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
 
-  private class EditorListener implements DocumentListener {
-
-    @Override
-    public void changedUpdate(DocumentEvent de) {}
+  private class EditorListener implements BaseDocumentListenerContract {
 
     @Override
     public void insertUpdate(DocumentEvent de) {

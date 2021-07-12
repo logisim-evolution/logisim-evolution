@@ -65,7 +65,9 @@ class TableTabCaret {
           ActionListener {
 
     @Override
-    public void cellsChanged(TruthTableEvent event) {}
+    public void cellsChanged(TruthTableEvent event) {
+      // dummy
+    }
 
     @Override
     public void focusGained(FocusEvent e) {
@@ -110,6 +112,9 @@ class TableTabCaret {
         case "expand":
           TruthTable model = table.getTruthTable();
           model.expandVisibleRows();
+          break;
+        default:
+          // do nothing
           break;
       }
     }
@@ -161,18 +166,17 @@ class TableTabCaret {
 
     @Override
     public void keyTyped(KeyEvent e) {
-      int mask = e.getModifiersEx();
+      final var mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
-      char c = e.getKeyChar();
-      doKey(c);
+      doKey(e.getKeyChar());
     }
 
     private int[] allRowsContaining(List<Integer> indexes) {
       final var model = table.getTruthTable();
-      int n = (indexes == null ? 0 : indexes.size());
+      var n = (indexes == null ? 0 : indexes.size());
       if (n == 0) return null;
-      int[] rows = new int[n];
-      for (int i = 0; i < n; i++) rows[i] = model.findVisibleRowContaining(indexes.get(i));
+      final var rows = new int[n];
+      for (var i = 0; i < n; i++) rows[i] = model.findVisibleRowContaining(indexes.get(i));
       Arrays.sort(rows);
       return rows;
     }
@@ -181,13 +185,13 @@ class TableTabCaret {
       final var model = table.getTruthTable();
       if (r1 < 0 || r2 < 0) return null;
       if (r1 > r2) {
-        int t = r1;
+        final var t = r1;
         r1 = r2;
         r2 = t;
       }
-      ArrayList<Integer> indexes = new ArrayList<>();
-      for (int r = r1; r <= r2; r++) {
-        for (Integer idx : model.getVisibleRowIndexes(r)) indexes.add(idx);
+      final var indexes = new ArrayList<Integer>();
+      for (var r = r1; r <= r2; r++) {
+        for (final var idx : model.getVisibleRowIndexes(r)) indexes.add(idx);
       }
       Collections.sort(indexes);
       return indexes;
@@ -204,17 +208,17 @@ class TableTabCaret {
         scrollTo(cursor);
       }
       final var model = table.getTruthTable();
-      int inputs = table.getInputColumnCount();
+      final var inputs = table.getInputColumnCount();
       Entry newEntry = null;
-      int dx = 1;
-      int dy = 0;
+      var dx = 1;
+      var dy = 0;
       switch (c) {
         case ' ':
           if (cursor.col < inputs) {
-            Entry cur = model.getVisibleInputEntry(cursor.row, cursor.col);
+            final var cur = model.getVisibleInputEntry(cursor.row, cursor.col);
             newEntry = (cur == Entry.DONT_CARE ? Entry.ZERO : Entry.ONE);
           } else {
-            Entry cur = model.getVisibleOutputEntry(cursor.row, cursor.col - inputs);
+            final var cur = model.getVisibleOutputEntry(cursor.row, cursor.col - inputs);
             if (cur == Entry.ZERO) newEntry = Entry.ONE;
             else if (cur == Entry.ONE) newEntry = Entry.DONT_CARE;
             else newEntry = Entry.ZERO;
@@ -363,8 +367,9 @@ class TableTabCaret {
     @Override
     public void mousePressed(MouseEvent e) {
       table.requestFocus();
-      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) mouseDragged(e);
-      else {
+      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
+        mouseDragged(e);
+      } else {
         setCursor(pointAt(e), pointNear(e));
       }
     }
@@ -434,8 +439,7 @@ class TableTabCaret {
 
     @Override
     public String toString() {
-      if (isValid()) return "Pt(" + row + ", " + col + ")";
-      else return "Pt(?, ?)";
+      return isValid() ? "Pt(" + row + ", " + col + ")" : "Pt(?, ?)";
     }
   }
 
@@ -483,7 +487,9 @@ class TableTabCaret {
           private static final long serialVersionUID = 1L;
 
           @Override
-          public void actionPerformed(ActionEvent e) {}
+          public void actionPerformed(ActionEvent e) {
+            // dummy
+          }
         };
     final var nullKey = "null";
     amap.put(nullKey, nullAction);
@@ -523,7 +529,7 @@ class TableTabCaret {
   boolean hadSelection = false;
 
   void updateMenus() {
-    boolean sel = hasSelection();
+    final var sel = hasSelection();
     if (hadSelection != sel) {
       hadSelection = sel;
       table.updateTab();
@@ -538,18 +544,18 @@ class TableTabCaret {
       final var x0 = table.getXLeft(0);
       final var x1 = table.getXRight(inputs + outputs - 1);
       for (final var rowId : hilightRows) {
-        int y = table.getY(rowId);
-        int h = table.getCellHeight();
+        final var y = table.getY(rowId);
+        final var h = table.getCellHeight();
         g.fillRect(x0, y, x1 - x0, h);
       }
     }
     if (marked() && !markA.equals(markB)) {
-      Rectangle r = region(markA, markB);
+      final var r = region(markA, markB);
       g.setColor(SELECT_COLOR);
       g.fillRect(r.x, r.y, r.width, r.height);
     }
     if (table.isFocusOwner() && cursor.isValid()) {
-      Rectangle r = region(cursor);
+      final var r = region(cursor);
       g.setColor(Color.WHITE);
       g.fillRect(r.x, r.y + 1, r.width - 1, r.height - 3);
     }
@@ -596,9 +602,9 @@ class TableTabCaret {
   }
 
   private void move(int row, int col, boolean shift) {
-    Pt p = pointNear(row, col);
+    final var p = pointNear(row, col);
     if (shift) {
-      Pt oldMarkB = markB;
+      final var oldMarkB = markB;
       markB = p;
       repaint(oldMarkB, cursor, markA, markB);
       scrollTo(markB);
@@ -625,8 +631,7 @@ class TableTabCaret {
     final var cy = table.getY(p.row);
     final var cw = table.getCellWidth(p.col);
     final var ch = table.getCellHeight();
-    Rectangle r = new Rectangle(cx, cy, cw, ch);
-    table.getBody().scrollRectToVisible(r);
+    table.getBody().scrollRectToVisible(new Rectangle(cx, cy, cw, ch));
   }
 
   private void repaint(Pt... pts) {

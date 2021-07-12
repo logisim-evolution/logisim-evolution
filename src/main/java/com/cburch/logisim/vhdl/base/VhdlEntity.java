@@ -380,15 +380,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     icon.setInvalid(!content.isValid());
   }
 
-  @Override
-  public void aboutToSave(HdlModel source) {}
-
-  @Override
-  public void displayChanged(HdlModel source) {}
-
-  @Override
-  public void appearanceChanged(HdlModel source) {}
-
   private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
 
   public Collection<Circuit> getCircuitsUsingThis() {

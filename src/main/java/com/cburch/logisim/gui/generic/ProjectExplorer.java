@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.gui.generic;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -52,7 +53,6 @@ import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
@@ -131,6 +131,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     model.updateStructure();
   }
 
+  @Override
   public void localeChanged() {
     // repaint() would work, except that names that get longer will be
     // abbreviated with an ellipsis, even when they fit into the window.
@@ -150,6 +151,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void actionPerformed(ActionEvent event) {
       TreePath path = getSelectionPath();
       if (listener != null && path != null && path.getPathCount() == 2) {
@@ -220,8 +222,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
   }
 
-  private class MyListener
-      implements MouseListener, TreeSelectionListener, ProjectListener, PropertyChangeListener {
+  private class MyListener implements BaseMouseListenerContract, TreeSelectionListener, ProjectListener, PropertyChangeListener {
     private void checkForPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
@@ -234,6 +235,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
       if (e.getClickCount() == 2) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
@@ -246,15 +248,13 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // MouseListener methods
     //
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
+    @Override
     public void mousePressed(MouseEvent e) {
       ProjectExplorer.this.requestFocus();
       checkForPopup(e);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       checkForPopup(e);
     }
@@ -270,6 +270,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // project/library file/circuit listener methods
     //
+    @Override
     public void projectChanged(ProjectEvent event) {
       int act = event.getAction();
       if (act == ProjectEvent.ACTION_SET_CURRENT || act == ProjectEvent.ACTION_SET_TOOL) {
@@ -281,6 +282,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // PropertyChangeListener methods
     //
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.GATE_SHAPE.isSource(event)) {
         ProjectExplorer.this.repaint();
@@ -290,6 +292,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // TreeSelectionListener methods
     //
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
       TreePath path = e.getNewLeadSelectionPath();
       if (listener != null) {
@@ -379,14 +382,17 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
 
+    @Override
     public int getIconHeight() {
       return AppPreferences.getScaled(AppPreferences.BoxSize);
     }
 
+    @Override
     public int getIconWidth() {
       return AppPreferences.getScaled(AppPreferences.BoxSize);
     }
 
+    @Override
     public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
       boolean viewed;
       if (proj.getFrame().getHdlEditorView() == null) {
@@ -453,15 +459,23 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   }
 
   public interface Listener {
-    void deleteRequested(Event event);
+    default void deleteRequested(Event event) {
+      // dummy implementation
+    }
 
-    void doubleClicked(Event event);
+    default void doubleClicked(Event event) {
+      // dummy implementation
+    }
 
     JPopupMenu menuRequested(Event event);
 
-    void moveRequested(Event event, AddTool dragged, AddTool target);
+    default void moveRequested(Event event, AddTool dragged, AddTool target) {
+      // dummy implementation
+    }
 
-    void selectionChanged(Event event);
+    default void selectionChanged(Event event) {
+      // dummy implementation
+    }
   }
 
   public static class Event {

@@ -406,9 +406,6 @@ public class MenuSimulate extends Menu {
     }
 
     @Override
-    public void propagationCompleted(Simulator.Event e) {}
-
-    @Override
     public void simulatorReset(Simulator.Event e) {
       updateSimulator(e);
     }

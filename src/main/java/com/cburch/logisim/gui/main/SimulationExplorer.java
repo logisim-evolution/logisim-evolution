@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.gui.main;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.draw.toolbar.Toolbar;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.proj.Project;
@@ -35,14 +36,13 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-class SimulationExplorer extends JPanel implements ProjectListener, MouseListener {
+class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseListenerContract {
 
   private static final long serialVersionUID = 1L;
   private final Project project;
@@ -73,6 +73,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
     }
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getClickCount() == 2) {
       TreePath path = tree.getPathForLocation(e.getX(), e.getY());
@@ -87,19 +88,18 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
     }
   }
 
-  public void mouseEntered(MouseEvent e) {}
-
-  public void mouseExited(MouseEvent e) {}
-
+  @Override
   public void mousePressed(MouseEvent e) {
     requestFocus();
     checkForPopup(e);
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     checkForPopup(e);
   }
 
+  @Override
   public void projectChanged(ProjectEvent event) {
     int action = event.getAction();
     if (action == ProjectEvent.ACTION_SET_STATE) {

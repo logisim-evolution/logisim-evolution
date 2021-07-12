@@ -1136,9 +1136,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     }
 
     @Override
-    public void simulatorStateChanged(Simulator.Event e) {}
-
-    @Override
     public void simulatorReset(Simulator.Event e) {
       waitForRepaintDone();
     }

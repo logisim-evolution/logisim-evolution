@@ -71,6 +71,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   @Override
   public void removeComponent(Circuit circ, Component c, CircuitState state) {}
 
+  @Override
   public abstract Component createComponent(Location loc, AttributeSet attrs);
 
   //
@@ -137,8 +138,10 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     return new int[] {0};
   }
 
+  @Override
   public abstract String getName();
 
+  @Override
   public abstract Bounds getOffsetBounds(AttributeSet attrs);
 
   @Override
@@ -156,6 +159,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     return false;
   }
 
+  @Override
   public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
     if (toolIcon != null) {

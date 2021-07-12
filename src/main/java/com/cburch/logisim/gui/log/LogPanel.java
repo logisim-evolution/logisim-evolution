@@ -64,10 +64,6 @@ public abstract class LogPanel extends JPanel {
     return null;
   }
 
-  // SimulationHandler getSimulationHandler() {
-  //   return null;
-  // }
-
   public LogFrame getLogFrame() {
     return logFrame;
   }
@@ -86,7 +82,11 @@ public abstract class LogPanel extends JPanel {
 
   public abstract String getTitle();
 
-  public abstract void localeChanged();
+  public void localeChanged() {
+    // dummy implementation
+  }
 
-  public abstract void modelChanged(Model oldModel, Model newModel);
+  public void modelChanged(Model oldModel, Model newModel) {
+    // dummy implementation
+  }
 }

@@ -43,7 +43,7 @@ public class AttributeMapKey {
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof AttributeMapKey)) return false;
-    AttributeMapKey o = (AttributeMapKey) other;
+    final var o = (AttributeMapKey) other;
     return (Objects.equals(attr, o.attr))
         && (Objects.equals(object, o.object));
   }

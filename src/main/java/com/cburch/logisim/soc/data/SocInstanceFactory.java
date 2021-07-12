@@ -35,56 +35,62 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.StringGetter;
 
 public abstract class SocInstanceFactory extends InstanceFactory {
-  
+
   public static final int SocUnknown = 0;
   public static final int SocMaster = 1;
   public static final int SocSlave = 2;
   public static final int SocBus = 4;
   public static final int SocSniffer = 8;
-  
+
   private int myType = SocUnknown;
-  
+
   public SocInstanceFactory(String name, StringGetter displayName, int type) {
     super(name, displayName);
     myType = type;
   }
-  
-  @Override
-  public void paintInstance(InstancePainter painter) {}
 
   @Override
-  public void propagate(InstanceState state) {}
-  
+  public void paintInstance(InstancePainter painter) {
+    // dummy implementation
+  }
+
   @Override
-  public boolean isSocComponent() { return true ; }
-  
+  public void propagate(InstanceState state) {
+    // dummy implementation
+  }
+
+  @Override
+  public boolean isSocComponent() {
+    return true;
+  }
+
   public int getSocType() {
     return myType;
   }
-  
+
   public boolean isSocSlave() {
     return (myType & SocSlave) != 0;
   }
-  
+
   public boolean isSocSniffer() {
     return (myType & SocSniffer) != 0;
   }
-	  
+
   public boolean isSocBus() {
     return (myType & SocBus) != 0;
   }
-		  
+
   public boolean isSocMaster() {
     return (myType & SocMaster) != 0;
   }
-			  
+
   public boolean isSocUnknown() {
     return myType == SocUnknown;
   }
-				  
+
   public abstract SocBusSlaveInterface getSlaveInterface(AttributeSet attrs);
-  
+
   public abstract SocBusSnifferInterface getSnifferInterface(AttributeSet attrs);
-  
+
   public abstract SocProcessorInterface getProcessorInterface(AttributeSet attrs);
 }

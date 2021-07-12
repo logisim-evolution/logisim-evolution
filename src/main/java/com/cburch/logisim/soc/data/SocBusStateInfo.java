@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
@@ -53,7 +54,6 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JButton;
@@ -65,7 +65,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class SocBusStateInfo extends JDialog
-    implements ActionListener, LocaleListener, WindowListener {
+    implements ActionListener, LocaleListener, BaseWindowListenerContract {
 
   private static final long serialVersionUID = 1L;
   public static final int TraceWidth = 630;
@@ -127,6 +127,7 @@ public class SocBusStateInfo extends JDialog
       listeners = new ArrayList<>();
     }
 
+    @Override
     public SocBusState clone() {
       try {
         return (SocBusState) super.clone();
@@ -220,6 +221,7 @@ public class SocBusStateInfo extends JDialog
         new JTable(memMap) {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public TableCellRenderer getCellRenderer(int row, int column) {
             return memMap.getCellRender();
           }
@@ -259,6 +261,7 @@ public class SocBusStateInfo extends JDialog
     return memMap.getSlaves();
   }
 
+  @Override
   public String getName() {
     String name = myComp.getAttributeSet().getValue(StdAttr.LABEL);
     if (name == null || name.isEmpty()) {
@@ -356,26 +359,7 @@ public class SocBusStateInfo extends JDialog
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     setVisible(false);
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
-
 }

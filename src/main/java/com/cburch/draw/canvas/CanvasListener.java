@@ -54,7 +54,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
   }
 
   public void setTool(CanvasTool value) {
-    CanvasTool oldValue = tool;
+    final var oldValue = tool;
     if (value != oldValue) {
       tool = value;
       if (oldValue != null) oldValue.toolDeselected(canvas);
@@ -68,17 +68,17 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
   }
 
   private void handlePopupTrigger(MouseEvent e) {
-    Location loc = Location.create(e.getX(), e.getY());
-    List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
+    final var loc = Location.create(e.getX(), e.getY());
+    final var objects = canvas.getModel().getObjectsFromTop();
     CanvasObject clicked = null;
-    for (CanvasObject o : objects) {
+    for (final var o : objects) {
       if (o.contains(loc, false)) {
         clicked = o;
         break;
       }
     }
     if (clicked == null) {
-      for (CanvasObject o : objects) {
+      for (final var o : objects) {
         if (o.contains(loc, true)) {
           clicked = o;
           break;
@@ -111,6 +111,11 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
   public void modelChanged(CanvasModelEvent event) {
     canvas.getSelection().modelChanged(event);
     canvas.repaint();
+  }
+
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    // dummy implementation
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.cburch.logisim.soc.gui;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.comp.ComponentEvent;
@@ -9,11 +10,9 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 
-public class ListeningFrame extends JFrame
-    implements WindowListener, LocaleListener, CircuitListener, ComponentListener {
+public class ListeningFrame extends JFrame implements BaseWindowListenerContract, LocaleListener, CircuitListener, ComponentListener {
 
   private static final long serialVersionUID = 1L;
   private final StringGetter title;
@@ -51,28 +50,10 @@ public class ListeningFrame extends JFrame
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     setVisible(false);
     dispose();
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 
   @Override
   public void localeChanged() {
@@ -83,12 +64,6 @@ public class ListeningFrame extends JFrame
   public void circuitChanged(CircuitEvent event) {
     if (event.getAction() == CircuitEvent.ACTION_SET_NAME) updateTitle();
   }
-
-  @Override
-  public void componentInvalidated(ComponentEvent e) {}
-
-  @Override
-  public void endChanged(ComponentEvent e) {}
 
   @Override
   public void LabelChanged(ComponentEvent e) {

@@ -30,6 +30,7 @@ package com.cburch.logisim.vhdl.gui;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.draw.toolbar.ToolbarModel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
@@ -49,13 +50,12 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-public class HdlContentView extends JPanel implements DocumentListener, HdlModelListener {
+public class HdlContentView extends JPanel implements BaseDocumentListenerContract, HdlModelListener {
 
   private class HdlEditAction extends Action {
     final HdlModel model;
@@ -66,22 +66,27 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
       this.original = original;
     }
 
+    @Override
     public void doIt(Project proj) {
       /* nop b/c already done */
     }
 
+    @Override
     public String getName() {
       return "VHDL edits";
     }
 
+    @Override
     public boolean isModification() {
       return true;
     }
 
+    @Override
     public boolean shouldAppendTo(Action other) {
       return (other instanceof HdlEditAction) && ((HdlEditAction) other).model == model;
     }
 
+    @Override
     public void undo(Project proj) {
       setText(original);
       model.setContent(original);
@@ -90,13 +95,11 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
       if (HdlContentView.this.model != model) setHdlModel(model);
     }
 
+    @Override
     public Action append(Action other) {
       return this;
     }
   }
-
-  @Override
-  public void changedUpdate(DocumentEvent de) {}
 
   @Override
   public void insertUpdate(DocumentEvent de) {
@@ -278,12 +281,6 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
       toolbar.setDirty(!model.isValid());
     }
   }
-
-  @Override
-  public void displayChanged(HdlModel source) {}
-
-  @Override
-  public void appearanceChanged(HdlModel source) {}
 
   public void setHdlModel(HdlModel model) {
     if (this.model == model) return;

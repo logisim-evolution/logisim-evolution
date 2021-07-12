@@ -72,7 +72,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   private class MyListener implements OutputExpressionsListener, TruthTableListener {
 
     @Override
-    public void rowsChanged(TruthTableEvent event) {}
+    public void rowsChanged(TruthTableEvent event) {
+      // dummy
+    }
 
     @Override
     public void cellsChanged(TruthTableEvent event) {
@@ -82,8 +84,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
     @Override
     public void expressionChanged(OutputExpressionsEvent event) {
-      if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL
-          && event.getVariable().equals(output)) {
+      if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL && event.getVariable().equals(output)) {
         kMapGroups.update();
         repaint();
       }
@@ -217,7 +218,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
   private void computePreferredSize() {
     selInfo = null;
-    Graphics2D g = (Graphics2D) getGraphics();
+    final var g = (Graphics2D) getGraphics();
     final var table = model.getTruthTable();
 
     String message = null;
@@ -247,9 +248,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     } else {
       computePreferredLinedSize(g, table);
       computePreferredNumberedSize(g, table);
-      int boxWidth = Math.max(linedKMapInfo.getWidth(), numberedKMapInfo.getWidth());
+      var boxWidth = Math.max(linedKMapInfo.getWidth(), numberedKMapInfo.getWidth());
       boxWidth = Math.max(boxWidth, AppPreferences.getScaled(300));
-      int boxHeight = Math.max(linedKMapInfo.getHeight(), numberedKMapInfo.getHeight());
+      var boxHeight = Math.max(linedKMapInfo.getHeight(), numberedKMapInfo.getHeight());
       linedKMapInfo.calculateOffsets(boxWidth, boxHeight);
       numberedKMapInfo.calculateOffsets(boxWidth, boxHeight);
       final var ctx = g.getFontRenderContext();
@@ -276,30 +277,32 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       boolean rowLabel,
       boolean addComma,
       FontRenderContext ctx) {
-    List<TextLayout> lines = new ArrayList<>();
+    final var lines = new ArrayList<TextLayout>();
     if (start >= end) return lines;
     final var ret = new StringBuilder(inputs.get(start));
-    for (int i = start + 1; i < end; i++) {
+    for (var i = start + 1; i < end; i++) {
       ret.append(", ");
       ret.append(inputs.get(i));
     }
     if (addComma) ret.append(",");
-    int maxSize = rowLabel ? (1 << (end - start - 1)) * cellWidth : 100;
+    final var maxSize = rowLabel ? (1 << (end - start - 1)) * cellWidth : 100;
     final var myLayout = styled(ret.toString(), headerFont, ctx);
     if (((end - start) <= 1) || (myLayout.getBounds().getWidth() <= maxSize)) {
       lines.add(myLayout);
       return lines;
     }
-    int nrOfEntries = end - start;
+    final var nrOfEntries = end - start;
     if (nrOfEntries > 1) {
-      int half = nrOfEntries >> 1;
+      final var half = nrOfEntries >> 1;
       lines.addAll(header(inputs, start, end - half, rowLabel, true, ctx));
       lines.addAll(header(inputs, end - half, end, rowLabel, addComma, ctx));
-    } else lines.add(myLayout);
+    } else {
+      lines.add(myLayout);
+    }
     return lines;
   }
 
-  private void computePreferredNumberedSize(Graphics2D g, TruthTable table) {
+  private void computePreferredNumberedSize(Graphics2D gfx, TruthTable table) {
     final var inputs = model.getInputs().bits;
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
@@ -308,71 +311,71 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     int headWidth;
     int tableHeight;
 
-    if (g == null) {
+    if (gfx == null) {
       cellHeight = 16;
       cellWidth = 24;
     } else {
-      final var fm = g.getFontMetrics(entryFont);
+      final var fm = gfx.getFontMetrics(entryFont);
       cellHeight = fm.getAscent() + CELL_VERT_SEP;
       cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
     }
-    int rows = 1 << rowVars;
-    int cols = 1 << colVars;
-    int bodyWidth = cellWidth * (cols + 1);
-    int bodyHeight = cellHeight * (rows + 1);
+    final var rows = 1 << rowVars;
+    final var cols = 1 << colVars;
+    final var bodyWidth = cellWidth * (cols + 1);
+    final var bodyHeight = cellHeight * (rows + 1);
 
     int colLabelWidth;
-    if (g == null) {
+    if (gfx == null) {
       headHeight = 16;
       headWidth = 80;
       colLabelWidth = 80;
     } else {
-      final var ctx = g.getFontRenderContext();
+      final var ctx = gfx.getFontRenderContext();
       final var rowHeader = header(inputs, 0, rowVars, true, false, ctx);
       final var colHeader = header(inputs, rowVars, rowVars + colVars, false, false, ctx);
       headWidth = 0;
-      int height = 0;
+      var height = 0;
       for (TextLayout l : rowHeader) {
-        int w = (int) l.getBounds().getWidth();
+        final var w = (int) l.getBounds().getWidth();
         if (w > headWidth) headWidth = w;
       }
       colLabelWidth = 0;
-      for (TextLayout l : colHeader) {
-        int w = (int) l.getBounds().getWidth();
-        int h = (int) l.getBounds().getHeight();
+      for (final var l : colHeader) {
+        final var w = (int) l.getBounds().getWidth();
+        final var h = (int) l.getBounds().getHeight();
         if (w > colLabelWidth) colLabelWidth = w;
         if (h > height) height = h;
       }
       headHeight = colHeader.size() * height;
     }
     tableHeight = headHeight + bodyHeight + 5;
-    int tableWidth = headWidth + Math.max(bodyWidth, colLabelWidth + cellWidth) + 5;
+    final var tableWidth = headWidth + Math.max(bodyWidth, colLabelWidth + cellWidth) + 5;
     numberedKMapInfo = new KMapInfo(headWidth, headHeight, tableWidth, tableHeight);
   }
 
-  private void computePreferredLinedSize(Graphics2D g, TruthTable table) {
+  private void computePreferredLinedSize(Graphics2D gfx, TruthTable table) {
     int headHeight;
     final int headWidth;
     int tableWidth;
     int tableHeight;
 
-    if (g == null) {
+    if (gfx == null) {
       headHeight = 16;
       cellHeight = 16;
       cellWidth = 24;
     } else {
-      final var ctx = g.getFontRenderContext();
-      var fm = g.getFontMetrics(headerFont);
-      int singleheight = styledHeight(styled("E", headerFont), ctx);
+      final var ctx = gfx.getFontRenderContext();
+      var fm = gfx.getFontMetrics(headerFont);
+      final var singleheight = styledHeight(styled("E", headerFont), ctx);
       headHeight = styledHeight(styled("E:2", headerFont), ctx) + (fm.getAscent() - singleheight);
 
-      fm = g.getFontMetrics(entryFont);
+      fm = gfx.getFontMetrics(entryFont);
       cellHeight = fm.getAscent() + CELL_VERT_SEP;
       cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
     }
 
-    int rows = 1 << ROW_VARS[table.getInputColumnCount()];
-    int cols = 1 << COL_VARS[table.getInputColumnCount()];
+    final var rows = 1 << ROW_VARS[table.getInputColumnCount()];
+    final var cols = 1 << COL_VARS[table.getInputColumnCount()];
     tableWidth = headHeight + cellWidth * (cols) + 15;
     tableHeight = headHeight + cellHeight * (rows) + 15;
     if ((cols >= 4) && (rows >= 4)) {
@@ -438,16 +441,16 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   public int getRow(MouseEvent event) {
-    TruthTable table = model.getTruthTable();
-    int inputs = table.getInputColumnCount();
+    final var table = model.getTruthTable();
+    final var inputs = table.getInputColumnCount();
     if (inputs >= ROW_VARS.length) return -1;
-    int x = event.getX() - kMapArea.getX();
-    int y = event.getY() - kMapArea.getY();
+    final var x = event.getX() - kMapArea.getX();
+    final var y = event.getY() - kMapArea.getY();
     if (x < 0 || y < 0) return -1;
-    int row = y / cellHeight;
-    int col = x / cellWidth;
-    int rows = 1 << ROW_VARS[inputs];
-    int cols = 1 << COL_VARS[inputs];
+    final var row = y / cellHeight;
+    final var col = x / cellWidth;
+    final var rows = 1 << ROW_VARS[inputs];
+    final var cols = 1 << COL_VARS[inputs];
     if (row >= rows || col >= cols) return -1;
     return getTableRow(row, col, rows, cols);
   }
@@ -459,23 +462,22 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   @Override
   public String getToolTipText(MouseEvent event) {
     if (kMapArea == null) return null;
-    TruthTable table = model.getTruthTable();
-    int row = getRow(event);
+    final var table = model.getTruthTable();
+    final var row = getRow(event);
     if (row < 0) return null;
-    int col = getOutputColumn(event);
-    Entry entry = table.getOutputEntry(row, col);
-    StringBuilder s = new StringBuilder(
+    final var col = getOutputColumn(event);
+    final var entry = table.getOutputEntry(row, col);
+    final var s = new StringBuilder(
         entry.getErrorMessage() == null
             ? ""
             : entry.getErrorMessage() + "<br>");
     s.append(output).append(" = ").append(entry.getDescription());
-    List<String> inputs = model.getInputs().bits;
+    final var inputs = model.getInputs().bits;
     if (inputs.size() == 0) return "<html>" + s + "</html>";
     s.append("<br>When:");
-    int n = inputs.size();
-    for (int i = 0; i < MAX_VARS && i < inputs.size(); i++) {
-      s.append("<br>&nbsp;&nbsp;&nbsp;&nbsp;").append(inputs.get(i)).append(" = ")
-          .append((row >> (n - i - 1)) & 1);
+    final var n = inputs.size();
+    for (var i = 0; i < MAX_VARS && i < inputs.size(); i++) {
+      s.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;").append(inputs.get(i)).append(" = ").append((row >> (n - i - 1)) & 1);
     }
     return "<html>" + s + "</html>";
   }
@@ -490,28 +492,28 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   @Override
-  public void paintComponent(Graphics g) {
-    paintKmap(g, true);
+  public void paintComponent(Graphics gfx) {
+    paintKmap(gfx, true);
   }
 
-  public void paintKmap(Graphics g, boolean selectionBlock) {
-    if (!(g instanceof Graphics2D)) return;
-    Graphics2D g2 = (Graphics2D) g;
+  public void paintKmap(Graphics gfx, boolean selectionBlock) {
+    if (!(gfx instanceof Graphics2D)) return;
+    Graphics2D g2 = (Graphics2D) gfx;
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g2.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-    Color col = g2.getColor();
+    final var col = g2.getColor();
     if (selectionBlock) {
       g2.setColor(getBackground());
       g2.fillRect(0, 0, getBounds().width, getBounds().height);
       g2.setColor(col);
     }
 
-    TruthTable table = model.getTruthTable();
-    int inputCount = table.getInputColumnCount();
-    Dimension sz = getSize();
+    final var table = model.getTruthTable();
+    final var inputCount = table.getInputColumnCount();
+    final var sz = getSize();
     String message = null;
     if (output == null) {
       message = S.get("karnaughNoOutputError");
@@ -523,7 +525,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       message = S.get("karnaughTooFewInputsError");
     }
     if (message != null) {
-      g.setFont(headerFont);
+      gfx.setFont(headerFont);
       GraphicsUtil.drawCenteredText(g2, message, sz.width / 2, sz.height / 2);
       return;
     }
@@ -545,10 +547,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
     paintKMap(g2, x, y, table);
     if (!selectionBlock) return;
+
     final var expr = kMapGroups.getHighlightedExpression();
-    final var bcol = kMapGroups.getBackgroundColor();
     final var ctx = g2.getFontRenderContext();
     final var ccol = g2.getColor();
+    final var bcol = kMapGroups.getBackgroundColor();
     if (bcol != null) g2.setColor(bcol);
     else g2.setColor(this.getBackground());
     g2.fillRect(selInfo.getX(), selInfo.getY(), selInfo.getWidth() - 1, selInfo.getHeight() - 1);
@@ -556,16 +559,16 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     g2.drawRect(selInfo.getX(), selInfo.getY(), selInfo.getWidth() - 1, selInfo.getHeight() - 1);
     if (expr == null) {
       final var t1 = new TextLayout(S.get("NoSelectedKmapGroup"), headerFont, ctx);
-      int xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
-      int yoff = (selInfo.getHeight() - (int) t1.getBounds().getHeight()) / 2;
+      final var xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
+      final var yoff = (selInfo.getHeight() - (int) t1.getBounds().getHeight()) / 2;
       t1.draw(g2, xoff + selInfo.getX(), yoff + selInfo.getY() + t1.getAscent());
     } else {
       final var t1 = new TextLayout(S.get("SelectedKmapGroup"), headerFont, ctx);
-      int xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
+      var xoff = (selInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
       t1.draw(g2, xoff + selInfo.getX(), selInfo.getY() + t1.getAscent());
       final var t2 = new ExpressionRenderData(expr, selInfo.getWidth(), notation);
       xoff = (selInfo.getWidth() - t2.getWidth()) / 2;
-      t2.paint(g, xoff + selInfo.getX(), (int) (selInfo.getY() + t1.getAscent() + t1.getDescent()));
+      t2.paint(gfx, xoff + selInfo.getX(), (int) (selInfo.getY() + t1.getAscent() + t1.getDescent()));
     }
   }
 
@@ -621,34 +624,33 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     return "";
   }
 
-  private void drawNumberedHeader(Graphics2D g, int x, int y) {
+  private void drawNumberedHeader(Graphics2D gfx, int x, int y) {
     final var table = model.getTruthTable();
-    int inputCount = table.getInputColumnCount();
-    int tableXstart = x + numberedKMapInfo.getHeaderWidth() + cellWidth;
-    int tableYstart = y + numberedKMapInfo.getHeaderHeight() + cellHeight;
-    int rowVars = ROW_VARS[inputCount];
-    int colVars = COL_VARS[inputCount];
-    int rows = 1 << rowVars;
-    int cols = 1 << colVars;
-    final var headFm = g.getFontMetrics(headerFont);
-    final var ctx = g.getFontRenderContext();
+    final var inputCount = table.getInputColumnCount();
+    final var tableXstart = x + numberedKMapInfo.getHeaderWidth() + cellWidth;
+    final var tableYstart = y + numberedKMapInfo.getHeaderHeight() + cellHeight;
+    final var rowVars = ROW_VARS[inputCount];
+    final var colVars = COL_VARS[inputCount];
+    final var rows = 1 << rowVars;
+    final var cols = 1 << colVars;
+    final var headFm = gfx.getFontMetrics(headerFont);
+    final var ctx = gfx.getFontRenderContext();
     var numberFont = headerFont;
-    int width2 = headFm.stringWidth("00");
-    int width3 = headFm.stringWidth("000");
-    float scale = (float) width2 / (float) width3;
+    final var width2 = headFm.stringWidth("00");
+    final var width3 = headFm.stringWidth("000");
+    final var scale = (float) width2 / (float) width3;
     numberFont = headerFont.deriveFont(scale * headerFont.getSize2D());
-    for (int c = 0; c < cols; c++) {
+    for (var c = 0; c < cols; c++) {
       final var label = label(c, cols);
       final var styledLabel = styled(label, numberFont, ctx);
-      int xoff = (cellWidth - (int) styledLabel.getBounds().getWidth()) >> 1;
-      styledLabel.draw(
-          g, tableXstart + xoff + c * cellWidth, tableYstart - 3 - (int) styledLabel.getDescent());
+      final var xoff = (cellWidth - (int) styledLabel.getBounds().getWidth()) >> 1;
+      styledLabel.draw(gfx, tableXstart + xoff + c * cellWidth, tableYstart - 3 - (int) styledLabel.getDescent());
     }
-    for (int r = 0; r < rows; r++) {
+    for (var r = 0; r < rows; r++) {
       final var label = label(r, rows);
       final var styledLabel = styled(label, numberFont, ctx);
       styledLabel.draw(
-          g,
+          gfx,
           (float) (tableXstart - styledLabel.getBounds().getWidth() - styledLabel.getDescent() - 3),
           tableYstart
               + (cellHeight - styledLabel.getAscent()) / 2
@@ -658,16 +660,16 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     final var rowHeader = header(model.getInputs().bits, 0, rowVars, true, false, ctx);
     final var colHeader =
         header(model.getInputs().bits, rowVars, rowVars + colVars, false, false, ctx);
-    int rx = x + 3;
-    int ry = y + numberedKMapInfo.getHeaderHeight() + cellHeight / 2;
-    for (TextLayout l : rowHeader) {
-      l.draw(g, rx, ry + l.getAscent());
+    var rx = x + 3;
+    var ry = y + numberedKMapInfo.getHeaderHeight() + cellHeight / 2;
+    for (final var l : rowHeader) {
+      l.draw(gfx, rx, ry + l.getAscent());
       ry += (int) l.getBounds().getHeight();
     }
     rx = x + numberedKMapInfo.getHeaderWidth() + cellWidth / 2;
     ry = y + 3;
     for (TextLayout l : colHeader) {
-      l.draw(g, rx, ry + l.getAscent());
+      l.draw(gfx, rx, ry + l.getAscent());
       ry += (int) l.getBounds().getHeight();
     }
   }
@@ -676,7 +678,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     ArrayList<Integer> starts = new ArrayList<>();
     ArrayList<Integer> stops = new ArrayList<>();
     StringBuilder str = new StringBuilder();
-    int idx = 0;
+    var idx = 0;
     while (header != null && idx < header.length()) {
       if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {
         idx++;
@@ -689,12 +691,12 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
           idx++;
       } else str.append(header.charAt(idx++));
     }
-    AttributedString styled = new AttributedString(str.toString());
+    final var styled = new AttributedString(str.toString());
     styled.addAttribute(TextAttribute.FAMILY, font.getFamily());
     styled.addAttribute(TextAttribute.SIZE, font.getSize());
-    for (int i = 0; i < starts.size(); i++)
-      styled.addAttribute(
-          TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, starts.get(i), stops.get(i));
+    for (var i = 0; i < starts.size(); i++) {
+      styled.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, starts.get(i), stops.get(i));
+    }
     return styled;
   }
 
@@ -703,36 +705,36 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private int styledWidth(AttributedString header, FontRenderContext ctx) {
-    TextLayout layout = new TextLayout(header.getIterator(), ctx);
+    final var layout = new TextLayout(header.getIterator(), ctx);
     return (int) layout.getBounds().getWidth();
   }
 
   private int styledHeight(AttributedString header, FontRenderContext ctx) {
-    TextLayout layout = new TextLayout(header.getIterator(), ctx);
+    final var layout = new TextLayout(header.getIterator(), ctx);
     return (int) layout.getBounds().getHeight();
   }
 
-  private void drawKmapLine(Graphics2D g, Point p1, Point p2) {
-    final var oldStroke = g.getStroke();
-    g.setStroke(new BasicStroke(2));
-    g.drawLine(p1.x, p1.y, p2.x, p2.y);
+  private void drawKmapLine(Graphics2D gfx, Point p1, Point p2) {
+    final var oldStroke = gfx.getStroke();
+    gfx.setStroke(new BasicStroke(2));
+    gfx.drawLine(p1.x, p1.y, p2.x, p2.y);
     if (p1.y == p2.y) {
       // we have a horizontal line
-      g.drawLine(p1.x, p1.y - 4, p1.x, p1.y + 4);
-      g.drawLine(p2.x, p2.y - 4, p2.x, p2.y + 4);
+      gfx.drawLine(p1.x, p1.y - 4, p1.x, p1.y + 4);
+      gfx.drawLine(p2.x, p2.y - 4, p2.x, p2.y + 4);
     } else {
       // we have a vertical line
-      g.drawLine(p1.x - 4, p1.y, p1.x + 4, p1.y);
-      g.drawLine(p2.x - 4, p2.y, p2.x + 4, p2.y);
+      gfx.drawLine(p1.x - 4, p1.y, p1.x + 4, p1.y);
+      gfx.drawLine(p2.x - 4, p2.y, p2.x + 4, p2.y);
     }
-    g.setStroke(oldStroke);
+    gfx.setStroke(oldStroke);
   }
 
-  private void drawLinedHeader(Graphics2D g, int x, int y) {
+  private void drawLinedHeader(Graphics2D gfx, int x, int y) {
     final var table = model.getTruthTable();
     final var inputCount = table.getInputColumnCount();
-    final var headFm = g.getFontMetrics(headerFont);
-    final var ctx = g.getFontRenderContext();
+    final var headFm = gfx.getFontMetrics(headerFont);
+    final var ctx = gfx.getFontRenderContext();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
     final var rows = 1 << rowVars;
@@ -824,22 +826,25 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
           break;
       }
       if (rotated) {
-        g.translate(offsetX + x, offsetY + y);
-        g.rotate(-Math.PI / 2.0);
-        g.drawString(header.getIterator(), -middleOffset, 0);
-        g.rotate(Math.PI / 2.0);
-        g.translate(-(offsetX + x), -(offsetY + y));
+        gfx.translate(offsetX + x, offsetY + y);
+        gfx.rotate(-Math.PI / 2.0);
+        gfx.drawString(header.getIterator(), -middleOffset, 0);
+        gfx.rotate(Math.PI / 2.0);
+        gfx.translate(-(offsetX + x), -(offsetY + y));
         if (i == 2 && inputCount == 6) {
           offsetY += 4 * cellHeight;
-          g.translate(offsetX + x, offsetY + y);
-          g.rotate(-Math.PI / 2.0);
-          g.drawString(header.getIterator(), -middleOffset, 0);
-          g.rotate(Math.PI / 2.0);
-          g.translate(-(offsetX + x), -(offsetY + y));
+          gfx.translate(offsetX + x, offsetY + y);
+          gfx.rotate(-Math.PI / 2.0);
+          gfx.drawString(header.getIterator(), -middleOffset, 0);
+          gfx.rotate(Math.PI / 2.0);
+          gfx.translate(-(offsetX + x), -(offsetY + y));
         }
-      } else g.drawString(header.getIterator(), offsetX + x - middleOffset, offsetY + y);
-      if ((i == 4 && inputCount == 5) || (i == 5))
-        g.drawString(header.getIterator(), 4 * cellWidth + offsetX + x - middleOffset, offsetY + y);
+      } else {
+        gfx.drawString(header.getIterator(), offsetX + x - middleOffset, offsetY + y);
+      }
+      if ((i == 4 && inputCount == 5) || (i == 5)) {
+        gfx.drawString(header.getIterator(), 4 * cellWidth + offsetX + x - middleOffset, offsetY + y);
+      }
     }
 
     x += headHeight + 11;
@@ -847,30 +852,30 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     /* Here the lines are placed */
     switch (cols) {
       case 2:
-        drawKmapLine(g, new Point(x + cellWidth, y - 8), new Point(x + 2 * cellWidth, y - 8));
+        drawKmapLine(gfx, new Point(x + cellWidth, y - 8), new Point(x + 2 * cellWidth, y - 8));
         break;
       case 4:
-        drawKmapLine(g, new Point(x + 2 * cellWidth, y - 8), new Point(x + 4 * cellWidth, y - 8));
+        drawKmapLine(gfx, new Point(x + 2 * cellWidth, y - 8), new Point(x + 4 * cellWidth, y - 8));
         drawKmapLine(
-            g,
+            gfx,
             new Point(x + cellWidth, y + 9 + rows * cellHeight),
             new Point(x + 3 * cellWidth, y + 9 + rows * cellHeight));
         break;
       case 8:
         drawKmapLine(
-            g,
+            gfx,
             new Point(x + cellWidth, y + 8 + rows * cellHeight + headHeight + (headHeight >> 2)),
             new Point(
                 x + 3 * cellWidth, y + 8 + rows * cellHeight + headHeight + (headHeight >> 2)));
         drawKmapLine(
-            g,
+            gfx,
             new Point(
                 x + 5 * cellWidth, y + 8 + rows * cellHeight + headHeight + (headHeight >> 2)),
             new Point(
                 x + 7 * cellWidth, y + 8 + rows * cellHeight + headHeight + (headHeight >> 2)));
-        drawKmapLine(g, new Point(x + 2 * cellWidth, y - 8), new Point(x + 6 * cellWidth, y - 8));
+        drawKmapLine(gfx, new Point(x + 2 * cellWidth, y - 8), new Point(x + 6 * cellWidth, y - 8));
         drawKmapLine(
-            g,
+            gfx,
             new Point(x + 4 * cellWidth, y + 8 + rows * cellHeight),
             new Point(x + 8 * cellWidth, y + 8 + rows * cellHeight));
         break;
@@ -880,29 +885,29 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
     switch (rows) {
       case 2:
-        drawKmapLine(g, new Point(x - 8, y + cellHeight), new Point(x - 8, y + 2 * cellHeight));
+        drawKmapLine(gfx, new Point(x - 8, y + cellHeight), new Point(x - 8, y + 2 * cellHeight));
         break;
       case 4:
-        drawKmapLine(g, new Point(x - 8, y + 2 * cellHeight), new Point(x - 8, y + 4 * cellHeight));
+        drawKmapLine(gfx, new Point(x - 8, y + 2 * cellHeight), new Point(x - 8, y + 4 * cellHeight));
         drawKmapLine(
-            g,
+            gfx,
             new Point(x + cols * cellWidth + 8, y + cellHeight),
             new Point(x + cols * cellWidth + 8, y + 3 * cellHeight));
         break;
       case 8:
-        drawKmapLine(g, new Point(x - 8, y + 4 * cellHeight), new Point(x - 8, y + 8 * cellHeight));
+        drawKmapLine(gfx, new Point(x - 8, y + 4 * cellHeight), new Point(x - 8, y + 8 * cellHeight));
         drawKmapLine(
-            g,
+            gfx,
             new Point(x + cols * cellWidth + 8, y + 2 * cellHeight),
             new Point(x + cols * cellWidth + 8, y + 6 * cellHeight));
         drawKmapLine(
-            g,
+            gfx,
             new Point(
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 1 * cellHeight),
             new Point(
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 3 * cellHeight));
         drawKmapLine(
-            g,
+            gfx,
             new Point(
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 5 * cellHeight),
             new Point(
@@ -914,67 +919,67 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
   }
 
-  private void paintKMap(Graphics2D g, int x, int y, TruthTable table) {
+  private void paintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
     final var rows = 1 << rowVars;
     final var cols = 1 << colVars;
-    g.setFont(entryFont);
-    final var fm = g.getFontMetrics();
+    gfx.setFont(entryFont);
+    final var fm = gfx.getFontMetrics();
     final var dy = (cellHeight + fm.getAscent()) / 2;
 
     kMapArea = Bounds.create(x, y, cols * cellWidth, rows * cellHeight);
-    final var oldstroke = g.getStroke();
-    g.setStroke(new BasicStroke(2));
-    g.drawLine(x - cellHeight, y - cellHeight, x, y);
-    g.setStroke(oldstroke);
+    final var oldstroke = gfx.getStroke();
+    gfx.setStroke(new BasicStroke(2));
+    gfx.drawLine(x - cellHeight, y - cellHeight, x, y);
+    gfx.setStroke(oldstroke);
     final var outputColumn = table.getOutputIndex(output);
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
         final var row = getTableRow(i, j, rows, cols);
         var entry = table.getOutputEntry(row, outputColumn);
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX)
           entry = provisionalValue;
         if (entry.isError()) {
-          g.setColor(Value.ERROR_COLOR);
-          g.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
-          g.setColor(Color.BLACK);
+          gfx.setColor(Value.ERROR_COLOR);
+          gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
+          gfx.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {
-          g.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
+          gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
         }
-        g.setStroke(new BasicStroke(2));
-        g.drawRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
-        g.setStroke(oldstroke);
+        gfx.setStroke(new BasicStroke(2));
+        gfx.drawRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
+        gfx.setStroke(oldstroke);
       }
     }
 
     if (outputColumn < 0) return;
 
-    kMapGroups.paint(g, x, y, cellWidth, cellHeight);
-    g.setColor(Color.BLUE);
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
+    kMapGroups.paint(gfx, x, y, cellWidth, cellHeight);
+    gfx.setColor(Color.BLUE);
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
         final var row = getTableRow(i, j, rows, cols);
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX) {
           final var text = provisionalValue.getDescription();
-          g.setColor(Color.BLACK);
-          g.drawString(
+          gfx.setColor(Color.BLACK);
+          gfx.drawString(
               text,
               x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
               y + i * cellHeight + dy);
-          g.setColor(Color.BLUE);
+          gfx.setColor(Color.BLUE);
         } else {
           final var entry = table.getOutputEntry(row, outputColumn);
           final var text = entry.getDescription();
-          g.drawString(
+          gfx.drawString(
               text,
               x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
               y + i * cellHeight + dy);
         }
       }
     }
-    g.setColor(Color.BLACK);
+    gfx.setColor(Color.BLACK);
   }
 
   public void setEntryProvisional(int y, int x, Entry value) {
@@ -1079,9 +1084,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     final var row = getRow(e);
     if (row < 0) return;
     final var col = getOutputColumn(e);
-    TruthTable tt = model.getTruthTable();
+    final var tt = model.getTruthTable();
     tt.expandVisibleRows();
-    Entry entry = tt.getOutputEntry(row, col);
+    final var entry = tt.getOutputEntry(row, col);
     if (entry.equals(Entry.DONT_CARE)) {
       tt.setOutputEntry(row, col, Entry.ZERO);
     } else if (entry.equals(Entry.ZERO)) {

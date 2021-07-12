@@ -231,8 +231,7 @@ class TablePanel extends LogPanel {
       update();
     }
 
-    public void filePropertyChanged(Model.Event event) {}
-
+    @Override
     public void selectionChanged(Model.Event event) {
       computeRowCount();
     }
@@ -272,6 +271,7 @@ class TablePanel extends LogPanel {
       }
     }
 
+    @Override
     public void stateChanged(ChangeEvent event) {
       int newMaximum = getMaximum();
       int newExtent = getVisibleAmount();

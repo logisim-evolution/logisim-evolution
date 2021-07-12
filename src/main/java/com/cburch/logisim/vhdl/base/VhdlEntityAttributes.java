@@ -321,12 +321,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void aboutToSave(HdlModel source) {}
-
-    @Override
-    public void displayChanged(HdlModel source) {}
-
-    @Override
     public void appearanceChanged(HdlModel source) {
       attrs.vhdlInstance.recomputeBounds();
       attrs.fireAttributeValueChanged(

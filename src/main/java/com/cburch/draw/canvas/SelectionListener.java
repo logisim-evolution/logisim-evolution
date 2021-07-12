@@ -28,7 +28,9 @@
 
 package com.cburch.draw.canvas;
 
-public interface SelectionListener extends java.util.EventListener {
+import java.util.EventListener;
+
+public interface SelectionListener extends EventListener {
   default void selectionChanged(SelectionEvent e) {
     // default implementation
   }

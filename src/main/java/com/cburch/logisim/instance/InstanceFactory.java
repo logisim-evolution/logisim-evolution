@@ -99,7 +99,9 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   // event methods
-  protected void configureNewInstance(Instance instance) {}
+  protected void configureNewInstance(Instance instance) {
+    // dummy imlementation
+  }
 
   public boolean contains(Location loc, AttributeSet attrs) {
     Bounds bds = getOffsetBounds(attrs);
@@ -108,9 +110,9 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     }
     return bds.contains(loc, 1);
   }
-  
+
   public Icon getIcon() {
-    return icon;  
+    return icon;
   }
 
   @Override
@@ -135,8 +137,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public final void drawGhost(
-      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+  public final void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     InstancePainter painter = context.getInstancePainter();
     Graphics g = painter.getGraphics();
     g.setColor(color);
@@ -348,7 +349,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   public void setShouldSnap(boolean value) {
     shouldSnap = value;
   }
-  
+
   public boolean providesSubCircuitMenu() {
     return false;
   }

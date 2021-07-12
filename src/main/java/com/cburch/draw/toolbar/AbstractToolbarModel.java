@@ -38,30 +38,35 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
     listeners = new ArrayList<>();
   }
 
+  @Override
   public void addToolbarModelListener(ToolbarModelListener listener) {
     listeners.add(listener);
   }
 
   protected void fireToolbarAppearanceChanged() {
-    ToolbarModelEvent event = new ToolbarModelEvent(this);
-    for (ToolbarModelListener listener : listeners) {
+    final var event = new ToolbarModelEvent(this);
+    for (final var listener : listeners) {
       listener.toolbarAppearanceChanged(event);
     }
   }
 
   protected void fireToolbarContentsChanged() {
-    ToolbarModelEvent event = new ToolbarModelEvent(this);
-    for (ToolbarModelListener listener : listeners) {
+    final var event = new ToolbarModelEvent(this);
+    for (final var listener : listeners) {
       listener.toolbarContentsChanged(event);
     }
   }
 
+  @Override
   public abstract List<ToolbarItem> getItems();
 
+  @Override
   public abstract boolean isSelected(ToolbarItem item);
 
+  @Override
   public abstract void itemSelected(ToolbarItem item);
 
+  @Override
   public void removeToolbarModelListener(ToolbarModelListener listener) {
     listeners.remove(listener);
   }

@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
@@ -80,7 +81,7 @@ public class AssemblerPanel extends JPanel
         LocaleListener,
         ActionListener,
         BaseKeyListenerContract,
-        DocumentListener,
+        BaseDocumentListenerContract,
         CaretListener,
         BaseWindowListenerContract {
 
@@ -365,9 +366,6 @@ public class AssemblerPanel extends JPanel
     documentChanged = true;
     assembler.checkAndBuildTokens(asmWindow.getCaretLineNumber());
   }
-
-  @Override
-  public void changedUpdate(DocumentEvent e) {}
 
   @Override
   public void caretUpdate(CaretEvent e) {

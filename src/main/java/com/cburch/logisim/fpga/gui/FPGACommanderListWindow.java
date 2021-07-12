@@ -28,20 +28,20 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.contracts.BaseListDataListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 
 @SuppressWarnings("serial")
-public class FPGACommanderListWindow extends JFrame implements WindowListener, ListDataListener {
+public class FPGACommanderListWindow extends JFrame implements BaseWindowListenerContract, BaseListDataListenerContract {
 
   private final String Title;
   private final JList<Object> textArea = new JList<>();
@@ -89,36 +89,15 @@ public class FPGACommanderListWindow extends JFrame implements WindowListener, L
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     IsActive = false;
     setVisible(false);
   }
 
   @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
   public void windowActivated(WindowEvent e) {
     IsActive = true;
   }
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
-
-  @Override
-  public void intervalAdded(ListDataEvent e) {}
-
-  @Override
-  public void intervalRemoved(ListDataEvent e) {}
 
   @Override
   public void contentsChanged(ListDataEvent e) {

@@ -30,11 +30,11 @@ package com.cburch.draw.gui;
 
 import static com.cburch.draw.Strings.S;
 
+import com.cburch.contracts.BaseSelectionListenerContract;
 import com.cburch.draw.actions.ModelChangeAttributeAction;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
-import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.AttributeMapKey;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
@@ -44,7 +44,7 @@ import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import java.util.HashMap;
 import java.util.Map;
 
-class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
+class AttrTableSelectionModel extends AttributeSetTableModel implements BaseSelectionListenerContract {
   private final Canvas canvas;
 
   public AttrTableSelectionModel(Canvas canvas) {
@@ -87,6 +87,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   //
   // SelectionListener method
   //
+  @Override
   public void selectionChanged(SelectionEvent e) {
     fireTitleChanged();
   }
