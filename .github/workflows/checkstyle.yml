@@ -22,7 +22,7 @@ jobs:
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_checkstyle: ${{ steps.filter.outputs.src }}
-      # These are source files matching our filter  that are affected by the PR.
+      # These are source files matching our filter that are affected by the PR.
       changed_files: ${{ steps.filter.outputs.src_files }}
 
     steps:

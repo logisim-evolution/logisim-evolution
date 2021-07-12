@@ -1,6 +1,6 @@
 # Runs markdownlint on all *.md files
 
-name: "Markdown Lint"
+name: "MD Lint"
 
 on:
   push:
@@ -9,14 +9,18 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  lint:
+  markdown_lint:
+    name: "Markdown linter"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
 
     # https://github.com/marketplace/actions/paths-changes-filter
-    - uses: dorny/paths-filter@v2
+    - name: "Look for changed doc related files..."
+      uses: dorny/paths-filter@v2
       id: filter
       with:
         filters: |
@@ -29,5 +33,7 @@ jobs:
       uses: ruzickap/action-my-markdown-linter@v1
       if: steps.filter.outputs.docs == 'true'
       with:
+        # LICENSE is externally sourced and we're not going to fix it.
         exclude: "LICENSE.md"
         config_file: .markdownlint.yaml
+
