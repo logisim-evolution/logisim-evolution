@@ -74,6 +74,7 @@ public abstract class Tool implements AttributeDefaultProvider {
     return dflt_cursor;
   }
 
+  @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     return null;
   }
@@ -98,6 +99,7 @@ public abstract class Tool implements AttributeDefaultProvider {
     return null;
   }
 
+  @Override
   public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
     return false;
   }
@@ -121,8 +123,6 @@ public abstract class Tool implements AttributeDefaultProvider {
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {}
 
   public void paintIcon(ComponentDrawContext c, int x, int y) {}
-
-  public void registerParent(java.awt.Component parent) {}
 
   public void select(Canvas canvas) {}
 
