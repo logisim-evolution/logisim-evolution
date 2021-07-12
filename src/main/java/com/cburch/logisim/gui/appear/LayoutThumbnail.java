@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.appear;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearancePort;
 import com.cburch.logisim.circuit.appear.DynamicElement;
@@ -37,7 +36,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.Led;
-import com.cburch.logisim.std.io.RGBLed;
+import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -126,7 +125,7 @@ public class LayoutThumbnail extends JComponent {
           int y = b.getY();
           int w = b.getWidth();
           int h = b.getHeight();
-          if (elt.getFactory() instanceof Led || elt.getFactory() instanceof RGBLed) {
+          if (elt.getFactory() instanceof Led || elt.getFactory() instanceof RgbLed) {
             gfxCopy.drawOval(x, y, w, h);
           } else {
             gfxCopy.drawRect(x, y, w, h);

@@ -34,7 +34,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class AppearEditIcon extends AbstractIcon {
+public class AppearEditIcon extends BaseIcon {
 
   private final int[] tip = {0, 14, 1, 15, 0, 15};
   private final int[] body = {0, 13, 13, 0, 15, 2, 2, 15};

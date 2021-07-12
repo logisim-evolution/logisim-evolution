@@ -22,50 +22,19 @@ package com.cburch.logisim.gui.icons;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class LedBarIcon extends AnimatedIcon {
-
-  private int state = 0;
-
-  @Override
-  public void animationUpdate() {
-    state = (state + 1) % 4;
-  }
-
-  @Override
-  public void resetToStatic() {
-    state = 0;
-  }
+public class LedBarIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.DARK_GRAY);
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
 
-    Color col1;
-    Color col2;
-    switch (state) {
-      case 0:
-        col1 = Color.gray;
-        col2 = Color.gray;
-        break;
-      case 1:
-        col1 = Color.green;
-        col2 = Color.gray;
-        break;
-      case 3:
-        col1 = Color.gray;
-        col2 = Color.green;
-        break;
-      case 4:
-      default:
-        col1 = Color.green;
-        col2 = Color.green;
-        break;
-    }
+    final var col1 = Color.green;
+    final var col2 = Color.gray;
 
-    int y = scale(2);
-    int h = scale(12);
-    int w = scale(5);
+    final var y = scale(2);
+    final var h = scale(12);
+    final var w = scale(5);
     g2.setColor(col1);
     g2.fillRect(scale(2), y, w, h);
     g2.setColor(col2);

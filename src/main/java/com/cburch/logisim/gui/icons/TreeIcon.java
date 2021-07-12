@@ -34,7 +34,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 
-public class TreeIcon extends AbstractIcon {
+public class TreeIcon extends BaseIcon {
 
   private final Rectangle paper =
       new Rectangle(

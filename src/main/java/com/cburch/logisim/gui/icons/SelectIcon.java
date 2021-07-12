@@ -31,7 +31,7 @@ package com.cburch.logisim.gui.icons;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Graphics2D;
 
-public class SelectIcon extends AbstractIcon {
+public class SelectIcon extends BaseIcon {
 
   public static void paint(Graphics2D g2) {
     int[] xp = {3, 3, 7, 10, 11, 9, 14};

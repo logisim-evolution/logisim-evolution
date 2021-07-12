@@ -34,20 +34,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class TtyIcon extends AnimatedIcon {
+public class TtyIcon extends BaseIcon {
 
-  private static final String display = "__Hello World!__";
-  private int index = 0;
-
-  @Override
-  public void animationUpdate() {
-    index = (index + 1) % (display.length() - 2);
-  }
-
-  @Override
-  public void resetToStatic() {
-    index = 0;
-  }
+  private static final String display = "Hello World!";
 
   @Override
   protected void paintIcon(Graphics2D g2) {
@@ -55,13 +44,9 @@ public class TtyIcon extends AnimatedIcon {
     g2.fillRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
     g2.setColor(Color.BLACK);
     g2.drawRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
-    Font f = Tty.DEFAULT_FONT.deriveFont(scale((float) 5)).deriveFont(Font.BOLD);
-    TextLayout t =
-        new TextLayout(display.substring(index, index + 3), f, g2.getFontRenderContext());
+    final var f = Tty.DEFAULT_FONT.deriveFont(scale((float) 5)).deriveFont(Font.BOLD);
+    final var t = new TextLayout(display.substring(0, 3), f, g2.getFontRenderContext());
     g2.setColor(Color.yellow);
-    t.draw(
-        g2,
-        (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
-        (float) (getIconHeight() / 2 - t.getBounds().getCenterY()));
+    t.draw(g2, (float) (getIconWidth() / 2 - t.getBounds().getCenterX()), (float) (getIconHeight() / 2 - t.getBounds().getCenterY()));
   }
 }

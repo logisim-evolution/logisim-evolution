@@ -34,7 +34,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class TextIcon extends AbstractIcon {
+public class TextIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {

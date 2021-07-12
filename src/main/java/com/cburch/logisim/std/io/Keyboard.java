@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ButtonIcon;
+import com.cburch.logisim.gui.icons.KeyboardIcon;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
@@ -178,7 +179,8 @@ public class Keyboard extends InstanceFactory {
 
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  private static final char FORM_FEED = '\u000c'; // control-L
+  @SuppressWarnings("checkstyle:IllegalTokenText")
+  private static final char FORM_FEED = 12; // control-L (LINE FEED)
 
   private static final Attribute<Integer> ATTR_BUFFER =
       Attributes.forIntegerRange("buflen", S.getter("keybBufferLengthAttr"), 1, 256);
@@ -189,7 +191,7 @@ public class Keyboard extends InstanceFactory {
         new Attribute[] {ATTR_BUFFER, StdAttr.EDGE_TRIGGER},
         new Object[] {32, StdAttr.TRIG_RISING});
     setOffsetBounds(Bounds.create(0, -15, WIDTH, HEIGHT));
-    setIcon(new ButtonIcon(S.getter("keyboardComponent")));
+    setIcon(new KeyboardIcon());
     setInstancePoker(Poker.class);
 
     final var ps = new Port[5];
@@ -289,7 +291,7 @@ public class Keyboard extends InstanceFactory {
         py[2] = y1 + 3;
         g.drawPolyline(px, py, 3);
       } else if (key == '\n') {
-        int y1 = ys - 3;
+        final var y1 = ys - 3;
         px[0] = w1;
         py[0] = ys - asc;
         px[1] = w1;

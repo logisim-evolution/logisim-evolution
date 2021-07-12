@@ -83,9 +83,24 @@ public class AnimationTimer extends TimerTask implements PropertyChangeListener 
     }
   }
 
+  /**
+   * AnimationListener.
+   *
+   * @deprecated AnimatedIcon class is deprecated and will be removed in next release.
+   */
   public interface AnimationListener {
+    /**
+     * animationUpdate.
+     *
+     * @deprecated AnimatedIcon class is deprecated and will be removed in next release.
+     */
     void animationUpdate();
 
+    /**
+     * resetToStatic.
+     *
+     * @deprecated AnimatedIcon class is deprecated and will be removed in next release.
+     */
     void resetToStatic();
   }
 }

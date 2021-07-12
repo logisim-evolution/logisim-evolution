@@ -34,7 +34,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class FatArrowIcon extends AbstractIcon {
+public class FatArrowIcon extends BaseIcon {
 
   private static final int[] points = {2, 7, 7, 2, 12, 7, 9, 7, 9, 12, 5, 12, 5, 7};
   private final Direction dir;
