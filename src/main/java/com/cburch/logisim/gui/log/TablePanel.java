@@ -206,7 +206,9 @@ class TablePanel extends LogPanel {
   }
 
   private static class MyListener implements Model.Listener {
-    private void computeRowCount() {}
+    private void computeRowCount() {
+      // dummy, private
+    }
 
     void update() {}
 
@@ -218,7 +220,7 @@ class TablePanel extends LogPanel {
     @Override
     public void historyLimitChanged(Model.Event event) {
       System.out.println("todo");
-      //  update(); maybe?
+      // TODO: update(); maybe?
     }
 
     @Override

@@ -162,26 +162,6 @@ public class AttributeSets {
     }
   }
 
-  public static void copy(AttributeSet src, AttributeSet dst) {
-    if (src == null || src.getAttributes() == null) return;
-    for (Attribute<?> attr : src.getAttributes()) {
-      @SuppressWarnings("unchecked")
-      Attribute<Object> attrObj = (Attribute<Object>) attr;
-      Object value = src.getValue(attr);
-      dst.setValue(attrObj, value);
-    }
-  }
-
-  public static AttributeSet fixedSet(Attribute<?>[] attrs, Object[] initValues) {
-    if (attrs.length > 1) {
-      return new FixedSet(attrs, initValues);
-    } else if (attrs.length == 1) {
-      return new SingletonSet(attrs[0], initValues[0]);
-    } else {
-      return EMPTY;
-    }
-  }
-
   public static final AttributeSet EMPTY =
       new AttributeSet() {
         @Override
@@ -230,5 +210,28 @@ public class AttributeSets {
         }
       };
 
-  private AttributeSets() {}
+  private AttributeSets() {
+    // dummy, private
+  }
+
+  public static void copy(AttributeSet src, AttributeSet dst) {
+    if (src == null || src.getAttributes() == null) return;
+    for (Attribute<?> attr : src.getAttributes()) {
+      @SuppressWarnings("unchecked")
+      Attribute<Object> attrObj = (Attribute<Object>) attr;
+      Object value = src.getValue(attr);
+      dst.setValue(attrObj, value);
+    }
+  }
+
+  public static AttributeSet fixedSet(Attribute<?>[] attrs, Object[] initValues) {
+    if (attrs.length > 1) {
+      return new FixedSet(attrs, initValues);
+    } else if (attrs.length == 1) {
+      return new SingletonSet(attrs[0], initValues[0]);
+    } else {
+      return EMPTY;
+    }
+  }
+
 }
