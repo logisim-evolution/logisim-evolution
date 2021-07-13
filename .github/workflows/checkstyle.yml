@@ -5,7 +5,7 @@
 #
 # Marcin Orlowski
 
-name: "Code style JAR"
+name: "Code style"
 on:
   push:
     # No need to run on push to "develop" as there should not be any direct pushes.
