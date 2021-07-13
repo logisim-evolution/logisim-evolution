@@ -62,8 +62,8 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ./gradlew shadowJar
 ```
 
-which will create `logisim-evolution-<version>-all.jar` in `build/libs/`. To run it
-(JRE/JDK v14 or newer required) type:
+which will create `logisim-evolution-<version>-all.jar` in `build/libs/`.
+To run it with JRE/JDK 14 or higher, type:
 
 ```bash
 java -jar logisim-evolution-<version>-all.jar
