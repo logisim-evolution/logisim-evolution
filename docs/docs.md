@@ -58,7 +58,7 @@ will be stored in the new format.
 
 `Logisim-evolution` is built with multi-language support, which means we have done our best to ensure all messages and
 texts you see on the screeen can be translated. Many of them were automatically translated using [DeepL](https://www.deepl.com/).
-If you should find bizarre translations, please do not hesitate to [correct them](docs/developers.md)
+If you should find bizarre translations, please do not hesitate to [correct them](developers.md)
 in the corresponding property files and to make a pull request!
 
 ---

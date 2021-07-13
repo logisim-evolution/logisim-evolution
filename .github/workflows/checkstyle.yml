@@ -66,9 +66,6 @@ jobs:
     # such instead of installing packaged version via apt.
 
     steps:
-    - name: "Install packages..."
-      run: sudo apt-get install checkstyle unzip libcommons-cli-java
-
     - name: "Checkout sources"
       uses: actions/checkout@v2
 
@@ -76,20 +73,19 @@ jobs:
       # We need bash here as java-wrappers.sh may not work with other shells.
       shell: bash
       run: |
-        echo "Using $(checkstyle --version)"
+        VERSION="8.44"
+        JAR="checkstyle-${VERSION}-all.jar"
+        URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${VERSION}/${JAR}"
 
+        echo "Downloading ${JAR}..."
+        wget --quiet "${URL}"
+
+        # Extracting config file for possible manipulations.
         declare -r REPORT_FILE="output.txt"
         declare -r CHECKS_FILE="google_checks.xml"
 
-        # Find where checkstyle.jar lives and get built-in google_checks.xml config out of it.
-        source /usr/lib/java-wrappers/java-wrappers.sh
-        locate_jar checkstyle
-        if [[ -z "${found_jar}" ]]; then
-          echo "checkstyle.jar not found."
-          exit 100
-        fi
-
-        unzip -d . "${found_jar}" "${CHECKS_FILE}"
+        # Extract built-in config file.
+        unzip -qq -d . "${JAR}" "${CHECKS_FILE}"
 
         # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
         # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
@@ -100,7 +96,10 @@ jobs:
         ln -s "${supp_file}" checkstyle-suppressions.xml
 
         # Let's lint eventually...
-        checkstyle -o "${REPORT_FILE}" -c "${CHECKS_FILE}" ${{ needs.analyze_sources.outputs.changed_files }}
+        echo "*********************************************************"
+        java -version
+        echo "Linting using $(java -jar "${JAR}" --version)"
+        java -jar "${JAR}" -o "${REPORT_FILE}" -c "${CHECKS_FILE}" ${{ needs.analyze_sources.outputs.changed_files }}
 
         # Plain output always contains "Starting audit..." and "Audit done." lines. Let's remove them.
         sed -i 's/^Starting audit...$//; s/^Audit done.$//' "${REPORT_FILE}"

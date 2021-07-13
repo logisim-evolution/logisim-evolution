@@ -20,7 +20,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
   * **[Downloads](#download)**
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
-  * [Bugs reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
+  * [Bug reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
   * [For developers](docs/developers.md)
   * [How to contribute](docs/developers.md#how-to-contribute)
   * [Credits](docs/credits.md)
@@ -52,7 +52,7 @@ Project highlights:
 ## Requirements ##
 
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
-It requires [Java 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
+It requires [Java 14 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
 
 ## Download ###
 
@@ -72,7 +72,7 @@ include the Java runtime and do not require it to be installed separately:
   or via [Homebrew](https://brew.sh/) (by typing `brew install --cask logisim-evolution`).
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
-is also available and can be run on any system with a Java 11 or newer runtime installed.
+is also available and can be run on any system with a supported Java runtime installed.
 
 ---
 
