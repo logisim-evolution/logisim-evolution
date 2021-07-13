@@ -30,8 +30,8 @@ package com.cburch.logisim.gui.appear;
 
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseMouseMotionListenerContract;
-import com.cburch.contracts.BaseSelectionListenerContract;
 import com.cburch.draw.canvas.SelectionEvent;
+import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearancePort;
@@ -50,7 +50,7 @@ import javax.swing.JViewport;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
-class LayoutPopupManager implements BaseSelectionListenerContract, BaseMouseListenerContract, BaseMouseMotionListenerContract {
+class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract, BaseMouseMotionListenerContract {
   private final CanvasPane canvasPane;
   private final AppearanceCanvas canvas;
   private Popup curPopup;

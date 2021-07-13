@@ -30,15 +30,9 @@ package com.cburch.logisim.gui.test;
 
 interface ModelListener {
 
-  default void testingChanged() {
-    // dummy implementation
-  }
+  void testingChanged();
 
-  default void testResultsChanged(int numPass, int numFail) {
-    // dummy implementation
-  }
+  void testResultsChanged(int numPass, int numFail);
 
-  default void vectorChanged() {
-    // dummy implementation
-  }
+  void vectorChanged();
 }

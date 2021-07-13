@@ -41,7 +41,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -275,6 +274,30 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       fail.setText(S.get("failMessage", Integer.toString(numFail)));
       finished = numPass + numFail;
     }
+
+    @Override
+    public void vectorChanged() {
+      // do nothing
+    }
+
+    // simulator
+    @Override
+    public void simulatorReset(Simulator.Event e) {
+      // FIXME: is no-op the right implementation here?
+      // ? curModel.propagationCompleted();
+    }
+
+    @Override
+    public void propagationCompleted(Simulator.Event e) {
+      // FIXME: is no-op the right implementation here?
+      // curMoedl.propagationCompleted();
+    }
+
+    @Override
+    public void simulatorStateChanged(Simulator.Event e) {
+      // do nothing
+    }
+
   }
 
   private class WindowMenuManager extends WindowMenuItemManager

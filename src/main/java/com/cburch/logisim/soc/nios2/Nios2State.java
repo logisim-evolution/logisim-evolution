@@ -724,8 +724,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   public int getEntryPoint(CircuitState cState) {
     if (cState != null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-      if (comp != null) return 0;
-      return ((ProcessorState) cState.getData(comp)).getEntryPoint();
+      if (comp != null) {
+        return ((ProcessorState) cState.getData(comp)).getEntryPoint();
+      }
     }
     return 0;
   }

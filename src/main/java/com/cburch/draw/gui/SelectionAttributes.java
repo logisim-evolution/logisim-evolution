@@ -28,9 +28,9 @@
 
 package com.cburch.draw.gui;
 
-import com.cburch.contracts.BaseSelectionListenerContract;
 import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
+import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
@@ -137,7 +137,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
   }
 
-  private class Listener implements BaseSelectionListenerContract, AttributeListener {
+  private class Listener implements SelectionListener, AttributeListener {
     //
     // AttributeSet listener
     //

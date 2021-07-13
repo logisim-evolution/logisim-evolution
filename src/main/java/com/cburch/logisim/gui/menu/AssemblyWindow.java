@@ -263,6 +263,17 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
     windows.setVisible(bool);
   }
 
+  @Override
+  public void keyTyped(KeyEvent ke) {
+    // FIXME: we should have some more advanced logic here pehaps?
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void keyPressed(KeyEvent ke) {
+    // FIXME: this should have some more advanced logic?
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
 
   @Override
   public void keyReleased(KeyEvent ke) {
@@ -276,6 +287,16 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
     if (e.getSource().isAutoTicking()) {
       updateHighlightLine();
     }
+  }
+
+  @Override
+  public void simulatorReset(Simulator.Event e) {
+    // do nothing
+  }
+
+  @Override
+  public void simulatorStateChanged(Simulator.Event e) {
+    // do nothing
   }
 
   public void setTitle(String title) {

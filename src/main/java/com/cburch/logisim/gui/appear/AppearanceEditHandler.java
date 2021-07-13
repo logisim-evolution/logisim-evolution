@@ -30,13 +30,13 @@ package com.cburch.logisim.gui.appear;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.contracts.BaseSelectionListenerContract;
 import com.cburch.draw.actions.ModelDeleteHandleAction;
 import com.cburch.draw.actions.ModelInsertHandleAction;
 import com.cburch.draw.actions.ModelReorderAction;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
+import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
@@ -59,7 +59,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class AppearanceEditHandler extends EditHandler implements BaseSelectionListenerContract, PropertyChangeListener, CanvasModelListener {
+public class AppearanceEditHandler extends EditHandler implements SelectionListener, PropertyChangeListener, CanvasModelListener {
   private final AppearanceCanvas canvas;
 
   AppearanceEditHandler(AppearanceCanvas canvas) {

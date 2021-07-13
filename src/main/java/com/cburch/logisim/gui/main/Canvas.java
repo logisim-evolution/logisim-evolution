@@ -790,6 +790,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     //
     // MouseListener methods
     //
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -1135,6 +1139,11 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     public void propagationCompleted(Simulator.Event e) {
       paintThread.requestRepaint();
       if (e.didTick()) waitForRepaintDone();
+    }
+
+    @Override
+    public void simulatorStateChanged(Simulator.Event e) {
+      // do nothing
     }
 
     @Override
