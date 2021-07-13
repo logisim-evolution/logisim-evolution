@@ -11,12 +11,8 @@ import javax.swing.event.MouseInputListener;
  * methods. That's saves some efforts and reduces overall LOC.
  */
 public interface BaseMouseInputListenerContract extends MouseInputListener {
-//  @Override
-//  default void mouseClicked(MouseEvent mouseEvent) {
-//    // dummy implementation
-//  }
-
   @Override
+  // No default implementation provided intentionally.
   void mouseClicked(MouseEvent mouseEvent);
 
   @Override
