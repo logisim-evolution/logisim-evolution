@@ -20,7 +20,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
   * **[Downloads](#download)**
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
-  * [Bugs reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
+  * [Bug reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
   * [For developers](docs/developers.md)
   * [How to contribute](docs/developers.md#how-to-contribute)
   * [Credits](docs/credits.md)
