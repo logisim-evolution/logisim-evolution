@@ -44,7 +44,6 @@ import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringGetter;
@@ -110,10 +109,9 @@ class ExpressionTab extends AnalyzerTab {
 
     @Override
     public void fireTableChanged(TableModelEvent event) {
-      int    index;
       TableModelListener listener;
-      Object[] list = listenerList.getListenerList();
-      for (index = 0; index < list.length; index += 2) {
+      final var list = listenerList.getListenerList();
+      for (var index = 0; index < list.length; index += 2) {
         listener = (TableModelListener) list[index + 1];
         listener.tableChanged(event);
       }
@@ -121,12 +119,11 @@ class ExpressionTab extends AnalyzerTab {
 
     @Override
     public void setValueAt(Object obj, int row, int column) {
-      NamedExpression ne = listCopy[row];
+      final var ne = listCopy[row];
       if (!(obj instanceof NamedExpression))
         return;
-      NamedExpression e = (NamedExpression) obj;
-      if (ne != e && !ne.name.equals(e.name))
-        return;
+      final var e = (NamedExpression) obj;
+      if (ne != e && !ne.name.equals(e.name)) return;
       listCopy[row] = e;
       if (e.expr != null) model.getOutputExpressions().setExpression(e.name, e.expr, e.exprString);
     }
@@ -164,9 +161,9 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public void expressionChanged(OutputExpressionsEvent event) {
       if (event.getType() == OutputExpressionsEvent.OUTPUT_EXPRESSION) {
-        String name = event.getVariable();
+        final var name = event.getVariable();
         int idx = -1;
-        for (NamedExpression e : listCopy) {
+        for (final var e : listCopy) {
           idx++;
           if (e.name.equals(name)) {
             try {
@@ -234,8 +231,7 @@ class ExpressionTab extends AnalyzerTab {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-        Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       Color fg;
       Color bg;
       if (isSelected) {
@@ -298,7 +294,7 @@ class ExpressionTab extends AnalyzerTab {
     boolean ok() {
       final var exprString = field.getText();
       try {
-        Expression expr = Parser.parse(exprString, model);
+        final var expr = Parser.parse(exprString, model);
         setError(null);
         newExpr = new NamedExpression(oldExpr.name, expr, exprString);
         return true;
@@ -363,8 +359,8 @@ class ExpressionTab extends AnalyzerTab {
     table.setDropMode(DropMode.ON);
 
     final var inputMap = table.getInputMap();
-    for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
-      var accel = menubar.getAccelerator(item);
+    for (final var item : LogisimMenuBar.EDIT_ITEMS) {
+      final var accel = menubar.getAccelerator(item);
       inputMap.put(accel, item);
     }
 
@@ -534,9 +530,10 @@ class ExpressionTab extends AnalyzerTab {
         idx = 0;
       } else if (info.isDrop()) {
         try {
-          JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+          final var dl = (JTable.DropLocation) info.getDropLocation();
           idx = dl.getRow();
         } catch (ClassCastException ignored) {
+          // do nothing
         }
       } else {
         idx = table.getSelectedRow();
@@ -562,7 +559,7 @@ class ExpressionTab extends AnalyzerTab {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-      int idx = table.getSelectedRow();
+      final var idx = table.getSelectedRow();
       if (idx < 0) return null;
       final var ne = (NamedExpression) table.getValueAt(idx, 0);
       final var s = ne.expr != null ? ne.expr.toString(notation) : ne.err;
@@ -575,12 +572,13 @@ class ExpressionTab extends AnalyzerTab {
     }
 
     @Override
-    protected void exportDone(JComponent c, Transferable tdata, int action) { }
+    protected void exportDone(JComponent c, Transferable tdata, int action) {
+      // dummy
+    }
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
-      return table.getRowCount() > 0
-          && support.isDataFlavorSupported(DataFlavor.stringFlavor);
+      return table.getRowCount() > 0 && support.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
   }
 
@@ -593,10 +591,10 @@ class ExpressionTab extends AnalyzerTab {
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {
-          int width = table.getWidth();
-          int height = 14;
-          int n = table.getRowCount();
-          for (int i = 0; i < n; i++) {
+          final var width = table.getWidth();
+          var height = 14;
+          final var n = table.getRowCount();
+          for (var i = 0; i < n; i++) {
             final var ne = (NamedExpression) table.getValueAt(i, 0);
             prettyView.setWidth(width);
             prettyView.setExpression(ne);
@@ -612,7 +610,7 @@ class ExpressionTab extends AnalyzerTab {
           g.setClip(0, 0, width, height);
           g.translate(6 / 2, 14);
           final var n = table.getRowCount();
-          for (int i = 0; i < n; i++) {
+          for (var i = 0; i < n; i++) {
             final var ne = (NamedExpression) table.getValueAt(i, 0);
             prettyView.setForeground(Color.BLACK);
             prettyView.setBackground(Color.WHITE);
@@ -631,9 +629,9 @@ class ExpressionTab extends AnalyzerTab {
           g.translate(6 / 2, 14 / 2);
 
           final var n = table.getRowCount();
-          double y = 0;
+          var y = 0;
           var pg = 0;
-          for (int i = 0; i < n; i++) {
+          for (var i = 0; i < n; i++) {
             final var ne = (NamedExpression) table.getValueAt(i, 0);
             prettyView.setWidth(width - 6);
             prettyView.setForeground(Color.BLACK);

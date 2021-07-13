@@ -46,8 +46,6 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,21 +64,24 @@ public class Caret {
     this.listeners = new ArrayList<>();
     this.cursor = -1;
 
-    Listener l = new Listener();
+    final var l = new Listener();
     hex.addMouseListener(l);
     hex.addMouseMotionListener(l);
     hex.addKeyListener(l);
     hex.addFocusListener(l);
 
-    InputMap imap = hex.getInputMap();
-    ActionMap amap = hex.getActionMap();
-    AbstractAction nullAction =
+    final var imap = hex.getInputMap();
+    final var amap = hex.getActionMap();
+    final var nullAction =
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
-          public void actionPerformed(ActionEvent e) {}
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            // dummy
+          }
         };
-    String nullKey = "null";
+    final var nullKey = "null";
     amap.put(nullKey, nullAction);
     imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nullKey);
     imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), nullKey);
@@ -99,11 +100,11 @@ public class Caret {
 
   private void expose(long loc, boolean scrollTo) {
     if (loc >= 0) {
-      Measures measures = hex.getMeasures();
-      int x = measures.toX(loc);
-      int y = measures.toY(loc);
-      int w = measures.getCellWidth();
-      int h = measures.getCellHeight();
+      final var measures = hex.getMeasures();
+      final var x = measures.toX(loc);
+      final var y = measures.toY(loc);
+      final var w = measures.getCellWidth();
+      final var h = measures.getCellHeight();
       hex.repaint(x - 1, y - 1, w + 2, h + 2);
       if (scrollTo) {
         hex.scrollRectToVisible(new Rectangle(x, y, w, h));
@@ -121,11 +122,11 @@ public class Caret {
 
   void paintForeground(Graphics g, long start, long end) {
     if (cursor >= start && cursor < end && hex.isFocusOwner()) {
-      Measures measures = hex.getMeasures();
-      int x = measures.toX(cursor);
-      int y = measures.toY(cursor);
-      Graphics2D g2 = (Graphics2D) g;
-      Stroke oldStroke = g2.getStroke();
+      final var measures = hex.getMeasures();
+      final var x = measures.toX(cursor);
+      final var y = measures.toY(cursor);
+      final var g2 = (Graphics2D) g;
+      final var oldStroke = g2.getStroke();
       g2.setColor(hex.getForeground());
       g2.setStroke(CURSOR_STROKE);
       g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
@@ -138,12 +139,12 @@ public class Caret {
   }
 
   public void setDot(long value, boolean keepMark) {
-    HexModel model = hex.getModel();
+    final var model = hex.getModel();
     if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) {
       value = -1;
     }
     if (cursor != value) {
-      long oldValue = cursor;
+      final var oldValue = cursor;
       if (highlight != null) {
         hex.getHighlighter().remove(highlight);
         highlight = null;
@@ -157,8 +158,8 @@ public class Caret {
       expose(oldValue, false);
       expose(value, true);
       if (!listeners.isEmpty()) {
-        ChangeEvent event = new ChangeEvent(this);
-        for (ChangeListener l : listeners) {
+        final var event = new ChangeEvent(this);
+        for (final var l : listeners) {
           l.stateChanged(event);
         }
       }
@@ -166,18 +167,21 @@ public class Caret {
   }
 
   private class Listener implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
+    @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void focusLost(FocusEvent e) {
       expose(cursor, false);
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
-      int cols = hex.getMeasures().getColumnCount();
+      final var cols = hex.getMeasures().getColumnCount();
       int rows;
-      boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+      final var shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP:
           if (cursor >= cols) setDot(cursor - cols, shift);
@@ -186,30 +190,31 @@ public class Caret {
           if (cursor >= 1) setDot(cursor - 1, shift);
           break;
         case KeyEvent.VK_DOWN:
-          if (cursor >= hex.getModel().getFirstOffset()
-              && cursor <= hex.getModel().getLastOffset() - cols) {
+          if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - cols) {
             setDot(cursor + cols, shift);
           }
           break;
         case KeyEvent.VK_RIGHT:
-          if (cursor >= hex.getModel().getFirstOffset()
-              && cursor <= hex.getModel().getLastOffset() - 1) {
+          if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - 1) {
             setDot(cursor + 1, shift);
           }
           break;
         case KeyEvent.VK_HOME:
           if (cursor >= 0) {
-            int dist = (int) (cursor % cols);
-            if (dist == 0) setDot(0, shift);
-            else setDot(cursor - dist, shift);
+            final var dist = (int) (cursor % cols);
+            if (dist == 0) {
+              setDot(0, shift);
+            } else {
+              setDot(cursor - dist, shift);
+            }
           }
           break;
         case KeyEvent.VK_END:
           if (cursor >= 0) {
-            HexModel model = hex.getModel();
-            long dest = (cursor / cols * cols) + cols - 1;
+            final var model = hex.getModel();
+            var dest = (cursor / cols * cols) + cols - 1;
             if (model != null) {
-              long end = model.getLastOffset();
+              final var end = model.getLastOffset();
               if (dest > end || dest == cursor) dest = end;
             }
             setDot(dest, shift);
@@ -219,11 +224,11 @@ public class Caret {
           rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
           if (rows > 2) rows--;
           if (cursor >= 0) {
-            long max = hex.getModel().getLastOffset();
+            final var max = hex.getModel().getLastOffset();
             if (cursor + rows * cols <= max) {
               setDot(cursor + rows * cols, shift);
             } else {
-              long n = cursor;
+              var n = cursor;
               while (n + cols < max) n += cols;
               setDot(n, shift);
             }
@@ -235,17 +240,24 @@ public class Caret {
           if (cursor >= rows * cols) setDot(cursor - rows * cols, shift);
           else if (cursor >= cols) setDot(cursor % cols, shift);
           break;
+
+        default:
+          // do nothing
       }
     }
 
-    public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyReleased(KeyEvent e) {
+      // dummy
+    }
 
+    @Override
     public void keyTyped(KeyEvent e) {
-      int mask = e.getModifiersEx();
+      final var mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
 
-      char c = e.getKeyChar();
-      int cols = hex.getMeasures().getColumnCount();
+      final var c = e.getKeyChar();
+      final var cols = hex.getMeasures().getColumnCount();
       switch (c) {
         case ' ':
           if (cursor >= 0) setDot(cursor + 1, (mask & InputEvent.SHIFT_DOWN_MASK) != 0);
@@ -259,44 +271,59 @@ public class Caret {
           // setDot(cursor - 1, (mask & InputEvent.SHIFT_MASK) != 0);
           break;
         default:
-          int digit = Character.digit(e.getKeyChar(), 16);
+          final var digit = Character.digit(e.getKeyChar(), 16);
           if (digit >= 0) {
-            HexModel model = hex.getModel();
+            final var model = hex.getModel();
             if (model != null
                 && cursor >= model.getFirstOffset()
                 && cursor <= model.getLastOffset()) {
-              long curValue = model.get(cursor);
-              long newValue = 16 * curValue + digit;
+              final var curValue = model.get(cursor);
+              final var newValue = 16 * curValue + digit;
               model.set(cursor, newValue);
             }
           }
       }
     }
 
-    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      // dummy
+    }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
-      Measures measures = hex.getMeasures();
-      long loc = measures.toAddress(e.getX(), e.getY());
+      final var measures = hex.getMeasures();
+      final var loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, true);
 
       // TODO should repeat dragged events when mouse leaves the
       // component
     }
 
-    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      // dummy
+    }
 
-    public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {
+      // dummy
+    }
 
-    public void mouseMoved(MouseEvent e) {}
+    @Override
+    public void mouseMoved(MouseEvent e) {
+      // dummy
+    }
 
+    @Override
     public void mousePressed(MouseEvent e) {
-      Measures measures = hex.getMeasures();
-      long loc = measures.toAddress(e.getX(), e.getY());
+      final var measures = hex.getMeasures();
+      final var loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
       if (!hex.isFocusOwner()) hex.requestFocus();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       mouseDragged(e);
     }

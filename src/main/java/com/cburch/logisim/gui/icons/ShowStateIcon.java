@@ -31,57 +31,41 @@ package com.cburch.logisim.gui.icons;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class ShowStateIcon extends AnimatedIcon {
+public class ShowStateIcon extends BaseIcon {
 
   private final boolean pressed;
-  private int state;
 
   public ShowStateIcon(boolean pressed) {
     this.pressed = pressed;
-    state = 5;
   }
 
   @Override
-  protected void paintIcon(Graphics2D g2) {
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
+  protected void paintIcon(Graphics2D gfx) {
+    gfx.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
     if (pressed) {
-      g2.setColor(Color.MAGENTA.brighter().brighter().brighter());
-      g2.fillRect(0, 0, getIconWidth(), getIconHeight());
+      gfx.setColor(Color.MAGENTA.brighter().brighter().brighter());
+      gfx.fillRect(0, 0, getIconWidth(), getIconHeight());
     }
-    g2.setColor(Color.BLACK);
-    g2.drawRect(0, 0, getIconWidth(), getIconHeight() / 2);
-    Font f = g2.getFont().deriveFont((float) getIconWidth() / (float) 2);
-    StringBuilder str = new StringBuilder(Integer.toBinaryString(state));
-    while (str.length() < 3) {
-      str.insert(0, "0");
-    }
-    TextLayout l = new TextLayout(str.toString(), f, g2.getFontRenderContext());
-    l.draw(
-        g2,
-        (float) ((double) getIconWidth() / 2.0 - l.getBounds().getCenterX()),
-        (float) ((double) getIconHeight() / 4.0 - l.getBounds().getCenterY()));
-    int wh = AppPreferences.getScaled(AppPreferences.IconSize / 2 - AppPreferences.IconBorder);
-    int offset = AppPreferences.getScaled(AppPreferences.IconBorder);
-    g2.setColor((state & 4) != 0 ? Color.RED : Color.DARK_GRAY);
-    g2.fillOval(offset, offset + getIconHeight() / 2, wh, wh);
-    g2.setColor((state & 1) != 0 ? Color.GREEN : Color.DARK_GRAY);
-    g2.fillOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
-    g2.setColor(Color.BLACK);
-    g2.drawOval(offset, offset + getIconHeight() / 2, wh, wh);
-    g2.drawOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
-  }
-
-  @Override
-  public void animationUpdate() {
-    state = (state + 1) & 7;
-  }
-
-  @Override
-  public void resetToStatic() {
-    state = 5;
+    gfx.setColor(Color.BLACK);
+    gfx.drawRect(0, 0, getIconWidth(), getIconHeight() / 2);
+    final var font = gfx.getFont().deriveFont((float) getIconWidth() / (float) 2);
+    final var textLayout = new TextLayout("101", font, gfx.getFontRenderContext());
+    textLayout.draw(
+        gfx,
+        (float) ((double) getIconWidth() / 2.0 - textLayout.getBounds().getCenterX()),
+        (float) ((double) getIconHeight() / 4.0 - textLayout.getBounds().getCenterY()));
+    final var iconBorder = AppPreferences.IconBorder;
+    final var wh = AppPreferences.getScaled(AppPreferences.IconSize / 2 - iconBorder);
+    final var offset = AppPreferences.getScaled(iconBorder);
+    gfx.setColor(Color.RED);
+    gfx.fillOval(offset, offset + getIconHeight() / 2, wh, wh);
+    gfx.setColor(Color.GREEN);
+    gfx.fillOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
+    gfx.setColor(Color.BLACK);
+    gfx.drawOval(offset, offset + getIconHeight() / 2, wh, wh);
+    gfx.drawOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
   }
 }

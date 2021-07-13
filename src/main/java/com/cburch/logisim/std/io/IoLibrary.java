@@ -69,7 +69,7 @@ public class IoLibrary extends Library {
     new FactoryDescription(Keyboard.class, S.getter("keyboardComponent"), "keyboard.gif"),
     new FactoryDescription(Led.class, S.getter("ledComponent"), "led.gif"),
     new FactoryDescription(LedBar.class, S.getter("ioLedBarComponent"), "ledlightbar.gif"),
-    new FactoryDescription(RGBLed.class, S.getter("RGBledComponent"), "rgbled.gif"),
+    new FactoryDescription(RgbLed.class, S.getter("RGBledComponent"), "rgbled.gif"),
     new FactoryDescription(SevenSegment.class, S.getter("sevenSegmentComponent"), "7seg.gif"),
     new FactoryDescription(HexDigit.class, S.getter("hexDigitComponent"), "hexdig.gif"),
     new FactoryDescription(DotMatrix.class, S.getter("dotMatrixComponent"), "dotmat.gif"),
@@ -95,6 +95,7 @@ public class IoLibrary extends Library {
     return tools;
   }
 
+  @Override
   public boolean removeLibrary(String Name) {
     return false;
   }

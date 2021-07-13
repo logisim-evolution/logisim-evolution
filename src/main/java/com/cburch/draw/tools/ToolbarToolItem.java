@@ -45,6 +45,7 @@ public class ToolbarToolItem implements ToolbarItem {
     this.icon = tool.getIcon();
   }
 
+  @Override
   public Dimension getDimension(Object orientation) {
     if (icon == null) {
       return new Dimension(
@@ -61,24 +62,27 @@ public class ToolbarToolItem implements ToolbarItem {
     return tool;
   }
 
+  @Override
   public String getToolTip() {
     return tool.getDescription();
   }
 
+  @Override
   public boolean isSelectable() {
     return true;
   }
 
-  public void paintIcon(Component destination, Graphics g) {
+  @Override
+  public void paintIcon(Component destination, Graphics gfx) {
     if (icon == null) {
-      g.setColor(new Color(255, 128, 128));
-      g.fillRect(4, 4, 8, 8);
-      g.setColor(Color.BLACK);
-      g.drawLine(4, 4, 12, 12);
-      g.drawLine(4, 12, 12, 4);
-      g.drawRect(4, 4, 8, 8);
+      gfx.setColor(new Color(255, 128, 128));
+      gfx.fillRect(4, 4, 8, 8);
+      gfx.setColor(Color.BLACK);
+      gfx.drawLine(4, 4, 12, 12);
+      gfx.drawLine(4, 12, 12, 4);
+      gfx.drawRect(4, 4, 8, 8);
     } else {
-      icon.paintIcon(destination, g, 4, 4);
+      icon.paintIcon(destination, gfx, 4, 4);
     }
   }
 }

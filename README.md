@@ -3,8 +3,12 @@
 ---
 
 Branch [master](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
+[![Code style](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/checkstyle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions)
+[![Markdown Lint](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/markdown.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions)
 
 Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
+[![Code style](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/checkstyle.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions)
+[![Markdown Lint](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/markdown.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions)
 
 ---
 
@@ -16,7 +20,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
   * **[Downloads](#download)**
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
-  * [Bugs reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
+  * [Bug reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
   * [For developers](docs/developers.md)
   * [How to contribute](docs/developers.md#how-to-contribute)
   * [Credits](docs/credits.md)

@@ -73,10 +73,10 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    int xq = loc.getX();
-    int yq = loc.getY();
-    double d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
-    int thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
+    final var xq = loc.getX();
+    final var yq = loc.getY();
+    final var d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
+    final var thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
     return d < thresh * thresh;
   }
 
@@ -113,26 +113,22 @@ public class Line extends AbstractCanvasObject {
       return UnmodifiableList.create(
           new Handle[] {new Handle(this, x0, y0), new Handle(this, x1, y1)});
     } else {
-      Handle h = gesture.getHandle();
-      int dx = gesture.getDeltaX();
-      int dy = gesture.getDeltaY();
-      Handle[] ret = new Handle[2];
-      ret[0] =
-          new Handle(
-              this, h.isAt(x0, y0) ? Location.create(x0 + dx, y0 + dy) : Location.create(x0, y0));
-      ret[1] =
-          new Handle(
-              this, h.isAt(x1, y1) ? Location.create(x1 + dx, y1 + dy) : Location.create(x1, y1));
+      final var h = gesture.getHandle();
+      final var dx = gesture.getDeltaX();
+      final var dy = gesture.getDeltaY();
+      final var ret = new Handle[2];
+      ret[0] = new Handle(this, h.isAt(x0, y0) ? Location.create(x0 + dx, y0 + dy) : Location.create(x0, y0));
+      ret[1] = new Handle(this, h.isAt(x1, y1) ? Location.create(x1 + dx, y1 + dy) : Location.create(x1, y1));
       return UnmodifiableList.create(ret);
     }
   }
 
   @Override
   public Location getRandomPoint(Bounds bds, Random rand) {
-    double u = rand.nextDouble();
-    int x = (int) Math.round(x0 + u * (x1 - x0));
-    int y = (int) Math.round(y0 + u * (y1 - y0));
-    int w = strokeWidth;
+    final var u = rand.nextDouble();
+    var x = (int) Math.round(x0 + u * (x1 - x0));
+    var y = (int) Math.round(y0 + u * (y1 - y0));
+    final var w = strokeWidth;
     if (w > 1) {
       x += (rand.nextInt(w) - w / 2);
       y += (rand.nextInt(w) - w / 2);
@@ -169,7 +165,7 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public int matchesHashCode() {
-    int ret = x0 * 31 + y0;
+    var ret = x0 * 31 + y0;
     ret = ret * 31 * 31 + x1 * 31 + y1;
     ret = ret * 31 + strokeWidth;
     ret = ret * 31 + strokeColor.hashCode();
@@ -178,9 +174,9 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
-    Handle h = gesture.getHandle();
-    int dx = gesture.getDeltaX();
-    int dy = gesture.getDeltaY();
+    final var h = gesture.getHandle();
+    final var dx = gesture.getDeltaX();
+    final var dy = gesture.getDeltaY();
     Handle ret = null;
     if (h.isAt(x0, y0)) {
       x0 += dx;
@@ -199,11 +195,11 @@ public class Line extends AbstractCanvasObject {
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
     if (setForStroke(g)) {
-      int x0 = this.x0;
-      int y0 = this.y0;
-      int x1 = this.x1;
-      int y1 = this.y1;
-      Handle h = gesture.getHandle();
+      var x0 = this.x0;
+      var y0 = this.y0;
+      var x1 = this.x1;
+      var y1 = this.y1;
+      final var h = gesture.getHandle();
       if (h.isAt(x0, y0)) {
         x0 += gesture.getDeltaX();
         y0 += gesture.getDeltaY();

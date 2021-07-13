@@ -39,7 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.gui.icons.LEDIcon;
+import com.cburch.logisim.gui.icons.LedIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -109,7 +109,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
           new ComponentMapInformationContainer(0, 1, 0)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new LEDIcon(false));
+    setIcon(new LedIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setPorts(new Port[] {new Port(0, 0, Port.INPUT, 1)});
     setInstanceLogger(Logger.class);
@@ -195,6 +195,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
     return true;
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new LedShape(x, y, path);
   }

@@ -32,7 +32,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class RunIcon extends AbstractIcon {
+public class RunIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {

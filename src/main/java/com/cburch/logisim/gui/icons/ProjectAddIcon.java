@@ -37,7 +37,7 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
 
-public class ProjectAddIcon extends AbstractIcon {
+public class ProjectAddIcon extends BaseIcon {
 
   private static final int[] points = {
     2, 6, 6, 6, 6, 2, 9, 2, 9, 6, 13, 6, 13, 9, 9, 9, 9, 13, 6, 13, 6, 9, 2, 9

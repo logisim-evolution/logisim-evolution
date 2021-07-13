@@ -58,10 +58,10 @@ public class AppearanceView {
 
   public AppearanceView() {
     attrs = new DrawingAttributeSet();
-    SelectTool selectTool = new SelectTool();
+    final var selectTool = new SelectTool();
     canvas = new AppearanceCanvas(selectTool);
     canvasPane = new CanvasPane(canvas);
-    ShowStateTool ssTool = new ShowStateTool(this, canvas, attrs);
+    final var ssTool = new ShowStateTool(this, canvas, attrs);
     toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attrs);
     zoomModel =
         new BasicZoomModel(
@@ -84,7 +84,7 @@ public class AppearanceView {
   }
 
   public AttrTableDrawManager getAttrTableDrawManager(AttrTable table) {
-    AttrTableDrawManager ret = attrTableManager;
+    var ret = attrTableManager;
     if (ret == null) {
       ret = new AttrTableDrawManager(canvas, table, attrs);
       attrTableManager = ret;

@@ -33,18 +33,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class CounterIcon extends AnimatedIcon {
+public class CounterIcon extends BaseIcon {
 
   private int state = 1;
 
-  public void animationUpdate() {
-    state = (state + 1) % 100;
-  }
-
-  public void resetToStatic() {
-    state = 1;
-  }
-
+  @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLACK);
     g2.fillRect(scale(1), 0, scale(6), scale(16));

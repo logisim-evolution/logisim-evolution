@@ -223,7 +223,7 @@ public class TruthtableTextFile {
 
     if (nbits < 4 && (d >= (1 << nbits))) {
       throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
-      }
+    }
 
     return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;
   }
@@ -231,10 +231,10 @@ public class TruthtableTextFile {
   static int parseVal(Entry[] row, int col, String sval, Var var, int lineno) throws IOException {
     if (sval.length() == var.width) {
       // must be binary
-      for (int i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
+      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
     } else if (sval.length() == (var.width + 3) / 4) {
       // try hex
-      for (int i = 0; i < var.width; i++) {
+      for (var i = 0; i < var.width; i++) {
         row[col++] =
             parseHex(
                 sval.charAt((i + ((4 - (var.width % 4)) % 4)) / 4),
@@ -253,9 +253,7 @@ public class TruthtableTextFile {
     return col;
   }
 
-  static void validateRow(
-      String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno)
-      throws IOException {
+  static void validateRow(String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno) throws IOException {
     final var row = new Entry[inputs.bits.size() + outputs.bits.size()];
     var col = 0;
     final var s = line.split("\\s+");

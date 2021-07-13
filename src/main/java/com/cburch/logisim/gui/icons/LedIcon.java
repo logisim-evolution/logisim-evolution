@@ -28,38 +28,37 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class DiceIcon extends AnimatedIcon {
+public class LedIcon extends BaseIcon {
 
-  private int state = ThreadLocalRandom.current().nextInt(0, 6);
+  private final boolean isRgb;
 
-  @Override
-  public void animationUpdate() {
-    state = ThreadLocalRandom.current().nextInt(0, 6);
-  }
-
-  @Override
-  public void resetToStatic() {
-    state = ThreadLocalRandom.current().nextInt(0, 6);
+  public LedIcon(boolean isRgb) {
+    super();
+    this.isRgb = isRgb;
   }
 
   @Override
   protected void paintIcon(Graphics2D g2) {
+    int xy = AppPreferences.getScaled(2);
+    int wh = AppPreferences.getScaled(12);
+    if (isRgb) {
+      g2.setColor(Color.GREEN);
+      g2.fillArc(xy, xy, wh, wh, 0, 120);
+      g2.setColor(Color.RED);
+      g2.fillArc(xy, xy, wh, wh, 120, 120);
+      g2.setColor(Color.BLUE);
+      g2.fillArc(xy, xy, wh, wh, 240, 120);
+    } else {
+      g2.setColor(Color.RED);
+      g2.fillOval(xy, xy, wh, wh);
+    }
     g2.setColor(Color.BLACK);
-    g2.drawRoundRect(0, 0, scale(16), scale(16), scale(5), scale(5));
-    if (state == 1 || state > 2) g2.fillOval(scale(2), scale(2), scale(3), scale(3));
-    if (state == 5) {
-      g2.fillOval(scale(2), scale(6), scale(3), scale(3));
-      g2.fillOval(scale(10), scale(6), scale(3), scale(3));
-    }
-    if (state == 0 || state == 4 || state == 2) g2.fillOval(scale(6), scale(6), scale(3), scale(3));
-    if (state > 1) {
-      g2.fillOval(scale(2), scale(10), scale(3), scale(3));
-      g2.fillOval(scale(10), scale(2), scale(3), scale(3));
-    }
-    if (state > 2 || state == 1) g2.fillOval(scale(10), scale(10), scale(3), scale(3));
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.drawOval(xy, xy, wh, wh);
   }
 }

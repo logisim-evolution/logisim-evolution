@@ -39,7 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.gui.icons.LEDIcon;
+import com.cburch.logisim.gui.icons.LedIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -51,11 +51,10 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class RGBLed extends InstanceFactory implements DynamicElementProvider {
+public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -66,6 +65,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 
   public static class Logger extends InstanceLogger {
     static final BitWidth bitwidth = BitWidth.create(3);
+
     @Override
     public String getLogName(InstanceState state, Object option) {
       return state.getAttributeValue(StdAttr.LABEL);
@@ -105,7 +105,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   public static final int GREEN = 1;
   public static final int BLUE = 2;
 
-  public RGBLed() {
+  public RgbLed() {
     super(_ID, S.getter("RGBledComponent"));
     setAttributes(
         new Attribute[] {
@@ -129,7 +129,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           new ComponentMapInformationContainer(0, 3, 0, null, getLabels(), null)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new LEDIcon(true));
+    setIcon(new LedIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setInstanceLogger(Logger.class);
   }
@@ -137,7 +137,10 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var ps = new Port[3];
-    int cx = 0, cy = 0, dx = 0, dy = 0;
+    int cx = 0;
+    int cy = 0;
+    int dx = 0;
+    int dy = 0;
     if (facing == Direction.NORTH) {
       cy = 10;
       dx = 10;
@@ -250,6 +253,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     return true;
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new RGBLedShape(x, y, path);
   }

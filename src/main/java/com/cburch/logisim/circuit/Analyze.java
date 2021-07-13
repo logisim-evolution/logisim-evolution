@@ -433,5 +433,7 @@ public class Analyze {
 
   private static final int MAX_ITERATIONS = 100;
 
-  private Analyze() {}
+  private Analyze() {
+    // dummy
+  }
 }

@@ -54,10 +54,14 @@ public abstract class AbstractTool extends CanvasTool {
 
   /** This is because a popup menu may result from the subsequent mouse release. */
   @Override
-  public void cancelMousePress(Canvas canvas) {}
+  public void cancelMousePress(Canvas canvas) {
+    // dummy
+  }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {}
+  public void draw(Canvas canvas, Graphics gfx) {
+    // dummy
+  }
 
   public abstract List<Attribute<?>> getAttributes();
 
@@ -74,35 +78,57 @@ public abstract class AbstractTool extends CanvasTool {
   public abstract Icon getIcon();
 
   @Override
-  public void keyPressed(Canvas canvas, KeyEvent e) {}
+  public void keyPressed(Canvas canvas, KeyEvent e) {
+    // dummy
+  }
 
   @Override
-  public void keyReleased(Canvas canvas, KeyEvent e) {}
+  public void keyReleased(Canvas canvas, KeyEvent e) {
+    // dummy
+  }
 
   @Override
-  public void keyTyped(Canvas canvas, KeyEvent e) {}
+  public void keyTyped(Canvas canvas, KeyEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mouseDragged(Canvas canvas, MouseEvent e) {}
+  public void mouseDragged(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mouseEntered(Canvas canvas, MouseEvent e) {}
+  public void mouseEntered(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mouseExited(Canvas canvas, MouseEvent e) {}
+  public void mouseExited(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mouseMoved(Canvas canvas, MouseEvent e) {}
+  public void mouseMoved(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mousePressed(Canvas canvas, MouseEvent e) {}
+  public void mousePressed(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void mouseReleased(Canvas canvas, MouseEvent e) {}
+  public void mouseReleased(Canvas canvas, MouseEvent e) {
+    // dummy
+  }
 
   @Override
-  public void toolDeselected(Canvas canvas) {}
+  public void toolDeselected(Canvas canvas) {
+    // dummy
+  }
 
   @Override
-  public void toolSelected(Canvas canvas) {}
+  public void toolSelected(Canvas canvas) {
+    // dummy
+  }
 }
