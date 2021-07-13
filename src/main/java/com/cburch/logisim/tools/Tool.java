@@ -87,7 +87,7 @@ public abstract class Tool implements AttributeDefaultProvider {
    * Returns Tool unique ID as defined in its _ID constant.
    *
    * For each tool extending this class, define
-   *    public static final String _ID = "<UNIQUE ID>"
+   *    public static final String _ID = "UNIQUE_ID"
    *
    * @return unique ID of the tool
    */
