@@ -22,6 +22,7 @@ https://www.pucminas.br/destaques/Paginas/default.aspx), Brazil
 * David H. Hutchens - [Millersville University](https://www.millersville.edu/), Pennsylvania, USA
 * Tom Niget - [LEAT](https://leat.univ-cotedazur.fr/), [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/),
 France
+* Marcin Orlowski, USA 
 
 If you feel that your name should be in this list, please feel free
 to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues).
