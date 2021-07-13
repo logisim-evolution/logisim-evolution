@@ -20,7 +20,7 @@ The following institutions/people actively contributed to `Logisim-evolution`:
 https://www.pucminas.br/destaques/Paginas/default.aspx), Brazil
 * Moshe Berman - [Brooklyn College](http://www.brooklyn.cuny.edu/), USA
 * David H. Hutchens - [Millersville University](https://www.millersville.edu/), Pennsylvania, USA
-* Tom Niget - [LEAT](https://leat.univ-cotedazur.fr/), [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/), 
+* Tom Niget - [LEAT](https://leat.univ-cotedazur.fr/), [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/),
 France
 
 If you feel that your name should be in this list, please feel free
