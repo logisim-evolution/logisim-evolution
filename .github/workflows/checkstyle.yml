@@ -66,9 +66,6 @@ jobs:
     # such instead of installing packaged version via apt.
 
     steps:
-    - name: foo
-      run: java -version
-
     - name: "Checkout sources"
       uses: actions/checkout@v2
 
@@ -100,6 +97,7 @@ jobs:
 
         # Let's lint eventually...
         echo "*********************************************************"
+        java -version
         echo "Linting using $(java -jar "${JAR}" --version)"
         java -jar "${JAR}" -o "${REPORT_FILE}" -c "${CHECKS_FILE}" ${{ needs.analyze_sources.outputs.changed_files }}
 
