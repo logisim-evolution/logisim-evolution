@@ -20,8 +20,8 @@
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 14, so to build it from sources you need JDK 14
-(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) or newer.
+`Logisim-evolution` is written in Java 14. To build it from sources you need JDK
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 14 or newer.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
@@ -62,8 +62,8 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ./gradlew shadowJar
 ```
 
-which will create `logisim-evolution-<version>-all.jar` in `build/libs/`. To use this package
-you need any Java runtime environment (JRE or JDK) v14 or newer, and then type:
+which will create `logisim-evolution-<version>-all.jar` in `build/libs/`. To run it
+(JRE/JDK v14 or newer required) type:
 
 ```bash
 java -jar logisim-evolution-<version>-all.jar
