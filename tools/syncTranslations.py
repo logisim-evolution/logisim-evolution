@@ -95,22 +95,25 @@ def main():
 
     args = parser.parse_args()
 
+    log = []
+
     if args.rootDir is None:
         args.rootDir = defaultRootDir
 
-    if not args.quiet:
-        h1 = ' ' * maxFileNameLen + '|'
-        h2 = '-' * maxFileNameLen + '+'
-        for lang in langs:
-            h1 += '{:^5} |'.format(lang.upper())
-        h2 += '------+' * len(langs)
-        print('{}\n{}'.format(h1, h2))
+    h1 = ' ' * maxFileNameLen + '|'
+    h2 = '-' * maxFileNameLen + '+'
+    for lang in langs:
+        h1 += '{:^5} |'.format(lang.upper())
+    h2 += '------+' * len(langs)
+    log.append(h1)
+    log.append(h2)
 
     for file in files:
+        row = ''
         filePath = os.path.join(args.rootDir, file, file)
         if not args.quiet:
             fmt = '{:<' + str(maxFileNameLen) + '}|'
-            print(fmt.format(file), end = '')
+            row += fmt.format(file)
         keys = getKeys(filePath + ".properties")
 
         failed = False
@@ -118,12 +121,13 @@ def main():
             trans = getTrans(filePath + '_' + lang + ".properties")
             missing = writeFile(args, filePath + '_' + lang + ".properties", keys, trans)
             failed = failed or missing
-            if not args.quiet:
-                if missing == 0:
-                    missing = '-'
-                print(' {:>4} |'.format(missing), end = '')
-        if not args.quiet:
-            print()
+            if missing == 0:
+                missing = '-'
+            row += ' {:>4} |'.format(missing)
+        log.append(row)
+
+    if not args.quiet:
+        print('\n'.join(log))
 
     if failed:
         sys.exit(100)
