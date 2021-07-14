@@ -3,9 +3,10 @@
 import argparse
 import os
 
+
 def getKeys(path):
     keys = []
-    with open(path, 'r', encoding="utf8") as file:
+    with open(path, 'r', encoding = "utf8") as file:
         lines = file.readlines()
         for line in lines:
             if len(line) == 1:
@@ -20,7 +21,7 @@ def getKeys(path):
 
 def getTrans(path):
     trans = {}
-    with open(path, 'r', encoding="utf8") as file:
+    with open(path, 'r', encoding = "utf8") as file:
         lines = file.readlines()
         for line in lines:
             if line == '' or line[0] == '#':
@@ -47,7 +48,7 @@ def writeFile(args, path, keys, trans):
             missingTranslations += 1
     lines = ''.join(lines) + '\n\n'
     if (args.write):
-        with open(path, 'w', encoding="utf8") as file:
+        with open(path, 'w', encoding = "utf8") as file:
             file.write(lines)
     return missingTranslations
 
@@ -85,11 +86,11 @@ def main():
         filePath = os.path.join(args.rootDir, file, file)
         if not args.quiet:
             fmt = '{:<' + str(maxFileNameLen) + '}|'
-            print(fmt.format(file), end='')
+            print(fmt.format(file), end = '')
         keys = getKeys(filePath + ".properties")
         for lang in langs:
-            trans = getTrans(filePath+'_'+lang+".properties")
-            missing = writeFile(args, filePath+'_'+lang+".properties", keys, trans)
+            trans = getTrans(filePath + '_' + lang + ".properties")
+            missing = writeFile(args, filePath + '_' + lang + ".properties", keys, trans)
             if not args.quiet:
                 if missing == 0:
                     missing = '-'
