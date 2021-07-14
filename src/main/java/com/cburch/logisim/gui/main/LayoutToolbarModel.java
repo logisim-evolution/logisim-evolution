@@ -96,7 +96,6 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       if (tool == null) {
         newItems.add(new ToolbarSeparator(4));
       } else {
-        if (tool instanceof AddTool) tool.registerParent(frame.getToolbar());
         final var i = findItem(oldItems, tool);
         newItems.add(Objects.requireNonNullElseGet(i, () -> new ToolItem(tool)));
       }

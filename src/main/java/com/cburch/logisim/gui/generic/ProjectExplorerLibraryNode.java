@@ -107,12 +107,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
     for (T tool : items) {
       if (tool instanceof Library && ((Library) tool).isHidden()) {
-        if (!showMouseTools) continue;
-        else if (!(tool instanceof BaseLibrary)) continue;
-      }
-      if (tool instanceof AddTool) {
-        AddTool a = (AddTool) tool;
-        a.registerParent(guiElement);
+        if (!showMouseTools || !(tool instanceof BaseLibrary)) continue;
       }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
 
@@ -220,6 +215,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     }
   }
 
+  @Override
   public void libraryChanged(LibraryEvent event) {
     switch (event.getAction()) {
       case LibraryEvent.DIRTY_STATE:
