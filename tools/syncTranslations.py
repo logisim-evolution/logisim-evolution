@@ -110,8 +110,7 @@ def main():
         row = ''
         filePath = os.path.join(args.rootDir, file)
         if not args.quiet:
-            fmt = '{:<' + str(maxFileNameLen) + '}|'
-            row += fmt.format(file)
+            row += f'{file:<{maxFileNameLen}}|'
         keys = getKeys(os.path.join(filePath, f"{file}.properties"))
 
         failed = False
