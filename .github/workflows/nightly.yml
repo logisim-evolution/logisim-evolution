@@ -107,7 +107,7 @@ jobs:
 
     # Will run only if git_check determined it is needed.
     needs: git_check
-    if: needs.git_check.outputs.run_build == 'true-DISABLED'
+    if: needs.git_check.outputs.run_build == 'true'
 
     steps:
       # https://github.com/marketplace/actions/checkout
