@@ -74,7 +74,6 @@ jobs:
     # ##################################
 
     - name: "Install required packages"
-      id: vars
       run: sudo apt install -y rpm
 
     # ##################################
