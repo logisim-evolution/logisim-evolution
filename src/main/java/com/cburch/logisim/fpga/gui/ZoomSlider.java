@@ -29,23 +29,21 @@
 package com.cburch.logisim.fpga.gui;
 
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.Dimension;
 import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 
-@SuppressWarnings("serial")
 public class ZoomSlider extends JSlider {
 
-  private int minzoom;
-  private int maxzoom;
+  private int zoomMin;
+  private int zoomMax;
 
   public int getMaxZoom() {
-    return maxzoom;
+    return zoomMax;
   }
 
   public int getMinZoom() {
-    return minzoom;
+    return zoomMin;
   }
 
   public ZoomSlider(int orientation, int min, int max, int value) {
@@ -57,28 +55,28 @@ public class ZoomSlider extends JSlider {
   }
 
   private void setup(int orientation, int min, int max, int value) {
-    minzoom = min;
-    maxzoom = max;
-    int midvalue = min + ((max - min) >> 1);
+    zoomMin = min;
+    zoomMax = max;
+    final var midValue = min + ((max - min) >> 1);
     JLabel label;
     super.setOrientation(orientation);
     super.setMinimum(min);
     super.setMaximum(max);
     super.setValue(value);
-    Dimension orig = super.getSize();
+    final var orig = super.getSize();
     orig.height = AppPreferences.getScaled(orig.height);
     orig.width = AppPreferences.getScaled(orig.width);
     super.setSize(orig);
     setMajorTickSpacing(50);
     setMinorTickSpacing(10);
     setPaintTicks(true);
-    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+    final var labelTable = new Hashtable<Integer, JLabel>();
     label = new JLabel(getId(min));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
     labelTable.put(min, label);
-    label = new JLabel(getId(midvalue));
+    label = new JLabel(getId(midValue));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
-    labelTable.put(midvalue, label);
+    labelTable.put(midValue, label);
     label = new JLabel(getId(max));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
     labelTable.put(max, label);
@@ -87,8 +85,8 @@ public class ZoomSlider extends JSlider {
   }
 
   private String getId(int value) {
-    int hun = value / 100;
-    int tens = (value % 100) / 10;
+    final var hun = value / 100;
+    final var tens = (value % 100) / 10;
     return String.format("%d.%dx", hun, tens);
   }
 }
