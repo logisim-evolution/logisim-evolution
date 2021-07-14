@@ -1,0 +1,47 @@
+
+name: "Nightly"
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  analyze_sources:
+    name: "Do we need to build the application?"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "WILL BUILD STEP BE RUN?"
+      run: |
+        found="true"
+        echo "::set-output name=run_build::${found}"
+
+  # Build step.
+  build:
+    name: "Gradle builder"
+    runs-on: ubuntu-latest
+
+    # Will run only if analyze_sources determined it is needed.
+    needs: analyze_sources
+    if: needs.analyze_sources.outputs.run_build == 'true'
+
+    steps:
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+    - name: "Set up JDK"
+      uses: actions/setup-java@v2
+      with:
+        java-version: 14
+        distribution: 'adopt'
+
+    - name: "Build with Gradle"
+      run: |
+       chmod +x gradlew
+       ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+
+    - name: 'Upload *.deb'
+      uses: actions/upload-artifact@v2
+        path: build/dist/logisim-evolution_3.5.0-1_amd64.deb
+        name: logisim-evolution_3.5.0-1_amd64.deb
