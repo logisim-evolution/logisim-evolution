@@ -125,7 +125,7 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/dist/${{ steps.vars.outputs.lse_name }}_${{ steps.vars.outputs.lse_version }}-1.x86_64.rpm
+        path: build/dist/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-1.x86_64.rpm
         name: ${{ steps.vars.outputs.base_name }}.x86_64.rpm
 
       # ##################################
