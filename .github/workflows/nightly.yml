@@ -33,7 +33,7 @@ jobs:
 
     steps:
       # https://github.com/marketplace/actions/checkout
-      - name: "Checkout sources"
+      - name: 'Checkout sources'
         uses: actions/checkout@v2
         with:
           # We want develop branch only.
@@ -63,7 +63,7 @@ jobs:
 
   # Building for macOS.
   build_macos:
-    name: "macOS build"
+    name: 'macOS build'
     runs-on: macos-latest
 
     # Will run only if git_check determined it is needed.
@@ -102,7 +102,7 @@ jobs:
 
   # Building for Linux.
   build_linux:
-    name: "Linux build"
+    name: 'Linux build'
     runs-on: ubuntu-latest
 
     # Will run only if git_check determined it is needed.
@@ -125,7 +125,7 @@ jobs:
 
     # ##################################
 
-    - name: "Build binary JAR"
+    - name: 'Build binary JAR'
       run: |
         chmod +x gradlew
         ./gradlew shadowJar
@@ -139,7 +139,7 @@ jobs:
 
     # ##################################
 
-    - name: "Build DEB"
+    - name: 'Build DEB'
       run: |
        chmod +x gradlew
        ./gradlew createDeb -x checkstyleMain -x checkstyleTest
@@ -153,7 +153,7 @@ jobs:
 
       # ##################################
 
-    - name: "Build RPM"
+    - name: 'Build RPM'
       run: |
         chmod +x gradlew
         # Needs rpm package, but it should be installed already.
@@ -168,7 +168,7 @@ jobs:
 
       # ##################################
 
-    - name: "Build sources JAR"
+    - name: 'Build sources JAR'
       run: |
         chmod +x gradlew
         # Need to clean to have just one JAR or createDistDir task would fail.
