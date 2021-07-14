@@ -206,8 +206,7 @@ jobs:
           distribution: 'adopt'
 
       - name: "Build MSI"
-        run: |
-          .\gradlew.bat createMsi
+        run: .\gradlew.bat createMsi
 
       - name: 'Upload MSI'
         uses: actions/upload-artifact@v2
