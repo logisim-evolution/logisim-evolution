@@ -48,7 +48,8 @@ jobs:
           else
             echo "*** No repo activity since yesterday. Skipping."
           fi
-          echo "::set-output name=run_build::${result}"
+          # echo "::set-output name=run_build::${result}"
+          echo "::set-output name=run_build::true"
 
   # ##################################
 
