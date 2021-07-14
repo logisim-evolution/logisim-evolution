@@ -1,0 +1,126 @@
+#
+# Logisim-evolution nightly builder
+#
+# Cron driven Github Action builder, intended to create nightly builds
+# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# daily (once per 24 hrs) and skips building if there was no repo activity
+# during last 24 hours.
+#
+# Marcin Orlowski
+#
+
+name: "Nightly"
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+jobs:
+  analyze_activity:
+    name: "Any changes since last nightly?"
+    runs-on: ubuntu-latest
+
+    outputs:
+      # Export 'filter' step check result so next step can use it.
+      run_build: ${{ steps.filter.outputs.run_build }}
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      # Check if latest commit is less than a day.
+      - name: "ANY CHANGES SINCE LAST BUILD?"
+        id: filter
+        continue-on-error: true
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          result="false"
+          if [[ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]]; then
+            result="true"
+          else
+            echo "*** No repo activity since yesterday. Skipping."
+          fi
+          echo "::set-output name=run_build::${result}"
+
+  # ##################################
+
+  # Build step.
+  build:
+    name: "Nightly build"
+    runs-on: ubuntu-latest
+
+    # Will run only if analyze_activity determined it is needed.
+    needs: analyze_activity
+    if: needs.analyze_activity.outputs.run_build == 'true'
+
+    steps:
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+    - name: "Set up JDK"
+      uses: actions/setup-java@v2
+      with:
+        java-version: 14
+        distribution: 'adopt'
+
+    # ##################################
+
+    - name: "Generate base name"
+      id: vars
+      run: |
+        echo "::set-output name=base_name::logisim-evolution_develop_$(date +%Y%m%d)"
+
+    # ##################################
+
+    - name: "Build sources JAR"
+      run: |
+        chmod +x gradlew
+        ./gradlew clean
+        ./gradlew sourcesJar
+        find . -name "*.jar"
+
+    - name: 'Upload sources JAR'
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        path: build/libs/logisim-evolution-3.5.0-src.jar
+        name: ${{ steps.vars.outputs.base_name }}-src.jar
+
+    # ##################################
+
+    - name: "Build binary JAR"
+      run: |
+        chmod +x gradlew
+        ./gradlew clean
+        ./gradlew shadowJar
+        find . -name "*.jar"
+
+    - name: 'Upload binary JAR'
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        path: build/libs/logisim-evolution-3.5.0-all.jar
+        name: ${{ steps.vars.outputs.base_name }}-all_jdk14.jar
+
+    # ##################################
+
+    - name: "Build DEB"
+      run: |
+       chmod +x gradlew
+       ./gradlew clean
+       ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+
+    - name: 'Upload *.deb'
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        path: build/dist/logisim-evolution_3.5.0-1_amd64.deb
+        name: ${{ steps.vars.outputs.base_name }}_amd64.deb
