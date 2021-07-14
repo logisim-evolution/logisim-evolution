@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+#
+# Checks *.properties files agains base english version.
+# Reports missing translations. Can also update targed files
+# with translation placeholders (with --write option)
+#
+
 import argparse
 import os
 import sys
