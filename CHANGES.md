@@ -20,6 +20,7 @@
   * Adds "Rotate Left" context menu action.
   * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
   * Project's "Dirty" (unsaved) state is now also reflected by adding `*` marker to the window title.
+  * Support for `AnimatedIcon` has been completely removed.
   * Tons of code cleanup and internal improvements.
 
 * v3.5.0 (2021-05-25)
