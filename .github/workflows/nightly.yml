@@ -11,12 +11,12 @@
 
 name: "Nightly"
 on:
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
-#  schedule:
-#    - cron: '0 0 * * *'  # every day at midnight
+#  push:
+#    branches: [ develop ]
+#  pull_request:
+#    branches: [ develop ]
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
 
 jobs:
   git_check:
@@ -191,8 +191,7 @@ jobs:
 
     # Will run only if git_check determined it is needed.
     needs: git_check
-    #    if: needs.git_check.outputs.run_build == 'true'
-    if: always()
+    if: needs.git_check.outputs.run_build == 'true'
 
     steps:
       # https://github.com/marketplace/actions/checkout
