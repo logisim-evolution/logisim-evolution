@@ -116,8 +116,13 @@ public class ZoomControl extends JPanel {
     return closest;
   }
 
+  /**
+   * Returns string representation of current zoom factor.
+   *
+   * @return zoom factor as string
+   */
   public String zoomString() {
-    return String.format("%.0f%%", model.getZoomFactor() * 100.0);
+    return "\u00D7" + Double.toString(model.getZoomFactor());
   }
 
   public void zoomIn() {
@@ -127,7 +132,7 @@ public class ZoomControl extends JPanel {
     for (final var choice : choices) {
       if (choice > factor) {
         model.setZoomFactor(choice / 100.0);
-        return;
+        break;
       }
     }
   }
@@ -139,7 +144,7 @@ public class ZoomControl extends JPanel {
     for (var i = choices.size() - 1; i >= 0; i--) {
       if (choices.get(i) < factor) {
         model.setZoomFactor(choices.get(i) / 100.0);
-        return;
+        break;
       }
     }
   }
