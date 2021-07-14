@@ -83,8 +83,8 @@ extra.apply {
    val projectVersion = project.version as String
    val uppercaseProjectName = projectName.substring(0,1).toUpperCase() + projectName.substring(1)
    set("uppercaseProjectName", uppercaseProjectName)
-   set("appDirname", "$buildDir/dist/" + uppercaseProjectName + ".app")
-   set("dmgFilename", "$buildDir/dist/" + uppercaseProjectName + "-" + projectVersion + ".dmg")
+   set("appDirname", "$buildDir/dist/" + projectName + ".app")
+   set("dmgFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".dmg")
    set("rpmFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + "-1.x86_64.rpm")
    set("debFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + "-1_amd64.deb")
    set("msiFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".msi")
