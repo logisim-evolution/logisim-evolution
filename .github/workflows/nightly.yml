@@ -21,7 +21,7 @@ on:
 
 jobs:
   analyze_activity:
-    name: "Any changes since last nightly?"
+    name: "Any changes since last run?"
     runs-on: ubuntu-latest
 
     outputs:
@@ -53,14 +53,42 @@ jobs:
 
   # ##################################
 
-  # Build step.
-  build:
-    name: "Nightly build"
-    runs-on: ubuntu-latest
+  # Building for macOS.
+  build_macos:
+    name: "macOS build"
+    runs-on: macos-latest
 
     # Will run only if analyze_activity determined it is needed.
     needs: analyze_activity
     if: needs.analyze_activity.outputs.run_build == 'true'
+
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: 14
+          distribution: 'adopt'
+
+      - name: "Build DMG"
+        run: |
+          chmod +x gradlew
+          set JAVA_HOME="${JAVA_HOME_14_X64}"
+          ./gradlew createDmg
+          find . -name "*.dmg"
+
+  # ##################################
+
+  # Building for Linux.
+  build_linux:
+    name: "Linux build"
+    runs-on: ubuntu-latest
+
+    # Will run only if analyze_activity determined it is needed.
+    needs: analyze_activity
+    if: needs.analyze_activity.outputs.run_build == 'true-DISABLED'
 
     steps:
     - name: "Checkout sources"
@@ -71,11 +99,6 @@ jobs:
       with:
         java-version: 14
         distribution: 'adopt'
-
-    # ##################################
-
-    - name: "Install required packages"
-      run: sudo apt install -y rpm
 
     # ##################################
 
@@ -120,6 +143,7 @@ jobs:
     - name: "Build RPM"
       run: |
         chmod +x gradlew
+        # Needs rpm package, but it should be installed already.
         ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
     - name: 'Upload *.rpm'
