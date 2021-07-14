@@ -82,7 +82,8 @@ is also available and can be run on any system with a supported Java runtime ins
 We also offer builds based on current state of [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
 branch, which are created everyday at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
-**[Click here for list of downloadable artifacts](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml).**  
+To get nightly downloads, please [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
+and browse to last successful run of "Nightly build" (should be on top).
 
 Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
 or [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues) if you found a bug or have improvement
