@@ -43,13 +43,13 @@ jobs:
       - name: "ANY CHANGES SINCE LAST BUILD?"
         id: filter
         continue-on-error: true
-        # if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' }}
         run: |
           result="false"
           if [[ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]]; then
             result="true"
           else
-            echo "*** No repo activity since yesterday. Skipping."
+            echo "*** No code changes since yesterday. Skipping."
           fi
           echo "::set-output name=run_build::${result}"
           echo "::set-output name=run_build::true"
