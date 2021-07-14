@@ -431,7 +431,6 @@ public class ZoomControl extends JPanel {
     public PredefinedZoomButton(ZoomModel model, String label, double zoomValue) {
       zoomModel = model;
       this.zoomValue = zoomValue;
-//      super.setText("\u00D7" + "1");
       super.setText(label);
       addActionListener(this);
     }
