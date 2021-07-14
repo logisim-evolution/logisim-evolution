@@ -20,13 +20,16 @@ on:
     - cron: '0 0 * * *'  # every day at midnight
 
 jobs:
-  analyze_activity:
+  git_check:
     name: "Any changes since last run?"
     runs-on: ubuntu-latest
 
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_build: ${{ steps.filter.outputs.run_build }}
+      lse_name: ${{ steps.filter.outputs.lse_name }}
+      lse_version: ${{ steps.filter.outputs.lse_version }}
+      base_name: ${{ steps.filter.outputs.base_name }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -51,6 +54,11 @@ jobs:
           echo "::set-output name=run_build::${result}"
           echo "::set-output name=run_build::true"
 
+          declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
+          echo "::set-output name=lse_name::${lse_name}"
+          echo "::set-output name=base_name::${lse_name}_develop_$(date +%Y%m%d)"
+          echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
+
   # ##################################
 
   # Building for macOS.
@@ -58,13 +66,17 @@ jobs:
     name: "macOS build"
     runs-on: macos-latest
 
-    # Will run only if analyze_activity determined it is needed.
-    needs: analyze_activity
-    if: needs.analyze_activity.outputs.run_build == 'true'
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
 
     steps:
+      # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
         uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
 
       - name: "Set up JDK"
         uses: actions/setup-java@v2
@@ -79,6 +91,13 @@ jobs:
           ./gradlew createDmg
           find . -name "*.dmg"
 
+      - name: 'Upload binary DMG'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
+          name: ${{ needs.git_check.outputs.base_name }}.dmg
+
   # ##################################
 
   # Building for Linux.
@@ -86,29 +105,23 @@ jobs:
     name: "Linux build"
     runs-on: ubuntu-latest
 
-    # Will run only if analyze_activity determined it is needed.
-    needs: analyze_activity
-    if: needs.analyze_activity.outputs.run_build == 'true-DISABLED'
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true-DISABLED'
 
     steps:
-    - name: "Checkout sources"
-      uses: actions/checkout@v2
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
 
     - name: "Set up JDK"
       uses: actions/setup-java@v2
       with:
         java-version: 14
         distribution: 'adopt'
-
-    # ##################################
-
-    - name: "Generate base name"
-      id: vars
-      run: |
-        declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
-        echo "::set-output name=lse_name::${lse_name}"
-        echo "::set-output name=base_name::${lse_name}_develop_$(date +%Y%m%d)"
-        echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
 
     # ##################################
 
@@ -121,8 +134,8 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/libs/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-all.jar
-        name: ${{ steps.vars.outputs.base_name }}-all_jdk14.jar
+        path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
+        name: ${{ needs.git_check.outputs.base_name }}-all_jdk14.jar
 
     # ##################################
 
@@ -135,8 +148,8 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/dist/${{ steps.vars.outputs.lse_name }}_${{ steps.vars.outputs.lse_version }}-1_amd64.deb
-        name: ${{ steps.vars.outputs.base_name }}_amd64.deb
+        path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
+        name: ${{ needs.git_check.outputs.base_name }}_amd64.deb
 
       # ##################################
 
@@ -150,8 +163,8 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/dist/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-1.x86_64.rpm
-        name: ${{ steps.vars.outputs.base_name }}.x86_64.rpm
+        path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
+        name: ${{ needs.git_check.outputs.base_name }}.x86_64.rpm
 
       # ##################################
 
@@ -166,5 +179,5 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/libs/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-src.jar
-        name: ${{ steps.vars.outputs.base_name }}-src.jar
+        path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
+        name: ${{ needs.git_check.outputs.base_name }}-src.jar
