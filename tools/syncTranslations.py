@@ -70,7 +70,7 @@ def writeFile(args, path, keys, trans):
         else:
             lines.append("# ==> " + key + " =\n")
             missingTranslations += 1
-    lines = ''.join(lines) + '\n\n'
+    lines = ''.join(lines)
     if (args.write):
         with open(path, 'w', encoding = "utf8") as file:
             file.write(lines)
