@@ -11,24 +11,27 @@
 
 name: "Nightly"
 on:
-#  push:
-#    branches: [ develop ]
-#  pull_request:
-#    branches: [ develop ]
-  schedule:
-    - cron: '0 0 * * *'  # every day at midnight
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+#  schedule:
+#    - cron: '0 0 * * *'  # every day at midnight
 
 jobs:
   git_check:
     name: "Any changes since last run?"
     runs-on: ubuntu-latest
 
+    # Export build vars so other steps can use it.
     outputs:
-      # Export 'filter' step check result so next step can use it.
+      # Shall we build anything?
       run_build: ${{ steps.filter.outputs.run_build }}
+      # Base application name and version (read from gradle.properties).
       lse_name: ${{ steps.filter.outputs.lse_name }}
       lse_version: ${{ steps.filter.outputs.lse_version }}
-      base_name: ${{ steps.filter.outputs.base_name }}
+      # Base name for final artifacts.
+      out_name: ${{ steps.filter.outputs.out_name }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -42,7 +45,7 @@ jobs:
       - name: "ANY CHANGES SINCE LAST BUILD?"
         id: filter
         continue-on-error: true
-        if: ${{ github.event_name == 'schedule' }}
+        # if: ${{ github.event_name == 'schedule' }}
         run: |
           result="false"
           if [[ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]]; then
@@ -54,7 +57,7 @@ jobs:
 
           declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
           echo "::set-output name=lse_name::${lse_name}"
-          echo "::set-output name=base_name::${lse_name}_develop_$(date +%Y%m%d)"
+          echo "::set-output name=out_name::${lse_name}_develop_$(date +%Y%m%d)"
           echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
 
   # ##################################
@@ -66,7 +69,7 @@ jobs:
 
     # Will run only if git_check determined it is needed.
     needs: git_check
-    if: needs.git_check.outputs.run_build == 'true'
+    if: needs.git_check.outputs.run_build == 'true-XXXXXXXX'
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -94,21 +97,21 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
-          name: ${{ needs.git_check.outputs.base_name }}-all_jdk14.jar
+          name: ${{ needs.git_check.outputs.out_name }}-all_jdk14.jar
 
       # ##################################
 
       - name: 'Build DEB'
         run: |
-         chmod +x gradlew
-         ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+          chmod +x gradlew
+          ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
         uses: actions/upload-artifact@v2
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
-          name: ${{ needs.git_check.outputs.base_name }}_amd64.deb
+          name: ${{ needs.git_check.outputs.out_name }}_amd64.deb
 
         # ##################################
 
@@ -123,7 +126,7 @@ jobs:
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
-          name: ${{ needs.git_check.outputs.base_name }}.x86_64.rpm
+          name: ${{ needs.git_check.outputs.out_name }}.x86_64.rpm
 
         # ##################################
 
@@ -139,7 +142,7 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
-          name: ${{ needs.git_check.outputs.base_name }}-src.jar
+          name: ${{ needs.git_check.outputs.out_name }}-src.jar
 
   # ##################################
 
@@ -150,7 +153,7 @@ jobs:
 
     # Will run only if git_check determined it is needed.
     needs: git_check
-    if: needs.git_check.outputs.run_build == 'true'
+    if: needs.git_check.outputs.run_build == 'true-XXXXXXXXX'
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -171,11 +174,47 @@ jobs:
           chmod +x gradlew
           set JAVA_HOME="${JAVA_HOME_14_X64}"
           ./gradlew createDmg
-          find . -name "*.dmg"
 
-      - name: 'Upload binary DMG'
+      - name: 'Upload DMG'
         uses: actions/upload-artifact@v2
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
-          name: ${{ needs.git_check.outputs.base_name }}.dmg
+          name: ${{ needs.git_check.outputs.out_name }}.dmg
+
+  # ##################################
+
+  # Building for Windows.
+  build_windows:
+    name: 'Windows build'
+    runs-on: windows-latest
+
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    #    if: needs.git_check.outputs.run_build == 'true'
+    if: always()
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: 14
+          distribution: 'adopt'
+
+      - name: "Build MSI"
+        run: |
+          .\gradlew.bat createMsi
+
+      - name: 'Upload MSI'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.msi
+          name: ${{ needs.git_check.outputs.out_name }}.msi
