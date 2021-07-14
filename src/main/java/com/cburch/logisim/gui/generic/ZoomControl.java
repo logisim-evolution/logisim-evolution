@@ -38,6 +38,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -65,7 +66,10 @@ public class ZoomControl extends JPanel {
   private final JButton plus;
   private final JButton minus;
   public final AutoZoomButton zoomButton;
-  public final ResetZoomButton resetButton;
+  public final JPanel zoomContainer;
+  public final PredefinedZoomButton predefinedZoom1;
+  public final PredefinedZoomButton predefinedZoom2;
+  public final PredefinedZoomButton predefinedZoom3;
   private ZoomModel model;
   private SliderModel sliderModel;
 
@@ -96,8 +100,14 @@ public class ZoomControl extends JPanel {
     zoomButton = new AutoZoomButton(model);
     this.add(zoomButton, BorderLayout.WEST);
 
-    resetButton = new ResetZoomButton(model);
-    this.add(resetButton, BorderLayout.CENTER);
+    zoomContainer = new JPanel(new GridLayout());
+    predefinedZoom1 = new PredefinedZoomButton(model, "\u00D7" + "\u00BD", 0.5);
+    zoomContainer.add(predefinedZoom1);
+    predefinedZoom2 = new PredefinedZoomButton(model, "\u00D7" + "1", 1.0);
+    zoomContainer.add(predefinedZoom2);
+    predefinedZoom3 = new PredefinedZoomButton(model, "\u00D7" + "2", 2.0);
+    zoomContainer.add(predefinedZoom3);
+    this.add(zoomContainer, BorderLayout.CENTER);
 
     model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
     model.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
@@ -157,7 +167,7 @@ public class ZoomControl extends JPanel {
 
   public void setAutoZoomButtonEnabled(boolean val) {
     zoomButton.setEnabled(val);
-    resetButton.setEnabled(val);
+    predefinedZoom1.setEnabled(val);
   }
 
   public void setZoomModel(ZoomModel value) {
@@ -172,14 +182,18 @@ public class ZoomControl extends JPanel {
       if (value == null) {
         slider.setEnabled(false);
         zoomButton.setEnabled(false);
-        resetButton.setEnabled(false);
+        predefinedZoom1.setEnabled(false);
+        predefinedZoom2.setEnabled(false);
+        predefinedZoom3.setEnabled(false);
         label.setEnabled(false);
         plus.setEnabled(false);
         minus.setEnabled(false);
       } else {
         slider.setEnabled(true);
         zoomButton.setEnabled(true);
-        resetButton.setEnabled(true);
+        predefinedZoom1.setEnabled(true);
+        predefinedZoom2.setEnabled(true);
+        predefinedZoom3.setEnabled(true);
         label.setEnabled(true);
         plus.setEnabled(true);
         minus.setEnabled(true);
@@ -187,7 +201,9 @@ public class ZoomControl extends JPanel {
         slider.setModel(sliderModel);
         grid.update();
         zoomButton.setZoomModel(value);
-        resetButton.setZoomModel(value);
+        predefinedZoom1.setZoomModel(value);
+        predefinedZoom2.setZoomModel(value);
+        predefinedZoom3.setZoomModel(value);
         value.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
         value.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
         value.addPropertyChangeListener(ZoomModel.ZOOM, label);
@@ -407,13 +423,16 @@ public class ZoomControl extends JPanel {
     }
   }
 
-  public class ResetZoomButton extends JButton implements ActionListener {
+  public class PredefinedZoomButton extends JButton implements ActionListener {
     private static final long serialVersionUID = 1L;
     private ZoomModel zoomModel;
+    final double zoomValue;
 
-    public ResetZoomButton(ZoomModel model) {
+    public PredefinedZoomButton(ZoomModel model, String label, double zoomValue) {
       zoomModel = model;
-      super.setText("100%");
+      this.zoomValue = zoomValue;
+//      super.setText("\u00D7" + "1");
+      super.setText(label);
       addActionListener(this);
     }
 
@@ -424,8 +443,9 @@ public class ZoomControl extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (zoomModel != null && canvas.getProject().getCurrentCircuit() != null) {
-        zoomModel.setZoomFactor(1.0);
+        zoomModel.setZoomFactor(zoomValue);
       }
     }
   }
+
 }
