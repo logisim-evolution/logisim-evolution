@@ -76,7 +76,9 @@ jobs:
     - name: "Generate base name"
       id: vars
       run: |
-        echo "::set-output name=base_name::logisim-evolution_develop_$(date +%Y%m%d)"
+        echo "::set-output name=lse_name::$(fgrep version gradle.properties | awk '{print $3}')"
+        echo "::set-output name=base_name::${lse_name}_develop_$(date +%Y%m%d)"
+        echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
 
     # ##################################
 
@@ -85,13 +87,12 @@ jobs:
         chmod +x gradlew
         ./gradlew clean
         ./gradlew sourcesJar
-        find . -name "*.jar"
 
     - name: 'Upload sources JAR'
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/libs/logisim-evolution-3.5.0-src.jar
+        path: build/libs/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-src.jar
         name: ${{ steps.vars.outputs.base_name }}-src.jar
 
     # ##################################
@@ -101,13 +102,12 @@ jobs:
         chmod +x gradlew
         ./gradlew clean
         ./gradlew shadowJar
-        find . -name "*.jar"
 
     - name: 'Upload binary JAR'
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/libs/logisim-evolution-3.5.0-all.jar
+        path: build/libs/${{ steps.vars.outputs.lse_name }}-${{ steps.vars.outputs.lse_version }}-all.jar
         name: ${{ steps.vars.outputs.base_name }}-all_jdk14.jar
 
     # ##################################
@@ -122,5 +122,5 @@ jobs:
       uses: actions/upload-artifact@v2
       if: success()
       with:
-        path: build/dist/logisim-evolution_3.5.0-1_amd64.deb
+        path: build/dist/${{ steps.vars.outputs.lse_name }}_${{ steps.vars.outputs.lse_version }}-1_amd64.deb
         name: ${{ steps.vars.outputs.base_name }}_amd64.deb
