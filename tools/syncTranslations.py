@@ -3,8 +3,25 @@
 #
 # Checks *.properties files agains base english version.
 # Reports missing translations. Can also update targed files
-# with translation placeholders (with --write option)
+# with translation placeholders (with --write option).
 #
+# Usage example:
+#
+# To see current sync state:
+#
+#   cd <SRC>/tools
+#   ./syncTranslations.py
+#
+# To update translation files
+#
+#   cd <SRC>/tools
+#   ./syncTranslations.py --write
+#
+# When using with CWD being project root folder instead of tools/
+#
+#   ./syncTranslations.py --root src/main/resources/resources/logisim/strings/
+#
+
 
 import argparse
 import os
