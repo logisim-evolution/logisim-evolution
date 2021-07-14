@@ -83,7 +83,8 @@ We also offer builds based on current state of [develop](https://github.com/logi
 branch, which are created everyday at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
 To get nightly downloads, please [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
-and browse to the last successful run of "Nightly build" (should be on top).
+and browse to the last successful run of "Nightly build" (should be on top). Note, that due to Github internals,
+all files are provided as ZIP archives. You must unpack unpack downloaded binary prior run or installation.
 
 Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
 or [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues) if you found a bug or have improvement
