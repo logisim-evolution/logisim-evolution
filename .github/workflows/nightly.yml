@@ -82,7 +82,8 @@ jobs:
     - name: "Generate base name"
       id: vars
       run: |
-        echo "::set-output name=lse_name::$(fgrep name gradle.properties | awk '{print $3}')"
+        declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
+        echo "::set-output name=lse_name::${lse_name}"
         echo "::set-output name=base_name::${lse_name}_develop_$(date +%Y%m%d)"
         echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
 
