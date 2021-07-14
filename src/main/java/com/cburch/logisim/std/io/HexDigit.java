@@ -70,7 +70,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     U,
     H
   }
-  final static NoDataDisplayMode NO_DATA_DISPLAY = NoDataDisplayMode.BLANK;
+
+  static final NoDataDisplayMode NO_DATA_DISPLAY = NoDataDisplayMode.BLANK;
 
   public HexDigit() {
     super(_ID, S.getter("hexDigitComponent"));
