@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 
 
 def getKeys(path):
@@ -88,15 +89,23 @@ def main():
             fmt = '{:<' + str(maxFileNameLen) + '}|'
             print(fmt.format(file), end = '')
         keys = getKeys(filePath + ".properties")
+
+        failed = False
         for lang in langs:
             trans = getTrans(filePath + '_' + lang + ".properties")
             missing = writeFile(args, filePath + '_' + lang + ".properties", keys, trans)
+            failed = failed or missing
             if not args.quiet:
                 if missing == 0:
                     missing = '-'
                 print(' {:>4} |'.format(missing), end = '')
         if not args.quiet:
             print()
+
+    if failed:
+        sys.exit(100)
+    else:
+        sys.exit(0)
 
 
 if __name__ == "__main__":
