@@ -91,14 +91,11 @@ def main():
 
     group = parser.add_argument_group('Paths')
     group.add_argument('--root', action = 'store', dest = 'rootDir', nargs = 1, metavar = 'DIR',
-                       help = 'String resources root dir. Default: {}'.format(defaultRootDir))
+                       default = defaultRootDir, help = 'String resources root dir. Default: {}'.format(defaultRootDir))
 
     args = parser.parse_args()
 
     log = []
-
-    if args.rootDir is None:
-        args.rootDir = defaultRootDir
 
     h1 = ' ' * maxFileNameLen + '|'
     h2 = '-' * maxFileNameLen + '+'
@@ -110,16 +107,17 @@ def main():
 
     for file in files:
         row = ''
-        filePath = os.path.join(args.rootDir, file, file)
+        filePath = os.path.join(args.rootDir, file)
         if not args.quiet:
             fmt = '{:<' + str(maxFileNameLen) + '}|'
             row += fmt.format(file)
-        keys = getKeys(filePath + ".properties")
+        keys = getKeys(os.path.join(filePath, "{}.properties".format(file)))
 
         failed = False
         for lang in langs:
-            trans = getTrans(filePath + '_' + lang + ".properties")
-            missing = writeFile(args, filePath + '_' + lang + ".properties", keys, trans)
+            prop_file = os.path.join(filePath, '{}_{}.properties'.format(file, lang))
+            trans = getTrans(prop_file)
+            missing = writeFile(args, prop_file, keys, trans)
             failed = failed or missing
             if missing == 0:
                 missing = '-'
