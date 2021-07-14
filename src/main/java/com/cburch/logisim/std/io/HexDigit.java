@@ -232,7 +232,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
 
         break;
       default:
-        segs = 0x0001000; // a dash '-'
+        // This shape indicates error value (out of bounds)
+        segs = SEG_A_MASK | SEG_D_MASK | SEG_G_MASK;
         break;
     }
     return segs;

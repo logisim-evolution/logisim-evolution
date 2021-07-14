@@ -19,6 +19,7 @@
   * Replace DarkLaf with FlatLaf for better compatibility.
   * Adds "Rotate Left" context menu action.
   * Display "Too few inputs for table" if Karnaugh Map has only 1 input.
+  * HexDisplay is stays blank if no valid data is fed instead of showing "H"
   * Project's "Dirty" (unsaved) state is now also reflected by adding `*` marker to the window title.
   * Tons of code cleanup and internal improvements.
 
