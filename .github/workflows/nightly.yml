@@ -73,6 +73,12 @@ jobs:
 
     # ##################################
 
+    - name: "Install required packages"
+      id: vars
+      run: sudo apt install -y rpm
+
+    # ##################################
+
     - name: "Generate base name"
       id: vars
       run: |
@@ -124,3 +130,18 @@ jobs:
       with:
         path: build/dist/${{ steps.vars.outputs.lse_name }}_${{ steps.vars.outputs.lse_version }}-1_amd64.deb
         name: ${{ steps.vars.outputs.base_name }}_amd64.deb
+
+      # ##################################
+
+    - name: "Build RPM"
+      run: |
+        chmod +x gradlew
+        ./gradlew clean
+        ./gradlew createRpm -x checkstyleMain -x checkstyleTest
+
+    - name: 'Upload *.rpm'
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        path: build/dist/${{ steps.vars.outputs.lse_name }}_${{ steps.vars.outputs.lse_version }}-1.x86_64.rpm
+        name: ${{ steps.vars.outputs.base_name }}.x86_64.rpm
