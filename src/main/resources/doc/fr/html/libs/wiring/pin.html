@@ -12,10 +12,10 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class=maindiv>
+    <div class="maindiv">
       <h1>
-        <img class=iconlibs src="../../../../icons/6464/pinInput.png" alt="#########" height=32 width=32> 
-		<img class=iconlibs src="../../../../icons/6464/pinOutput.png" alt="#########" height=32 width=32> <em>Broche</em>
+        <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32">&nbsp;<em>Broche</em>
       </h1>
       <table>
         <tbody>
@@ -39,9 +39,57 @@
             <td valign="top">
               <strong>Apparence:</strong>
             </td>
-            <td valign="top">
-              <img class="notscal" src="../../../../img-libs/pin.png" alt="#########">
-            </td>
+			<td valign="top">
+            <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th colspan=2>
+                      Flèche
+                    </th>
+                    <th colspan=2>
+                      Classic
+                    </th>
+                    <th >
+                    </th>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      En entrée:
+                    </th>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th valign="middle" align="left">
+                      En sortie:
+                    </th>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
+                    </td>
+					 <td>
+                      <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+			  </td>
           </tr>
         </tbody>
       </table>
@@ -49,71 +97,86 @@
         Comportement
       </h2>
       <p>
-        Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <q>sortie?</q>. Logisim représente les broches de sortie à l'aide d'un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans les deux cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit).
+        Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <b class="propertie">sortie?</b>. Vous pouvez observer ci-dessus la manière dont Logisim représente les broches d'entrées et ou de sorties selon sont attribut <b class="propertie">Apparence</b>.<br>
+        Dans le mode "flèche" les entrées auront le branchement du coté pointu et les sorties du coté rectangulaire. Dans l'apparence "classique" les sorties sont reprsentée par un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans tous les cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit). 
       </p>
       <p>
-        Une broche est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augemente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section <a class=refguide href="../../guide/subcirc/index.html">Design hiérarchique</a> du <a href="../index.html">Guide de l'utilisateur</a> et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants pin du schéma d'un circuit définissent les broches qui apparaissent sur le symbole du sous-circuit lorsque q'il est utilisée dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schema du sous-circuit.
+        Une "broche" est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augmente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section <a class=refguide href="../../guide/subcirc/index.html">Design hiérarchique</a> du <a href="../index.html">Guide de l'utilisateur</a> et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants "Broche" du schéma d'un circuit définissent les contactes qui apparaissent sur le symbole du sous-circuit lorsque qu'il est utilisé dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schéma du sous-circuit.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        Un composant broche ne possède qu’une pin, qui sera une entrée pour lui si la broche est une connexion de sortie du schéma, et qui sera une sortie si la briche est une connexion d’entrée du schéma. Dans les deux cas, sa largeur de bit correspond à l'attribut Largeur de données et son emplacement est spécifié par l'attribut Orientation.
+        Un composant "broche" ne possède qu’une pin, qui sera une entrée pour lui si la broche est une connexion de sortie du schéma, et qui sera une sortie si la broche est une connexion d’entrée du schéma. Dans les deux cas, sa largeur de bit correspond à l'attribut Largeur de données et son emplacement est spécifié par l'attribut Orientation.
       </p>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q>Largeur de données</q> , les touches fléchées modifient son attribut <q>Orientation</q> et Alt avec une touche fléchée modifie l'attribut <q>Emplacement du libellé</q>
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut <b class="propertie">Largeur de données</b> , les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Orientation
+           <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa pin d'entrée / sortie.
         </dd>
         <dt>
-          Sortie ?
+           <b class="propertie">Sortie ?</b>
         </dt>
         <dd>
           Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. <b class=note>Note</b>: Si le composant broche est une entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.)
         </dd>
         <dt>
-          Largeur de données
+           <b class="propertie">Largeur de données</b>
         </dt>
         <dd>
           Le nombre de bits correspondant à la largeur en bit prise en charge par la pin.
         </dd>
         <dt>
-          Trois états?
+           <b class="propertie">Trois états?</b>
         </dt>
         <dd>
           Pour une broche d’entrée, cette option détermine si l’utilisateur peut demander à la pin d’émettre des valeurs flottantes (Non spécifiée). L'attribut n'est utile que dans l'interface utilisateur pour la simulation. cela n'a aucun effet sur le comportement de la broche lorsque la disposition du circuit est utilisée comme sous-circuit. Pour une broche de sortie, l'attribut n'a aucun effet.
         </dd>
         <dt>
-          Pull Comportement
+           <b class="propertie">Pull Comportement</b>
         </dt>
         <dd>
           Pour une broche d'entrée, l'attribut spécifie comment les valeurs flottantes doivent être traitées dans la simulation lorsqu'elles sont reçues en entrée depuis un circuit de hyérachie supérieur. Avec "inchangé", les valeurs flottantes sont reprise dans le schéma sous forme de valeurs flottantes; avec "pull up", ils sont convertis en 1 et avec "pull down", ils sont convertis en valeurs 0.
         </dd>
         <dt>
-          Label
+           <b class="propertie">Label</b>
         </dt>
         <dd>
           Le texte dans l'étiquette associée au composant.
         </dd>
         <dt>
-          Postion du Label
-        </dt>
-        <dd>
-          L'emplacement de l'étiquette par rapport au composant.
-        </dd>
-        <dt>
-          Police du Label
+           <b class="propertie">Police du Label</b>
         </dt>
         <dd>
           La police avec laquelle rendre l'étiquette.
+        </dd>
+		 <dt>
+          <b class="propertie">Base</b>
+        </dt>
+        <dd>
+          Permet de définir la base dans laquelle les valeurs seront représentées.<br>
+		  Example pour 1010 en binaire<br>
+			&emsp;Binaire&emsp;: <b>1010<sub>b</sub></b><br>
+			&emsp;Octal&emsp;: <b>12<sub>o</sub></b><br>
+			&emsp;Décimal signé&emsp;: <b>-6<sub>s</sub></b><br>
+			&emsp;Décimal non signé&emsp;: <b>10<sub>u</sub></b><br>
+			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
+			&emsp;Flotant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits  de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
+        </dd>
+		<dt>
+          <b class="propertie">&nbsp;Appearence</b>
+        </dt>
+        <dd>
+          Il existe deux types d'apparence, la Logisim CLassic et les Formes de flèches. Voir les exemples en haut de la page.
         </dd>
       </dl>
       <h2>
@@ -131,6 +194,7 @@
       <h2>
         Action de l'outil text
       </h2>
+	  </div>
       <p>
         Permet de modifier l’étiquette associée au composant.
       </p>

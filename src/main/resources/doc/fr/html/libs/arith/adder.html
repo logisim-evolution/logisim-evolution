@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Additionneur à virgule flottante 
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/adder.png" alt="#########" width="32" height="32" align="middle"> <em>Additionneur à virgule flottante</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmetique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              3.5
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/fpadder.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Ce composant additionne deux valeurs entrant par les entrées ouest et sort la somme sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres additionneurs pour fournir une addition de plus de bits que ce qui est possible avec un seul additionneur : L'entrée de retenue (si elle est spécifiée) qui fournit une valeur d'un bit à ajouter également à la somme , et une sortie de retenue qui fournit qui une valeur de dépassement d'un bit qui peut être envoyé à un autre additionneur.
+      </p>
+      <p>Si l'une des additions contient des bits flottants ou des bits d'erreur, le composant effectuera une addition partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest, extrémité nord
+        </dt>
+        <dd>
+          Une des deux valeurs à additionner.
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud
+        </dt>
+        <dd>
+          L'autre des deux valeurs à additionner.
+        </dd>
+        <dt>
+          Bord nord, étiqueté <var>c in</var> 
+        </dt>
+        <dd>
+          Une valeur de report à ajouter à la somme de 1 bit. Si la valeur est inconnue (c'est-à-dire flottante), elle est considérée comme égale à 0.
+        </dd>
+        <dt>
+          Bord est
+        </dt>
+        <dd>
+          La somme des deux valeurs en entrée et de l'entrée <var>c in</var>.
+        </dd>
+        <dt>
+          Bord sud, étiquetée <var>c out</var>
+        </dt>
+        <dd>
+          Le bit de report calculé pour la somme. Si les valeurs additionnées en tant que valeurs non signées donnent un résultat qui est inférieur a <var>Largeur de données</var>, alors ce bit sera 0 ; sinon, il sera 1.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+	   <div class="attliste">
+	   <p>
+	   Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut Largeur de données , 
+	   </p>
+      <dl>
+        <dt>
+          <b class="propertie">Largeur de données</b>
+        </dt>
+        <dd>
+          La largeur en bit de l'additionneur.
+        </dd>
+       </dl>
+	   </div>
+      <h2>
+        Action de l'outil pousser
+      </h2>
+      <p>
+        Aucunne.
+      </p>
+      <h2>
+        Action de l'outil text 
+      </h2>
+      <p>
+        Aucunne.
+      </p>
+      <p>
+        Back to <a href="../index.html"><em>Library Reference</em></a>
+      </p>
+    </div>
+  </body>
+</html>

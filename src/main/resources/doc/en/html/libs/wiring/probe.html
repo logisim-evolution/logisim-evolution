@@ -91,13 +91,26 @@
       <p>
         When the component is selected or being added, the arrow keys alter its <q>Facing</q> attribute.
       </p>
-	  
+	  <div class="attliste">
       <dl>
         <dt>
           <b class="propertie">&nbsp;Facing </b>
         </dt>
         <dd>
           The side of the component where its input pin should be.
+        </dd>
+		 <dt>
+          <b class="propertie">Radix</b>
+        </dt>
+        <dd>
+          Allows you to define the base in which the values will be represented.<br>
+		  Example for 1010 in binary<br>
+			&emsp;Binary&emsp;: <b>1010<sub>b</sub></b><br>
+			&emsp;Octal&emsp;: <b>12<sub>o</sub></b><br>
+			&emsp;Signed decimal&emsp;: <b>-6<sub>s</sub></b><br>
+			&emsp;Unsigned deciaml&emsp;: <b>10<sub>u</sub></b><br>
+			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
+			&emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b> Only in 32 or 64 bits 1 or 0. If not present the value <b>NaN<sub>f</sub></b> <br>
         </dd>
         <dt>
           <b class="propertie">&nbsp;Label </b>
@@ -130,7 +143,7 @@
           There are two types of appearance, CLassic Logisim and Arrow Shapes. See the examples at the top of the page
         </dd>
       </dl>
-
+      </div>
       <h2>
         Poke Tool Behavior
       </h2>

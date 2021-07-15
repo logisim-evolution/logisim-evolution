@@ -22,24 +22,8 @@ div.forcode{
 	text-indent:-20px;
 }
 
-div.AttributesListe {
-	margin-left:20;
-}
-
-/* For for the keyboard keys  (not used) */
-kbd {
-	background-color: #eee;
-	border-radius: 3px;
-	border: 1px solid #b4b4b4;
-	box-shadow: 0 1px 1px rgba(0,0,0,.2),0 2px 0 0 rgba(255,255,255,.7) inset;
-	color: #333;
-	display: inline-block;
-	font-family: consolas,"Liberation Mono",courier,monospace;
-	font-size: .85em;
-	font-weight: 700;
-	line-height: 1;
-	padding: 2px 4px;
-	white-space: nowrap;
+div.attliste{
+	padding-left:10px;
 }
 
 /* For img in the text */
@@ -61,6 +45,13 @@ img.inbullet {
 img.notscal {
 	height:auto;
 	width:auto;
+	vertical-align:middle;
+}
+
+/* For icon in the text */
+img.icontxt{
+	height:16px;
+	width:16px;
 	vertical-align:middle;
 }
 
@@ -89,13 +80,6 @@ img.appearancelibshaut{
 	width:64;
 	vertical-align:middle;
 
-}
-
-/* For icon in the text */
-img.icontxt{
-	height:16px;
-	width:16px;
-	vertical-align:middle;
 }
 
 div.twodiv{
@@ -188,54 +172,10 @@ td.toolslist {
 	vertical-align:top;
 }
 
-
-/* For tables of truth tables */
-table.tblver {
-	text-align:center;
-	border-spacing:2px;
-	border-style:dotted;
-	border-width:0px;
-}
-
-tr.tblvertitl{
-	background-color:#ccd1d6;
-}
-td.space {
-	background-color:#ffffff;
-}
-td.zerov {
-	color:#008000;
-	text-align :center;
-}
-td.unov {
-	color:#00FF00;
-	text-align :center;
-}
-td.xvalue {
-	color:#0000FF;
-	text-align :center;
-}
-td.evalue {
-	color:#FF0000;
-	text-align :center;
-}
-span.xvalue {
-	color:#0000FF;
-	text-align :center;
-}
-span.evalue {
-	color:#FF0000;
-	text-align :center;
-}
-
 /* To mark the areas to translate */ 
 span.totranslate {
 	color:#DA81F5;
 }
-
-/* Définition pour la table présentation de lib */
-
-/* Définition pour la table des composant de lib */
 
 /* For list items */
 dt {
@@ -247,4 +187,97 @@ margin-top:5px;
 
 p.blue {
   color:#008000;
+}
+
+/* For for the truth tables */
+table.encapsul{
+  text-align:center;
+}
+table.truthtable {
+  border:0;
+  border-collapse : collapse;
+  text-align:center;
+}
+/* cell truth tables */
+td.space {
+	background-color:#ffffff;
+	padding:3;
+}
+td.zerov {
+	color:#008000;
+	padding:3;
+	text-align:center;
+}
+td.unov {
+	color:#00FF00;
+	padding:3;
+	text-align:center;
+}
+td.uvalue {
+	color:#0000FF;
+	padding:3;
+	text-align:center;
+}
+
+td.evalue {
+	color:#FF0000;
+	padding:3;
+	text-align:center;
+}
+
+td.space {
+	padding:3;
+	text-align:center;
+}
+
+/* cell in title truth tables*/
+th.tspace {
+	background-color:#e0e0e0;
+	padding:3;
+}
+
+
+td.tzerov {
+	color:#008000;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tunov {
+	color:#00FF00;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tuvalue {
+	color:#0000FF;
+	padding:3;
+	background-color:#e0e0e0;
+}
+td.tevalue {
+	color:#FF0000;
+	padding:3;
+	background-color:#e0e0e0;
+}
+
+/* cell  tables */
+td.left {
+	 text-align:left;
+}
+td.center {
+	 text-align:center;
+}
+td.right {
+	 text-align:right;
+}
+
+b.uvalue {
+	 color:#0000FF;
+	 font-weight: normal
+}
+b.evalue {
+	 color:#FF0000;
+	 font-weight: normal
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
 }
