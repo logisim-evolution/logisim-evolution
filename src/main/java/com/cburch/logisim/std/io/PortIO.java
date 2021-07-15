@@ -133,7 +133,7 @@ public class PortIO extends InstanceFactory {
 
     public Color getColor(int i) {
       final var v = get(i);
-      return (v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor());
+      return v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor();
     }
 
     @Override
