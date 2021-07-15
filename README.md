@@ -18,6 +18,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
   * [Features](#features)
   * [Requirements](#requirements)
   * **[Downloads](#download)**
+    * [Nightly builds (unstable)](#nightly-builds)
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
   * [Bug reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
@@ -54,6 +55,8 @@ Project highlights:
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
 It requires [Java 14 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
 
+---
+
 ## Download ###
 
 `Logisim-evolution` is available for
@@ -73,6 +76,19 @@ include the Java runtime and do not require it to be installed separately:
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
 is also available and can be run on any system with a supported Java runtime installed.
+
+### Nightly builds ###
+
+We also offer builds based on current state of [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
+branch, which are created everyday at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+To get nightly downloads, please [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
+and browse to the last successful run of "Nightly build" (should be on top). Note, that due to Github internals,
+all files are provided as ZIP archives. You must unpack unpack downloaded binary prior run or installation.
+
+Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
+or [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues) if you found a bug or have improvement
+idea.
 
 ---
 
