@@ -84,6 +84,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Timer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -146,17 +147,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
-    CanvasPane canvasPane = new CanvasPane(layoutCanvas);
-    double[] options = new double[49];
-    for (int i = 0; i < 49; i++) {
-      options[i] = (i + 1) * 20;
-    }
+    final var canvasPane = new CanvasPane(layoutCanvas);
+
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
-            options,
-            canvasPane); // ZOOM_OPTIONS);
+            buildZoomSteps(),
+            canvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -252,6 +250,37 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+
+  /**
+   * Computes allowed zoom steps.
+   *
+   * @return
+   */
+  private ArrayList<Double> buildZoomSteps() {
+    class Pair {
+      int maxZoom;
+      int singleStep;
+
+      Pair(int maxZoom, int step) {
+        this.maxZoom = maxZoom;
+        this.singleStep = step;
+      }
+    }
+    // Pairs must be in acending order (sorted by maxZoom value).
+    final var config = new Pair[] {new Pair(50, 5), new Pair(200, 10), new Pair(1000, 20)};
+
+    // Result zoomsteps.
+    final var steps = new ArrayList<Double>();
+
+    double zoom = 0;
+    for (final var pair : config) {
+      while (zoom < pair.maxZoom) {
+        zoom += pair.singleStep;
+        steps.add(zoom);
+      }
+    }
+    return steps;
   }
 
   private static Point getInitialLocation() {
