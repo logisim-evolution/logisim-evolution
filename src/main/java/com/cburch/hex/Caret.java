@@ -291,6 +291,11 @@ public class Caret {
     }
 
     @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
       final var measures = hex.getMeasures();
       final var loc = measures.toAddress(e.getX(), e.getY());

@@ -117,6 +117,11 @@ public class HorizontalSplitPane extends JPanel {
       setFraction((double) value / (HorizontalSplitPane.this.getHeight() - in.bottom - in.top));
       revalidate();
     }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
   }
 
   private class MyLayout implements BaseLayoutManagerContract {

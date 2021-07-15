@@ -55,6 +55,11 @@ public class VerticalSplitPane extends JPanel {
       setFraction((double) value / (VerticalSplitPane.this.getWidth() - in.left - in.right));
       revalidate();
     }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
   }
 
   private class MyLayout implements BaseLayoutManagerContract {

@@ -365,6 +365,11 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
     if (MyProject != null) MyProject.repaintCanvas();
   }
 
+  @Override
+  public void mouseClicked(MouseEvent mouseEvent) {
+    // do nothing
+  }
+
   /* Here the mouse events are handled */
   @Override
   public void mousePressed(MouseEvent e) {

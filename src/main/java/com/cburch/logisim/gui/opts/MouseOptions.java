@@ -303,6 +303,11 @@ class MouseOptions extends OptionsPanel {
     }
 
     @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
       if (e.getSource() == addArea && curTool != null) {
         final var t = curTool.cloneTool();

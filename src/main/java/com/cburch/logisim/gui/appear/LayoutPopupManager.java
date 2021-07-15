@@ -127,6 +127,11 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
   }
 
   @Override
+  public void mouseClicked(MouseEvent mouseEvent) {
+    // do nothing
+  }
+
+  @Override
   public void mousePressed(MouseEvent e) {
     long sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();

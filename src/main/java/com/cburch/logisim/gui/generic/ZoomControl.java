@@ -234,6 +234,11 @@ public class ZoomControl extends JPanel {
     }
 
     @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
       if (model != null) model.setShowGrid(!state);
     }

@@ -40,9 +40,7 @@ import java.awt.event.MouseListener;
  */
 public interface BaseMouseListenerContract extends MouseListener {
   @Override
-  default void mouseClicked(MouseEvent mouseEvent) {
-    // dummy implementation
-  }
+  void mouseClicked(MouseEvent mouseEvent);
 
   @Override
   default void mousePressed(MouseEvent mouseEvent) {
