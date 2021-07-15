@@ -371,7 +371,7 @@ public class Buzzer extends InstanceFactory {
               }
             }
 
-           var rvalues = new double[sampleRate];
+            var rvalues = new double[sampleRate];
             for (var i = 0; i < sampleRate; i += cycle) {
               System.arraycopy(values, 2 * cycle, rvalues, i, Math.min(cycle, sampleRate - i));
             }
