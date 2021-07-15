@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -67,7 +68,10 @@ public class ZoomControl extends JPanel {
   private final JButton plus;
   private final JButton minus;
   public final AutoZoomButton zoomButton;
-  public final ResetZoomButton resetButton;
+  public final JPanel zoomContainer;
+  public final PredefinedZoomButton predefinedZoom1;
+  public final PredefinedZoomButton predefinedZoom2;
+  public final PredefinedZoomButton predefinedZoom3;
   private ZoomModel model;
   private SliderModel sliderModel;
 
@@ -83,7 +87,7 @@ public class ZoomControl extends JPanel {
     minus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMOUT), true);
     slider = new JSlider(sliderModel);
 
-    JPanel zoom = new JPanel(new BorderLayout());
+    final var zoom = new JPanel(new BorderLayout());
     zoom.add(minus, BorderLayout.WEST);
     zoom.add(label, BorderLayout.CENTER);
     zoom.add(plus, BorderLayout.EAST);
@@ -98,8 +102,14 @@ public class ZoomControl extends JPanel {
     zoomButton = new AutoZoomButton(model);
     this.add(zoomButton, BorderLayout.WEST);
 
-    resetButton = new ResetZoomButton(model);
-    this.add(resetButton, BorderLayout.CENTER);
+    zoomContainer = new JPanel(new GridLayout());
+    predefinedZoom1 = new PredefinedZoomButton(model, "\u00D7" + "\u00BD", 0.5);
+    zoomContainer.add(predefinedZoom1);
+    predefinedZoom2 = new PredefinedZoomButton(model, "\u00D7" + "1", 1.0);
+    zoomContainer.add(predefinedZoom2);
+    predefinedZoom3 = new PredefinedZoomButton(model, "\u00D7" + "2", 2.0);
+    zoomContainer.add(predefinedZoom3);
+    this.add(zoomContainer, BorderLayout.CENTER);
 
     model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
     model.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
@@ -107,57 +117,63 @@ public class ZoomControl extends JPanel {
   }
 
   private int nearestZoomOption() {
-    double[] choices = model.getZoomOptions();
-    double factor = model.getZoomFactor() * 100.0;
-    int closest = 0;
-    for (int i = 1; i < choices.length; i++) {
-      if (Math.abs(choices[i] - factor) < Math.abs(choices[closest] - factor)) closest = i;
+    final var choices = model.getZoomOptions();
+    final var factor = model.getZoomFactor() * 100.0;
+    var closest = 0;
+    for (var i = 1; i < choices.size(); i++) {
+      if (Math.abs(choices.get(i) - factor) < Math.abs(choices.get(closest) - factor)) {
+        closest = i;
+      }
     }
     return closest;
   }
 
+  /**
+   * Returns string representation of current zoom factor.
+   *
+   * @return zoom factor as string
+   */
   public String zoomString() {
-    double factor = model.getZoomFactor();
-    return String.format("%.0f%%", factor * 100.0);
+    return "\u00D7" + Double.toString(model.getZoomFactor());
   }
 
   public void zoomIn() {
-    double zoom = model.getZoomFactor();
-    double[] choices = model.getZoomOptions();
-    double factor = zoom * 100.0 * 1.001;
-    for (double choice : choices) {
+    final var zoom = model.getZoomFactor();
+    final var choices = model.getZoomOptions();
+    final var factor = zoom * 100.0 * 1.001;
+    for (final var choice : choices) {
       if (choice > factor) {
         model.setZoomFactor(choice / 100.0);
-        return;
+        break;
       }
     }
   }
 
   public void zoomOut() {
-    double zoom = model.getZoomFactor();
-    double[] choices = model.getZoomOptions();
-    double factor = zoom * 100.0 * 0.999;
-    for (int i = choices.length - 1; i >= 0; i--) {
-      if (choices[i] < factor) {
-        model.setZoomFactor(choices[i] / 100.0);
-        return;
+    final var zoom = model.getZoomFactor();
+    final var choices = model.getZoomOptions();
+    final var factor = zoom * 100.0 * 0.999;
+    for (var i = choices.size() - 1; i >= 0; i--) {
+      if (choices.get(i) < factor) {
+        model.setZoomFactor(choices.get(i) / 100.0);
+        break;
       }
     }
   }
 
   public void zoomTo(int i) {
-    double[] choices = model.getZoomOptions();
-    i = Math.max(Math.min(i, choices.length - 1), 0);
-    model.setZoomFactor(choices[i] / 100.0);
+    final var choices = model.getZoomOptions();
+    i = Math.max(Math.min(i, choices.size() - 1), 0);
+    model.setZoomFactor(choices.get(i) / 100.0);
   }
 
   public void setAutoZoomButtonEnabled(boolean val) {
     zoomButton.setEnabled(val);
-    resetButton.setEnabled(val);
+    predefinedZoom1.setEnabled(val);
   }
 
   public void setZoomModel(ZoomModel value) {
-    ZoomModel oldModel = model;
+    final var oldModel = model;
     if (oldModel != value) {
       if (oldModel != null) {
         oldModel.removePropertyChangeListener(ZoomModel.SHOW_GRID, grid);
@@ -168,14 +184,18 @@ public class ZoomControl extends JPanel {
       if (value == null) {
         slider.setEnabled(false);
         zoomButton.setEnabled(false);
-        resetButton.setEnabled(false);
+        predefinedZoom1.setEnabled(false);
+        predefinedZoom2.setEnabled(false);
+        predefinedZoom3.setEnabled(false);
         label.setEnabled(false);
         plus.setEnabled(false);
         minus.setEnabled(false);
       } else {
         slider.setEnabled(true);
         zoomButton.setEnabled(true);
-        resetButton.setEnabled(true);
+        predefinedZoom1.setEnabled(true);
+        predefinedZoom2.setEnabled(true);
+        predefinedZoom3.setEnabled(true);
         label.setEnabled(true);
         plus.setEnabled(true);
         minus.setEnabled(true);
@@ -183,7 +203,9 @@ public class ZoomControl extends JPanel {
         slider.setModel(sliderModel);
         grid.update();
         zoomButton.setZoomModel(value);
-        resetButton.setZoomModel(value);
+        predefinedZoom1.setZoomModel(value);
+        predefinedZoom2.setZoomModel(value);
+        predefinedZoom3.setZoomModel(value);
         value.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
         value.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
         value.addPropertyChangeListener(ZoomModel.ZOOM, label);
@@ -212,23 +234,27 @@ public class ZoomControl extends JPanel {
     }
 
     @Override
+    public void mousePressed(MouseEvent e) {
+      if (model != null) model.setShowGrid(!state);
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
       if (AppPreferences.AntiAliassing.getBoolean()) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        final var g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       }
-      int width = getWidth();
-      int height = getHeight();
+      final var width = getWidth();
+      final var height = getHeight();
       g.setColor(state ? getBackground() : Color.BLACK);
-      int three = AppPreferences.getScaled(3);
-      int xdim = (width - AppPreferences.getScaled(4)) / three * three + 1;
-      int ydim = (height - AppPreferences.getScaled(4)) / three * three + 1;
-      int xoff = (width - xdim) / 2;
-      int yoff = (height - ydim) / 2;
-      for (int x = 0; x < xdim; x += three) {
-        for (int y = 0; y < ydim; y += three) {
+      final var three = AppPreferences.getScaled(3);
+      final var xdim = (width - AppPreferences.getScaled(4)) / three * three + 1;
+      final var ydim = (height - AppPreferences.getScaled(4)) / three * three + 1;
+      final var xoff = (width - xdim) / 2;
+      final var yoff = (height - ydim) / 2;
+      for (var x = 0; x < xdim; x += three) {
+        for (var y = 0; y < ydim; y += three) {
           g.drawLine(x + xoff, y + yoff, x + xoff, y + yoff);
         }
       }
@@ -249,7 +275,7 @@ public class ZoomControl extends JPanel {
     }
 
     private void update() {
-      boolean grid = model.getShowGrid();
+      final var grid = model.getShowGrid();
       if (grid != state) {
         state = grid;
         repaint();
@@ -261,7 +287,7 @@ public class ZoomControl extends JPanel {
     private static final long serialVersionUID = 1L;
 
     public SliderModel(ZoomModel model) {
-      super(nearestZoomOption(), 0, 0, model.getZoomOptions().length - 1);
+      super(nearestZoomOption(), 0, 0, model.getZoomOptions().size() - 1);
     }
 
     @Override
@@ -290,8 +316,11 @@ public class ZoomControl extends JPanel {
       setOpaque(false);
       setBackground(new java.awt.Color(0, 0, 0, 0));
       setBorderPainted(false);
-      if (left) setMargin(new Insets(2, 1, 2, 0));
-      else setMargin(new Insets(2, 0, 2, 1));
+      if (left) {
+        setMargin(new Insets(2, 1, 2, 0));
+      } else {
+        setMargin(new Insets(2, 0, 2, 1));
+      }
       addMouseListener(new ZoomMouseListener());
       addActionListener(new ZoomActionListener());
       setFocusable(false);
@@ -312,8 +341,11 @@ public class ZoomControl extends JPanel {
     protected class ZoomActionListener implements ActionListener {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if (out) zoomOut();
-        else zoomIn();
+        if (out) {
+          zoomOut();
+        } else {
+          zoomIn();
+        }
       }
     }
   }
@@ -341,7 +373,7 @@ public class ZoomControl extends JPanel {
 
     public AutoZoomButton(ZoomModel model) {
       zoomModel = model;
-      super.setText("Auto");
+      super.setText(S.get("zoomAuto"));
       addActionListener(this);
     }
 
@@ -352,30 +384,26 @@ public class ZoomControl extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (zoomModel != null) {
-        Graphics g = getGraphics();
-        Bounds bounds;
+        final var g = getGraphics();
         if (canvas.getProject().getCurrentCircuit() == null) return;
-        if (g != null) bounds = canvas.getProject().getCurrentCircuit().getBounds(getGraphics());
-        else bounds = canvas.getProject().getCurrentCircuit().getBounds();
-        if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
-          return;
-        }
 
-        CanvasPane canvasPane = canvas.getCanvasPane();
+        final var bounds = (g != null)
+                ? canvas.getProject().getCurrentCircuit().getBounds(getGraphics())
+                : canvas.getProject().getCurrentCircuit().getBounds();
+        if (bounds.getHeight() == 0 || bounds.getWidth() == 0) return;
+
+        final var canvasPane = canvas.getCanvasPane();
         if (canvasPane == null) return;
         // the white space around
-        byte padding = 50;
+        final var padding = 50;
         // set autozoom
-        double zoomFactor = zoomModel.getZoomFactor();
-        double height = (bounds.getHeight() + 2 * padding) * zoomFactor;
-        double width = (bounds.getWidth() + 2 * padding) * zoomFactor;
-        double autozoom = zoomFactor;
-        autozoom *=
-            Math.min(
-                canvasPane.getViewport().getSize().getWidth() / width,
-                canvasPane.getViewport().getSize().getHeight() / height);
-        double max = zoomModel.getZoomOptions()[zoomModel.getZoomOptions().length - 1] / 100.0;
-        double min = zoomModel.getZoomOptions()[0] / 100.0;
+        final var zoomFactor = zoomModel.getZoomFactor();
+        final var height = (bounds.getHeight() + 2 * padding) * zoomFactor;
+        final var width = (bounds.getWidth() + 2 * padding) * zoomFactor;
+        var autozoom = zoomFactor;
+        autozoom *= Math.min(canvasPane.getViewport().getSize().getWidth() / width, canvasPane.getViewport().getSize().getHeight() / height);
+        final var max = zoomModel.getZoomOptions().get(zoomModel.getZoomOptions().size() - 1) / 100.0;
+        final var min = zoomModel.getZoomOptions().get(0) / 100.0;
         if (autozoom > max) autozoom = max;
         if (autozoom < min) autozoom = min;
         if (Math.abs(autozoom - zoomFactor) >= 0.01) {
@@ -385,13 +413,15 @@ public class ZoomControl extends JPanel {
     }
   }
 
-  public class ResetZoomButton extends JButton implements ActionListener {
+  public class PredefinedZoomButton extends JButton implements ActionListener {
     private static final long serialVersionUID = 1L;
     private ZoomModel zoomModel;
+    final double zoomValue;
 
-    public ResetZoomButton(ZoomModel model) {
+    public PredefinedZoomButton(ZoomModel model, String label, double zoomValue) {
       zoomModel = model;
-      super.setText("100%");
+      this.zoomValue = zoomValue;
+      super.setText(label);
       addActionListener(this);
     }
 
@@ -402,8 +432,9 @@ public class ZoomControl extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       if (zoomModel != null && canvas.getProject().getCurrentCircuit() != null) {
-        zoomModel.setZoomFactor(1.0);
+        zoomModel.setZoomFactor(zoomValue);
       }
     }
   }
+
 }

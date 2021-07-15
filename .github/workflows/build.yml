@@ -60,8 +60,7 @@ jobs:
 
     strategy:
       matrix:
-        # Using lowest supported JDK 11 and highest available JDK 16.
-        jdk: [ 11, 16 ]
+        jdk: [ 14 ]
 
     steps:
     - name: "Checkout sources"

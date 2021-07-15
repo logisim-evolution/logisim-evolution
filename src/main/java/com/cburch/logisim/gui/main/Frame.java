@@ -53,7 +53,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
-import com.cburch.logisim.gui.icons.AnimationTimer;
 import com.cburch.logisim.gui.menu.MainMenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -74,7 +73,6 @@ import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -86,6 +84,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Timer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -95,8 +94,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
-
-  public static final AnimationTimer ANIMATIONICONTIMER = new AnimationTimer();
   public static final String EDITOR_VIEW = "editorView";
   public static final String EXPLORER_VIEW = "explorerView";
   public static final String EDIT_LAYOUT = "layout";
@@ -150,17 +147,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
     layoutCanvas = new Canvas(project);
-    CanvasPane canvasPane = new CanvasPane(layoutCanvas);
-    double[] options = new double[49];
-    for (int i = 0; i < 49; i++) {
-      options[i] = (i + 1) * 20;
-    }
+    final var canvasPane = new CanvasPane(layoutCanvas);
+
     layoutZoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
-            options,
-            canvasPane); // ZOOM_OPTIONS);
+            buildZoomSteps(),
+            canvasPane);
 
     layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
@@ -256,11 +250,37 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
-    try {
-      timer.schedule(ANIMATIONICONTIMER, 1000, 500);
-    } catch (IllegalStateException e) {
-      /* just continue, the timer was already running */
+  }
+
+  /**
+   * Computes allowed zoom steps.
+   *
+   * @return
+   */
+  private ArrayList<Double> buildZoomSteps() {
+    class Pair {
+      int maxZoom;
+      int singleStep;
+
+      Pair(int maxZoom, int step) {
+        this.maxZoom = maxZoom;
+        this.singleStep = step;
+      }
     }
+    // Pairs must be in acending order (sorted by maxZoom value).
+    final var config = new Pair[] {new Pair(50, 5), new Pair(200, 10), new Pair(1000, 20)};
+
+    // Result zoomsteps.
+    final var steps = new ArrayList<Double>();
+
+    double zoom = 0;
+    for (final var pair : config) {
+      while (zoom < pair.maxZoom) {
+        zoom += pair.singleStep;
+        steps.add(zoom);
+      }
+    }
+    return steps;
   }
 
   private static Point getInitialLocation() {
@@ -401,7 +421,6 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         app.setCircuit(project, project.getCircuitState());
         mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
         appearance = app;
-        ANIMATIONICONTIMER.addParent(toolbar);
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();

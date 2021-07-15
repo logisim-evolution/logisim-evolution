@@ -45,11 +45,9 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.AnimatedIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
-import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
@@ -60,7 +58,6 @@ import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.AutoLabel;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -76,10 +73,12 @@ import java.util.ArrayList;
 
 public class AddTool extends Tool implements Transferable, PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
+    @Override
     public void attributeListChanged(AttributeEvent e) {
       bounds = null;
     }
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       bounds = null;
     }
@@ -161,26 +160,12 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public void registerParent(java.awt.Component parent) {
-    ComponentFactory fac = getFactory();
-    if (fac instanceof InstanceFactory) {
-      final var f = (InstanceFactory) fac;
-      if (f.getIcon() instanceof AnimatedIcon) {
-        final var i = (AnimatedIcon) f.getIcon();
-        i.registerParent(parent);
-      }
-    }
-  }
-
-  @Override
   public void propertyChange(PropertyChangeEvent evt) {
     if (AppPreferences.DefaultAppearance.isSource(evt))
       attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
     else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt))
       attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
   }
-
-  public void cancelOp() {}
 
   @Override
   public Tool cloneTool() {

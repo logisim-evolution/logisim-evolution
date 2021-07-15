@@ -913,34 +913,29 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
-      Tool tool = proj.getTool();
+      final var tool = proj.getTool();
       if (mwe.isControlDown()) {
-        ZoomModel zoomModel = proj.getFrame().getZoomModel();
-        double zoom = zoomModel.getZoomFactor();
-        double[] opts = zoomModel.getZoomOptions();
+        final var zoomModel = proj.getFrame().getZoomModel();
+        var zoom = zoomModel.getZoomFactor();
+        final var opts = zoomModel.getZoomOptions();
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
-          double max = opts[opts.length - 1] / 100.0;
+          double max = opts.get(opts.size() - 1) / 100.0;
           zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
         } else { // ZOOM OUT
           zoom -= 0.1;
-          double min = opts[0] / 100.0;
+          final var min = opts.get(0) / 100.0;
           zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
-        int id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
-        KeyEvent e =
-            new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
+        final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
+        final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
         tool.keyPressed(Canvas.this, e);
       } else {
         if (mwe.isShiftDown()) {
-          canvasPane
-              .getHorizontalScrollBar()
-              .setValue(scrollValue(canvasPane.getHorizontalScrollBar(), mwe.getWheelRotation()));
+          canvasPane.getHorizontalScrollBar().setValue(scrollValue(canvasPane.getHorizontalScrollBar(), mwe.getWheelRotation()));
         } else {
-          canvasPane
-              .getVerticalScrollBar()
-              .setValue(scrollValue(canvasPane.getVerticalScrollBar(), mwe.getWheelRotation()));
+          canvasPane.getVerticalScrollBar().setValue(scrollValue(canvasPane.getVerticalScrollBar(), mwe.getWheelRotation()));
         }
       }
     }

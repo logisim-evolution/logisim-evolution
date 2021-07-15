@@ -148,9 +148,6 @@ public abstract class Tool implements AttributeDefaultProvider {
     // dummy implementation
   }
 
-  public void registerParent(java.awt.Component parent) {
-    // dummy implementation
-  }
 
   public void select(Canvas canvas) {
     // dummy implementation

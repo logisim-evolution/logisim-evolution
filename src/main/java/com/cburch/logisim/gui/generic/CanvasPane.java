@@ -62,7 +62,7 @@ public class CanvasPane extends JScrollPane {
   }
 
   public Dimension getViewportSize() {
-    Dimension size = new Dimension();
+    final var size = new Dimension();
     getViewport().getSize(size);
     return size;
   }
@@ -73,7 +73,7 @@ public class CanvasPane extends JScrollPane {
   }
 
   public void setZoomModel(ZoomModel model) {
-    ZoomModel oldModel = zoomModel;
+    final var oldModel = zoomModel;
     if (oldModel != null) {
       oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
       oldModel.removePropertyChangeListener(ZoomModel.CENTER, listener);
@@ -86,33 +86,43 @@ public class CanvasPane extends JScrollPane {
   }
 
   public Dimension supportPreferredSize(int width, int height) {
-    double zoom = getZoomFactor();
+    final var zoom = getZoomFactor();
     if (zoom != 1.0) {
       width = (int) Math.ceil(width * zoom);
       height = (int) Math.ceil(height * zoom);
     }
-    Dimension minSize = getViewportSize();
+    final var minSize = getViewportSize();
     if (minSize.width > width) width = minSize.width;
     if (minSize.height > height) height = minSize.height;
     return new Dimension(width, height);
   }
 
-  public int supportScrollableBlockIncrement(
-      Rectangle visibleRect, int orientation, int direction) {
-    int unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
-    if (direction == SwingConstants.VERTICAL) {
-      return visibleRect.height / unit * unit;
-    } else {
-      return visibleRect.width / unit * unit;
-    }
+  public int supportScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+    final var unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
+    return (direction == SwingConstants.VERTICAL)
+        ? visibleRect.height / unit * unit
+        : visibleRect.width / unit * unit;
   }
 
   public int supportScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-    double zoom = getZoomFactor();
-    return (int) Math.round(10 * zoom);
+    return (int) Math.round(10 * getZoomFactor());
   }
 
   private class Listener implements BaseComponentListenerContract, PropertyChangeListener {
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+      // do nothing
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+      // do nothing
+    }
+
+    //
+    // ComponentListener methods
+    //
     @Override
     public void componentResized(ComponentEvent e) {
       contents.recomputeSize();
@@ -120,17 +130,17 @@ public class CanvasPane extends JScrollPane {
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-      String prop = e.getPropertyName();
+      final var prop = e.getPropertyName();
       if (prop.equals(ZoomModel.ZOOM)) {
-        double oldZoom = (Double) e.getOldValue();
-        Rectangle r = getViewport().getViewRect();
-        double cx = (r.x + r.width / 2) / oldZoom;
-        double cy = (r.y + r.height / 2) / oldZoom;
+        final var oldZoom = (Double) e.getOldValue();
+        var r = getViewport().getViewRect();
+        final var cx = (r.x + r.width / 2) / oldZoom;
+        final var cy = (r.y + r.height / 2) / oldZoom;
 
-        double newZoom = (Double) e.getNewValue();
+        final var newZoom = (Double) e.getNewValue();
         r = getViewport().getViewRect();
-        int hv = (int) (cx * newZoom) - r.width / 2;
-        int vv = (int) (cy * newZoom) - r.height / 2;
+        final var hv = (int) (cx * newZoom) - r.width / 2;
+        final var vv = (int) (cy * newZoom) - r.height / 2;
         getHorizontalScrollBar().setValue(hv);
         getVerticalScrollBar().setValue(vv);
         contents.recomputeSize();
@@ -144,23 +154,21 @@ public class CanvasPane extends JScrollPane {
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
       if (mwe.isControlDown()) {
-        double zoom = zoomModel.getZoomFactor();
-        double[] opts = zoomModel.getZoomOptions();
+        var zoom = zoomModel.getZoomFactor();
+        final var opts = zoomModel.getZoomOptions();
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
-          double max = opts[opts.length - 1] / 100.0;
+          final var max = opts.get(opts.size() - 1) / 100.0;
           zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
         } else { // ZOOM OUT
           zoom -= 0.1;
-          double min = opts[0] / 100.0;
+          final var min = opts.get(0) / 100.0;
           zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
       } else if (mwe.isShiftDown()) {
-        getHorizontalScrollBar()
-            .setValue(scrollValue(getHorizontalScrollBar(), mwe.getWheelRotation()));
+        getHorizontalScrollBar().setValue(scrollValue(getHorizontalScrollBar(), mwe.getWheelRotation()));
       } else {
-        getVerticalScrollBar()
-            .setValue(scrollValue(getVerticalScrollBar(), mwe.getWheelRotation()));
+        getVerticalScrollBar().setValue(scrollValue(getVerticalScrollBar(), mwe.getWheelRotation()));
       }
     }
 
