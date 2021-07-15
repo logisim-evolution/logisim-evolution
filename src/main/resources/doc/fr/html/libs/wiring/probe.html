@@ -38,8 +38,33 @@
             <td valign="top">
               <strong>Apparence:</strong>
             </td>
-            <td valign="top">
-              <img class="notscal" src="../../../../img-libs/probe.png" alt="#########">
+             <td>
+              <table>
+                <tbody>
+                  <tr>
+                    <th colspan=2>
+                      Arrow shapes:
+                    </th>
+                    <th colspan=2>
+                      Logisim classic
+                    </th>
+                   </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/probe0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/probe1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/probe2.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/probe3.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
         </tbody>
@@ -51,9 +76,9 @@
         Une sonde est un élément qui affiche simplement la valeur à un point donné dans un circuit. Il n'interagit pas avec d'autres composants.
       </p>
       <p>
-        À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html">Pin</a> configuré en tant que pin de sortie. La sonde présente cependant certaines différences :<br>
+        À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html">Porb</a> configuré en tant que pin de sortie. La sonde présente cependant certaines différences :<br>
         - Elle n'est pas considérée comme une sortie par un circuit de hiérarchie supérieur.<br>
-        - Elle n’a pas d’attribut Data Bits à configurer, la largeur de bit est déduite de la valeur qu’elle trouve sur son entrée.<br>
+        - Elle n’a pas d’attribut <b class="propertie">Largeur données</b> à configurer, la largeur de bit est déduite de la valeur qu’elle trouve sur son entrée.<br>
         - Graphiquement sa bordure est plus fine et grise.
       </p>
       <h2>
@@ -66,11 +91,11 @@
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut  <b class="propertie">Orientation</b>.
       </p>
       <dl>
         <dt>
-          Orientation
+           <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche d'entrée.
@@ -89,28 +114,22 @@
 			&emsp;Flotant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits  de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
         </dd>
         <dt>
-          Label
+           <b class="propertie">Label</b>
         </dt>
         <dd>
           Le texte dans l'étiquette associée au composant.
         </dd>
         <dt>
-          Emplacement du libellé <!-- dt-->
+           <b class="propertie">Emplacement du libellé</b>
         </dt>
         <dd>
-          L'emplacement de l'étiquette par rapport au composant. <!-- dd-->
+          L'emplacement de l'étiquette par rapport au composant.
         </dd>
         <dt>
-          Police de libellé <!-- dt-->
+           <b class="propertie">Police de libellé</b>
         </dt>
         <dd>
-          La police avec laquelle rendre l'étiquette. <!-- dd-->
-        </dd>
-        <dt>
-          Radix
-        </dt>
-        <dd>
-          la base (par exemple, binaire, décimale ou hexadécimale) dans laquelle une valeur est affichée.
+          La police avec laquelle rendre l'étiquette.
         </dd>
       </dl>
       <h2>

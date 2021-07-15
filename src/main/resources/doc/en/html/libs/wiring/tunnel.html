@@ -54,42 +54,48 @@
         <img src="../../../../img-libs/tunnel-demo.png" alt="#########">
       </blockquote>
       <p>
-        Here, all three tunnels have the same label, <em>a</em>, and so the three points to which the tunnels point are connected. (If one of the tunnels were labeled something else, like <em>b</em>, then it would be part of a different set of tunnels.) The controlled buffer at top emits a floating output since its lower input is 0. This normally leads the wire coming from the controlled buffer to be blue; but here it is dark green because the floating output combines through the tunnel with the 0 from the pin at bottom. If the control input into the buffer changes to 1, then the controlled buffer would feed 1 into the tunnel, which would combine with 0 from the pin at bottom to result in an error value; thus, we would then see red wires feeding through all three tunnels.
+        The illustration above shows how this works. Here the three tunnels have the same label, <em>Clk_A</em>, and represents the three points to which the tunnels are connected. If one of the tunnels has a different label, such as <em>R_W</em>, then it would be part of a different set of tunnels.<br>
+		In the following example we can observe the occurrence of an error on activation of the controlled buffer conflicting with the bottom pin.
+		</p>
+      <blockquote>
+        <img src="../../../../img-libs/tunnel-demo1.gif" alt="#########">
+      </blockquote>
+      <p>The controlled buffer emits a floating output since its lower input is 0. Normally this causes the wire from the controlled buffer to be blue, but here it is bright green. This is correct, as it is connected through the tunnel to the bottom pin which is 1. If the buffer control goes to 1, the tunnel will carry this value to the other points and it will conflict with the 1 on the bottom pin triggering an error. Red wires (<b class="evalue">E</b>) can then be seen running through the three tunnels as in the example.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        A tunnel has only one pin, whose bit width matches the tunnel's Data Bits attribute. This pin is neither an input nor an output — the matching tunnels are simply connected transparently.
+        A tunnel has only one pin, whose bit width matches the tunnel's <b class="propertie">Data Bits</b> attribute. This pin is neither an input nor an output — Tunnels of the same label are simply interconnected transparently like wires.
       </p>
       <h2>
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute.
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          Facing
+          <b class="propertie">Facing</b>
         </dt>
         <dd>
           The direction toward which the tunnel points.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Data Bits</b>
         </dt>
         <dd>
           The number of bits for the tunnel.
         </dd>
         <dt>
-          Label
+          <b class="propertie">Label</b>
         </dt>
         <dd>
           The text within the label associated with the tunnel. This tunnel is connected to all other tunnels with exactly the same label.
         </dd>
         <dt>
-          Label Font
+          <b class="propertie">Label Font</b>
         </dt>
         <dd>
           The font with which to render the label.
