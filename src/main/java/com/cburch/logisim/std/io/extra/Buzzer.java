@@ -273,7 +273,7 @@ public class Buzzer extends InstanceFactory {
     int xPw = 20;
     int yPw = 20;
     if (dir == Direction.SOUTH) {
-      yPw = -20 ;
+      yPw = -20;
     } else if (dir == Direction.EAST) {
       xPw = -20;
     }

@@ -182,7 +182,7 @@ public class Joystick extends InstanceFactory {
     setInstancePoker(Poker.class);
   }
   
-    @Override
+  @Override
   protected void configureNewInstance(Instance instance) {
     updatePorts(instance);
     instance.addAttributeListener();
