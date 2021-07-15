@@ -319,7 +319,11 @@ public class PortIO extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.LABEL_LOC) {
+    if (attr == StdAttr.FACING) {
+      instance.recomputeBounds();
+      updatePorts(instance);
+      instance.computeLabelTextField(Instance.AVOID_BOTTOM);
+    } else if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_BOTTOM);
     } else if (attr == ATTR_SIZE || attr == ATTR_DIR) {
       instance.recomputeBounds();

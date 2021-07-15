@@ -266,12 +266,19 @@ public class Buzzer extends InstanceFactory {
       p[FREQ] = new Port(-10, 0, Port.INPUT, 14);
       p[VOL] = new Port(10, 0, Port.INPUT, VolumeWidth);
     }
-    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
-    p[PW] = new Port(20, 20, Port.INPUT, 8);
     p[FREQ].setToolTip(S.getter("buzzerFrequecy"));
-    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
-    p[ENABLE].setToolTip(S.getter("enableSound"));
     p[VOL].setToolTip(S.getter("buzzerVolume"));
+    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
+    p[ENABLE].setToolTip(S.getter("enableSound"));
+    int xPw = 20;
+    int yPw = 20;
+    if (dir == Direction.SOUTH) {
+      yPw = -20 ;
+    } else if (dir == Direction.EAST) {
+      xPw = -20;
+    }
+    p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
+    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
     instance.setPorts(p);
   }
 
