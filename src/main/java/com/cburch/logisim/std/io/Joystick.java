@@ -34,14 +34,18 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.JoystickIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -87,10 +91,8 @@ public class Joystick extends InstanceFactory {
       final var x = loc.getX();
       final var y = loc.getY();
       final var g = painter.getGraphics();
-      g.setColor(Color.WHITE);
-      g.fillRect(x - 20, y, 10, 10);
+      g.fillOval(x - 19, y + 1, 8, 8);
       GraphicsUtil.switchToWidth(g, 3);
-      g.setColor(Color.BLACK);
       final var dx = state.xPos;
       final var dy = state.yPos;
       final var x0 = x - 15 + (dx > 5 ? 1 : dx < -5 ? -1 : 0);
@@ -156,7 +158,20 @@ public class Joystick extends InstanceFactory {
 
   public Joystick() {
     super(_ID, S.getter("joystickComponent"));
-    setAttributes(new Attribute[] {ATTR_WIDTH, IoLibrary.ATTR_COLOR}, new Object[] {BitWidth.create(4), Color.RED});
+    setAttributes(
+        new Attribute[] {
+          StdAttr.FACING,
+          ATTR_WIDTH,
+          IoLibrary.ATTR_COLOR,
+          IoLibrary.ATTR_BACKGROUND
+        },
+        new Object[] {
+          Direction.EAST,
+          BitWidth.create(4),
+          Color.RED,
+          IoLibrary.DEFAULT_BACKGROUND
+        });
+    setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
     setIcon(new JoystickIcon());
@@ -165,6 +180,45 @@ public class Joystick extends InstanceFactory {
           new Port(0, 0, Port.OUTPUT, ATTR_WIDTH), new Port(0, 10, Port.OUTPUT, ATTR_WIDTH),
         });
     setInstancePoker(Poker.class);
+  }
+  
+    @Override
+  protected void configureNewInstance(Instance instance) {
+    updatePorts(instance);
+    instance.addAttributeListener();
+  }
+  
+  private void updatePorts(Instance instance) {
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    int x0, y0;
+    int x1, y1;
+    if (facing == Direction.NORTH) {
+      x0 = -20;
+      y0 = -10;
+      x1 = -10;
+      y1 = -10;
+    } else if (facing == Direction.SOUTH) {
+      x0 = -20;
+      y0 = 20;
+      x1 = -10;
+      y1 = 20;
+    } else if (facing == Direction.WEST) {
+      x0 = -30;
+      y0 = 0;
+      x1 = -30;
+      y1 = 10;
+    } else {
+      x0 = 0;
+      y0 = 0;
+      x1 = 0;
+      y1 = 10;
+    }
+    final var ports = new Port[2];
+    ports[0] = new Port(x0, y0, Port.OUTPUT, ATTR_WIDTH);
+    ports[0].setToolTip(S.getter("joystickCoordinateX"));
+    ports[1] = new Port(x1, y1, Port.OUTPUT, ATTR_WIDTH);
+    ports[1].setToolTip(S.getter("joystickCoordinateY"));
+    instance.setPorts(ports);
   }
 
   @Override
@@ -181,10 +235,20 @@ public class Joystick extends InstanceFactory {
     final var y = loc.getY();
 
     final var g = painter.getGraphics();
+    g.setColor(painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND));
+    g.fillRoundRect(x - 30, y - 10, 30, 30, 8, 8);
+    g.setColor(Color.BLACK);
     g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
     g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
     drawBall(g, x - 15, y + 5, painter.getAttributeValue(IoLibrary.ATTR_COLOR), painter.shouldDrawColor());
     painter.drawPorts();
+  }
+
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == StdAttr.FACING) {
+      updatePorts(instance);
+    }
   }
 
   @Override
