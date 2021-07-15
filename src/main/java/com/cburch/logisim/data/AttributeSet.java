@@ -32,7 +32,7 @@ import java.util.List;
 
 public interface AttributeSet {
   default void addAttributeListener(AttributeListener l) {
-    // dummy implementation
+    // no-op implementation
   }
 
   Object clone();
@@ -54,7 +54,7 @@ public interface AttributeSet {
   boolean isToSave(Attribute<?> attr);
 
   default void removeAttributeListener(AttributeListener l) {
-    // dummy implementation
+    // no-op implementation
   }
 
   void setReadOnly(Attribute<?> attr, boolean value); // optional

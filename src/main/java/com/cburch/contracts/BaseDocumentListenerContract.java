@@ -7,16 +7,16 @@ public interface BaseDocumentListenerContract extends DocumentListener {
 
   @Override
   default void insertUpdate(DocumentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void removeUpdate(DocumentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void changedUpdate(DocumentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 }

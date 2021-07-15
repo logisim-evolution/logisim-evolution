@@ -30,10 +30,10 @@ package com.cburch.logisim.data;
 
 public interface AttributeListener {
   default void attributeListChanged(AttributeEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void attributeValueChanged(AttributeEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 }

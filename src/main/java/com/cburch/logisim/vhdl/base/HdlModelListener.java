@@ -32,21 +32,21 @@ public interface HdlModelListener {
 
   /** Called when the content of the given model has been set. */
   default void contentSet(HdlModel source) {
-    // dummy implementation
+    // no-op implementation
   }
 
   /** Called when the content of the given model is about to be saved. */
   default void aboutToSave(HdlModel source) {
-    // dummy implementation
+    // no-op implementation
   }
 
   /** Called when the vhdl appearance has changed. */
   default void appearanceChanged(HdlModel source) {
-    // dummy implementation
+    // no-op implementation
   }
 
   /** Called when the vhdl icon or name has changed. */
   default void displayChanged(HdlModel source) {
-    // dummy implementation
+    // no-op implementation
   }
 }

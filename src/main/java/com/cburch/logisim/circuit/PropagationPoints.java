@@ -64,7 +64,7 @@ class PropagationPoints {
   private final HashSet<Entry<Component>> pendingInputs =  new HashSet<>();
 
   PropagationPoints() {
-    // dummy implementation
+    // no-op implementation
   }
 
   void addPendingInput(CircuitState state, Component comp) {

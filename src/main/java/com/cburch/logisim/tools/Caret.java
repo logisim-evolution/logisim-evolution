@@ -41,52 +41,52 @@ public interface Caret {
 
   // listener methods
   default void addCaretListener(CaretListener e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void cancelEditing() {
-    // dummy implementation
+    // no-op implementation
   }
 
   // finishing
   default void commitText(String text) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void draw(Graphics g) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void keyPressed(KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void keyReleased(KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void keyTyped(KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void mouseDragged(MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   // events to handle
   default void mousePressed(MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void mouseReleased(MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void removeCaretListener(CaretListener e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void stopEditing() {
-    // dummy implementation
+    // no-op implementation
   }
 }

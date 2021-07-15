@@ -460,21 +460,21 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   public interface Listener {
     default void deleteRequested(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void doubleClicked(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     JPopupMenu menuRequested(Event event);
 
     default void moveRequested(Event event, AddTool dragged, AddTool target) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void selectionChanged(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
   }
 

@@ -8,12 +8,12 @@ import java.awt.LayoutManager;
 public interface BaseLayoutManagerContract extends LayoutManager {
   @Override
   default void addLayoutComponent(String var1, Component var2) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void removeLayoutComponent(Component var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
@@ -24,6 +24,6 @@ public interface BaseLayoutManagerContract extends LayoutManager {
 
   @Override
   default void layoutContainer(Container var1) {
-    // dummy implementation
+    // no-op implementation
   }
 }

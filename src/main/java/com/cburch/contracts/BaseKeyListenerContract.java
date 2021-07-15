@@ -13,16 +13,16 @@ import java.awt.event.KeyListener;
 public interface BaseKeyListenerContract extends KeyListener {
   @Override
   default void keyTyped(KeyEvent keyEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void keyPressed(KeyEvent keyEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void keyReleased(KeyEvent keyEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 }

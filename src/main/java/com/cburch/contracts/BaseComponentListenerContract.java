@@ -7,21 +7,21 @@ public interface BaseComponentListenerContract extends ComponentListener {
 
   @Override
   default void componentResized(ComponentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void componentMoved(ComponentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void componentShown(ComponentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void componentHidden(ComponentEvent event) {
-    // dummy implementation
+    // no-op implementation
   }
 }

@@ -83,10 +83,10 @@ public abstract class LogPanel extends JPanel {
   public abstract String getTitle();
 
   public void localeChanged() {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void modelChanged(Model oldModel, Model newModel) {
-    // dummy implementation
+    // no-op implementation
   }
 }

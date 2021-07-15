@@ -13,11 +13,11 @@ import java.awt.event.MouseMotionListener;
 public interface BaseMouseMotionListenerContract extends MouseMotionListener {
   @Override
   default void mouseDragged(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void mouseMoved(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 }

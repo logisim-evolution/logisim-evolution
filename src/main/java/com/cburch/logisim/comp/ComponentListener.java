@@ -30,14 +30,14 @@ package com.cburch.logisim.comp;
 
 public interface ComponentListener {
   default void componentInvalidated(ComponentEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void endChanged(ComponentEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   default void LabelChanged(ComponentEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 }

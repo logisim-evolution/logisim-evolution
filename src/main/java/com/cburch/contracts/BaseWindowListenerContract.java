@@ -14,36 +14,36 @@ public interface BaseWindowListenerContract extends WindowListener {
 
   @Override
   default void windowOpened(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowClosing(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowClosed(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowIconified(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowDeiconified(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowActivated(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void windowDeactivated(WindowEvent var1) {
-    // dummy implementation
+    // no-op implementation
   }
 }

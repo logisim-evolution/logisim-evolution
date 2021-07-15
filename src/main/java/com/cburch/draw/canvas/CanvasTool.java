@@ -36,60 +36,60 @@ import java.awt.event.MouseEvent;
 public abstract class CanvasTool {
   /** This is because a popup menu may result from the subsequent mouse release. */
   public void cancelMousePress(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void draw(Canvas canvas, Graphics gfx) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public abstract Cursor getCursor(Canvas canvas);
 
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void keyReleased(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void keyTyped(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseDragged(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseEntered(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseExited(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseMoved(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseReleased(Canvas canvas, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void toolDeselected(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void toolSelected(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void zoomFactorChanged(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 }

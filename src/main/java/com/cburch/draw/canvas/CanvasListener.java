@@ -115,7 +115,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override

@@ -237,7 +237,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    // dummy implementation
+    // no-op implementation
   }
 
   private boolean isClassOk(Class<?> sub, Class<?> sup) {

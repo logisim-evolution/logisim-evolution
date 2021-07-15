@@ -53,7 +53,7 @@ public abstract class Tool implements AttributeDefaultProvider {
   }
 
   public void deselect(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void draw(Canvas canvas, ComponentDrawContext context) {
@@ -63,7 +63,7 @@ public abstract class Tool implements AttributeDefaultProvider {
   // This was the draw method until 2.0.4 - As of 2.0.5, you should
   // use the other draw method.
   public void draw(ComponentDrawContext context) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public AttributeSet getAttributeSet() {
@@ -109,52 +109,52 @@ public abstract class Tool implements AttributeDefaultProvider {
   }
 
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void keyReleased(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void keyTyped(Canvas canvas, KeyEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    // dummy implementation
+    // no-op implementation
   }
 
 
   public void select(Canvas canvas) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public void setAttributeSet(AttributeSet attrs) {
-    // dummy implementation
+    // no-op implementation
   }
 
   public boolean sharesSource(Tool other) {

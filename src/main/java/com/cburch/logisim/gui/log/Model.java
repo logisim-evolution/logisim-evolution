@@ -63,32 +63,32 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   // FIXME: it looks we can get rid of Even class as it's a) dummy b) unused which forcess callers to pass `null`
   public static class Event {
-    // dummy implementation
+    // no-op implementation
   }
 
   public interface Listener {
     default void signalsReset(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void signalsExtended(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void filePropertyChanged(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void selectionChanged(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void modeChanged(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
 
     default void historyLimitChanged(Event event) {
-      // dummy implementation
+      // no-op implementation
     }
   }
 

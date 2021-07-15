@@ -45,21 +45,21 @@ public interface BaseMouseListenerContract extends MouseListener {
 
   @Override
   default void mousePressed(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void mouseReleased(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void mouseEntered(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   default void mouseExited(MouseEvent mouseEvent) {
-    // dummy implementation
+    // no-op implementation
   }
 }

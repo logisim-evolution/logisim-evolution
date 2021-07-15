@@ -51,12 +51,12 @@ public abstract class SocInstanceFactory extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
   public void propagate(InstanceState state) {
-    // dummy implementation
+    // no-op implementation
   }
 
   @Override
