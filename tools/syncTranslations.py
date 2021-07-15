@@ -1,8 +1,36 @@
 #!/usr/bin/env python3
 
+#
+# Checks *.properties files agains base english version.
+# Reports missing translations. Can also update targed files
+# with translation placeholders (with --write option).
+#
+# Usage example:
+#
+# To see current sync state:
+#
+#   cd <SRC>/tools
+#   ./syncTranslations.py
+#
+# To update translation files
+#
+#   cd <SRC>/tools
+#   ./syncTranslations.py --write
+#
+# When using with CWD being project root folder instead of tools/
+#
+#   ./syncTranslations.py --root src/main/resources/resources/logisim/strings/
+#
+
+
+import argparse
+import os
+import sys
+
+
 def getKeys(path):
     keys = []
-    with open(path, 'r', encoding="utf8") as file:
+    with open(path, 'r', encoding = "utf8") as file:
         lines = file.readlines()
         for line in lines:
             if len(line) == 1:
@@ -17,12 +45,10 @@ def getKeys(path):
 
 def getTrans(path):
     trans = {}
-    with open(path, 'r', encoding="utf8") as file:
+    with open(path, 'r', encoding = "utf8") as file:
         lines = file.readlines()
         for line in lines:
-            if line == '':
-                continue
-            if line[0] == '#':
+            if line == '' or line[0] == '#':
                 continue
             words = line.split('=')
             if len(words) <= 1:
@@ -31,9 +57,9 @@ def getTrans(path):
     return trans
 
 
-def writeFile(path, keys, trans):
+def writeFile(args, path, keys, trans):
     lines = []
-    c = 0       # number of missing translations
+    missingTranslations = 0
     for key in keys:
         if key in trans:
             if trans[key] != '':
@@ -43,25 +69,69 @@ def writeFile(path, keys, trans):
             lines.append(key + '\n')
         else:
             lines.append("# ==> " + key + " =\n")
-            c += 1
-    lines = ''.join(lines) + '\n\n'
-    with open(path, 'w', encoding="utf8") as file:
-        file.write(lines)
-    return c
-        
-        
-showMissing = False     # output number of missing translations
-path = "../src/main/resources/resources/logisim/strings/"
-files = ("analyze","circuit", "data", "draw", "file", "fpga", "gui", "hdl", "proj", "soc", "std", "tools", "util")
-langs = ("de", "el", "es", "fr", "pt", "ru", "it", "nl", "ja", "pl")
+            missingTranslations += 1
+    lines = ''.join(lines)
+    if (args.write):
+        with open(path, 'w', encoding = "utf8") as file:
+            file.write(lines)
+    return missingTranslations
 
-for file in files:
-    filePath = path + file +'/'+file
-    if showMissing:
-        print(file + ':')
-    keys = getKeys(filePath + ".properties")
+
+def main():
+    defaultRootDir = "../src/main/resources/resources/logisim/strings/"
+    files = sorted(["analyze", "circuit", "data", "draw", "file", "fpga", "gui", "hdl", "proj", "soc", "std", "tools", "util"])
+    maxFileNameLen = max([len(i) for i in files]) + 2
+    langs = sorted(["de", "el", "es", "fr", "pl", "pt", "ru", "it", "nl", "ja"])
+
+    parser = argparse.ArgumentParser()
+    group = parser.add_argument_group('Options')
+    group.add_argument('--write', action = 'store_true', dest = 'write',
+                       help = "Update translation files")
+    group.add_argument('-q', '--quiet', action = 'store_true', dest = 'quiet')
+
+    group = parser.add_argument_group('Paths')
+    group.add_argument('--root', action = 'store', dest = 'rootDir', nargs = 1, metavar = 'DIR',
+                       default = defaultRootDir, help = f'String resources root dir. Default: {defaultRootDir}')
+
+    args = parser.parse_args()
+
+    log = []
+
+    h1 = ' ' * maxFileNameLen + '|'
+    h2 = '-' * maxFileNameLen + '+'
     for lang in langs:
-        trans = getTrans(filePath+'_'+lang+".properties")
-        missing = writeFile(filePath+'_'+lang+".properties", keys, trans)
-        if showMissing and missing > 0:
-            print("  " + lang + ": " + str(missing))
+        h1 += f'{lang.upper():^5} |'
+
+    h2 += '------+' * len(langs)
+    log.append(h1)
+    log.append(h2)
+
+    for file in files:
+        row = ''
+        filePath = os.path.join(args.rootDir, file)
+        if not args.quiet:
+            row += f'{file:<{maxFileNameLen}}|'
+        keys = getKeys(os.path.join(filePath, f"{file}.properties"))
+
+        failed = False
+        for lang in langs:
+            prop_file = os.path.join(filePath, f'{file}_{lang}.properties')
+            trans = getTrans(prop_file)
+            missing = writeFile(args, prop_file, keys, trans)
+            failed = failed or missing
+            if missing == 0:
+                missing = '-'
+            row += f' {missing:>4} |'
+        log.append(row)
+
+    if not args.quiet:
+        print('\n'.join(log))
+
+    if failed:
+        sys.exit(100)
+    else:
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

@@ -42,11 +42,23 @@ import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 public class AppearanceView {
-  private static final double[] ZOOM_OPTIONS = {100, 150, 200, 300, 400, 600, 800};
+  private static final ArrayList<Double> ZOOM_OPTIONS =
+      new ArrayList<>() {
+        {
+          add(100.0);
+          add(150.0);
+          add(200.0);
+          add(300.0);
+          add(400.0);
+          add(600.0);
+          add(800.0);
+        }
+      };
 
   private final DrawingAttributeSet attrs;
   private final AppearanceCanvas canvas;

@@ -1,0 +1,216 @@
+#
+# Logisim-evolution nightly builder
+#
+# Cron driven Github Action builder, intended to create nightly builds
+# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# daily (once per 24 hrs) and skips building if there was no repo activity
+# during last 24 hours.
+#
+# Marcin Orlowski
+#
+
+name: "Nightly"
+on:
+#  push:
+#    branches: [ develop ]
+#  pull_request:
+#    branches: [ develop ]
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+jobs:
+  git_check:
+    name: "Any changes since last run?"
+    runs-on: ubuntu-latest
+
+    # Export build vars so other steps can use it.
+    outputs:
+      # Shall we build anything?
+      run_build: ${{ steps.filter.outputs.run_build }}
+      # Base application name and version (read from gradle.properties).
+      lse_name: ${{ steps.filter.outputs.lse_name }}
+      lse_version: ${{ steps.filter.outputs.lse_version }}
+      # Base name for final artifacts.
+      out_name: ${{ steps.filter.outputs.out_name }}
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: 'Checkout sources'
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      # Check if latest commit is less than a day.
+      - name: "ANY CHANGES SINCE LAST BUILD?"
+        id: filter
+        continue-on-error: true
+        # if: ${{ github.event_name == 'schedule' }}
+        run: |
+          if [[ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]]; then
+            echo "::set-output name=run_build::${true}"
+          else
+            echo "*** No code changes since yesterday. Skipping."
+          fi
+
+          declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
+          echo "::set-output name=lse_name::${lse_name}"
+          echo "::set-output name=out_name::${lse_name}_develop_$(date +%Y%m%d)"
+          echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
+
+  # ##################################
+
+  # Building for Linux.
+  build_linux:
+    name: 'Linux build'
+    runs-on: ubuntu-latest
+
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: 14
+          distribution: 'adopt'
+
+      # ##################################
+
+      - name: 'Build binary JAR'
+        run: |
+          chmod +x gradlew
+          ./gradlew shadowJar
+
+      - name: 'Upload binary JAR'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
+          name: ${{ needs.git_check.outputs.out_name }}-all_jdk14.jar
+
+      # ##################################
+
+      - name: 'Build DEB'
+        run: |
+          chmod +x gradlew
+          ./gradlew createDeb -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *.deb'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
+          name: ${{ needs.git_check.outputs.out_name }}_amd64.deb
+
+        # ##################################
+
+      - name: 'Build RPM'
+        run: |
+          chmod +x gradlew
+          # Needs rpm package, but it should be installed already.
+          ./gradlew createRpm -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload *.rpm'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
+          name: ${{ needs.git_check.outputs.out_name }}.x86_64.rpm
+
+        # ##################################
+
+      - name: 'Build sources JAR'
+        run: |
+          chmod +x gradlew
+          # Need to clean to have just one JAR or createDistDir task would fail.
+          ./gradlew clean
+          ./gradlew sourcesJar
+
+      - name: 'Upload sources JAR'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
+          name: ${{ needs.git_check.outputs.out_name }}-src.jar
+
+  # ##################################
+
+  # Building for macOS.
+  build_macos:
+    name: 'macOS build'
+    runs-on: macos-latest
+
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: 14
+          distribution: 'adopt'
+
+      - name: "Build DMG"
+        run: |
+          chmod +x gradlew
+          set JAVA_HOME="${JAVA_HOME_14_X64}"
+          ./gradlew createDmg -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload DMG'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
+          name: ${{ needs.git_check.outputs.out_name }}.dmg
+
+  # ##################################
+
+  # Building for Windows.
+  build_windows:
+    name: 'Windows build'
+    runs-on: windows-latest
+
+    # Will run only if git_check determined it is needed.
+    needs: git_check
+    if: needs.git_check.outputs.run_build == 'true'
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          # We want develop branch only.
+          ref: 'develop'
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: 14
+          distribution: 'adopt'
+
+      - name: "Build MSI"
+        run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
+
+      - name: 'Upload MSI'
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.msi
+          name: ${{ needs.git_check.outputs.out_name }}.msi

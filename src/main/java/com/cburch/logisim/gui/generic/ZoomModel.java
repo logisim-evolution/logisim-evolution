@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public interface ZoomModel {
   String ZOOM = "zoom";
@@ -42,7 +43,7 @@ public interface ZoomModel {
 
   double getZoomFactor();
 
-  double[] getZoomOptions();
+  ArrayList<Double> getZoomOptions();
 
   void setZoomFactor(double value);
 

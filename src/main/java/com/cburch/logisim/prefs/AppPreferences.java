@@ -102,6 +102,7 @@ public class AppPreferences {
   // methods for accessing preferences
   //
   private static class MyListener implements PreferenceChangeListener, LocaleListener {
+    @Override
     public void localeChanged() {
       final var loc = LocaleManager.getLocale();
       final var lang = loc.getLanguage();
@@ -110,6 +111,7 @@ public class AppPreferences {
       }
     }
 
+    @Override
     public void preferenceChange(PreferenceChangeEvent event) {
       final var prefs = event.getNode();
       final var prop = event.getKey();
@@ -556,8 +558,6 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("namedBoxesFixed", true));
   public static final PrefMonitor<Boolean> KMAP_LINED_STYLE =
       create(new PrefMonitorBoolean("KmapLinedStyle", false));
-  public static final PrefMonitor<Boolean> ANIMATED_ICONS =
-      create(new PrefMonitorBoolean("AnimatedIcons", false));
   public static final PrefMonitor<String> DefaultAppearance =
       create(
           new PrefMonitorStringOpts(
