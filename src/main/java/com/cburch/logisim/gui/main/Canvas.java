@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.main;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseMouseInputListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -98,12 +99,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
-import javax.swing.event.MouseInputListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-public class Canvas extends JPanel
-    implements LocaleListener, CanvasPaneContents, AdjustmentListener {
+public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents, AdjustmentListener {
 
   public static final byte zoomButtonSize = 52;
   public static final byte zoomButtonMargin = 30;
@@ -740,7 +739,7 @@ public class Canvas extends JPanel
   }
 
   private class MyListener
-      implements MouseInputListener,
+      implements BaseMouseInputListenerContract,
           KeyListener,
           PopupMenuListener,
           PropertyChangeListener,
@@ -792,7 +791,9 @@ public class Canvas extends JPanel
     // MouseListener methods
     //
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -953,7 +954,9 @@ public class Canvas extends JPanel
     }
 
     @Override
-    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+      // do nothing
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
@@ -990,9 +993,6 @@ public class Canvas extends JPanel
           AttributeListener,
           Simulator.Listener,
           Selection.Listener {
-
-    @Override
-    public void attributeListChanged(AttributeEvent e) {}
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -1137,7 +1137,9 @@ public class Canvas extends JPanel
     }
 
     @Override
-    public void simulatorStateChanged(Simulator.Event e) {}
+    public void simulatorStateChanged(Simulator.Event e) {
+      // do nothing
+    }
 
     @Override
     public void simulatorReset(Simulator.Event e) {
@@ -1162,7 +1164,9 @@ public class Canvas extends JPanel
     boolean zoomButtonVisible = false;
     Color zoomButtonColor = defaultzoomButtonColor;
 
-    MyViewport() {}
+    MyViewport() {
+      // dummy
+    }
 
     void clearArrows() {
       isNorth = false;

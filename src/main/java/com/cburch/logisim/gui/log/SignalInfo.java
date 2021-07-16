@@ -33,7 +33,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -132,12 +131,12 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     listener = l;
   }
 
-  public void attributeListChanged(AttributeEvent e) {}
-
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     recomputeName();
   }
 
+  @Override
   public void circuitChanged(CircuitEvent event) {
     if (obsoleted) {
       return; // this SelectionItem doesn't appear to be alive any more
@@ -312,6 +311,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     return fullname;
   }
 
+  @Override
   public Location getLocation() {
     return path[n - 1].getLocation();
   }

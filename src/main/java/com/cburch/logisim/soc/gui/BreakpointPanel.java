@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.icons.BreakpointIcon;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
@@ -42,7 +43,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JButton;
@@ -57,7 +57,7 @@ import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class BreakpointPanel extends JPanel
-    implements CaretListener, LocaleListener, ActionListener, KeyListener {
+    implements CaretListener, LocaleListener, ActionListener, BaseKeyListenerContract {
 
   private static final long serialVersionUID = 1L;
   private final RSyntaxTextArea asmWindow;
@@ -200,13 +200,7 @@ public class BreakpointPanel extends JPanel
   }
 
   @Override
-  public void keyTyped(KeyEvent e) {}
-
-  @Override
   public void keyPressed(KeyEvent e) {
     if (e.getKeyChar() == 'b' && debugLines.containsKey(currentLine)) updateBreakpoint();
   }
-
-  @Override
-  public void keyReleased(KeyEvent e) {}
 }

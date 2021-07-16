@@ -30,6 +30,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.contracts.BaseComponentListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.IOComponentsInformation;
@@ -45,7 +46,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JButton;
@@ -55,8 +55,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class BoardEditor implements ActionListener, ComponentListener,
-        LocaleListener, BoardManipulatorListener {
+public class BoardEditor implements ActionListener, BaseComponentListenerContract, LocaleListener, BoardManipulatorListener {
 
   private final JFrame panel;
   private BoardInformation TheBoard = new BoardInformation();
@@ -250,18 +249,9 @@ public class BoardEditor implements ActionListener, ComponentListener,
   }
 
   @Override
-  public void componentHidden(ComponentEvent e) {}
-
-  @Override
-  public void componentMoved(ComponentEvent e) {}
-
-  @Override
   public void componentResized(ComponentEvent e) {
     panel.pack();
   }
-
-  @Override
-  public void componentShown(ComponentEvent e) {}
 
   private String getDirName(String old, String window_name) {
     JFileChooser fc = new JFileChooser(old);

@@ -166,7 +166,8 @@ public class LineTool extends AbstractTool {
   private void updateMouse(Canvas canvas, int mx, int my, int mods) {
     if (active) {
       final var shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-      var newEnd = (shift) ? LineUtil.snapTo8Cardinals(mouseStart, mx, my) : Location.create(mx, my);
+      var newEnd =
+          (shift) ? LineUtil.snapTo8Cardinals(mouseStart, mx, my) : Location.create(mx, my);
 
       if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
         var x = newEnd.getX();

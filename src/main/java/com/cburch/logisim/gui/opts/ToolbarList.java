@@ -120,9 +120,6 @@ class ToolbarList extends JList {
 
   private class Model extends AbstractListModel implements ToolbarListener, AttributeListener, PropertyChangeListener {
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
-
-    @Override
     public void attributeValueChanged(AttributeEvent e) {
       repaint();
     }

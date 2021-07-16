@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -50,7 +51,7 @@ import javax.swing.JLabel;
 
 public class SocSimulationManager implements SocBusMasterInterface {
 
-  private static class SocBusSelector extends JLabel implements MouseListener {
+  private static class SocBusSelector extends JLabel implements BaseMouseListenerContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,24 +93,10 @@ public class SocSimulationManager implements SocBusMasterInterface {
         }
       }
     }
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
   }
 
 
   private static class SocBusSelectAttribute extends Attribute<SocBusInfo> {
-
     private SocBusSelectAttribute() {
       super("SocBusSelection", S.getter("SocBusSelectAttr"));
     }
@@ -135,7 +122,6 @@ public class SocSimulationManager implements SocBusMasterInterface {
     public String toStandardString(SocBusInfo value) {
       return value.getBusId();
     }
-
   }
 
   public static final Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
@@ -157,7 +143,6 @@ public class SocSimulationManager implements SocBusMasterInterface {
       name = null;
     return name;
   }
-
 
   public boolean registerComponent(Component c) {
     if (!c.getFactory().isSocComponent())

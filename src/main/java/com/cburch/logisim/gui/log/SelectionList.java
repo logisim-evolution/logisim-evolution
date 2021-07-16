@@ -74,21 +74,6 @@ public class SelectionList extends JTable {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void modeChanged(Model.Event event) {}
-
-    @Override
-    public void signalsExtended(Model.Event event) {}
-
-    @Override
-    public void signalsReset(Model.Event event) {}
-
-    @Override
-    public void filePropertyChanged(Model.Event event) {}
-
-    @Override
-    public void historyLimitChanged(Model.Event event) {}
-
-    @Override
     public void selectionChanged(Model.Event event) {
       fireTableDataChanged();
     }
@@ -268,6 +253,7 @@ public class SelectionList extends JTable {
     actionMap.put(
         "Delete",
         new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             removeSelected();
           }

@@ -88,6 +88,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public void deleteRequested(ProjectExplorer.Event event) {
     Object request = event.getTarget();
     if (request instanceof ProjectExplorerLibraryNode) {
@@ -105,6 +106,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public void doubleClicked(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
@@ -126,6 +128,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public JPopupMenu menuRequested(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
@@ -158,6 +161,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
     LogisimFile file = proj.getLogisimFile();
     int draggedIndex = file.getTools().indexOf(dragged);
@@ -166,6 +170,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
   }
 
+  @Override
   public void selectionChanged(ProjectExplorer.Event event) {
     if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
       lastSelected = proj.getTool();
@@ -206,12 +211,12 @@ class ToolboxManip implements ProjectExplorer.Listener {
       }
     }
 
-    public void attributeListChanged(AttributeEvent e) {}
-
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       explorer.repaint();
     }
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.ADD_LIBRARY) {
@@ -234,6 +239,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
       explorer.repaint();
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_FILE) {

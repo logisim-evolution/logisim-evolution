@@ -30,6 +30,9 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.BoardRectangle;
@@ -55,10 +58,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -79,13 +79,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class BoardManipulator extends JPanel
-    implements MouseListener,
-        MouseMotionListener,
+    implements BaseMouseListenerContract,
+        BaseMouseMotionListenerContract,
         ChangeListener,
         PropertyChangeListener,
         IOComponentsListener,
         ListSelectionListener,
-        WindowListener,
+        BaseWindowListenerContract,
         LocaleListener,
         ActionListener {
   private static final long serialVersionUID = 1L;
@@ -207,6 +207,7 @@ public class BoardManipulator extends JPanel
     return zoom;
   }
 
+  @Override
   public int getWidth() {
     return AppPreferences.getScaled(IMAGE_WIDTH, scale);
   }
@@ -224,6 +225,7 @@ public class BoardManipulator extends JPanel
     if (UnMapAllButton != null) UnMapAllButton.setEnabled(false);
   }
 
+  @Override
   public int getHeight() {
     return AppPreferences.getScaled(IMAGE_HEIGHT + (mapMode ? CONSTANT_BAR_HEIGHT : 0), scale);
   }
@@ -473,9 +475,6 @@ public class BoardManipulator extends JPanel
   }
 
   @Override
-  public void mouseEntered(MouseEvent e) { }
-
-  @Override
   public void mouseExited(MouseEvent e) {
     IOcomps.mouseExited(scale);
   }
@@ -519,25 +518,6 @@ public class BoardManipulator extends JPanel
       }
     }
   }
-
-  @Override
-  public void windowOpened(WindowEvent e) { }
-
-  @Override
-  public void windowClosing(WindowEvent e) { }
-
-  @Override
-  public void windowClosed(WindowEvent e) {
-  }
-
-  @Override
-  public void windowIconified(WindowEvent e) { }
-
-  @Override
-  public void windowDeiconified(WindowEvent e) { }
-
-  @Override
-  public void windowActivated(WindowEvent e) { }
 
   @Override
   public void windowDeactivated(WindowEvent e) {

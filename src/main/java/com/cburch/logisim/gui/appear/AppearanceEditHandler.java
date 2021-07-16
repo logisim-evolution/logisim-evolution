@@ -59,8 +59,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class AppearanceEditHandler extends EditHandler
-    implements SelectionListener, PropertyChangeListener, CanvasModelListener {
+public class AppearanceEditHandler extends EditHandler implements SelectionListener, PropertyChangeListener, CanvasModelListener {
   private final AppearanceCanvas canvas;
 
   AppearanceEditHandler(AppearanceCanvas canvas) {
@@ -221,8 +220,7 @@ public class AppearanceEditHandler extends EditHandler
 
   @Override
   public void lower() {
-    ModelReorderAction act =
-        ModelReorderAction.createLower(canvas.getModel(), canvas.getSelection().getSelected());
+    ModelReorderAction act = ModelReorderAction.createLower(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
@@ -230,14 +228,13 @@ public class AppearanceEditHandler extends EditHandler
 
   @Override
   public void lowerBottom() {
-    ModelReorderAction act =
-        ModelReorderAction.createLowerBottom(
-            canvas.getModel(), canvas.getSelection().getSelected());
+    ModelReorderAction act = ModelReorderAction.createLowerBottom(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
   }
 
+  @Override
   public void modelChanged(CanvasModelEvent event) {
     computeEnabled();
   }
@@ -293,6 +290,7 @@ public class AppearanceEditHandler extends EditHandler
                 clip.getAnchorFacing()));
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent e) {
     String prop = e.getPropertyName();
     if (prop.equals(Canvas.MODEL_PROPERTY)) {
@@ -339,6 +337,7 @@ public class AppearanceEditHandler extends EditHandler
     canvas.repaint();
   }
 
+  @Override
   public void selectionChanged(SelectionEvent e) {
     computeEnabled();
   }

@@ -82,9 +82,9 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
   }
 
   @Override
-  public Bounds getBounds(Graphics g) {
+  public Bounds getBounds(Graphics gfx) {
     if (poker != null) {
-      context.setGraphics(g);
+      context.setGraphics(gfx);
       InstancePainter painter = new InstancePainter(context, comp);
       return poker.getBounds(painter);
     } else {
@@ -92,6 +92,7 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
     }
   }
 
+  @Override
   public Caret getPokeCaret(ComponentUserEvent event) {
     if (poker == null) {
       return null;

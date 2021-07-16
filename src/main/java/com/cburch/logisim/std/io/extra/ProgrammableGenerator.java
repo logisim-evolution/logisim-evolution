@@ -30,6 +30,7 @@ package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.comp.Component;
@@ -61,7 +62,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -165,7 +165,7 @@ public class ProgrammableGenerator extends InstanceFactory {
     }
   }
 
-  public static class ContentsCell extends JLabel implements MouseListener {
+  public static class ContentsCell extends JLabel implements BaseMouseListenerContract {
     /** */
     private static final long serialVersionUID = -53754819096800664L;
 
@@ -183,18 +183,6 @@ public class ProgrammableGenerator extends InstanceFactory {
       if (data == null) return;
       data.editWindow();
     }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
   }
 
   public static class Poker extends InstancePoker {

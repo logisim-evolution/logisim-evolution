@@ -30,6 +30,9 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseWindowFocusListenerContract;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
@@ -70,10 +73,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.awt.font.TextLayout;
 import java.math.BigInteger;
 import javax.swing.BorderFactory;
@@ -94,7 +95,7 @@ public class Pin extends InstanceFactory {
   public static final String _ID = "Pin";
 
   @SuppressWarnings("serial")
-  private static class EditDecimal extends JDialog implements KeyListener, LocaleListener {
+  private static class EditDecimal extends JDialog implements BaseKeyListenerContract, LocaleListener {
 
     private final JFormattedTextField text;
     private final int bitWidth;
@@ -107,6 +108,7 @@ public class Pin extends InstanceFactory {
     final JButton ok;
     final JButton cancel;
 
+    @Override
     public void localeChanged() {
       setTitle(S.get("PinEnterDecimal"));
       ok.setText(S.get("PinOkay"));
@@ -132,12 +134,11 @@ public class Pin extends InstanceFactory {
       cancel.addActionListener(
           e -> EditDecimal.this.setVisible(false));
       addWindowFocusListener(
-          new WindowFocusListener() {
+          new BaseWindowFocusListenerContract() {
+            @Override
             public void windowLostFocus(WindowEvent e) {
               EditDecimal.this.setVisible(false);
             }
-
-            public void windowGainedFocus(WindowEvent e) {}
           });
       setLayout(new GridBagLayout());
 
@@ -149,7 +150,8 @@ public class Pin extends InstanceFactory {
 
       text.getDocument()
           .addDocumentListener(
-              new DocumentListener() {
+              new BaseDocumentListenerContract() {
+                @Override
                 public void insertUpdate(DocumentEvent e) {
                   String s = text.getText();
                   if (isEditValid(s)) {
@@ -161,11 +163,10 @@ public class Pin extends InstanceFactory {
                   }
                 }
 
+                @Override
                 public void removeUpdate(DocumentEvent e) {
                   insertUpdate(e);
                 }
-
-                public void changedUpdate(DocumentEvent e) {}
               });
 
       gbc.gridx = 0;
@@ -247,15 +248,9 @@ public class Pin extends InstanceFactory {
         setVisible(false);
       }
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
   }
 
-  private static class EditFloat extends JDialog implements KeyListener, LocaleListener {
+  private static class EditFloat extends JDialog implements BaseKeyListenerContract, LocaleListener {
     private final JFormattedTextField text;
     private final int bitWidth;
     final PinState pinState;
@@ -266,6 +261,7 @@ public class Pin extends InstanceFactory {
     final JButton ok;
     final JButton cancel;
 
+    @Override
     public void localeChanged() {
       setTitle(S.get("PinEnterFloat"));
       ok.setText(S.get("PinOkay"));
@@ -290,12 +286,11 @@ public class Pin extends InstanceFactory {
       cancel.addActionListener(
           e -> EditFloat.this.setVisible(false));
       addWindowFocusListener(
-          new WindowFocusListener() {
+          new BaseWindowFocusListenerContract() {
+            @Override
             public void windowLostFocus(WindowEvent e) {
               EditFloat.this.setVisible(false);
             }
-
-            public void windowGainedFocus(WindowEvent e) {}
           });
       setLayout(new GridBagLayout());
 
@@ -308,6 +303,7 @@ public class Pin extends InstanceFactory {
       text.getDocument()
           .addDocumentListener(
               new DocumentListener() {
+                @Override
                 public void insertUpdate(DocumentEvent e) {
                   final var s = text.getText();
                   if (isEditValid(s)) {
@@ -319,11 +315,15 @@ public class Pin extends InstanceFactory {
                   }
                 }
 
+                @Override
                 public void removeUpdate(DocumentEvent e) {
                   insertUpdate(e);
                 }
 
-                public void changedUpdate(DocumentEvent e) {}
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                  // do nothing
+                }
               });
 
       gbc.gridx = 0;
@@ -349,9 +349,9 @@ public class Pin extends InstanceFactory {
       final var s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
-            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) ||
-            s.equals("???")) {
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+            || s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           double val;
@@ -371,13 +371,15 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) ||
-          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
-      if (s.toLowerCase().equals("nan") ||
-	      s.toLowerCase().equals("inf") ||
-		  s.toLowerCase().equals("+inf") ||
-		  s.toLowerCase().equals("-inf")) return true;
-      
+      if (tristate
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+              || s.equals("???"))) return true;
+      if (s.toLowerCase().equals("nan")
+          || s.toLowerCase().equals("inf")
+          || s.toLowerCase().equals("+inf")
+          || s.toLowerCase().equals("-inf")) return true;
+
       try {
         Double.parseDouble(s);
         return true;
@@ -394,12 +396,6 @@ public class Pin extends InstanceFactory {
         setVisible(false);
       }
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
   }
 
   public static class PinLogger extends InstanceLogger {

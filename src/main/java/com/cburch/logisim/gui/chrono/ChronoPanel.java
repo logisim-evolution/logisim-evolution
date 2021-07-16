@@ -141,6 +141,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
             System.out.println("chrono clear");
             leftPanel.clearSelection();
@@ -171,6 +172,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     // zoom on control+scrollwheel
     var zoomer =
         new MouseAdapter() {
+          @Override
           public void mouseWheelMoved(MouseWheelEvent e) {
             if (e.isControlDown()) {
               e.consume();
@@ -236,9 +238,6 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   }
 
   @Override
-  public void localeChanged() {}
-
-  @Override
   public void modelChanged(Model oldModel, Model newModel) {
     setModel(newModel);
     rightPanel.setModel(newModel);
@@ -259,9 +258,6 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   }
 
   @Override
-  public void modeChanged(Model.Event event) {}
-
-  @Override
   public void signalsExtended(Model.Event event) {
     leftPanel.updateSignalValues();
     rightPanel.updateWaveforms(true);
@@ -272,9 +268,6 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     setSignalCursorX(Integer.MAX_VALUE);
     rightPanel.updateWaveforms(true);
   }
-
-  @Override
-  public void filePropertyChanged(Model.Event event) {}
 
   @Override
   public void historyLimitChanged(Model.Event event) {
@@ -289,6 +282,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     editHandler.computeEnabled();
   }
 
+  @Override
   public Model getModel() {
     return model;
   }

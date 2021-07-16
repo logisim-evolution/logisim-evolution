@@ -30,6 +30,7 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -43,7 +44,6 @@ import com.cburch.logisim.proj.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +54,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
-public class Download extends DownloadBase implements Runnable, WindowListener {
+public class Download extends DownloadBase implements Runnable, BaseWindowListenerContract {
 
   private boolean StopRequested = false;
 
@@ -419,9 +419,6 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     MyProgress.setString(S.get("FPGACancelWait"));
     StopRequested = true;
@@ -431,21 +428,6 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       }
     }
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 
   public static String GetClockFrequencyString(BoardInformation CurrentBoard) {
     long clkfreq = CurrentBoard.fpga.getClockFrequency();

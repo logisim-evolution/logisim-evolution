@@ -28,6 +28,9 @@
 
 package com.cburch.hex;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -39,10 +42,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -166,7 +166,7 @@ public class Caret {
     }
   }
 
-  private class Listener implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
+  private class Listener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, FocusListener {
     @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
@@ -247,11 +247,6 @@ public class Caret {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-      // dummy
-    }
-
-    @Override
     public void keyTyped(KeyEvent e) {
       final var mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
@@ -286,11 +281,6 @@ public class Caret {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-      // dummy
-    }
-
-    @Override
     public void mouseDragged(MouseEvent e) {
       final var measures = hex.getMeasures();
       final var loc = measures.toAddress(e.getX(), e.getY());
@@ -301,18 +291,8 @@ public class Caret {
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-      // dummy
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-      // dummy
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-      // dummy
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
     }
 
     @Override

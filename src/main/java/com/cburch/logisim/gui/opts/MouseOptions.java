@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.opts;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
@@ -50,7 +51,6 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.BorderFactory;
@@ -270,7 +270,7 @@ class MouseOptions extends OptionsPanel {
 
   private class MyListener
       implements ActionListener,
-          MouseListener,
+          BaseMouseListenerContract,
           ListSelectionListener,
           MouseMappings.MouseMappingsListener,
           ProjectExplorer.Listener {
@@ -289,27 +289,10 @@ class MouseOptions extends OptionsPanel {
     }
 
     @Override
-    public void deleteRequested(ProjectExplorer.Event event) {}
-
-    @Override
-    public void doubleClicked(ProjectExplorer.Event event) {}
-
-    @Override
     public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
 
-    //
-    // MouseListener methods
-    //
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
 
     //
     // MouseMappingsListener method
@@ -317,6 +300,11 @@ class MouseOptions extends OptionsPanel {
     @Override
     public void mouseMappingsChanged() {
       model.fireTableStructureChanged();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
     }
 
     @Override
@@ -328,12 +316,6 @@ class MouseOptions extends OptionsPanel {
         setSelectedRow(model.getRow(mods));
       }
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
 
     //
     // Explorer.Listener methods

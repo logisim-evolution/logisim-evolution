@@ -144,9 +144,6 @@ class SimulateOptions extends OptionsPanel {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
-
-    @Override
     public void attributeValueChanged(AttributeEvent e) {
       final Attribute<?> attr = e.getAttribute();
       final var val = e.getValue();

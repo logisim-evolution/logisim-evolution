@@ -28,10 +28,11 @@
 
 package com.cburch.logisim.gui.menu;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.Simulator.Event;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.instance.StdAttr;
@@ -45,9 +46,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,8 +68,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 
-public class AssemblyWindow
-    implements ActionListener, WindowListener, Simulator.Listener, KeyListener {
+public class AssemblyWindow implements ActionListener, BaseWindowListenerContract, Simulator.Listener, BaseKeyListenerContract {
 
   private static Circuit curCircuit;
   private static CircuitState curCircuitState;
@@ -266,7 +264,14 @@ public class AssemblyWindow
   }
 
   @Override
+  public void keyTyped(KeyEvent ke) {
+    // FIXME: we should have some more advanced logic here pehaps?
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
   public void keyPressed(KeyEvent ke) {
+    // FIXME: this should have some more advanced logic?
     // throw new UnsupportedOperationException("Not supported yet.");
   }
 
@@ -278,23 +283,25 @@ public class AssemblyWindow
   }
 
   @Override
-  public void keyTyped(KeyEvent ke) {
-    // throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public void propagationCompleted(Simulator.Event e) {
     if (e.getSource().isAutoTicking()) {
       updateHighlightLine();
     }
   }
 
-  public void setTitle(String title) {
-    windows.setTitle(title);
+  @Override
+  public void simulatorReset(Simulator.Event e) {
+    // do nothing
   }
 
   @Override
-  public void simulatorStateChanged(Simulator.Event e) {}
+  public void simulatorStateChanged(Simulator.Event e) {
+    // do nothing
+  }
+
+  public void setTitle(String title) {
+    windows.setTitle(title);
+  }
 
   /*
    * Track the movement of the Caret by painting a background line at the
@@ -338,31 +345,10 @@ public class AssemblyWindow
   }
 
   @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowClosing(WindowEvent e) {}
-
-  @Override
   public void windowDeactivated(WindowEvent e) {
     prefs.putInt("X", windows.getX());
     prefs.putInt("Y", windows.getY());
     prefs.putInt("W", windows.getWidth());
     prefs.putInt("H", windows.getHeight());
   }
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
-  public void simulatorReset(Event e) { }
 }

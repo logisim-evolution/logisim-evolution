@@ -136,8 +136,7 @@ class ToolbarOptions extends OptionsPanel {
     list.localeChanged();
   }
 
-  private class Listener
-      implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
+  private class Listener implements ProjectExplorer.Listener, ActionListener, ListSelectionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
       final var src = event.getSource();
@@ -165,9 +164,6 @@ class ToolbarOptions extends OptionsPanel {
       moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
       remove.setEnabled(index >= 0);
     }
-
-    @Override
-    public void deleteRequested(ProjectExplorer.Event event) {}
 
     private void doAddTool(Tool tool) {
       if (tool != null) {
@@ -198,9 +194,6 @@ class ToolbarOptions extends OptionsPanel {
     public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
-
-    @Override
-    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
 
     @Override
     public void selectionChanged(ProjectExplorer.Event event) {
