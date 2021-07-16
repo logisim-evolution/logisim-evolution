@@ -133,7 +133,8 @@ public class PortIO extends InstanceFactory {
 
     public Color getColor(int i) {
       final var v = get(i);
-      return (v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor());    }
+      return v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor();
+    }
 
     @Override
     public Object clone() {
@@ -319,7 +320,11 @@ public class PortIO extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.LABEL_LOC) {
+    if (attr == StdAttr.FACING) {
+      instance.recomputeBounds();
+      updatePorts(instance);
+      instance.computeLabelTextField(Instance.AVOID_BOTTOM);
+    } else if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_BOTTOM);
     } else if (attr == ATTR_SIZE || attr == ATTR_DIR) {
       instance.recomputeBounds();
