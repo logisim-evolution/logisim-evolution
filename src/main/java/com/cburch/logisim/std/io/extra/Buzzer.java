@@ -223,9 +223,9 @@ public class Buzzer extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     Data d = getData(state);
-    boolean active = state.getPortValue(ENABLE) == Value.TRUE;
+    var active = state.getPortValue(ENABLE) == Value.TRUE;
     d.is_on.set(active);
-    int freq = (int) state.getPortValue(FREQ).toLongValue();
+    var freq = (int) state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
       if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) {
         freq /= 10;
@@ -266,12 +266,19 @@ public class Buzzer extends InstanceFactory {
       p[FREQ] = new Port(-10, 0, Port.INPUT, 14);
       p[VOL] = new Port(10, 0, Port.INPUT, VolumeWidth);
     }
-    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
-    p[PW] = new Port(20, 20, Port.INPUT, 8);
     p[FREQ].setToolTip(S.getter("buzzerFrequecy"));
-    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
-    p[ENABLE].setToolTip(S.getter("enableSound"));
     p[VOL].setToolTip(S.getter("buzzerVolume"));
+    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
+    p[ENABLE].setToolTip(S.getter("enableSound"));
+    var xPw = 20;
+    var yPw = 20;
+    if (dir == Direction.SOUTH) {
+      yPw = -20;
+    } else if (dir == Direction.EAST) {
+      xPw = -20;
+    }
+    p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
+    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
     instance.setPorts(p);
   }
 
@@ -325,8 +332,8 @@ public class Buzzer extends InstanceFactory {
       AudioFormat af = null;
       Clip clip = null;
       AudioInputStream ais = null;
-      int oldfreq = -1;
-      int oldpw = -1;
+      var oldfreq = -1;
+      var oldpw = -1;
       try {
         while (is_on.get()) {
           if (updateRequired) {
@@ -343,16 +350,16 @@ public class Buzzer extends InstanceFactory {
             }
 
             // TODO: Computing all those values takes time; it may be interesting to replace this by a LUT
-            int cycle = Math.max(1, sampleRate / hz);
-            double[] values = new double[4 * cycle];
-            for (int i = 0; i < values.length; i++) {
+            var cycle = Math.max(1, sampleRate / hz);
+            var values = new double[4 * cycle];
+            for (var i = 0; i < values.length; i++) {
               values[i] = wf.strategy.amplitude(i / (double) sampleRate, hz, pw / 256.0);
             }
 
             if (wf != BuzzerWaveform.Sine && smoothLevel > 0 && smoothWidth > 0) {
-              double[] nsig = new double[values.length];
-              for (int k = 0; k < smoothLevel; k++) {
-                double sum = 0;
+              var nsig = new double[values.length];
+              for (var k = 0; k < smoothLevel; k++) {
+                var sum = 0;
                 for (var i = 0; i < values.length; i++) {
                   if (i > 2 * smoothWidth) {
                     nsig[i - smoothWidth - 1] = (sum - values[i - smoothWidth - 1]) / (2 * smoothWidth);
@@ -364,14 +371,14 @@ public class Buzzer extends InstanceFactory {
               }
             }
 
-            double[] rvalues = new double[sampleRate];
+            var rvalues = new double[sampleRate];
             for (var i = 0; i < sampleRate; i += cycle) {
               System.arraycopy(values, 2 * cycle, rvalues, i, Math.min(cycle, sampleRate - i));
             }
 
             byte[] buf = new byte[4 * sampleRate];
             for (int i = 0, j = 0; i < buf.length; i += 4, j++) {
-              short val = (short) Math.round(rvalues[j] * vol);
+              var val = (short) Math.round(rvalues[j] * vol);
               if ((channels & 1) != 0) {
                 buf[i] = (byte) (val & 0xff);
                 buf[i + 1] = (byte) (val >> 8);

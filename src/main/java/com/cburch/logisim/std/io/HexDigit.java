@@ -63,6 +63,16 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
   protected static final int HEX = 0;
   protected static final int DP = 1;
 
+  // Possible display configurations for "no valid input" mode.
+  protected enum NoDataDisplayMode {
+    BLANK,
+    u,
+    U,
+    H
+  }
+
+  static final NoDataDisplayMode NO_DATA_DISPLAY = NoDataDisplayMode.BLANK;
+
   public HexDigit() {
     super(_ID, S.getter("hexDigitComponent"));
     setAttributes(
@@ -134,9 +144,27 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     SevenSegment.drawBase(painter, painter.getAttributeValue(SevenSegment.ATTR_DP));
   }
 
+  /**
+   * Maps integer value to display segments. Each nibble is one segment, in top-down, left-to-right
+   * order, middle three nibbles are the three horizontal segments:
+   *
+   * <code>
+   *
+   * ··A··
+   * F···B
+   * ··G··
+   * E···C
+   * ··D··
+   *
+   * bits: 0xFEAGDBC i.e.: 0x1110111 => "0" shape
+   *
+   * </code> *
+   *
+   * @param value value to map
+   * @return
+   */
   public static int getSegs(int value) {
-    int segs; // each nibble is one segment, in top-down, left-to-right
-    // order: middle three nibbles are the three horizontal segments
+    int segs;
     switch (value) {
       case 0:
         segs = 0x1110111;
@@ -187,27 +215,44 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         segs = 0x1111000;
         break;
       case -1:
-        segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_G_MASK;
-        break; // a H for static icon
+        switch (NO_DATA_DISPLAY) {
+          case H:
+            segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_G_MASK; // a "H" for static icon
+            break;
+          case U:
+            segs = SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK | SEG_D_MASK;  // a "U" for static icon
+            break;
+          case u:
+            segs = SEG_C_MASK | SEG_E_MASK | SEG_D_MASK;  // a "u" for static icon
+            break;
+          case BLANK:
+          default:
+            segs = 0;
+            break;
+        }
+
+        break;
       default:
-        segs = 0x0001000;
-        break; // a dash '-'
+        // This shape indicates error value (out of bounds)
+        segs = SEG_A_MASK | SEG_D_MASK | SEG_G_MASK;
+        break;
     }
     return segs;
   }
 
-  public static final int SEG_A_MASK = 0x10000;
-  public static final int SEG_B_MASK = 0x10;
-  public static final int SEG_C_MASK = 0x1;
-  public static final int SEG_D_MASK = 0x100;
-  public static final int SEG_E_MASK = 0x100000;
+  //                                     FEAGDBC
+  public static final int SEG_A_MASK = 0x0010000;
+  public static final int SEG_B_MASK = 0x0000010;
+  public static final int SEG_C_MASK = 0x0000001;
+  public static final int SEG_D_MASK = 0x0000100;
+  public static final int SEG_E_MASK = 0x0100000;
   public static final int SEG_F_MASK = 0x1000000;
-  public static final int SEG_G_MASK = 0x1000;
+  public static final int SEG_G_MASK = 0x0001000;
 
   @Override
   public void propagate(InstanceState state) {
-    int summary = 0;
-    Value baseVal = state.getPortValue(HEX);
+    var summary = 0;
+    var baseVal = state.getPortValue(HEX);
     if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
     int segs = getSegs((int) baseVal.toLongValue());
     if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
@@ -219,13 +264,13 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     if ((segs & SEG_F_MASK) != 0) summary |= 32; // vertical seg at top left
 
     if (state.getAttributeValue(SevenSegment.ATTR_DP)) {
-      Value dpVal = state.getPortValue(DP);
+      final var dpVal = state.getPortValue(DP);
       if (dpVal != null && (int) dpVal.toLongValue() == 1)
         summary |= 128; // decimal point
     }
 
     Object value = summary;
-    InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
+    final var data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));
     } else {
@@ -244,6 +289,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new HexDigitShape(x, y, path);
   }

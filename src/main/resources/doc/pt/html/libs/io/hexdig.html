@@ -15,14 +15,15 @@
 <tr><td><strong>Introduçaõ:</strong></td>
 	<td>2.2.0</td></tr>
 <tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../../../../img-libs/hexdig.png"></td></tr>
+	<td valign="top"><img src="../../../../img-libs/hexdig.png">
+		<img src="../../../../img-libs/hexdigoff.png"></td></tr>
 </table></p>
 
 <h2>Comportamento</h2>
 
-<p> Ao usar um <i>display</i> de 7-segmentos, mostrará o dígito hexadecimal 
-correspondente à entrada de quatro bits. Se qualquer uma das entradas não forem 0/1 
-(ou flutuante ou erro), então, o <i>display</i> mostrará um traço ('-'). 
+<p> Ao usar um <i>display</i> de 7-segmentos, mostrará o dígito hexadecimal
+correspondente à entrada de quatro bits. Se qualquer uma das entradas não forem 0/1
+(ou flutuante ou erro), então, a tela estará desligada.
 Uma entrada de um bit em separado controlará a exibição do ponto decimal. </p>
 
 <h2> Pinos </h2>
@@ -32,7 +33,7 @@ Uma entrada de um bit em separado controlará a exibição do ponto decimal. </p
 <dt> Na face sul, a primeira a partir da esquerda (entrada, com largura de 4 bits) </dt>
 <dd> Essa entrada será interpretada como um número de quatro bits sem sinal, e os
 dígitos hexadecimais correspondentes serão exibida. Se algum dos bits for flutuante
-ou erro, então, um traço ('-') será exibido. </dd>
+ou erro, então, a tela estará desligada.</dd>
 
 <dt> Na face sul, a segunda a partir da esquerda (entrada, com largura de 1 bit) </dt>
 <dd> Serve para controlar o ponto decimal. Se este não estiver conectado, o ponto decimal
