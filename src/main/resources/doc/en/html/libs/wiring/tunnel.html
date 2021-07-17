@@ -50,16 +50,16 @@
       <p>
         A <q>tunnel</q> acts like a wire in that it binds points together, but unlike a wire the connection is not explicitly drawn. This is helpful when you need to connect points far apart in the circuit and a network of wires would make the circuit much more ugly. The below illustration illustrates how this works.
       </p>
-      <blockquote>
+      <center>
         <img src="../../../../img-libs/tunnel-demo.png" alt="#########">
-      </blockquote>
+      </center>
       <p>
         The illustration above shows how this works. Here the three tunnels have the same label, <em>Clk_A</em>, and represents the three points to which the tunnels are connected. If one of the tunnels has a different label, such as <em>R_W</em>, then it would be part of a different set of tunnels.<br>
 		In the following example we can observe the occurrence of an error on activation of the controlled buffer conflicting with the bottom pin.
 		</p>
-      <blockquote>
+      <center>
         <img src="../../../../img-libs/tunnel-demo1.gif" alt="#########">
-      </blockquote>
+      </center>
       <p>The controlled buffer emits a floating output since its lower input is 0. Normally this causes the wire from the controlled buffer to be blue, but here it is bright green. This is correct, as it is connected through the tunnel to the bottom pin which is 1. If the buffer control goes to 1, the tunnel will carry this value to the other points and it will conflict with the 1 on the bottom pin triggering an error. Red wires (<b class="evalue">E</b>) can then be seen running through the three tunnels as in the example.
       </p>
       <h2>
@@ -74,7 +74,8 @@
       <p>
         When the component is selected or being added, Alt-0 through Alt-9 alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
-	  <div class="attliste">
+	<div class="attliste">
+	 
       <dl>
         <dt>
           <b class="propertie">Facing</b>
@@ -115,7 +116,7 @@
         Allows the label associated with the tunnel to be edited.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
       </p>
     </div>
   </body>
