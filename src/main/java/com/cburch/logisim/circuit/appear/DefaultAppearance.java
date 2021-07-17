@@ -38,9 +38,11 @@ import java.util.Collection;
 import java.util.List;
 
 class DefaultAppearance {
+  private DefaultAppearance() {
+    // dummy, private
+  }
 
-  public static List<CanvasObject> build(
-      Collection<Instance> pins, AttributeOption style, boolean Fixed, String CircuitName) {
+  public static List<CanvasObject> build(Collection<Instance> pins, AttributeOption style, boolean Fixed, String CircuitName) {
     if (style == CircuitAttributes.APPEAR_CLASSIC) {
       return DefaultClassicAppearance.build(pins);
     } else if (style == CircuitAttributes.APPEAR_FPGA) {
@@ -51,11 +53,7 @@ class DefaultAppearance {
   }
 
   static void sortPinList(List<Instance> pins, Direction facing) {
-    if (facing == Direction.NORTH || facing == Direction.SOUTH)
-      Location.sortHorizontal(pins);
-    else
-      Location.sortVertical(pins);
+    if (facing == Direction.NORTH || facing == Direction.SOUTH) Location.sortHorizontal(pins);
+    else Location.sortVertical(pins);
   }
-
-  private DefaultAppearance() {}
 }

@@ -30,6 +30,8 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.contracts.BaseComponentListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.ComponentMapParser;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -44,9 +46,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -57,8 +57,7 @@ import javax.swing.JScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComponentMapDialog implements ActionListener, WindowListener,
-        LocaleListener, ComponentListener {
+public class ComponentMapDialog implements ActionListener, BaseWindowListenerContract, LocaleListener, BaseComponentListenerContract {
 
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
@@ -83,8 +82,7 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
   private final Object lock = new Object();
   private boolean canceled = true;
 
-  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board,
-                            MappableResourcesContainer mappable) {
+  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board, MappableResourcesContainer mappable) {
     OldDirectory = new File(projectPath).getParent();
     if (OldDirectory == null) OldDirectory = "";
     else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
@@ -289,29 +287,11 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     synchronized (lock) {
       lock.notify();
     }
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 
   @Override
   public void localeChanged() {
@@ -329,21 +309,10 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   @Override
   public void componentResized(ComponentEvent e) {
-    UnmappedText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    MappedText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    CommandText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     panel.pack();
   }
 
-  @Override
-  public void componentMoved(ComponentEvent e) { }
-
-  @Override
-  public void componentShown(ComponentEvent e) { }
-
-  @Override
-  public void componentHidden(ComponentEvent e) { }
 }

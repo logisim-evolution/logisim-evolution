@@ -30,8 +30,6 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.data.Bounds;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,26 +37,21 @@ import java.util.List;
 public class AbstractCaret implements Caret {
   private final ArrayList<CaretListener> listeners = new ArrayList<>();
   private final List<CaretListener> listenersView;
-  private Bounds bds = Bounds.EMPTY_BOUNDS;
+  private Bounds bounds = Bounds.EMPTY_BOUNDS;
 
   public AbstractCaret() {
     listenersView = Collections.unmodifiableList(listeners);
   }
 
   // listener methods
+  @Override
   public void addCaretListener(CaretListener e) {
     listeners.add(e);
   }
 
-  public void cancelEditing() {}
-
-  // finishing
-  public void commitText(String text) {}
-
-  public void draw(Graphics g) {}
-
-  public Bounds getBounds(Graphics g) {
-    return bds;
+  @Override
+  public Bounds getBounds(Graphics gfx) {
+    return bounds;
   }
 
   protected List<CaretListener> getCaretListeners() {
@@ -66,31 +59,18 @@ public class AbstractCaret implements Caret {
   }
 
   // query/Graphics methods
+  @Override
   public String getText() {
     return "";
   }
 
-  public void keyPressed(KeyEvent e) {}
-
-  public void keyReleased(KeyEvent e) {}
-
-  public void keyTyped(KeyEvent e) {}
-
-  public void mouseDragged(MouseEvent e) {}
-
-  // events to handle
-  public void mousePressed(MouseEvent e) {}
-
-  public void mouseReleased(MouseEvent e) {}
-
+  @Override
   public void removeCaretListener(CaretListener e) {
     listeners.remove(e);
   }
 
   // configuration methods
   public void setBounds(Bounds value) {
-    bds = value;
+    bounds = value;
   }
-
-  public void stopEditing() {}
 }

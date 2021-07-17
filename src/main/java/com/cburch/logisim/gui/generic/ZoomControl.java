@@ -30,6 +30,8 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -212,7 +214,7 @@ public class ZoomControl extends JPanel {
     }
   }
 
-  private class GridIcon extends JComponent implements MouseListener, PropertyChangeListener {
+  private class GridIcon extends JComponent implements BaseMouseListenerContract, PropertyChangeListener {
     private static final long serialVersionUID = 1L;
     boolean state = true;
 
@@ -232,21 +234,14 @@ public class ZoomControl extends JPanel {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
       if (model != null) model.setShowGrid(!state);
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
 
     @Override
     protected void paintComponent(Graphics g) {

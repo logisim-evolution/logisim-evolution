@@ -48,7 +48,7 @@ class GrayCounter extends InstanceFactory {
                 new Port(-30, 0, Port.INPUT, 1),
                 new Port(  0, 0, Port.OUTPUT, StdAttr.WIDTH),
         });
-        
+
         // У нас будут атрибуты ширина, метка и шрифт метки. Последние два
         // атрибута позволяют нам связать метку с компонентом (однако,
         // нам также нужен configureNewInstance для настройки расположения
@@ -56,18 +56,18 @@ class GrayCounter extends InstanceFactory {
         setAttributes(
                 new Attribute[] { StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT },
                 new Object[] { BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT });
-        
+
         // Следующее обращение к методу устанавливает всё так, чтобы состоянием
         // экземпляра можно было управлять с помощью Инструмента Нажатие.
         setInstancePoker(CounterPoker.class);
-        
+
         // Следующие две строчки настраивают его так, чтобы окно проводника показывало
         // определённый значок, представляющий тип компонента. Это должно быть
         // изображение 16x16.
         URL url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
         if(url != null) setIcon(new ImageIcon(url));
     }
-    
+
     /** Метод configureNewInstance вызывается каждый раз, когда создаётся
      * новый экземпляр. В суперклассе метод ничего не делает, поскольку
      * новый экземпляр уже довольно хорошо настроен по умолчанию. Но
@@ -98,7 +98,7 @@ class GrayCounter extends InstanceFactory {
         painter.drawClock(0, Direction.EAST);
         painter.drawPort(1);
         painter.drawLabel();
-        
+
         if(painter.getShowState()) {
             BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
             CounterData state = CounterData.get(painter, width);
@@ -135,10 +135,10 @@ import com.cburch.logisim.instance.StdAttr;
  * CounterPoker - это класс, специфичный для GrayCounter, и что он должен быть
  * подклассом InstancePoker из пакета com.cburch.logisim.instance. */
 public class CounterPoker extends InstancePoker {
-    public CounterPoker() { }
+    public CounterPoker() {}
 
     /** Определяет, должно ли положение, в котором нажата мышь,
-     * инициировать нажатие. 
+     * инициировать нажатие.
      */
     public boolean init(InstanceState state, MouseEvent e) {
         return state.getInstance().getBounds().contains(e.getX(), e.getY());
@@ -175,7 +175,7 @@ public class CounterPoker extends InstancePoker {
         Value newValue = Value.createKnown(width, newVal);
         cur.setValue(newValue);
         state.fireInvalidated();
-        
+
         // Вы, возможно, подумываете о том, чтобы просчитать значение здесь сразу, используя
         // state.setPort. Однако, схема может просчитываться в данный момент в
         // другом потоке, и непосредственный вызов setPort может помешать

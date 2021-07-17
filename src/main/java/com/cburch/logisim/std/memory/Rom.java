@@ -30,6 +30,7 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
@@ -51,7 +52,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -115,7 +115,7 @@ public class Rom extends Mem {
   }
 
   @SuppressWarnings("serial")
-  private static class ContentsCell extends JLabel implements MouseListener {
+  private static class ContentsCell extends JLabel implements BaseMouseListenerContract {
     final Window source;
     final MemContents contents;
 
@@ -134,18 +134,6 @@ public class Rom extends Mem {
       frame.setVisible(true);
       frame.toFront();
     }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
   }
 
   public static final Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();

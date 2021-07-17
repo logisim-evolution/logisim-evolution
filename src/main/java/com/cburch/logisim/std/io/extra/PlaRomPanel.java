@@ -30,6 +30,8 @@ package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.ttl.Drawgates;
@@ -42,11 +44,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 
-public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
 
   /** */
   private static final long serialVersionUID = 7182231893518001053L;
@@ -170,29 +170,11 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
   }
 
   @Override
-  public void mouseDragged(MouseEvent e) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
-
-  @Override
   public void mouseMoved(MouseEvent e) {
     if (drawCircleConnection(e)) setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     else setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     repaint();
   }
-
-  @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
 
   @Override
   public void paintComponent(Graphics g) {

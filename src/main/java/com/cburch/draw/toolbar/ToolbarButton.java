@@ -28,15 +28,15 @@
 
 package com.cburch.draw.toolbar;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JComponent;
 
-class ToolbarButton extends JComponent implements MouseListener {
+class ToolbarButton extends JComponent implements BaseMouseListenerContract {
   private static final long serialVersionUID = 1L;
 
   private static final int BORDER = 2;

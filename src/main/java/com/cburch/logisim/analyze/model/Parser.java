@@ -36,6 +36,10 @@ import java.util.ArrayList;
 import java.util.function.Predicate;
 
 public class Parser {
+  private Parser() {
+    // dummy, private
+  }
+
   private static class Context {
     final int level;
     final Expression current;
@@ -486,6 +490,4 @@ public class Parser {
   private static final int TOKEN_ERROR_BRACE = 13;
   private static final int TOKEN_ERROR_SUBSCRIPT = 14;
   private static final int TOKEN_ERROR_IDENT = 15;
-
-  private Parser() {}
 }

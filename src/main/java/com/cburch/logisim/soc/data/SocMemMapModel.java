@@ -30,13 +30,13 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.BorderFactory;
@@ -46,7 +46,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 public class SocMemMapModel extends AbstractTableModel
-    implements SocBusSlaveListener, LocaleListener, MouseListener {
+    implements SocBusSlaveListener, LocaleListener, BaseMouseListenerContract {
 
   private static final long serialVersionUID = 1L;
   private static final long longMask = Long.parseUnsignedLong("FFFFFFFF", 16);
@@ -346,15 +346,6 @@ public class SocMemMapModel extends AbstractTableModel
       }
     }
   }
-
-  @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
 
   @Override
   public void mouseExited(MouseEvent e) {

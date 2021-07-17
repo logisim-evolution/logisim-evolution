@@ -33,7 +33,6 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -155,6 +154,7 @@ class FilePanel extends LogPanel {
   }
 
   private class Listener implements ActionListener, Model.Listener {
+    @Override
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == enableButton) {
@@ -212,21 +212,6 @@ class FilePanel extends LogPanel {
         enableButton.setText(S.get("fileEnableButton"));
       }
     }
-
-    @Override
-    public void modeChanged(Model.Event event) {}
-
-    @Override
-    public void historyLimitChanged(Model.Event event) {}
-
-    @Override
-    public void signalsExtended(Model.Event event) {}
-
-    @Override
-    public void signalsReset(Model.Event event) {}
-
-    @Override
-    public void selectionChanged(Model.Event event) {}
 
     @Override
     public void filePropertyChanged(Model.Event event) {

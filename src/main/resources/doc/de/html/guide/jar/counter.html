@@ -49,7 +49,7 @@ class GrayCounter extends InstanceFactory {
                 new Port(-30, 0, Port.INPUT, 1),
                 new Port(  0, 0, Port.OUTPUT, StdAttr.WIDTH),
         });
-        
+
         // Der Zähler hat Attribute für Bitbreite, Beschriftung und Zeichensatz der Beschriftung. Die letzteren beiden
         // Attribute erlauben es uns, dem Bauelement eine Beschriftung zu geben (auch wenn
         // wir außerdem noch configureNewInstance benötigen, um die Position der Beschriftung
@@ -57,19 +57,19 @@ class GrayCounter extends InstanceFactory {
         setAttributes(
                 new Attribute[] { StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT },
                 new Object[] { BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT });
-        
+
         // Der folgende Methodenaufruf schafft die Voraussetzungen dafür, daß der Zustand
         // der Instanz mit demSchaltwerkzeug gändert werden kann.
         setInstancePoker(CounterPoker.class);
-        
+
         // Die zwei nächsten Zeilen sorgen dafür, daß
-        // das Bauelement mit einem individuellen Symbol dargestellt wird. Hierbei sollte es sich um ein 
+        // das Bauelement mit einem individuellen Symbol dargestellt wird. Hierbei sollte es sich um ein
         // 16x16 Punkte großes Bild handeln.
         URL url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
         if(url != null) setIcon(new ImageIcon(url));
     }
-    
-    /** Die Methode configureNewInstance wird jedes Mal aufgerufen, wenn eine neue Instanz 
+
+    /** Die Methode configureNewInstance wird jedes Mal aufgerufen, wenn eine neue Instanz
      * erstellt wird. In der Überklasse macht diese Methode nichts, weil die neue
      * Instanz schon per Voreinstellung gründlich konfiguriert wird. Aber
      * manchmal müssen spezielle Operationen für jede Instanz durchgeführt werden, und
@@ -83,7 +83,7 @@ class GrayCounter extends InstanceFactory {
     }
 
     public void propagate(InstanceState state) {
-        // Dieser Abschnitt ist genauso wie beim SimpleGrayCounter, abgesehen davon, daß wir das 
+        // Dieser Abschnitt ist genauso wie beim SimpleGrayCounter, abgesehen davon, daß wir das
         // StdAttr.WIDTH Attribut benutzen, um die zu verwendende Bitbreite zu bestimmen.
         BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
         CounterData cur = CounterData.get(state, width);
@@ -99,7 +99,7 @@ class GrayCounter extends InstanceFactory {
         painter.drawClock(0, Direction.EAST);
         painter.drawPort(1);
         painter.drawLabel();
-        
+
         if(painter.getShowState()) {
             BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
             CounterData state = CounterData.get(painter, width);
@@ -136,10 +136,10 @@ import com.cburch.logisim.instance.StdAttr;
  * CounterPoker eine spezifische Klasse von GrayCounter ist, und daß es eine
  * Unterklasse von InstancePoker aus dem  com.cburch.logisim.instance-Paket sein muß. */
 public class CounterPoker extends InstancePoker {
-    public CounterPoker() { }
+    public CounterPoker() {}
 
-    /** Legt fest, ob die Position des Mausklicks eine Bearbeitung 
-     * zur Folge haben soll. 
+    /** Legt fest, ob die Position des Mausklicks eine Bearbeitung
+     * zur Folge haben soll.
      */
     public boolean init(InstanceState state, MouseEvent e) {
         return state.getInstance().getBounds().contains(e.getX(), e.getY());
@@ -176,7 +176,7 @@ public class CounterPoker extends InstancePoker {
         Value newValue = Value.createKnown(width, newVal);
         cur.setValue(newValue);
         state.fireInvalidated();
-        
+
         // Sie könnten versucht sein, den Wert jetzt direkt über
         // state.setPort auszugeben. Aber die Schaltung könnte gerade an einer Stelle beschäftigt sein
         // und der direkte Zugriff auf setPort könnte hier

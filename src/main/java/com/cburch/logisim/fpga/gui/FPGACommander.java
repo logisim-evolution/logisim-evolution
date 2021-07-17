@@ -30,6 +30,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -57,7 +58,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -76,7 +76,7 @@ public class FPGACommander
         ProjectListener,
         Simulator.Listener,
         CircuitListener,
-        WindowListener,
+        BaseWindowListenerContract,
         LocaleListener,
         PreferenceChangeListener {
 
@@ -137,16 +137,16 @@ public class FPGACommander
     }
   }
 
+
   @Override
-  public void propagationCompleted(Simulator.Event e) {}
+  public void simulatorReset(Simulator.Event e) {
+    // do nothing
+  }
 
   @Override
   public void simulatorStateChanged(Simulator.Event e) {
     FrequencyPanel.setSelectedFrequency();
   }
-
-  @Override
-  public void simulatorReset(Simulator.Event e) { }
 
   @Override
   public void circuitChanged(CircuitEvent event) {
@@ -494,30 +494,12 @@ public class FPGACommander
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     ReporterGui.CloseOpenWindows();
     if (e.getSource().equals(MyProject.getFrame()) && panel.isVisible()) {
       panel.setVisible(false);
     }
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 
   @Override
   public void localeChanged() {

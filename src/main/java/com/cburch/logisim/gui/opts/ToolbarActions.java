@@ -36,7 +36,9 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
 
 class ToolbarActions {
-  private ToolbarActions() {}
+  private ToolbarActions() {
+    // private
+  }
 
   public static Action addSeparator(ToolbarData toolbar, int pos) {
     return new AddSeparator(toolbar, pos);

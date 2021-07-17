@@ -204,7 +204,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     painter.drawPorts();
   }
 
-  @Override
   /**
    * Propagate signals through the VHDL component. Logisim doesn't have a VHDL simulation tool. So
    * we need to use an external tool. We send signals to Questasim/Modelsim through a socket and a
@@ -214,6 +213,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
    * <p>This can be done only if Logisim could connect to the tcl server (socket). This is done in
    * Simulation.java.
    */
+  @Override
   public void propagate(InstanceState state) {
 
     if (state.getProject().getVhdlSimulator().isEnabled()
@@ -379,15 +379,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   public void contentSet(HdlModel source) {
     icon.setInvalid(!content.isValid());
   }
-
-  @Override
-  public void aboutToSave(HdlModel source) {}
-
-  @Override
-  public void displayChanged(HdlModel source) {}
-
-  @Override
-  public void appearanceChanged(HdlModel source) {}
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
 

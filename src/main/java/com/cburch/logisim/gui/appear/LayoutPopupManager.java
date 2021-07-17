@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.gui.appear;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.draw.canvas.SelectionEvent;
 import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasObject;
@@ -40,8 +42,6 @@ import com.cburch.logisim.instance.Instance;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,7 +50,7 @@ import javax.swing.JViewport;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
-class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotionListener {
+class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract, BaseMouseMotionListenerContract {
   private final CanvasPane canvasPane;
   private final AppearanceCanvas canvas;
   private Popup curPopup;
@@ -107,8 +107,7 @@ class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotio
     return false;
   }
 
-  public void mouseClicked(MouseEvent e) {}
-
+  @Override
   public void mouseDragged(MouseEvent e) {
     Location start = dragStart;
     if (start != null && start.manhattanDistanceTo(e.getX(), e.getY()) > 4) {
@@ -116,25 +115,30 @@ class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotio
     }
   }
 
+  @Override
   public void mouseEntered(MouseEvent e) {
     hideCurrentPopup();
   }
 
+  @Override
   public void mouseExited(MouseEvent e) {
     long sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();
   }
 
-  public void mouseMoved(MouseEvent arg0) {}
+  @Override
+  public void mouseClicked(MouseEvent mouseEvent) {
+    // do nothing
+  }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     long sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();
     dragStart = Location.create(e.getX(), e.getY());
   }
 
-  public void mouseReleased(MouseEvent e) {}
-
+  @Override
   public void selectionChanged(SelectionEvent e) {
     int act = e.getAction();
     if (act == SelectionEvent.ACTION_ADDED) {
