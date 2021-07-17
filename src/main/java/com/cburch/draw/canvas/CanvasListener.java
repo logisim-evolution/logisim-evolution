@@ -28,18 +28,19 @@
 
 package com.cburch.draw.canvas;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Location;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.util.List;
 
-class CanvasListener implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
+class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, CanvasModelListener {
   private final Canvas canvas;
   private CanvasTool tool;
 
@@ -114,7 +115,7 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    // dummy
+    // no-op implementation
   }
 
   @Override

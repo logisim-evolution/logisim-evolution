@@ -51,7 +51,7 @@ class GrayCounter extends InstanceFactory {
                 new Port(-30, 0, Port.INPUT, 1),
                 new Port(  0, 0, Port.OUTPUT, StdAttr.WIDTH),
         });
-        
+
         // We'll have width, label, and label font attributes. The latter two
         // attributes allow us to associate a label with the component (though
         // we'll also need configureNewInstance to configure the label's
@@ -59,18 +59,18 @@ class GrayCounter extends InstanceFactory {
         setAttributes(
                 new Attribute[] { StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT },
                 new Object[] { BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT });
-        
+
         // The following method invocation sets things up so that the instance's
         // state can be manipulated using the Poke Tool.
         setInstancePoker(CounterPoker.class);
-        
+
         // These next two lines set it up so that the explorer window shows a
         // customized icon representing the component type. This should be a
         // 16x16 image.
         URL url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
         if(url != null) setIcon(new ImageIcon(url));
     }
-    
+
     /** The configureNewInstance method is invoked every time a new instance
      * is created. In the superclass, the method doesn't do anything, since
      * the new instance is pretty thoroughly configured already by default. But
@@ -101,7 +101,7 @@ class GrayCounter extends InstanceFactory {
         painter.drawClock(0, Direction.EAST);
         painter.drawPort(1);
         painter.drawLabel();
-        
+
         if(painter.getShowState()) {
             BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
             CounterData state = CounterData.get(painter, width);
@@ -137,10 +137,10 @@ import com.cburch.logisim.instance.StdAttr;
  * CounterPoker is a class specific to GrayCounter, and that it must be a
  * subclass of InstancePoker in the com.cburch.logisim.instance package. */
 public class CounterPoker extends InstancePoker {
-    public CounterPoker() { }
+    public CounterPoker() {}
 
     /** Determines whether the location the mouse was pressed should result
-     * in initiating a poke. 
+     * in initiating a poke.
      */
     public boolean init(InstanceState state, MouseEvent e) {
         return state.getInstance().getBounds().contains(e.getX(), e.getY());
@@ -177,7 +177,7 @@ public class CounterPoker extends InstancePoker {
         Value newValue = Value.createKnown(width, newVal);
         cur.setValue(newValue);
         state.fireInvalidated();
-        
+
         // You might be tempted to propagate the value immediately here, using
         // state.setPort. However, the circuit may currently be propagating in
         // another thread, and invoking setPort directly could interfere with

@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.gui.generic;
 
+import com.cburch.contracts.BaseComponentListenerContract;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -107,7 +108,7 @@ public class CanvasPane extends JScrollPane {
     return (int) Math.round(10 * getZoomFactor());
   }
 
-  private class Listener implements ComponentListener, PropertyChangeListener {
+  private class Listener implements BaseComponentListenerContract, PropertyChangeListener {
 
     @Override
     public void componentHidden(ComponentEvent e) {
@@ -125,11 +126,6 @@ public class CanvasPane extends JScrollPane {
     @Override
     public void componentResized(ComponentEvent e) {
       contents.recomputeSize();
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-      // do nothing
     }
 
     @Override

@@ -28,14 +28,14 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
 
 public abstract class WindowMenuItemManager {
-  private class MyListener implements WindowListener {
+  private class MyListener implements BaseWindowListenerContract {
     @Override
     public void windowActivated(WindowEvent event) {
       addToManager();
@@ -61,16 +61,10 @@ public abstract class WindowMenuItemManager {
     }
 
     @Override
-    public void windowDeiconified(WindowEvent event) {}
-
-    @Override
     public void windowIconified(WindowEvent event) {
       addToManager();
       WindowMenuManager.setCurrentManager(WindowMenuItemManager.this);
     }
-
-    @Override
-    public void windowOpened(WindowEvent event) {}
   }
 
   private final MyListener myListener = new MyListener();

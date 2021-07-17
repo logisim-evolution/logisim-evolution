@@ -30,6 +30,7 @@ package com.cburch.logisim.vhdl.gui;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
@@ -59,7 +60,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -67,10 +67,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
 
-  private class EditorListener implements DocumentListener {
-
-    @Override
-    public void changedUpdate(DocumentEvent de) {}
+  private class EditorListener implements BaseDocumentListenerContract {
 
     @Override
     public void insertUpdate(DocumentEvent de) {
@@ -141,15 +138,6 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     public void contentSet(HdlModel source) {
       validate.setEnabled(false);
     }
-
-    @Override
-    public void aboutToSave(HdlModel source) {}
-
-    @Override
-    public void displayChanged(HdlModel source) {}
-
-    @Override
-    public void appearanceChanged(HdlModel source) {}
   }
 
   public static boolean confirmImport(Component parent) {

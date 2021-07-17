@@ -31,5 +31,7 @@ package com.cburch.draw.canvas;
 import java.util.EventListener;
 
 public interface SelectionListener extends EventListener {
-  void selectionChanged(SelectionEvent e);
+  default void selectionChanged(SelectionEvent e) {
+    // default implementation
+  }
 }

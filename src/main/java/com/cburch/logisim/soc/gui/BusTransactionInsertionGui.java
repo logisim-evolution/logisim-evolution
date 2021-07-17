@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocBusTransaction;
@@ -41,7 +42,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -51,7 +51,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class BusTransactionInsertionGui extends JFrame
-    implements WindowListener, ActionListener, LocaleListener {
+    implements BaseWindowListenerContract, ActionListener, LocaleListener {
 
   private static final long serialVersionUID = 1L;
   private final SocBusStateInfo myBus;
@@ -173,27 +173,9 @@ public class BusTransactionInsertionGui extends JFrame
   }
 
   @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     this.dispose();
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 
   @Override
   public void actionPerformed(ActionEvent e) {

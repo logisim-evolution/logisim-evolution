@@ -37,7 +37,9 @@ import java.util.List;
 
 public interface Component extends Location.At {
   // listener methods
-  void addComponentListener(ComponentListener l);
+  default void addComponentListener(ComponentListener l) {
+    // no-op implementation
+  }
 
   boolean contains(Location pt);
 
@@ -48,7 +50,9 @@ public interface Component extends Location.At {
   boolean endsAt(Location pt);
 
   // user interface methods
-  void expose(ComponentDrawContext context);
+  default void expose(ComponentDrawContext context) {
+    // no-op implementation
+  }
 
   AttributeSet getAttributeSet();
 
@@ -63,8 +67,10 @@ public interface Component extends Location.At {
   // basic information methods
 
   ComponentFactory getFactory();
-  
-  void setFactory(ComponentFactory fact);
+
+  default void setFactory(ComponentFactory fact) {
+    // no-op implementation
+  }
 
   /**
    * Retrieves information about a special-purpose feature for this component. This technique allows
@@ -85,7 +91,11 @@ public interface Component extends Location.At {
    */
   Object getFeature(Object key);
 
-  void propagate(CircuitState state);
+  default void propagate(CircuitState state) {
+    // no-op implementation
+  }
 
-  void removeComponentListener(ComponentListener l);
+  default void removeComponentListener(ComponentListener l) {
+    // no-op implementation
+  }
 }

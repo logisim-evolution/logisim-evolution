@@ -258,5 +258,7 @@ public class DefaultHolyCrossAppearance {
     }
   }
 
-  private DefaultHolyCrossAppearance() {}
+  private DefaultHolyCrossAppearance() {
+    // dummy, private
+  }
 }

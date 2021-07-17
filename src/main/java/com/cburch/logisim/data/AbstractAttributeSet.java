@@ -34,8 +34,7 @@ import java.util.List;
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
 
-  public AbstractAttributeSet() {}
-
+  @Override
   public void addAttributeListener(AttributeListener l) {
     if (listeners == null) listeners = new ArrayList<>();
     listeners.add(l);
@@ -57,6 +56,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     }
   }
 
+  @Override
   public boolean containsAttribute(Attribute<?> attr) {
     return getAttributes().contains(attr);
   }
@@ -82,6 +82,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     }
   }
 
+  @Override
   public Attribute<?> getAttribute(String name) {
     for (Attribute<?> attr : getAttributes()) {
       if (attr.getName().equals(name)) {
@@ -91,27 +92,34 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     return null;
   }
 
+  @Override
   public abstract List<Attribute<?>> getAttributes();
 
+  @Override
   public abstract <V> V getValue(Attribute<V> attr);
 
+  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return false;
   }
 
+  @Override
   public boolean isToSave(Attribute<?> attr) {
     return true;
   }
 
+  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
     if (listeners.isEmpty()) listeners = null;
   }
 
+  @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   public abstract <V> void setValue(Attribute<V> attr, V value);
 
 }

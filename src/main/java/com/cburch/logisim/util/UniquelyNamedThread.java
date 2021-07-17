@@ -45,8 +45,8 @@ public class UniquelyNamedThread extends Thread {
     return prefix + "-" + id;
   }
 
-  // private UniquelyNamedThread() { }
-  // private UniquelyNamedThread(Runnable runnable) { }
+  // private UniquelyNamedThread() {}
+  // private UniquelyNamedThread(Runnable runnable) {}
 
   public UniquelyNamedThread(String prefix) {
     super(nextName(prefix));

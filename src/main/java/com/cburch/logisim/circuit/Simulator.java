@@ -77,9 +77,13 @@ public class Simulator {
       return false;
     }
 
-    default void propagationInProgress(Event e) {}
+    default void propagationInProgress(Event e) {
+      // do nothing
+    }
 
-    void propagationCompleted(Event e);
+    default void propagationCompleted(Event e) {
+      // do nothing
+    }
 
     void simulatorStateChanged(Event e);
   }
@@ -438,7 +442,9 @@ public class Simulator {
 
     try {
       simThread.setPriority(simThread.getPriority() - 1);
-    } catch (IllegalArgumentException | SecurityException ignored) { }
+    } catch (IllegalArgumentException | SecurityException ignored) {
+      // do nothing
+    }
 
     simThread.start();
 

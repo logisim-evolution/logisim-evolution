@@ -180,11 +180,15 @@ public class SelectionPanel extends LogPanel {
       pack();
     }
 
+    @Override
     public void cancelClicked() {
       okClicked();
     }
 
-    public void okClicked() {}
+    @Override
+    public void okClicked() {
+      // do nothing
+    }
   }
 
   public static void doDialog(LogFrame logFrame) {

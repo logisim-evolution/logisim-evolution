@@ -73,8 +73,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     fontColor = StdAttr.DEFAULT_LABEL_COLOR;
   }
 
-  public void attributeListChanged(AttributeEvent e) {}
-
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     Attribute<?> attr = e.getAttribute();
     if (attr == labelAttr) {
@@ -110,12 +109,14 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     return field == null || !isLabelVisible ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
   }
 
+  @Override
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
     SetAttributeAction act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
     act.set(comp, labelAttr, newText);
     return act;
   }
 
+  @Override
   public Caret getTextCaret(ComponentUserEvent event) {
     canvas = event.getCanvas();
     Graphics g = canvas.getGraphics();
@@ -142,6 +143,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     return labelAttr != null || fontAttr != null;
   }
 
+  @Override
   public void textChanged(TextFieldEvent e) {
     String prev = e.getOldText();
     String next = e.getText();

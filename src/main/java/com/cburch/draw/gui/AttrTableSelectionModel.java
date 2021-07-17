@@ -87,6 +87,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   //
   // SelectionListener method
   //
+  @Override
   public void selectionChanged(SelectionEvent e) {
     fireTitleChanged();
   }

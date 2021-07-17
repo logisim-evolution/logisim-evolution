@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
@@ -76,7 +77,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       implements InstanceData,
           Cloneable,
           ComponentDataGuiProvider,
-          WindowListener,
+          BaseWindowListenerContract,
           SocUpStateInterface {
     private static final long serialVersionUID = 1L;
     private final int[] registers;
@@ -148,10 +149,12 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       return entryPoint;
     }
 
+    @Override
     public boolean programLoaded() {
       return programLoaded;
     }
 
+    @Override
     public JPanel getAsmWindow() {
       return bPanel;
     }
@@ -161,14 +164,17 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       lastClock = clock;
     }
 
+    @Override
     public int getProgramCounter() {
       return pc;
     }
 
+    @Override
     public SocUpSimulationState getSimState() {
       return simState;
     }
 
+    @Override
     public void SimButtonPressed() {
       simState.buttonPressed();
     }
@@ -185,6 +191,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       return registers[index - 1];
     }
 
+    @Override
     public String getRegisterValueHex(int index) {
       if (RegisterIsValid(index))
         return String.format("0x%08X", getRegisterValue(index));
@@ -300,6 +307,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       if (visible) repaint();
     }
 
+    @Override
     public ProcessorState clone() {
       try {
         return (ProcessorState) super.clone();
@@ -326,68 +334,79 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       SocUpMenuProvider.SOCUPMENUPROVIDER.deregisterCpuState(this, myInstance);
     }
 
+    @Override
     public void windowOpened(WindowEvent e) {
       repaint();
       visible = true;
     }
 
+    @Override
     public void windowClosing(WindowEvent e) {
       visible = false;
     }
 
-    public void windowClosed(WindowEvent e) {}
-
+    @Override
     public void windowIconified(WindowEvent e) {
       visible = false;
     }
 
+    @Override
     public void windowDeiconified(WindowEvent e) {
       repaint();
       visible = true;
     }
 
+    @Override
     public void windowActivated(WindowEvent e) {
       visible = true;
     }
 
-    public void windowDeactivated(WindowEvent e) {}
-
+    @Override
     public int getLastRegisterWritten() {
       return lastRegisterWritten;
     }
 
+    @Override
     public String getRegisterAbiName(int index) {
       return registerABINames[index];
     }
 
+    @Override
     public String getRegisterNormalName(int index) {
       return "x" + index;
     }
 
+    @Override
     public LinkedList<TraceInfo> getTraces() {
       return instrTrace;
     }
 
+    @Override
     public WindowListener getWindowListener() {
       return this;
     }
 
+    @Override
     public JPanel getStatePanel() {
       return this;
     }
 
+    @Override
     public AssemblerInterface getAssembler() {
       return ASSEMBLER;
     }
 
+    @Override
     public SocProcessorInterface getProcessorInterface() {
       return myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE);
     }
 
+    @Override
     public String getProcessorType() {
       return "RV32im (RISC V)";
     }
 
+    @Override
     public int getElfType() {
       return ElfHeader.EM_RISCV;
     }

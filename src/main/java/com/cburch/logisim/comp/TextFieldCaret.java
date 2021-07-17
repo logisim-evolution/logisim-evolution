@@ -74,10 +74,12 @@ class TextFieldCaret implements Caret, TextFieldListener {
     pos = end = findCaret(x, y);
   }
 
+  @Override
   public void addCaretListener(CaretListener l) {
     listeners.add(l);
   }
 
+  @Override
   public void cancelEditing() {
     final var e = new CaretEvent(this, oldText, oldText);
     curText = oldText;
@@ -89,6 +91,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     field.removeTextFieldListener(this);
   }
 
+  @Override
   public void commitText(String text) {
     curText = text;
     pos = curText.length();
@@ -96,6 +99,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     field.setText(text);
   }
 
+  @Override
   public void draw(Graphics g) {
     final var x = field.getX();
     final var y = field.getY();
@@ -129,10 +133,12 @@ class TextFieldCaret implements Caret, TextFieldListener {
     }
   }
 
+  @Override
   public String getText() {
     return curText;
   }
 
+  @Override
   public Bounds getBounds(Graphics g) {
     final var x = field.getX();
     final var y = field.getY();
@@ -143,6 +149,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     return bds.add(field.getBounds(g)).expand(3);
   }
 
+  @Override
   public void keyPressed(KeyEvent e) {
     final var ign = InputEvent.ALT_DOWN_MASK | InputEvent.META_DOWN_MASK;
     if ((e.getModifiersEx() & ign) != 0) return;
@@ -326,8 +333,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     }
   }
 
-  public void keyReleased(KeyEvent e) {}
-
+  @Override
   public void keyTyped(KeyEvent e) {
     final var ign = InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
     if ((e.getModifiersEx() & ign) != 0) return;
@@ -355,14 +361,17 @@ class TextFieldCaret implements Caret, TextFieldListener {
     }
   }
 
+  @Override
   public void mouseDragged(MouseEvent e) {
     end = findCaret(e.getX(), e.getY());
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     pos = end = findCaret(e.getX(), e.getY());
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     end = findCaret(e.getX(), e.getY());
   }
@@ -375,10 +384,12 @@ class TextFieldCaret implements Caret, TextFieldListener {
     return GraphicsUtil.getTextPosition(g, curText, x, y, halign, valign);
   }
 
+  @Override
   public void removeCaretListener(CaretListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public void stopEditing() {
     final var e = new CaretEvent(this, oldText, curText);
     field.setText(curText);
@@ -388,6 +399,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     field.removeTextFieldListener(this);
   }
 
+  @Override
   public void textChanged(TextFieldEvent e) {
     curText = field.getText();
     oldText = curText;

@@ -129,6 +129,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // listening methods
   //
+  @Override
   public void addComponentListener(ComponentListener l) {
     EventSourceWeakSupport<ComponentListener> ls = listeners;
     if (ls == null) {
@@ -143,8 +144,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // AttributeListener methods
   //
-  public void attributeListChanged(AttributeEvent e) {}
-
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     Attribute<?> attr = e.getAttribute();
     if (e.getAttribute().equals(StdAttr.LABEL)) {
@@ -234,12 +234,14 @@ public final class InstanceComponent implements Component, AttributeListener, To
     }
   }
 
+  @Override
   public boolean contains(Location pt) {
     Location translated = pt.translate(-loc.getX(), -loc.getY());
     InstanceFactory factory = instance.getFactory();
     return factory.contains(translated, instance.getAttributeSet());
   }
 
+  @Override
   public boolean contains(Location pt, Graphics g) {
     InstanceTextField field = textField;
     if (field != null && field.getBounds(g).contains(pt)) return true;
@@ -249,6 +251,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // drawing methods
   //
+  @Override
   public void draw(ComponentDrawContext context) {
     InstancePainter painter = context.getInstancePainter();
     painter.setInstance(this);
@@ -287,6 +290,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     }
   }
 
+  @Override
   public boolean endsAt(Location pt) {
     EndData[] ends = endArray;
     for (EndData end : ends) {
@@ -295,6 +299,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return false;
   }
 
+  @Override
   public void expose(ComponentDrawContext context) {
     Bounds b = bounds;
     context.getDestination().repaint(b.getX(), b.getY(), b.getWidth(), b.getHeight());
@@ -333,14 +338,17 @@ public final class InstanceComponent implements Component, AttributeListener, To
     }
   }
 
+  @Override
   public AttributeSet getAttributeSet() {
     return attrs;
   }
 
+  @Override
   public Bounds getBounds() {
     return bounds;
   }
 
+  @Override
   public Bounds getBounds(Graphics g) {
     Bounds ret = bounds;
     InstanceTextField field = textField;
@@ -348,6 +356,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return ret;
   }
 
+  @Override
   public EndData getEnd(int index) {
     return endArray[index];
   }
@@ -355,6 +364,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // propagation methods
   //
+  @Override
   public List<EndData> getEnds() {
     return endList;
   }
@@ -362,14 +372,17 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // basic information methods
   //
+  @Override
   public ComponentFactory getFactory() {
     return factory;
   }
 
+  @Override
   public void setFactory(ComponentFactory fact) {
     factory = (InstanceFactory) fact;
   }
 
+  @Override
   public Object getFeature(Object key) {
     Object ret = factory.getInstanceFeature(instance, key);
     if (ret != null) {
@@ -397,6 +410,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   // location/extent methods
   //
+  @Override
   public Location getLocation() {
     return loc;
   }
@@ -405,6 +419,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return portList;
   }
 
+  @Override
   public String getToolTip(ComponentUserEvent e) {
     int x = e.getX();
     int y = e.getY();
@@ -420,6 +435,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     return defaultTip == null ? null : defaultTip.toString();
   }
 
+  @Override
   public void propagate(CircuitState state) {
     factory.propagate(state.getInstanceState(this));
   }
@@ -429,6 +445,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     bounds = factory.getOffsetBounds(attrs).translate(p.getX(), p.getY());
   }
 
+  @Override
   public void removeComponentListener(ComponentListener l) {
     if (listeners != null) {
       listeners.remove(l);
@@ -458,6 +475,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
     }
   }
 
+  @Override
   public String toString() {
     String label = attrs.getValue(StdAttr.LABEL);
     return "InstanceComponent{factory="

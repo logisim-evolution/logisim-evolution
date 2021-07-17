@@ -28,11 +28,10 @@
 
 package com.cburch.logisim.util;
 
-import java.awt.Component;
+import com.cburch.contracts.BaseLayoutManagerContract;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -56,12 +55,14 @@ public class VerticalSplitPane extends JPanel {
       setFraction((double) value / (VerticalSplitPane.this.getWidth() - in.left - in.right));
       revalidate();
     }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
   }
 
-  private class MyLayout implements LayoutManager {
-    @Override
-    public void addLayoutComponent(String name, Component comp) {}
-
+  private class MyLayout implements BaseLayoutManagerContract {
     @Override
     public void layoutContainer(Container parent) {
       final var in = parent.getInsets();
@@ -110,9 +111,6 @@ public class VerticalSplitPane extends JPanel {
           in.left + d0.width + d1.width + in.right,
           in.top + Math.max(d0.height, d1.height) + in.bottom);
     }
-
-    @Override
-    public void removeLayoutComponent(Component comp) {}
   }
 
   private static final long serialVersionUID = 1L;
