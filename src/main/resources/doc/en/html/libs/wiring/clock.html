@@ -49,57 +49,70 @@
         Behavior
       </h2>
       <p>
-        The clock toggles its output value on a regular schedule as long as ticks are enabled via the <a href="../../guide/menu/simulate.html">Simulate menu</a>. (Ticks are disabled by default.) A "tick" is Logisim's unit of time; the speed at which ticks occur can be selected from the Simulate menu's Tick Frequency submenu.
-      </p>The clock's cycle can be configured using its High Duration and Low Duration attributes.
+        The clock toggles its output value on a regular schedule as long as ticks are enabled via the  option <b class="menu">Auto-tick enabled</b> of <a href="../../guide/menu/simulate.html">Simulate menu</a>. (Ticks are disabled by default.) A "tick" is Logisim's unit of time; the speed at which ticks occur can be selected from the submenu<b class="menu">Tick Frequency</b> of the <b class="menu">Simulate</b>
+		menu.
+      </p>
+	  <p>The clock's cycle can be configured using its <b class="propertie">High Duration</b> and <b class="propertie">Low Duration attributes</b>.</p>
+	  <p>In the <a href="../../guide/tutorial/tutor-step.html">step-by-step mode</a> the clocks advance by one tick with each keystroke. 
+	  </p>
       <p>
-        Note that Logisim's simulation of clocks is quite unrealistic: In real circuits, multiple clocks will drift from one another and will never move in lockstep. But in Logisim, all clocks experience ticks at the same rate.
+        <b class="note">Note</b> that Logisim's simulation of clocks is quite unrealistic: In real circuits, multiple clocks will drift from one another and will never move in lockstep. But in Logisim, all clocks experience ticks at the same rate.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        A clock has only one pin, an output with a bit width of 1, whose value will represent the current value of the clock. The location of this pin is specified in the Facing attribute. The clock's value will toggle on its schedule whenever ticks are enabled, and it will toggle whenever it is clicked using the <a href="../base/poke.html">Poke Tool</a>.
+        A clock has only one pin, an output with a bit width of 1, whose value will represent the current value of the clock. The location of this pin is specified in the <b class="propertie">Facing</b> attribute.<br> The clock's value will toggle on its schedule whenever ticks are enabled, and it will advance by one tick each time it is clicked with the Poke tool.
       </p>
       <h2>
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, the arrow keys alter its <q>Facing</q> attribute.
+        When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          Facing
+          <b class="propertie">Facing</b>
         </dt>
         <dd>
           The side of the component where its output pin should be.
         </dd>
         <dt>
-          High Duration
+          <b class="propertie">High Duration</b>
         </dt>
         <dd>
           The length of time within each cycle that the clock's output should be 1.
         </dd>
         <dt>
-          Low Duration
+          <b class="propertie">Low Duration</b>
         </dt>
         <dd>
           The length of time within each cycle that the clock's output should be 0.
         </dd>
+		<dt>
+          <b class="propertie">Phase Offset</b>
+        </dt>
+        <dd>
+           The phase Offset in tick of the clock. Below are two identical clock, one of which(in gray) has a phase shift of 1 tick.
+		  </center>
+		  <img src="../../../../img-libs/clockshift.png" alt="#########" >
+		  </center>
+        </dd>
         <dt>
-          Label
+          <b class="propertie">Label</b>
         </dt>
         <dd>
           The text within the label associated with the clock component.
         </dd>
         <dt>
-          Label Location
+          <b class="propertie">Label Location</b>
         </dt>
         <dd>
           The location of the label relative to the component.
         </dd>
         <dt>
-          Label Font
+          <b class="propertie">Label Font</b>
         </dt>
         <dd>
           The font with which to render the label.
@@ -110,7 +123,7 @@
         Poke Tool Behavior
       </h2>
       <p>
-        Clicking a clock component will toggle its current output value immediately.
+        By clicking on a clock component, you advance all the clocks by one tick.
       </p>
       <h2>
         Text Tool Behavior

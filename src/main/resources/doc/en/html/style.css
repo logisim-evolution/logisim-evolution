@@ -278,6 +278,14 @@ b.evalue {
 	 color:#FF0000;
 	 font-weight: normal
 }
+b.unov {
+	 color:#00FF00;
+	 font-weight: normal
+}
+b.zerov {
+	 color:#008000;
+	 font-weight: normal
+}
 
 tr.tblvertitl{
 	background-color:#ccd1d6;

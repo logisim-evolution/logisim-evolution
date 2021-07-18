@@ -22,6 +22,10 @@ div.forcode{
 	text-indent:-20px;
 }
 
+div.attliste{
+	padding-left:10px;
+}
+
 /* For img in the text */
 img.intxt {
 	height:16;
@@ -162,6 +166,7 @@ b.refquest {
 table.toolslist {
 	border-spacing :2px 8px;
 }
+
 td.toolslist {
 	width:40px;
 	text-align:center;
@@ -271,6 +276,14 @@ b.uvalue {
 }
 b.evalue {
 	 color:#FF0000;
+	 font-weight: normal
+}
+b.unov {
+	 color:#00FF00;
+	 font-weight: normal
+}
+b.zerov {
+	 color:#008000;
 	 font-weight: normal
 }
 

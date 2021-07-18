@@ -1,14 +1,22 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ru">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
     <title>
       Согласующий резистор
     </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
-  <body bgcolor="#FFFFFF">
+  <body>
+    <div class="maindiv">
     <h1>
-      <img src="../../../../icons/6464/anspull.png" align="middle" alt="#########"  width="32" height="32"> <img src="../../../../icons/6464/iecpull.png" align="middle" alt="#########"  width="32" height="32"> <em>Согласующий резистор</em>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+	  <em>Согласующий резистор</em>
     </h1>
     <table>
       <tbody>
@@ -34,24 +42,30 @@
           </td>
           <td valign="top">
             <table>
-              <tbody>
-                <tr>
-                  <th align="left">
-                    Фигурные:
-                  </th>
-                  <td>
-                    <img src="../../../../img-libs/pull-shaped.png" width="40" height="15" alt="#########">
-                  </td>
-                </tr>
-                <tr>
-                  <th align="left">
-                    Прямоугольные:
-                  </th>
-                  <td>
-                    <img src="../../../../img-libs/pull-rect.png" width="40" height="15" alt="#########">
-                  </td>
-                </tr>
-              </tbody>
+                <tbody>
+                  <tr>
+                    <th colspan="2">
+                      ANSI:
+                    </th>
+                    <th colspan="2">
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
             </table>
           </td>
         </tr>
@@ -61,7 +75,7 @@
       Поведение
     </h2>
     <p>
-      Когда подключен к точке, этот компонент имеет воздействие только когда значение в этой точке - плавающее (Z). В этом случае резистор меняет значение на проводе, к которому он подключен, на значение, указанное в его атрибуте <q>Направление согласования</q>.
+      Когда подключен к точке, этот компонент имеет воздействие только когда значение в этой точке - плавающее (<b class="uvalue">U</b>). В этом случае резистор меняет значение на проводе, к которому он подключен, на значение, указанное в его атрибуте <b class="propertie">Направление согласования</b>.
     </p>
     <p>
       Если он подключен к многобитному значению, то каждый плавающий бит в этом значении будет изменён в указанном направлении, а не плавающие биты будут оставлены без изменений.
@@ -76,22 +90,24 @@
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, клавиши со стрелками меняют его атрибут <q>Направление</q>.
+      Когда компонент выбран, или уже добавлен, клавиши со стрелками меняют его атрибут <b class="propertie">Направление</b>.
     </p>
+	 <div class="attliste">
     <dl>
       <dt>
-        Направление
+        <b class="propertie">Направление</b>
       </dt>
       <dd>
         Направление, в котором расположен контакт относительно центра компонента.
       </dd>
       <dt>
-        Направление согласования
+        <b class="propertie">Направление согласования</b>
       </dt>
       <dd>
-        Определяет значение, на которое будет изменяться плавающее значение. Оно может быть 0, 1, или значением ошибки.
+        Определяет значение, на которое будет изменяться плавающее значение. Оно может быть <b class="zerov">0</b>, <b class="unov">1</b> или значением ошибки (<b class="evalue">E</b>).
       </dd>
     </dl>
+	</div>
     <h2>
       Поведение Инструмента Нажатие
     </h2>
@@ -105,7 +121,9 @@
       Нет.
     </p>
     <p>
-      <a href="../index.html">Назад к <em>Справке по библиотеке</em></a>
+      <b>Назад к </b><a href="../index.html">Справке по библиотеке</a>
     </p>
+	</div>
   </body>
 </html>
+

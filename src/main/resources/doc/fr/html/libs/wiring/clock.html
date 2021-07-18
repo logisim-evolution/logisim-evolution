@@ -14,7 +14,8 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/clock.png" alt="#########" height="32" width="32"> <em>Horloge</em>
+        <img class="iconlibs" src="../../../../icons/6464/clock.png" alt="#########" width="32" height="32"> 
+		<em>Horloge</em>
       </h1>
       <table>
         <tbody>
@@ -39,7 +40,7 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="notscal" src="../../../../img-libs/clock.png" alt="#########">
+              <img class="appearancelibs" src="../../../../img-libs/clock.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
@@ -48,70 +49,84 @@
         Comportement
       </h2>
       <p>
-        Lorloge émet un signal rectangulaire régulier de 0 et de 1 selon sa planification tant que l'option <q>"tic activés"</q> du <a href="../../guide/menu/simulate.html">Menu simulation</a> est active. (Cette option est désactivée par défaut) ou quand vous cliquez dessus avec l'outil pousser (<img class=intxt src="../../../../icons/1616/toolpoke.png" alt="#########">).<br>
-        Un "tic" est l'unité de temps de Logisim, la vitesse à laquelle les impulsions de l'horloge se produisent sont paramètrées dans le sous-menu <q>Fréquence des tics</q> du menu Simulation.
+        Lorloge émet un signal rectangulaire régulier de 0 et de 1 selon sa planification tant que l'option <b class="menu">tic activés</b> du <a href="../../guide/menu/simulate.html">Menu simulation</a> est active. (Cette option est désactivée par défaut).<br>
+        Un "tic" est l'unité de temps de Logisim, la vitesse à laquelle les impulsions de l'horloge se produisent  est paramétrée dans le sous-menu <b class="menu">Fréquence des tics</b> du menu <b class="menu">Simulation</b>.
       </p>
       <p>
-        Le rapport cyclique de l'horloge peut être configuré à l'aide de ses attributs de durée haute et de durée basse.
+        Le rapport cyclique de l'horloge peut être configuré à l'aide de ses attributs de <b class="propertie">durée haute</b> et de <b class="propertie">durée basse</b>.
       </p>
+	  <p>
+		Dans le mode <a href="../../guide/tutorial/tutor-step.html">pas à pas</a> les horloges avancent d'un tic à chaque action sur la touche. 
+	  </p>
       <p>
-        Notez que la simulation des horloges par Logisim est assez irréaliste: Dans des circuits réels, de multiples horloges dériveront les unes par rapport aux autres et ne fonctionnent jamais exactement au même rythme. Mais dans Logisim, toutes les horloges fonctionnent au même rythme.
+        <b class="note">Note</b> :La simulation des horloges par Logisim est assez irréaliste: dans des circuits réels, de multiples horloges dériveront les unes par rapport aux autres et ne fonctionnent jamais exactement au même rythme. Mais dans Logisim, toutes les horloges fonctionnent au même rythme.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        Une horloge ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel de l'horloge. L'emplacement de cette broche est spécifié dans l'attribut Orientation.
+        Une horloge ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel de l'horloge. L'emplacement de cette broche est spécifié dans l'attribut <b class="propertie">Orientation</b>.<br>
+		La valeur de l'horloge basculera en fonction de ses paramètres chaque fois que les tics seront activés, et elle avancera d'un tic chaque fois que l'on cliquera dessus à l'aide de l'outil Poke. 
       </p>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Orientation
+           <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie.
         </dd>
         <dt>
-          Durée haute
+           <b class="propertie">Durée haute</b>
         </dt>
         <dd>
           La durée en tic de cycle haut (1) de l'horloge.
         </dd>
         <dt>
-          Durée basse
+           <b class="propertie">Durée basse</b>
         </dt>
         <dd>
           La durée en tic de cycle bas (0) de l'horloge.
         </dd>
         <dt>
-          Label
+           <b class="propertie">Label</b>
         </dt>
-        <dd>
-          Le texte dans l'étiquette associée au composant horloge.
+		 <dd>
+          La durée en tic de cycle bas (0) de l'horloge.
         </dd>
         <dt>
-          Position du Label
+           <b class="propertie">Déclage de phase</b>
+        </dt>
+        <dd>
+          Le déphasage en tick de l'horloge. Ci-dessous deux hologes identiques dont une (en gris) a un déphasage de 1 tic.
+		  <img src="../../../../img-libs/clockshift.png" alt="#########" >
+		  </center>
+        </dd>
+        <dt>
+           <b class="propertie">Position du Label</b>
         </dt>
         <dd>
           Le positionnement de l'étiquette par rapport au composant.
         </dd>
         <dt>
-          Police du label
+           <b class="propertie">Police du label</b>
         </dt>
         <dd>
           La police avec laquelle présenter l'étiquette.
         </dd>
       </dl>
+	  </div>
       <h2>
         Action de l'outil pousser
       </h2>
       <p>
-        En cliquant sur un composant d'horloge, vous basculez sa valeur de sortie immédiatement.
+        En cliquant sur un composant d'horloge, vous faite avancer l'ensemble des horloges de un tic.
       </p>
       <h2>
         Action de l'outil text

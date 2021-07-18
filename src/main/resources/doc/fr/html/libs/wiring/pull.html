@@ -14,8 +14,9 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" height="32" width="32"> 
-		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" height="32" width="32"> <em>Résistance de charge</em>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+		<em>Résistance de charge</em>
       </h1>
       <table>
         <tbody>
@@ -35,27 +36,33 @@
               2.5.0 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)
             </td>
           </tr>
-          <tr>
+         <tr>
             <td valign="top">
-              <strong>Apparence:</strong>
+              <strong>Appearance:</strong>
             </td>
             <td valign="top">
               <table>
                 <tbody>
                   <tr>
-                    <th align="left">
-                      Shaped:
+                    <th colspan="2">
+                      ANSI:
                     </th>
-                    <td>
-                      <img class="notscal" src="../../../../img-libs/pull-shaped.png" alt="#########">
-                    </td>
+                    <th colspan="2">
+                      IEC:
+                    </th>
                   </tr>
                   <tr>
-                    <th align="left">
-                      Rectangulaire:
-                    </th>
                     <td>
-                      <img class="notscal" src="../../../../img-libs/pull-rect.png" alt="#########">
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
                     </td>
                   </tr>
                 </tbody>
@@ -82,23 +89,26 @@
       <h2>
         Attributs
       </h2>
+	  
       <p>
-        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <<b class="propertie">Orientation</b>.
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Orientation
+           <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie.
         </dd>
         <dt>
-          Direction charge
+           <b class="propertie">Direction charge</b>
         </dt>
         <dd>
-          Spécifie la valeur à laquelle une valeur flottante doit être tirée. Cela pourrait être <b class="zerovalue">0</b>, <b class="unovalue">1</b> ou la valeur d'erreur (<b class="evalue">E</b>).
+          Spécifie la valeur à laquelle une valeur flottante doit être tirée. Cela pourrait être <b class="zerov">0</b>, <b class="unov">1</b> ou la valeur d'erreur (<b class="evalue">E</b>).
         </dd>
       </dl>
+	  </div>
       <h2>
         Action de l'outil pousser
       </h2>
