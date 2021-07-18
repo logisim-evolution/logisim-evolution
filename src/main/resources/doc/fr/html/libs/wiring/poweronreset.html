@@ -14,7 +14,8 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/por.png" alt="#########" height="32" width="32"> <em>Reset à la mise sous tension</em>
+        <img class="iconlibs" src="../../../../icons/6464/por.png" alt="#########" height="32" width="32"> 
+		<em>Reset à la mise sous tension</em>
       </h1>
       <table>
         <tbody>
@@ -39,7 +40,7 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="notscal" src="../../../../img-libs/por.png" width="23" height="23" alt="#########">
+              <img class="notscal" src="../../../../img-libs/por.png" width="128" height="23" alt="#########">
             </td>
           </tr>
         </tbody>
@@ -48,35 +49,37 @@
         Comportement
       </h2>
       <p>
-        Le composant POR émet un signal haut durant un temps défini par la propriété <q>Temps Reset</q> au démarrage de la simulation. Cela se passe soit a l'ouverture du projet par logisim soit quand on utilise le menu <a href="../../guide/menu/simulate.html">Redémarer la simulation</a><br>
-        En mode pas à pas (Menu Simulation / Simulation pas à pas ) il faut considérer environs trois pas par secondes de la propriété <q>Temps Reset</q>.
+        Le composant POR émet un signal haut au démarrage de la simulation durant un délais défini par la propriété <b class="propertie">Temps Reset</b> . Cela se passe soit a l'ouverture du projet par logisim soit quand on utilise le menu <a href="../../guide/menu/simulate.html">Redémarer la simulation</a><br>
+        En mode pas à pas <b class="menu"> Menu Simulation | Simulation pas à pas </b> la transition aura lieu après le délais mais en sychronisation avec l'appuis de la touche (<b class="tkeybd">Ctrl-I </b>).
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        Ce composant ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel du reset. L'emplacement de cette broche est spécifié dans l'attribut <q>Orientation.</q>
+        Ce composant ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel du reset. L'emplacement de cette broche est spécifié dans l'attribut <b class="propertie">Orientation.</b>
       </p>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie.
         </dd>
         <dt>
-          Temps reset
+          <b class="propertie">Temps reset</b>
         </dt>
         <dd>
           Le temps en seconde avant que le signale descende au niveau bas (0)
         </dd>
-        
+        </dl>
+</div>		
           <h2>
             Action de l'outil pousser
           </h2>
@@ -93,7 +96,7 @@
            <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
           </p>
         
-      </dl>
+
     </div>
   </body>
 </html>
