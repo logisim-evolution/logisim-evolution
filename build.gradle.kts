@@ -83,10 +83,10 @@ extra.apply {
    val projectVersion = project.version as String
    val uppercaseProjectName = projectName.substring(0,1).toUpperCase() + projectName.substring(1)
    set("uppercaseProjectName", uppercaseProjectName)
-   set("appDirname", "$buildDir/dist/" + projectName + ".app")
+   set("appDirname", "$buildDir/dist/" + uppercaseProjectName + ".app")
    set("dmgFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".dmg")
    set("rpmFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + "-1.x86_64.rpm")
-   set("debFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + "-1_amd64.deb")
+   set("debFilename", "$buildDir/dist/" + projectName + "_" + projectVersion + "-1_amd64.deb")
    set("msiFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".msi")
 }
 
@@ -193,10 +193,9 @@ tasks.register("createApp") {
       if (OperatingSystem.current().isMacOsX) {
          val appDirname = ext.get("appDirname") as String
          delete(appDirname)
-         val appName = ext.get("uppercaseProjectName") as String
          val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
          parameters.addAll(Arrays.asList(
-            "--name", appName,
+            "--name", ext.get("uppercaseProjectName") as String,
             "--file-associations", "$projectDir/support/jpackage/macos/file.jpackage",
             "--icon", "$projectDir/support/jpackage/macos/Logisim-evolution.icns",
             "--type", "app-image"
@@ -207,7 +206,7 @@ tasks.register("createApp") {
          if (process1.waitFor() != 0) {
             throw GradleException("Error while creating app directory")
          }
-         val plistfilename = "$buildDir/dist/" + appName + ".app/Contents/Info.plist"
+         val plistfilename = appDirname + "/Contents/Info.plist"
          val parameters2 = ArrayList<String>(Arrays.asList(
             "awk", "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};{print >\"$buildDir/dist/Info.plist\"};/NSHighResolutionCapable/{print \"  <string>true</string>\" >\"$buildDir/dist/Info.plist\"; print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"$buildDir/dist/Info.plist\"}",
             plistfilename
@@ -248,12 +247,11 @@ tasks.register("createDmg") {
    outputs.file(ext.get("dmgFilename") as String)
    doLast {
       if (OperatingSystem.current().isMacOsX) {
-         val appName = ext.get("uppercaseProjectName") as String
          val parameters1 = ArrayList<String>(Arrays.asList(
             ext.get("jpackagecmd") as String,
             "--type", "dmg",
-            "--app-image", "$buildDir" + File.separator + "dist" + File.separator +  appName + ".app",
-            "--name", appName,
+            "--app-image", ext.get("appDirname") as String,
+            "--name", project.name as String,
             "--app-version", project.version as String,
             "--dest", "$buildDir/dist"
          ))

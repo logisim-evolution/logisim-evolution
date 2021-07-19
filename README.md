@@ -70,25 +70,37 @@ include the Java runtime and do not require it to be installed separately:
 * `logisim-evolution_<version>-1_amd64.deb`: Debian package (also suitable for Ubuntu and derivatives),
 * `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
 * `logisim-evolution-<version>.msi`: Installer package for Microsoft Windows,
-* `Logisim-evolution-<version>.dmg`: macOS package. Note that `Logisim-evolution` may also be installed
+* `logisim-evolution-<version>.dmg`: macOS package. Note that `Logisim-evolution` may also be installed
   using [MacPorts](https://www.macports.org/) (by typing `sudo port install logisim-evolution`)
   or via [Homebrew](https://brew.sh/) (by typing `brew install --cask logisim-evolution`).
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
 is also available and can be run on any system with a supported Java runtime installed.
 
+**Note for macOS users**:
+The Logisim-evolution.app is not code-signed.
+The first time you launch it, you should do so by ctrl- or right-clicking the app and selecting `Open`,
+ which will give you a panel that allows you to open it.
+Depending on your security settings, you may also get a panel asking if you wish to allow it to accept network connections.
+You can click `Deny`.
+
 ### Nightly builds ###
 
-We also offer builds based on current state of [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
-branch, which are created everyday at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+We also offer builds based on the current state of the
+[develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop) branch.
+If the develop branch has been changed,
+a new `Nightly build` is created at midnight [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
-To get nightly downloads, please [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
-and browse to the last successful run of "Nightly build" (should be on top). Note, that due to Github internals,
-all files are provided as ZIP archives. You must unpack unpack downloaded binary prior run or installation.
+Note that these builds may be unstable since the develop branch is a work in progress.
+
+To get nightly downloads, please
+[click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
+and browse to the last successful run of `Nightly build`, which should be on top. Note that due to Github internals,
+all files are provided as ZIP archives. You must unzip the downloaded file to get the package for installation.
 
 Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
-or [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues) if you found a bug or have improvement
-idea.
+or [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues)
+if you found a bug or have suggestions for improvement.
 
 ---
 
