@@ -59,9 +59,9 @@ extra.apply {
    val year = df.format(Date())
    val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
    val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
-   val jpackagecmd = if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd
+   val jPackageCmd = if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd
    val parameters = ArrayList<String>(Arrays.asList(
-      jpackagecmd,
+      jPackageCmd,
       "--input", "$buildDir/libs",
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", project.name + '-' + project.version + "-all.jar",
@@ -78,7 +78,7 @@ extra.apply {
    ))
    set("sharedParameters", parameters)
    set("linuxParameters", linuxParameters)
-   set("jpackagecmd", jpackagecmd)
+   set("jPackageCmd", jPackageCmd)
    val projectName = project.name as String
    val projectVersion = project.version as String
    val uppercaseProjectName = projectName.substring(0,1).toUpperCase() + projectName.substring(1)
@@ -206,10 +206,10 @@ tasks.register("createApp") {
          if (process1.waitFor() != 0) {
             throw GradleException("Error while creating app directory")
          }
-         val plistfilename = appDirname + "/Contents/Info.plist"
+         val pListFilename = "$appDirname/Contents/Info.plist"
          val parameters2 = ArrayList<String>(Arrays.asList(
             "awk", "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};{print >\"$buildDir/dist/Info.plist\"};/NSHighResolutionCapable/{print \"  <string>true</string>\" >\"$buildDir/dist/Info.plist\"; print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"$buildDir/dist/Info.plist\"}",
-            plistfilename
+            pListFilename
          ))
          val processBuilder2 = ProcessBuilder()
          processBuilder2.command(parameters2)
@@ -218,7 +218,7 @@ tasks.register("createApp") {
             throw GradleException("Error while patching Info.plist")
          }
          val parameters3 = ArrayList<String>(Arrays.asList(
-            "mv", "$buildDir/dist/Info.plist", plistfilename
+            "mv", "$buildDir/dist/Info.plist", pListFilename
          ))
          val processBuilder3 = ProcessBuilder()
          processBuilder3.command(parameters3)
@@ -248,7 +248,7 @@ tasks.register("createDmg") {
    doLast {
       if (OperatingSystem.current().isMacOsX) {
          val parameters1 = ArrayList<String>(Arrays.asList(
-            ext.get("jpackagecmd") as String,
+            ext.get("jPackageCmd") as String,
             "--type", "dmg",
             "--app-image", ext.get("appDirname") as String,
             "--name", project.name as String,
