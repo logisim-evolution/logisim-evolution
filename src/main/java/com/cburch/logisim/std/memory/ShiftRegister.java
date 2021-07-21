@@ -317,33 +317,26 @@ public class ShiftRegister extends InstanceFactory {
     }
     GraphicsUtil.switchToWidth(g, 1);
     /* Draw the outputs */
-    if (lastBlock) {
-      GraphicsUtil.switchToWidth(g, dataWidth);
+    GraphicsUtil.switchToWidth(g, dataWidth);
+    if (currentStage == 0 && (hasLoad || lastBlock)) {
+      g.drawLine(
+          realXpos + blockWidth + lineFix,
+          realYpos + 20,
+          realXpos + blockWidth + 10,
+          realYpos + 20);
+    } else if (hasLoad || lastBlock) {
       g.drawLine(
           realXpos + blockWidth + lineFix,
           realYpos + 10,
           realXpos + blockWidth + 10,
           realYpos + 10);
+    }
+    if (lastBlock) {
       painter.drawPort(OUT);
-      GraphicsUtil.switchToWidth(g, 1);
-    }
-    if (hasLoad && !lastBlock) {
-      GraphicsUtil.switchToWidth(g, dataWidth);
-      if (currentStage == 0)
-        g.drawLine(
-            realXpos + blockWidth + lineFix,
-            realYpos + 20,
-            realXpos + blockWidth + 10,
-            realYpos + 20);
-      else
-        g.drawLine(
-            realXpos + blockWidth + lineFix,
-            realYpos + 10,
-            realXpos + blockWidth + 10,
-            realYpos + 10);
+    } else if (hasLoad) {
       painter.drawPort(6 + 2 * currentStage + 1);
-      GraphicsUtil.switchToWidth(g, 1);
     }
+    GraphicsUtil.switchToWidth(g, 1);
     /* Draw stage value */
     if (painter.getShowState() && (data_value != null)) {
       if (data_value.isFullyDefined()) g.setColor(Color.LIGHT_GRAY);
