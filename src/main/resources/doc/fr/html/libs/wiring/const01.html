@@ -15,7 +15,8 @@
     <div class="maindiv">
       <h1>
         <img class="iconlibs" src="../../../../icons/6464/power.png" alt="#########" height="32" width="32"> 
-		<img class="iconlibs" src="../../../../icons/6464/ground.png" alt="#########" height="32" width="32"> <em>Alimentation/Masse</em>
+		<img class="iconlibs" src="../../../../icons/6464/ground.png" alt="#########" height="32" width="32"> 
+		<em>Alimentation/Masse</em>
       </h1>
       <table>
         <tbody>
@@ -40,7 +41,18 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="notscal" src="../../../../img-libs/power.png" alt="#########"> <img class="notscal" src="../../../../img-libs/ground.png" alt="#########">
+               <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/power.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ground.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
         </tbody>
@@ -50,8 +62,7 @@
       </h2>
       <p>
         Génère constamment un état spécéfié par son type.<br>
-        Pour un élement Alimentation (<img class="intxt" src="../../../../img-libs/power.png" alt="#########">) représenté par un triangle la valeur est haute (1) sur tout l'ensemble de ses bits.<br>
-        Pour un élément Masse (<img class="intxt" src="../../../../img-libs/ground.png" alt="#########"> ) représenté par une flèche zébrée, la valeur est basse (0) sur tout l'ensemble de ses bits.
+        Pour un élement Alimentation (<img class="intxt" src="../../../../icons/1616/power.png" alt="#########">) représenté par un triangle la valeur au niveyu haut (<b class="unov">1</b>) sur tout l'ensemble de ses bits. Pour un élément Masse (<img class="intxt" src="../../../../icons/1616/ground.png" alt="#########"> ) représenté par une flèche zébrée, la valeur est au niveau bas (<b class="zerov">0</b>) sur tout l'ensemble de ses bits.
       </p>
       <p>
         Ces composants ont des symboles standard en électroniques est c'est la seule raison de les préférer au composant plus polyvalent <a href="constant.html">Constante</a> qui peut fournir les mêmes fonctionnalités.
@@ -60,39 +71,43 @@
         Pins
       </h2>
       <p>
-        Un composant Alimentation ou Masse ne possède qu’une seule broche de sortie dont la largeur de bit correspond à l'attribut <q>Data Bits</q>
+        Un composant Alimentation ou Masse ne possède qu’une seule broche de sortie dont la largeur de bit correspond à l'attribut <b class="propertie">Largeur de données</b>.
+      </p>
       </p>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie l'attribut "Data Bits", et les touches fléchées modifient son attribut "Orientation".
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur de données</b>.
+      </p>
         </dt>
         <dd>
           La largeur en bit placé sur la connexion.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
-        Aucunne.
+        Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
-        Aucunne.
+        Aucun.
       </p>
       <p>
         <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>

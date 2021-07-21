@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -76,7 +76,7 @@
         Une sonde est un élément qui affiche simplement la valeur à un point donné dans un circuit. Il n'interagit pas avec d'autres composants.
       </p>
       <p>
-        À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html">Porb</a> configuré en tant que pin de sortie. La sonde présente cependant certaines différences :<br>
+        À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html">broche</a> configuré en tant que pin de sortie. La sonde présente cependant certaines différences :<br>
         - Elle n'est pas considérée comme une sortie par un circuit de hiérarchie supérieur.<br>
         - Elle n’a pas d’attribut <b class="propertie">Largeur données</b> à configurer, la largeur de bit est déduite de la valeur qu’elle trouve sur son entrée.<br>
         - Graphiquement sa bordure est plus fine et grise.
@@ -93,6 +93,7 @@
       <p>
         Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut  <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
            <b class="propertie">Orientation</b>
@@ -111,7 +112,7 @@
 			&emsp;Décimal signé&emsp;: <b>-6<sub>s</sub></b><br>
 			&emsp;Décimal non signé&emsp;: <b>10<sub>u</sub></b><br>
 			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
-			&emsp;Flotant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits  de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
+			&emsp;Flottant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits  de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
         </dd>
         <dt>
            <b class="propertie">Label</b>
@@ -132,14 +133,15 @@
           La police avec laquelle rendre l'étiquette.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
         Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
         Permets de modifier l’étiquette associée au composant.

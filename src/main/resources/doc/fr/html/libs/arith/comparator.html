@@ -1,34 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
     <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Language" content="fr">
     <title>
-      Comparator
+      Comparateur
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> <em>Comparator</em>
+        <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Comparateur</em>
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <strong>Librairie:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <a href="index.html">Arithmétique</a>
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <strong>Introduction:</strong>
             </td>
             <td>
               2.0 Beta 22
@@ -36,86 +37,88 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/comparator.png" alt="#########" width="64" height="64">
+              <img class="Apparencelibs" src="../../../../img-libs/comparator.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
       </table>
       <h2>
-        Behavior
+        Comportement
       </h2>
       <p>
-        Compares two values, either as unsigned values or as two's-complement values, depending on the Numeric Type attribute. Normally, one of the outputs will be 1, and the other two outputs will be 0.
+        Compare deux valeurs, soit sous forme de valeurs non signées, soit sous forme de compléments à deux, selon l'attribut Numeric Type. Normalement, l'une des sorties sera 1, et les deux autres sorties seront 0.
       </p>
       <p>
-        The comparison is performed starting at the most significant bits in each number and descending downward in parallel until a location is found where the two values disagree. If, however, an error value or a floating value is encountered during this descent, then all outputs will match that error or floating value.
+        La comparaison est effectuée en commençant par les bits les plus significatifs de chaque nombre et en descendant en parallèle jusqu'à ce qu'un emplacement soit trouvé où les deux valeurs sont en désaccord. Si, toutefois, une valeur d'erreur ou une valeur flottante est rencontrée au cours de cette descente, alors toutes les sorties correspondront à cette erreur ou à cette valeur flottante.
       </p>
       <h2>
         Pins
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The first of the two values to be compared.
+          La première des deux valeurs à comparer.
         </dd>
         <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The second of the two values to be compared.
+          La deuxième des deux valeurs à comparer.
         </dd>
         <dt>
-          East edge, labeled <tt>&gt;</tt> (output, bit width 1)
+          Bord est, étiqueté <tt>&gt;</tt> (sortie, largeur de bit 1)
         </dt>
         <dd>
-          1 if the first input is greater than the second input, 0 if the first input is less than or equal the second input.
+          1 si la première entrée est supérieure à la deuxième entrée, 0 si la première entrée est inférieure ou égale à la deuxième entrée.
         </dd>
         <dt>
-          East edge, labeled <tt>=</tt> (output, bit width 1)
+          Bord est, étiqueté <tt>=</tt> (sortie, largeur de bit 1)
         </dt>
         <dd>
-          1 if the first input equals the second input, 0 if the first input is not equal the second input.
+          1 si la première entrée est égale à la deuxième entrée, 0 si la première entrée n'est pas égale à la deuxième entrée.
         </dd>
         <dt>
-          East edge, labeled <tt>&lt;</tt> (output, bit width 1)
+          Bord est, étiqueté <tt>&lt;</tt> (sortie, largeur de bit 1)
         </dt>
         <dd>
-          1 if the first input is less than the second input, 0 if the first input is greater than or equal the second input.
+          1 si la première entrée est inférieure à la deuxième entrée, 0 si la première entrée est supérieure ou égale à la deuxième entrée.
         </dd>
       </dl>
       <h2>
-        Attributes
+        Attributs
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur données</b>
         </dt>
         <dd>
-          The bit width of the component's inputs.
+          La largeur de bit de l'entrée et de la sortie du composant.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Poke Tool Behavior
+        Comportement de l'outil pousser
       </h2>
       <p>
         None.
       </p>
       <h2>
-        Text Tool Behavior
+        Comportement de l'outil text 
       </h2>
       <p>
         None.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
       </p>
     </div>
   </body>

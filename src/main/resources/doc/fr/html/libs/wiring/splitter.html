@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -14,7 +14,8 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>Répartiteur (Splitter)</em>
+        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> 
+		<em>Répartiteur (Splitter)</em>
       </h1>
       <table>
         <tbody>
@@ -49,21 +50,21 @@
       </h2>
       <p>
         Le répartiteur (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous-ensembles distincts, soit combiner des sous-ensembles en une connexion multibits,
-        voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la <a href="../../guide/feature/fet-splitting.html">section "Répartiteur"</a> du <em>Guide de l'utilisateur</em>.
+        voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la <a class=refguide href="../../guide/feature/fet-splitting.html">section "Répartiteur"</a> du <a href="../index.html">Guide de l'utilisateur</a>.
       </p>
       <p>
         Logisim traite spécialement les terminaisons lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les
         fils).
       </p>
       <p>
-        <strong>Remarque:</strong> le terme <em>Splitter</em>, utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce
+        <b class="note">Remarque:</b> le terme <em>Splitter</em>, utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce
         terme est inutilement violent à mon goût.
       </p>
       <h2>
         Pin
       </h2>
       <p>
-        Pour distinguer les différents points de connexion d’une terminaison, nous désignons le point de connexion d'un côté qui regroupe en un seul câble tous les fils : le <em>bus</em>, et nous désignons les multiples points de connexion de l’autre côté comme : les <em>terminaisons</em>. (voir
+        Pour distinguer les différents points de connexion d’une terminaison, nous désignons le point de connexion d'un côté qui regroupe en un seul câble tous les fils : le <b>bus</b>, et nous désignons les multiples points de connexion de l’autre côté comme : les <b>terminaisons</b>. (voir
         figure ci-dessous)
       </p>
       <center>
@@ -87,14 +88,14 @@
       <dl>
         <dd></dd>
         <dt>
-          Bus :
+          <b class="propertie">Bus </b>:
         </dt>
         <dd>
-          la largeur en bit du bus correspond à l'attribut <q>Largeur de bits</q> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.
+          la largeur en bit du bus correspond à l'attribut <b class="propertie">Largeur de bits</b> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.
         </dd>
         <dd></dd>
         <dt>
-          Terminaison :
+          <b class="propertie">Terminaison</b> :
         </dt>
         <dd>
           La largeur de bit des terminaisons est determinée par la largeur de bit du bus divisé (division entière) par le nombre de terminaisons. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
@@ -107,33 +108,34 @@
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, les chiffres '0' à '9' modifient l'attribut <q>"Terminaisons"</q>, Alt-0 à Alt-9 modifient à la fois les attributs <q>"Terminaisons"</q> et <q>"Largeur de bit"</q> et les touches fléchées modifient l'attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, les chiffres <b class="tkeybd">0</b> à <b class="tkeybd">9</b> modifient l'attribut <b class="propertie">Terminaisons</b>, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient à la fois les attributs <b class="propertie">Terminaisons</b> et <b class="propertie">Largeur de bit</b> et les touches fléchées modifient l'attribut <b class="propertie">Orientation</b>.
       </p>
+	  	  <div class="attliste">
       <dl>
         <dd></dd>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Précide de quel côté du composant dessiné doivent se trouver les broches de terminaisons
         </dd>
         <dd></dd>
         <dt>
-          Terminaisons
+          <b class="propertie">Terminaisons</b>
         </dt>
         <dd>
           Nombre de terminaisons
         </dd>
         <dd></dd>
         <dt>
-          Largeur en bit
+          <b class="propertie">Largeur en bit</b>
         </dt>
         <dd>
           Largeur en bit du bus
         </dd>
         <dd></dd>
         <dt>
-          Apparence
+          <b class="propertie">Apparence</b>
         </dt>
         <dd>
           Prend en charge différentes manières de représenter le séparateur dans le circuit. (Voir figure ci-dessous) L'option <q>Gauche</q> (par défaut) dessine une colonne vertébrale à gauche du bus (si on le considère comme une entrée), avec une ligne étiquetée provenant du dos pour chaque
@@ -176,13 +178,13 @@
         </dd>
         <dd></dd>
 		<dt>
-          Espacement
+          <b class="propertie">Espacement</b>
       </dt>
       <dd>
 	    Détermine l'espacement entre les terminaisons.
       <dt>
         <dt>
-          Bit <var>x</var>
+           <b class="propertie">Bit <var>x</var></b>
         </dt>
         <dd>
           Détermine l'index de la terminaison auquel correspond le bit <var>x</var> du bus. Les terminaisons sont indexées à partir de 0 en haut (pour un séparateur orienté est ou ouest) ou de 0 à gauche / ouest (pour un séparateur orienté nord ou sud). Un terminaison peut ne pas être connectée à
@@ -194,6 +196,7 @@
           </p>
         </dd>
       </dl>
+	  </div>
       <h2>
         Comportement de l'outil pousser
       </h2>
@@ -201,7 +204,7 @@
         Aucun.
       </p>
       <h2>
-        Comportement de l'outil de texte
+        Comportement de l'outil text
       </h2>
       <p>
         Aucun.

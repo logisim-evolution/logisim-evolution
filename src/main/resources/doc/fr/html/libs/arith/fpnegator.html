@@ -7,15 +7,15 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
-      Additionneur à virgule flottante 
+      Inverseur à virgule flottante
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/fpadder.png" alt="#########" width="32" height="32" align="middle"> 
-		<em>Additionneur à virgule flottante</em>
+        <img class="iconlibs" src="../../../../icons/6464/fpnegator.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Inverseur à virgule flottante</em>
       </h1>
       <table>
         <tbody>
@@ -24,7 +24,7 @@
               <strong>Librairie:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetique</a>
+              <a href="index.html">Arithmétique</a>
             </td>
           </tr>
           <tr>
@@ -32,7 +32,7 @@
               <strong>Introduction:</strong>
             </td>
             <td>
-              3.5
+              2.0 Beta 22
             </td>
           </tr>
           <tr>
@@ -40,7 +40,7 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="Apparencelibs" src="../../../../img-libs/adder.png" alt="#########" width="64" height="64">
+              <img class="Apparencelibs" src="../../../../img-libs/negator.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
@@ -49,48 +49,44 @@
         Comportement
       </h2>
       <p>
-        Ce composant additionne deux valeurs en vigule flottante entrant par les entrées ouest et présente la somme sur la sortie est. 
+        Computes the two's-complement negation of the input. This negation is performed by maintaining all the lower-order bits up to the lowest-order 1, and complementing all bits above that.
       </p>
-      <p>Si l'une des additions contient des bits flottants ou des bits d'erreur, le composant présente une sortie en erreur avec la valeur NaNf ou 7fc00000h.  Les bits ne sont pas en erreur E ou flottant U. 
+      <p>
+        If the value to be negated happens to be the least negative value, then its negation (which cannot be represented in two's-complement form), is still the least negative value.
       </p>
       <h2>
         Pins
       </h2>
       <dl>
         <dt>
-          Bord ouest, extrémité nord
+          West edge (input, bit width matches Largeur de données attribute)
         </dt>
         <dd>
-          Une des deux valeurs à additionner.
+          The value to negate.
         </dd>
         <dt>
-          Bord ouest, extrémité sud
+          East edge, labeled -<var>x</var> (output, bit width matches Largeur de données attribute)
         </dt>
         <dd>
-          L'autre des deux valeurs à additionner.
-        </dd>
-        <dt>
-          Bord est
-        </dt>
-        <dd>
-          La somme des deux valeurs en entrée.
+          The negation of the input. If the input happens to be the least negative value representable in <var>dataBits</var> bits, however, then the output matches the input.
         </dd>
       </dl>
       <h2>
         Attributs
       </h2>
-	   <div class="attliste">
-	   <dl>
+      <p>
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Largeur de données</q> attribute.
+      </p>
+      <dl>
         <dt>
-          <b class="propertie">Largeur de données</b>
+          Largeur de données
         </dt>
         <dd>
-          La largeur en bit de l'additionneur 32 ou 64 bits.
+          The bit width of the component's input and output.
         </dd>
-       </dl>
-	   </div>
+      </dl>
       <h2>
-        Comportement de l'outil pousser 
+        Comportement de l'outil pousser
       </h2>
       <p>
         Aucun.

@@ -1,34 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
     <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Language" content="fr">
     <title>
-      Subtractor
+      Soustracteur
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>Subtractor</em>
+        <img class="iconlibs" src="../../../../icons/6464/subtractor.png" alt="#########" width="32" height="32" align="middle"> <em>Soustracteur</em>
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <strong>Librairie:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <a href="index.html">Arithmétique</a>
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <strong>Introduit:</strong>
             </td>
             <td>
               2.0 Beta 11
@@ -36,196 +36,91 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/subtractor.png" alt="#########" width="64" height="64">
+              <img class="Apparencelibs" src="../../../../img-libs/subtractor.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
       </table>
       <h2>
-        Behavior
+        Propriétés
       </h2>
       <p>
-        This component subtracts values coming in via the west inputs (the upper minus the lower) and outputs the difference on the east output. The component is designed so that it can be cascaded with other subtractors to provide subtract more bits than is possible with a single subtractor: The borrow-in input provides a one-bit value to be borrowed out of the difference (if the borrow-in input is specified), and a borrow-out output indicates whether the component needs to borrow an upper-order bit to complete the subtraction without underflow (assuming unsigned subtraction).
+        Ce composant soustrait les valeurs entrant par les entrées ouest (le supérieur moins le inférieur) et sort la différence sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres soustracteurs pour fournir une soustraction de plus de bits que ce qui est possible avec un seul soustracteur : L'entrée d'emprunt fournit une valeur d'un bit à emprunter de la différence (si l'entrée d'emprunt est spécifiée), et une sortie d'emprunt indique si le composant doit emprunter un bit d'ordre supérieur pour compléter la soustraction sans dépassement de capacité (en supposant une soustraction non signée).
       </p>
       <p>
-        Internally, the subtractor simply performs a bitwise NOT on the subtrahend, and add this to the minuend along with the NOT of the borrow-in input. (The <em>minuend</em> is the first operand (upper input) to the subtraction, and the <em>subtrahend</em> is the second (lower input). I happen to like the antiquated terms.)
+	    En interne, le soustracteur effectue simplement un NOT au sens du bit sur le diminuteur, et l'ajoute au diminuende  ainsi que le NOT de l'entrée d'emprunt. (Le <em>diminuende </em> est le premier opérande (entrée supérieure) de la soustraction, et le <em>diminuteur</em> est le second (entrée inférieure). Et oui en frnaçais ces termes désuets exitent aussi : diminuende − diminuteur  = différence).
       </p>
       <p>
-        If either of the operands contains some floating bits or some error bits, then the component will perform a partial subtraction. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits.
+        Si l'un des opérandes contient des bits flottants ou des bits d'erreur, le composant effectue une soustraction partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur.
       </p>
       <h2>
         Pins
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
+           Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The minuend of the subtraction; that is, the number from which to subtract.
+          Le minimum de la soustraction, c'est-à-dire le nombre à partir duquel il faut soustraire (diminuende).
         </dd>
         <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The subtrahend of the subtraction; that is, the number to subtract from the minuend.
+          Le soustractif de la soustraction, c'est-à-dire le nombre à soustraire du diminuende (diminuteur).
         </dd>
         <dt>
-          North edge, labeled <var>b in</var> (input, bit width 1)
+          Bord nord, étiqueté <var>b in</var> (entrée, largeur de bit 1)
         </dt>
         <dd>
-          If 1, then 1 is borrowed out of the difference. If the value is unknown (i.e., floating), then it is assumed to be 0.
+         Si 1, alors 1 est emprunté sur la différence. Si la valeur est inconnue (c'est-à-dire flottante), on suppose qu'elle est égale à 0.
         </dd>
         <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The lower <var>dataBits</var> bits of the difference of the two values coming in the west edge, minus the <var>b</var><sub><var>in</var></sub> bit.
+          Les <var>dataBits</var> bits inférieurs de la différence des deux valeurs provenant du bord ouest, moins le <var>b</var><sub><var>in</var></sub> bit.
         </dd>
         <dt>
-          South edge, labeled <var>b out</var> (output, bit width 1)
+          Bord sud, étiqueté <var>b out</var> (sortie, largeur de bit 1)
         </dt>
         <dd>
-          The borrow bit computed for the difference. If the values subtracted as unsigned values yield a negative value, then this bit will be 1; otherwise, it will be 0.
+          Le bit d'emprunt calculé pour la différence. Si les valeurs soustraites en tant que valeurs non signées donnent une valeur négative, alors ce bit sera 1 ; sinon, il sera 0.
         </dd>
       </dl>
       <h2>
-        Attributes
+        Attributs
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        Lorsque le composant est sélectionné ou en cours d'ajout, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient son attribut <b class="propertie">Largeur données</b>.
       </p>
+	   <div class="attliste">
       <dl>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur données</b>
         </dt>
         <dd>
-          The bit width of the values to be subtracted and of the result.
+          La largeur de bit des valeurs à soustraire et du résultat.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Poke Tool Behavior
+        Comportement de l'outil pousser
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <h2>
-        Text Tool Behavior
+        Comportement de l'outil text
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
-      </p>
-      <h1>
-        <img src="../../../../icons/subtractor.gif" width="32" height="32" align="middle" alt="#########"> <em>Subtractor</em>
-      </h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <strong>Library:</strong>
-            </td>
-            <td>
-              <a href="index.html">Arithmetic</a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Introduced:</strong>
-            </td>
-            <td>
-              2.0 Beta 11
-            </td>
-          </tr>
-          <tr>
-            <td valign="top">
-              <strong>Appearance:</strong>
-            </td>
-            <td valign="top">
-              <img src="../../../../img-libs/subtractor.png" width="44" height="45" alt="#########">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>
-        Behavior
-      </h2>
-      <p>
-        This component subtracts values coming in via the west inputs (the upper minus the lower) and outputs the difference on the east output. The component is designed so that it can be cascaded with other subtractors to provide subtract more bits than is possible with a single subtractor: The borrow-in input provides a one-bit value to be borrowed out of the difference (if the borrow-in input is specified), and a borrow-out output indicates whether the component needs to borrow an upper-order bit to complete the subtraction without underflow (assuming unsigned subtraction).
-      </p>
-      <p>
-        Internally, the subtractor simply performs a bitwise NOT on the subtrahend, and add this to the minuend along with the NOT of the borrow-in input. (The <em>minuend</em> is the first operand (upper input) to the subtraction, and the <em>subtrahend</em> is the second (lower input). I happen to like the antiquated terms.)
-      </p>
-      <p>
-        If either of the operands contains some floating bits or some error bits, then the component will perform a partial subtraction. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits.
-      </p>
-      <h2>
-        Pins
-      </h2>
-      <dl>
-        <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
-        </dt>
-        <dd>
-          The minuend of the subtraction; that is, the number from which to subtract.
-        </dd>
-        <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
-        </dt>
-        <dd>
-          The subtrahend of the subtraction; that is, the number to subtract from the minuend.
-        </dd>
-        <dt>
-          North edge, labeled <var>b in</var> (input, bit width 1)
-        </dt>
-        <dd>
-          If 1, then 1 is borrowed out of the difference. If the value is unknown (i.e., floating), then it is assumed to be 0.
-        </dd>
-        <dt>
-          East edge (output, bit width matches Data Bits attribute)
-        </dt>
-        <dd>
-          The lower <var>dataBits</var> bits of the difference of the two values coming in the west edge, minus the <var>b</var><sub><var>in</var></sub> bit.
-        </dd>
-        <dt>
-          South edge, labeled <var>b out</var> (output, bit width 1)
-        </dt>
-        <dd>
-          The borrow bit computed for the difference. If the values subtracted as unsigned values yield a negative value, then this bit will be 1; otherwise, it will be 0.
-        </dd>
-      </dl>
-      <h2>
-        Attributes
-      </h2>
-      <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
-      </p>
-      <dl>
-        <dt>
-          Data Bits
-        </dt>
-        <dd>
-          The bit width of the values to be subtracted and of the result.
-        </dd>
-      </dl>
-      <h2>
-        Poke Tool Behavior
-      </h2>
-      <p>
-        None.
-      </p>
-      <h2>
-        Text Tool Behavior
-      </h2>
-      <p>
-        None.
-      </p>
-      <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
       </p>
     </div>
   </body>

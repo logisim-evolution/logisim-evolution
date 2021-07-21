@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -15,7 +15,8 @@
     <div class="maindiv">
       <h1>
         <img class="iconlibs" src="../../../../icons/6464/trans0.png" alt="#########" height="32" width="32"> 
-		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" height="32" width="32"> <em>Transistor</em>
+		<img class="iconlibs" src="../../../../icons/6464/trans1.png" alt="#########" height="32" width="32">
+		<em>Transistor</em>
       </h1>
       <table>
         <tbody>
@@ -40,7 +41,7 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-<table>
+			<table>
                 <tbody>
 				  <tr>
 				    <th>P-type
@@ -221,11 +222,11 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="tzerov">
+                     <td class="tzerov">
                       0
                     </td>
-                    <td class="zerov">
-                      0
+                    <td class="uvalue">
+                      U
                     </td>
                     <td class="uvalue">
                       U
@@ -324,15 +325,15 @@
                       E
                     </td>
                   </tr>
-                  <tr>
+                   <tr>
                     <td class="tzerov">
-                      0
-                    </td>
-                    <td class="zerov">
                       0
                     </td>
                     <td class="uvalue">
                       U
+                    </td>
+                    <td class="zerov">
+                      0
                     </td>
                     <td class="evalue">
                       E
@@ -342,11 +343,11 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="tunov">
+                     <td class="tunov">
                       1
                     </td>
-                    <td class="unov">
-                      1
+                    <td class="uvalue">
+                      U
                     </td>
                     <td class="uvalue">
                       U
@@ -379,11 +380,11 @@
                     <td class="tevalue">
                       E
                     </td>
-                    <td class="evalue">
-                      E
-                    </td>
                     <td class="uvalue">
                       U
+                    </td>
+                    <td class="evalue">
+                      E
                     </td>
                     <td class="evalue">
                       E
@@ -399,7 +400,9 @@
         </tbody>
       </table>
 	  </center>
+      <p>
        Qui se résume
+      </p>	   
       <center>
          <table class="encapsul">
           <tbody>
@@ -520,7 +523,7 @@
       </p>
 	  </center>
       <p>
-        <b class=note>Note:</b>Etant donné que Logisim utilise les marqueurs U (haute impédance / indéfini) et E (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents
+        <b class=note>Note:</b>Etant donné que Logisim utilise les marqueurs <b class=uvalue>U</b> (haute impédance / indéfini) et <b class=evalue>E</b> (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents
       </p>
       <p>
         Si l'attribut <b class="propertie">Largeur données</b> est supérieur à 1, l'entrée <b>gate</b> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <b>source</b> .
@@ -539,7 +542,7 @@
           source
         </dt>
         <dd>
-          l'état sera transmis à la sortie si elle est déclenchée par l'entrée <b>gate</b> . La largeur de bit est définie par l'attribut Data Bits.
+          l'état sera transmis à la sortie si elle est déclenchée par l'entrée <b>gate</b> . La largeur de bit est définie par l'attribut Largeur de données.
         </dd>
         <dt>
           Gate
@@ -558,43 +561,45 @@
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie l'attribut <q>Data Bits</q>, et les touches fléchées modifient son attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut  <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut  <b class="propertie">Orientation</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Type
+          <b class="propertie">Type</b>
         </dt>
         <dd>
           Détermine le type de transistor : P-type ou N-type.
         </dd>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie <b>drain</b>.
         </dd>
         <dd></dd>
         <dt>
-          Position Gate
+          <b class="propertie">Position de la porte</b>
         </dt>
         <dd>
           Disposition haut/gauche ou Bas/Droite de l'entrée <b>gate</b>.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur de données</b>
         </dt>
         <dd>
           Largeur en bit de l'entrée <b>source</b> et de la sortie <b>drain</b>. L'entrée <b>gate</b> a toujours une largeur de 1 bit.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
         Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
         Aucun.

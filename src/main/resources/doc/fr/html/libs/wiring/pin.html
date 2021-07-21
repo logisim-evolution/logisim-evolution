@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -15,7 +15,8 @@
     <div class="maindiv">
       <h1>
         <img class="iconlibs" src="../../../../icons/6464/pinInput.png" alt="#########" height="32" width="32">&nbsp; 
-		<img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32">&nbsp;<em>Broche</em>
+		<img class="iconlibs" src="../../../../icons/6464/pinOutput.png" alt="#########" height="32" width="32">&nbsp;
+		<em>Broche</em>
       </h1>
       <table>
         <tbody>
@@ -58,16 +59,16 @@
                       En entrée:
                     </th>
                     <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/pinin1.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/pinin3.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/lpinin1.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/lpinin3.png" alt="#########" width="64" height="64">
                     </td>
                   </tr>
                   <tr>
@@ -75,16 +76,16 @@
                       En sortie:
                     </th>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/pinout1.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/pinout3.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/lpinout1.png" alt="#########" width="64" height="64">
                     </td>
 					 <td>
-                      <img class="appearancelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
+                      <img class="Apparencelibs" src="../../../../img-libs/lpinout3.png" alt="#########" width="64" height="64">
                     </td>
                   </tr>
                 </tbody>
@@ -113,7 +114,7 @@
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut <b class="propertie">Largeur de données</b> , les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut <b class="propertie">Largeur de données</b>. L'utilisation rapide des touches permet la saisie de plus grande valeur par exemple : <b class="tkeybd">ALT-1 ALT-2</b> donne 12. Les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
 	  <div class="attliste">
       <dl>
@@ -170,7 +171,7 @@
 			&emsp;Décimal signé&emsp;: <b>-6<sub>s</sub></b><br>
 			&emsp;Décimal non signé&emsp;: <b>10<sub>u</sub></b><br>
 			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
-			&emsp;Flotant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits  de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
+			&emsp;flottant&emsp;: <b>1.4E-44<sub>f</sub> </b> Seulement en 32 ou 64 bits de 1 ou de 0. Si non présente la valeur <b>NaN<sub>f</sub></b> <br>
         </dd>
 		<dt>
           <b class="propertie">&nbsp;Appearence</b>
@@ -180,19 +181,20 @@
         </dd>
       </dl>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
         Cliquer sur une broche de sortie n’a aucun effet, bien que les attributs de la broche soient affichés.
       </p>
       <p>
-        En cliquant sur une broche d’entrée, vous activez le bit sur lequel vous avez cliqué. S'il s'agit d'une broche à trois états, le bit correspondant va pivoter entre les trois états.
+        En cliquant sur une broche d’entrée, vous activez le bit sur lequel vous avez cliqué. S'il s'agit d'une broche à trois états, le bit correspondant va pivoter entre les trois états.<br>
+		Si la base est flottant un petit écran de saisie sera affiché.
       </p>
       <p>
         Si, toutefois, l’utilisateur visualise l’état d’un sous-circuit comme décrit dans le <a href="../../guide/subcirc/sub-debug.html">débogage de Sous-circuits</a> du <em>Guide de l'utilisateur</em> , alors la valeur de la pin est pilotée par la valeur que le sous-circuit reçoit du circuit de hyérachie supérieur. L'utilisateur ne peut pas modifier la valeur sans rompre ce lien entre l'état du sous-circuit et l'état du circuit contenant, et Logisim demandera à l'utilisateur de vérifier que la rupture de ce lien est réellement souhaitée.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
 	  </div>
       <p>

@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+   <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -133,7 +133,7 @@
       <p>
         Depending on the value found at <b>gate</b>, the value at <b>source</b> may be transmitted to <b>drain</b>; or there may be no connection from <b>source</b>, so <b>drain</b> is left floating. The determination of transmitting or disconnecting depends on the type of transistor: A P-type transistor (indicated by a circle on the <b>gate</b> line) transmits when <b>gate</b> is 0, while an N-type transistor (which has no such circle) transmits when <b>gate</b> is 1. The behavior is summarized by the following tables.
       </p>
-	        <center>
+	  <center>
       <table class="encapsul">
         <tbody>
 		  <tr>
@@ -227,8 +227,8 @@
                     <td class="tzerov">
                       0
                     </td>
-                    <td class="zerov">
-                      0
+                    <td class="uvalue">
+                      U
                     </td>
                     <td class="uvalue">
                       U
@@ -331,11 +331,11 @@
                     <td class="tzerov">
                       0
                     </td>
-                    <td class="zerov">
-                      0
-                    </td>
                     <td class="uvalue">
                       U
+                    </td>
+                    <td class="zerov">
+                      0
                     </td>
                     <td class="evalue">
                       E
@@ -348,8 +348,8 @@
                     <td class="tunov">
                       1
                     </td>
-                    <td class="unov">
-                      1
+                    <td class="uvalue">
+                      U
                     </td>
                     <td class="uvalue">
                       U
@@ -382,11 +382,11 @@
                     <td class="tevalue">
                       E
                     </td>
-                    <td class="evalue">
-                      E
-                    </td>
                     <td class="uvalue">
                       U
+                    </td>
+                    <td class="evalue">
+                      E
                     </td>
                     <td class="evalue">
                       E
@@ -402,7 +402,6 @@
         </tbody>
       </table>
 	  </center>
-  
       <p>
         Or in summarized form:
       </p>
@@ -525,7 +524,7 @@
         </p>
       </center>
 	 <p>
-        <b class=note>Note:</b>Since Logisim uses the markers U (high impedance / undefined) and E (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p>
+        <b class=note>Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (high impedance / undefined) and <b class="evalue">E</b> (Error) I have used the same in the illustrations rather than the more common Z (high impedance) and X (Error) in other documents</p>
       <p>
         If the <b class="propertie">Data Bits</b> attribute is more than 1, the <b>gate</b> input is still a single bit, but its value is applied simultaneously to each of the <b>source</b> input's bits.
       </p>
@@ -546,43 +545,43 @@
           North edge (input, bit width 1)
         </dt>
         <dd>
-          The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b> value is 0; for N-type transistors, this will trigger the transistor if the <b>gate</b> value is 1.
+          The component's <b>gate</b> input. For P-type transistors, the transistor will transmit if the <b>gate</b> value is <b class="zerov">0</b>; for N-type transistors, this will trigger the transistor if the <b>gate</b> value is <b class="unov">1</b>.
         </dd>
         <dt>
           East edge (output, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating or an error value, then the output will be an error value.
+          The component's output, which will match the <b>source</b> input if indicated by the <b>gate</b> input, or will be floating if the <b>gate</b> input is the negation of what indicates negation. If <b>gate</b> is floating (<b class="uvalue">U</b>) or an error error value (<b class="evalue">E</b>) value, then the output will be an error value (<b class="evalue">E</b>).
         </dd>
       </dl>
       <h2>
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute.
+       When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          Type
+          <b class="propertie">Type</b>
         </dt>
         <dd>
           Determines whether the transistor is P-type or N-type.
         </dd>
         <dt>
-          Facing
+          <b class="propertie">Facing</b>
         </dt>
         <dd>
           The direction of the component (its output relative to its input).
         </dd>
         <dt>
-          Gate Location
+          <b class="propertie">Gate Location</b>
         </dt>
         <dd>
           The location of the gate input.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Data Bits</b>
         </dt>
         <dd>
           The bit width of the component's inputs and outputs.

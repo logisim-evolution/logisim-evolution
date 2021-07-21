@@ -1,34 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
     <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Language" content="fr">
     <title>
-      Shifter
+      Décalage
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/shifter.png" alt="#########" width="32" height="32" align="middle"> <em>Shifter</em>
+        <img class="iconlibs" src="../../../../icons/6464/shifter.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Décalage</em>
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <strong>Librairie:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <a href="index.html">Arithmétique</a>
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <strong>Introduction:</strong>
             </td>
             <td>
               2.3.0
@@ -36,92 +37,94 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="appearancelibs"  src="../../../../img-libs/shifter.png" alt="#########" width="64" height="64">
+              <img class="Apparencelibs"  src="../../../../img-libs/shifter.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
       </table>
       <h2>
-        Behavior
+        Comportement
       </h2>
       <p>
-        This component includes two inputs, <var>data</var> and <var>dist</var>, and it has one output, which is the result of shifting <var>data</var> by <var>dist</var> places. Both <var>data</var> and output have the same number of bits in them. The component supports the following shift types:
+        Ce composant comprend deux entrées, <var>data</var> et <var>dist</var>, et il a une sortie, qui est le résultat du décalage de <var>data</var> par <var>dist</var> places. Les deux <var>data</var> et la sortie ont le même nombre de bits en eux. Le composant prend en charge les types de décalage suivants :
       </p>
       <ul>
-        <li>Logical Left: All bits in <var>data</var> are shifted up <var>dist</var> places, with the bottom <var>dist</var> places filled with 0's. For example, 11001011 logically shifted left twice is 00101100. (The top two ones are lost.)
+        <li>Gauche logique : Tous les bits de <var>data</var> sont décalés vers le haut <var>dist</var> places, les <var>dist</var> places inférieures étant remplies de 0. Par exemple, 11001011 logiquement décalé deux fois vers la gauche donne 00101100. (Les deux premières sont perdues).
         </li>
-        <li>Logical Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the upper <var>dist</var> places filled with 0's. For example, 11001011 logically shifted right twice is 00110010. (The bottom two ones are lost.)
+        <li>Logique droite : Tous les bits de <var>data</var> sont décalés vers le bas de <var>dist</var> places, les <var>dist</var> places supérieures étant remplies de 0. Par exemple, 11001011 logiquement décalé deux fois vers la droite donne 00110010. (Les deux inférieurs sont perdus).
         </li>
-        <li>Arithmetic Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the upper <var>dist</var> places filled with repetitions of whatever the uppermost bit in <var>data</var>. For example, 11001011 arithmetically shifted right twice is 11110010.
+        <li>Arithmétique droite : Tous les bits de <var>data</var> sont décalés vers le bas de <var>dist</var> places, les <var>dist</var> places supérieures étant remplies de répétitions de n'importe quel bit supérieur de <var>data</var>. Par exemple, 11001011 Arithmétiquement décalé vers la droite deux fois est 11110010.
         </li>
-        <li>Rotate Left: All bits in <var>data</var> are shifted up <var>dist</var> places, with the top <var>dist</var> places wrapped around into the bottom. For example, 11001011 rotated left twice is 00101111.
+        <li>Rotation à gauche : Tous les bits de <var>data</var> sont décalés vers le haut de <var>dist</var> places, avec les <var>dist</var> places supérieures enveloppées dans les inférieures. Par exemple, 11001011 tourné deux fois vers la gauche est 00101111.
         </li>
-        <li>Rotate Right: All bits in <var>data</var> are shifted down <var>dist</var> places, with the bottom <var>dist</var> places wrapped around into the top. For example, 11001011 rotated right twice is 11110010.
+        <li>Rotation à droite : Tous les bits de <var>data</var> sont décalés vers le bas <var>dist</var> places, avec les <var>dist</var> places inférieures enroulées dans le haut. Par exemple, 11001011 tourné deux fois vers la droite est 11110010.
         </li>
       </ul>
       <p>
-        Note that if <var>dist</var> contains any floating or error inputs, then the output is composed entirely of error values, since there is no way to guess how far to shift the input.
+        Notez que si <var>dist</var> contient des entrées flottantes ou d'erreur, alors la sortie est composée entièrement de valeurs d'erreur, puisqu'il n'y a aucun moyen de deviner de combien décaler l'entrée.
       </p>
       <h2>
         Pins
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches the Data Bits attribute)
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The value to be shifted.
+          La valeur à décaler.
         </dd>
         <dt>
-          West edge, south end (input, bit width is computed as below)
+          Bord ouest, extrémité sud (entrée, la largeur du bit est calculée comme ci-dessous)
         </dt>
         <dd>
-          The number of bits by which to shift the <var>data</var> input. This input should have as many bits as is the minimum number to indicate any shift distance from 0 up to one less than Data Bits; that is, it should be the ceiling of the base-2 logarithm of Data Bits. For example, if Data Bits were 8, this input would require 3 bits; but if it were 9, it would require 4 bits.
+          Le nombre de bits par lequel décaler l'entrée <var>data</var>. Cette entrée doit avoir autant de bits que le nombre minimum pour indiquer n'importe quelle distance de décalage de 0 jusqu'à un moins que les bits de données ; c'est-à-dire qu'elle doit être le plafond du logarithme de base-2 des bits de données. Par exemple, si les bits de données étaient 8, cette entrée nécessiterait 3 bits, mais si elle était 9, elle nécessiterait 4 bits.
         </dd>
         <dt>
-          East edge (output, bit width matches the Data Bits attribute)
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The result of shifting the input value by the input distance.
+          Le résultat du décalage de la valeur d'entrée par la distance d'entrée.
         </dd>
       </dl>
       <h2>
-        Attributes
+        Attributs
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur données</b>
         </dt>
         <dd>
-          The bit width of the <var>data</var> input and of the output.
+          La largeur de bit de l'entrée et de la sortie du composant.
         </dd>
         <dt>
-          Shift Type
+          <b class="propertie">Shift Type</b>
         </dt>
         <dd>
-          One of the five possible shift types as outlined above (Logical Left, Logical Right, Arithmetic Right, Rotate Left, Rotate Right).
+          L'un des cinq types de déplacement possibles décrits ci-dessus (logique à gauche, logique à droite, arithmétique à droite, rotation à gauche, rotation à droite).
         </dd>
       </dl>
+	  </div>
       <h2>
-        Poke Tool Behavior
+        Comportement de l'outil pousser
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <h2>
-        Text Tool Behavior
+        Comportement de l'outil text 
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
       </p>
     </div>
   </body>

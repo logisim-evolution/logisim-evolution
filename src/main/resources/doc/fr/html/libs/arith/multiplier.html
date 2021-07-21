@@ -1,34 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
     <meta name="changed" content="2020-06-26T10:59:00.126200000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Language" content="fr">
     <title>
-      Multiplier
+      Multiplicateur
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        <img  class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="#########" width="32" height="32" align="middle"> <em>Multiplier</em>
+        <img  class="iconlibs" src="../../../../icons/6464/multiplier.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Multiplicateur</em>
       </h1>
       <table>
         <tbody>
           <tr>
             <td>
-              <strong>Library:</strong>
+              <strong>Librairie:</strong>
             </td>
             <td>
-              <a href="index.html">Arithmetic</a>
+              <a href="index.html">Arithmétique</a>
             </td>
           </tr>
           <tr>
             <td>
-              <strong>Introduced:</strong>
+              <strong>Introduction:</strong>
             </td>
             <td>
               2.0 Beta 20
@@ -36,86 +37,88 @@
           </tr>
           <tr>
             <td valign="top">
-              <strong>Appearance:</strong>
+              <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/multiplier.png" alt="#########" width="64" height="64">
+              <img class="Apparencelibs" src="../../../../img-libs/multiplier.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
       </table>
       <h2>
-        Behavior
+        Comportement
       </h2>
       <p>
-        This component multiplies two values coming in via the west inputs and outputs the product on the east output. The component is designed so that it can be cascaded with other multipliers to multiply a multiplicand with more bits than is possible with a single multiplier: The carry-in input provides a multi-bit value to be added into the product (if it is specified), and a carry-out output provides the upper half of the product result, which can be fed into another multiplier.
+        Ce composant multiplie deux valeurs entrant par les entrées ouest et sort le produit sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres multiplicateurs pour multiplier un multiplicande avec plus de bits qu'il n'est possible avec un seul multiplicateur : L'entrée carry-in fournit une valeur multibit à ajouter au produit (si elle est spécifiée), et une sortie carry-out fournit la moitié supérieure du résultat du produit, qui peut être introduite dans un autre multiplicateur.
       </p>
       <p>
-        If the multiplicand, the multiplier, or the carry-in input contain some floating bits or some error bits, then the component will perform a partial multiplication. That is, it will compute as many low-order bits as possible. But above the floating or error bit, the result will have floating or error bits. Note that if the carry-in input is completely floating, then it will be assumed to be all-zeroes.
+        Si le multiplicande, le multiplicateur ou l'entrée de retenue contiennent des bits flottants ou des bits d'erreur, le composant effectue une multiplication partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur. Notez que si l'entrée de retenue est complètement flottante, alors elle sera supposée être entièrement nulle.
       </p>
       <h2>
         Pins
       </h2>
       <dl>
         <dt>
-          West edge, north end (input, bit width matches Data Bits attribute)
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The multiplicand (that is, the first of the two numbers to multiply).
+          Le multiplicande (c'est-à-dire le premier des deux nombres à multiplier).
         </dd>
         <dt>
-          West edge, south end (input, bit width matches Data Bits attribute)
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The multiplier (that is, the second of the two numbers to multiply).
+          Le multiplicateur (c'est-à-dire le deuxième des deux nombres à multiplier).
         </dd>
         <dt>
-          North edge, labeled <var>c in</var> (input, bit width matches Data Bits attribute)
+          Bord nord, étiqueté <var>c in</var> (entrée, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          A carry value to add into the product. If all bits of the value are unknown (i.e., floating), then they are assumed to be 0.
+          Une valeur de report à ajouter au produit. Si tous les bits de la valeur sont inconnus (c'est-à-dire flottants), ils sont supposés être égaux à 0.
         </dd>
         <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
         </dt>
         <dd>
-          The lower <var>dataBits</var> bits of the product of the two values coming in the west edge, plus the <var>c</var><sub><var>in</var></sub> value.
+          Les <var>dataBits</var> bits inférieurs du produit des deux valeurs provenant du bord ouest, plus la valeur <var>c</var><sub><var>in</var></sub>.
         </dd>
         <dt>
-          South edge, labeled <var>c out</var> (output, bit width matches Data Bits attribute)
+          Bord sud, étiqueté <var>c out</var> (sortie, la largeur des bits correspond à l'attribut Largeur de données)
         </dt>
         <dd>
-          The upper <var>dataBits</var> bits of the product.
+          Les <var>dataBits</var> bits supérieurs du produit.
         </dd>
       </dl>
       <h2>
-        Attributes
+        Attributs
       </h2>
       <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
       </p>
+	  <div class="attliste">	  
       <dl>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur données</b>
         </dt>
         <dd>
-          The bit width of the values to be multiplied and of the result.
+          La largeur de bit de l'entrée et de la sortie du composant.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Poke Tool Behavior
+        Comportement de l'outil pousser
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <h2>
-        Text Tool Behavior
+        Comportement de l'outil text 
       </h2>
       <p>
-        None.
+        Aucun.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
       </p>
     </div>
   </body>

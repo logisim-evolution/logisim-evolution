@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -91,79 +91,79 @@
         <table>
           <tbody>
             <tr>
-              <th style="border-bottom: 1px solid">
-                <em>p-gate</em>
+              <th class="tspace">
+                p-gate
               </th>
-              <th style="border-bottom: 1px solid">
-                <em>n-gate</em>
+              <th class="tspace">
+                n-gate
               </th>
-              <th style="border-bottom: 1px solid">
-                <em>drain</em>
+              <th class="tspace">
+                drain
               </th>
             </tr>
             <tr>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td align="center">
+              <td class="space">
                 *
               </td>
             </tr>
             <tr>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
               <td align="center">
-                <em>source</em>
+                source
               </td>
             </tr>
             <tr>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td align="center">
+              <td class="uvalue">
                 U
               </td>
             </tr>
             <tr>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
-              <td align="center">
+              <td class="space">
                 *
               </td>
             </tr>
             <tr>
-              <td align="center">
-                U/E
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
               </td>
-              <td align="center">
-                <em>tout</em>
+              <td class="space">
+                all
               </td>
-              <td align="center">
+              <td class="space">
                 *
               </td>
             </tr>
             <tr>
-              <td align="center">
-                <em>tout</em>
+              <td class="space">
+                all
               </td>
-              <td align="center">
-                U/E
+              <td class="space">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
               </td>
-              <td align="center">
+              <td class="space">
                 *
               </td>
             </tr>
@@ -171,71 +171,72 @@
         </table>
       </center>
       <p>
-        * If <em>source</em> is High impedance, <em>drain</em> is High impedance otherwise <em>drain</em> is in error.
+        * If <em>source</em> is  High impedance (<b class="uvalue">U</b>), <em>drain</em> is High impedance (<b class="uvalue">U</b>) otherwise <em>drain</em> is in error (<b class="evalue">E</b>).
       </p>
       <p>
-        <b class="note">Note:</b>Since Logisim uses the markers U (High impedance) and E (Error) I used the same in the illustrations rather than the more common Z (High impedance) and X (Error) in other documents
+        <b class="note">Note:</b>Since Logisim uses the markers <b class="uvalue">U</b> (High impedance) and <b class="evalue">E</b> (Error) I used the same in the illustrations rather than the more common Z (High impedance) and X (Error) in other documents 
       </p>
       <p>
-        <em>If the Data Bits attribute is more than 1, each <em>gate</em> input is still a single bit, but the <em>gate</em> values are applied simultaneously to each of the <em>source</em> input's bits.</em>
+       If the Data Bits attribute is more than 1, each <em>gate</em> input is still a single bit, but the <em>gate</em> values are applied simultaneously to each of the <em>source</em> input's bits.
       </p>
       <h2>
-        Pins (assuming component faces east, gate line top/left)
+        Pins
       </h2>
+	  <p>This component has four pins, three are inputs <q>Source</q>,<q>P-gate</q>,<q>N-gate</q> one is an output <q>Drain</q> which you can see in the figure above.
+	  </p>
       <dl>
         <dt>
-          West edge (input, bit width matches Data Bits attribute)
+          West edge : The source
         </dt>
         <dd>
-          The component's <em>source</em> input that will transmit to the output if triggered by the <em>p-gate</em> and <em>n-gate</em> inputs.
+          The component's <em>source</em> input that will transmit to the output if triggered by the <em>p-gate</em> and <em>n-gate</em> inputs. Bit width matches  <b class="propertie">Data Bits</b> attribute.
         </dd>
         <dt>
-          North edge (input, bit width 1)
+          North edge : p-gate
         </dt>
         <dd>
-          The component's <em>p-gate</em> input.
+          The component's <em>p-gate</em> input, controls the transmission. Normally, opposite control values are applied to these inputs. The bit width is always 1.
         </dd>
         <dt>
-          South edge (input, bit width 1)
+          South edge : n-gate
         </dt>
         <dd>
-          The component's <em>n-gate</em> input.
+          The component's <em>n-gate</em> input, controls the transmission. Normally, opposite control values are applied to these inputs. The bit width is always 1.
         </dd>
         <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          East edge : The drain
         </dt>
         <dd>
-          The component's output, which will match the <em>source</em> input if <em>p-gate</em> is 0 and <em>n-gate</em> is 1, or it will be floating if <em>p-gate</em> is 1 and <em>n-gate</em> is 0. For all other values on <em>p-gate</em> and <em>n-gate</em>, the output is an error value.
+          The component's output, which will match the <em>source</em> input if <em>p-gate</em> is <b class="zerov">0</b> and <em>n-gate</em> is <b class="unov">1</b>, or it will be floating (<b class="uvalue">U</b>) if <em>p-gate</em> is <b class="unov">1</b> and <em>n-gate</em> is <b class="zerov">0</b>. For all other values on <em>p-gate</em> and <em>n-gate</em>, the output is an error value (<b class="evalue">E</b>). Bit width matches  <b class="propertie">Data Bits</b> attribute.
         </dd>
       </dl>
       <h2>
         Attributes
-      </h2>
-	  <div class="attliste">
-      <p>
-        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute.
-      </p>
-      <dl>
-        <dt>
-          Facing
-        </dt>
-        <dd>
-          The direction of the component (its output relative to its input).
-        </dd>
-        <dt>
-          Gate Location
-        </dt>
-        <dd>
-          The location of the gate input.
-        </dd>
-        <dt>
-          Data Bits
-        </dt>
-        <dd>
-          The bit width of the component's inputs and outputs.
-        </dd>
-      </dl>
-	  </div>
+      </h2><p>
+           When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+        </p>
+        <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Facing</b>
+          </dt>
+          <dd>
+            The direction of the component (its output relative to its input).
+          </dd>
+          <dt>
+            <b class="propertie">Gate Location</b>
+          </dt>
+          <dd>
+            The location of the gate input.
+          </dd>
+          <dt>
+            <b class="propertie">Data Bits</b>
+          </dt>
+          <dd>
+            The bit width of the component's inputs and outputs.
+          </dd>
+        </dl>
+      </div>
       <h2>
         Poke Tool Behavior
       </h2>

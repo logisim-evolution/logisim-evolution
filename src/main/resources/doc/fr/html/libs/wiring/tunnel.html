@@ -14,7 +14,8 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/tunnel.png" alt="#########" height="32" width="32"> <em>Tunnel</em>
+        <img class="iconlibs" src="../../../../icons/6464/tunnel.png" alt="#########" height="32" width="32"> 
+		<em>Tunnel</em>
       </h1>
       <table>
         <tbody>
@@ -60,7 +61,8 @@
         <center>
          <img src="../../../../img-libs/tunnel-demo1.gif" alt="#########">
         </center>
-		Le buffer contrôlé émet une sortie flottante puisque son entrée de commande est 0. Normalement cela conduit le fil en provenance du buffer contrôlé à être bleu, mais ici, il est vert clair. Ceci est correct, car il est relié au travers du tunnel à la broche du bas qui est à 1. Si le contrôle du buffer passe à 1, le tunnel transportera cette valeur sur les autres points et elle sera en conflit avec le 1 de la broche du bas déclenchant une erreur. On voit alors des fils rouges (<b class="evalue">E</b>) traverser les trois tunnels comme dans l'exemple.
+		</p>
+		Le buffer contrôlé émet une sortie flottante puisque son entrée de commande est <b class="zerov">0</b>. Normalement cela conduit le fil en provenance du buffer contrôlé à être bleu, mais ici, il est vert clair. Ceci est correct, car il est relié au travers du tunnel à la broche du bas qui est à <b class="unov">1</b>. Si le contrôle du buffer passe à <b class="unov">1</b>, le tunnel transportera cette valeur sur les autres points et elle sera en conflit avec le <b class="unov">1</b> de la broche du bas déclenchant une erreur. On voit alors des fils rouges (<b class="evalue">E</b>) traverser les trois tunnels comme dans l'exemple.
       </p>
       <h2>
         Pins
@@ -72,7 +74,7 @@
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <b class="propertie">Largeur données</b> et les touches fléchées modifient son attribut <b class="propertie">Orientation</b> .
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut <b class="propertie">Largeur données</b> et les touches fléchées modifient son attribut <b class="propertie">Orientation</b> .
       </p>
 	   <div class="attliste">
       <dl>
@@ -103,13 +105,13 @@
       </dl>
 	  </div>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
         Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
         Permets de modifier l’étiquette associée au tunnel.

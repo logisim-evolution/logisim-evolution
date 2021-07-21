@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" height="32" width="32"> <em>Porte de transmission</em>
+        <img class="iconlibs" src="../../../../icons/6464/transmis.png" alt="#########" width="32" height="32"> <em>Porte de transmission</em>
       </h1>
       <table>
         <tbody>
@@ -39,7 +39,7 @@
               <strong>Apparence:</strong>
             </td>
             <td valign="top">
-              <img class="notscal" src="../../../../img-libs/transmis.png" alt="#########">
+              <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
             </td>
           </tr>
         </tbody>
@@ -65,7 +65,7 @@
                 <em>source</em>
               </td>
               <td valign="middle" align="center">
-                <img src="../../../../img-libs/transmis.png" width="44" height="43" alt="#########">
+                <img class="appearancelibs" src="../../../../img-libs/transmis.png" alt="#########" width="64" height="64">
               </td>
               <td valign="middle">
                 <em>drain</em>
@@ -88,25 +88,24 @@
         Normalement la valeur des commandes de <em>n-gate</em> et <em>p-gate</em> devraient être opposés l'une à l'autre. Si <em>p-gate</em> vaut 0 et <em>n-gate</em> vaut 1, alors la valeur trouvée sur <em>source</em> est transmise au <em>drain</em> . Si <em>p-gate</em> vaut 1 et <em>p-gate</em> vaut 0, la connexion est rompue, la valeur du <em>drain</em> reste donc flottante. Dans tous les autres cas, <em>drain</em> reçoit une sortie d'erreur sauf si <em>source</em> est flottant, auquel cas <em>drain</em> est également flottant. Ce Comportement est résumé par le tableau suivant.
       </p>
       <center>
-        &gt;
         <table>
           <tbody>
             <tr>
-              <th style="border-bottom: 1px solid">
-                <em>p-gate</em>
+              <th class="tspace">
+                p-gate
               </th>
-              <th style="border-bottom: 1px solid">
-                <em>n-gate</em>
+              <th class="tspace">
+                n-gate
               </th>
-              <th style="border-bottom: 1px solid">
-                <em>drain</em>
+              <th class="tspace">
+                drain
               </th>
             </tr>
             <tr>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
               <td align="center">
@@ -114,32 +113,32 @@
               </td>
             </tr>
             <tr>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
               <td align="center">
-                <em>source</em>
+                source
               </td>
             </tr>
             <tr>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
-              <td style="color:#088A29" align="center">
+              <td class="zerov">
                 0
               </td>
-              <td align="center">
+              <td class="uvalue">
                 U
               </td>
             </tr>
             <tr>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
-              <td style="color:#00FF00" align="center">
+              <td class="unov">
                 1
               </td>
               <td align="center">
@@ -148,10 +147,10 @@
             </tr>
             <tr>
               <td align="center">
-                U/E
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
               </td>
               <td align="center">
-                <em>tout</em>
+                tout
               </td>
               <td align="center">
                 *
@@ -159,10 +158,10 @@
             </tr>
             <tr>
               <td align="center">
-                <em>tout</em>
+                tout
               </td>
               <td align="center">
-                U/E
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
               </td>
               <td align="center">
                 *
@@ -172,74 +171,81 @@
         </table>
       </center>
       <p>
-        * Si <em>source</em> est Haute impédance, <em>drain</em> est Haute impédance autrement <em>drain</em> est en erreur.
+        * Si <em>source</em> est Haute impédance (<b class="uvalue">U</b>), <em>drain</em> est Haute impédance (<b class="uvalue">U</b>) autrement <em>drain</em> est en erreur (<b class="evalue">E</b>).
       </p>
       <p>
         Note:Etant donné que Logisim utilise les marqueurs U (haute impédance) et E (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents
       </p>
       <p>
-        Si l'attribut Data Bits est supérieur à 1, l'entrée <em>gate</em> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <em>source</em> .
+        Si l'attribut Largeur de données est supérieur à 1, l'entrée <em>gate</em> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <em>source</em> .
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        Ce composant possède quatre broches, trois sont des entrées <q>Source</q>,<q>P-gate</q>,<q>N-gate</q> une est une sortie <q>Drain</q>
+        Ce composant possède quatre broches, trois sont des entrées <q>Source</q>,<q>P-gate</q>,<q>N-gate</q> une est une sortie <q>Drain</q> que vous pouvez observer sur la figure plus haut.
       </p>
       <dl>
         <dt>
-          Source
+          Bord est : la source. 
         </dt>
         <dd>
-          l'état sera transmis à la sortie si elle est déclenchée par l'entrée <em>gate</em> . La largeur de bit est définie par l'attribut Data Bits.
+          En etrée, l'état sera transmis à la sortie si elle est déclenchée par l'entrée <em>n-gate</em> et <em>p-gate</em> . La largeur de bit est définie par l'attribut <b class="propertie">Largeur de données</b>.
         </dd>
         <dt>
-          P-gate et N-gate
+          Bord  nord : P-gate
         </dt>
         <dd>
-          Ces entrées commandent la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bite est toujours de 1
+          En entrées, commande la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bit est toujours de 1
+        </dd>
+		<dt>
+          Bord  sud : N-gate
+        </dt>
+        <dd>
+          Ces entrées, commande la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bit est toujours de 1
         </dd>
         <dt>
-          Drain
+          Bord ouest : Le drain
         </dt>
         <dd>
-          Cette sortie reprend l'état de l'entrée quand lanporte est activé par les entrées Gate. Sinon elle est dans un état haute impédance (indéfini). Voir les figures ci-dessus pour plus de précisions
+          La sortie du composant, qui correspondra à l'entrée source si p-gate est <b class="zerov">0</b> et n-gate est <b class="unov">1</b>, ou sera flottante (<b class="uvalue">U</b>) si p-gate est <b class="unov">1</b> et n-gate est <b class="zerov">0</b>. Pour toutes les autres valeurs de p-gate et n-gate, la sortie est une valeur d'erreur (<b class="evalue">E</b>). La largeur de bit est définie par l'attribut <b class="propertie">Largeur de données</b>.
         </dd>
       </dl>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie l'attribut <q>Data Bits</q>, et les touches fléchées modifient son attribut <q>Orientation</q>.
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
+      <div class="attliste">
       <dl>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           Le côté du composant dessiné où doit se trouver sa broche de sortie <em>Drain</em>.
         </dd>
         <dt>
-          Position Gate
+          <b class="propertie">Position de la porte</b>
         </dt>
         <dd>
           Disposition haut/gauche ou bas/droite de l'entrée <em>P-gate</em>.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur de données</b>
         </dt>
         <dd>
           Largeur en bit de l'entrée <em>Source</em> et de la sortie <em>Drain</em>. Les entrées <em>Gate</em> ont toujours une largeur de 1 bit.
         </dd>
       </dl>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser
       </h2>
       <p>
         Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
         Aucun.

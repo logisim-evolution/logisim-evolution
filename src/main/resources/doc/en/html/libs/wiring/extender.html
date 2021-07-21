@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -39,7 +39,18 @@
               <strong>Appearance:</strong>
             </td>
             <td valign="top">
-              <img class="appearancelibs" src="../../../../img-libs/extender.png" alt="#########" width="64" height="64">
+			 <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
         </tbody>
@@ -83,24 +94,24 @@
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, the digits 0 through 9 alter the <q>Bit Width In</q> attribute and Alt-0 through Alt-9 alter its <q>Bit Width Out</q> attribute.
+        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter the <b class="propertie">Bit Width In</b> attribute and <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Bit Width Out</b> attribute.
       </p>
 	  <div class="attliste">
       <dl>
         <dt>
-          Bit Width In
+          <b class="propertie">Bit Width In</b>
         </dt>
         <dd>
           The input's bit width.
         </dd>
         <dt>
-          Bit Width Out
+          <b class="propertie">Bit Width Out
         </dt>
         <dd>
           The output's bit width.
         </dd>
         <dt>
-          Extension Type
+          <b class="propertie">Extension Type</b>
         </dt>
         <dd>
           Assuming the output bit width exceeds the input bit width, this attribute configures what the additional output bits should be. If <q>Zero</q> or <q>One,</q> the additional bits are 0 or 1 accordingly. If <q>Sign,</q> the additional bits are taken to match the highest-order bit in the input. And if <q>Input,</q> the component has a second input on its north side whose one-bit value is used for the additional bits.

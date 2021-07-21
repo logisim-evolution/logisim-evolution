@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-22T06:18:42.262000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>
@@ -14,7 +14,8 @@
   <body>
     <div class="maindiv">
     <h1>
-      <img src="../../../../icons/6464/constant.png" align="middle" alt="#########" width="32" height="32" > <em>Константа</em>
+      <img class="iconlibs" src="../../../../icons/6464/constant.png" alt="#########" width="32" height="32">
+	  <em>Константа</em>
     </h1>
     <table>
       <tbody>
@@ -38,9 +39,10 @@
           <td valign="top">
             <strong>Внешний вид:</strong>
           </td>
-          <td valign="top">
-            <img src="../../../../img-libs/constant.png" width="18" height="15" alt="#########">
-          </td>
+           <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/constant0.png" alt="#########" width="64" height="64"> 
+			  <img class="appearancelibs" src="../../../../img-libs/constant1.png" alt="#########" width="64" height="64">
+            </td>
         </tr>
       </tbody>
     </table>
@@ -60,28 +62,30 @@
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, клавиши с шестнадцатеричными цифрами от 0 до 9 и от a до f меняют его атрибут <q>Значение</q>, комбинации от Alt-0 до Alt-9 меняют его атрибут <q>Биты данных</q>, а клавиши со стрелками меняют его атрибут <q>Направление</q>.
+      Когда компонент выбран, или уже добавлен, клавиши с шестнадцатеричными цифрами от <b class="tkeybd">0</b> до <b class="tkeybd">9</b> и от <b class="tkeybd">a</b> до <b class="tkeybd">f</b> меняют его атрибут <b class="propertie">Значение</b>. комбинации от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> меняют его атрибут <b class="propertie">Биты данных</b>, а клавиши со стрелками меняют его атрибут <b class="propertie">Направление</b>.
     </p>
+    <div class="attliste">
     <dl>
       <dt>
-        Направление
+        <b class="propertie">Направление</b>
       </dt>
       <dd>
         Направление, в котором расположен контакт относительно отрисованного значения.
       </dd>
       <dt>
-        Биты данных
+        <b class="propertie">Биты данных</b>
       </dt>
       <dd>
         Разрядность значения, выдаваемого на провод.
       </dd>
       <dt>
-        Значение
+        <b class="propertie">Значение</b>
       </dt>
       <dd>
         Значение, выдаваемое компонентом, записанное в шестнадцатеричном виде. Количество битов, используемых для указания значения, не может превышать разрядность компонента.
       </dd>
     </dl>
+    <div class="attliste">
     <h2>
       Поведение Инструмента Нажатие
     </h2>

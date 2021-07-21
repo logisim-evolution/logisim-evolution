@@ -62,20 +62,20 @@ img.iconlibs{
 	vertical-align:middle;
 }
 /* For img apparence of the library cards  */
-img.appearancelibs{
+img.Apparencelibs{
 	height:64px;
 	width:64px;
 	vertical-align:middle;
 }
 /* For img apparence large of the library cards  */
-img.appearancelibslarge{
+img.Apparencelibslarge{
 	height:64px;
 	width:128;
 	vertical-align:middle;
 
 }
 /* For img apparence upper of the library cards  */
-img.appearancelibshaut{
+img.Apparencelibshaut{
 	height:128;
 	width:64;
 	vertical-align:middle;

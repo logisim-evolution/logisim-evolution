@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-22T06:18:42.262000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>
@@ -39,7 +39,18 @@
             <strong>Внешний вид:</strong>
           </td>
           <td valign="top">
-            <img src="../../../../img-libs/extender.png" width="44" height="42" alt="#########">
+ <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
           </td>
         </tr>
       </tbody>
@@ -83,28 +94,30 @@
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, клавиши от 0 до 9 меняют атрибут <q>Разрядность входа</q>, а комбинации от Alt-0 до Alt-9 меняют атрибут <q>Разрядность выхода</q>.
+      Когда компонент выбран, или уже добавлен, клавиши от <b class="tkeybd">0</b> до <b class="tkeybd">9</b> меняют атрибут <b class="propertie">Разрядность входа</b>, а комбинации от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> меняют атрибут <b class="propertie">Разрядность выхода</b>.
     </p>
+	<div class="attliste">
     <dl>
       <dt>
-        Разрядность входа
+        <b class="propertie">Разрядность входа</b>
       </dt>
       <dd>
         Разрядность входного значения.
       </dd>
       <dt>
-        Разрядность выхода
+        <b class="propertie">Разрядность выхода</b>
       </dt>
       <dd>
         Разрядность выходного значения.
       </dd>
       <dt>
-        Тип расширения
+        <b class="propertie">Тип расширения</b>
       </dt>
       <dd>
         Предполагая, что разрядность выхода превышает разрядность входа, этот атрибут определяет, какими должны быть дополнительные биты выходного значения. Если <q>Ноль</q> или <q>Единица</q>, то дополнительные биты будут 0 или 1 соответственно. Если <q>Знак</q>, то дополнительные биты соответствуют самому старшему биту на входе. И если <q>Вход</q>, то компонент имеет второй вход на северной стороне, однобитное значение на котором используется для дополнительных битов.
       </dd>
     </dl>
+	</div>
     <h2>
       Поведение Инструмента Нажатие
     </h2>
