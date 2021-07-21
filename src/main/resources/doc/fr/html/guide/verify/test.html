@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-01-16T17:28:04.263000000">
+    <meta name="changed" content="2021-07-21T17:28:04.263000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -71,9 +71,11 @@ A[4] B[4] O[4] C_in C_out
       </p>
       <blockquote>
         <div class=forcode>
-          <tt>java -jar logisim-evolution.jar -testvector &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</tt>
+          <tt>java -jar logisim-evolution-x.x.x-all.jar -testvector &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</tt>
         </div>
       </blockquote>
+	  <p>ou x.x.x est la version de logisim-evolution example : logisim-evolution.3.5.0-all.jar</p>
+	  <p>
 	  <p>
 	  Le résultat d'un test réussi sera dans la sortie standard (stdout) celui-ci par exemple
 	  <blockquote><pre>Loading test vector "testv1b.txt" ...
@@ -87,7 +89,7 @@ Réussit: 4, Erreur: 0
 	  </pre></blockquote>
 	  et en cas d'échec
 	  <blockquote><pre>Loading test vector "testv1a.txt" ...
-Exécution 4 vecteurs ...
+Exécution 4 vectors  ...
 1 
 2 
 3 
@@ -99,7 +101,7 @@ Exécution 4 vecteurs ...
 
 Réussit: 2, Erreur: 2
 	  </pre></blockquote>
-	  Note: Dans la sortie erreur (stderr) on lira ceci :
+	  <b class="note">Note</b>: Dans la sortie erreur (stderr) on lira ceci :
 	  <blockquote><pre>Error on test vector 3:
 Error on test vector 4:
        </pre></blockquote>
