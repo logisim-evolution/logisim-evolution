@@ -55,7 +55,7 @@ class NandGate extends AbstractGate {
       oneLine.append("   ")
           .append(HDL.assignPreamble())
           .append("Result")
-          .append(HDL.andOperator())
+          .append(HDL.assignOperator())
           .append(HDL.notOperator())
           .append("(");
       final var tabWidth = oneLine.length();
