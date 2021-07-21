@@ -318,18 +318,20 @@ public class ShiftRegister extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
     /* Draw the outputs */
     GraphicsUtil.switchToWidth(g, dataWidth);
-    if (currentStage == 0 && (hasLoad || lastBlock)) {
-      g.drawLine(
-          realXpos + blockWidth + lineFix,
-          realYpos + 20,
-          realXpos + blockWidth + 10,
-          realYpos + 20);
-    } else if (hasLoad || lastBlock) {
-      g.drawLine(
-          realXpos + blockWidth + lineFix,
-          realYpos + 10,
-          realXpos + blockWidth + 10,
-          realYpos + 10);
+    if (hasLoad || lastBlock) {
+      if (currentStage == 0) {
+        g.drawLine(
+            realXpos + blockWidth + lineFix,
+            realYpos + 20,
+            realXpos + blockWidth + 10,
+            realYpos + 20);
+      } else {
+        g.drawLine(
+            realXpos + blockWidth + lineFix,
+            realYpos + 10,
+            realXpos + blockWidth + 10,
+            realYpos + 10);
+      }
     }
     if (lastBlock) {
       painter.drawPort(OUT);
