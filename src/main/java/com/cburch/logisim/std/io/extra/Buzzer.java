@@ -114,10 +114,25 @@ public class Buzzer extends InstanceFactory {
     super(_ID, S.getter("buzzerComponent"));
     setAttributes(
         new Attribute[]{
-            StdAttr.FACING, StdAttr.GATE, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT,
-            WAVEFORM, CHANNEL, SMOOTH_LEVEL, SMOOTH_WIDTH
+            StdAttr.FACING,
+            StdAttr.SELECT_LOC,
+            FREQUENCY_MEASURE,
+            VOLUME_WIDTH,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            WAVEFORM,
+            CHANNEL,
+            SMOOTH_LEVEL,
+            SMOOTH_WIDTH
         },
-        new Object[]{Direction.WEST, StdAttr.GATE_BOTTOM_RIGHT, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT, Sine,
+        new Object[]{
+            Direction.WEST,
+            StdAttr.SELECT_BOTTOM_LEFT,
+            Hz,
+            BitWidth.create(7),
+            "",
+            StdAttr.DEFAULT_LABEL_FONT,
+            Sine,
             C_BOTH, 2, 2});
     setFacingAttribute(StdAttr.FACING);
     setIconName("buzzer.gif");
@@ -171,7 +186,7 @@ public class Buzzer extends InstanceFactory {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
       updateports(instance);
-    } else if (attr == VOLUME_WIDTH || attr == StdAttr.GATE) {
+    } else if (attr == VOLUME_WIDTH || attr == StdAttr.SELECT_LOC) {
       updateports(instance);
     } else if (attr == WAVEFORM || attr == CHANNEL || attr == SMOOTH_LEVEL || attr == SMOOTH_WIDTH) {
       instance.fireInvalidated();
@@ -270,15 +285,15 @@ public class Buzzer extends InstanceFactory {
     p[VOL].setToolTip(S.getter("buzzerVolume"));
     p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
     p[ENABLE].setToolTip(S.getter("enableSound"));
-    Object gateLoc = instance.getAttributeValue(StdAttr.GATE);
+    Object gateLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     var xPw = 20;
     var yPw = 20;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-      xPw *= gateLoc == StdAttr.GATE_TOP_LEFT ? -1 : 1;
+      xPw *= gateLoc == StdAttr.SELECT_BOTTOM_LEFT ? -1 : 1;
       yPw *= facing == Direction.SOUTH ? -1 : 1;
     } else {
       xPw *= facing == Direction.EAST ? -1 : 1;
-      yPw *= gateLoc == StdAttr.GATE_TOP_LEFT ? -1 : 1;
+      yPw *= gateLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
     }
     p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
     p[PW].setToolTip(S.getter("buzzerDutyCycle"));

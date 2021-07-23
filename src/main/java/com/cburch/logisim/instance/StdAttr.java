@@ -105,15 +105,15 @@ public interface StdAttr {
             BitWidth.create(32), BitWidth.create(64)
           });
   
-  AttributeOption GATE_TOP_LEFT =
-      new AttributeOption("tl", S.getter("stdGateTopLeftOption"));
-  AttributeOption GATE_BOTTOM_RIGHT =
-      new AttributeOption("br", S.getter("stdGateBottomRightOption"));
-  Attribute<AttributeOption> GATE =
+  AttributeOption SELECT_BOTTOM_LEFT =
+      new AttributeOption("bl", S.getter("stdSelectBottomLeftOption"));
+  AttributeOption SELECT_TOP_RIGHT =
+      new AttributeOption("tr", S.getter("stdSelectTopRightOption"));
+  Attribute<AttributeOption> SELECT_LOC =
       Attributes.forOption(
-          "gate",
-          S.getter("stdGateAttr"),
-          new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
+          "selloc",
+          S.getter("stdSelectLocAttr"),
+          new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
 
   Attribute<String> DUMMY = Attributes.forHidden();
 }

@@ -92,14 +92,14 @@ public class Multiplexer extends InstanceFactory {
         new Attribute[] {
           StdAttr.FACING,
           PlexersLibrary.ATTR_SIZE,
-          PlexersLibrary.ATTR_SELECT_LOC,
+          StdAttr.SELECT_LOC,
           PlexersLibrary.ATTR_SELECT,
           StdAttr.WIDTH,
           PlexersLibrary.ATTR_DISABLED,
           PlexersLibrary.ATTR_ENABLE
         },
         new Object[] {
-          Direction.EAST, PlexersLibrary.SIZE_WIDE, PlexersLibrary.SELECT_BOTTOM_LEFT,
+          Direction.EAST, PlexersLibrary.SIZE_WIDE, StdAttr.SELECT_BOTTOM_LEFT,
           PlexersLibrary.DEFAULT_SELECT, BitWidth.ONE, PlexersLibrary.DISABLED_ZERO,
           PlexersLibrary.DEFAULT_ENABLE
         });
@@ -171,7 +171,7 @@ public class Multiplexer extends InstanceFactory {
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING
-        || attr == PlexersLibrary.ATTR_SELECT_LOC
+        || attr == StdAttr.SELECT_LOC
         || attr == PlexersLibrary.ATTR_SELECT
         || attr == PlexersLibrary.ATTR_SIZE) {
       instance.recomputeBounds();
@@ -210,8 +210,8 @@ public class Multiplexer extends InstanceFactory {
     // draw stubs for select/enable inputs that aren't on instance boundary
     GraphicsUtil.switchToWidth(g, 3);
     final var vertical = facing != Direction.NORTH && facing != Direction.SOUTH;
-    Object selectLoc = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
-    final var selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
+    Object selectLoc = painter.getAttributeValue(StdAttr.SELECT_LOC);
+    final var selMult = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 1 : -1;
     final var oddside = (vertical == (selMult < 0));
     int dx, dy;
     if (wide) {
@@ -312,8 +312,8 @@ public class Multiplexer extends InstanceFactory {
     final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var dir = instance.getAttributeValue(StdAttr.FACING);
     final var vertical = dir != Direction.NORTH && dir != Direction.SOUTH;
-    Object selectLoc = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
-    final var botLeft = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT;
+    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    final var botLeft = selectLoc == StdAttr.SELECT_BOTTOM_LEFT;
     final var selMult = botLeft ? 1 : -1;
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
     final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
