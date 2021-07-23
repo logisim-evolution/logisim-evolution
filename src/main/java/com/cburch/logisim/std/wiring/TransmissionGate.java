@@ -68,8 +68,8 @@ public class TransmissionGate extends InstanceFactory {
     super(_ID, S.getter("transmissionGateComponent"));
     setIconName("transmis.gif");
     setAttributes(
-        new Attribute[] {StdAttr.FACING, WiringLibrary.ATTR_GATE, StdAttr.WIDTH},
-        new Object[] {Direction.EAST, WiringLibrary.GATE_TOP_LEFT, BitWidth.ONE});
+        new Attribute[] {StdAttr.FACING, StdAttr.GATE, StdAttr.WIDTH},
+        new Object[] {Direction.EAST, StdAttr.GATE_TOP_LEFT, BitWidth.ONE});
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
@@ -120,11 +120,11 @@ public class TransmissionGate extends InstanceFactory {
 
   private void drawInstance(InstancePainter painter, boolean isGhost) {
     Bounds bds = painter.getBounds();
-    Object powerLoc = painter.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = painter.getAttributeValue(StdAttr.GATE);
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     boolean flip =
         (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+            == (powerLoc == StdAttr.GATE_TOP_LEFT);
 
     int degrees = Direction.WEST.toDegrees() - facing.toDegrees();
     if (flip) degrees += 180;
@@ -199,7 +199,7 @@ public class TransmissionGate extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == WiringLibrary.ATTR_GATE) {
+    if (attr == StdAttr.FACING || attr == StdAttr.GATE) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH) {
@@ -236,10 +236,10 @@ public class TransmissionGate extends InstanceFactory {
       dx = 1;
     }
 
-    Object powerLoc = instance.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = instance.getAttributeValue(StdAttr.GATE);
     boolean flip =
         (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+            == (powerLoc == StdAttr.GATE_TOP_LEFT);
 
     Port[] ports = new Port[4];
     ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);

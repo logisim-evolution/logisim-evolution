@@ -104,6 +104,16 @@ public interface StdAttr {
           new BitWidth[] {
             BitWidth.create(32), BitWidth.create(64)
           });
+  
+  AttributeOption GATE_TOP_LEFT =
+      new AttributeOption("tl", S.getter("stdGateTopLeftOption"));
+  AttributeOption GATE_BOTTOM_RIGHT =
+      new AttributeOption("br", S.getter("stdGateBottomRightOption"));
+  Attribute<AttributeOption> GATE =
+      Attributes.forOption(
+          "gate",
+          S.getter("stdGateAttr"),
+          new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
 
   Attribute<String> DUMMY = Attributes.forHidden();
 }
