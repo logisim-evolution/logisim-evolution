@@ -64,7 +64,7 @@ extra.apply {
       jPackageCmd,
       "--input", "$buildDir/libs",
       "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", project.name + '-' + project.version + "-all.jar",
+      "--main-jar", "${project.name}-${project.version}-all.jar",
       "--app-version", project.version as String,
       "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
       "--dest", "$buildDir/dist"
@@ -79,15 +79,13 @@ extra.apply {
   set("sharedParameters", parameters)
   set("linuxParameters", linuxParameters)
   set("jPackageCmd", jPackageCmd)
-  val projectName = project.name as String
-  val projectVersion = project.version as String
-  val uppercaseProjectName = projectName.substring(0,1).toUpperCase() + projectName.substring(1)
+  val uppercaseProjectName = project.name.substring(0,1).toUpperCase() + project.name.substring(1)
   set("uppercaseProjectName", uppercaseProjectName)
-  set("appDirname", "$buildDir/dist/" + uppercaseProjectName + ".app")
-  set("dmgFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".dmg")
-  set("rpmFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + "-1.x86_64.rpm")
-  set("debFilename", "$buildDir/dist/" + projectName + "_" + projectVersion + "-1_amd64.deb")
-  set("msiFilename", "$buildDir/dist/" + projectName + "-" + projectVersion + ".msi")
+  set("appDirName", "$buildDir/dist/$uppercaseProjectName.app")
+  set("dmgFilename", "$buildDir/dist/${project.name}-${project.version}.dmg")
+  set("rpmFilename", "$buildDir/dist/${project.name}-${project.version}-1.x86_64.rpm")
+  set("debFilename", "$buildDir/dist/${project.name}_${project.version}-1_amd64.deb")
+  set("msiFilename", "$buildDir/dist/${project.name}-${project.version}.msi")
 }
 
 tasks.register("createDistDir") {
@@ -98,7 +96,7 @@ tasks.register("createDistDir") {
   outputs.dir("$buildDir/dist")
   doLast {
     if (File("$buildDir/libs").list().count() != 1) {
-      throw GradleException("$buildDir/libs should just contain a single shadowjar file.")
+      throw GradleException("$buildDir/libs should just contain a single shadowJar file.")
     }
     val folder = File("$buildDir/dist")
     if (!folder.exists() && !folder.mkdirs()) {
@@ -113,7 +111,7 @@ tasks.register("createDeb") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("$buildDir/libs")
   inputs.dir("$projectDir/support/jpackage/linux")
-  outputs.file(ext.get("debFilename") as String)
+  outputs.file(ext.get("debFilename"))
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -122,7 +120,7 @@ tasks.register("createDeb") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating deb package")
+        throw GradleException("Error while creating the .deb package")
       }
     }
   }
@@ -134,7 +132,7 @@ tasks.register("createRpm") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("$buildDir/libs")
   inputs.dir("$projectDir/support/jpackage/linux")
-  outputs.file(ext.get("rpmFilename") as String)
+  outputs.file(ext.get("rpmFilename"))
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -146,7 +144,7 @@ tasks.register("createRpm") {
       processBuilder2.command(parameters)
       val process2 = processBuilder2.start()
       if (process2.waitFor() != 0) {
-        throw GradleException("Error while creating rpm package")
+        throw GradleException("Error while creating the .rpm package")
       }
     }
   }
@@ -158,7 +156,7 @@ tasks.register("createMsi") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("$buildDir/libs")
   inputs.dir("$projectDir/support/jpackage/windows")
-  outputs.file(ext.get("msiFilename") as String)
+  outputs.file(ext.get("msiFilename"))
   doLast {
     if (OperatingSystem.current().isWindows) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -176,7 +174,7 @@ tasks.register("createMsi") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating msi package")
+        throw GradleException("Error while creating the .msi package")
       }
     }
   }
@@ -188,11 +186,11 @@ tasks.register("createApp") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("$buildDir/libs")
   inputs.dir("$projectDir/support/jpackage/macos")
-  outputs.dir(ext.get("appDirname") as String)
+  outputs.dir(ext.get("appDirName"))
   doLast {
     if (OperatingSystem.current().isMacOsX) {
-      val appDirname = ext.get("appDirname") as String
-      delete(appDirname)
+      val appDirName = ext.get("appDirName") as String
+      delete(appDirName)
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
       parameters.addAll(Arrays.asList(
           "--name", ext.get("uppercaseProjectName") as String,
@@ -204,9 +202,9 @@ tasks.register("createApp") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating app directory")
+        throw GradleException("Error while creating the .app directory")
       }
-      val pListFilename = "$appDirname/Contents/Info.plist"
+      val pListFilename = "$appDirName/Contents/Info.plist"
       val parameters2 = ArrayList<String>(Arrays.asList(
           "awk",
           "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
@@ -230,16 +228,16 @@ tasks.register("createApp") {
       processBuilder3.command(parameters3)
       val process3 = processBuilder3.start()
       if (process3.waitFor() != 0) {
-        throw GradleException("Error while moving Info.plist into app")
+        throw GradleException("Error while moving Info.plist into the .app directory")
       }
       val parameters4 = ArrayList<String>(Arrays.asList(
-          "codesign", "--remove-signature", appDirname
+          "codesign", "--remove-signature", appDirName
       ))
       val processBuilder4 = ProcessBuilder()
       processBuilder4.command(parameters4)
       val process4 = processBuilder4.start()
       if (process4.waitFor() != 0) {
-        throw GradleException("Error while executing codesign --remove-signature")
+        throw GradleException("Error while executing: codesign --remove-signature")
       }
     }
   }
@@ -249,14 +247,14 @@ tasks.register("createDmg") {
   group = "build"
   description = "Makes the Mac dmg package"
   dependsOn("createApp")
-  inputs.dir(ext.get("appDirname") as String)
-  outputs.file(ext.get("dmgFilename") as String)
+  inputs.dir(ext.get("appDirName"))
+  outputs.file(ext.get("dmgFilename"))
   doLast {
     if (OperatingSystem.current().isMacOsX) {
       val parameters1 = ArrayList<String>(Arrays.asList(
           ext.get("jPackageCmd") as String,
           "--type", "dmg",
-          "--app-image", ext.get("appDirname") as String,
+          "--app-image", ext.get("appDirName") as String,
           "--name", project.name as String,
           "--app-version", project.version as String,
           "--dest", "$buildDir/dist"
@@ -265,7 +263,7 @@ tasks.register("createDmg") {
       processBuilder1.command(parameters1)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating dmg package")
+        throw GradleException("Error while creating the .dmg package")
       }
     }
   }
