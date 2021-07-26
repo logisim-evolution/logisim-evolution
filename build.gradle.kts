@@ -62,17 +62,17 @@ extra.apply {
   val jPackageCmd = if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd
   val parameters = ArrayList<String>(Arrays.asList(
       jPackageCmd,
-      "--input", "$buildDir/libs",
+      "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", "${project.name}-${project.version}-all.jar",
       "--app-version", project.version as String,
       "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
-      "--dest", "$buildDir/dist"
+      "--dest", "${buildDir}/dist"
   ))
   val linuxParameters = ArrayList<String>(Arrays.asList(
       "--name", project.name,
-      "--file-associations", "$projectDir/support/jpackage/linux/file.jpackage",
-      "--icon", "$projectDir/support/jpackage/linux/logisim-icon-128.png",
+      "--file-associations", "${projectDir}/support/jpackage/linux/file.jpackage",
+      "--icon", "${projectDir}/support/jpackage/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
   ))
@@ -81,26 +81,26 @@ extra.apply {
   set("jPackageCmd", jPackageCmd)
   val uppercaseProjectName = project.name.substring(0,1).toUpperCase() + project.name.substring(1)
   set("uppercaseProjectName", uppercaseProjectName)
-  set("appDirName", "$buildDir/dist/$uppercaseProjectName.app")
-  set("dmgFilename", "$buildDir/dist/${project.name}-${project.version}.dmg")
-  set("rpmFilename", "$buildDir/dist/${project.name}-${project.version}-1.x86_64.rpm")
-  set("debFilename", "$buildDir/dist/${project.name}_${project.version}-1_amd64.deb")
-  set("msiFilename", "$buildDir/dist/${project.name}-${project.version}.msi")
+  set("appDirName", "${buildDir}/dist/${uppercaseProjectName}.app")
+  set("dmgFilename", "${buildDir}/dist/${project.name}-${project.version}.dmg")
+  set("rpmFilename", "${buildDir}/dist/${project.name}-${project.version}-1.x86_64.rpm")
+  set("debFilename", "${buildDir}/dist/${project.name}_${project.version}-1_amd64.deb")
+  set("msiFilename", "${buildDir}/dist/${project.name}-${project.version}.msi")
 }
 
 tasks.register("createDistDir") {
   group = "build"
   description = "Creates the directory for distribution"
   dependsOn("shadowJar")
-  inputs.dir("$buildDir/libs")
-  outputs.dir("$buildDir/dist")
+  inputs.dir("${buildDir}/libs")
+  outputs.dir("${buildDir}/dist")
   doLast {
-    if (File("$buildDir/libs").list().count() != 1) {
-      throw GradleException("$buildDir/libs should just contain a single shadowJar file.")
+    if (File("${buildDir}/libs").list().count() != 1) {
+      throw GradleException("${buildDir}/libs should just contain a single shadowJar file.")
     }
-    val folder = File("$buildDir/dist")
+    val folder = File("${buildDir}/dist")
     if (!folder.exists() && !folder.mkdirs()) {
-      throw GradleException("Unable to create directory \"$buildDir/dist\"")
+      throw GradleException("Unable to create directory \"${buildDir}/dist\"")
     }
   }
 }
@@ -109,8 +109,8 @@ tasks.register("createDeb") {
   group = "build"
   description = "Makes the Linux platform specific packages"
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("$buildDir/libs")
-  inputs.dir("$projectDir/support/jpackage/linux")
+  inputs.dir("${buildDir}/libs")
+  inputs.dir("${projectDir}/support/jpackage/linux")
   outputs.file(ext.get("debFilename"))
   doLast {
     if (OperatingSystem.current().isLinux) {
@@ -130,8 +130,8 @@ tasks.register("createRpm") {
   group = "build"
   description = "Makes the Linux platform specific packages"
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("$buildDir/libs")
-  inputs.dir("$projectDir/support/jpackage/linux")
+  inputs.dir("${buildDir}/libs")
+  inputs.dir("${projectDir}/support/jpackage/linux")
   outputs.file(ext.get("rpmFilename"))
   doLast {
     if (OperatingSystem.current().isLinux) {
@@ -154,16 +154,16 @@ tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows platform specific package"
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("$buildDir/libs")
-  inputs.dir("$projectDir/support/jpackage/windows")
+  inputs.dir("${buildDir}/libs")
+  inputs.dir("${projectDir}/support/jpackage/windows")
   outputs.file(ext.get("msiFilename"))
   doLast {
     if (OperatingSystem.current().isWindows) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
       parameters.addAll(Arrays.asList(
           "--name", project.name,
-          "--file-associations", "$projectDir/support/jpackage/windows/file.jpackage",
-          "--icon", "$projectDir/support/jpackage/windows/Logisim-evolution.ico",
+          "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
+          "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
           "--type", "msi",
           "--win-menu-group", "logisim",
           "--win-shortcut",
@@ -184,8 +184,8 @@ tasks.register("createApp") {
   group = "build"
   description = "Makes the Mac application"
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("$buildDir/libs")
-  inputs.dir("$projectDir/support/jpackage/macos")
+  inputs.dir("${buildDir}/libs")
+  inputs.dir("${projectDir}/support/jpackage/macos")
   outputs.dir(ext.get("appDirName"))
   doLast {
     if (OperatingSystem.current().isMacOsX) {
@@ -194,8 +194,8 @@ tasks.register("createApp") {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
       parameters.addAll(Arrays.asList(
           "--name", ext.get("uppercaseProjectName") as String,
-          "--file-associations", "$projectDir/support/jpackage/macos/file.jpackage",
-          "--icon", "$projectDir/support/jpackage/macos/Logisim-evolution.icns",
+          "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
+          "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
           "--type", "app-image"
       ))
       val processBuilder1 = ProcessBuilder()
@@ -204,14 +204,14 @@ tasks.register("createApp") {
       if (process1.waitFor() != 0) {
         throw GradleException("Error while creating the .app directory")
       }
-      val pListFilename = "$appDirName/Contents/Info.plist"
+      val pListFilename = "${appDirName}/Contents/Info.plist"
       val parameters2 = ArrayList<String>(Arrays.asList(
           "awk",
           "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-              + "{print >\"$buildDir/dist/Info.plist\"};"
+              + "{print >\"${buildDir}/dist/Info.plist\"};"
               + "/NSHighResolutionCapable/{"
-                  + "print \"  <string>true</string>\" >\"$buildDir/dist/Info.plist\";"
-                  + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"$buildDir/dist/Info.plist\""
+                  + "print \"  <string>true</string>\" >\"${buildDir}/dist/Info.plist\";"
+                  + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${buildDir}/dist/Info.plist\""
               + "}",
           pListFilename
       ))
@@ -222,7 +222,7 @@ tasks.register("createApp") {
         throw GradleException("Error while patching Info.plist")
       }
       val parameters3 = ArrayList<String>(Arrays.asList(
-          "mv", "$buildDir/dist/Info.plist", pListFilename
+          "mv", "${buildDir}/dist/Info.plist", pListFilename
       ))
       val processBuilder3 = ProcessBuilder()
       processBuilder3.command(parameters3)
@@ -257,7 +257,7 @@ tasks.register("createDmg") {
           "--app-image", ext.get("appDirName") as String,
           "--name", project.name as String,
           "--app-version", project.version as String,
-          "--dest", "$buildDir/dist"
+          "--dest", "${buildDir}/dist"
       ))
       val processBuilder1 = ProcessBuilder()
       processBuilder1.command(parameters1)
@@ -316,7 +316,7 @@ tasks {
 
     // FIXME there should be cleaner way of using custom suppression config with built-in style
     // https://stackoverflow.com/a/64703619/1235698
-    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "$projectDir/config/checkstyle/suppressions.xml")
+    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/config/checkstyle/suppressions.xml")
   }
   checkstyleMain {
     source = fileTree("src/main/java")
