@@ -228,6 +228,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
           getAttributeInputType(),
           getAttributeColumns(),
           getAttributeRows(),
+          StdAttr.SELECT_LOC,
           IoLibrary.ATTR_ON_COLOR,
           IoLibrary.ATTR_OFF_COLOR,
           ATTR_PERSIST,
@@ -243,6 +244,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
           getAttributeItemColumn(),
           BitWidth.create(cols),
           BitWidth.create(rows),
+          StdAttr.SELECT_BOTTOM_LEFT,
           Color.GREEN,
           Color.gray,
           0,
@@ -326,6 +328,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
+    } else if (attr == StdAttr.SELECT_LOC) {
+        updatePorts(instance);
     } else if (attr == getAttributeRows()
         || attr == getAttributeColumns()
         || attr == getAttributeInputType()) {
@@ -450,22 +454,24 @@ public abstract class DotMatrixBase extends InstanceFactory {
     Object input = instance.getAttributeValue(getAttributeInputType());
     final var rows = instance.getAttributeValue(getAttributeRows()).getWidth();
     final var cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
+    final var selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     Port[] ps;
     if (input == getAttributeItemColumn()) {
       ps = new Port[cols];
       for (var i = 0; i < cols; i++) {
-        ps[i] = new Port(10 * i, 0, Port.INPUT, rows);
+        ps[i] = new Port(10 * i, selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : rows * -10 * scaleY, Port.INPUT, rows);
       }
     } else if (input == getAttributeItemRow()) {
       ps = new Port[rows];
       for (var i = 0; i < rows; i++) {
-        ps[i] = new Port(0, 10 * i, Port.INPUT, cols);
+        ps[i] = new Port(selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10, 10 * i, Port.INPUT, cols);
       }
     } else {
       if (rows <= 1) {
         ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(10 * cols, 0, Port.INPUT, rows)};
       } else {
-        ps = new Port[] {new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows)};
+        final var dx = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 0 : cols * 10;
+        ps = new Port[] {new Port(dx, 0, Port.INPUT, cols), new Port(dx, 10, Port.INPUT, rows)};
       }
     }
     instance.setPorts(ps);

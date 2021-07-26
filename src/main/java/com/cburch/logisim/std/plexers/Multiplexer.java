@@ -312,7 +312,7 @@ public class Multiplexer extends InstanceFactory {
     final var wide = size == PlexersLibrary.SIZE_WIDE;
     final var dir = instance.getAttributeValue(StdAttr.FACING);
     final var vertical = dir != Direction.NORTH && dir != Direction.SOUTH;
-    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    final var selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     final var botLeft = selectLoc == StdAttr.SELECT_BOTTOM_LEFT;
     final var selMult = botLeft ? 1 : -1;
     final var data = instance.getAttributeValue(StdAttr.WIDTH);

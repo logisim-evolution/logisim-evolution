@@ -285,15 +285,15 @@ public class Buzzer extends InstanceFactory {
     p[VOL].setToolTip(S.getter("buzzerVolume"));
     p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
     p[ENABLE].setToolTip(S.getter("enableSound"));
-    Object gateLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     var xPw = 20;
     var yPw = 20;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) {
-      xPw *= gateLoc == StdAttr.SELECT_BOTTOM_LEFT ? -1 : 1;
+      xPw *= selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? -1 : 1;
       yPw *= facing == Direction.SOUTH ? -1 : 1;
     } else {
       xPw *= facing == Direction.EAST ? -1 : 1;
-      yPw *= gateLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
+      yPw *= selectLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
     }
     p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
     p[PW].setToolTip(S.getter("buzzerDutyCycle"));
