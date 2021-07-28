@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Décalage
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/shifter.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Décalage</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.3.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs"  src="../../../../img-libs/shifter.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Ce composant comprend deux entrées, <var>data</var> et <var>dist</var>, et il a une sortie, qui est le résultat du décalage de <var>data</var> par <var>dist</var> places. Les deux <var>data</var> et la sortie ont le même nombre de bits en eux. Le composant prend en charge les types de décalage suivants :
+      </p>
+      <ul>
+        <li>Gauche logique : Tous les bits de <var>data</var> sont décalés vers le haut <var>dist</var> places, les <var>dist</var> places inférieures étant remplies de 0. Par exemple, 11001011 logiquement décalé deux fois vers la gauche donne 00101100. (Les deux premières sont perdues).
+        </li>
+        <li>Logique droite : Tous les bits de <var>data</var> sont décalés vers le bas de <var>dist</var> places, les <var>dist</var> places supérieures étant remplies de 0. Par exemple, 11001011 logiquement décalé deux fois vers la droite donne 00110010. (Les deux inférieurs sont perdus).
+        </li>
+        <li>Arithmétique droite : Tous les bits de <var>data</var> sont décalés vers le bas de <var>dist</var> places, les <var>dist</var> places supérieures étant remplies de répétitions de n'importe quel bit supérieur de <var>data</var>. Par exemple, 11001011 Arithmétiquement décalé vers la droite deux fois est 11110010.
+        </li>
+        <li>Rotation à gauche : Tous les bits de <var>data</var> sont décalés vers le haut de <var>dist</var> places, avec les <var>dist</var> places supérieures enveloppées dans les inférieures. Par exemple, 11001011 tourné deux fois vers la gauche est 00101111.
+        </li>
+        <li>Rotation à droite : Tous les bits de <var>data</var> sont décalés vers le bas <var>dist</var> places, avec les <var>dist</var> places inférieures enroulées dans le haut. Par exemple, 11001011 tourné deux fois vers la droite est 11110010.
+        </li>
+      </ul>
+      <p>
+        Notez que si <var>dist</var> contient des entrées flottantes ou d'erreur, alors la sortie est composée entièrement de valeurs d'erreur, puisqu'il n'y a aucun moyen de deviner de combien décaler l'entrée.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          La valeur à décaler.
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud (entrée, la largeur du bit est calculée comme ci-dessous)
+        </dt>
+        <dd>
+          Le nombre de bits par lequel décaler l'entrée <var>data</var>. Cette entrée doit avoir autant de bits que le nombre minimum pour indiquer n'importe quelle distance de décalage de 0 jusqu'à un moins que les bits de données ; c'est-à-dire qu'elle doit être le plafond du logarithme de base-2 des bits de données. Par exemple, si les bits de données étaient 8, cette entrée nécessiterait 3 bits, mais si elle était 9, elle nécessiterait 4 bits.
+        </dd>
+        <dt>
+          Bord est (sortie, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Le résultat du décalage de la valeur d'entrée par la distance d'entrée.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit de l'entrée et de la sortie du composant.
+        </dd>
+        <dt>
+          <b class="propertie">Shift Type</b>
+        </dt>
+        <dd>
+          L'un des cinq types de déplacement possibles décrits ci-dessus (logique à gauche, logique à droite, arithmétique à droite, rotation à gauche, rotation à droite).
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

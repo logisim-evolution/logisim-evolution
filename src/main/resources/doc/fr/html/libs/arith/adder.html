@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Additionneur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/adder.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Additionneur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 11
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+               <img class="appearancelibs" src="../../../../img-libs/adder.png" alt="#########" width="64" height="64"> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Ce composant additionne deux valeurs présentées sur les entrées ouest et fournis la somme sur la sortie est. Le composant est conçu de manière à pouvoir être cascadé avec d'autres additionneurs pour permetre une addition de plus grande largeur de bit que ce qui est possible avec un seul additionneur : L'entrée de retenue recoit une valeur d'un bit à ajouter également à la somme (si elle est spécifiée), et une sortie de retenue fournit une valeur de dépassement d'un bit qui peut être envoyée à un autre additionneur.
+      </p>
+      <p>
+        Si l'une des valeurs contient des bits flottants ou des bits d'erreur, le composant effectuera une addition partielle. C'est-à-dire qu'il calculera autant de bits de poids faible que possible. Mais au-dessus du bit flottant ou d'erreur, le résultat aura des bits flottants ou d'erreur. 
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+		  Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          Une des deux valeurs à ajouter.
+        </dd>
+        <dt>
+		  Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          L'autre des deux valeurs à ajouter.
+        </dd>
+        <dt>
+		  Bord nord, étiqueté <var>c in</var> (entrée, largeur de bit 1)
+        </dt>
+        <dd>
+		   Une valeur de report à ajouter à la somme. Si la valeur est inconnue (c'est-à-dire flottante), elle est considérée comme égale à 0.
+        </dd>
+        <dt>
+		  Bord est, (la somme en sortie, la largeur des bits correspond à l'attribut Bits de données) 
+        </dt>
+        <dd>
+          Les <var>Largeur données</var> bits inférieurs de la somme des deux valeurs provenant du bord ouest, plus le bit <var>c</var><sub><var>in</var></sub>.
+        </dd>
+        <dt>
+          Bord sud, étiqueté <var>c out</var> (sortie, largeur de bit 1)
+        </dt>
+        <dd>
+   	      Le bit de report calculé pour la somme. Si les valeurs additionnées en tant que valeurs non signées donnent un résultat qui tient dans <var>Largeur données</var> bits, alors ce bit sera 0 ; sinon, il sera 1.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit des valeurs à additionner et du résultat.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

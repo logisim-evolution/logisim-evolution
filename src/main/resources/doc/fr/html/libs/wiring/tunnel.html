@@ -12,9 +12,10 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class=maindiv>
+    <div class="maindiv">
       <h1>
-        <img class=iconlibs src="../../../../icons/6464/tunnel.png" alt="#########" height=32 width=32> <em>Tunnel</em>
+        <img class="iconlibs" src="../../../../icons/6464/tunnel.png" alt="#########" height="32" width="32"> 
+		<em>Tunnel</em>
       </h1>
       <table>
         <tbody>
@@ -48,68 +49,76 @@
         Comportement
       </h2>
       <p>
-        Un <q>tunnel</q> se comporte comme un câble dans le sens qu’il lie des points d'un circuit ensemble, mais contrairement à un câble, la connexion n’est pas explicitement dessinée. L'utilité se démontre lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles surchargerait le schéma de manière exagéré. Il ne permet des connexions entre plusieurs schémas de circuit.
+        Un <q>tunnel</q> se comporte comme un câble dans le sens qu’il relie des points d'un circuit ensemble, mais contrairement à un câble, la connexion n’est pas explicitement dessinée. L'utilité se démontre lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles surchargerait le schéma de manière exagéré. Il ne permet pas des connexions entre plusieurs schémas de circuit.
       </p>
       <center>
         <img src="../../../../img-libs/tunnel-demo.png" alt="#########">
       </center>
       <p>
-        L'illustration ci-dessus montre comment cela fonctionne. Ici à gauche, les trois tunnels ont le même label, <em>a</em>, et représente les trois points auxquels les tunnels sont connectés. Si l'un des tunnels porte un label différent, comme <em>b</em>, alors il ferait partie d'un ensemble de tunnels différent.<br>
-        Dans l'exemple le buffer contrôlé émet une sortie flottante puisque son entrée inférieure est 0. Cela conduit normalement le fil en provenant du buffer contrôlé à être bleu, mais ici, il est vert foncé. Ceci est correct, car il est relié au travers du tunnel à la broche du bas qui est à 0. Si le contrôle du buffer passe à 1, le tunnel transportera cette valeur sur les autres points et elle sera en conflit avec le zéro de la broche du bas déclenchant une erreur. On verrait alors des fils rouges traverser les trois tunnels comme dans l'exemple <em>c</em> à droite
+        L'illustration ci-dessus montre comment cela fonctionne. Ici, trois tunnels ont le même label, <em>Clk_A</em>, et représentent les trois points auxquels les tunnels sont connectés. Si l'un des tunnels porte un label différent, comme <em>R_W</em>, alors il ferait partie d'un ensemble de tunnels différent.<br>
+		Dans l'exemple suivant, on peut observer l'apparition d'une erreur à l'activation du buffer contrôlé en conflit avec la broche du bas.
+		</p>
+        <center>
+         <img src="../../../../img-libs/tunnel-demo1.gif" alt="#########">
+        </center>
+		</p>
+		Le buffer contrôlé émet une sortie flottante puisque son entrée de commande est <b class="zerov">0</b>. Normalement cela conduit le fil en provenance du buffer contrôlé à être bleu, mais ici, il est vert clair. Ceci est correct, car il est relié au travers du tunnel à la broche du bas qui est à <b class="unov">1</b>. Si le contrôle du buffer passe à <b class="unov">1</b>, le tunnel transportera cette valeur sur les autres points et elle sera en conflit avec le <b class="unov">1</b> de la broche du bas déclenchant une erreur. On voit alors des fils rouges (<b class="evalue">E</b>) traverser les trois tunnels comme dans l'exemple.
       </p>
       <h2>
         Pins
       </h2>
       <p>
-        Un tunnel n’a qu’une seule broche dont la largeur de bit correspond à l’attribut Data Bits du tunnel. Ce composant n'est ni une entrée ni une sortie. Les tunnels de même label sont simplement interconnectés de manière transparente comme des fils.
+        Un tunnel n’a qu’une seule broche dont la largeur de bit correspond à l’attribut <b class="propertie">Largeur données</b> du tunnel. Ce composant n'est ni une entrée ni une sortie. Les tunnels de même label sont simplement interconnectés de manière transparente comme des fils.
       </p>
       <h2>
         Attributs
       </h2>
       <p>
-        Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q>Data Bits</q> et les touches fléchées modifient son attribut <q>Orientation</q> .
+        Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie son attribut <b class="propertie">Largeur données</b> et les touches fléchées modifient son attribut <b class="propertie">Orientation</b> .
       </p>
+	   <div class="attliste">
       <dl>
         <dt>
-          Orientation
+          <b class="propertie">Orientation</b>
         </dt>
         <dd>
           La direction vers laquelle pointe le tunnel.
         </dd>
         <dt>
-          Data Bits
+          <b class="propertie">Largeur données</b>
         </dt>
         <dd>
           La largeur en bits du tunnel.
         </dd>
         <dt>
-          Label
+          <b class="propertie">Label</b>
         </dt>
         <dd>
           Le texte dans l’étiquette associée au tunnel. Ce tunnel est connecté à tous les autres tunnels avec exactement le même libellé.
         </dd>
         <dt>
-          Police du Label
+          <b class="propertie">Police du Label</b>
         </dt>
         <dd>
           La police avec laquelle rendre l'étiquette.
         </dd>
       </dl>
+	  </div>
       <h2>
-        Action de l'outil pousser
+        Comportement de l'outil pousser 
       </h2>
       <p>
         Aucun.
       </p>
       <h2>
-        Action de l'outil text
+        Comportement de l'outil text
       </h2>
       <p>
         Permets de modifier l’étiquette associée au tunnel.
       </p>
       <p>
-        <a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a>
+        Retour à  <a href="../index.html"><em>Référence de la bibliothèque</em></a>
       </p>
-    </div>&gt;
+    </div>
   </body>
 </html>

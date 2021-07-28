@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -89,48 +89,55 @@
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, the arrow keys alter its <q>Facing</q> attribute.
+        When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
-	  
+	  <div class="attliste">
       <dl>
         <dt>
-          <b class="propertie">&nbsp;Facing </b>
+          <b class="propertie">Facing </b>
         </dt>
         <dd>
           The side of the component where its input pin should be.
         </dd>
+		 <dt>
+          <b class="propertie">Radix</b>
+        </dt>
+        <dd>
+          Allows you to define the base in which the values will be represented.<br>
+		  Example for 1010 in binary<br>
+			&emsp;Binary&emsp;: <b>1010<sub>b</sub></b><br>
+			&emsp;Octal&emsp;: <b>12<sub>o</sub></b><br>
+			&emsp;Signed decimal&emsp;: <b>-6<sub>s</sub></b><br>
+			&emsp;Unsigned deciaml&emsp;: <b>10<sub>u</sub></b><br>
+			&emsp;Hexadecimal&emsp;: <b>A<sub>h</sub></b><br>
+			&emsp;Float&emsp;: <b>1.4E-44<sub>f</sub> </b> Only in 32 or 64 bits 1 or 0. If not present the value <b>NaN<sub>f</sub></b> <br>
+        </dd>
         <dt>
-          <b class="propertie">&nbsp;Label </b>
+          <b class="propertie">Label </b>
         </dt>
         <dd>
           The text within the label associated with the component.
         </dd>
         <dt>
-          <b class="propertie">&nbsp;Label Location </b>
+          <b class="propertie">Label Location </b>
         </dt>
         <dd>
           The location of the label relative to the component.
         </dd>
         <dt>
-          <b class="propertie">&nbsp;Label Font </b>
+          <b class="propertie">Label Font </b>
         </dt>
         <dd>
           The font with which to render the label.
         </dd>
-        <dt>
-         <b class="propertie">&nbsp;Radix </b>
-        </dt>
-        <dd>
-          The base (for example, binary, decimal, or hexadecimal) in which a value is displayed.
-        </dd>
-		<dt>
-          <b class="propertie">&nbsp;Appearence </b>
+          <b class="propertie">Appearence </b>
         </dt>
         <dd>
           There are two types of appearance, CLassic Logisim and Arrow Shapes. See the examples at the top of the page
         </dd>
+		
       </dl>
-
+      </div>
       <h2>
         Poke Tool Behavior
       </h2>
@@ -144,7 +151,7 @@
         Allows the label associated with the component to be edited.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
       </p>
     </div>
   </body>

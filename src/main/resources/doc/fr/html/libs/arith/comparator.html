@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Comparateur
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/comparator.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Comparateur</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 22
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/comparator.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Compare deux valeurs, soit sous forme de valeurs non signées, soit sous forme de compléments à deux, selon l'attribut Numeric Type. Normalement, l'une des sorties sera 1, et les deux autres sorties seront 0.
+      </p>
+      <p>
+        La comparaison est effectuée en commençant par les bits les plus significatifs de chaque nombre et en descendant en parallèle jusqu'à ce qu'un emplacement soit trouvé où les deux valeurs sont en désaccord. Si, toutefois, une valeur d'erreur ou une valeur flottante est rencontrée au cours de cette descente, alors toutes les sorties correspondront à cette erreur ou à cette valeur flottante.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest, extrémité nord (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          La première des deux valeurs à comparer.
+        </dd>
+        <dt>
+          Bord ouest, extrémité sud (entrée, la largeur des bits correspond à l'attribut Bits de données)
+        </dt>
+        <dd>
+          La deuxième des deux valeurs à comparer.
+        </dd>
+        <dt>
+          Bord est, étiqueté <tt>&gt;</tt> (sortie, largeur de bit 1)
+        </dt>
+        <dd>
+          1 si la première entrée est supérieure à la deuxième entrée, 0 si la première entrée est inférieure ou égale à la deuxième entrée.
+        </dd>
+        <dt>
+          Bord est, étiqueté <tt>=</tt> (sortie, largeur de bit 1)
+        </dt>
+        <dd>
+          1 si la première entrée est égale à la deuxième entrée, 0 si la première entrée n'est pas égale à la deuxième entrée.
+        </dd>
+        <dt>
+          Bord est, étiqueté <tt>&lt;</tt> (sortie, largeur de bit 1)
+        </dt>
+        <dd>
+          1 si la première entrée est inférieure à la deuxième entrée, 0 si la première entrée est supérieure ou égale à la deuxième entrée.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou en cours d'ajout, les touches <b class="tkeybd"><b class="tkeybd">Alt-0</b></b> à <b class="tkeybd"><b class="tkeybd">Alt-9</b></b> modifient son attribut <b class="propertie">Largeur données</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largeur données</b>
+        </dt>
+        <dd>
+          La largeur de bit de l'entrée et de la sortie du composant.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>
