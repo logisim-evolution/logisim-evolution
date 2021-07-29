@@ -329,7 +329,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
     } else if (attr == StdAttr.SELECT_LOC) {
-        updatePorts(instance);
+      updatePorts(instance);
     } else if (attr == getAttributeRows()
         || attr == getAttributeColumns()
         || attr == getAttributeInputType()) {
