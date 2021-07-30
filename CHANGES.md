@@ -17,7 +17,7 @@
   * Added TTL 74x139: dual 2-line to 4-lines decoders.
   * Fixed missing port on DotMatrix.
   * Combined `Select Location` from Plexers and `Gate Location` from Wiring to one attribute.
-    - Breaks backwards comparability for Transistors and Transmission Gates.
+    * Breaks backwards comparability for Transistors and Transmission Gates.
       When opening old .circ files, they will have the default `Select Location` ("Bottom/Left").
   * Replace DarkLaf with FlatLaf for better compatibility.
   * Adds "Rotate Left" context menu action.
