@@ -155,7 +155,7 @@ class MenuHelp extends JMenu implements ActionListener {
     if (!browserIntegrationSupported()) return;
     try {
       if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-        Desktop.getDesktop().browse(new URI(Main.APP_URL));
+        Desktop.getDesktop().browse(new URI(Main.ORG_URL));
       }
     } catch (Exception e) {
       e.printStackTrace();

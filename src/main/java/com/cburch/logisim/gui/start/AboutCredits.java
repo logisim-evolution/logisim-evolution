@@ -62,7 +62,7 @@ class AboutCredits extends JComponent {
     lines
         .title(Main.APP_DISPLAY_NAME)
         .h2("Copyright \u00A9" + Main.COPYRIGHT_YEAR + " " + Main.APP_NAME + " developers")
-        .url(Main.APP_URL)
+        .url(Main.ORG_URL)
         .space()
         .h1(S.get("creditsRoleFork"))
         .text("College of the Holy Cross")

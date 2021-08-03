@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.fpga.gui.Reporter;
 
 public class FileWriter {
@@ -152,42 +153,24 @@ public class FileWriter {
     ArrayList<String> Lines = new ArrayList<>();
     if (HDL.isVHDL()) {
       Lines.add("--==============================================================================");
-      Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
+      Lines.add("--== Logisim-evolution goes FPGA automatic generated VHDL code                ==");
+      Lines.add(String.format("--== %-72s ==", Main.APP_URL));
       Lines.add("--==                                                                          ==");
       Lines.add("--==                                                                          ==");
-      StringBuilder ThisLine = new StringBuilder("--== Project   : ");
-      int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
-      ThisLine.append(projName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
-      ThisLine = new StringBuilder("--== Component : ");
-      nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
-      ThisLine.append(compName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
+      Lines.add(String.format("--== Project   : %-60s ==", projName));
+      Lines.add(String.format("--== Component : %-60s ==", compName));
       Lines.add("--==                                                                          ==");
       Lines.add("--==============================================================================");
       Lines.add("");
     } else {
       if (HDL.isVerilog()) {
-        Lines.add(
-            "/******************************************************************************");
-        Lines.add(
-            " ** Logisim goes FPGA automatic generated Verilog code                       **");
-        Lines.add(
-            " **                                                                          **");
-        StringBuilder ThisLine = new StringBuilder(" ** Component : ");
-        int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
-        ThisLine.append(compName);
-        ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-        ThisLine.append("**");
-        Lines.add(ThisLine.toString());
-        Lines.add(
-            " **                                                                          **");
-        Lines.add(
-            " ******************************************************************************/");
+        Lines.add("/******************************************************************************");
+        Lines.add(" ** Logisim-evolution goes FPGA automatic generated Verilog code             **");
+        Lines.add(String.format(" ** %-72s **", Main.APP_URL));
+        Lines.add(" **                                                                          **");
+        Lines.add(String.format(" ** Component : %-60s **", compName));
+        Lines.add(" **                                                                          **");
+        Lines.add(" ******************************************************************************/");
         Lines.add("");
       }
     }
