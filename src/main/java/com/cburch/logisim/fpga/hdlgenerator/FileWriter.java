@@ -153,7 +153,11 @@ public class FileWriter {
     ArrayList<String> Lines = new ArrayList<>();
     if (HDL.isVHDL()) {
       Lines.add("--==============================================================================");
-      Lines.add("--== Logisim-evolution goes FPGA automatic generated VHDL code                ==");
+      Lines.add("--== "
+                + Main.APP_NAME
+                + " goes FPGA automatic generated VHDL code"
+                + " ".repeat(Math.max(0, 33 - Main.APP_NAME.length()))
+                +"==");
       Lines.add(String.format("--== %-72s ==", Main.APP_URL));
       Lines.add("--==                                                                          ==");
       Lines.add("--==                                                                          ==");
@@ -165,7 +169,11 @@ public class FileWriter {
     } else {
       if (HDL.isVerilog()) {
         Lines.add("/******************************************************************************");
-        Lines.add(" ** Logisim-evolution goes FPGA automatic generated Verilog code             **");
+        Lines.add(" ** "
+                  + Main.APP_NAME
+                  + " goes FPGA automatic generated Verilog code"
+                  + " ".repeat(Math.max(0, 30 - Main.APP_NAME.length()))
+                  + "**");
         Lines.add(String.format(" ** %-72s **", Main.APP_URL));
         Lines.add(" **                                                                          **");
         Lines.add(String.format(" ** Component : %-60s **", compName));

@@ -406,7 +406,9 @@ class XmlWriter {
     ret.appendChild(
         doc.createTextNode(
             "\nThis file is intended to be "
-                + "loaded by Logisim-evolution ("
+                + "loaded by "
+                + Main.APP_NAME
+                + "("
                 + Main.APP_URL
                 + ").\n"));
     ret.setAttribute("version", "1.0");
