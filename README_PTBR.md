@@ -1,6 +1,8 @@
 [![Logisim-evolution](artwork/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
 
-[English](/readme.md) [Portuguese](/README_PTBR.md)
+---
+
+[English](/readme.md) | [Portuguese](/README_PTBR.md)
 
 ---
 
