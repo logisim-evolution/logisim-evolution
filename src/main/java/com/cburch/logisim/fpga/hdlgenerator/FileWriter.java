@@ -155,10 +155,10 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
     
-    var headText = " " + Main.APP_NAME + " goes FPGA automatic generated VHDL code";
-    var headUrl  = " " + Main.APP_URL;
-    var headProj = " Project   : " + projName;
-    var headComp = " Component : " + compName;
+    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated VHDL code";
+    final var headUrl  = " " + Main.APP_URL;
+    final var headProj = " Project   : " + projName;
+    final var headComp = " Component : " + compName;
     
     if (HDL.isVHDL()) {
       headWidth = 74;
@@ -181,13 +181,13 @@ public class FileWriter {
       headClose = "**";
       
       Lines.add("/**" + "*".repeat(headWidth) + headClose);
-        Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
-        Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
-        Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-        Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
-        Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-        Lines.add(headOpen + "*".repeat(headWidth) + "*/");
-        Lines.add("");
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "*".repeat(headWidth) + "*/");
+      Lines.add("");
     }
     return Lines;
   }
