@@ -151,36 +151,43 @@ public class FileWriter {
 
   public static ArrayList<String> getGenerateRemark(String compName, String projName) {
     ArrayList<String> Lines = new ArrayList<>();
+    final int headWidth;
+    final String headOpen;
+    final String headClose;
+    
+    var headText = " " + Main.APP_NAME + " goes FPGA automatic generated VHDL code";
+    var headUrl  = " " + Main.APP_URL;
+    var headProj = " Project   : " + projName;
+    var headComp = " Component : " + compName;
+    
     if (HDL.isVHDL()) {
-      Lines.add("--==============================================================================");
-      Lines.add("--== "
-                + Main.APP_NAME
-                + " goes FPGA automatic generated VHDL code"
-                + " ".repeat(Math.max(0, 33 - Main.APP_NAME.length()))
-                + "==");
-      Lines.add(String.format("--== %-72s ==", Main.APP_URL));
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==                                                                          ==");
-      Lines.add(String.format("--== Project   : %-60s ==", projName));
-      Lines.add(String.format("--== Component : %-60s ==", compName));
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==============================================================================");
+      headWidth = 74;
+      headOpen = "--==";
+      headClose = "==";
+      
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
       Lines.add("");
-    } else {
-      if (HDL.isVerilog()) {
-        Lines.add("/******************************************************************************");
-        Lines.add(" ** "
-                  + Main.APP_NAME
-                  + " goes FPGA automatic generated Verilog code"
-                  + " ".repeat(Math.max(0, 30 - Main.APP_NAME.length()))
-                  + "**");
-        Lines.add(String.format(" ** %-72s **", Main.APP_URL));
-        Lines.add(" **                                                                          **");
-        Lines.add(String.format(" ** Component : %-60s **", compName));
-        Lines.add(" **                                                                          **");
-        Lines.add(" ******************************************************************************/");
+    } else if (HDL.isVerilog()) {
+      headWidth = 74;
+      headOpen = " **";
+      headClose = "**";
+      
+      Lines.add("/**" + "*".repeat(headWidth) + headClose);
+        Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+        Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+        Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+        Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+        Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+        Lines.add(headOpen + "*".repeat(headWidth) + "*/");
         Lines.add("");
-      }
     }
     return Lines;
   }
