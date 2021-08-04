@@ -157,7 +157,7 @@ public class FileWriter {
                 + Main.APP_NAME
                 + " goes FPGA automatic generated VHDL code"
                 + " ".repeat(Math.max(0, 33 - Main.APP_NAME.length()))
-                +"==");
+                + "==");
       Lines.add(String.format("--== %-72s ==", Main.APP_URL));
       Lines.add("--==                                                                          ==");
       Lines.add("--==                                                                          ==");
