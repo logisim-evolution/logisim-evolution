@@ -93,8 +93,7 @@ public class Main {
   public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
   public static final int COPYRIGHT_YEAR = 2021;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
-  public static final String APP_URL = "https://github.com/logisim-evolution/logisim-evolution";
-  public static final String ORG_URL = "https://github.com/logisim-evolution/";
+  public static final String APP_URL = "https://github.com/logisim-evolution/";
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
