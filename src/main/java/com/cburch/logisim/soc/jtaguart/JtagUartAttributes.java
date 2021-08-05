@@ -68,8 +68,10 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
   public static final AttributeOption OPT_8192 = new AttributeOption("8192", S.fixedString("8KB"));
   public static final AttributeOption OPT_16384 = new AttributeOption("16384", S.fixedString("16KB"));
   public static final AttributeOption OPT_32768 = new AttributeOption("32768", S.fixedString("32KB"));
-  public static final AttributeOption[] SIZE_ARRAY = new AttributeOption[] {
-        OPT_8, OPT_16, OPT_32, OPT_64, OPT_128, OPT_256, OPT_512, OPT_1024, OPT_2048, OPT_4096, OPT_8192, OPT_16384, OPT_32768
+  public static final AttributeOption[] SIZE_ARRAY =
+      new AttributeOption[] {
+        OPT_8, OPT_16, OPT_32, OPT_64, OPT_128, OPT_256, OPT_512, OPT_1024, OPT_2048, OPT_4096,
+        OPT_8192, OPT_16384, OPT_32768
       };
 
   public static final Attribute<Integer> START_ADDRESS =
