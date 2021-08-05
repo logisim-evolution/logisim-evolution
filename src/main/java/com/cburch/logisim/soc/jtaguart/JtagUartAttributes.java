@@ -55,29 +55,21 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
     }
   }
 
-  public static final AttributeOption OPT_8 = new AttributeOption("8", S.getter("JtagSize8"));
-  public static final AttributeOption OPT_16 = new AttributeOption("16", S.getter("JtagSize16"));
-  public static final AttributeOption OPT_32 = new AttributeOption("32", S.getter("JtagSize32"));
-  public static final AttributeOption OPT_64 = new AttributeOption("64", S.getter("JtagSize64"));
-  public static final AttributeOption OPT_128 = new AttributeOption("128", S.getter("JtagSize128"));
-  public static final AttributeOption OPT_256 = new AttributeOption("256", S.getter("JtagSize256"));
-  public static final AttributeOption OPT_512 = new AttributeOption("512", S.getter("JtagSize512"));
-  public static final AttributeOption OPT_1024 =
-      new AttributeOption("1024", S.getter("JtagSize1024"));
-  public static final AttributeOption OPT_2048 =
-      new AttributeOption("2048", S.getter("JtagSize2048"));
-  public static final AttributeOption OPT_4096 =
-      new AttributeOption("4096", S.getter("JtagSize4096"));
-  public static final AttributeOption OPT_8192 =
-      new AttributeOption("8192", S.getter("JtagSize8192"));
-  public static final AttributeOption OPT_16384 =
-      new AttributeOption("16384", S.getter("JtagSize16384"));
-  public static final AttributeOption OPT_32768 =
-      new AttributeOption("32768", S.getter("JtagSize32768"));
-  public static final AttributeOption[] SIZE_ARRAY =
-      new AttributeOption[] {
-        OPT_8, OPT_16, OPT_32, OPT_64, OPT_128, OPT_256, OPT_512, OPT_1024, OPT_2048, OPT_4096,
-        OPT_8192, OPT_16384, OPT_32768
+  public static final AttributeOption OPT_8 = new AttributeOption("8", S.fixedString("8"));
+  public static final AttributeOption OPT_16 = new AttributeOption("16", S.fixedString("16"));
+  public static final AttributeOption OPT_32 = new AttributeOption("32", S.fixedString("32"));
+  public static final AttributeOption OPT_64 = new AttributeOption("64", S.fixedString("64"));
+  public static final AttributeOption OPT_128 = new AttributeOption("128", S.fixedString("128"));
+  public static final AttributeOption OPT_256 = new AttributeOption("256", S.fixedString("256"));
+  public static final AttributeOption OPT_512 = new AttributeOption("512", S.fixedString("512"));
+  public static final AttributeOption OPT_1024 = new AttributeOption("1024", S.fixedString("1KB"));
+  public static final AttributeOption OPT_2048 = new AttributeOption("2048", S.fixedString("2KB"));
+  public static final AttributeOption OPT_4096 = new AttributeOption("4096", S.fixedString("4KB"));
+  public static final AttributeOption OPT_8192 = new AttributeOption("8192", S.fixedString("8KB"));
+  public static final AttributeOption OPT_16384 = new AttributeOption("16384", S.fixedString("16KB"));
+  public static final AttributeOption OPT_32768 = new AttributeOption("32768", S.fixedString("32KB"));
+  public static final AttributeOption[] SIZE_ARRAY = new AttributeOption[] {
+        OPT_8, OPT_16, OPT_32, OPT_64, OPT_128, OPT_256, OPT_512, OPT_1024, OPT_2048, OPT_4096, OPT_8192, OPT_16384, OPT_32768
       };
 
   public static final Attribute<Integer> START_ADDRESS =
