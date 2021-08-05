@@ -68,22 +68,22 @@ public class VgaAttributes extends AbstractAttributeSet {
   public static final int MODE_800_600_MASK = 8;
   public static final int MODE_1024_768_MASK = 16;
 
-  public static final AttributeOption OPT_160_120 = new AttributeOption("160x120", S.getter("VgaMode160x120"));
-  public static final AttributeOption OPT_320_240 = new AttributeOption("320x240", S.getter("VgaMode320x240"));
-  public static final AttributeOption OPT_640_480 = new AttributeOption("640x480", S.getter("VgaMode640x480"));
-  public static final AttributeOption OPT_800_600 = new AttributeOption("800x600", S.getter("VgaMode800x600"));
-  public static final AttributeOption OPT_1024_768 = new AttributeOption("1024x768", S.getter("VgaMode1024x768"));
+  public static final AttributeOption OPT_160_120 = new AttributeOption("160x120", S.fixedString("160x120"));
+  public static final AttributeOption OPT_320_240 = new AttributeOption("320x240", S.fixedString("320x240"));
+  public static final AttributeOption OPT_640_480 = new AttributeOption("640x480", S.fixedString("640x480"));
+  public static final AttributeOption OPT_800_600 = new AttributeOption("800x600", S.fixedString("800x600"));
+  public static final AttributeOption OPT_1024_768 = new AttributeOption("1024x768", S.fixedString("1024x768"));
   public static final AttributeOption[] MODE_ARRAY = new AttributeOption[] {OPT_160_120, OPT_320_240, OPT_640_480, OPT_800_600, OPT_1024_768};
 
   public static final Attribute<VgaState> VGA_STATE = new VgaStateAttribute();
   public static final Attribute<Integer> START_ADDRESS = Attributes.forHexInteger("StartAddress", S.getter("VgaStartAddress"));
   public static final Attribute<Integer> BUFFER_ADDRESS = Attributes.forHexInteger("BufferAddress", S.getter("VgaBufferAddress"));
   public static final Attribute<AttributeOption> MODE = Attributes.forOption("DisplayMode", S.getter("VgaInitialDisplayMode"), MODE_ARRAY);
-  public static final Attribute<Boolean> SOFT_160_120 = Attributes.forBoolean("soft160x120", S.getter("VgaSoft160x120"));
-  public static final Attribute<Boolean> SOFT_320_240 = Attributes.forBoolean("soft320x240", S.getter("VgaSoft320x240"));
-  public static final Attribute<Boolean> SOFT_640_480 = Attributes.forBoolean("soft640x480", S.getter("VgaSoft640x480"));
-  public static final Attribute<Boolean> SOFT_800_600 = Attributes.forBoolean("soft800x600", S.getter("VgaSoft800x600"));
-  public static final Attribute<Boolean> SOFT_1024_768 = Attributes.forBoolean("soft1024x768", S.getter("VgaSoft1024x768"));
+  public static final Attribute<Boolean> SOFT_160_120 = Attributes.forBoolean("soft160x120", S.getter("VgaSoftMode", "160x120"));
+  public static final Attribute<Boolean> SOFT_320_240 = Attributes.forBoolean("soft320x240", S.getter("VgaSoftMode", "320x240"));
+  public static final Attribute<Boolean> SOFT_640_480 = Attributes.forBoolean("soft640x480", S.getter("VgaSoftMode", "640x480"));
+  public static final Attribute<Boolean> SOFT_800_600 = Attributes.forBoolean("soft800x600", S.getter("VgaSoftMode", "800x600"));
+  public static final Attribute<Boolean> SOFT_1024_768 = Attributes.forBoolean("soft1024x768", S.getter("VgaSoftMode", "1024x768"));
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
