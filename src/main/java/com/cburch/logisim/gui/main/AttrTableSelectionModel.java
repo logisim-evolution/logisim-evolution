@@ -126,10 +126,13 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       }
     } else if (factoryCount == 1) {
       setInstance(factory);
-      if (label != null && label.length() > 0)
-        return S.get("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
-      else if (loc != null) return S.get("selectionOne", factory.getDisplayName() + " " + loc);
-      else return S.get("selectionOne", factory.getDisplayName());
+      if (label != null && label.length() > 0) {
+        return factory.getDisplayName() + " \"" + label + "\"";
+      } else if (loc != null) {
+        return factory.getDisplayName() + " " + loc;
+      } else {
+        return factory.getDisplayName();
+      }
     } else {
       setInstance(factory);
       return S.get("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
@@ -138,6 +141,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   //
   // Selection.Listener methods
+  @Override
   public void selectionChanged(Event event) {
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {

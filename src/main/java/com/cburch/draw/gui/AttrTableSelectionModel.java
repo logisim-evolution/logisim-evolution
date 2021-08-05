@@ -78,7 +78,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     } else if (commonClass == null) {
       return S.get("selectionVarious", "" + totalCount);
     } else if (commonCount == 1) {
-      return S.get("selectionOne", firstObject.getDisplayNameAndLabel());
+      return firstObject.getDisplayNameAndLabel();
     } else {
       return S.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
     }
