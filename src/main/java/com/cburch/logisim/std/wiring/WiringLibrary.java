@@ -31,9 +31,6 @@ package com.cburch.logisim.std.wiring;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.circuit.SplitterFactory;
-import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
@@ -51,16 +48,6 @@ public class WiringLibrary extends Library {
    * Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "Wiring";
-
-  static final AttributeOption GATE_TOP_LEFT =
-      new AttributeOption("tl", S.getter("wiringGateTopLeftOption"));
-  static final AttributeOption GATE_BOTTOM_RIGHT =
-      new AttributeOption("br", S.getter("wiringGateBottomRightOption"));
-  static final Attribute<AttributeOption> ATTR_GATE =
-      Attributes.forOption(
-          "gate",
-          S.getter("wiringGateAttr"),
-          new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
 
   private static final Tool[] ADD_TOOLS = {
     new AddTool(SplitterFactory.instance),
