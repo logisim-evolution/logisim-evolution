@@ -64,7 +64,7 @@ public class Decoder extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          PlexersLibrary.ATTR_SELECT_LOC,
+          StdAttr.SELECT_LOC,
           PlexersLibrary.ATTR_SELECT,
           PlexersLibrary.ATTR_TRISTATE,
           PlexersLibrary.ATTR_DISABLED,
@@ -72,7 +72,7 @@ public class Decoder extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          PlexersLibrary.SELECT_BOTTOM_LEFT,
+          StdAttr.SELECT_BOTTOM_LEFT,
           PlexersLibrary.DEFAULT_SELECT,
           PlexersLibrary.DEFAULT_TRISTATE,
           PlexersLibrary.DISABLED_ZERO,
@@ -114,12 +114,12 @@ public class Decoder extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     final var facing = attrs.getValue(StdAttr.FACING);
-    final var selectLoc = attrs.getValue(PlexersLibrary.ATTR_SELECT_LOC);
+    final var selectLoc = attrs.getValue(StdAttr.SELECT_LOC);
     final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     final var outputs = 1 << select.getWidth();
     Bounds bds;
     var reversed = facing == Direction.WEST || facing == Direction.NORTH;
-    if (selectLoc == PlexersLibrary.SELECT_TOP_RIGHT) reversed = !reversed;
+    if (selectLoc == StdAttr.SELECT_TOP_RIGHT) reversed = !reversed;
     if (outputs == 2) {
       int y = reversed ? 0 : -40;
       bds = Bounds.create(-20, y - 5, 30, 40 + 10);
@@ -145,7 +145,7 @@ public class Decoder extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == PlexersLibrary.ATTR_SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == PlexersLibrary.ATTR_ENABLE) {
@@ -185,10 +185,10 @@ public class Decoder extends InstanceFactory {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
-    Object selectLoc = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    Object selectLoc = painter.getAttributeValue(StdAttr.SELECT_LOC);
     final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     boolean enable = painter.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
-    int selMult = selectLoc == PlexersLibrary.SELECT_TOP_RIGHT ? -1 : 1;
+    int selMult = selectLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
     int outputs = 1 << select.getWidth();
 
     // draw stubs for select and enable ports
@@ -312,7 +312,7 @@ public class Decoder extends InstanceFactory {
 
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
-    Object selectLoc = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     var outputs = 1 << select.getWidth();
@@ -322,7 +322,7 @@ public class Decoder extends InstanceFactory {
       Location end1;
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
         int y = facing == Direction.NORTH ? -10 : 10;
-        if (selectLoc == PlexersLibrary.SELECT_TOP_RIGHT) {
+        if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
           end0 = Location.create(-30, y);
           end1 = Location.create(-10, y);
         } else {
@@ -331,7 +331,7 @@ public class Decoder extends InstanceFactory {
         }
       } else {
         int x = facing == Direction.WEST ? -10 : 10;
-        if (selectLoc == PlexersLibrary.SELECT_TOP_RIGHT) {
+        if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
           end0 = Location.create(x, 10);
           end1 = Location.create(x, 30);
         } else {
@@ -349,12 +349,12 @@ public class Decoder extends InstanceFactory {
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
         dy = facing == Direction.NORTH ? -20 : 20;
         ddy = 0;
-        dx = selectLoc == PlexersLibrary.SELECT_TOP_RIGHT ? -10 * outputs : 0;
+        dx = selectLoc == StdAttr.SELECT_TOP_RIGHT ? -10 * outputs : 0;
         ddx = 10;
       } else {
         dx = facing == Direction.WEST ? -20 : 20;
         ddx = 0;
-        dy = selectLoc == PlexersLibrary.SELECT_TOP_RIGHT ? 0 : -10 * outputs;
+        dy = selectLoc == StdAttr.SELECT_TOP_RIGHT ? 0 : -10 * outputs;
         ddy = 10;
       }
       for (var i = 0; i < outputs; i++) {

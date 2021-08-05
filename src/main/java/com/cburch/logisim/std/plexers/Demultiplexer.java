@@ -65,7 +65,7 @@ public class Demultiplexer extends InstanceFactory {
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          PlexersLibrary.ATTR_SELECT_LOC,
+          StdAttr.SELECT_LOC,
           PlexersLibrary.ATTR_SELECT,
           StdAttr.WIDTH,
           PlexersLibrary.ATTR_TRISTATE,
@@ -74,7 +74,7 @@ public class Demultiplexer extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          PlexersLibrary.SELECT_BOTTOM_LEFT,
+          StdAttr.SELECT_BOTTOM_LEFT,
           PlexersLibrary.DEFAULT_SELECT,
           BitWidth.ONE,
           PlexersLibrary.DEFAULT_TRISTATE,
@@ -145,7 +145,7 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == PlexersLibrary.ATTR_SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {
@@ -192,8 +192,8 @@ public class Demultiplexer extends InstanceFactory {
     // draw select and enable inputs
     GraphicsUtil.switchToWidth(g, 3);
     final var vertical = facing == Direction.NORTH || facing == Direction.SOUTH;
-    Object selectLoc = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
-    final var selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
+    Object selectLoc = painter.getAttributeValue(StdAttr.SELECT_LOC);
+    final var selMult = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 1 : -1;
     final var dx = vertical ? selMult : 0;
     final var dy = vertical ? 0 : -selMult;
     if (outputs == 2) { // draw select wire
@@ -310,14 +310,14 @@ public class Demultiplexer extends InstanceFactory {
 
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
-    Object selectLoc = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT_LOC);
+    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
     final var select = instance.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var enable = instance.getAttributeValue(PlexersLibrary.ATTR_ENABLE);
     var outputs = 1 << select.getWidth();
     final var ps = new Port[outputs + (enable ? 3 : 2)];
     Location sel;
-    int selMult = selectLoc == PlexersLibrary.SELECT_BOTTOM_LEFT ? 1 : -1;
+    int selMult = selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? 1 : -1;
     if (outputs == 2) {
       Location end0;
       Location end1;

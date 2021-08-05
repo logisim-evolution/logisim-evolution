@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.fpga.gui.Reporter;
 
 public class FileWriter {
@@ -150,46 +151,43 @@ public class FileWriter {
 
   public static ArrayList<String> getGenerateRemark(String compName, String projName) {
     ArrayList<String> Lines = new ArrayList<>();
+    final int headWidth;
+    final String headOpen;
+    final String headClose;
+    
+    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated VHDL code";
+    final var headUrl  = " " + Main.APP_URL;
+    final var headProj = " Project   : " + projName;
+    final var headComp = " Component : " + compName;
+    
     if (HDL.isVHDL()) {
-      Lines.add("--==============================================================================");
-      Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==                                                                          ==");
-      StringBuilder ThisLine = new StringBuilder("--== Project   : ");
-      int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
-      ThisLine.append(projName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
-      ThisLine = new StringBuilder("--== Component : ");
-      nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
-      ThisLine.append(compName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==============================================================================");
+      headWidth = 74;
+      headOpen = "--==";
+      headClose = "==";
+      
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
       Lines.add("");
-    } else {
-      if (HDL.isVerilog()) {
-        Lines.add(
-            "/******************************************************************************");
-        Lines.add(
-            " ** Logisim goes FPGA automatic generated Verilog code                       **");
-        Lines.add(
-            " **                                                                          **");
-        StringBuilder ThisLine = new StringBuilder(" ** Component : ");
-        int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
-        ThisLine.append(compName);
-        ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-        ThisLine.append("**");
-        Lines.add(ThisLine.toString());
-        Lines.add(
-            " **                                                                          **");
-        Lines.add(
-            " ******************************************************************************/");
-        Lines.add("");
-      }
+    } else if (HDL.isVerilog()) {
+      headWidth = 74;
+      headOpen = " **";
+      headClose = "**";
+      
+      Lines.add("/**" + "*".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "*".repeat(headWidth) + "*/");
+      Lines.add("");
     }
     return Lines;
   }
