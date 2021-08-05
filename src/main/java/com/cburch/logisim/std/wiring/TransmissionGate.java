@@ -68,8 +68,8 @@ public class TransmissionGate extends InstanceFactory {
     super(_ID, S.getter("transmissionGateComponent"));
     setIconName("transmis.gif");
     setAttributes(
-        new Attribute[] {StdAttr.FACING, WiringLibrary.ATTR_GATE, StdAttr.WIDTH},
-        new Object[] {Direction.EAST, WiringLibrary.GATE_TOP_LEFT, BitWidth.ONE});
+        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH},
+        new Object[] {Direction.EAST, StdAttr.SELECT_TOP_RIGHT, BitWidth.ONE});
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
@@ -120,11 +120,11 @@ public class TransmissionGate extends InstanceFactory {
 
   private void drawInstance(InstancePainter painter, boolean isGhost) {
     Bounds bds = painter.getBounds();
-    Object powerLoc = painter.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = painter.getAttributeValue(StdAttr.SELECT_LOC);
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     boolean flip =
-        (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+        (facing == Direction.NORTH || facing == Direction.WEST)
+            == (powerLoc == StdAttr.SELECT_TOP_RIGHT);
 
     int degrees = Direction.WEST.toDegrees() - facing.toDegrees();
     if (flip) degrees += 180;
@@ -199,7 +199,7 @@ public class TransmissionGate extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == WiringLibrary.ATTR_GATE) {
+    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH) {
@@ -236,10 +236,10 @@ public class TransmissionGate extends InstanceFactory {
       dx = 1;
     }
 
-    Object powerLoc = instance.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     boolean flip =
-        (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+        (facing == Direction.NORTH || facing == Direction.WEST)
+            == (powerLoc == StdAttr.SELECT_TOP_RIGHT);
 
     Port[] ports = new Port[4];
     ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);

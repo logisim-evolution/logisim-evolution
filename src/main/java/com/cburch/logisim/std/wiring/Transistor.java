@@ -79,8 +79,8 @@ public class Transistor extends InstanceFactory {
   public Transistor() {
     super(_ID, S.getter("transistorComponent"));
     setAttributes(
-        new Attribute[] {ATTR_TYPE, StdAttr.FACING, WiringLibrary.ATTR_GATE, StdAttr.WIDTH},
-        new Object[] {TYPE_P, Direction.EAST, WiringLibrary.GATE_TOP_LEFT, BitWidth.ONE});
+        new Attribute[] {ATTR_TYPE, StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH},
+        new Object[] {TYPE_P, Direction.EAST, StdAttr.SELECT_TOP_RIGHT, BitWidth.ONE});
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
@@ -137,12 +137,12 @@ public class Transistor extends InstanceFactory {
 
   private void drawInstance(InstancePainter painter, boolean isGhost) {
     Object type = painter.getAttributeValue(ATTR_TYPE);
-    Object powerLoc = painter.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = painter.getAttributeValue(StdAttr.SELECT_LOC);
     Direction from = painter.getAttributeValue(StdAttr.FACING);
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     boolean flip =
-        (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+        (facing == Direction.NORTH || facing == Direction.WEST)
+            == (powerLoc == StdAttr.SELECT_TOP_RIGHT);
 
     int degrees = Direction.EAST.toDegrees() - from.toDegrees();
     double radians = Math.toRadians((degrees + 360) % 360);
@@ -217,22 +217,22 @@ public class Transistor extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
-    Object gateLoc = attrs.getValue(WiringLibrary.ATTR_GATE);
-    int delta = gateLoc == WiringLibrary.GATE_TOP_LEFT ? -20 : 0;
+    Object gateLoc = attrs.getValue(StdAttr.SELECT_LOC);
+    int delta = gateLoc == StdAttr.SELECT_TOP_RIGHT ? 20 : 0;
     if (facing == Direction.NORTH) {
-      return Bounds.create(delta, 0, 20, 40);
+      return Bounds.create(-20 + delta, 0, 20, 40);
     } else if (facing == Direction.SOUTH) {
-      return Bounds.create(delta, -40, 20, 40);
+      return Bounds.create(-20 + delta, -40, 20, 40);
     } else if (facing == Direction.WEST) {
-      return Bounds.create(0, delta, 40, 20);
+      return Bounds.create(0, delta * -1, 40, 20);
     } else { // facing == Direction.EAST
-      return Bounds.create(-40, delta, 40, 20);
+      return Bounds.create(-40, delta * -1, 40, 20);
     }
   }
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == WiringLibrary.ATTR_GATE) {
+    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH) {
@@ -279,10 +279,10 @@ public class Transistor extends InstanceFactory {
       dx = 1;
     }
 
-    Object powerLoc = instance.getAttributeValue(WiringLibrary.ATTR_GATE);
+    Object powerLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     boolean flip =
-        (facing == Direction.SOUTH || facing == Direction.WEST)
-            == (powerLoc == WiringLibrary.GATE_TOP_LEFT);
+        (facing == Direction.NORTH || facing == Direction.WEST)
+            == (powerLoc == StdAttr.SELECT_TOP_RIGHT);
 
     Port[] ports = new Port[3];
     ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);

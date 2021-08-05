@@ -66,8 +66,8 @@ public class BitSelector extends InstanceFactory {
   public BitSelector() {
     super(_ID, S.getter("bitSelectorComponent"));
     setAttributes(
-        new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, GROUP_ATTR},
-        new Object[] {Direction.EAST, BitWidth.create(8), BitWidth.ONE});
+        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR},
+        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE});
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
@@ -109,7 +109,7 @@ public class BitSelector extends InstanceFactory {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
       updatePorts(instance);
-    } else if (attr == StdAttr.WIDTH || attr == GROUP_ATTR) {
+    } else if (attr == StdAttr.WIDTH || attr == GROUP_ATTR || attr == StdAttr.SELECT_LOC) {
       updatePorts(instance);
     }
   }
@@ -164,6 +164,7 @@ public class BitSelector extends InstanceFactory {
 
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     final var data = instance.getAttributeValue(StdAttr.WIDTH);
     final var group = instance.getAttributeValue(GROUP_ATTR);
     var groups = (data.getWidth() + group.getWidth() - 1) / group.getWidth() - 1;
@@ -180,16 +181,28 @@ public class BitSelector extends InstanceFactory {
     Location selPt;
     if (facing == Direction.WEST) {
       inPt = Location.create(30, 0);
-      selPt = Location.create(10, 10);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+        selPt = Location.create(10, -10);
+      else
+        selPt = Location.create(10, 10);
     } else if (facing == Direction.NORTH) {
       inPt = Location.create(0, 30);
-      selPt = Location.create(-10, 10);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+        selPt = Location.create(-10, 10);
+      else
+        selPt = Location.create(10, 10);
     } else if (facing == Direction.SOUTH) {
       inPt = Location.create(0, -30);
-      selPt = Location.create(-10, -10);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+        selPt = Location.create(-10, -10);
+      else
+        selPt = Location.create(10, -10);
     } else {
       inPt = Location.create(-30, 0);
-      selPt = Location.create(-10, 10);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+        selPt = Location.create(-10, 10);
+      else
+        selPt = Location.create(-10, -10);
     }
 
     final var ps = new Port[3];

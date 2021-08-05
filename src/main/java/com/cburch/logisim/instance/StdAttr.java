@@ -104,6 +104,16 @@ public interface StdAttr {
           new BitWidth[] {
             BitWidth.create(32), BitWidth.create(64)
           });
+  
+  AttributeOption SELECT_BOTTOM_LEFT =
+      new AttributeOption("bl", S.getter("stdSelectBottomLeftOption"));
+  AttributeOption SELECT_TOP_RIGHT =
+      new AttributeOption("tr", S.getter("stdSelectTopRightOption"));
+  Attribute<AttributeOption> SELECT_LOC =
+      Attributes.forOption(
+          "selloc",
+          S.getter("stdSelectLocAttr"),
+          new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
 
   Attribute<String> DUMMY = Attributes.forHidden();
 }
