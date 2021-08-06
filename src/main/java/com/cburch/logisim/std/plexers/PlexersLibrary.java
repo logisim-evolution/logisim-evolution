@@ -142,17 +142,6 @@ public class PlexersLibrary extends Library {
   public static final Attribute<Boolean> ATTR_ENABLE =
       Attributes.forBoolean("enable", S.getter("plexerEnableAttr"));
   public static final Object DEFAULT_ENABLE = Boolean.FALSE;
-  static final AttributeOption SELECT_BOTTOM_LEFT =
-      new AttributeOption("bl", S.getter("plexerSelectBottomLeftOption"));
-
-  static final AttributeOption SELECT_TOP_RIGHT =
-      new AttributeOption("tr", S.getter("plexerSelectTopRightOption"));
-
-  static final Attribute<AttributeOption> ATTR_SELECT_LOC =
-      Attributes.forOption(
-          "selloc",
-          S.getter("plexerSelectLocAttr"),
-          new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
 
   public static final int DELAY = 3;
 
