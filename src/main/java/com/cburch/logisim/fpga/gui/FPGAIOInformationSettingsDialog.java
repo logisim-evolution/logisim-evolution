@@ -120,17 +120,17 @@ public class FPGAIOInformationSettingsDialog {
     int nrOfPins = 0;
     switch (driveMode) {
       case LedArrayDriving.LedDefault : {
-        nrOfPins = nrOfRows*nrOfColumns;
+        nrOfPins = nrOfRows * nrOfColumns;
         for (int row = 0; row < nrOfRows; row++) {
           for (int col = 0; col < nrOfColumns; col++)
-            pinLabels.add("Row_" + row + "_Col_"+col);
+            pinLabels.add("Row_" + row + "_Col_" + col);
         }
         break;
       }
       case LedArrayDriving.LedRowScanning : {
         double nrBitsDouble = Math.log(nrOfRows) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
-        nrOfPins = nrBits+nrOfColumns;
+        nrOfPins = nrBits + nrOfColumns;
         for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
             pinLabels.add("RowAddress_" + i);
@@ -143,7 +143,7 @@ public class FPGAIOInformationSettingsDialog {
       case LedArrayDriving.LedColumnScanning : {
         double nrBitsDouble = Math.log(nrOfColumns) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
-        nrOfPins = nrBits+nrOfRows;
+        nrOfPins = nrBits + nrOfRows;
         for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
             pinLabels.add("ColumnAddress_" + i);
@@ -154,7 +154,7 @@ public class FPGAIOInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RgbDefault : {
-        nrOfPins = nrOfRows * nrOfColumns*3;
+        nrOfPins = nrOfRows * nrOfColumns * 3;
         String preamble;
         for (int rgb = 0; rgb < 3; rgb++) {
           switch (rgb) {
@@ -362,8 +362,8 @@ public class FPGAIOInformationSettingsDialog {
               return;
             }
             case "LedArray" : {
-              info.setNrOfRows(RowSize.getSelectedIndex()+1);
-              info.setNrOfColumns(ColSize.getSelectedIndex()+1);
+              info.setNrOfRows(RowSize.getSelectedIndex() + 1);
+              info.setNrOfColumns(ColSize.getSelectedIndex() + 1);
               info.setArrayDriveMode((char) Encoding.getSelectedIndex());
               updateLedArrayRequirements(
                   info.getNrOfRows(),
@@ -417,14 +417,14 @@ public class FPGAIOInformationSettingsDialog {
       ArrayPanel.setLayout(new GridBagLayout());
       RowSize.removeAll();
       ColSize.removeAll();
-      for (int i = 1 ; i < 33 ; i++) {
+      for (int i = 1; i < 33; i++) {
         RowSize.addItem(i);
         ColSize.addItem(i);
       }
-      RowSize.setSelectedIndex(info.getNrOfRows()-1);
-      ColSize.setSelectedIndex(info.getNrOfColumns()-1);
+      RowSize.setSelectedIndex(info.getNrOfRows() - 1);
+      ColSize.setSelectedIndex(info.getNrOfColumns() - 1);
       Encoding.removeAll();
-      for (String val: LedArrayDriving.getDisplayStrings())
+      for (String val : LedArrayDriving.getDisplayStrings())
         Encoding.addItem(val);
       Encoding.setSelectedIndex(info.getArrayDriveMode());
       RowSize.setActionCommand("LedArray");
@@ -437,21 +437,21 @@ public class FPGAIOInformationSettingsDialog {
       arr.gridx = 0;
       arr.gridy = 0;
       arr.gridwidth = 2;
-      panel.add(new JLabel(S.get("FpgaArrayDriving")),arr);
+      panel.add(new JLabel(S.get("FpgaArrayDriving")) , arr);
       arr.gridy++;
-      panel.add(Encoding, arr);
+      panel.add(Encoding , arr);
       arr.gridwidth = 1;
       arr.gridy++;
-      panel.add(new JLabel(S.get("FpgaArrayRows")),arr);
+      panel.add(new JLabel(S.get("FpgaArrayRows")) , arr);
       arr.gridx++;
-      panel.add(RowSize, arr);
+      panel.add(RowSize , arr);
       arr.gridy++;
-      panel.add(ColSize,arr);
+      panel.add(ColSize , arr);
       arr.gridx--;
-      panel.add(new JLabel(S.get("FpgaArrayCols")),arr);
+      panel.add(new JLabel(S.get("FpgaArrayCols")) , arr);
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(panel, c);
+      contents.add(panel , c);
       c.gridwidth = 1;
     }
     if (NrOfPins.get(INPUT_ID) > 0) {
