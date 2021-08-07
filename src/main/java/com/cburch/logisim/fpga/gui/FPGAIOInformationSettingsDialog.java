@@ -437,21 +437,21 @@ public class FPGAIOInformationSettingsDialog {
       arr.gridx = 0;
       arr.gridy = 0;
       arr.gridwidth = 2;
-      panel.add(new JLabel(S.get("FpgaArrayDriving")) , arr);
+      panel.add(new JLabel(S.get("FpgaArrayDriving")), arr);
       arr.gridy++;
-      panel.add(Encoding , arr);
+      panel.add(Encoding, arr);
       arr.gridwidth = 1;
       arr.gridy++;
-      panel.add(new JLabel(S.get("FpgaArrayRows")) , arr);
+      panel.add(new JLabel(S.get("FpgaArrayRows")), arr);
       arr.gridx++;
-      panel.add(RowSize , arr);
+      panel.add(RowSize, arr);
       arr.gridy++;
-      panel.add(ColSize , arr);
+      panel.add(ColSize, arr);
       arr.gridx--;
-      panel.add(new JLabel(S.get("FpgaArrayCols")) , arr);
+      panel.add(new JLabel(S.get("FpgaArrayCols")), arr);
       c.gridy++;
       c.gridwidth = 2;
-      contents.add(panel , c);
+      contents.add(panel, c);
       c.gridwidth = 1;
     }
     if (NrOfPins.get(INPUT_ID) > 0) {
