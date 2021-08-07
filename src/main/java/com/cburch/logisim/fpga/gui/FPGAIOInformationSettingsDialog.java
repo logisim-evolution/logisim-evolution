@@ -121,42 +121,42 @@ public class FPGAIOInformationSettingsDialog {
     switch (driveMode) {
       case LedArrayDriving.LedDefault : {
         nrOfPins = nrOfRows*nrOfColumns;
-        for (int row = 0 ; row < nrOfRows ; row++) {
-          for (int col = 0 ; col < nrOfColumns ; col++)
-            pinLabels.add("Row_"+row+"_Col_"+col);
+        for (int row = 0; row < nrOfRows; row++) {
+          for (int col = 0; col < nrOfColumns; col++)
+            pinLabels.add("Row_" + row + "_Col_"+col);
         }
         break;
       }
       case LedArrayDriving.LedRowScanning : {
-        double nrBitsDouble = Math.log(nrOfRows)/Math.log(2.0);
+        double nrBitsDouble = Math.log(nrOfRows) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
         nrOfPins = nrBits+nrOfColumns;
-        for (int i = 0 ; i < nrOfPins ; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
-            pinLabels.add("RowAddress_"+i);
+            pinLabels.add("RowAddress_" + i);
           } else {
-            pinLabels.add("Col_"+(i-nrBits));
+            pinLabels.add("Col_" + (i - nrBits));
           }
         }
         break;
       }
       case LedArrayDriving.LedColumnScanning : {
-        double nrBitsDouble = Math.log(nrOfColumns)/Math.log(2.0);
+        double nrBitsDouble = Math.log(nrOfColumns) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
         nrOfPins = nrBits+nrOfRows;
-        for (int i = 0 ; i < nrOfPins ; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
-            pinLabels.add("ColumnAddress_"+i);
+            pinLabels.add("ColumnAddress_" + i);
           } else {
-            pinLabels.add("Row_"+(i-nrBits));
+            pinLabels.add("Row_" + (i - nrBits));
           }
         }
         break;
       }
       case LedArrayDriving.RgbDefault : {
-        nrOfPins = nrOfRows*nrOfColumns*3;
+        nrOfPins = nrOfRows * nrOfColumns*3;
         String preamble;
-        for (int rgb = 0 ; rgb < 3 ; rgb++) {
+        for (int rgb = 0; rgb < 3; rgb++) {
           switch (rgb) {
             case 0 : {
               preamble = "Red_";
@@ -171,25 +171,25 @@ public class FPGAIOInformationSettingsDialog {
               break;
             }
           }
-          for (int row = 0 ; row < nrOfRows ; row++) {
-            for (int col = 0 ; col < nrOfColumns ; col++)
-              pinLabels.add(preamble+"Row_"+row+"_Col_"+col);
+          for (int row = 0; row < nrOfRows; row++) {
+            for (int col = 0; col < nrOfColumns; col++)
+              pinLabels.add(preamble + "Row_" + row + "_Col_" + col);
           }
         }
         break;
       }
       case LedArrayDriving.RgbRowScanning : {
-        double nrBitsDouble = Math.log(nrOfRows)/Math.log(2.0);
+        double nrBitsDouble = Math.log(nrOfRows) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
-        nrOfPins = nrBits+3*nrOfColumns;
+        nrOfPins = nrBits + 3 * nrOfColumns;
         String preamble;
-        for (int i = 0 ; i < nrOfPins ; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
-            pinLabels.add("RowAddress_"+i);
+            pinLabels.add("RowAddress_" + i);
           } else {
             int id = i - nrBits;
-            int rgb = id/nrOfColumns;
-            int col = id%nrOfColumns;
+            int rgb = id / nrOfColumns;
+            int col = id % nrOfColumns;
             switch (rgb) {
               case 0 : {
                 preamble = "Red_";
@@ -204,23 +204,23 @@ public class FPGAIOInformationSettingsDialog {
                 break;
               }
             }            
-            pinLabels.add(preamble+"Col_"+col);
+            pinLabels.add(preamble + "Col_" + col);
           }
         }
         break;
       }
       case LedArrayDriving.RgbColumnScanning : {
-        double nrBitsDouble = Math.log(nrOfColumns)/Math.log(2.0);
+        double nrBitsDouble = Math.log(nrOfColumns) / Math.log(2.0);
         int nrBits = (int) Math.ceil(nrBitsDouble);
-        nrOfPins = nrBits+3*nrOfRows;
+        nrOfPins = nrBits + 3 * nrOfRows;
         String preamble;
-        for (int i = 0 ; i < nrOfPins ; i++) {
+        for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
-            pinLabels.add("ColumnAddress_"+i);
+            pinLabels.add("ColumnAddress_" + i);
           } else {
             int id = i - nrBits;
-            int rgb = id/nrOfRows;
-            int col = id%nrOfRows;
+            int rgb = id / nrOfRows;
+            int col = id % nrOfRows;
             switch (rgb) {
               case 0 : {
                 preamble = "Red_";
@@ -235,7 +235,7 @@ public class FPGAIOInformationSettingsDialog {
                 break;
               }
             }            
-            pinLabels.add(preamble+"Row_"+col);
+            pinLabels.add(preamble + "Row_" + col);
           }
         }
         break;
