@@ -38,6 +38,7 @@ import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.IOComponentsInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
+import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -103,6 +104,156 @@ public class FPGAIOInformationSettingsDialog {
     }
   }
 
+  private static void updateLedArrayRequirements(
+      int nrOfRows,
+      int nrOfColumns,
+      char driveMode,
+      JPanel pinPanel,
+      ArrayList<JTextField> LocInputs,
+      ArrayList<String> oldLocations,
+      HashMap<Integer, Integer> NrOfPins) {
+
+    ArrayList<String> pinLabels = new ArrayList<>();
+    NrOfPins.clear();
+    NrOfPins.put(INPUT_ID, 0);
+    NrOfPins.put(IO_ID, 0);
+    int nrOfPins = 0;
+    switch (driveMode) {
+      case LedArrayDriving.LedDefault : {
+        nrOfPins = nrOfRows*nrOfColumns;
+        for (int row = 0 ; row < nrOfRows ; row++) {
+          for (int col = 0 ; col < nrOfColumns ; col++)
+            pinLabels.add("Row_"+row+"_Col_"+col);
+        }
+        break;
+      }
+      case LedArrayDriving.LedRowScanning : {
+        double nrBitsDouble = Math.log(nrOfRows)/Math.log(2.0);
+        int nrBits = (int) Math.ceil(nrBitsDouble);
+        nrOfPins = nrBits+nrOfColumns;
+        for (int i = 0 ; i < nrOfPins ; i++) {
+          if (i < nrBits) {
+            pinLabels.add("RowAddress_"+i);
+          } else {
+            pinLabels.add("Col_"+(i-nrBits));
+          }
+        }
+        break;
+      }
+      case LedArrayDriving.LedColumnScanning : {
+        double nrBitsDouble = Math.log(nrOfColumns)/Math.log(2.0);
+        int nrBits = (int) Math.ceil(nrBitsDouble);
+        nrOfPins = nrBits+nrOfRows;
+        for (int i = 0 ; i < nrOfPins ; i++) {
+          if (i < nrBits) {
+            pinLabels.add("ColumnAddress_"+i);
+          } else {
+            pinLabels.add("Row_"+(i-nrBits));
+          }
+        }
+        break;
+      }
+      case LedArrayDriving.RgbDefault : {
+        nrOfPins = nrOfRows*nrOfColumns*3;
+        String preamble;
+        for (int rgb = 0 ; rgb < 3 ; rgb++) {
+          switch (rgb) {
+            case 0 : {
+              preamble = "Red_";
+              break;
+            }
+            case 1 : {
+              preamble = "Green_";
+              break;
+            }
+            default : {
+              preamble = "Blue_";
+              break;
+            }
+          }
+          for (int row = 0 ; row < nrOfRows ; row++) {
+            for (int col = 0 ; col < nrOfColumns ; col++)
+              pinLabels.add(preamble+"Row_"+row+"_Col_"+col);
+          }
+        }
+        break;
+      }
+      case LedArrayDriving.RgbRowScanning : {
+        double nrBitsDouble = Math.log(nrOfRows)/Math.log(2.0);
+        int nrBits = (int) Math.ceil(nrBitsDouble);
+        nrOfPins = nrBits+3*nrOfColumns;
+        String preamble;
+        for (int i = 0 ; i < nrOfPins ; i++) {
+          if (i < nrBits) {
+            pinLabels.add("RowAddress_"+i);
+          } else {
+            int id = i - nrBits;
+            int rgb = id/nrOfColumns;
+            int col = id%nrOfColumns;
+            switch (rgb) {
+              case 0 : {
+                preamble = "Red_";
+                break;
+              }
+              case 1 : {
+                preamble = "Green_";
+                break;
+              }
+              default : {
+                preamble = "Blue_";
+                break;
+              }
+            }            
+            pinLabels.add(preamble+"Col_"+col);
+          }
+        }
+        break;
+      }
+      case LedArrayDriving.RgbColumnScanning : {
+        double nrBitsDouble = Math.log(nrOfColumns)/Math.log(2.0);
+        int nrBits = (int) Math.ceil(nrBitsDouble);
+        nrOfPins = nrBits+3*nrOfRows;
+        String preamble;
+        for (int i = 0 ; i < nrOfPins ; i++) {
+          if (i < nrBits) {
+            pinLabels.add("ColumnAddress_"+i);
+          } else {
+            int id = i - nrBits;
+            int rgb = id/nrOfRows;
+            int col = id%nrOfRows;
+            switch (rgb) {
+              case 0 : {
+                preamble = "Red_";
+                break;
+              }
+              case 1 : {
+                preamble = "Green_";
+                break;
+              }
+              default : {
+                preamble = "Blue_";
+                break;
+              }
+            }            
+            pinLabels.add(preamble+"Row_"+col);
+          }
+        }
+        break;
+      }
+      default : {
+        nrOfPins = 0;
+      }
+    }
+    NrOfPins.put(OUTPUT_ID, nrOfPins);
+    buildPinTable(
+        nrOfPins,
+        IOComponentTypes.LEDArray,
+        pinPanel,
+        LocInputs,
+        pinLabels,
+        oldLocations);
+  }
+
   private static JPanel getRectPanel(ArrayList<JTextField> rectLocations) {
     JPanel rectPanel = new JPanel();
     rectPanel.setLayout(new GridBagLayout());
@@ -125,6 +276,7 @@ public class FPGAIOInformationSettingsDialog {
       rectPanel.add(rectLocations.get(c.gridy), c);
     return rectPanel;
   }
+  
 
   private static final int INPUT_ID = 0;
   private static final int OUTPUT_ID = 1;
@@ -133,6 +285,31 @@ public class FPGAIOInformationSettingsDialog {
   public static void GetSimpleInformationDialog(Boolean deleteButton,
         IOComponentsInformation IOcomps, FPGAIOInformationContainer info) {
     HashMap<Integer, Integer> NrOfPins = new HashMap<>();
+    final JDialog selWindow =
+        new JDialog(IOcomps.getParentFrame(), info.GetType() + " " + S.get("FpgaIoProperties"));
+    final JPanel contents = new JPanel();
+    JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
+    JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
+    JComboBox<String> ActiveInput = new JComboBox<>(PinActivity.Behavior_strings);
+    JComboBox<Integer> Inputsize = new JComboBox<>();
+    JComboBox<Integer> Outputsize = new JComboBox<>();
+    JComboBox<Integer> IOsize = new JComboBox<>();
+    JComboBox<Integer> RowSize = new JComboBox<>();
+    JComboBox<Integer> ColSize = new JComboBox<>();
+    JComboBox<String> Encoding = new JComboBox<>();
+    ArrayList<JTextField> LocInputs = new ArrayList<>();
+    ArrayList<JTextField> LocOutputs = new ArrayList<>();
+    ArrayList<JTextField> LocIOs = new ArrayList<>();
+    ArrayList<String> PinLabels = new ArrayList<>();
+    JPanel ArrayPanel = new JPanel();
+    JPanel InputsPanel = new JPanel();
+    JPanel OutputsPanel = new JPanel();
+    JPanel IOPanel = new JPanel();
+    boolean abort = false;
+    ArrayList<JTextField> rectLocations = new ArrayList<>();
+    ArrayList<String> oldInputLocations = new ArrayList<>();
+    ArrayList<String> oldOutputLocations = new ArrayList<>();
+    ArrayList<String> oldIOLocations = new ArrayList<>();
     IOComponentTypes MyType = info.GetType();
     BoardRectangle MyRectangle = info.GetRectangle();
     if (info.getNrOfPins() == 0) {
@@ -144,27 +321,6 @@ public class FPGAIOInformationSettingsDialog {
       NrOfPins.put(OUTPUT_ID, info.getNrOfOutputPins());
       NrOfPins.put(IO_ID, info.getNrOfIOPins());
     }
-    final JDialog selWindow =
-        new JDialog(IOcomps.getParentFrame(), MyType + " " + S.get("FpgaIoProperties"));
-    final JPanel contents = new JPanel();
-    JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
-    JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
-    JComboBox<String> ActiveInput = new JComboBox<>(PinActivity.Behavior_strings);
-    JComboBox<Integer> Inputsize = new JComboBox<>();
-    JComboBox<Integer> Outputsize = new JComboBox<>();
-    JComboBox<Integer> IOsize = new JComboBox<>();
-    ArrayList<JTextField> LocInputs = new ArrayList<>();
-    ArrayList<JTextField> LocOutputs = new ArrayList<>();
-    ArrayList<JTextField> LocIOs = new ArrayList<>();
-    ArrayList<String> PinLabels = new ArrayList<>();
-    JPanel InputsPanel = new JPanel();
-    JPanel OutputsPanel = new JPanel();
-    JPanel IOPanel = new JPanel();
-    boolean abort = false;
-    ArrayList<JTextField> rectLocations = new ArrayList<>();
-    ArrayList<String> oldInputLocations = new ArrayList<>();
-    ArrayList<String> oldOutputLocations = new ArrayList<>();
-    ArrayList<String> oldIOLocations = new ArrayList<>();
     for (int cnt = 0; cnt < info.getNrOfPins(); cnt++) {
       if (cnt < NrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
       else if (cnt < NrOfPins.get(INPUT_ID) + NrOfPins.get(OUTPUT_ID))
@@ -205,6 +361,21 @@ public class FPGAIOInformationSettingsDialog {
               selWindow.pack();
               return;
             }
+            case "LedArray" : {
+              info.setNrOfRows(RowSize.getSelectedIndex()+1);
+              info.setNrOfColumns(ColSize.getSelectedIndex()+1);
+              info.setArrayDriveMode((char) Encoding.getSelectedIndex());
+              updateLedArrayRequirements(
+                  info.getNrOfRows(),
+                  info.getNrOfColumns(),
+                  info.getArrayDriveMode(),
+                  OutputsPanel,
+                  LocOutputs,
+                  oldOutputLocations,
+                  NrOfPins);
+              selWindow.pack();
+              return;
+            }
             case "cancel":
               info.setType(IOComponentTypes.Unknown);
               break;
@@ -238,6 +409,51 @@ public class FPGAIOInformationSettingsDialog {
       c.gridwidth = 1;
     }
     c.fill = GridBagConstraints.HORIZONTAL;
+    if (MyType.equals(IOComponentTypes.LEDArray)) {
+      JPanel panel = new JPanel();
+      panel.setLayout(new GridBagLayout());
+      panel.setBorder(BorderFactory.createTitledBorder(
+              BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaArrayDefinition")));
+      ArrayPanel.setLayout(new GridBagLayout());
+      RowSize.removeAll();
+      ColSize.removeAll();
+      for (int i = 1 ; i < 33 ; i++) {
+        RowSize.addItem(i);
+        ColSize.addItem(i);
+      }
+      RowSize.setSelectedIndex(info.getNrOfRows()-1);
+      ColSize.setSelectedIndex(info.getNrOfColumns()-1);
+      Encoding.removeAll();
+      for (String val: LedArrayDriving.getDisplayStrings())
+        Encoding.addItem(val);
+      Encoding.setSelectedIndex(info.getArrayDriveMode());
+      RowSize.setActionCommand("LedArray");
+      RowSize.addActionListener(actionListener);
+      ColSize.setActionCommand("LedArray");
+      ColSize.addActionListener(actionListener);
+      Encoding.setActionCommand("LedArray");
+      Encoding.addActionListener(actionListener);
+      GridBagConstraints arr = new GridBagConstraints();
+      arr.gridx = 0;
+      arr.gridy = 0;
+      arr.gridwidth = 2;
+      panel.add(new JLabel(S.get("FpgaArrayDriving")),arr);
+      arr.gridy++;
+      panel.add(Encoding, arr);
+      arr.gridwidth = 1;
+      arr.gridy++;
+      panel.add(new JLabel(S.get("FpgaArrayRows")),arr);
+      arr.gridx++;
+      panel.add(RowSize, arr);
+      arr.gridy++;
+      panel.add(ColSize,arr);
+      arr.gridx--;
+      panel.add(new JLabel(S.get("FpgaArrayCols")),arr);
+      c.gridy++;
+      c.gridwidth = 2;
+      contents.add(panel, c);
+      c.gridwidth = 1;
+    }
     if (NrOfPins.get(INPUT_ID) > 0) {
       JPanel panel = new JPanel();
       panel.setLayout(new BorderLayout());
@@ -277,11 +493,22 @@ public class FPGAIOInformationSettingsDialog {
         Outputsize.setActionCommand("outputSize");
         panel.add(Outputsize, BorderLayout.NORTH);
       }
-      PinLabels.clear();
-      int nr = NrOfPins.get(OUTPUT_ID);
-      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
-      buildPinTable(
-          NrOfPins.get(OUTPUT_ID), MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
+      if (MyType != IOComponentTypes.LEDArray) {
+        PinLabels.clear();
+        int nr = NrOfPins.get(OUTPUT_ID);
+        for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+        buildPinTable(
+            NrOfPins.get(OUTPUT_ID), MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
+      } else {
+        updateLedArrayRequirements(
+            info.getNrOfRows(),
+            info.getNrOfColumns(),
+            info.getArrayDriveMode(),
+            OutputsPanel,
+            LocOutputs,
+            oldOutputLocations,
+            NrOfPins);
+      }
       panel.add(OutputsPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;

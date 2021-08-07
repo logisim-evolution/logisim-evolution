@@ -103,6 +103,9 @@ public class FPGAIOInformationContainer implements Cloneable {
   private int paintColor = BoardManipulator.DEFINE_COLOR_ID;
   private boolean mapMode = false;
   private boolean highlighted = false;
+  private int nrOfRows = 4;
+  private int nrOfColumns = 4;
+  private char Driving = LedArrayDriving.LedDefault;
   protected boolean selectable = false;
   protected MapListModel.MapInfo selComp = null;
 
@@ -198,6 +201,19 @@ public class FPGAIOInformationContainer implements Cloneable {
             height = Integer.parseUnsignedInt(vals[3]);
           } catch (NumberFormatException e) {
             x = y = width = height = -1;
+          }
+        }
+      }
+      if (ThisAttr.getNodeName().equals(BoardWriterClass.LedArrayInfoString)) {
+        String[] vals = ThisAttr.getNodeValue().split(",");
+        if (vals.length == 3) {
+          try {
+            nrOfRows = Integer.parseUnsignedInt(vals[0]);
+            nrOfColumns = Integer.parseUnsignedInt(vals[1]);
+            Driving = LedArrayDriving.getId(vals[2]);
+          } catch (NumberFormatException e) {
+            nrOfRows = nrOfColumns = 4;
+            Driving = LedArrayDriving.LedDefault;
           }
         }
       }
@@ -307,7 +323,32 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyIOPins == null) return 0;
     return MyIOPins.size();
   }
+  
+  public int getNrOfRows() {
+    return nrOfRows;
+  }
+  
+  public int getNrOfColumns() {
+    return nrOfColumns;
+  }
+  
+  public char getArrayDriveMode() {
+    return Driving;
+  }
+  
+  public void setNrOfRows(int value) {
+    nrOfRows = value;
+  }
 
+  public void setNrOfColumns(int value) {
+    nrOfColumns = value;
+  }
+
+  public void setArrayDriveMode(char value) {
+    Driving = value;
+  }
+
+  
   public void edit(Boolean deleteButton, IOComponentsInformation IOcomps) {
     FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton, IOcomps, this);
   }
@@ -386,6 +427,15 @@ public class FPGAIOInformationContainer implements Cloneable {
         Attr label = doc.createAttribute(BoardWriterClass.LabelString);
         label.setValue(MyLabel);
         result.setAttributeNode(label);
+      }
+      if (MyType.equals(IOComponentTypes.LEDArray)) {
+        result.setAttribute(
+            BoardWriterClass.LedArrayInfoString, 
+            nrOfRows
+            + ","
+            + nrOfColumns
+            + ","
+            + LedArrayDriving.getStrings().get(Driving));
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
         Attr Set = doc.createAttribute(BoardWriterClass.InputSetString);
