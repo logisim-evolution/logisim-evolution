@@ -28,8 +28,8 @@
       <Pin Label="PIN_E16" Rect_x_y_w_h="363,167,7,6"/>
       <Pin Label="PIN_B18" Rect_x_y_w_h="337,166,9,7"/>
       <Pin Label="PIN_E12" Rect_x_y_w_h="326,166,8,7"/>
-      <Button ActivityLevel="Active low" InputPinSet="PIN_B12" Rect_x_y_w_h="291,165,7,7"/>
-      <Button ActivityLevel="Active low" InputPinSet="PIN_A12" Rect_x_y_w_h="277,165,8,7"/>
+      <Button ActivityLevel="Active high" InputPinSet="PIN_B12" Rect_x_y_w_h="291,165,7,7"/>
+      <Button ActivityLevel="Active high" InputPinSet="PIN_A12" Rect_x_y_w_h="277,165,8,7"/>
       <Pin Label="PIN_D17" Rect_x_y_w_h="350,165,8,8"/>
       <Pin Label="PIN_J2" Rect_x_y_w_h="520,362,5,6"/>
       <Pin Label="PIN_H1" Rect_x_y_w_h="530,361,6,6"/>
