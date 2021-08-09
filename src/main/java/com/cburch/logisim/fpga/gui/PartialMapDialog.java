@@ -440,45 +440,51 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       MapComponent map = mapInfo.getMap();
       if (InputSingleMultiple != null && InputSingleMultiple.getSelectedIndex() != 0) {
         int pin = Math.max(mapInfo.getPin(), 0);
+        map.unmap(pin);
         map.tryMap(pin, ioComp, InputMapSet.get(InputSingleMultiple.getSelectedIndex() - 1));
       }
       if (InputMultipleSingle != null && InputMultipleSingle.getSelectedIndex() != 0) {
+        map.unmap(InputMultipleSingle.getSelectedIndex() - 1);
         map.tryMap(InputMultipleSingle.getSelectedIndex() - 1, ioComp, InputMapSet.get(0));
       }
       for (int i = 0; InputMultipleMultiple != null && i < InputMultipleMultiple.size(); i++) {
         if (InputMultipleMultiple.get(i).getSelectedIndex() == 0) continue;
         int pinId = InputMapSet.get(InputMultipleMultiple.get(i).getSelectedIndex() - 1);
+        map.unmap(i);
         map.tryMap(i, ioComp, pinId);
       }
       if (OutputSingleMultiple != null && OutputSingleMultiple.getSelectedIndex() != 0) {
         int pin = mapInfo.getPin() < 0 ? map.nrInputs() : mapInfo.getPin();
+        map.unmap(pin);
         map.tryMap(pin, ioComp, OutputMapSet.get(OutputSingleMultiple.getSelectedIndex() - 1));
       }
       if (OutputMultipleSingle != null && OutputMultipleSingle.getSelectedIndex() != 0) {
-        map.tryMap(
-            map.nrInputs() + OutputMultipleSingle.getSelectedIndex() - 1,
-            ioComp,
-            OutputMapSet.get(0));
+        int pin = map.nrInputs() + OutputMultipleSingle.getSelectedIndex() - 1;
+        map.unmap(pin);
+        map.tryMap(pin, ioComp, OutputMapSet.get(0));
       }
       for (int i = 0; OutputMultipleMultiple != null && i < OutputMultipleMultiple.size(); i++) {
         if (OutputMultipleMultiple.get(i).getSelectedIndex() == 0) continue;
         int pinId = OutputMapSet.get(OutputMultipleMultiple.get(i).getSelectedIndex() - 1);
+        map.unmap(map.nrInputs() + i);
         map.tryMap(map.nrInputs() + i, ioComp, pinId);
       }
       if (IOSingleMultiple != null && IOSingleMultiple.getSelectedIndex() != 0) {
         int pin = mapInfo.getPin() < 0 ? map.nrInputs() + map.nrOutputs() : mapInfo.getPin();
+        map.unmap(pin);
         map.tryMap(pin, ioComp, IOMapSet.get(IOSingleMultiple.getSelectedIndex() - 1));
       }
       if (IOMultipleSingle != null && IOMultipleSingle.getSelectedIndex() != 0) {
-        map.tryMap(
-            map.nrInputs() + map.nrOutputs() + IOMultipleSingle.getSelectedIndex() - 1,
-            ioComp,
-            IOMapSet.get(0));
+        int pin = map.nrInputs() + map.nrOutputs() + IOMultipleSingle.getSelectedIndex() - 1;
+        map.unmap(pin);
+        map.tryMap(pin, ioComp, IOMapSet.get(0));
       }
       for (int i = 0; IOMultipleMultiple != null && i < IOMultipleMultiple.size(); i++) {
         if (IOMultipleMultiple.get(i).getSelectedIndex() == 0) continue;
         int pinId = IOMapSet.get(IOMultipleMultiple.get(i).getSelectedIndex() - 1);
-        map.tryMap(map.nrInputs() + map.nrOutputs() + i, ioComp, pinId);
+        int pin = map.nrInputs() + map.nrOutputs() + i;
+        map.unmap(pin);
+        map.tryMap(pin, ioComp, pinId);
       }
     }
     setVisible(false);

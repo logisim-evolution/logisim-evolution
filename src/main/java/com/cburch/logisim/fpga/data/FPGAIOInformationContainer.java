@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
 import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -92,6 +91,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private HashSet<Integer> MyInputPins;
   private HashSet<Integer> MyOutputPins;
   private HashSet<Integer> MyIOPins;
+  private Integer[][] PartialMapArray;
   private Integer NrOfPins;
   private char MyPullBehavior;
   private char MyActivityLevel;
@@ -107,6 +107,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private int nrOfColumns = 4;
   private char Driving = LedArrayDriving.LedDefault;
   protected boolean selectable = false;
+  protected int selectedPin = -1;
   protected MapListModel.MapInfo selComp = null;
 
   public FPGAIOInformationContainer() {
@@ -760,6 +761,8 @@ public class FPGAIOInformationContainer implements Cloneable {
     selComp = comp;
     MapComponent map = comp.getMap();
     int connect = comp.getPin();
+    selectedPin = -1;
+    selectable = false;
     if (connect < 0) {
       if (map.hasInputs() && (hasIOs() || hasInputs())) selectable = true;
       if (map.hasOutputs() && (hasIOs() || hasOutputs())) selectable = true;
@@ -776,11 +779,22 @@ public class FPGAIOInformationContainer implements Cloneable {
     boolean ret = selectable;
     selComp = null;
     selectable = false;
+    selectedPin = -1;
     return ret;
   }
 
   public void paint(Graphics2D g, float scale) {
     if (mapMode) {
+      if (PartialMapArray == null) {
+        PartialMapArray = new Integer[MyRectangle.getWidth()][MyRectangle.getHeight()];
+        IOComponentTypes.getPartialMapInfo(PartialMapArray, 
+            MyRectangle.getWidth(), 
+            MyRectangle.getHeight(), 
+            NrOfPins, 
+            nrOfRows,
+            nrOfColumns,
+            MyType);
+      }
       mappaint(g, scale);
       return;
     }
@@ -801,7 +815,6 @@ public class FPGAIOInformationContainer implements Cloneable {
     int i = nrOfMaps();
     if (i > 0) paintmapped(g, scale, i);
     else paintselected(g, scale);
-    if (highlighted && (i > 0 || selectable)) paintinfo(g, scale);
     g.setColor(c);
   }
 
@@ -810,6 +823,58 @@ public class FPGAIOInformationContainer implements Cloneable {
     MapComponent com = selComp.getMap();
     for (int i = 0; i < NrOfPins; i++) {
       if (pinIsMapped.get(i) != null && pinIsMapped.get(i).map.equals(com)) return true;
+    }
+    return false;
+  }
+  
+  public boolean selectedPinChanged(int xPos, int Ypos) {
+    if (!(highlighted && selectable)) return false;
+    if (PartialMapArray == null) {
+      PartialMapArray = new Integer[MyRectangle.getWidth()][MyRectangle.getHeight()];
+      IOComponentTypes.getPartialMapInfo(PartialMapArray, 
+          MyRectangle.getWidth(), 
+          MyRectangle.getHeight(), 
+          NrOfPins, 
+          nrOfRows,
+          nrOfColumns,
+          MyType);
+    }
+    int selPin = PartialMapArray[xPos - MyRectangle.getXpos()][Ypos - MyRectangle.getYpos()];
+    if (selPin != selectedPin) {
+      selectedPin = selPin;
+      return true;
+    }
+    return false;
+  }
+  
+  public boolean isCompleteMap() {
+    if (selComp == null) return true;
+    MapComponent map = selComp.getMap();
+    if (selComp.getPin() >= 0 && NrOfPins == 1) {
+      /* single pin only */
+      return true;
+    }
+    if (map.nrInputs() == nrInputs()
+        && map.nrOutputs() == nrOutputs()
+        && map.nrIOs() == nrIOs()
+        && selComp.getPin() < 0) {
+      return true;
+    }
+    if (nrInputs() == 0
+        && nrOutputs() == 0
+        && map.nrIOs() == 0
+        && map.nrInputs() == nrIOs()
+        && map.nrOutputs() == 0
+        && selComp.getPin() < 0) {
+      return true;
+    }
+    if (nrInputs() == 0
+        && nrOutputs() == 0
+        && map.nrIOs() == 0
+        && map.nrOutputs() == nrIOs()
+        && map.nrInputs() == 0
+        && selComp.getPin() < 0) {
+      return true;
     }
     return false;
   }
@@ -823,29 +888,13 @@ public class FPGAIOInformationContainer implements Cloneable {
       map.unmap(selComp.getPin());
       return map.tryMap(selComp.getPin(), this, 0);
     }
-    if (map.nrInputs() == nrInputs()
-        && map.nrOutputs() == nrOutputs()
-        && map.nrIOs() == nrIOs()
-        && selComp.getPin() < 0) {
+    if (selComp.getPin() >= 0 && selectedPin >= 0) {
+      /* single pin on a selected Pin */
+      map.unmap(selComp.getPin());
+      return map.tryMap(selComp.getPin(), this, selectedPin);
+    }
+    if (isCompleteMap()) {
       /* complete map */
-      map.unmap();
-      return map.tryMap(this);
-    }
-    if (nrInputs() == 0
-        && nrOutputs() == 0
-        && map.nrIOs() == 0
-        && map.nrInputs() == nrIOs()
-        && map.nrOutputs() == 0
-        && selComp.getPin() < 0) {
-      map.unmap();
-      return map.tryMap(this);
-    }
-    if (nrInputs() == 0
-        && nrOutputs() == 0
-        && map.nrIOs() == 0
-        && map.nrOutputs() == nrIOs()
-        && map.nrInputs() == 0
-        && selComp.getPin() < 0) {
       map.unmap();
       return map.tryMap(this);
     }
@@ -865,40 +914,16 @@ public class FPGAIOInformationContainer implements Cloneable {
     Color col = BoardManipulator.getColor(color);
     if (col == null) return;
     g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
-    if (nrOfMaps == NrOfPins) {
-      g.fillRect(x, y, width, height);
-    } else {
-      g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
-      g.drawRect(x, y, width, height);
-      g.setStroke(new BasicStroke(1));
-      if (height > width) {
-        int y1 = y + ((height * nrOfMaps) / NrOfPins);
-        int y2 = y + ((height * (nrOfMaps - 1)) / NrOfPins);
-        int[] xpoints = {x, x + width, x + width, x};
-        int[] ypoints = {y, y, y1, y2};
-        g.fillPolygon(xpoints, ypoints, 4);
-        if (selectable) {
-          col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
-          if (col == null) return;
-          g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
-          ypoints[0] += height;
-          ypoints[1] += height;
-          g.fillPolygon(xpoints, ypoints, 4);
-        }
-      } else {
-        int x1 = x + ((width * nrOfMaps) / NrOfPins);
-        int x2 = x + ((width * (nrOfMaps - 1)) / NrOfPins);
-        int[] xpoints = {x, x1, x2, x};
-        int[] ypoints = {y, y, y + height, y + height};
-        g.fillPolygon(xpoints, ypoints, 4);
-        if (selectable) {
-          col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
-          if (col == null) return;
-          g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
-          xpoints[0] += width;
-          xpoints[3] += width;
-          g.fillPolygon(xpoints, ypoints, 4);
-        }
+    for (int i = 0; i < NrOfPins; i++) {
+      alpha = !highlighted || !selectable ? 75 : (i == selectedPin && !isCompleteMap()) ? 250 : 150;
+      if (pinIsMapped.get(i) != null) {
+        col = BoardManipulator.getColor(color);
+        IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
+            x, y, col, alpha, MyType);
+      } else if (selectable) {
+        col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
+        IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
+            x, y, col, alpha, MyType);
       }
     }
   }
@@ -909,14 +934,21 @@ public class FPGAIOInformationContainer implements Cloneable {
     int y = AppPreferences.getScaled(MyRectangle.getYpos(), scale);
     int width = AppPreferences.getScaled(MyRectangle.getWidth(), scale);
     int height = AppPreferences.getScaled(MyRectangle.getHeight(), scale);
-    int alpha = highlighted ? 200 : 100;
+    int alpha;
     Color col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
     if (col == null) return;
-    g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
-    g.fillRect(x, y, width, height);
+    if (NrOfPins == 0 && selectable) {
+      alpha = highlighted ? 150 : 75;
+      IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns, 
+          x, y, col, alpha, MyType);
+    }
+    for (int i = 0; i < NrOfPins; i++) {
+      alpha = !highlighted ? 75 : (i == selectedPin && !isCompleteMap()) ? 250 : 150;
+      if (pinIsMapped.get(i) != null || selectable) {
+        IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
+            x, y, col, alpha, MyType);
+      }
+    }
   }
 
-  private void paintinfo(Graphics2D g, float scale) {
-
-  }
 }

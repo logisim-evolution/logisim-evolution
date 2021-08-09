@@ -166,7 +166,11 @@ public class IOComponentsInformation {
     ypos = Math.max(ypos, 0);
     ypos = Math.min(ypos, imageHeight - 1);
     FPGAIOInformationContainer selected = lookup[xpos][ypos];
-    if (selected == highlighted) return;
+    if (selected == highlighted) {
+      if (highlighted != null && highlighted.selectedPinChanged(xpos, ypos))
+        fireRedraw(highlighted.GetRectangle(), scale);
+      return;
+    }
     if (highlighted != null) {
       highlighted.unsetHighlighted();
       fireRedraw(highlighted.GetRectangle(), scale);

@@ -81,7 +81,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       if (mappedList) {
         if (map.isCompleteMap(false)) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx, new MapInfo(-1, map));
+          myItems.add(idx, new MapInfo(map.getNrOfPins() == 1 ? 0 : -1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins() - 1; i >= 0; i--) {
@@ -91,7 +91,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       } else {
         if (map.isNotMapped()) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx, new MapInfo(-1, map));
+          myItems.add(idx, new MapInfo(map.getNrOfPins() == 1 ? 0 : -1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins() - 1; i >= 0; i--) {
