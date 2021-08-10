@@ -139,7 +139,7 @@ public enum IOComponentTypes {
     }
   }
 
-  public static String getOutputLabel(int nrPins,int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
+  public static String getOutputLabel(int nrPins, int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
     switch (comp) {
       case SevenSegmentNoDp:
       case SevenSegment:

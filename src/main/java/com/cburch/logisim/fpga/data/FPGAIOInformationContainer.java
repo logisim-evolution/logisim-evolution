@@ -933,7 +933,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         /* we can completely map the ledbar in this row */
         map.unmap(); /* remove all old maps */
         boolean canBeMapped = true;
-        for (int i = 0 ; i < nrOfSegs ; i++) {
+        for (int i = 0; i < nrOfSegs; i++) {
           canBeMapped &= map.tryMap(nrOfSegs - i - 1, this, selectedPin + i);
         }
         if (!canBeMapped) map.unmap();
@@ -941,9 +941,9 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
     }
     if (fact instanceof RgbLed) {
-      if (Driving == LedArrayDriving.RgbColumnScanning ||
-          Driving == LedArrayDriving.RgbDefault ||
-          Driving == LedArrayDriving.RgbRowScanning) {
+      if (Driving == LedArrayDriving.RgbColumnScanning
+          || Driving == LedArrayDriving.RgbDefault
+          || Driving == LedArrayDriving.RgbRowScanning) {
         /* only if we have an RGB-array we are going to do something special */
         map.unmap(); /* remove all previous maps */
         return map.tryCompleteMap(this, selectedPin);

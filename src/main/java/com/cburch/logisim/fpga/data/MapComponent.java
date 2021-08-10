@@ -246,7 +246,7 @@ public class MapComponent {
           if (map1 != null) map1.unmap();
           if (map2 != null) map2.unmap();
           if (map3 != null) map3.unmap();
-          for (int i = 0; i < 3 ; i++) {
+          for (int i = 0; i < 3; i++) {
             maps.set(i, null);
             opens.set(i, false);
             constants.set(i, -1);
@@ -356,7 +356,7 @@ public class MapComponent {
               /* we have a triple map on a LEDArray, so do it */
               for (FPGAIOInformationContainer comp : IOcomps) {
                 if (comp.GetRectangle().PointInside(rect1.getXpos(), rect1.getYpos())) {
-                  tryCompleteMap(comp,iomap1);
+                  tryCompleteMap(comp, iomap1);
                   return;
                 }
               }
@@ -387,7 +387,7 @@ public class MapComponent {
   public boolean tryCompleteMap(FPGAIOInformationContainer comp, int compPin) {
     MapClass map = new MapClass(comp, compPin);
     if (!comp.tryMap(this, 0, compPin)) return false;
-    for (int i = 0 ; i < nrOfPins ; i++) {
+    for (int i = 0; i < nrOfPins; i++) {
       maps.set(i, map);
       opens.set(i, false);
       constants.set(i, -1);
