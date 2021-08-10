@@ -28,11 +28,17 @@
 
 package com.cburch.logisim.fpga.data;
 
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
 import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
 import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.io.DipSwitch;
+import com.cburch.logisim.std.io.DotMatrix;
+import com.cburch.logisim.std.io.LedBar;
+import com.cburch.logisim.std.io.RgbLed;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -93,6 +99,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private HashSet<Integer> MyIOPins;
   private Integer[][] PartialMapArray;
   private Integer NrOfPins;
+  private Integer NrOfExternalPins = 0;
   private char MyPullBehavior;
   private char MyActivityLevel;
   private char MyIOStandard;
@@ -308,6 +315,15 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyType.equals(IOComponentTypes.Pin)) MyActivityLevel = PinActivity.ActiveHigh;
     MyRectangle = new BoardRectangle(x, y, width, height);
     if (MyLabel != null) MyRectangle.SetLabel(MyLabel);
+    
+    if (MyType.equals(IOComponentTypes.LEDArray)) {
+      NrOfExternalPins = NrOfPins;
+      NrOfPins = nrOfRows * nrOfColumns;
+      setNrOfPins(NrOfPins);
+      MyOutputPins.clear();
+      for (int i = 0; i < NrOfPins; i++)
+        MyOutputPins.add(i);
+    }
   }
 
   public int getNrOfInputPins() {
@@ -749,7 +765,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       return IOComponentTypes.getInputLabel(NrOfPins, index, MyType);
     }
     if (MyOutputPins != null && MyOutputPins.contains(index)) {
-      return IOComponentTypes.getOutputLabel(NrOfPins, index, MyType);
+      return IOComponentTypes.getOutputLabel(NrOfPins, nrOfRows, nrOfColumns, index, MyType);
     }
     if (MyIOPins != null && MyIOPins.contains(index)) {
       return IOComponentTypes.getIOLabel(NrOfPins, index, MyType);
@@ -878,10 +894,70 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
     return false;
   }
+  
+  public boolean tryLedArrayMap(JPanel parent) {
+    MapComponent map = selComp.getMap();
+    if (selComp.getPin() >= 0 && selectedPin >= 0) {
+      /* single pin on a selected Pin */
+      map.unmap(selComp.getPin());
+      return map.tryMap(selComp.getPin(), this, selectedPin);
+    }
+    /* okay, the map component has more than one pin, then we treat first the RGB-LED,
+     * DotMatrix, and LedBar, all others will be handled by a partialmapdialog
+     */
+    ComponentFactory fact = map.getComponentFactory();
+    if (fact instanceof DotMatrix) {
+      int nrOfMatrixRows = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
+      int nrOfMatrixColumns = map.getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
+      int startRow =  selectedPin / nrOfColumns;
+      int startColumn = selectedPin % nrOfColumns;
+      if (((nrOfMatrixRows + startRow) <= nrOfRows) && ((nrOfMatrixColumns + startColumn) <= nrOfColumns)) {
+        boolean canMap = true;
+        /* we can map the matrix here */
+        map.unmap(); // Remove all previous maps
+        for (int row = 0; row < nrOfMatrixRows; row++) {
+          for (int column = 0; column < nrOfMatrixColumns; column++) {
+            int SourcePin = row * nrOfMatrixColumns + column;
+            int MapPin = (row + startRow) * nrOfColumns + column + startColumn;
+            canMap &= map.tryMap(SourcePin, this, MapPin);
+          }
+        }
+        if (!canMap) map.unmap();
+        return canMap;
+      }
+    }
+    if (fact instanceof LedBar) {
+      int nrOfSegs = map.getAttributeSet().getValue(LedBar.ATTR_MATRIX_COLS).getWidth();
+      int selCol = selectedPin % nrOfColumns;
+      if ((selCol + nrOfSegs) <= nrOfColumns) {
+        /* we can completely map the ledbar in this row */
+        map.unmap(); /* remove all old maps */
+        boolean canBeMapped = true;
+        for (int i = 0 ; i < nrOfSegs ; i++) {
+          canBeMapped &= map.tryMap(nrOfSegs - i - 1, this, selectedPin + i);
+        }
+        if (!canBeMapped) map.unmap();
+        return canBeMapped;
+      }
+    }
+    if (fact instanceof RgbLed) {
+      if (Driving == LedArrayDriving.RgbColumnScanning ||
+          Driving == LedArrayDriving.RgbDefault ||
+          Driving == LedArrayDriving.RgbRowScanning) {
+        /* only if we have an RGB-array we are going to do something special */
+        map.unmap(); /* remove all previous maps */
+        return map.tryCompleteMap(this, selectedPin);
+      }
+    }
+    PartialMapDialog diag = new PartialMapDialog(selComp, this, parent);
+    return diag.doit();
+  }
 
   public boolean tryMap(JPanel parent) {
     if (!selectable) return false;
     if (selComp == null) return false;
+    if (MyType.equals(IOComponentTypes.LEDArray))
+      return tryLedArrayMap(parent);
     MapComponent map = selComp.getMap();
     if (selComp.getPin() >= 0 && NrOfPins == 1) {
       /* single pin only */
@@ -897,6 +973,18 @@ public class FPGAIOInformationContainer implements Cloneable {
       /* complete map */
       map.unmap();
       return map.tryMap(this);
+    }
+    /* in case of a dipswitch on dipswitch we are doing some more intelligent approach */
+    if (MyType.equals(IOComponentTypes.DIPSwitch) && (map.getComponentFactory() instanceof DipSwitch)) {
+      int nrOfSwitches = map.getAttributeSet().getValue(DipSwitch.ATTR_SIZE).getWidth();
+      if ((nrOfSwitches + selectedPin) <= NrOfPins) {
+        map.unmap();
+        boolean canMap = true;
+        for (int i = 0; i < nrOfSwitches; i++)
+          canMap &= map.tryMap(i, this, i + selectedPin);
+        if (!canMap) map.unmap();
+        return canMap;
+      }
     }
     PartialMapDialog diag = new PartialMapDialog(selComp, this, parent);
     return diag.doit();
@@ -915,7 +1003,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (col == null) return;
     g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
     for (int i = 0; i < NrOfPins; i++) {
-      alpha = !highlighted || !selectable ? 75 : (i == selectedPin && !isCompleteMap()) ? 250 : 150;
+      alpha = !highlighted || !selectable ? 100 : (i == selectedPin && !isCompleteMap()) ? 255 : 150;
       if (pinIsMapped.get(i) != null) {
         col = BoardManipulator.getColor(color);
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
@@ -938,12 +1026,12 @@ public class FPGAIOInformationContainer implements Cloneable {
     Color col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
     if (col == null) return;
     if (NrOfPins == 0 && selectable) {
-      alpha = highlighted ? 150 : 75;
+      alpha = highlighted ? 150 : 100;
       IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns, 
           x, y, col, alpha, MyType);
     }
     for (int i = 0; i < NrOfPins; i++) {
-      alpha = !highlighted ? 75 : (i == selectedPin && !isCompleteMap()) ? 250 : 150;
+      alpha = !highlighted ? 100 : (i == selectedPin && !isCompleteMap()) ? 255 : 150;
       if (pinIsMapped.get(i) != null || selectable) {
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
             x, y, col, alpha, MyType);

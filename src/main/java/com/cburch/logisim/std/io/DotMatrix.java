@@ -51,9 +51,9 @@ public class DotMatrix extends DotMatrixBase {
     super(_ID, S.getter("dotMatrixComponent"), 5, 7);
   }
 
-  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
+  public static final Attribute<BitWidth> ATTR_MATRIX_COLS =
       Attributes.forBitWidth("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
-  protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
+  public static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
       Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
 
   public Attribute<BitWidth> getAttributeRows() {

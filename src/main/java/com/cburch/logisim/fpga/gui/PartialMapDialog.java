@@ -33,7 +33,11 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MapListModel;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -45,6 +49,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class PartialMapDialog extends JDialog implements LocaleListener, ActionListener {
   private static final long serialVersionUID = 1L;
@@ -73,30 +78,32 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     ioComp = io;
     setLayout(new GridBagLayout());
     setModal(true);
-    setResizable(false);
+    setResizable(true);
     setLocationRelativeTo(parent);
     setAlwaysOnTop(true);
     MapTo = new ArrayList<>();
     GridBagConstraints cs = new GridBagConstraints();
     cs.gridx = 0;
-    cs.gridy = -1;
+    cs.gridy = 0;
     cs.gridwidth = 2;
     cs.fill = GridBagConstraints.HORIZONTAL;
+    JPanel content = new JPanel();
+    content.setLayout(new BorderLayout());
     JPanel pane = createInputPane();
     if (pane != null) {
-      cs.gridy++;
-      add(pane, cs);
+      content.add(pane, BorderLayout.NORTH);
     }
     pane = createOutputPane();
     if (pane != null) {
-      cs.gridy++;
-      add(pane, cs);
+      content.add(pane, BorderLayout.CENTER);
     }
     pane = createIOPane();
     if (pane != null) {
-      cs.gridy++;
-      add(pane, cs);
+      content.add(pane, BorderLayout.SOUTH);
     }
+    JScrollPane scroll = new JScrollPane(content);
+    scroll.setPreferredSize(new Dimension(AppPreferences.getScaled(450), AppPreferences.getScaled(250)));
+    add(scroll, cs);
     cs.gridwidth = 1;
     cs.gridy++;
     OkButton = new JButton();

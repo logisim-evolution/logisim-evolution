@@ -346,7 +346,7 @@ public class FPGAIOInformationSettingsDialog {
               NrOfPins.put(OUTPUT_ID, nr);
               PinLabels.clear();
               for (int i = 0; i < nr; i++)
-                PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+                PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, MyType));
               buildPinTable(nr, MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
               selWindow.pack();
               return;
@@ -470,7 +470,7 @@ public class FPGAIOInformationSettingsDialog {
       }
       PinLabels.clear();
       int nr = NrOfPins.get(INPUT_ID);
-      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+      for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, MyType));
       buildPinTable(
           NrOfPins.get(INPUT_ID), MyType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
       panel.add(InputsPanel, BorderLayout.CENTER);
@@ -496,7 +496,7 @@ public class FPGAIOInformationSettingsDialog {
       if (MyType != IOComponentTypes.LEDArray) {
         PinLabels.clear();
         int nr = NrOfPins.get(OUTPUT_ID);
-        for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, i, MyType));
+        for (int i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, MyType));
         buildPinTable(
             NrOfPins.get(OUTPUT_ID), MyType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
       } else {
@@ -651,7 +651,7 @@ public class FPGAIOInformationSettingsDialog {
                 "Error",
                 S.get(
                     "FpgaIoPinLoc",
-                    IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), i, MyType)));
+                    IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), 0, 0, i, MyType)));
             break;
           }
         }

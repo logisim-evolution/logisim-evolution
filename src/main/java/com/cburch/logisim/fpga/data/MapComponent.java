@@ -32,10 +32,12 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.BubbleInformationContainer;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,6 +93,7 @@ public class MapComponent {
    * The following structure defines if the pin is mapped
    */
   private final ComponentFactory myFactory;
+  private final AttributeSet myAttributes;
 
   private final ArrayList<String> myName;
 
@@ -103,6 +106,7 @@ public class MapComponent {
 
   public MapComponent(ArrayList<String> name, NetlistComponent comp) {
     myFactory = comp.GetComponent().getFactory();
+    myAttributes = comp.GetComponent().getAttributeSet();
     myName = name;
     ComponentMapInformationContainer mapInfo = comp.GetMapInformationContainer();
     ArrayList<String> bName = new ArrayList<>();
@@ -133,6 +137,14 @@ public class MapComponent {
       pinLabels.add(mapInfo.GetInOutportLabel(i));
       MyIOBubles.put(nrOfPins++, idx);
     }
+  }
+  
+  public ComponentFactory getComponentFactory() {
+    return myFactory;
+  }
+  
+  public AttributeSet getAttributeSet() {
+    return myAttributes;
   }
 
   public int getNrOfPins() {
@@ -223,6 +235,26 @@ public class MapComponent {
 
   public void unmap(int pin) {
     if (pin < 0 || pin >= maps.size()) return;
+    if (myFactory instanceof RgbLed) {
+      /* we have too look if we have a tripple map */
+      MapClass map1 = maps.get(0);
+      MapClass map2 = maps.get(1);
+      MapClass map3 = maps.get(2);
+      if (map1.getIOComp().equals(map2.getIOComp()) && (map2.getIOComp().equals(map3.getIOComp()))) {
+        if ((maps.get(0).getIOPin() == maps.get(1).getIOPin()) && (maps.get(1).getIOPin() == maps.get(2).getIOPin())) {
+          /* we have a tripple map, unmap all */
+          if (map1 != null) map1.unmap();
+          if (map2 != null) map2.unmap();
+          if (map3 != null) map3.unmap();
+          for (int i = 0; i < 3 ; i++) {
+            maps.set(i, null);
+            opens.set(i, false);
+            constants.set(i, -1);
+          }
+          return;
+        }
+      }
+    }
     MapClass map = maps.get(pin);
     maps.set(pin, null);
     if (map != null) map.unmap();
@@ -306,6 +338,32 @@ public class MapComponent {
     } else {
       ArrayList<CircuitMapInfo> pmaps = cmap.getPinMaps();
       if (pmaps.size() != nrOfPins) return;
+      if (myFactory instanceof RgbLed) {
+        /* let's see of the RGB-Led is triple mapped */
+        boolean isPinMapped = true;
+        for (int i = 0; i < nrOfPins; i++) {
+          isPinMapped &= pmaps.get(i).isSinglePin();
+        }
+        if (isPinMapped) {
+          BoardRectangle rect1 = pmaps.get(0).getRectangle();
+          BoardRectangle rect2 = pmaps.get(1).getRectangle();
+          BoardRectangle rect3 = pmaps.get(2).getRectangle();
+          if (rect1.equals(rect2) && rect2.equals(rect3)) {
+            int iomap1 = pmaps.get(0).getIOId();
+            int iomap2 = pmaps.get(1).getIOId();
+            int iomap3 = pmaps.get(2).getIOId();
+            if (iomap1 == iomap2 && iomap2 == iomap3) {
+              /* we have a triple map on a LEDArray, so do it */
+              for (FPGAIOInformationContainer comp : IOcomps) {
+                if (comp.GetRectangle().PointInside(rect1.getXpos(), rect1.getYpos())) {
+                  tryCompleteMap(comp,iomap1);
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
       for (int i = 0; i < nrOfPins; i++) {
         opens.set(i, false);
         constants.set(i, -1);
@@ -324,6 +382,17 @@ public class MapComponent {
         }
       }
     }
+  }
+  
+  public boolean tryCompleteMap(FPGAIOInformationContainer comp, int compPin) {
+    MapClass map = new MapClass(comp, compPin);
+    if (!comp.tryMap(this, 0, compPin)) return false;
+    for (int i = 0 ; i < nrOfPins ; i++) {
+      maps.set(i, map);
+      opens.set(i, false);
+      constants.set(i, -1);
+    }
+    return true;
   }
 
   public boolean tryMap(int myPin, FPGAIOInformationContainer comp, int compPin) {

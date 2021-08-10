@@ -112,6 +112,8 @@ public enum IOComponentTypes {
         return 3;
       case LocalBus:
         return 2;
+      case LEDArray:
+        return 16;
       default:
         return 0;
     }
@@ -137,7 +139,7 @@ public enum IOComponentTypes {
     }
   }
 
-  public static String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
+  public static String getOutputLabel(int nrPins,int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
     switch (comp) {
       case SevenSegmentNoDp:
       case SevenSegment:
@@ -146,6 +148,13 @@ public enum IOComponentTypes {
         return RgbLed.getLabel(id);
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
+      case LEDArray: {
+        if (nrOfRows != 0 && nrOfColumns != 0 && id >= 0 && id < nrPins) {
+          int row = id / nrOfColumns;
+          int col = id % nrOfColumns;
+          return "Row_" + row + "_Col_" + col;
+        }
+      }
       default:
         return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
@@ -298,9 +307,9 @@ public enum IOComponentTypes {
               int bx = (width > height) ? x + (int) ((float) ypos * party) : x + (int) ((float) xpos * partx);
               int by = (width > height) ? y + (int) ((float) xpos * partx) : y + (int) ((float) ypos * party);
               int bw = (width > height) ? x + (int) ((float) (ypos + 1) * party) - bx :
-                x + (int) ((float) (xpos + 1) * partx) - bx;
+                  x + (int) ((float) (xpos + 1) * partx) - bx;
               int bh = (width > height) ? y + (int) ((float) (xpos + 1) * partx) - by : 
-                y + (int) ((float) (ypos + 1) * party) - by;
+                  y + (int) ((float) (ypos + 1) * party) - by;
               g.fillRect(bx, by, bw, bh);
             }
           }
