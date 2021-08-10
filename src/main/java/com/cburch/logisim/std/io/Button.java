@@ -118,6 +118,7 @@ public class Button extends InstanceFactory {
         new Attribute[] {
           StdAttr.FACING,
           IoLibrary.ATTR_COLOR,
+          IoLibrary.ATTR_ACTIVE,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -128,6 +129,7 @@ public class Button extends InstanceFactory {
         new Object[] {
           Direction.EAST,
           Color.WHITE,
+          Boolean.TRUE,
           "",
           Direction.WEST,
           StdAttr.DEFAULT_LABEL_FONT,
@@ -247,6 +249,7 @@ public class Button extends InstanceFactory {
   public void propagate(InstanceState state) {
     final var data = (InstanceDataSingleton) state.getData();
     Value val = data == null ? Value.FALSE : (Value) data.getValue();
+    val = state.getAttributeValue(IoLibrary.ATTR_ACTIVE) ? val : val == Value.TRUE ? Value.FALSE : Value.TRUE; 
     state.setPort(0, val, 1);
   }
 
