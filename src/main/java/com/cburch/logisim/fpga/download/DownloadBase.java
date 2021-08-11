@@ -115,9 +115,9 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesignCheckIOs() {
-	if (MyMappableResources.isCompletelyMapped()) return true;
-	int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
-      S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
+	   if (MyMappableResources.isCompletelyMapped()) return true;
+	   int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
+	       S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
@@ -259,13 +259,13 @@ public abstract class DownloadBase {
     }
     if (!AbstractHDLGeneratorFactory.WriteEntity(
         ProjectDir + Top.GetRelativeDirectory(),
-        Top.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Top.GetEntity(RootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
         Top.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
         ProjectDir + Top.GetRelativeDirectory(),
-        Top.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Top.GetArchitecture(RootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
         Top.getComponentStringIdentifier());
   }
 

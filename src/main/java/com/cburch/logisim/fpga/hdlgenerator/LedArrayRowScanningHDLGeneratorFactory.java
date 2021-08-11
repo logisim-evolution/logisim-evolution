@@ -130,7 +130,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
     return map;
   }
   
- @Override
+  @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, nrOfRowAddressBitsGeneric);
@@ -179,7 +179,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
     return Regs;
   }
 
- public ArrayList<String> getRowCounterCode() {
+  public ArrayList<String> getRowCounterCode() {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.add("");

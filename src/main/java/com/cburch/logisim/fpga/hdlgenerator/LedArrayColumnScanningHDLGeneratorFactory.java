@@ -179,7 +179,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     return Regs;
   }
 
- public ArrayList<String> getColumnCounterCode() {
+  public ArrayList<String> getColumnCounterCode() {
     ArrayList<String> Contents = new ArrayList<>();
     if (HDL.isVHDL()) {
       Contents.add("");
