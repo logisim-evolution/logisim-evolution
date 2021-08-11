@@ -192,7 +192,7 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // fill the xdc file
-    if (RootNetList.NumberOfClockTrees() > 0) {
+    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
       String clockPin = BoardInfo.fpga.getClockPinLocation();
       String clockSignal = TickComponentHDLGeneratorFactory.FPGAClock;
       String getPortsString = " [get_ports {" + clockSignal + "}]";
@@ -253,7 +253,7 @@ public class VivadoDownload implements VendorDownload {
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           String netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
           contents.add(
               "set_property PACKAGE_PIN "

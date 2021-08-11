@@ -33,6 +33,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -40,6 +41,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -230,19 +232,41 @@ public abstract class DownloadBase {
         return false;
       }
     }
-    Worker =
+    ToplevelHDLGeneratorFactory Top =
         new ToplevelHDLGeneratorFactory(
             MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
+    if (Top.hasLedArray()) {
+      for (String type : LedArrayDriving.Driving_strings) {
+        if (Top.hasLedArrayType(type)) {
+          Worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
+          String name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+          if (Worker != null && name != null) {
+            if (!AbstractHDLGeneratorFactory.WriteEntity(
+                ProjectDir + Worker.GetRelativeDirectory(),
+                Worker.GetEntity(RootSheet.getNetList(), null, name),
+                Worker.getComponentStringIdentifier())) {
+              return false;
+            }
+            if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+                ProjectDir + Worker.GetRelativeDirectory(),
+                Worker.GetArchitecture(RootSheet.getNetList(), null, name),
+                Worker.getComponentStringIdentifier())) {
+              return false;
+            }
+          }
+        }
+      }
+    }
     if (!AbstractHDLGeneratorFactory.WriteEntity(
-        ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        Worker.getComponentStringIdentifier())) {
+        ProjectDir + Top.GetRelativeDirectory(),
+        Top.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Top.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
-        ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        Worker.getComponentStringIdentifier());
+        ProjectDir + Top.GetRelativeDirectory(),
+        Top.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        Top.getComponentStringIdentifier());
   }
 
   protected boolean GenDirectory(String dir) {

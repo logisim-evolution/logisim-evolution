@@ -56,7 +56,6 @@ public class LedArrayDriving {
 
   public static LinkedList<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
-
     result.add(Driving_strings[0]);
     result.add(Driving_strings[1]);
     result.add(Driving_strings[2]);

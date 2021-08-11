@@ -259,7 +259,7 @@ public class AlteraDownload implements VendorDownload {
     }
     Contents.add("");
     Contents.add("    # Map fpga_clk and ionets to fpga pins");
-    if (RootNetList.NumberOfClockTrees() > 0) {
+    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
       Contents.add(
           "    set_location_assignment "
               + BoardInfo.fpga.getClockPinLocation()
@@ -284,9 +284,9 @@ public class AlteraDownload implements VendorDownload {
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        Temp.setLength(0);
-        Temp.append("    set_location_assignment ");
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+          Temp.setLength(0);
+          Temp.append("    set_location_assignment ");
           Temp.append(map.getPinLocation(i)).append(" -to ");
           if (map.isExternalInverted(i)) Temp.append("n_");
           Temp.append(map.getHdlString(i));

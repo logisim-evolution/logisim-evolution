@@ -1321,12 +1321,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     StringBuffer temp = new StringBuffer();
     ArrayList<String> contents = new ArrayList<>();
     if (Component.getNrOfPins() <= 0) {
-      Reporter.Report.AddError("BUG: Found a component with not pins");
+      Reporter.Report.AddError("BUG: Found a component with no pins");
       return contents;
     }
     for (int i = 0; i < Component.getNrOfPins(); i++) {
       temp.setLength(0);
       temp.append("   ").append(HDL.assignPreamble());
+      if (Component.isInternalMapped(i)) {
+        /* TODO : handle internal mapped signals */
+        continue;
+      }
       /* IO-pins need to be mapped directly to the top-level component and cannot be
        * passed by signals, so we skip them.
        */

@@ -283,7 +283,7 @@ public class XilinxDownload implements VendorDownload {
     Contents.add("quit");
     if (!FileWriter.WriteContents(DownloadFile, Contents)) return false;
     Contents.clear();
-    if (RootNetList.NumberOfClockTrees() > 0) {
+    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
       Contents.add(
           "NET \""
               + TickComponentHDLGeneratorFactory.FPGAClock
@@ -316,7 +316,7 @@ public class XilinxDownload implements VendorDownload {
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");

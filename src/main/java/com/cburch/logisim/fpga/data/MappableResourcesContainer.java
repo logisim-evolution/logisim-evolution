@@ -200,7 +200,7 @@ public class MappableResourcesContainer {
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (!map.isIO(i)) continue;
+        if (!map.isIO(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
           StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
@@ -217,7 +217,7 @@ public class MappableResourcesContainer {
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (!map.isInput(i)) continue;
+        if (!map.isInput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
           StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
@@ -234,7 +234,7 @@ public class MappableResourcesContainer {
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (!map.isOutput(i)) continue;
+        if (!map.isOutput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
           StringBuilder sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");

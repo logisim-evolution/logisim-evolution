@@ -325,6 +325,13 @@ public class FPGAIOInformationContainer implements Cloneable {
         MyOutputPins.add(i);
     }
   }
+  
+  public boolean hasMap() {
+    boolean ret = false;
+    for (int i = 0; i < NrOfPins; i++)
+      ret |= pinIsMapped(i);
+    return ret;
+  }
 
   public int getNrOfInputPins() {
     if (MyInputPins == null) return 0;

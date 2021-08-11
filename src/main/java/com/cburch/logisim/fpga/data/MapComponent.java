@@ -205,6 +205,11 @@ public class MapComponent {
     if (opens.get(pin)) return true;
     return constants.get(pin) >= 0;
   }
+  
+  public boolean isInternalMapped(int pin) {
+    if (pin < 0 || pin >= nrOfPins) return false;
+    return isMapped(pin) && maps.get(pin).getIOComp().GetType().equals(IOComponentTypes.LEDArray);
+  }
 
   public boolean isBoardMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;

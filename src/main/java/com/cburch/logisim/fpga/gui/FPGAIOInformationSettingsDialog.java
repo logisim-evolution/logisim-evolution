@@ -41,6 +41,7 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
+import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -128,8 +129,7 @@ public class FPGAIOInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LedRowScanning : {
-        double nrBitsDouble = Math.log(nrOfRows) / Math.log(2.0);
-        int nrBits = (int) Math.ceil(nrBitsDouble);
+        int nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + nrOfColumns;
         for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -141,8 +141,7 @@ public class FPGAIOInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LedColumnScanning : {
-        double nrBitsDouble = Math.log(nrOfColumns) / Math.log(2.0);
-        int nrBits = (int) Math.ceil(nrBitsDouble);
+        int nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + nrOfRows;
         for (int i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -179,8 +178,7 @@ public class FPGAIOInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RgbRowScanning : {
-        double nrBitsDouble = Math.log(nrOfRows) / Math.log(2.0);
-        int nrBits = (int) Math.ceil(nrBitsDouble);
+        int nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         String preamble;
         for (int i = 0; i < nrOfPins; i++) {
@@ -210,8 +208,7 @@ public class FPGAIOInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RgbColumnScanning : {
-        double nrBitsDouble = Math.log(nrOfColumns) / Math.log(2.0);
-        int nrBits = (int) Math.ceil(nrBitsDouble);
+        int nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         String preamble;
         for (int i = 0; i < nrOfPins; i++) {

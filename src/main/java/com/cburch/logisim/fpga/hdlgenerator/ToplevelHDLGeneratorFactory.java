@@ -31,14 +31,19 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -48,6 +53,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final double TickFrequency;
   private final Circuit MyCircuit;
   private final MappableResourcesContainer MyIOComponents;
+  private final boolean requiresFPGAClock;
+  private final boolean hasLedArray;
+  private final ArrayList<FPGAIOInformationContainer> myLedArrays;
+  private final HashMap<String, Boolean> LedArrayTypesUsed; 
 
 
   public ToplevelHDLGeneratorFactory(
@@ -56,7 +65,36 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     TickFrequency = TickClock;
     MyCircuit = TopLevel;
     MyIOComponents = IOComponents;
+    boolean hasScanningLedArray = false;
+    boolean hasLedArray = false;
+    HashMap<String, Boolean> LedArrayTypesUsed = new HashMap<>();
+    ArrayList<FPGAIOInformationContainer> LedArrays = new ArrayList<>();
+    for (FPGAIOInformationContainer comp : MyIOComponents.getIOComponentInformation().getComponents()) {
+      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+        if (comp.hasMap()) {
+          LedArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
+          LedArrays.add(comp);
+          hasLedArray = true;
+          if (!(comp.getArrayDriveMode() == LedArrayDriving.LedDefault) 
+              && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
+            hasScanningLedArray = true;
+        }
+      }
+    }
+    requiresFPGAClock = hasScanningLedArray;
+    this.hasLedArray = hasLedArray;
+    this.LedArrayTypesUsed = LedArrayTypesUsed;
+    myLedArrays = LedArrays;
     // this.useFPGAClock = useFPGAClock;
+  }
+  
+  public boolean hasLedArray() {
+    return hasLedArray;
+  }
+  
+  public boolean hasLedArrayType(String type) {
+    if (!LedArrayTypesUsed.containsKey(type)) return false;
+    return LedArrayTypesUsed.get(type);
   }
 
   @Override
@@ -83,6 +121,14 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .get(0)
                   .getFactory()
                   .getHDLName(TheNetlist.GetAllClockSources().get(0).getAttributeSet())));
+    }
+    for (String type : LedArrayDriving.Driving_strings) {
+      if (hasLedArrayType(type)) {
+        AbstractHDLGeneratorFactory Worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
+        String Name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+        if (Worker != null && Name != null)
+          Components.addAll(Worker.GetComponentInstantiation(TheNetlist, null, Name));
+      }
     }
     CircuitHDLGeneratorFactory Worker = new CircuitHDLGeneratorFactory(MyCircuit);
     Components.addAll(
@@ -113,6 +159,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (String io : MyIOComponents.GetMappedOutputPinNames()) {
       Outputs.put(io, 1);
     }
+    for (FPGAIOInformationContainer ledArray : myLedArrays) {
+      Outputs.putAll(LedArrayGenericHDLGeneratorFactory.getExternalSignals(
+          ledArray.getArrayDriveMode(), 
+          ledArray.getNrOfRows(), 
+          ledArray.getNrOfColumns(), 
+          myLedArrays.indexOf(ledArray)));
+    }
     return Outputs;
   }
 
@@ -121,7 +174,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
     /* First we instantiate the Clock tree busses when present */
-    if (NrOfClockTrees > 0 || TheNetlist.RequiresGlobalClockConnection()) {
+    if (NrOfClockTrees > 0 || TheNetlist.RequiresGlobalClockConnection() || requiresFPGAClock) {
       Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
     }
     for (String in : MyIOComponents.GetMappedInputPinNames()) {
@@ -140,7 +193,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       MapComponent comp = MyIOComponents.getMappableResources().get(key);
       Contents.addAll(AbstractHDLGeneratorFactory.GetToplevelCode(comp));
     }
-    /* now we peocess the clock tree components */
+    /* now we process the clock tree components */
     if (NrOfClockTrees > 0) {
       Contents.addAll(MakeRemarkBlock("Here the clock tree components are defined", 3));
       TickComponentHDLGeneratorFactory Ticker =
@@ -167,6 +220,19 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             null,
             MyIOComponents,
             CorrectLabel.getCorrectLabel(MyCircuit.getName())));
+    if (hasLedArray) {
+      Contents.add("");
+      Contents.addAll(MakeRemarkBlock("Here the Led arrays are connected", 3));
+      for (FPGAIOInformationContainer array : myLedArrays) {
+        Contents.addAll(LedArrayGenericHDLGeneratorFactory.GetComponentMap(
+            array.getArrayDriveMode(), 
+            array.getNrOfRows(), 
+            array.getNrOfColumns(), 
+            myLedArrays.indexOf(array),
+            FpgaClockFrequency,
+            array.GetActivityLevel() == PinActivity.ActiveLow));
+      }
+    }
     return Contents;
   }
 
@@ -248,6 +314,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         int NrOfBits = Nets.GetOutputPin(output).GetComponent().getEnd(0).getWidth().getWidth();
         Wires.put(SName, NrOfBits);
       }
+    }
+    for (FPGAIOInformationContainer ledArray : myLedArrays) {
+      Wires.putAll(LedArrayGenericHDLGeneratorFactory.getInternalSignals(
+          ledArray.getArrayDriveMode(), 
+          ledArray.getNrOfRows(), 
+          ledArray.getNrOfColumns(), 
+          myLedArrays.indexOf(ledArray)));
     }
     return Wires;
   }
