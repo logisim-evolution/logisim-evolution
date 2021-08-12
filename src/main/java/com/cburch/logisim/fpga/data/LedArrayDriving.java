@@ -46,7 +46,6 @@ public class LedArrayDriving {
     char result = 0;
     LinkedList<String> thelist = LedArrayDriving.getStrings();
     Iterator<String> iter = thelist.iterator();
-    result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
       result++;
@@ -55,7 +54,7 @@ public class LedArrayDriving {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<>();
+    var result = new LinkedList<String>();
     result.add(Driving_strings[0]);
     result.add(Driving_strings[1]);
     result.add(Driving_strings[2]);
@@ -66,7 +65,7 @@ public class LedArrayDriving {
   }
 
   public static LinkedList<String> getDisplayStrings() {
-    LinkedList<String> result = new LinkedList<>();
+    var result = new LinkedList<String>();
     result.add(S.get(Driving_strings[0]));
     result.add(S.get(Driving_strings[1]));
     result.add(S.get(Driving_strings[2]));

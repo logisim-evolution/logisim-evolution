@@ -68,7 +68,7 @@ public enum IOComponentTypes {
    */
 
   public static IOComponentTypes getEnumFromString(String str) {
-    for (IOComponentTypes elem : KnownComponentSet) {
+    for (var elem : KnownComponentSet) {
       if (elem.name().equalsIgnoreCase(str)) {
         return elem;
       }
@@ -150,8 +150,8 @@ public enum IOComponentTypes {
         return ReptarLocalBus.getOutputLabel(id);
       case LEDArray: {
         if (nrOfRows != 0 && nrOfColumns != 0 && id >= 0 && id < nrPins) {
-          int row = id / nrOfColumns;
-          int col = id % nrOfColumns;
+          final var row = id / nrOfColumns;
+          final var col = id % nrOfColumns;
           return "Row_" + row + "_Col_" + col;
         }
       }
@@ -180,33 +180,33 @@ public enum IOComponentTypes {
       int nrOfRows,
       int nrOfColumns,
       IOComponentTypes type) {
-    boolean hasDp = false;
+    var hasDp = false;
     switch (type) {
       case DIPSwitch: {
-        float part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
-        for (int w = 0; w < width; w++)
-          for (int h = 0; h < height; h++) {
-            float index = (width > height) ? (float) w / part : (float) h / part;
+        var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) {
+            var index = (width > height) ? (float) w / part : (float) h / part;
             PartialMap[w][h] = (int) index;
           }
         break;
       }
       case RGBLED: {
-        float part = height / 3;
-        for (int w = 0; w < width; w++)
-          for (int h = 0; h < height; h++) 
+        var part = (float) height / (float) 3;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) 
             PartialMap[w][h] = (int) ((float) h / part);
         break;
       }
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
-        int sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
-        int sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
-        int sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
-        int sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
-        int se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
-        int sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
-        int sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
+        final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
+        final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
+        final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
+        final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
+        final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
+        final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
+        final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
         int[][] indexes = {
             {-1, sa, sa, -1, -1}, 
             {sf, -1, -1, sb, -1}, 
@@ -217,12 +217,12 @@ public enum IOComponentTypes {
             {-1, sd, sd, -1, -1}
         };
         if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
-        float partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
-        float party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
-        for (int w = 0; w < width; w++)
-          for (int h = 0; h < height; h++) {
-            int xpos = (width > height) ? (int) ((float) h / partx) : (int) ((float) w / partx);
-            int ypos = (width > height) ? (int) ((float) w / party) : (int) ((float) h / party);
+        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
+        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) {
+            var xpos = (width > height) ? (int) ((float) h / partx) : (int) ((float) w / partx);
+            var ypos = (width > height) ? (int) ((float) w / party) : (int) ((float) h / party);
             PartialMap[w][h] = indexes[ypos][xpos];
           }
         break;
@@ -230,19 +230,19 @@ public enum IOComponentTypes {
       case LEDArray: {
         /* TODO: for the moment we assume that the columns are on the x-axis and the rows on the y-axis 
          * rotated array's are not taking into account */
-        float partx = (float) width / (float) nrOfColumns;
-        float party = (float) height / (float) nrOfRows;
-        for (int w = 0; w < width; w++) 
-          for (int h = 0; h < height; h++) {
-            int xPos = (int) ((float) w / partx);
-            int yPos = (int) ((float) h / party);
+        final var partx = (float) width / (float) nrOfColumns;
+        final var party = (float) height / (float) nrOfRows;
+        for (var w = 0; w < width; w++) 
+          for (var h = 0; h < height; h++) {
+            var xPos = (int) ((float) w / partx);
+            var yPos = (int) ((float) h / party);
             PartialMap[w][h] = (yPos * nrOfColumns) + xPos;
           }
         break;
       }
       default: {
-        for (int w = 0; w < width; w++)
-          for (int h = 0; h < height; h++)
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++)
             PartialMap[w][h] = -1;
         break;
       }
@@ -262,33 +262,33 @@ public enum IOComponentTypes {
       int alpha,
       IOComponentTypes type) {
     g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
-    boolean hasDp = false;
+    var hasDp = false;
     switch (type) {
       case DIPSwitch: {
-        float part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
-        int bx = (width > height) ? x + (int) ((float) pinNr * part) : x;
-        int by = (width > height) ? y : y + (int) ((float) pinNr * part);
-        int bw = (width > height) ? (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part) : width;
-        int bh = (width > height) ? height : (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
+        final var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
+        final var bx = (width > height) ? x + (int) ((float) pinNr * part) : x;
+        final var by = (width > height) ? y : y + (int) ((float) pinNr * part);
+        final var bw = (width > height) ? (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part) : width;
+        final var bh = (width > height) ? height : (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
         g.fillRect(bx, by, bw, bh);
         break;
       }
       case RGBLED : {
-        float part = height / 3;
-        int by = y + (int) ((float) pinNr * part);
-        int bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
+        final var part = (float) height / (float) 3;
+        final var by = y + (int) ((float) pinNr * part);
+        final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
         g.fillRect(x, by, width, bh);
         break;
       }
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
-        int sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
-        int sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
-        int sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
-        int sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
-        int se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
-        int sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
-        int sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
+        final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
+        final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
+        final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
+        final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
+        final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
+        final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
+        final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
         int[][] indexes = {
             {-1, sa, sa, -1, -1},
             {sf, -1, -1, sb, -1},
@@ -299,16 +299,16 @@ public enum IOComponentTypes {
             {-1, sd, sd, -1, -1},
         };
         if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
-        float partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
-        float party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
-        for (int xpos = 0; xpos < 5; xpos++) {
-          for (int ypos = 0; ypos < 7; ypos++) {
+        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
+        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
+        for (var xpos = 0; xpos < 5; xpos++) {
+          for (var ypos = 0; ypos < 7; ypos++) {
             if (indexes[ypos][xpos] == pinNr) {
-              int bx = (width > height) ? x + (int) ((float) ypos * party) : x + (int) ((float) xpos * partx);
-              int by = (width > height) ? y + (int) ((float) xpos * partx) : y + (int) ((float) ypos * party);
-              int bw = (width > height) ? x + (int) ((float) (ypos + 1) * party) - bx :
+              final var bx = (width > height) ? x + (int) ((float) ypos * party) : x + (int) ((float) xpos * partx);
+              final var by = (width > height) ? y + (int) ((float) xpos * partx) : y + (int) ((float) ypos * party);
+              final var bw = (width > height) ? x + (int) ((float) (ypos + 1) * party) - bx :
                   x + (int) ((float) (xpos + 1) * partx) - bx;
-              int bh = (width > height) ? y + (int) ((float) (xpos + 1) * partx) - by : 
+              final var bh = (width > height) ? y + (int) ((float) (xpos + 1) * partx) - by : 
                   y + (int) ((float) (ypos + 1) * party) - by;
               g.fillRect(bx, by, bw, bh);
             }
@@ -317,14 +317,14 @@ public enum IOComponentTypes {
         break;
       }
       case LEDArray: {
-        float partx = (float) width / (float) nrOfColumns;
-        float party = (float) height / (float) nrOfRows;
-        int xPos = pinNr % nrOfColumns;
-        int yPos = pinNr / nrOfColumns;
-        int bx = x + (int) ((float) xPos * partx);
-        int by = y + (int) ((float) yPos * party);
-        int bw = x + (int) ((float) (xPos + 1) * partx) - bx;
-        int bh = y + (int) ((float) (yPos + 1) * party) - by;
+        final var partx = (float) width / (float) nrOfColumns;
+        final var party = (float) height / (float) nrOfRows;
+        final var xPos = pinNr % nrOfColumns;
+        final var yPos = pinNr / nrOfColumns;
+        final var bx = x + (int) ((float) xPos * partx);
+        final var by = y + (int) ((float) yPos * party);
+        final var bw = x + (int) ((float) (xPos + 1) * partx) - bx;
+        final var bh = y + (int) ((float) (yPos + 1) * party) - by;
         g.fillRect(bx, by, bw, bh);
         break;
       }
