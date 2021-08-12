@@ -241,7 +241,7 @@ public class IOComponentsInformation {
 
   private void fireRedraw(BoardRectangle rect, float scale) {
     if (listeners == null) return;
-    var area =new Rectangle(
+    var area = new Rectangle(
         AppPreferences.getScaled(rect.getXpos() - 2, scale),
         AppPreferences.getScaled(rect.getYpos() - 2, scale),
         AppPreferences.getScaled(rect.getWidth() + 4, scale),
