@@ -30,10 +30,7 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
@@ -54,8 +51,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class DownloadBase {
 
@@ -84,8 +79,8 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesign(String CircuitName) {
-    LogisimFile myfile = MyProject.getLogisimFile();
-    Circuit RootSheet = myfile.getCircuit(CircuitName);
+    final var myfile = MyProject.getLogisimFile();
+    final var RootSheet = myfile.getCircuit(CircuitName);
     if (RootSheet == null) {
       Reporter.Report.AddError("INTERNAL ERROR: Circuit not found ?!?");
       return false;
@@ -95,9 +90,9 @@ public abstract class DownloadBase {
       return false;
     }
 
-    Map<String, ArrayList<Integer>> BoardComponents = MyBoardInformation.GetComponents();
+    var BoardComponents = MyBoardInformation.GetComponents();
     Reporter.Report.AddInfo("The Board " + MyBoardInformation.getBoardName() + " has:");
-    for (String key : BoardComponents.keySet()) {
+    for (var key : BoardComponents.keySet()) {
       Reporter.Report.AddInfo(BoardComponents.get(key).size() + " " + key + "(s)");
     }
     /*
@@ -119,15 +114,15 @@ public abstract class DownloadBase {
 
   protected boolean MapDesignCheckIOs() {
     if (MyMappableResources.isCompletelyMapped()) return true;
-    int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
+    var confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
         S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
   protected boolean performDRC(String CircuitName, String HDLType) {
-    Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
-    ArrayList<String> SheetNames = new ArrayList<>();
-    int DRCResult = Netlist.DRC_PASSED;
+    final var root = MyProject.getLogisimFile().getCircuit(CircuitName);
+    var SheetNames = new ArrayList<String>();
+    var DRCResult = Netlist.DRC_PASSED;
     if (root == null) {
       DRCResult |= Netlist.DRC_ERROR;
     } else {
@@ -138,8 +133,7 @@ public abstract class DownloadBase {
   }
 
   protected String GetProjDir(String selectedCircuit) {
-    String ProjectDir =
-        AppPreferences.FPGA_Workspace.get() + File.separator + MyProject.getLogisimFile().getName();
+    var ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator + MyProject.getLogisimFile().getName();
     if (!ProjectDir.endsWith(File.separator)) {
       ProjectDir += File.separator;
     }
@@ -160,8 +154,8 @@ public abstract class DownloadBase {
               + "\"");
       return false;
     }
-    String ProjectDir = GetProjDir(selectedCircuit);
-    Circuit RootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
+    final var ProjectDir = GetProjDir(selectedCircuit);
+    final var RootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!CleanDirectory(ProjectDir)) {
       Reporter.Report.AddFatalError(
           "Unable to cleanup old project files in directory: \"" + ProjectDir + "\"");
@@ -171,7 +165,7 @@ public abstract class DownloadBase {
       Reporter.Report.AddFatalError("Unable to create directory: \"" + ProjectDir + "\"");
       return false;
     }
-    for (String hdlPath : HDLPaths) {
+    for (var hdlPath : HDLPaths) {
       if (!GenDirectory(ProjectDir + hdlPath)) {
         Reporter.Report.AddFatalError(
             "Unable to create directory: \"" + ProjectDir + hdlPath + "\"");
@@ -179,9 +173,8 @@ public abstract class DownloadBase {
       }
     }
 
-    Set<String> GeneratedHDLComponents = new HashSet<>();
-    HDLGeneratorFactory Worker =
-        RootSheet.getSubcircuitFactory().getHDLGenerator(RootSheet.getStaticAttributes());
+    var GeneratedHDLComponents = new HashSet<String>();
+    var Worker = RootSheet.getSubcircuitFactory().getHDLGenerator(RootSheet.getStaticAttributes());
     if (Worker == null) {
       Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
@@ -191,10 +184,9 @@ public abstract class DownloadBase {
     }
     /* Here we generate the top-level shell */
     if (RootSheet.getNetList().NumberOfClockTrees() > 0) {
-      TickComponentHDLGeneratorFactory Ticker =
-          new TickComponentHDLGeneratorFactory(
-              MyBoardInformation.fpga.getClockFrequency(),
-              frequency /* , boardFreq.isSelected() */);
+      var Ticker = new TickComponentHDLGeneratorFactory(
+          MyBoardInformation.fpga.getClockFrequency(),
+          frequency /* , boardFreq.isSelected() */);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
           ProjectDir + Ticker.GetRelativeDirectory(),
           Ticker.GetEntity(
@@ -214,14 +206,12 @@ public abstract class DownloadBase {
         return false;
       }
 
-      HDLGeneratorFactory ClockGen =
-          RootSheet.getNetList()
-              .GetAllClockSources()
-              .get(0)
-              .getFactory()
-              .getHDLGenerator(RootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
-      String CompName =
-          RootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
+      final var ClockGen = RootSheet.getNetList()
+          .GetAllClockSources()
+          .get(0)
+          .getFactory()
+          .getHDLGenerator(RootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
+      final var CompName = RootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
           ProjectDir + ClockGen.GetRelativeDirectory(),
           ClockGen.GetEntity(RootSheet.getNetList(), null, CompName),
@@ -235,14 +225,13 @@ public abstract class DownloadBase {
         return false;
       }
     }
-    ToplevelHDLGeneratorFactory Top =
-        new ToplevelHDLGeneratorFactory(
-            MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
+    final var Top = new ToplevelHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), 
+        frequency, RootSheet, MyMappableResources);
     if (Top.hasLedArray()) {
-      for (String type : LedArrayDriving.Driving_strings) {
+      for (var type : LedArrayDriving.Driving_strings) {
         if (Top.hasLedArrayType(type)) {
           Worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
-          String name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+          final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
           if (Worker != null && name != null) {
             if (!AbstractHDLGeneratorFactory.WriteEntity(
                 ProjectDir + Worker.GetRelativeDirectory(),
@@ -274,7 +263,7 @@ public abstract class DownloadBase {
 
   protected boolean GenDirectory(String dir) {
     try {
-      File Dir = new File(dir);
+      var Dir = new File(dir);
       if (Dir.exists()) {
         return true;
       }
@@ -291,23 +280,20 @@ public abstract class DownloadBase {
       ArrayList<String> Entities,
       ArrayList<String> Behaviors,
       String HDLType) {
-    File Dir = new File(Path);
-    File[] Files = Dir.listFiles();
-    for (File thisFile : Files) {
+    var Dir = new File(Path);
+    var Files = Dir.listFiles();
+    for (var thisFile : Files) {
       if (thisFile.isDirectory()) {
         if (Path.endsWith(File.separator)) {
           GetVHDLFiles(SourcePath, Path + thisFile.getName(), Entities, Behaviors, HDLType);
         } else {
-          GetVHDLFiles(
-              SourcePath, Path + File.separator + thisFile.getName(), Entities, Behaviors, HDLType);
+          GetVHDLFiles(SourcePath, Path + File.separator + thisFile.getName(), Entities, Behaviors, HDLType);
         }
       } else {
-        String EntityMask =
-            (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension + ".vhd" : ".v";
-        String ArchitecturMask =
-            (HDLType.equals(HDLGeneratorFactory.VHDL))
-                ? FileWriter.ArchitectureExtension + ".vhd"
-                : "#not_searched#";
+        var EntityMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension + ".vhd" : ".v";
+        var ArchitecturMask = (HDLType.equals(HDLGeneratorFactory.VHDL))
+            ? FileWriter.ArchitectureExtension + ".vhd"
+            : "#not_searched#";
         if (thisFile.getName().endsWith(EntityMask)) {
           Entities.add((Path + File.separator + thisFile.getName()).replace("\\", "/"));
         } else if (thisFile.getName().endsWith(ArchitecturMask)) {
@@ -318,19 +304,18 @@ public abstract class DownloadBase {
   }
 
   public static String GetDirectoryLocation(String ProjectBase, int Identifier) {
-    String Base =
-        (ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase + File.separator;
+    var Base =(ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase + File.separator;
     if (Identifier >= HDLPaths.length) return null;
     return Base + HDLPaths[Identifier] + File.separator;
   }
 
   private boolean CleanDirectory(String dir) {
     try {
-      File thisDir = new File(dir);
+      final var thisDir = new File(dir);
       if (!thisDir.exists()) {
         return true;
       }
-      for (File theFiles : thisDir.listFiles()) {
+      for (var theFiles : thisDir.listFiles()) {
         if (theFiles.isDirectory()) {
           if (!CleanDirectory(theFiles.getPath())) {
             return false;
@@ -351,9 +336,9 @@ public abstract class DownloadBase {
   public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps,
       Netlist nets,
       BoardInformation board) {
-    HashMap<String, String> ledArrayMaps = new HashMap<>();
-    boolean hasMappedClockedArray = false;
-    for (FPGAIOInformationContainer comp : maps.getIOComponentInformation().getComponents()) {
+    var ledArrayMaps = new HashMap<String, String>();
+    var hasMappedClockedArray = false;
+    for (var comp : maps.getIOComponentInformation().getComponents()) {
       if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
         if (comp.hasMap()) {
           hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
