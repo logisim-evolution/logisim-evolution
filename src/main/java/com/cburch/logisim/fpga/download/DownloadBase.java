@@ -304,7 +304,7 @@ public abstract class DownloadBase {
   }
 
   public static String GetDirectoryLocation(String ProjectBase, int Identifier) {
-    var Base =(ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase + File.separator;
+    var Base = (ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase + File.separator;
     if (Identifier >= HDLPaths.length) return null;
     return Base + HDLPaths[Identifier] + File.separator;
   }

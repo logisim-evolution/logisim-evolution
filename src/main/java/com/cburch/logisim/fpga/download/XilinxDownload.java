@@ -32,9 +32,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.DriveStrength;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IoStandards;
-import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -51,7 +49,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
 
