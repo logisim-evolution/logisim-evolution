@@ -33,6 +33,8 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
@@ -50,6 +52,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -115,9 +118,9 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesignCheckIOs() {
-	   if (MyMappableResources.isCompletelyMapped()) return true;
-	   int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
-	       S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
+    if (MyMappableResources.isCompletelyMapped()) return true;
+    int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
+        S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
@@ -343,5 +346,31 @@ public abstract class DownloadBase {
       Reporter.Report.AddFatalError("Could not remove directory tree :" + dir);
       return false;
     }
+  }
+  
+  public static HashMap<String,String> getLedArrayMaps(MappableResourcesContainer maps, 
+      Netlist nets,
+      BoardInformation board) {
+    HashMap<String,String> ledArrayMaps = new HashMap<>();
+    boolean hasMappedClockedArray = false;
+    for (FPGAIOInformationContainer comp : maps.getIOComponentInformation().getComponents()) {
+      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+        if (comp.hasMap()) {
+          hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
+          for (int pin = 0 ; pin < comp.getExternalPinCount() ; pin++) {
+            ledArrayMaps.put(LedArrayGenericHDLGeneratorFactory.getExternalSignalName(
+                comp.getArrayDriveMode(), 
+                comp.getNrOfRows(), 
+                comp.getNrOfColumns(), 
+                comp.getArrayId(), 
+                pin), comp.getPinLocation(pin));
+          }
+        }
+      }
+    }
+    if (hasMappedClockedArray && (nets.NumberOfClockTrees() == 0) && !nets.RequiresGlobalClockConnection()) {
+      ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGAClock, board.fpga.getClockPinLocation());
+    }
+    return ledArrayMaps;
   }
 }

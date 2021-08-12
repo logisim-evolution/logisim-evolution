@@ -51,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
@@ -346,6 +347,10 @@ public class XilinxDownload implements VendorDownload {
           Contents.add(Temp.toString());
         }
       }
+    }
+    HashMap<String,String> LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (String key : LedArrayMap.keySet()) {
+      Contents.add("NET \"" + LedArrayMap.get(key) + "\" LOC=\"" + key + "\";");
     }
     return Contents;
   }

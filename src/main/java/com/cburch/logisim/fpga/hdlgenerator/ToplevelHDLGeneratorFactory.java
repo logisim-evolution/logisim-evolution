@@ -74,6 +74,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         if (comp.hasMap()) {
           LedArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
           LedArrays.add(comp);
+          comp.setArrayId(LedArrays.indexOf(comp));
           hasLedArray = true;
           if (!(comp.getArrayDriveMode() == LedArrayDriving.LedDefault) 
               && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
@@ -231,6 +232,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             myLedArrays.indexOf(array),
             FpgaClockFrequency,
             array.GetActivityLevel() == PinActivity.ActiveLow));
+        Contents.addAll(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
     return Contents;

@@ -97,9 +97,14 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs
           + id
+          + ",");
+      map.add("                 "
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + " => "
+          + TickComponentHDLGeneratorFactory.FPGAClock
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
@@ -119,6 +124,11 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs
           + id
+          + "),");
+      map.add("       ." 
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + "("
+          + TickComponentHDLGeneratorFactory.FPGAClock
           + "),");
       map.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayInputs

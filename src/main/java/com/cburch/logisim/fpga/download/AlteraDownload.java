@@ -44,6 +44,7 @@ import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -300,6 +301,10 @@ public class AlteraDownload implements VendorDownload {
           }
         }
       }
+    }
+    HashMap<String,String> LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (String key : LedArrayMap.keySet()) {
+      Contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
     }
     return Contents;
   }

@@ -74,6 +74,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     public void update(MapComponent map) {
       this.map = map;
     }
+    
+    public MapComponent getMap() {
+      return map;
+    }
   }
 
   public static class MapResultClass {
@@ -100,6 +104,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private Integer[][] PartialMapArray;
   private Integer NrOfPins;
   private Integer NrOfExternalPins = 0;
+  private Integer MyArrayId = -1;
   private char MyPullBehavior;
   private char MyActivityLevel;
   private char MyIOStandard;
@@ -324,6 +329,18 @@ public class FPGAIOInformationContainer implements Cloneable {
       for (int i = 0; i < NrOfPins; i++)
         MyOutputPins.add(i);
     }
+  }
+  
+  public void setArrayId(int val) {
+    MyArrayId = val;
+  }
+  
+  public int getArrayId() {
+    return MyArrayId;
+  }
+  
+  public int getExternalPinCount() {
+    return NrOfExternalPins;
   }
   
   public boolean hasMap() {
@@ -602,6 +619,16 @@ public class FPGAIOInformationContainer implements Cloneable {
   public boolean pinIsMapped(int index) {
     if (index < 0 || index >= NrOfPins) return true;
     return pinIsMapped.get(index) != null;
+  }
+  
+  public MapComponent getPinMap(int index) {
+    if (index < 0 || index >= NrOfPins) return null;
+    return pinIsMapped.get(index).getMap();
+  }
+  
+  public int getMapPin(int index) {
+    if (index < 0 || index >= NrOfPins) return -1;
+    return pinIsMapped.get(index).pin;
   }
 
   public void Set(

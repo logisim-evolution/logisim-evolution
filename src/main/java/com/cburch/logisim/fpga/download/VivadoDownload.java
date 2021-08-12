@@ -42,6 +42,7 @@ import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -284,6 +285,10 @@ public class VivadoDownload implements VendorDownload {
           }
         }
       }
+    }
+    HashMap<String,String> LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (String key : LedArrayMap.keySet()) {
+      contents.add("set_property PACKAGE_PIN " + key + " [get_ports {" + LedArrayMap.get(key) + "}]");
     }
     return contents;
   }

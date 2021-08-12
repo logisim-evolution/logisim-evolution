@@ -21,20 +21,25 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           + id
           + ",");
       map.add("                 "
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + " => "
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + ",");
+      map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs
           + id
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs
           + id
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs
           + id
           + ",");
@@ -62,6 +67,11 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress
           + id
+          + "),");
+      map.add("       ." 
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + "("
+          + TickComponentHDLGeneratorFactory.FPGAClock
           + "),");
       map.add("       ." 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs
@@ -107,9 +117,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfColumsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfColumsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, nrOfColumsGeneric);
+    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfRowsGeneric);
+    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfRowsGeneric);
+    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, nrOfRowsGeneric);
     return Outputs;
   }
 
@@ -167,7 +177,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
       Contents.add("      END IF;");
       Contents.add("   END PROCESS makeVirtualInputs;");
       Contents.add("");
-      Contents.add("   GenOutputs : FOR n IN " + nrOfColumnsString + "-1 DOWNTO 0 GENERATE");
+      Contents.add("   GenOutputs : FOR n IN " + nrOfRowsString + "-1 DOWNTO 0 GENERATE");
       Contents.add("      " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs 
           + "(n)   <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);");
@@ -182,7 +192,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
       Contents.add("");
       Contents.add("   genvar i;");
       Contents.add("   generate");
-      Contents.add("      for (i = 0; i < " + nrOfColumnsString + "; i = i + 1) begin");
+      Contents.add("      for (i = 0; i < " + nrOfRowsString + "; i = i + 1) begin");
       Contents.add("         assign " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs
           + "[i]  = (activeLow == 1) ? ~" 

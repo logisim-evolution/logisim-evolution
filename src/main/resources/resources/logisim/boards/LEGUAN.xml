@@ -24,7 +24,7 @@
       <Button ActivityLevel="Active low" FPGAPinPullBehavior="Pull Up" InputPinSet="PIN_G11" Label="Center" Rect_x_y_w_h="599,271,11,13"/>
       <DIPSwitch ActivityLevel="Active low" FPGAPinPullBehavior="Pull Up" InputPinSet="PIN_P3,PIN_P2,PIN_P1,PIN_N2,PIN_N1,PIN_M3,PIN_M2,PIN_M1" Rect_x_y_w_h="607,318,101,36"/>
       <DIPSwitch ActivityLevel="Active low" FPGAPinPullBehavior="Pull Up" InputPinSet="PIN_V2,PIN_V1,PIN_U2,PIN_U1,PIN_T3,PIN_F20,PIN_R2,PIN_R1" Rect_x_y_w_h="492,319,103,36"/>
-      <LEDArray ActivityLevel="Active low" Label="RGB_Array" LedArrayInfo="10,11,RgbColScanning" OutputPinSet="PIN_M22,PIN_F21,PIN_E22,PIN_E21,PIN_F22,PIN_K19,PIN_M21,PIN_P22,PIN_R22,PIN_J22,PIN_U20,PIN_W22,PIN_Y22,PIN_AA21,PIN_J17,PIN_K17,PIN_F17,PIN_M20,PIN_P21,PIN_R21,PIN_U22,PIN_V22,PIN_W21,PIN_Y21,PIN_J18,PIN_K19,PIN_M19,PIN_N20,PIN_P20,PIN_R20,PIN_U21,PIN_V21,PIN_W20,PIN_A22" Rect_x_y_w_h="508,81,177,86"/>
+      <LEDArray ActivityLevel="Active low" Label="RGB_Array" LedArrayInfo="10,11,RgbColScanning" OutputPinSet="PIN_M22,PIN_F21,PIN_E22,PIN_E21,PIN_F22,PIN_K19,PIN_M21,PIN_P22,PIN_R22,PIN_J22,PIN_U20,PIN_W22,PIN_Y22,PIN_AA21,PIN_J17,PIN_K17,PIN_F17,PIN_M20,PIN_P21,PIN_R21,PIN_U22,PIN_V22,PIN_W21,PIN_Y21,PIN_J18,PIN_K18,PIN_M19,PIN_N20,PIN_P20,PIN_R20,PIN_U21,PIN_V21,PIN_W20,PIN_AA22" Rect_x_y_w_h="508,81,177,86"/>
       <Pin BiDirPinSet="PIN_E16" Rect_x_y_w_h="363,167,7,6"/>
       <Pin BiDirPinSet="PIN_B18" Rect_x_y_w_h="337,166,9,7"/>
       <Pin BiDirPinSet="PIN_E12" Rect_x_y_w_h="326,166,8,7"/>

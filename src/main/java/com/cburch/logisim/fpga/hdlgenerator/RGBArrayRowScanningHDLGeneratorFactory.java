@@ -49,20 +49,25 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           + id
           + ",");
       map.add("                 "
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + " => "
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + ",");
+      map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
           + id
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
           + id
           + ",");
       map.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + " => s_"
+          + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
           + id
           + ",");
@@ -90,6 +95,11 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
           + id
+          + "),");
+      map.add("       ." 
+          + TickComponentHDLGeneratorFactory.FPGAClock
+          + "("
+          + TickComponentHDLGeneratorFactory.FPGAClock
           + "),");
       map.add("       ." 
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
