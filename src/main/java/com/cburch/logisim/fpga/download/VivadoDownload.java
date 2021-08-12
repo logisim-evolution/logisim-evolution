@@ -286,8 +286,8 @@ public class VivadoDownload implements VendorDownload {
         }
       }
     }
-    HashMap<String,String> LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
-    for (String key : LedArrayMap.keySet()) {
+    final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (var key : LedArrayMap.keySet()) {
       contents.add("set_property PACKAGE_PIN " + key + " [get_ports {" + LedArrayMap.get(key) + "}]");
     }
     return contents;

@@ -283,8 +283,8 @@ public class AlteraDownload implements VendorDownload {
     ArrayList<String> Contents = new ArrayList<>();
     StringBuilder Temp = new StringBuilder();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
-      MapComponent map = MapInfo.getMappableResources().get(key);
-      for (int i = 0; i < map.getNrOfPins(); i++) {
+      var map = MapInfo.getMappableResources().get(key);
+      for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           Temp.setLength(0);
           Temp.append("    set_location_assignment ");
@@ -302,8 +302,8 @@ public class AlteraDownload implements VendorDownload {
         }
       }
     }
-    HashMap<String,String> LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
-    for (String key : LedArrayMap.keySet()) {
+    final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (var key : LedArrayMap.keySet()) {
       Contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
     }
     return Contents;

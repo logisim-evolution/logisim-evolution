@@ -348,16 +348,16 @@ public abstract class DownloadBase {
     }
   }
   
-  public static HashMap<String,String> getLedArrayMaps(MappableResourcesContainer maps, 
+  public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps,
       Netlist nets,
       BoardInformation board) {
-    HashMap<String,String> ledArrayMaps = new HashMap<>();
+    HashMap<String, String> ledArrayMaps = new HashMap<>();
     boolean hasMappedClockedArray = false;
     for (FPGAIOInformationContainer comp : maps.getIOComponentInformation().getComponents()) {
       if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
         if (comp.hasMap()) {
           hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
-          for (int pin = 0 ; pin < comp.getExternalPinCount() ; pin++) {
+          for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
             ledArrayMaps.put(LedArrayGenericHDLGeneratorFactory.getExternalSignalName(
                 comp.getArrayDriveMode(), 
                 comp.getNrOfRows(), 

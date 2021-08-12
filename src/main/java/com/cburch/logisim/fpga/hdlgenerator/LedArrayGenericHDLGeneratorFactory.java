@@ -501,7 +501,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
   
   private static String getColorMap(String dest, int onColor, int offColor, String source) {
-    String onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit() ;
+    String onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     String offBit = (offColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     if (HDL.isVHDL()) {
       return "   " + dest + HDL.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";";
