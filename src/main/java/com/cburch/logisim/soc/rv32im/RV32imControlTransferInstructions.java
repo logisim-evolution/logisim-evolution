@@ -131,7 +131,6 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           jumped = true;
           cpuState.setProgramCounter(target);
         }
-System.out.println("BLT " + reg1 + " " + reg2 + " " + target + " " + jumped);
         return true;
       case INSTR_BGE:
         if (reg1 >= reg2) {
@@ -461,7 +460,6 @@ System.out.println("BLT " + reg1 + " " + reg2 + " " + target + " " + jumped);
             errors = true;
             break;
           }
-System.out.println(source1 + " " + source2);
           instruction = RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
           break;
         default:
