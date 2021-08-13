@@ -80,7 +80,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (var c = 0; c < cols; c++) {
           final var rowwire = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
               : GetBusEntryName(componentInfo, 1, true, r, netlist);
-          final var colwire = (rows == 1) ? GetNetName(componentInfo, 0, true, netlist)
+          final var colwire = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
               : GetBusEntryName(componentInfo, 0, true, c, netlist);
           final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
