@@ -155,7 +155,7 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
     
-    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated VHDL code";
+    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated" + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
     final var headUrl  = " " + Main.APP_URL;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
