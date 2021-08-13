@@ -173,6 +173,27 @@ public enum IOComponentTypes {
         + GetFPGAOutputRequirement(comp);
   }
   
+  private static int[][] getSevenSegmentDisplayArray(boolean hasDp) {
+    final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
+    final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
+    final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
+    final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
+    final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
+    final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
+    final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
+    int[][] indexes = {
+        {-1, sa, sa, -1, -1}, 
+        {sf, -1, -1, sb, -1}, 
+        {sf, -1, -1, sb, -1}, 
+        {-1, sg, sg, -1, -1}, 
+        {se, -1, -1, sc, -1}, 
+        {se, -1, -1, sc, -1}, 
+        {-1, sd, sd, -1, -1}
+    };
+    if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
+    return indexes;
+  }
+  
   public static void getPartialMapInfo(Integer[][] PartialMap,
       int width,
       int height,
@@ -200,23 +221,7 @@ public enum IOComponentTypes {
       }
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
-        final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
-        final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
-        final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
-        final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
-        final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
-        final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
-        final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
-        int[][] indexes = {
-            {-1, sa, sa, -1, -1}, 
-            {sf, -1, -1, sb, -1}, 
-            {sf, -1, -1, sb, -1}, 
-            {-1, sg, sg, -1, -1}, 
-            {se, -1, -1, sc, -1}, 
-            {se, -1, -1, sc, -1}, 
-            {-1, sd, sd, -1, -1}
-        };
-        if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
+        final var indexes = getSevenSegmentDisplayArray(hasDp);
         final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
         final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
         for (var w = 0; w < width; w++)
@@ -282,23 +287,7 @@ public enum IOComponentTypes {
       }
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
-        final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
-        final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
-        final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
-        final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
-        final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
-        final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
-        final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
-        int[][] indexes = {
-            {-1, sa, sa, -1, -1},
-            {sf, -1, -1, sb, -1},
-            {sf, -1, -1, sb, -1},
-            {-1, sg, sg, -1, -1},
-            {se, -1, -1, sc, -1},
-            {se, -1, -1, sc, -1},
-            {-1, sd, sd, -1, -1},
-        };
-        if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
+        final var indexes = getSevenSegmentDisplayArray(hasDp);
         final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
         final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
         for (var xpos = 0; xpos < 5; xpos++) {
