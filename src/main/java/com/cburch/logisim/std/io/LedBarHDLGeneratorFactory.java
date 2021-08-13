@@ -38,7 +38,6 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.instance.StdAttr;
 
 public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -50,7 +49,6 @@ public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
     final var isSingleBus = componentInfo.GetComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
-    final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
     final var nrOfSegments = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
     for (var pin = 0; pin < nrOfSegments; pin++) {
       final var destPin = HDLGeneratorFactory.LocalOutputBubbleBusname

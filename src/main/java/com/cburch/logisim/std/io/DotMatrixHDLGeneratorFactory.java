@@ -36,7 +36,6 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 
 public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -51,7 +50,6 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
     final var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
     final var rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
@@ -61,115 +59,33 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (colBased) {
       for (var r = 0; r < rows; r++)
         for (var c = 0; c < cols; c++) {
-          final var colName = (rows == 1) ? GetNetName(componentInfo, c, true, netlist)
-                                       : GetBusName(componentInfo, c, netlist);
-          int idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
-          if (colName.isEmpty())
-            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
-          else {
-            final var wire = (rows == 1) ? colName : colName + HDL.BracketOpen() + r + HDL.BracketClose();
-            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
-          }
+          final var wire = (rows == 1) ? GetNetName(componentInfo, c, true, netlist) 
+              : GetBusEntryName(componentInfo, c, true, r, netlist);
+          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+          contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+              + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
     } else if (rowBased) {
       for (var r = 0; r < rows; r++) {
-        final var rowName = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
-                                     : GetBusName(componentInfo, r, netlist);
         for (var c = 0; c < cols; c++) {
+          final var wire = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
+              : GetBusEntryName(componentInfo, r, true, c, netlist);
           final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
-          if (rowName.isEmpty())
-            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + HDL.zeroBit() + ";");
-          else {
-            final var wire = (cols == 1) ? rowName : rowName + HDL.BracketOpen() + c + HDL.BracketClose();
-            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                    + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
-          }
+          contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
       }
     } else {
-      var rowName = (rows == 1)
-              ? GetNetName(componentInfo, 1, true, netlist)
-              : GetBusName(componentInfo, 1, netlist);
-      var colName = (cols == 1)
-              ? GetNetName(componentInfo, 0, true, netlist)
-              : GetBusName(componentInfo, 0, netlist);
-      final var oneRow = (rows == 1);
-      final var oneCol = (cols == 1);
-      if (HDL.isVHDL()) {
-        var indent = "   ";
-        if (!oneRow) {
-          contents.add(indent + label + "_0 : FOR r IN " + (rows - 1) + " DOWNTO 0 GENERATE");
-          indent  += "   ";
-          rowName  += "(r)";
-        }
-        if (!oneCol) {
-          contents.add(indent + label + "_1 : FOR c IN " + (cols - 1) + " DOWNTO 0 GENERATE");
-          indent += "   ";
-          colName += "(c)";
-        }
-
-        var content = indent + HDLGeneratorFactory.LocalOutputBubbleBusname + "(";
-
-        content += ((oneRow) ? "" : "r" + ((oneCol) ? "" : "*" + cols + "+"))
-                    + ((oneCol) ? "" : "c")
-                    + ((oneRow && oneCol) ? "" : "+");
-
-        content += componentInfo.GetLocalBubbleOutputStartId() + ") <= " + rowName + " AND " + colName + ";";
-        contents.add(content);
-
-        if (!oneCol) {
-          indent = indent.substring(0, indent.length() - 3);
-          contents.add(indent + "END GENERATE " + label + "_1;");
-        }
-        if (!oneRow) {
-          indent = indent.substring(0, indent.length() - 3);
-          contents.add(indent + "END GENERATE " + label + "_0;");
-        }
-
-      } else {
-        var indent = "   ";
-        if (!oneRow || !oneCol) {
-          contents.add(indent + "genvar " + ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : ",")) + ((oneCol) ? "" : label + "_c") + ";");
-          contents.add(indent + "generate");
-          indent += "   ";
-        }
-        if (!oneRow) {
-          contents.add(indent + "for (" + label + "_r = 0 ; " + label + "_r < " + rows + "; " + label + "_r=" + label + "_r+1)");
-          contents.add(indent + "begin:" + label + "_0");
-          indent += "   ";
-          rowName += "[" + label + "_r]";
-        }
-        if (!oneCol) {
-          contents.add(indent + "for (" + label + "_c = 0 ; " + label + "_c < " + cols + "; " + label + "_c=" + label + "_c+1)");
-          contents.add(indent + "begin:" + label + "_1");
-          indent += "   ";
-          colName += "[" + label + "_c]";
-        }
-
-        var content = indent + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname + "[";
-
-        content += ((oneRow) ? "" : label + "_r" + ((oneCol) ? "" : "*" + cols + "+"))
-                    + ((oneCol) ? "" : label + "_c")
-                    + ((oneRow && oneCol) ? "" : "+");
-
-        content += componentInfo.GetLocalBubbleOutputStartId() + "] = " + rowName + " & " + colName + ";";
-        contents.add(content);
-
-        if (!oneCol) {
-          indent = indent.substring(0, indent.length() - 3);
-          contents.add(indent + "end");
-        }
-        if (!oneRow) {
-          indent = indent.substring(0, indent.length() - 3);
-          contents.add(indent + "end");
-        }
-
-        if (!oneRow || !oneCol) {
-          indent = indent.substring(0, indent.length() - 3);
-          contents.add(indent + "endgenerate");
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          final var rowwire = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
+              : GetBusEntryName(componentInfo, 1, true, r, netlist);
+          final var colwire = (rows == 1) ? GetNetName(componentInfo, 0, true, netlist)
+              : GetBusEntryName(componentInfo, 0, true, c, netlist);
+          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+          contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
+                + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() 
+                + rowwire + HDL.andOperator() + colwire + ";");
         }
       }
     }
