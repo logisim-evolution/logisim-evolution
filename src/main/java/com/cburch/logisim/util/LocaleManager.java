@@ -58,6 +58,25 @@ public class LocaleManager {
     }
   }
 
+  /**
+   * Always returns "fixed" value. Implements StringGetter interface
+   * to let this class be used for i.e. settings for which there's no
+   * point of providing localizable strings (i.e. screen resolutsions,
+   * or plain numeric values), thus using LocaleGetter is an overkill.
+   */
+  private static class FixedString implements StringGetter {
+    final String value;
+
+    FixedString(String value) {
+      this.value = value;
+    }
+
+    @Override
+    public String toString() {
+      return this.value;
+    }
+  }
+
   /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
     final String arg;
@@ -346,6 +365,10 @@ public class LocaleManager {
 
   public StringGetter getter(String key, StringGetter arg) {
     return new LocaleFormatterWithGetter(this, key, arg);
+  }
+
+  public StringGetter fixedString(String value) {
+    return new FixedString(value);
   }
 
   private void loadDefault() {

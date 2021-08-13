@@ -13,11 +13,11 @@
    </maps>
 	
    <!-- views --> 
-   <view xml:lang="pt" mergetype="javax.help.UniteAppendMerge">
+   <view xml:lang="en" mergetype="javax.help.UniteAppendMerge">
       <name>TOC</name>
       <label>Table Of Contents</label>
       <type>javax.help.TOCView</type>
-      <data>pt/contents.xml</data>
+      <data>en/contents.xml</data>
    </view>
 
   <view>
@@ -42,7 +42,7 @@
      *  a home button that has a user-defined image.
    -->
    <presentation default=true>
-       <name>main window</name>
+       <name>main window</name> 
        <location x="200" y="10" />
        <toolbar>
            <helpaction>javax.help.BackAction</helpaction>

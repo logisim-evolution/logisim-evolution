@@ -222,10 +222,10 @@
 			<tocitem target="base_label" text="Text" image="icon_label" />
 		</tocitem>
 -->
-	</tocitem>
 	<tocitem target="Tests_for_doc" text="Tests for documentation">
 		<tocitem target="test_hmlcss" text="test_hml_css" />
 		<tocitem target="Translation_status" text="Translation status" />
 	</tocitem>
   </tocitem>
+</tocitem>
 </toc>

@@ -55,7 +55,7 @@ public class SoftwaresOptions extends OptionsPanel {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-      Object source = ae.getSource();
+      final var source = ae.getSource();
 
       if (source == questaPathButton) {
         Softwares.setQuestaPath(getPreferencesFrame());
@@ -92,7 +92,6 @@ public class SoftwaresOptions extends OptionsPanel {
 
   private final MyListener myListener = new MyListener();
 
-  private final JCheckBox AutoUpdateCheckbox = new JCheckBox();
   private final JCheckBox questaValidationCheckBox = new JCheckBox();
   private final JLabel questaPathLabel = new JLabel();
   private final JTextField questaPathField = new JTextField(40);
@@ -115,130 +114,129 @@ public class SoftwaresOptions extends OptionsPanel {
     QuartusPathButton.addActionListener(myListener);
     ISEPathButton.addActionListener(myListener);
     VivadoPathButton.addActionListener(myListener);
-    AutoUpdateCheckbox.addActionListener(myListener);
     AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 
-    JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
-    GridBagLayout layout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
+    final var sep = new JSeparator(JSeparator.HORIZONTAL);
+    final var layout = new GridBagLayout();
+    final var c = new GridBagConstraints();
     setLayout(layout);
 
     c.insets = new Insets(2, 4, 4, 2);
     c.anchor = GridBagConstraints.BASELINE_LEADING;
 
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 3;
-    c.fill = GridBagConstraints.NONE;
-    add(AutoUpdateCheckbox, c);
+
+    var gridY = 0;
 
     c.gridx = 0;
-    c.gridy = 1;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(new JSeparator(JSeparator.HORIZONTAL), c);
 
     c.gridx = 0;
-    c.gridy = 2;
+    c.gridy = gridY++;
     c.gridwidth = 3;
     c.fill = GridBagConstraints.NONE;
     add(questaValidationCheckBox, c);
 
     c.gridx = 0;
-    c.gridy = 3;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(sep, c);
 
     c.gridx = 0;
-    c.gridy = 4;
+    c.gridy = gridY++;
     c.gridwidth = 3;
     c.fill = GridBagConstraints.NONE;
     add(questaPathLabel, c);
 
     c.gridx = 0;
-    c.gridy = 5;
+    c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(questaPathField, c);
-
     c.gridx = 2;
-    c.gridy = 5;
+    c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
     add(questaPathButton, c);
 
     c.gridx = 0;
-    c.gridy = 6;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(new JSeparator(JSeparator.HORIZONTAL), c);
 
     c.gridx = 0;
-    c.gridy = 7;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(QuartusPathLabel, c);
+
     c.gridx = 0;
-    c.gridy = 8;
+    c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(QuartusPathField, c);
     c.gridx = 2;
-    c.gridy = 8;
+    c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
     add(QuartusPathButton, c);
 
     c.gridx = 0;
-    c.gridy = 9;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(new JSeparator(JSeparator.HORIZONTAL), c);
 
     c.gridx = 0;
-    c.gridy = 10;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
+
     add(ISEPathLabel, c);
     c.gridx = 0;
-    c.gridy = 11;
+    c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(ISEPathField, c);
     c.gridx = 2;
-    c.gridy = 11;
+    c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
     add(ISEPathButton, c);
 
     c.gridx = 0;
-    c.gridy = 12;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(new JSeparator(JSeparator.HORIZONTAL), c);
 
     c.gridx = 0;
-    c.gridy = 13;
+    c.gridy = gridY++;
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(VivadoPathLabel, c);
+
     c.gridx = 0;
-    c.gridy = 14;
+    c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(VivadoPathField, c);
+
     c.gridx = 2;
-    c.gridy = 14;
+    c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
     add(VivadoPathButton, c);
 
@@ -266,7 +264,6 @@ public class SoftwaresOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    AutoUpdateCheckbox.setText(S.get("AutoUpdateLabel"));
     questaValidationCheckBox.setText(S.get("softwaresQuestaValidationLabel"));
     questaPathButton.setText(S.get("softwaresQuestaPathButton"));
     questaPathLabel.setText(S.get("softwaresQuestaPathLabel"));
