@@ -32,9 +32,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.designrulecheck.ConnectionEnd;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
-import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -52,13 +50,13 @@ import java.util.TreeSet;
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   protected static String IntToBin(int value, int nr_of_bits) {
-    int mask = 1 << (nr_of_bits - 1);
-    StringBuilder result = new StringBuilder();
-    int align = (7 - nr_of_bits) >> 1;
+    var mask = 1 << (nr_of_bits - 1);
+    var result = new StringBuilder();
+    var align = (7 - nr_of_bits) >> 1;
     while ((result.length() < align) && HDL.isVHDL()) {
       result.append(" ");
     }
-    String VhdlQuotes = (nr_of_bits == 1) ? "'" : "\"";
+    var VhdlQuotes = (nr_of_bits == 1) ? "'" : "\"";
     result.append((HDL.isVHDL()) ? VhdlQuotes : nr_of_bits + "'b");
     while (mask != 0) {
       if ((value & mask) != 0) {
@@ -86,7 +84,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               + "' received!");
       return false;
     }
-    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false);
+    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false);
     if (OutFile == null) {
       return false;
     }
@@ -102,7 +100,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
-    File OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true);
+    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true);
     if (OutFile == null) return false;
     return FileWriter.WriteContents(OutFile, Contents);
   }
@@ -121,40 +119,40 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs);
-    Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
-    Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
-    Map<Integer, String> ParameterList = GetParameterList(attrs);
-    Map<String, Integer> WireList = GetWireList(attrs, TheNetlist);
-    Map<String, Integer> RegList = GetRegList(attrs);
-    Map<String, Integer> MemList = GetMemList(attrs);
-    StringBuilder OneLine = new StringBuilder();
+    var Contents = new ArrayList<String>();
+    final var InputsList = GetInputList(TheNetlist, attrs);
+    final var InOutsList = GetInOutList(TheNetlist, attrs);
+    final var OutputsList = GetOutputList(TheNetlist, attrs);
+    final var ParameterList = GetParameterList(attrs);
+    final var WireList = GetWireList(attrs, TheNetlist);
+    final var RegList = GetRegList(attrs);
+    final var MemList = GetMemList(attrs);
+    var OneLine = new StringBuilder();
     Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
     if (HDL.isVHDL()) {
-      ArrayList<String> libs = GetExtraLibraries();
+      final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
         Contents.addAll(libs);
         Contents.add("");
       }
       Contents.add("ARCHITECTURE PlatformIndependent OF " + ComponentName + " IS ");
       Contents.add("");
-      int NrOfTypes = GetNrOfTypes(TheNetlist, attrs);
+      var NrOfTypes = GetNrOfTypes(TheNetlist, attrs);
       if (NrOfTypes > 0) {
         Contents.addAll(MakeRemarkBlock("Here all private types are defined", 3));
-        for (String ThisType : GetTypeDefinitions(TheNetlist, attrs)) {
+        for (var ThisType : GetTypeDefinitions(TheNetlist, attrs)) {
           Contents.add("   " + ThisType + ";");
         }
         Contents.add("");
       }
-      ArrayList<String> Comps = GetComponentDeclarationSection(TheNetlist, attrs);
+      var Comps = GetComponentDeclarationSection(TheNetlist, attrs);
       if (!Comps.isEmpty()) {
         Contents.addAll(MakeRemarkBlock("Here all used components are defined", 3));
         Contents.addAll(Comps);
         Contents.add("");
       }
       Contents.addAll(MakeRemarkBlock("Here all used signals are defined", 3));
-      for (String Wire : WireList.keySet()) {
+      for (var Wire : WireList.keySet()) {
         OneLine.append(Wire);
         while (OneLine.length() < SallignmentSize) {
           OneLine.append(" ");
@@ -184,7 +182,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
-      for (String Reg : RegList.keySet()) {
+      for (var Reg : RegList.keySet()) {
         OneLine.append(Reg);
         while (OneLine.length() < SallignmentSize) {
           OneLine.append(" ");
@@ -214,7 +212,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
-      for (String Mem : MemList.keySet()) {
+      for (var Mem : MemList.keySet()) {
         OneLine.append(Mem);
         while (OneLine.length() < SallignmentSize) {
           OneLine.append(" ");
@@ -230,16 +228,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.addAll(GetModuleFunctionality(TheNetlist, attrs));
       Contents.add("END PlatformIndependent;");
     } else {
-      String Preamble = "module " + ComponentName + "( ";
-      StringBuilder Indenting = new StringBuilder();
+      final var Preamble = "module " + ComponentName + "( ";
+      var Indenting = new StringBuilder();
       while (Indenting.length() < Preamble.length()) {
         Indenting.append(" ");
       }
       if (InputsList.isEmpty() && OutputsList.isEmpty() && InOutsList.isEmpty()) {
         Contents.add(Preamble + " );");
       } else {
-        StringBuilder ThisLine = new StringBuilder();
-        for (String inp : InputsList.keySet()) {
+        var ThisLine = new StringBuilder();
+        for (var inp : InputsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(inp);
           } else {
@@ -248,7 +246,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(inp);
           }
         }
-        for (String outp : OutputsList.keySet()) {
+        for (var outp : OutputsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(outp);
           } else {
@@ -257,7 +255,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(outp);
           }
         }
-        for (String io : InOutsList.keySet()) {
+        for (var io : InOutsList.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(io);
           } else {
@@ -274,16 +272,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       if (!ParameterList.isEmpty()) {
         Contents.add("");
-        Contents.addAll(
-            MakeRemarkBlock("Here all module parameters are defined with a dummy value", 3));
-        for (int param : ParameterList.keySet()) {
+        Contents.addAll(MakeRemarkBlock("Here all module parameters are defined with a dummy value", 3));
+        for (var param : ParameterList.keySet()) {
           Contents.add("   parameter " + ParameterList.get(param) + " = 1;");
         }
         Contents.add("");
       }
-      boolean firstline = true;
-      int nr_of_bits;
-      for (String inp : InputsList.keySet()) {
+      var firstline = true;
+      var nr_of_bits = 0;
+      for (var inp : InputsList.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   input");
         nr_of_bits = InputsList.get(inp);
@@ -314,7 +311,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (String outp : OutputsList.keySet()) {
+      for (var outp : OutputsList.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   output");
         nr_of_bits = OutputsList.get(outp);
@@ -345,7 +342,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (String io : InOutsList.keySet()) {
+      for (var io : InOutsList.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   inout");
         nr_of_bits = InOutsList.get(io);
@@ -376,7 +373,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (String wire : WireList.keySet()) {
+      for (var wire : WireList.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   wire");
         nr_of_bits = WireList.get(wire);
@@ -406,7 +403,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         }
         Contents.add(OneLine.toString());
       }
-      for (String reg : RegList.keySet()) {
+      for (var reg : RegList.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   reg");
         nr_of_bits = RegList.get(reg);
@@ -456,9 +453,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
     var contents = new StringBuilder();
     if ((endIndex >= 0) && (endIndex < comp.NrOfEnds())) {
-      var thisEnd = comp.getEnd(endIndex);
-      boolean isOutput = thisEnd.IsOutputEnd();
-      int nrOfBits = thisEnd.NrOfBits();
+      final var thisEnd = comp.getEnd(endIndex);
+      final var isOutput = thisEnd.IsOutputEnd();
+      final var nrOfBits = thisEnd.NrOfBits();
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.GetConnection((byte) bitindex).GetParentNet() == null) {
           /* The net is not connected */
@@ -468,8 +465,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             contents.append(HDL.GetZeroVector(1, floatingNetTiedToGround));
           }
         } else {
-          Net connectedNet = thisEnd.GetConnection((byte) bitindex).GetParentNet();
-          int connectedNetBitIndex = thisEnd.GetConnection((byte) bitindex).GetParentNetBitIndex();
+          final var connectedNet = thisEnd.GetConnection((byte) bitindex).GetParentNet();
+          final var connectedNetBitIndex = thisEnd.GetConnection((byte) bitindex).GetParentNetBitIndex();
           if (!connectedNet.isBus()) {
             contents.append(NetName).append(theNets.GetNetId(connectedNet));
           } else {
@@ -487,61 +484,57 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public static String GetBusNameContinues(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    String Result;
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       return "";
     }
-    ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
-    int NrOfBits = ConnectionInformation.NrOfBits();
+    final var ConnectionInformation = comp.getEnd(EndIndex);
+    final var NrOfBits = ConnectionInformation.NrOfBits();
     if (NrOfBits == 1) {
       return "";
     }
     if (!TheNets.IsContinuesBus(comp, EndIndex)) {
       return "";
     }
-    Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
-    Result =
-        BusName
-            + TheNets.GetNetId(ConnectedNet)
-            + HDL.BracketOpen()
-            + ConnectionInformation.GetConnection((byte) (ConnectionInformation.NrOfBits() - 1))
-                .GetParentNetBitIndex()
-            + HDL.vectorLoopId()
-            + ConnectionInformation.GetConnection((byte) (0)).GetParentNetBitIndex()
-            + HDL.BracketClose();
-    return Result;
+    final var ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
+    return BusName
+        + TheNets.GetNetId(ConnectedNet)
+        + HDL.BracketOpen()
+        + ConnectionInformation.GetConnection((byte) (ConnectionInformation.NrOfBits() - 1))
+            .GetParentNetBitIndex()
+        + HDL.vectorLoopId()
+        + ConnectionInformation.GetConnection((byte) (0)).GetParentNetBitIndex()
+        + HDL.BracketClose();
   }
 
   public static String GetBusName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       return "";
     }
-    ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
-    int NrOfBits = ConnectionInformation.NrOfBits();
+    final var ConnectionInformation = comp.getEnd(EndIndex);
+    final var NrOfBits = ConnectionInformation.NrOfBits();
     if (NrOfBits == 1) {
       return "";
     }
     if (!TheNets.IsContinuesBus(comp, EndIndex)) {
       return "";
     }
-    Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
+    final var ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
     if (ConnectedNet.BitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
     return BusName + TheNets.GetNetId(ConnectedNet);
   }
 
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    StringBuilder Contents = new StringBuilder();
+    var Contents = new StringBuilder();
     if ((TheNets.GetCurrentHierarchyLevel() != null)
         && (EndIndex >= 0)
         && (EndIndex < comp.NrOfEnds())) {
-      ConnectionEnd EndData = comp.getEnd(EndIndex);
+      final var EndData = comp.getEnd(EndIndex);
       if (EndData.NrOfBits() == 1) {
-        Net ConnectedNet = EndData.GetConnection((byte) 0).GetParentNet();
-        byte ConnectedNetBitIndex = EndData.GetConnection((byte) 0).GetParentNetBitIndex();
+        final var ConnectedNet = EndData.GetConnection((byte) 0).GetParentNet();
+        final var ConnectedNetBitIndex = EndData.GetConnection((byte) 0).GetParentNetBitIndex();
         /* Here we search for a clock net Match */
-        int clocksourceid =
-            TheNets.GetClockSourceId(
-                TheNets.GetCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+        final var clocksourceid = TheNets.GetClockSourceId(
+            TheNets.GetCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
           Contents.append(ClockTreeName).append(clocksourceid);
         }
@@ -560,7 +553,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
+    var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
     return Contents;
   }
@@ -571,26 +564,26 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
       String Name) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> ParameterMap = GetParameterMap(Nets, ComponentInfo);
-    Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
-    String CompName = (Name != null && !Name.isEmpty()) ? Name :
+    var Contents = new ArrayList<String>();
+    final var ParameterMap = GetParameterMap(Nets, ComponentInfo);
+    final var PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
+    final var CompName = (Name != null && !Name.isEmpty()) ? Name :
         (ComponentInfo == null)
             ? this.getComponentStringIdentifier()
             : ComponentInfo.GetComponent()
                 .getFactory()
                 .getHDLName(ComponentInfo.GetComponent().getAttributeSet());
-    String ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
-    StringBuilder OneLine = new StringBuilder();
-    int TabLength;
-    boolean first;
+    final var ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
+    final var OneLine = new StringBuilder();
+    var TabLength = 0;
+    var first = true;
     if (HDL.isVHDL()) {
       Contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
       if (!ParameterMap.isEmpty()) {
         OneLine.append("      GENERIC MAP ( ");
         TabLength = OneLine.length();
         first = true;
-        for (String generic : ParameterMap.keySet()) {
+        for (var generic : ParameterMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -613,7 +606,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append("      PORT MAP ( ");
         TabLength = OneLine.length();
         first = true;
-        for (String port : PortMap.keySet()) {
+        for (var port : PortMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -638,7 +631,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(" #(");
         TabLength = OneLine.length();
         first = true;
-        for (String parameter : ParameterMap.keySet()) {
+        for (var parameter : ParameterMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -649,8 +642,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           } else {
             first = false;
           }
-          OneLine.append(".").append(parameter).append("(").append(ParameterMap.get(parameter))
-              .append(")");
+          OneLine.append(".").append(parameter).append("(").append(ParameterMap.get(parameter)).append(")");
         }
         OneLine.append(")");
         Contents.add(OneLine.toString());
@@ -660,7 +652,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       if (!PortMap.isEmpty()) {
         TabLength = OneLine.length();
         first = true;
-        for (String port : PortMap.keySet()) {
+        for (var port : PortMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -672,15 +664,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(".").append(port).append("(");
-          String MappedSignal = PortMap.get(port);
+          final var MappedSignal = PortMap.get(port);
           if (!MappedSignal.contains(",")) {
             OneLine.append(MappedSignal);
           } else {
             String[] VectorList = MappedSignal.split(",");
             OneLine.append("{");
-            int TabSize = OneLine.length();
-            for (int vectorentries = 0; vectorentries < VectorList.length; vectorentries++) {
-              String Entry = VectorList[vectorentries];
+            var TabSize = OneLine.length();
+            for (var vectorentries = 0; vectorentries < VectorList.length; vectorentries++) {
+              var Entry = VectorList[vectorentries];
               if (Entry.contains("{")) {
                 Entry = Entry.replace("{", "");
               }
@@ -718,7 +710,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName) {
-    ArrayList<String> Contents = new ArrayList<>();
+    var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
       Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
       Contents.addAll(FileWriter.getExtendedLibrary());
@@ -797,14 +789,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent comp,
       int EndIndex,
       Netlist TheNets) {
-    Map<String, String> NetMap = new HashMap<>();
+    var NetMap = new HashMap<String, String>();
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       Reporter.Report.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return NetMap;
     }
-    ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
-    boolean IsOutput = ConnectionInformation.IsOutputEnd();
-    int NrOfBits = ConnectionInformation.NrOfBits();
+    final var ConnectionInformation = comp.getEnd(EndIndex);
+    final var IsOutput = ConnectionInformation.IsOutputEnd();
+    final var NrOfBits = ConnectionInformation.NrOfBits();
     if (NrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
       NetMap.put(SourceName, GetNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
@@ -814,8 +806,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
        * be mapped
        */
       /* First we check if the bus has a connection */
-      boolean Connected = false;
-      for (int i = 0; i < NrOfBits; i++) {
+      var Connected = false;
+      for (var i = 0; i < NrOfBits; i++) {
         if (ConnectionInformation.GetConnection((byte) i).GetParentNet() != null) {
           Connected = true;
         }
@@ -838,8 +830,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           /* The last case, we have to enumerate through each bit */
           if (HDL.isVHDL()) {
-            StringBuilder SourceNetName = new StringBuilder();
-            for (int i = 0; i < NrOfBits; i++) {
+            var SourceNetName = new StringBuilder();
+            for (var i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */
               SourceNetName.setLength(0);
               SourceNetName.append(SourceName).append("(").append(i).append(") ");
@@ -874,13 +866,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               }
             }
           } else {
-            ArrayList<String> SeperateSignals = new ArrayList<>();
+            var SeperateSignals = new ArrayList<String>();
             /*
              * First we build an array with all the signals that
              * need to be concatenated
              */
-            for (int i = 0; i < NrOfBits; i++) {
-              ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) i);
+            for (var i = 0; i < NrOfBits; i++) {
+              final var SolderPoint = ConnectionInformation.GetConnection((byte) i);
               if (SolderPoint.GetParentNet() == null) {
                 /* this entry is not connected */
                 if (IsOutput) {
@@ -895,8 +887,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  */
                 if (SolderPoint.GetParentNet().BitWidth() == 1) {
                   /* The connection is to a Net */
-                  SeperateSignals.add(
-                      NetName + TheNets.GetNetId(SolderPoint.GetParentNet()));
+                  SeperateSignals.add(NetName + TheNets.GetNetId(SolderPoint.GetParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   SeperateSignals.add(
@@ -909,9 +900,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               }
             }
             /* Finally we can put all together */
-            StringBuilder Vector = new StringBuilder();
+            var Vector = new StringBuilder();
             Vector.append("{");
-            for (int i = NrOfBits; i > 0; i--) {
+            for (var i = NrOfBits; i > 0; i--) {
               Vector.append(SeperateSignals.get(i - 1));
               if (i != 1) {
                 Vector.append(",");
@@ -931,13 +922,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       int EndIndex,
       boolean FloatingNetTiedToGround,
       Netlist MyNetlist) {
-    StringBuilder Contents = new StringBuilder();
-    String FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
+    var Contents = new StringBuilder();
+    final var FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
-      ConnectionEnd ThisEnd = comp.getEnd(EndIndex);
-      boolean IsOutput = ThisEnd.IsOutputEnd();
+      final var ThisEnd = comp.getEnd(EndIndex);
+      final var IsOutput = ThisEnd.IsOutputEnd();
       if (ThisEnd.NrOfBits() == 1) {
-        ConnectionPoint SolderPoint = ThisEnd.GetConnection((byte) 0);
+        final var SolderPoint = ThisEnd.GetConnection((byte) 0);
         if (SolderPoint.GetParentNet() == null) {
           /* The net is not connected */
           if (IsOutput) {
@@ -1025,7 +1016,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public String GetRelativeDirectory() {
-    String Subdir = GetSubDir();
+    var Subdir = GetSubDir();
     if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
       Subdir += File.separatorChar;
     }
@@ -1053,17 +1044,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeSet<>();
   }
 
-  private ArrayList<String> GetVHDLBlackBox(
-      Netlist TheNetlist, AttributeSet attrs, String ComponentName, Boolean IsEntity) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs);
-    Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
-    Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
-    Map<Integer, String> ParameterList = GetParameterList(attrs);
-    StringBuilder OneLine = new StringBuilder();
-    int IdentSize;
-    String CompTab = (IsEntity) ? "" : "   ";
-    boolean first;
+  private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs, 
+      String ComponentName, Boolean IsEntity) {
+    var Contents = new ArrayList<String>();
+    final var InputsList = GetInputList(TheNetlist, attrs);
+    final var InOutsList = GetInOutList(TheNetlist, attrs);
+    final var OutputsList = GetOutputList(TheNetlist, attrs);
+    final var ParameterList = GetParameterList(attrs);
+    var OneLine = new StringBuilder();
+    var IdentSize = 0;
+    var CompTab = (IsEntity) ? "" : "   ";
+    var first = true;
     if (IsEntity) {
       Contents.add("ENTITY " + ComponentName + " IS");
     } else {
@@ -1073,7 +1064,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       OneLine.append(CompTab).append("   GENERIC ( ");
       IdentSize = OneLine.length();
       first = true;
-      for (int generic : ParameterList.keySet()) {
+      for (var generic : ParameterList.keySet()) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -1085,8 +1076,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(ParameterList.get(generic));
-        OneLine.append(
-            " ".repeat(Math.max(0, PallignmentSize - ParameterList.get(generic).length())));
+        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - ParameterList.get(generic).length())));
         OneLine.append(": INTEGER");
       }
       OneLine.append(");");
@@ -1094,11 +1084,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       OneLine.setLength(0);
     }
     if (!InputsList.isEmpty() || !OutputsList.isEmpty() || !InOutsList.isEmpty()) {
-      int nr_of_bits;
+      var nr_of_bits = 0;
       OneLine.append(CompTab).append("   PORT ( ");
       IdentSize = OneLine.length();
       first = true;
-      for (String input : InputsList.keySet()) {
+      for (var input : InputsList.keySet()) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -1133,7 +1123,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
         }
       }
-      for (String inout : InOutsList.keySet()) {
+      for (var inout : InOutsList.keySet()) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -1168,7 +1158,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
         }
       }
-      for (String output : OutputsList.keySet()) {
+      for (var output : OutputsList.keySet()) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -1242,12 +1232,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   /* Here all global helper methods are defined */
   protected ArrayList<String> MakeRemarkBlock(String RemarkText, Integer NrOfIndentSpaces) {
-    int maxRemarkLength = MaxLineLength - 2 * HDL.remarkOverhead() - NrOfIndentSpaces;
+    final var maxRemarkLength = MaxLineLength - 2 * HDL.remarkOverhead() - NrOfIndentSpaces;
     var remarkWords = RemarkText.split(" ");
     var oneLine = new StringBuilder();
     var contents = new ArrayList<String>();
-    int maxWordLength = 0;
-    for (String word : remarkWords) {
+    var maxWordLength = 0;
+    for (var word : remarkWords) {
       if (word.length() > maxWordLength) {
         maxWordLength = word.length();
       }
@@ -1259,13 +1249,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     while (oneLine.length() < NrOfIndentSpaces) {
       oneLine.append(" ");
     }
-    for (int i = 0; i < MaxLineLength - NrOfIndentSpaces; i++) {
+    for (var i = 0; i < MaxLineLength - NrOfIndentSpaces; i++) {
       oneLine.append(HDL.getRemakrChar(i == 0, i == MaxLineLength - NrOfIndentSpaces - 1));
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
     /* Next we put the remark text block in 1 or multiple lines */
-    for (String remarkWord : remarkWords) {
+    for (var remarkWord : remarkWords) {
       if ((oneLine.length() + remarkWord.length() + HDL.remarkOverhead()) > (MaxLineLength - 1)) {
         /* Next word does not fit, we end this line and create a new one */
         while (oneLine.length() < (MaxLineLength - HDL.remarkOverhead())) {
@@ -1311,26 +1301,24 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     while (oneLine.length() < NrOfIndentSpaces) {
       oneLine.append(" ");
     }
-    for (int i = 0; i < MaxLineLength - NrOfIndentSpaces; i++)
+    for (var i = 0; i < MaxLineLength - NrOfIndentSpaces; i++)
       oneLine.append(HDL.getRemakrChar(i == MaxLineLength - NrOfIndentSpaces - 1, i == 0));
     contents.add(oneLine.toString());
     return contents;
   }
 
   public static ArrayList<String> GetToplevelCode(MapComponent Component) {
-    StringBuffer temp = new StringBuffer();
-    ArrayList<String> contents = new ArrayList<>();
+    var temp = new StringBuffer();
+    var contents = new ArrayList<String>();
     if (Component.getNrOfPins() <= 0) {
       Reporter.Report.AddError("BUG: Found a component with no pins");
       return contents;
     }
-    for (int i = 0; i < Component.getNrOfPins(); i++) {
+    for (var i = 0; i < Component.getNrOfPins(); i++) {
       temp.setLength(0);
       temp.append("   ").append(HDL.assignPreamble());
-      if (Component.isInternalMapped(i)) {
-        /* TODO : handle internal mapped signals */
-        continue;
-      }
+      /* the internal mapped signals are handled in the top-level HDL generator */
+      if (Component.isInternalMapped(i)) continue;
       /* IO-pins need to be mapped directly to the top-level component and cannot be
        * passed by signals, so we skip them.
        */

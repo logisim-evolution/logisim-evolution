@@ -59,11 +59,11 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
       int nrOfColumns,
       long FpgaClockFrequency,
       boolean activeLow) {
-    ArrayList<String> map = new ArrayList<>();
-    int nrColAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
-    int scanningReload = (int) (FpgaClockFrequency / (long) 1000);
-    int nrOfScanningBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
-    int maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
+    var map = new ArrayList<String>();
+    final var nrColAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
+    final var scanningReload = (int) (FpgaClockFrequency / (long) 1000);
+    final var nrOfScanningBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
+    final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
     if (HDL.isVHDL()) {
       map.add("      GENERIC MAP ( " + nrOfLedsString + " => " + (nrOfRows * nrOfColumns) + ",");
       map.add("                    " + nrOfRowsString + " => " + nrOfRows + ",");
@@ -87,7 +87,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   }
   
   public static ArrayList<String> getPortMap(int id) {
-    ArrayList<String> map = new ArrayList<>();
+    var map = new ArrayList<String>();
     if (HDL.isVHDL()) {
       map.add("      PORT MAP ( " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress 
@@ -142,7 +142,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var Outputs = new TreeMap<String, Integer>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs, nrOfRowsGeneric);
     return Outputs;
@@ -150,7 +150,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer>();
     Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
     return Inputs;
@@ -158,7 +158,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Generics = new TreeMap<>();
+    final var Generics = new TreeMap<Integer, String>();
     Generics.put(nrOfLedsGeneric, nrOfLedsString);
     Generics.put(nrOfRowsGeneric, nrOfRowsString);
     Generics.put(nrOfColumsGeneric, nrOfColumnsString);
@@ -172,7 +172,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var Wires = new TreeMap<String, Integer>();
     Wires.put("s_columnCounterNext", nrOfColumnAddressBitsGeneric);
     Wires.put("s_scanningCounterNext", scanningCounterBitsGeneric);
     Wires.put("s_tickNext", 1);
@@ -182,7 +182,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
+    final var Regs = new TreeMap<String, Integer>();
     Regs.put("s_columnCounterReg", nrOfColumnAddressBitsGeneric);
     Regs.put("s_scanningCounterReg", scanningCounterBitsGeneric);
     Regs.put("s_tickReg", 1);
@@ -190,7 +190,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   }
 
   public ArrayList<String> getColumnCounterCode() {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
       Contents.add("");
       Contents.add("   " + LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress + " <= s_columnCounterReg;");
@@ -257,7 +257,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new ArrayList<String>();
     Contents.addAll(getColumnCounterCode());
     if (HDL.isVHDL()) {
       Contents.add("   makeVirtualInputs : PROCESS ( internalLeds ) IS");

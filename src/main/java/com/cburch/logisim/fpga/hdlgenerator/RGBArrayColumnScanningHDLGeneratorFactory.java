@@ -12,7 +12,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public static String RGBArrayName = "RGBArrayColumnScanning";
 
   public static ArrayList<String> getPortMap(int id) {
-    ArrayList<String> map = new ArrayList<>();
+    final var map = new ArrayList<String>();
     if (HDL.isVHDL()) {
       map.add("      PORT MAP ( " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress 
@@ -115,7 +115,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var Outputs = new TreeMap<String, Integer>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfRowsGeneric);
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfRowsGeneric);
@@ -125,7 +125,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer>();
     Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
@@ -135,7 +135,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var Wires = new TreeMap<String, Integer>();
     Wires.putAll(super.GetWireList(attrs, Nets));
     Wires.put("s_maxRedLedInputs", maxNrLedsGeneric);
     Wires.put("s_maxBlueLedInputs", maxNrLedsGeneric);
@@ -146,7 +146,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new ArrayList<String>();
     Contents.addAll(getColumnCounterCode());
     if (HDL.isVHDL()) {
       Contents.add("   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS");

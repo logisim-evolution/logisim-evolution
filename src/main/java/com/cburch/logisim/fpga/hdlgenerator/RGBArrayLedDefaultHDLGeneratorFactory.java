@@ -40,7 +40,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   public static String RGBArrayName = "RGBArrayLedDefault";
 
   public static ArrayList<String> getPortMap(int id) {
-    ArrayList<String> map = new ArrayList<>();
+    final var map = new ArrayList<String>();
     if (HDL.isVHDL()) {
       map.add("      PORT MAP ( " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs 
@@ -121,7 +121,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var Outputs = new TreeMap<String, Integer>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs, nrOfLedsGeneric);
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs, nrOfLedsGeneric);
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs, nrOfLedsGeneric);
@@ -130,7 +130,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer>();
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
@@ -139,7 +139,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
       Contents.add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE");
       Contents.add("      " 

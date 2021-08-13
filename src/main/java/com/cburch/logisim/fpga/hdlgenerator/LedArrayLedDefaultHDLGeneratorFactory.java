@@ -59,7 +59,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   }
   
   public static ArrayList<String> getPortMap(int id) {
-    ArrayList<String> map = new ArrayList<>();
+    final var map = new ArrayList<String>();
     if (HDL.isVHDL()) {
       map.add("      PORT MAP ( " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs 
@@ -92,21 +92,21 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
+    final var Outputs = new TreeMap<String, Integer>();
     Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, nrOfLedsGeneric);
     return Outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
+    final var Inputs = new TreeMap<String, Integer>();
     Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
     return Inputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Generics = new TreeMap<>();
+    final var Generics = new TreeMap<Integer, String>();
     Generics.put(nrOfLedsGeneric, nrOfLedsString);
     Generics.put(activeLowGeneric, activeLowString);
     return Generics;
@@ -114,7 +114,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) {
       Contents.add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE");
       Contents.add("      " 

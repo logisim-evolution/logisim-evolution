@@ -1,13 +1,11 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
-import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.std.io.RgbLed;
 
@@ -34,7 +32,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   
 
   public static AbstractHDLGeneratorFactory getSpecificHDLGenerator(String type) {
-    char typeId = LedArrayDriving.getId(type);
+    final var typeId = LedArrayDriving.getId(type);
     switch (typeId) {
       case LedArrayDriving.LedDefault : return new LedArrayLedDefaultHDLGeneratorFactory();
       case LedArrayDriving.LedRowScanning : return new LedArrayRowScanningHDLGeneratorFactory();
@@ -63,7 +61,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
   
   public static int getNrOfBitsRequired(int value) {
-    double nrBitsDouble = Math.log(value) / Math.log(2.0);
+    final var nrBitsDouble = Math.log(value) / Math.log(2.0);
     return (int) Math.ceil(nrBitsDouble);
   }
   
@@ -72,8 +70,8 @@ public class LedArrayGenericHDLGeneratorFactory {
       int nrOfColumns,
       int identifier,
       int pinNr) {
-    int nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
-    int nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
+    final var nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
+    final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
       case LedArrayDriving.LedDefault : {
         return LedArrayOutputs + identifier + "[" + pinNr + "]";
@@ -91,8 +89,8 @@ public class LedArrayGenericHDLGeneratorFactory {
         return LedArrayRowOutputs + identifier + "[" + (pinNr - nrColumnAddressBits) + "]";
       }
       case LedArrayDriving.RgbDefault : {
-        int index = pinNr % 3;
-        int col = pinNr / 3;
+        final var index = pinNr % 3;
+        final var col = pinNr / 3;
         switch (col) {
           case 0 : {
             return LedArrayRedOutputs + identifier + "[" + index + "]";
@@ -107,8 +105,8 @@ public class LedArrayGenericHDLGeneratorFactory {
         }
       }
       case LedArrayDriving.RgbRowScanning : {
-        int index = (pinNr - nrRowAddressBits) % nrOfColumns;
-        int col = (pinNr - nrRowAddressBits) / nrOfColumns;
+        final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
+        final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
         if (pinNr < nrRowAddressBits) {
           return LedArrayRowAddress + identifier + "[" + pinNr + "]";
         } else {
@@ -127,8 +125,8 @@ public class LedArrayGenericHDLGeneratorFactory {
         }
       }
       case LedArrayDriving.RgbColumnScanning : {
-        int index = (pinNr - nrColumnAddressBits) % nrOfRows;
-        int col = (pinNr - nrColumnAddressBits) / nrOfRows;
+        final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
+        final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
         if (pinNr < nrColumnAddressBits) {
           return LedArrayColumnAddress + identifier + "[" + pinNr + "]";
         } else {
@@ -158,9 +156,9 @@ public class LedArrayGenericHDLGeneratorFactory {
       int nrOfRows,
       int nrOfColumns,
       int identifier) {
-    SortedMap<String, Integer> Externals = new TreeMap<>();
-    int nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
-    int nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
+    final var Externals = new TreeMap<String, Integer>();
+    final var nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
+    final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
       case LedArrayDriving.LedDefault : {
         Externals.put(LedArrayOutputs + identifier, nrOfRows * nrOfColumns);
@@ -204,7 +202,7 @@ public class LedArrayGenericHDLGeneratorFactory {
       int nrOfRows,
       int nrOfColumns,
       int identifier) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
+    final var Wires = new TreeMap<String, Integer>();
     switch (typeId) {
       case LedArrayDriving.LedDefault :
       case LedArrayDriving.LedRowScanning :
@@ -230,7 +228,7 @@ public class LedArrayGenericHDLGeneratorFactory {
       int identifier,
       long FpgaClockFrequency,
       boolean isActiveLow) {
-    ArrayList<String> componentMap = new ArrayList<>();
+    final var componentMap = new ArrayList<String>();
     if (HDL.isVHDL())
       componentMap.add("   array" + identifier + " : " + getSpecificHDLName(typeId));
     else
@@ -296,7 +294,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
   
   public static ArrayList<String> getArrayConnections(FPGAIOInformationContainer array, int id) {
-    ArrayList<String> connections = new ArrayList<>();
+    final var connections = new ArrayList<String>();
     switch (array.getArrayDriveMode()) {
       case LedArrayDriving.LedDefault :
       case LedArrayDriving.LedRowScanning :
@@ -317,8 +315,8 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static ArrayList<String> getLedArrayConnections(FPGAIOInformationContainer array, int id) {
-    ArrayList<String> connections = new ArrayList<>();
-    for (int pin = 0; pin < array.getNrOfPins(); pin++) {
+    final var connections = new ArrayList<String>();
+    for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       if (!array.pinIsMapped(pin)) {
         connections.add("   " 
             + HDL.assignPreamble()
@@ -349,8 +347,8 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static ArrayList<String> getRGBArrayConnections(FPGAIOInformationContainer array, int id) {
-    ArrayList<String> connections = new ArrayList<>();
-    for (int pin = 0; pin < array.getNrOfPins(); pin++) {
+    final var connections = new ArrayList<String>();
+    for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       if (!array.pinIsMapped(pin)) {
         connections.add("   " 
             + HDL.assignPreamble()
@@ -386,7 +384,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             + HDL.zeroBit()
             + ";");
       } else {
-        MapComponent map = array.getPinMap(pin);
+        final var map = array.getPinMap(pin);
         if (map.getComponentFactory() instanceof RgbLed) {
           connections.add("   " 
               + HDL.assignPreamble()
@@ -423,15 +421,15 @@ public class LedArrayGenericHDLGeneratorFactory {
               + ";");
         } else if (map.getAttributeSet().containsAttribute(IoLibrary.ATTR_ON_COLOR) 
             && map.getAttributeSet().containsAttribute(IoLibrary.ATTR_OFF_COLOR)) {
-          Color onColor = map.getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
-          Color offColor = map.getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
-          int rOn = onColor.getRed();
-          int gOn = onColor.getGreen();
-          int bOn = onColor.getBlue();
-          int rOff = offColor.getRed();
-          int gOff = offColor.getGreen();
-          int bOff = offColor.getBlue();
-          String pinName = map.getHdlSignalName(array.getMapPin(pin));
+          final var onColor = map.getAttributeSet().getValue(IoLibrary.ATTR_ON_COLOR);
+          final var offColor = map.getAttributeSet().getValue(IoLibrary.ATTR_OFF_COLOR);
+          final var rOn = onColor.getRed();
+          final var gOn = onColor.getGreen();
+          final var bOn = onColor.getBlue();
+          final var rOff = offColor.getRed();
+          final var gOff = offColor.getGreen();
+          final var bOff = offColor.getBlue();
+          final var pinName = map.getHdlSignalName(array.getMapPin(pin));
           connections.add(getColorMap("s_" 
               + LedArrayRedInputs 
               + id
@@ -460,7 +458,7 @@ public class LedArrayGenericHDLGeneratorFactory {
               bOff, 
               pinName));
         } else {
-          String pinName = map.getHdlSignalName(array.getMapPin(pin));
+          final var pinName = map.getHdlSignalName(array.getMapPin(pin));
           connections.add("   " 
               + HDL.assignPreamble()
               + "s_"
@@ -501,8 +499,8 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
   
   private static String getColorMap(String dest, int onColor, int offColor, String source) {
-    String onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit();
-    String offBit = (offColor > 128) ? HDL.oneBit() : HDL.zeroBit();
+    final var onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit();
+    final var offBit = (offColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     if (HDL.isVHDL()) {
       return "   " + dest + HDL.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";";
     } else {
