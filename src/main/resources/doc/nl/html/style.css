@@ -5,24 +5,25 @@ java-help supports version 1 of CSS
 */
 
 
-/* For img icone in the text  */
-img {
-    height:auto;
-	width:90%;
+/* For page  */
+div.maindiv {
+	max-width:560px;
+	border:solid 0px;
+	background-color:#FFFFFF;
 }
-kbd {
-	background-color: #eee;
-	border-radius: 3px;
-	border: 1px solid #b4b4b4;
-	box-shadow: 0 1px 1px rgba(0,0,0,.2),0 2px 0 0 rgba(255,255,255,.7) inset;
-	color: #333;
-	display: inline-block;
-	font-family: consolas,"Liberation Mono",courier,monospace;
-	font-size: .85em;
-	font-weight: 700;
-	line-height: 1;
-	padding: 2px 4px;
-	white-space: nowrap;
+
+/* div  for the tiny code in the pages */
+div.codediv {
+	max-width:660px;
+	border:solid 0px;
+}
+/* div for the code in the pages */
+div.forcode{
+	text-indent:-20px;
+}
+
+div.attliste{
+	padding-left:10px;
 }
 
 /* For img in the text */
@@ -32,6 +33,14 @@ img.intxt {
 	vertical-align:middle;
 	margin:2px;
 }
+/* For img in bullet */
+img.inbullet {
+	height:32;
+	width:32;
+	vertical-align:middle;
+	margin:2px;
+}
+
 /* For Img not scal */
 img.notscal {
 	height:auto;
@@ -39,58 +48,44 @@ img.notscal {
 	vertical-align:middle;
 }
 
-img.iconlibs{
-	height:32px;
-	width:32px;
-	vertical-align:middle;
-}
-img.appearancelibs{
-	height:64px;
-	width:64px;
-	vertical-align:middle;
-}
-img.appearancelibslarge{
-	height:64px;
-	width:128;
-	vertical-align:middle;
-
-}
-img.appearancelibshaut{
-	height:128;
-	width:64;
-	vertical-align:middle;
-
-}
 /* For icon in the text */
 img.icontxt{
 	height:16px;
 	width:16px;
 	vertical-align:middle;
 }
-/* For spaces, page background */
-div.maindiv {
-	max-width:560px;
-	border:solid 0px;
-	background-color:#FFFFFF;
+
+/* For img icon of the library cards  */
+img.iconlibs{
+	height:32px;
+	width:32px;
+	vertical-align:middle;
+}
+/* For img apparence of the library cards  */
+img.appearancelibs{
+	height:64px;
+	width:64px;
+	vertical-align:middle;
+}
+/* For img apparence large of the library cards  */
+img.appearancelibslarge{
+	height:64px;
+	width:128;
+	vertical-align:middle;
+
+}
+/* For img apparence upper of the library cards  */
+img.appearancelibshaut{
+	height:128;
+	width:64;
+	vertical-align:middle;
+
 }
 
-div.codediv {
-	max-width:660px;
-	border:solid 0px;
-}
-
-div.leftdiv {
-   position:relative; 
-   float:left; 
-   max-width:160px;
-   border:solid 0px;   
-}
 div.twodiv{
 	display:inline-block;
 }
-div.forcode{
-	text-indent:-20px;
-}
+
 a {
 	color:#00137f;
 }
@@ -108,10 +103,12 @@ h2 {
 h3{
 	color:#00137f;
 }
+
 var {
 	color:#0025ff;
 	font-weight:bold;
 }
+
 tt {
 	font-size:110%;
 }
@@ -169,60 +166,17 @@ b.refquest {
 table.toolslist {
 	border-spacing :2px 8px;
 }
+
 td.toolslist {
 	width:40px;
 	text-align:center;
 	vertical-align:top;
 }
 
-
-/* For tables of truth tables */
-table.tblver {
-	text-align:center;
-	border-spacing:2px;
-	border-style:dotted;
-	border-width:0px;
-}
-
-tr.tblvertitl{
-	background-color:#ccd1d6;
-}
-td.space {
-	background-color:#ffffff;
-}
-td.zerov {
-	color:#008000;
-	text-align :center;
-}
-td.unov {
-	color:#00FF00;
-	text-align :center;
-}
-td.xvalue {
-	color:#0000FF;
-	text-align :center;
-}
-td.evalue {
-	color:#FF0000;
-	text-align :center;
-}
-span.xvalue {
-	color:#0000FF;
-	text-align :center;
-}
-span.evalue {
-	color:#FF0000;
-	text-align :center;
-}
-
 /* To mark the areas to translate */ 
 span.totranslate {
 	color:#DA81F5;
 }
-
-/* Définition pour la table présentation de lib */
-
-/* Définition pour la table des composant de lib */
 
 /* For list items */
 dt {
@@ -234,4 +188,115 @@ margin-top:5px;
 
 p.blue {
   color:#008000;
+}
+
+/* For for the truth tables */
+table.encapsul{
+  text-align:center;
+  border:1;
+}
+
+table.truthtable {
+  border:0;
+ /* border-collapse : collapse;  */
+  text-align:center;
+}
+
+/* cell truth tables */
+td.space {
+	background-color:#ffffff;
+	padding:3;
+}
+td.zerov {
+	color:#008000;
+	padding:3;
+	text-align:center;
+}
+td.unov {
+	color:#00FF00;
+	padding:3;
+	text-align:center;
+}
+td.uvalue {
+	color:#0000FF;
+	padding:3;
+	text-align:center;
+}
+
+td.evalue {
+	color:#FF0000;
+	padding:3;
+	text-align:center;
+}
+
+td.space {
+	padding:3;
+	text-align:center;
+}
+
+/* cell in title truth tables*/
+th.tspace {
+	background-color:#e0e0e0;
+	padding:3;
+	width:20px
+}
+
+
+td.tzerov {
+	color:#008000;
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
+}
+td.tunov {
+	color:#00FF00;
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
+}
+td.tuvalue {
+	color:#0000FF;
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
+}
+td.tevalue {
+	color:#FF0000;
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
+}
+td.tspace {
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
+}
+
+/* cell  tables */
+td.left {
+	 text-align:left;
+}
+td.center {
+	 text-align:center;
+}
+td.right {
+	 text-align:right;
+}
+
+/* Color for logic value */
+b.uvalue {
+	 color:#0000FF;
+}
+b.evalue {
+	 color:#FF0000;
+}
+b.unov {
+	 color:#00FF00;
+}
+b.zerov {
+	 color:#008000;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
 }

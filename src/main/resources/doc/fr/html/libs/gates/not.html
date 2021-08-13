@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2021-08-08T06:15:23.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -14,7 +14,9 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32"> <img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32"> <em>Porte Non</em>
+        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32">&nbsp;  
+		<em>Porte Non</em>
       </h1>
       <table>
         <tbody>
@@ -67,7 +69,7 @@
         Comportement
       </h2>
       <p>
-        La porte Non émet le complément de l'entrée qu'elle reçoit. La propriété <b class="propertie">Valeur de sortie</b> permet de modifier le coportement de la sortie selon trois modes. La table de vérité d'une porte non est la suivante. 
+        La porte Non émet le complément de l'entrée qu'elle reçoit. La propriété <b class="propertie">Valeur de sortie</b> permet de modifier le comportement de la sortie selon trois modes. La table de vérité d'une porte non est la suivante. 
       </p>
       <center>
         <table>
@@ -136,10 +138,10 @@
         </table>
       </center>
       <p>
-        Si l'entrée est flottante (<b class="uvalue">U</b>) ou une valeur valeur d'erreur (<b class="evalue">E</b>) alors la sortie sera une valeur d'erreur (<b class="evalue">E</b>).
+        Si l'entrée est flottante (<b class="uvalue">U</b>) ou une valeur d'erreur (<b class="evalue">E</b>) alors la sortie sera une valeur d'erreur (<b class="evalue">E</b>).
       </p>
       <p>
-        Une porte NOT multi-bits effectuera la transformation ci-dessus par bit sur son entrée.
+        Une porte NOT multibits effectuera la transformation ci-dessus par bit sur son entrée.
       </p>
       <h2>
         Pins (en supposant que le composant est orienté vers l'est)
@@ -155,14 +157,14 @@
           Bord est :
         </dt>
         <dd>
-          La sortie, dont la valeur est le complément de la valeur d'entrée. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>. Le mode de présentation des donnée est défini par l'attribut <b class="propertie">Valeur de sortie</b>.
+          La sortie, dont la valeur est le complément de la valeur d'entrée. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>. Le mode de présentation des données est défini par l'attribut <b class="propertie">Valeur de sortie</b>.
         </dd>
       </dl>
       <h2>
         Attributs
       </h2>
       <p>
-	    Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>
+	    Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
       </p>
       <div class="attliste">
         <dl>
@@ -188,7 +190,7 @@
             <b class="propertie">Valeur de sortie</b>
           </dt>
           <dd>
-		  Indique comment les résultats faux et vrais doivent être traduits en valeurs de sortie. Par défaut, false est indiqué par une tension faible (<b class="zerov">0</b>) et true par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peuvent être remplacé par une valeur à haute impédance (<q>floating</q> <b class="uvalue">U</b>) à la place. Cela permet des connexions de type ou-connecté et et-connecté, comme illustré dans la <a href="basic.html">documentation sur les portes AND/OR/NAND/NOR</a>
+		  Indique comment les résultats faux et vrais doivent être traduits en valeurs de sortie. Par défaut, faux est indiqué par une tension faible (<b class="zerov">0</b>) et vraie par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peuvent être remplacé par une valeur à haute impédance (<q>flottant</q> <b class="uvalue">U</b>) à la place. Cela permet des connexions de type ou-câblé et et-câblé, comme illustré dans la <a href="basic.html">documentation sur les portes AND/OR/NAND/NOR</a>.
           </dd>
           <dt>
             <b class="propertie">Étiquette</b>
@@ -214,7 +216,7 @@
         Comportement de l'outil text
       </h2>
       <p>
-        Permet de modifier l'étiquette associée à la porte.
+        Permets de modifier l'étiquette associée à la porte.
       </p>
       <p>
         <b>Retour à</b>  <a href="../index.html">Référence de la bibliothèque</a>
