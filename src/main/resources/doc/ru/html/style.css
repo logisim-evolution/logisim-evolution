@@ -193,12 +193,15 @@ p.blue {
 /* For for the truth tables */
 table.encapsul{
   text-align:center;
+  border:1;
 }
+
 table.truthtable {
   border:0;
-  border-collapse : collapse;
+ /* border-collapse : collapse;  */
   text-align:center;
 }
+
 /* cell truth tables */
 td.space {
 	background-color:#ffffff;
@@ -235,6 +238,7 @@ td.space {
 th.tspace {
 	background-color:#e0e0e0;
 	padding:3;
+	width:20px
 }
 
 
@@ -242,21 +246,30 @@ td.tzerov {
 	color:#008000;
 	padding:3;
 	background-color:#e0e0e0;
+	width:18px;
 }
 td.tunov {
 	color:#00FF00;
 	padding:3;
 	background-color:#e0e0e0;
+	width:18px;
 }
 td.tuvalue {
 	color:#0000FF;
 	padding:3;
 	background-color:#e0e0e0;
+	width:18px;
 }
 td.tevalue {
 	color:#FF0000;
 	padding:3;
 	background-color:#e0e0e0;
+	width:18px;
+}
+td.tspace {
+	padding:3;
+	background-color:#e0e0e0;
+	width:18px;
 }
 
 /* cell  tables */
@@ -270,21 +283,18 @@ td.right {
 	 text-align:right;
 }
 
+/* Color for logic value */
 b.uvalue {
 	 color:#0000FF;
-	 font-weight: normal
 }
 b.evalue {
 	 color:#FF0000;
-	 font-weight: normal
 }
 b.unov {
 	 color:#00FF00;
-	 font-weight: normal
 }
 b.zerov {
 	 color:#008000;
-	 font-weight: normal
 }
 
 tr.tblvertitl{
