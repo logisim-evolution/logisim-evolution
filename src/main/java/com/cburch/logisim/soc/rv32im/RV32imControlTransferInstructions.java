@@ -131,6 +131,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           jumped = true;
           cpuState.setProgramCounter(target);
         }
+System.out.println("BLT " + reg1 + " " + reg2 + " " + target + " " + jumped);
         return true;
       case INSTR_BGE:
         if (reg1 >= reg2) {
@@ -374,8 +375,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
         break;
       default:
         if (instr.getNrOfParameters() < 2 || instr.getNrOfParameters() > 3) {
-          instr.setError(
-              instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
+          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
           errors = true;
           break;
         }
@@ -414,7 +414,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           immediate = param3[0].getNumberValue();
         }
         if (operation != INSTR_JALR) {
-          source2 = destination;
+          source1 = destination;
           destination = 0;
         }
         break;
@@ -461,8 +461,8 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
             errors = true;
             break;
           }
-          instruction =
-              RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
+System.out.println(source1 + " " + source2);
+          instruction = RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
           break;
         default:
           errors = true;
