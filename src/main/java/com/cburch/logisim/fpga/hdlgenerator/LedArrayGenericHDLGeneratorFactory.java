@@ -156,70 +156,70 @@ public class LedArrayGenericHDLGeneratorFactory {
       int nrOfRows,
       int nrOfColumns,
       int identifier) {
-    final var Externals = new TreeMap<String, Integer>();
+    final var externals = new TreeMap<String, Integer>();
     final var nrRowAddressBits = getNrOfBitsRequired(nrOfRows);
     final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
       case LedArrayDriving.LedDefault : {
-        Externals.put(LedArrayOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(LedArrayOutputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.LedRowScanning : {
-        Externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
-        Externals.put(LedArrayColumnOutputs + identifier, nrOfColumns);
+        externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
+        externals.put(LedArrayColumnOutputs + identifier, nrOfColumns);
         break;
       }
       case LedArrayDriving.LedColumnScanning : {
-        Externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
-        Externals.put(LedArrayRowOutputs + identifier, nrOfRows);
+        externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
+        externals.put(LedArrayRowOutputs + identifier, nrOfRows);
         break;
       }
       case LedArrayDriving.RgbDefault : {
-        Externals.put(LedArrayRedOutputs + identifier, nrOfRows * nrOfColumns);
-        Externals.put(LedArrayGreenOutputs + identifier, nrOfRows * nrOfColumns);
-        Externals.put(LedArrayBlueOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(LedArrayRedOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(LedArrayGreenOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(LedArrayBlueOutputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.RgbRowScanning : {
-        Externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
-        Externals.put(LedArrayColumnRedOutputs + identifier, nrOfColumns);
-        Externals.put(LedArrayColumnGreenOutputs + identifier, nrOfColumns);
-        Externals.put(LedArrayColumnBlueOutputs + identifier, nrOfColumns);
+        externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
+        externals.put(LedArrayColumnRedOutputs + identifier, nrOfColumns);
+        externals.put(LedArrayColumnGreenOutputs + identifier, nrOfColumns);
+        externals.put(LedArrayColumnBlueOutputs + identifier, nrOfColumns);
         break;
       }
       case LedArrayDriving.RgbColumnScanning : {
-        Externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
-        Externals.put(LedArrayRowRedOutputs + identifier, nrOfRows);
-        Externals.put(LedArrayRowGreenOutputs + identifier, nrOfRows);
-        Externals.put(LedArrayRowBlueOutputs + identifier, nrOfRows);
+        externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
+        externals.put(LedArrayRowRedOutputs + identifier, nrOfRows);
+        externals.put(LedArrayRowGreenOutputs + identifier, nrOfRows);
+        externals.put(LedArrayRowBlueOutputs + identifier, nrOfRows);
         break;
       }
     }
-    return Externals;
+    return externals;
   }
   
   public static SortedMap<String, Integer> getInternalSignals(char typeId,
       int nrOfRows,
       int nrOfColumns,
       int identifier) {
-    final var Wires = new TreeMap<String, Integer>();
+    final var wires = new TreeMap<String, Integer>();
     switch (typeId) {
       case LedArrayDriving.LedDefault :
       case LedArrayDriving.LedRowScanning :
       case LedArrayDriving.LedColumnScanning : {
-        Wires.put("s_" + LedArrayInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put("s_" + LedArrayInputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.RgbDefault :
       case LedArrayDriving.RgbRowScanning :
       case LedArrayDriving.RgbColumnScanning : {
-        Wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
-        Wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
-        Wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
     }
-    return Wires;
+    return wires;
   }
   
   public static ArrayList<String> GetComponentMap(char typeId,

@@ -115,113 +115,113 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Outputs = new TreeMap<String, Integer>();
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfRowsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfRowsGeneric);
-    Outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, nrOfRowsGeneric);
-    return Outputs;
+    final var outputs = new TreeMap<String, Integer>();
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfRowsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfRowsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, nrOfRowsGeneric);
+    return outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Inputs = new TreeMap<String, Integer>();
-    Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
-    Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
-    Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
-    Inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
+    return inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var Wires = new TreeMap<String, Integer>();
-    Wires.putAll(super.GetWireList(attrs, Nets));
-    Wires.put("s_maxRedLedInputs", maxNrLedsGeneric);
-    Wires.put("s_maxBlueLedInputs", maxNrLedsGeneric);
-    Wires.put("s_maxGreenLedInputs", maxNrLedsGeneric);
-    return Wires;
+    final var wires = new TreeMap<String, Integer>();
+    wires.putAll(super.GetWireList(attrs, Nets));
+    wires.put("s_maxRedLedInputs", maxNrLedsGeneric);
+    wires.put("s_maxBlueLedInputs", maxNrLedsGeneric);
+    wires.put("s_maxGreenLedInputs", maxNrLedsGeneric);
+    return wires;
   }
   
   
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new ArrayList<String>();
-    Contents.addAll(getColumnCounterCode());
+    final var contents = new ArrayList<String>();
+    contents.addAll(getColumnCounterCode());
     if (HDL.isVHDL()) {
-      Contents.add("   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS");
-      Contents.add("   BEGIN");
-      Contents.add("      s_maxRedLedInputs <= (OTHERS => '0');");
-      Contents.add("      s_maxGreenLedInputs <= (OTHERS => '0');");
-      Contents.add("      s_maxBlueLedInputs <= (OTHERS => '0');");
-      Contents.add("      IF (" + activeLowString + " = 1) THEN");
-      Contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= NOT " 
+      contents.add("   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS");
+      contents.add("   BEGIN");
+      contents.add("      s_maxRedLedInputs <= (OTHERS => '0');");
+      contents.add("      s_maxGreenLedInputs <= (OTHERS => '0');");
+      contents.add("      s_maxBlueLedInputs <= (OTHERS => '0');");
+      contents.add("      IF (" + activeLowString + " = 1) THEN");
+      contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= NOT " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + ";");
-      Contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= NOT " 
+      contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= NOT " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + ";");
-      Contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= NOT " 
+      contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= NOT " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + ";");
-      Contents.add("                                       ELSE");
-      Contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= " 
+      contents.add("                                       ELSE");
+      contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + ";");
-      Contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= " 
+      contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + ";");
-      Contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= " 
+      contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + ";");
-      Contents.add("      END IF;");
-      Contents.add("   END PROCESS makeVirtualInputs;");
-      Contents.add("");
-      Contents.add("   GenOutputs : FOR n IN " + nrOfRowsString + "-1 DOWNTO 0 GENERATE");
-      Contents.add("      " 
+      contents.add("      END IF;");
+      contents.add("   END PROCESS makeVirtualInputs;");
+      contents.add("");
+      contents.add("   GenOutputs : FOR n IN " + nrOfRowsString + "-1 DOWNTO 0 GENERATE");
+      contents.add("      " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs 
           + "(n)   <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);");
-      Contents.add("      " 
+      contents.add("      " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs
           + "(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);");
-      Contents.add("      " 
+      contents.add("      " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs
           + "(n)  <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);");
-      Contents.add("   END GENERATE GenOutputs;");
+      contents.add("   END GENERATE GenOutputs;");
     } else {
-      Contents.add("");
-      Contents.add("   genvar i;");
-      Contents.add("   generate");
-      Contents.add("      for (i = 0; i < " + nrOfRowsString + "; i = i + 1) begin");
-      Contents.add("         assign " 
+      contents.add("");
+      contents.add("   genvar i;");
+      contents.add("   generate");
+      contents.add("      for (i = 0; i < " + nrOfRowsString + "; i = i + 1) begin");
+      contents.add("         assign " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs
           + "[i]  = (activeLow == 1) ? ~" 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + "[i*nrOfColumns+s_columnCounterReg] : ");
-      Contents.add("                                                       " 
+      contents.add("                                                       " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + "[i*nrOfColumns+s_columnCounterReg];");
-      Contents.add("         assign " 
+      contents.add("         assign " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs
           + "[i]  = (activeLow == 1) ? ~" 
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + "[i*nrOfColumns+s_columnCounterReg] : ");
-      Contents.add("                                                       " 
+      contents.add("                                                       " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + "[i*nrOfColumns+s_columnCounterReg];");
-      Contents.add("         assign " 
+      contents.add("         assign " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs
           + "[i]  = (activeLow == 1) ? ~" 
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + "[i*nrOfColumns+s_columnCounterReg] : ");
-      Contents.add("                                                       " 
+      contents.add("                                                       " 
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + "[i*nrOfColumns+s_columnCounterReg];");
 
-      Contents.add("      end");
-      Contents.add("   endgenerate");
+      contents.add("      end");
+      contents.add("   endgenerate");
     }
-    return Contents;
+    return contents;
   }
 
   @Override

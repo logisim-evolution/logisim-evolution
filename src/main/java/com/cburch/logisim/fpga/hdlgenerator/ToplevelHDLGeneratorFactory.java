@@ -47,32 +47,32 @@ import java.util.TreeMap;
 
 public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private final long FpgaClockFrequency;
-  private final double TickFrequency;
-  private final Circuit MyCircuit;
-  private final MappableResourcesContainer MyIOComponents;
+  private final long fpgaClockFrequency;
+  private final double tickFrequency;
+  private final Circuit myCircuit;
+  private final MappableResourcesContainer myIOComponents;
   private final boolean requiresFPGAClock;
   private final boolean hasLedArray;
   private final ArrayList<FPGAIOInformationContainer> myLedArrays;
-  private final HashMap<String, Boolean> LedArrayTypesUsed; 
+  private final HashMap<String, Boolean> ledArrayTypesUsed; 
 
 
-  public ToplevelHDLGeneratorFactory(long FPGAClock, double TickClock, Circuit TopLevel, 
-      MappableResourcesContainer IOComponents) {
-    FpgaClockFrequency = FPGAClock;
-    TickFrequency = TickClock;
-    MyCircuit = TopLevel;
-    MyIOComponents = IOComponents;
+  public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel, 
+      MappableResourcesContainer ioComponents) {
+    fpgaClockFrequency = fpgaClock;
+    tickFrequency = tickClock;
+    myCircuit = topLevel;
+    myIOComponents = ioComponents;
     var hasScanningLedArray = false;
     var hasLedArray = false;
-    final var LedArrayTypesUsed = new HashMap<String, Boolean>();
-    final var LedArrays = new ArrayList<FPGAIOInformationContainer>();
-    for (var comp : MyIOComponents.getIOComponentInformation().getComponents()) {
+    final var ledArrayTypesUsed = new HashMap<String, Boolean>();
+    final var ledArrays = new ArrayList<FPGAIOInformationContainer>();
+    for (final var comp : myIOComponents.getIOComponentInformation().getComponents()) {
       if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
         if (comp.hasMap()) {
-          LedArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
-          LedArrays.add(comp);
-          comp.setArrayId(LedArrays.indexOf(comp));
+          ledArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
+          ledArrays.add(comp);
+          comp.setArrayId(ledArrays.indexOf(comp));
           hasLedArray = true;
           if (!(comp.getArrayDriveMode() == LedArrayDriving.LedDefault) 
               && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
@@ -82,8 +82,8 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     requiresFPGAClock = hasScanningLedArray;
     this.hasLedArray = hasLedArray;
-    this.LedArrayTypesUsed = LedArrayTypesUsed;
-    myLedArrays = LedArrays;
+    this.ledArrayTypesUsed = ledArrayTypesUsed;
+    myLedArrays = ledArrays;
   }
   
   public boolean hasLedArray() {
@@ -91,50 +91,50 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
   
   public boolean hasLedArrayType(String type) {
-    if (!LedArrayTypesUsed.containsKey(type)) return false;
-    return LedArrayTypesUsed.get(type);
+    if (!ledArrayTypesUsed.containsKey(type)) return false;
+    return ledArrayTypesUsed.get(type);
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
-    final var Components = new ArrayList<String>();
-    final var NrOfClockTrees = TheNetlist.NumberOfClockTrees();
-    if (NrOfClockTrees > 0) {
-      TickComponentHDLGeneratorFactory Ticker =
+  public ArrayList<String> GetComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+    final var components = new ArrayList<String>();
+    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
+    if (nrOfClockTrees > 0) {
+      TickComponentHDLGeneratorFactory ticker =
           new TickComponentHDLGeneratorFactory(
-              FpgaClockFrequency, TickFrequency);
-      Components.addAll(
-          Ticker.GetComponentInstantiation(
-              TheNetlist, null, Ticker.getComponentStringIdentifier()));
-      HDLGeneratorFactory ClockWorker =
-          TheNetlist.GetAllClockSources()
+              fpgaClockFrequency, tickFrequency);
+      components.addAll(
+          ticker.GetComponentInstantiation(
+              theNetlist, null, ticker.getComponentStringIdentifier()));
+      HDLGeneratorFactory clockWorker =
+          theNetlist.GetAllClockSources()
               .get(0)
               .getFactory()
-              .getHDLGenerator(TheNetlist.GetAllClockSources().get(0).getAttributeSet());
-      Components.addAll(
-          ClockWorker.GetComponentInstantiation(
-              TheNetlist,
-              TheNetlist.GetAllClockSources().get(0).getAttributeSet(),
-              TheNetlist.GetAllClockSources()
+              .getHDLGenerator(theNetlist.GetAllClockSources().get(0).getAttributeSet());
+      components.addAll(
+          clockWorker.GetComponentInstantiation(
+              theNetlist,
+              theNetlist.GetAllClockSources().get(0).getAttributeSet(),
+              theNetlist.GetAllClockSources()
                   .get(0)
                   .getFactory()
-                  .getHDLName(TheNetlist.GetAllClockSources().get(0).getAttributeSet())));
+                  .getHDLName(theNetlist.GetAllClockSources().get(0).getAttributeSet())));
     }
-    for (var type : LedArrayDriving.Driving_strings) {
+    for (final var type : LedArrayDriving.Driving_strings) {
       if (hasLedArrayType(type)) {
-        final var Worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
-        final var Name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
-        if (Worker != null && Name != null)
-          Components.addAll(Worker.GetComponentInstantiation(TheNetlist, null, Name));
+        final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
+        final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+        if (worker != null && name != null)
+          components.addAll(worker.GetComponentInstantiation(theNetlist, null, name));
       }
     }
-    final var Worker = new CircuitHDLGeneratorFactory(MyCircuit);
-    Components.addAll(
-        Worker.GetComponentInstantiation(
-            TheNetlist,
+    final var worker = new CircuitHDLGeneratorFactory(myCircuit);
+    components.addAll(
+        worker.GetComponentInstantiation(
+            theNetlist,
             null,
-            CorrectLabel.getCorrectLabel(MyCircuit.getName())));
-    return Components;
+            CorrectLabel.getCorrectLabel(myCircuit.getName())));
+    return components;
   }
 
   @Override
@@ -143,94 +143,94 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    final var InOut = new TreeMap<String, Integer>();
-    for (var io : MyIOComponents.GetMappedIOPinNames()) {
-      InOut.put(io, 1);
+  public SortedMap<String, Integer> GetInOutList(Netlist theNetlist, AttributeSet attrs) {
+    final var inOut = new TreeMap<String, Integer>();
+    for (var io : myIOComponents.GetMappedIOPinNames()) {
+      inOut.put(io, 1);
     }
-    return InOut;
+    return inOut;
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Outputs = new TreeMap<String, Integer>();
-    for (var io : MyIOComponents.GetMappedOutputPinNames()) {
-      Outputs.put(io, 1);
+  public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
+    final var outputs = new TreeMap<String, Integer>();
+    for (var io : myIOComponents.GetMappedOutputPinNames()) {
+      outputs.put(io, 1);
     }
     for (var ledArray : myLedArrays) {
-      Outputs.putAll(LedArrayGenericHDLGeneratorFactory.getExternalSignals(
+      outputs.putAll(LedArrayGenericHDLGeneratorFactory.getExternalSignals(
           ledArray.getArrayDriveMode(), 
           ledArray.getNrOfRows(), 
           ledArray.getNrOfColumns(), 
           myLedArrays.indexOf(ledArray)));
     }
-    return Outputs;
+    return outputs;
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Inputs = new TreeMap<String, Integer>();
-    final var NrOfClockTrees = TheNetlist.NumberOfClockTrees();
+  public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
+    final var inputs = new TreeMap<String, Integer>();
+    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
     /* First we instantiate the Clock tree busses when present */
-    if (NrOfClockTrees > 0 || TheNetlist.RequiresGlobalClockConnection() || requiresFPGAClock) {
-      Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    if (nrOfClockTrees > 0 || theNetlist.RequiresGlobalClockConnection() || requiresFPGAClock) {
+      inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
     }
-    for (var in : MyIOComponents.GetMappedInputPinNames()) {
-      Inputs.put(in, 1);
+    for (var in : myIOComponents.GetMappedInputPinNames()) {
+      inputs.put(in, 1);
     }
-    return Inputs;
+    return inputs;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new ArrayList<String>();
-    final var NrOfClockTrees = TheNetlist.NumberOfClockTrees();
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents = new ArrayList<String>();
+    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
     /* First we process all components */
-    Contents.addAll(MakeRemarkBlock("Here all signal adaptations are performed", 3));
-    for (var key : MyIOComponents.getMappableResources().keySet()) {
-      final var comp = MyIOComponents.getMappableResources().get(key);
-      Contents.addAll(AbstractHDLGeneratorFactory.GetToplevelCode(comp));
+    contents.addAll(MakeRemarkBlock("Here all signal adaptations are performed", 3));
+    for (final var key : myIOComponents.getMappableResources().keySet()) {
+      final var comp = myIOComponents.getMappableResources().get(key);
+      contents.addAll(AbstractHDLGeneratorFactory.GetToplevelCode(comp));
     }
     /* now we process the clock tree components */
-    if (NrOfClockTrees > 0) {
-      Contents.addAll(MakeRemarkBlock("Here the clock tree components are defined", 3));
-      final var Ticker = new TickComponentHDLGeneratorFactory(FpgaClockFrequency, TickFrequency);
-      Contents.addAll(Ticker.GetComponentMap(null, 0L, null, null, ""));
+    if (nrOfClockTrees > 0) {
+      contents.addAll(MakeRemarkBlock("Here the clock tree components are defined", 3));
+      final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
+      contents.addAll(ticker.GetComponentMap(null, 0L, null, null, ""));
       var index = 0L;
-      for (var Clockgen : TheNetlist.GetAllClockSources()) {
-        final var ThisClock = new NetlistComponent(Clockgen);
-        Contents.addAll(
-            Clockgen.getFactory()
-                .getHDLGenerator(ThisClock.GetComponent().getAttributeSet())
-                .GetComponentMap(TheNetlist, index++, ThisClock, null, ""));
+      for (var clockGen : theNetlist.GetAllClockSources()) {
+        final var thisClock = new NetlistComponent(clockGen);
+        contents.addAll(
+            clockGen.getFactory()
+                .getHDLGenerator(thisClock.GetComponent().getAttributeSet())
+                .GetComponentMap(theNetlist, index++, thisClock, null, ""));
       }
     }
-    Contents.add("");
+    contents.add("");
     /* Here the map is performed */
-    Contents.addAll(MakeRemarkBlock("Here the toplevel component is connected", 3));
-    final var DUT = new CircuitHDLGeneratorFactory(MyCircuit);
-    Contents.addAll(
-        DUT.GetComponentMap(
-            TheNetlist,
+    contents.addAll(MakeRemarkBlock("Here the toplevel component is connected", 3));
+    final var dut = new CircuitHDLGeneratorFactory(myCircuit);
+    contents.addAll(
+        dut.GetComponentMap(
+            theNetlist,
             0L,
             null,
-            MyIOComponents,
-            CorrectLabel.getCorrectLabel(MyCircuit.getName())));
+            myIOComponents,
+            CorrectLabel.getCorrectLabel(myCircuit.getName())));
     if (hasLedArray) {
-      Contents.add("");
-      Contents.addAll(MakeRemarkBlock("Here the Led arrays are connected", 3));
+      contents.add("");
+      contents.addAll(MakeRemarkBlock("Here the Led arrays are connected", 3));
       for (var array : myLedArrays) {
-        Contents.addAll(LedArrayGenericHDLGeneratorFactory.GetComponentMap(
+        contents.addAll(LedArrayGenericHDLGeneratorFactory.GetComponentMap(
             array.getArrayDriveMode(), 
             array.getNrOfRows(), 
             array.getNrOfColumns(), 
             myLedArrays.indexOf(array),
-            FpgaClockFrequency,
+            fpgaClockFrequency,
             array.GetActivityLevel() == PinActivity.ActiveLow));
-        Contents.addAll(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
+        contents.addAll(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
-    return Contents;
+    return contents;
   }
 
   @Override
@@ -243,80 +243,80 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var Wires = new TreeMap<String, Integer>();
-    final var NrOfClockTrees = Nets.NumberOfClockTrees();
-    final var NrOfInputBubbles = Nets.NumberOfInputBubbles();
-    final var NrOfOutputBubbles = Nets.NumberOfOutputBubbles();
-    final var NrOfInputPorts = Nets.NumberOfInputPorts();
-    final var NrOfInOutPorts = Nets.NumberOfInOutPorts();
-    final var NrOfOutputPorts = Nets.NumberOfOutputPorts();
-    if (NrOfClockTrees > 0) {
-      Wires.put(TickComponentHDLGeneratorFactory.FPGATick, 1);
-      for (var clockBus = 0; clockBus < NrOfClockTrees; clockBus++) {
-        Wires.put(
+  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
+    final var wires = new TreeMap<String, Integer>();
+    final var nrOfClockTrees = nets.NumberOfClockTrees();
+    final var nrOfInputBubbles = nets.NumberOfInputBubbles();
+    final var nrOfOutputBubbles = nets.NumberOfOutputBubbles();
+    final var nrOfInputPorts = nets.NumberOfInputPorts();
+    final var nrOfInOutPorts = nets.NumberOfInOutPorts();
+    final var nrOfOutputPorts = nets.NumberOfOutputPorts();
+    if (nrOfClockTrees > 0) {
+      wires.put(TickComponentHDLGeneratorFactory.FPGATick, 1);
+      for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
+        wires.put(
             "s_" + ClockTreeName + clockBus,
             ClockHDLGeneratorFactory.NrOfClockBits);
       }
     }
-    if (NrOfInputBubbles > 0) {
-      if (NrOfInputBubbles > 1) {
-        Wires.put("s_LOGISIM_INPUT_BUBBLES", NrOfInputBubbles);
+    if (nrOfInputBubbles > 0) {
+      if (nrOfInputBubbles > 1) {
+        wires.put("s_LOGISIM_INPUT_BUBBLES", nrOfInputBubbles);
       } else {
-        Wires.put("s_LOGISIM_INPUT_BUBBLES", 0);
+        wires.put("s_LOGISIM_INPUT_BUBBLES", 0);
       }
     }
-    if (NrOfOutputBubbles > 0) {
-      if (NrOfOutputBubbles > 1) {
-        Wires.put("s_LOGISIM_OUTPUT_BUBBLES", NrOfOutputBubbles);
+    if (nrOfOutputBubbles > 0) {
+      if (nrOfOutputBubbles > 1) {
+        wires.put("s_LOGISIM_OUTPUT_BUBBLES", nrOfOutputBubbles);
       } else {
-        Wires.put("s_LOGISIM_OUTPUT_BUBBLES", 0);
+        wires.put("s_LOGISIM_OUTPUT_BUBBLES", 0);
       }
     }
-    if (NrOfInputPorts > 0) {
-      for (var input = 0; input < NrOfInputPorts; input++) {
-        String SName = "s_"
+    if (nrOfInputPorts > 0) {
+      for (var input = 0; input < nrOfInputPorts; input++) {
+        String sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                Nets.GetInputPin(input)
+                nets.GetInputPin(input)
                     .GetComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var NrOfBits = Nets.GetInputPin(input).GetComponent().getEnd(0).getWidth().getWidth();
-        Wires.put(SName, NrOfBits);
+        final var nrOfBits = nets.GetInputPin(input).GetComponent().getEnd(0).getWidth().getWidth();
+        wires.put(sName, nrOfBits);
       }
     }
-    if (NrOfInOutPorts > 0) {
-      for (var inout = 0; inout < NrOfInOutPorts; inout++) {
-        final var SName = "s_"
+    if (nrOfInOutPorts > 0) {
+      for (var inout = 0; inout < nrOfInOutPorts; inout++) {
+        final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                Nets.GetInOutPin(inout)
+                nets.GetInOutPin(inout)
                     .GetComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var NrOfBits = Nets.GetInOutPin(inout).GetComponent().getEnd(0).getWidth().getWidth();
-        Wires.put(SName, NrOfBits);
+        final var nrOfBits = nets.GetInOutPin(inout).GetComponent().getEnd(0).getWidth().getWidth();
+        wires.put(sName, nrOfBits);
       }
     }
-    if (NrOfOutputPorts > 0) {
-      for (var output = 0; output < NrOfOutputPorts; output++) {
-        final var SName = "s_"
+    if (nrOfOutputPorts > 0) {
+      for (var output = 0; output < nrOfOutputPorts; output++) {
+        final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                Nets.GetOutputPin(output)
+                nets.GetOutputPin(output)
                     .GetComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var NrOfBits = Nets.GetOutputPin(output).GetComponent().getEnd(0).getWidth().getWidth();
-        Wires.put(SName, NrOfBits);
+        final var nrOfBits = nets.GetOutputPin(output).GetComponent().getEnd(0).getWidth().getWidth();
+        wires.put(sName, nrOfBits);
       }
     }
-    for (var ledArray : myLedArrays) {
-      Wires.putAll(LedArrayGenericHDLGeneratorFactory.getInternalSignals(
+    for (final var ledArray : myLedArrays) {
+      wires.putAll(LedArrayGenericHDLGeneratorFactory.getInternalSignals(
           ledArray.getArrayDriveMode(), 
           ledArray.getNrOfRows(), 
           ledArray.getNrOfColumns(), 
           myLedArrays.indexOf(ledArray)));
     }
-    return Wires;
+    return wires;
   }
 
   @Override
