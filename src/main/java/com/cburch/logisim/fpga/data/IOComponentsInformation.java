@@ -65,8 +65,8 @@ public class IOComponentsInformation {
 
   public void clear() {
     IOcomps.clear();
-    for (int x = 0; x < BoardManipulator.IMAGE_WIDTH; x++)
-      for (int y = 0; y < imageHeight; y++) lookup[x][y] = null;
+    for (var x = 0; x < BoardManipulator.IMAGE_WIDTH; x++)
+      for (var y = 0; y < imageHeight; y++) lookup[x][y] = null;
     highlighted = null;
   }
 
@@ -79,15 +79,15 @@ public class IOComponentsInformation {
   }
 
   public boolean hasOverlap(BoardRectangle rect) {
-    boolean overlap = false;
-    for (FPGAIOInformationContainer io : IOcomps)
+    var overlap = false;
+    for (var io : IOcomps)
       overlap |= io.GetRectangle().Overlap(rect);
     return overlap;
   }
 
   public boolean hasOverlap(BoardRectangle orig, BoardRectangle update) {
-    boolean overlap = false;
-    for (FPGAIOInformationContainer io : IOcomps)
+    var overlap = false;
+    for (var io : IOcomps)
       if (!io.GetRectangle().equals(orig)) overlap |= io.GetRectangle().Overlap(update);
     return overlap;
   }
@@ -115,13 +115,13 @@ public class IOComponentsInformation {
   }
 
   public void setSelectable(MapListModel.MapInfo comp, float scale) {
-    for (FPGAIOInformationContainer io : IOcomps) {
+    for (var io : IOcomps) {
       if (io.setSelectable(comp)) this.fireRedraw(io.GetRectangle(), scale);
     }
   }
 
   public void removeSelectable(float scale) {
-    for (FPGAIOInformationContainer io : IOcomps) {
+    for (var io : IOcomps) {
       if (io.removeSelectable()) this.fireRedraw(io.GetRectangle(), scale);
     }
   }
@@ -129,9 +129,9 @@ public class IOComponentsInformation {
   public void addComponent(FPGAIOInformationContainer comp, float scale) {
     if (!IOcomps.contains(comp)) {
       IOcomps.add(comp);
-      BoardRectangle rect = comp.GetRectangle();
-      for (int x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
-        for (int y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
+      var rect = comp.GetRectangle();
+      for (var x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
+        for (var y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
           if (x < BoardManipulator.IMAGE_WIDTH && y < imageHeight) lookup[x][y] = comp;
       if (mapMode) return;
       fireRedraw(comp.GetRectangle(), scale);
@@ -142,16 +142,16 @@ public class IOComponentsInformation {
     if (IOcomps.contains(comp)) {
       if (highlighted == comp) highlighted = null;
       IOcomps.remove(comp);
-      BoardRectangle rect = comp.GetRectangle();
-      for (int x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
-        for (int y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
+      var rect = comp.GetRectangle();
+      for (var x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
+        for (var y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
           lookup[x][y] = null;
       fireRedraw(comp.GetRectangle(), scale);
     }
   }
 
-  public void replaceComponent(
-      FPGAIOInformationContainer oldI, FPGAIOInformationContainer newI, MouseEvent e, float scale) {
+  public void replaceComponent(FPGAIOInformationContainer oldI, FPGAIOInformationContainer newI, 
+      MouseEvent e, float scale) {
     if (!IOcomps.contains(oldI)) return;
     removeComponent(oldI, scale);
     addComponent(newI, scale);
@@ -159,14 +159,18 @@ public class IOComponentsInformation {
   }
 
   public void mouseMoved(MouseEvent e, float scale) {
-    int xpos = AppPreferences.getDownScaled(e.getX(), scale);
-    int ypos = AppPreferences.getDownScaled(e.getY(), scale);
+    var xpos = AppPreferences.getDownScaled(e.getX(), scale);
+    var ypos = AppPreferences.getDownScaled(e.getY(), scale);
     xpos = Math.max(xpos, 0);
     xpos = Math.min(xpos, BoardManipulator.IMAGE_WIDTH - 1);
     ypos = Math.max(ypos, 0);
     ypos = Math.min(ypos, imageHeight - 1);
-    FPGAIOInformationContainer selected = lookup[xpos][ypos];
-    if (selected == highlighted) return;
+    var selected = lookup[xpos][ypos];
+    if (selected == highlighted) {
+      if (highlighted != null && highlighted.selectedPinChanged(xpos, ypos))
+        fireRedraw(highlighted.GetRectangle(), scale);
+      return;
+    }
     if (highlighted != null) {
       highlighted.unsetHighlighted();
       fireRedraw(highlighted.GetRectangle(), scale);
@@ -231,19 +235,17 @@ public class IOComponentsInformation {
   }
 
   public void paint(Graphics2D g, float scale) {
-    for (FPGAIOInformationContainer c : IOcomps)
+    for (var c : IOcomps)
       c.paint(g, scale);
   }
 
   private void fireRedraw(BoardRectangle rect, float scale) {
     if (listeners == null) return;
-    Rectangle area =
-        new Rectangle(
-            AppPreferences.getScaled(rect.getXpos() - 2, scale),
-            AppPreferences.getScaled(rect.getYpos() - 2, scale),
-            AppPreferences.getScaled(rect.getWidth() + 4, scale),
-            AppPreferences.getScaled(rect.getHeight() + 4, scale));
-
-    for (IOComponentsListener l : listeners) l.repaintRequest(area);
+    var area = new Rectangle(
+        AppPreferences.getScaled(rect.getXpos() - 2, scale),
+        AppPreferences.getScaled(rect.getYpos() - 2, scale),
+        AppPreferences.getScaled(rect.getWidth() + 4, scale),
+        AppPreferences.getScaled(rect.getHeight() + 4, scale));
+    for (var l : listeners) l.repaintRequest(area);
   }
 }

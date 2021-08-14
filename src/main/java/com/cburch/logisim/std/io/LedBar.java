@@ -42,7 +42,7 @@ public class LedBar extends DotMatrixBase {
 
   protected static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
       Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
-  protected static final Attribute<BitWidth> ATTR_MATRIX_COLS =
+  public static final Attribute<BitWidth> ATTR_MATRIX_COLS =
       Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
 
   protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
