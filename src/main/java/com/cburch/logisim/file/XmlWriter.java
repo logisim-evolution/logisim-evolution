@@ -51,7 +51,6 @@ import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -101,11 +100,6 @@ class XmlWriter {
     if (a == null) return -1;
     if (b == null) return 1;
     return a.compareTo(b);
-    //for (var i = 0; i < Math.min(a.length(), b.length()); i++) {
-    //  if (a.charAt(i) != b.charAt(i))
-    //    return a.charAt(i) - b.charAt(i);
-    //}
-    //return a.length() - b.length();
   }
   
   static final void swap(Node top, Node node1, Node node2) {

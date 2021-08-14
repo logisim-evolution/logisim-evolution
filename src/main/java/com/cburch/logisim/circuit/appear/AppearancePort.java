@@ -46,7 +46,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class AppearancePort extends AppearanceElement {
-  private static final int INPUT_RADIUS = 4;
+  public static final int INPUT_RADIUS = 4;
   private static final int OUTPUT_RADIUS = 5;
   private static final int MINOR_RADIUS = 2;
   public static final Color COLOR = Color.BLUE;
