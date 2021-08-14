@@ -33,11 +33,11 @@ jobs:
         id: filter
         with:
           filters: |
-            changes:
+            translations:
               - 'src/main/resources/resources/logisim/**/*.properties'
 
       - name: "===> SEE HERE FOR LINTING REPORT"
-        if: steps.filter.outputs.changes == 'true'
+        if: steps.filter.outputs.translations == 'true'
         run: |
           # Have no mercy.
           set -euo pipefail
