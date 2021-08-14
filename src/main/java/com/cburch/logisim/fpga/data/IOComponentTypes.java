@@ -33,6 +33,9 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.EnumSet;
 
 public enum IOComponentTypes {
@@ -43,12 +46,12 @@ public enum IOComponentTypes {
   SevenSegmentNoDp,
   DIPSwitch,
   RGBLED,
+  LEDArray,
   PortIO,
   LocalBus,
   Bus,
   Open,
   Constant,
-  LedBar,
   Unknown;
 
   /*
@@ -65,7 +68,7 @@ public enum IOComponentTypes {
    */
 
   public static IOComponentTypes getEnumFromString(String str) {
-    for (IOComponentTypes elem : KnownComponentSet) {
+    for (var elem : KnownComponentSet) {
       if (elem.name().equalsIgnoreCase(str)) {
         return elem;
       }
@@ -109,6 +112,8 @@ public enum IOComponentTypes {
         return 3;
       case LocalBus:
         return 2;
+      case LEDArray:
+        return 16;
       default:
         return 0;
     }
@@ -134,7 +139,7 @@ public enum IOComponentTypes {
     }
   }
 
-  public static String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
+  public static String getOutputLabel(int nrPins, int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
     switch (comp) {
       case SevenSegmentNoDp:
       case SevenSegment:
@@ -143,6 +148,13 @@ public enum IOComponentTypes {
         return RgbLed.getLabel(id);
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
+      case LEDArray: {
+        if (nrOfRows != 0 && nrOfColumns != 0 && id >= 0 && id < nrPins) {
+          final var row = id / nrOfColumns;
+          final var col = id % nrOfColumns;
+          return "Row_" + row + "_Col_" + col;
+        }
+      }
       default:
         return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
@@ -160,6 +172,157 @@ public enum IOComponentTypes {
         + GetFPGAInputRequirement(comp)
         + GetFPGAOutputRequirement(comp);
   }
+  
+  private static int[][] getSevenSegmentDisplayArray(boolean hasDp) {
+    final var sa = com.cburch.logisim.std.io.SevenSegment.Segment_A;
+    final var sb = com.cburch.logisim.std.io.SevenSegment.Segment_B;
+    final var sc = com.cburch.logisim.std.io.SevenSegment.Segment_C;
+    final var sd = com.cburch.logisim.std.io.SevenSegment.Segment_D;
+    final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
+    final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
+    final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
+    int[][] indexes = {
+        {-1, sa, sa, -1, -1}, 
+        {sf, -1, -1, sb, -1}, 
+        {sf, -1, -1, sb, -1}, 
+        {-1, sg, sg, -1, -1}, 
+        {se, -1, -1, sc, -1}, 
+        {se, -1, -1, sc, -1}, 
+        {-1, sd, sd, -1, -1}
+    };
+    if (hasDp) indexes[6][4] = com.cburch.logisim.std.io.SevenSegment.DP;
+    return indexes;
+  }
+  
+  public static void getPartialMapInfo(Integer[][] PartialMap,
+      int width,
+      int height,
+      int nrOfPins,
+      int nrOfRows,
+      int nrOfColumns,
+      IOComponentTypes type) {
+    var hasDp = false;
+    switch (type) {
+      case DIPSwitch: {
+        var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) {
+            var index = (width > height) ? (float) w / part : (float) h / part;
+            PartialMap[w][h] = (int) index;
+          }
+        break;
+      }
+      case RGBLED: {
+        var part = (float) height / (float) 3;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) 
+            PartialMap[w][h] = (int) ((float) h / part);
+        break;
+      }
+      case SevenSegment: hasDp = true;
+      case SevenSegmentNoDp : {
+        final var indexes = getSevenSegmentDisplayArray(hasDp);
+        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
+        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++) {
+            var xpos = (width > height) ? (int) ((float) h / partx) : (int) ((float) w / partx);
+            var ypos = (width > height) ? (int) ((float) w / party) : (int) ((float) h / party);
+            PartialMap[w][h] = indexes[ypos][xpos];
+          }
+        break;
+      }
+      case LEDArray: {
+        /* TODO: for the moment we assume that the columns are on the x-axis and the rows on the y-axis 
+         * rotated array's are not taking into account */
+        final var partx = (float) width / (float) nrOfColumns;
+        final var party = (float) height / (float) nrOfRows;
+        for (var w = 0; w < width; w++) 
+          for (var h = 0; h < height; h++) {
+            var xPos = (int) ((float) w / partx);
+            var yPos = (int) ((float) h / party);
+            PartialMap[w][h] = (yPos * nrOfColumns) + xPos;
+          }
+        break;
+      }
+      default: {
+        for (var w = 0; w < width; w++)
+          for (var h = 0; h < height; h++)
+            PartialMap[w][h] = -1;
+        break;
+      }
+    }
+  }
+  
+  public static void paintPartialMap(Graphics2D g,
+      int pinNr,
+      int height,
+      int width,
+      int nrOfPins,
+      int nrOfRows,
+      int nrOfColumns,
+      int x,
+      int y,
+      Color col,
+      int alpha,
+      IOComponentTypes type) {
+    g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
+    var hasDp = false;
+    switch (type) {
+      case DIPSwitch: {
+        final var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
+        final var bx = (width > height) ? x + (int) ((float) pinNr * part) : x;
+        final var by = (width > height) ? y : y + (int) ((float) pinNr * part);
+        final var bw = (width > height) ? (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part) : width;
+        final var bh = (width > height) ? height : (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
+        g.fillRect(bx, by, bw, bh);
+        break;
+      }
+      case RGBLED : {
+        final var part = (float) height / (float) 3;
+        final var by = y + (int) ((float) pinNr * part);
+        final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
+        g.fillRect(x, by, width, bh);
+        break;
+      }
+      case SevenSegment: hasDp = true;
+      case SevenSegmentNoDp : {
+        final var indexes = getSevenSegmentDisplayArray(hasDp);
+        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
+        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
+        for (var xpos = 0; xpos < 5; xpos++) {
+          for (var ypos = 0; ypos < 7; ypos++) {
+            if (indexes[ypos][xpos] == pinNr) {
+              final var bx = (width > height) ? x + (int) ((float) ypos * party) : x + (int) ((float) xpos * partx);
+              final var by = (width > height) ? y + (int) ((float) xpos * partx) : y + (int) ((float) ypos * party);
+              final var bw = (width > height) ? x + (int) ((float) (ypos + 1) * party) - bx :
+                  x + (int) ((float) (xpos + 1) * partx) - bx;
+              final var bh = (width > height) ? y + (int) ((float) (xpos + 1) * partx) - by : 
+                  y + (int) ((float) (ypos + 1) * party) - by;
+              g.fillRect(bx, by, bw, bh);
+            }
+          }
+        }
+        break;
+      }
+      case LEDArray: {
+        final var partx = (float) width / (float) nrOfColumns;
+        final var party = (float) height / (float) nrOfRows;
+        final var xPos = pinNr % nrOfColumns;
+        final var yPos = pinNr / nrOfColumns;
+        final var bx = x + (int) ((float) xPos * partx);
+        final var by = y + (int) ((float) yPos * party);
+        final var bw = x + (int) ((float) (xPos + 1) * partx) - bx;
+        final var bh = y + (int) ((float) (yPos + 1) * party) - by;
+        g.fillRect(bx, by, bw, bh);
+        break;
+      }
+      default: {
+        g.fillRect(x, y, width, height);
+        break;
+      }
+    }
+  }
 
   public static final EnumSet<IOComponentTypes> KnownComponentSet =
       EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
@@ -176,8 +339,8 @@ public enum IOComponentTypes {
           IOComponentTypes.Pin,
           IOComponentTypes.RGBLED,
           IOComponentTypes.SevenSegment,
-          IOComponentTypes.SevenSegmentNoDp,
-          IOComponentTypes.LedBar);
+          IOComponentTypes.LEDArray,
+          IOComponentTypes.SevenSegmentNoDp);
 
   public static final EnumSet<IOComponentTypes> InOutComponentSet =
       EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);

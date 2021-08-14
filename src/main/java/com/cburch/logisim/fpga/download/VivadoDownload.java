@@ -31,9 +31,7 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IoStandards;
-import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
@@ -42,7 +40,6 @@ import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class VivadoDownload implements VendorDownload {
@@ -129,13 +126,13 @@ public class VivadoDownload implements VendorDownload {
 
   @Override
   public ProcessBuilder DownloadToBoard() {
-    List<String> command = new ArrayList<>();
+    var command = new ArrayList<String>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
     command.add("-source");
     command.add(ScriptPath + File.separator + LOAD_BITSTEAM_FILE);
-    ProcessBuilder stage0 = new ProcessBuilder(command);
+    final var stage0 = new ProcessBuilder(command);
     stage0.directory(new File(SandboxPath));
     return stage0;
   }
@@ -143,11 +140,10 @@ public class VivadoDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     // create project files
-    File createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL);
-    File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE);
-    File generateBitstreamFile =
-        FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
-    File loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
+    var createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL);
+    var xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE);
+    var generateBitstreamFile = FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
+    var loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
     if (createProjectFile == null
         || xdcFile == null
         || generateBitstreamFile == null
@@ -163,7 +159,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     // fill create project TCL script
-    ArrayList<String> contents = new ArrayList<>();
+    var contents = new ArrayList<String>();
     contents.add(
         "create_project "
             + VIVADO_PROJECT_NAME
@@ -178,34 +174,33 @@ public class VivadoDownload implements VendorDownload {
             + " [current_project]");
     contents.add("set_property target_language VHDL [current_project]");
     // add all entities and architectures
-    for (String entity : Entities) {
+    for (var entity : Entities) {
       contents.add("add_files \"" + entity + "\"");
     }
-    for (String architecture : Architectures) {
+    for (var architecture : Architectures) {
       contents.add("add_files \"" + architecture + "\"");
     }
     // add xdc constraints
-    contents.add(
-        "add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
+    contents.add("add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
     contents.add("exit");
     if (!FileWriter.WriteContents(createProjectFile, contents)) return false;
     contents.clear();
 
     // fill the xdc file
-    if (RootNetList.NumberOfClockTrees() > 0) {
-      String clockPin = BoardInfo.fpga.getClockPinLocation();
-      String clockSignal = TickComponentHDLGeneratorFactory.FPGAClock;
-      String getPortsString = " [get_ports {" + clockSignal + "}]";
+    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+      final var clockPin = BoardInfo.fpga.getClockPinLocation();
+      final var clockSignal = TickComponentHDLGeneratorFactory.FPGAClock;
+      final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 
       if (BoardInfo.fpga.getClockStandard() != IoStandards.DefaulStandard
           && BoardInfo.fpga.getClockStandard() != IoStandards.Unknown) {
-        String clockIoStandard = IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()];
+        final var clockIoStandard = IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()];
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
 
-      long clockFrequency = BoardInfo.fpga.getClockFrequency();
-      double clockPeriod = 1000000000.0 / clockFrequency;
+      final var clockFrequency = BoardInfo.fpga.getClockFrequency();
+      var clockPeriod = 1000000000.0 / (double) clockFrequency;
       contents.add(
           "    create_clock -add -name sys_clk_pin -period "
               + String.format(Locale.US, "%.2f", clockPeriod)
@@ -221,7 +216,7 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // generate bitstream
-    String openProjectPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".xpr";
+    var openProjectPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".xpr";
     openProjectPath = openProjectPath.replace("\\", "/");
     contents.add("open_project -verbose " + openProjectPath);
     contents.add("update_compile_order -fileset sources_1");
@@ -234,8 +229,8 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // load bitstream
-    String JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
-    String lindex = "[lindex [get_hw_devices] " + JTAGPos + "]";
+    final var JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
+    final var lindex = "[lindex [get_hw_devices] " + JTAGPos + "]";
     contents.add("open_hw");
     contents.add("connect_hw_server");
     contents.add("open_hw_target");
@@ -249,19 +244,19 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> contents = new ArrayList<>();
-    for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
-      MapComponent map = MapInfo.getMappableResources().get(key);
-      for (int i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
-          String netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
+    var contents = new ArrayList<String>();
+    for (var key : MapInfo.getMappableResources().keySet()) {
+      var map = MapInfo.getMappableResources().get(key);
+      for (var i = 0; i < map.getNrOfPins(); i++) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+          final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
           contents.add(
               "set_property PACKAGE_PIN "
                   + map.getPinLocation(i)
                   + " [get_ports {"
                   + netName
                   + "}]");
-          FPGAIOInformationContainer info = map.getFpgaInfo(i);
+          final var info = map.getFpgaInfo(i);
           if (info != null) {
             if (info.GetIOStandard() != IoStandards.Unknown
                 && info.GetIOStandard() != IoStandards.DefaulStandard) {
@@ -285,6 +280,10 @@ public class VivadoDownload implements VendorDownload {
         }
       }
     }
+    final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    for (var key : LedArrayMap.keySet()) {
+      contents.add("set_property PACKAGE_PIN " + key + " [get_ports {" + LedArrayMap.get(key) + "}]");
+    }
     return contents;
   }
 
@@ -294,25 +293,25 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Project() {
-    List<String> command = new ArrayList<>();
+    var command = new ArrayList<String>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
     command.add("-source");
     command.add(ScriptPath + File.separator + CREATE_PROJECT_TCL);
-    ProcessBuilder stage0 = new ProcessBuilder(command);
+    final var stage0 = new ProcessBuilder(command);
     stage0.directory(new File(SandboxPath));
     return stage0;
   }
 
   private ProcessBuilder Stage1Bit() {
-    List<String> command = new ArrayList<>();
+    var command = new ArrayList<String>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
     command.add("-source");
     command.add(ScriptPath + File.separator + GENERATE_BITSTREAM_FILE);
-    ProcessBuilder stage1 = new ProcessBuilder(command);
+    final var stage1 = new ProcessBuilder(command);
     stage1.directory(new File(SandboxPath));
     return stage1;
   }
