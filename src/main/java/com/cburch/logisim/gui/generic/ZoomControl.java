@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.generic;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.contracts.BaseMouseListenerContract;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -47,9 +46,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -134,7 +134,8 @@ public class ZoomControl extends JPanel {
    * @return zoom factor as string
    */
   public String zoomString() {
-    return "\u00D7" + Double.toString(model.getZoomFactor());
+    DecimalFormat df = new DecimalFormat("###.##");
+    return "\u00D7" + df.format(model.getZoomFactor()).toString();
   }
 
   public void zoomIn() {
