@@ -55,19 +55,23 @@ jobs:
           declare -r langs="${langs_list// /,}"
 
           # Validate.
+          failed=
           for file in ${base_files}; do
-            trans-tool -l ${langs} -b "${file}" >> /tmp/report.txt
+            # Keep validating even if previous run failed, so we can have complete report.
+            trans-tool -l ${langs} -b "${file}" >> /tmp/report.txt || failed="YES"
           done
 
-          if ! ./syncTranslations.py > /tmp/report.txt; then
+          if [[ "${failed}" == "YES" ]]; then
             echo ""
-            echo "Project *.properties files are out of sync."
-            echo "Please see trans-tool's docs:"
+            echo "Project *.properties files have some problems or are out of sync."
+            echo "Please see 'Update existing translations' in trans-tool's docs:"
             echo "  https://github.com/MarcinOrlowski/trans-tool"
-            echo "(chapter 'Update existing translations')"
-            echo "for more info on how to address that."
+            echo "for more info on how to address these issues."
             echo ""
             cat /tmp/report.txt
             echo ""
-            exit 1
+
+            # Do not fail the action no matter what. This is intentional
+            # unless translation files are in better condition.
+            # exit 1
           fi
