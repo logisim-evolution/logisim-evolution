@@ -374,8 +374,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
         break;
       default:
         if (instr.getNrOfParameters() < 2 || instr.getNrOfParameters() > 3) {
-          instr.setError(
-              instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
+          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
           errors = true;
           break;
         }
@@ -414,7 +413,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           immediate = param3[0].getNumberValue();
         }
         if (operation != INSTR_JALR) {
-          source2 = destination;
+          source1 = destination;
           destination = 0;
         }
         break;
@@ -461,8 +460,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
             errors = true;
             break;
           }
-          instruction =
-              RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
+          instruction = RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
           break;
         default:
           errors = true;

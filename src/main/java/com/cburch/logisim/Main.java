@@ -83,7 +83,7 @@ public class Main {
       final var printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
       OptionPane.showMessageDialog(null, strWriter.toString());
-      System.exit(-1);
+      System.exit(100);
     }
   }
 
