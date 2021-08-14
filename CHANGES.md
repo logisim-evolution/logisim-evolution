@@ -28,6 +28,11 @@
   * Canvas Zoom controls new offer wider range of zoom and three level of granularity.
   * Added predefined quick zoom buttons.
   * Tons of code cleanup and internal improvements.
+  * Added duplicated component placement on same location refusal
+  * Fixed pin duplication on load in case a custom apearance is used for a circuit
+  * Added LED-array support for FPGA-boards
+  * Improved partial placement on FPGA-boards for multi-pin components
+  * Fixed several small bugs
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
