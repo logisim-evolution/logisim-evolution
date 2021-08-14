@@ -83,6 +83,119 @@
         <li>Quando o valor for um valor de erro (e isso pode ocorrer caso dois valores conflitantes estejam alimentando a entrada), então a saída será um valor de erro.
         </li>
       </ul>
+	  	  <p>
+	       <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+			    Entradas
+			  </th>
+              <th class="tspace" colspan="2">
+                Saídas
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+			     Ent.
+              </th>
+              <th class="tspace">
+                 Ctrl.
+              </th>
+              <th class="tspace">
+                Buf.
+              </th>
+              <th class="tspace">
+                Inv.
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                Todas
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tevalue">
+                E
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+			  <tr>
+              <td class="tspace">
+                Todas
+              </td>
+              <td class="tspace">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
       <p>
         Um <i>buffer</i> controlado pode ser útil quando você tiver uma conexão (muitas vezes chamado de <em>barramento (<i>bus</i>)</em>), cujo valor deverá corresponder a saída de um dentre vários componentes. Ao se colocar um <i>buffer</i> controlado entre cada saída de componente e o barramento, você poderá controlar se uma a saída deverá alimentar o barramento, ou não.
       </p>

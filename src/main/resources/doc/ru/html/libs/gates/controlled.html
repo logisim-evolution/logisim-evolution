@@ -84,6 +84,119 @@
       <li>Когда значение - значение ошибки (такое может случится, когда два противоречивых значения поступают на вход), то на выходе - тоже значение ошибки.
       </li>
     </ul>
+		  <p>
+	       <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+			    входы
+			  </th>
+              <th class="tspace" colspan="2">
+                Выходы
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+			     вход
+              </th>
+              <th class="tspace">
+                 Контроль
+              </th>
+              <th class="tspace">
+                Buf.
+              </th>
+              <th class="tspace">
+                Inv.
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                все
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tevalue">
+                E
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+			  <tr>
+              <td class="tspace">
+                все
+              </td>
+              <td class="tspace">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
     <p>
       Управляемые буферы могут быть полезны, когда у вас есть провод (часто называемый <em>шина</em>), значение на котором должно соответствовать выходу одного из нескольких компонентов. Размещая управляемый буфер между выходом каждого компонента и шиной, вы можете управлять тем, подаётся выход этого компонента на шину, или нет.
     </p>
