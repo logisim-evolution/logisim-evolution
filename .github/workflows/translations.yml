@@ -1,0 +1,73 @@
+#
+# Logisim-evolution translation files (*.properties) checker.
+#
+# Github action that ensures project translation files are in sync and
+# in a good shape in general.
+#
+# Worker uses trans-tool: https://github.com/MarcinOrlowski/trans-tool
+#
+# Marcin Orlowski
+#
+
+name: "Translations"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  translations_lint:
+    name: "Translations linter"
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/paths-changes-filter
+      - name: "Looking for modified files..."
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            changes:
+              - 'src/main/resources/resources/logisim/**/*.properties'
+
+      - name: "Running checker..."
+        if: steps.filter.outputs.changes == 'true'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          sudo pip install trans-tool
+          trans-tool --version
+
+          # Get all Logisim's localization base (EN) files
+          declare -r base_files=$(find src/main/resources/resources/logisim/* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
+
+          # Read currently supported languages from settings.properties
+          declare -r "langs_list=$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
+
+          # Turn list into comma separated one
+          declare -r langs="${langs_list// /,}"
+
+          # Validate.
+          for file in ${base_files}; do
+            trans-tool -l ${langs} -b "${file}" >> /tmp/report.txt
+          done
+
+          if ! ./syncTranslations.py > /tmp/report.txt; then
+            echo ""
+            echo "Project *.properties files are out of sync."
+            echo "Please see trans-tool's docs:"
+            echo "  https://github.com/MarcinOrlowski/trans-tool"
+            echo "(chapter 'Update existing translations')"
+            echo "for more info on how to address that."
+            echo ""
+            cat /tmp/report.txt
+            echo ""
+            exit 1
+          fi
