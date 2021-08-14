@@ -823,7 +823,7 @@ public class Circuit {
   private boolean isDoubleMapped(Component comp) {
     final var loc = comp.getLocation();
     final var existing = wires.points.getNonWires(loc);
-    for (final var existingComp : existing)
+    for (final var existingComp : existing) {
       if (existingComp.getFactory().equals(comp.getFactory())) {
         /* we make an exception for the pin in case we have an input placed on an output */
         if (comp.getFactory() instanceof Pin) {
@@ -834,6 +834,7 @@ public class Circuit {
           return true;
         }
       }
+    }
     return false;
   }
 

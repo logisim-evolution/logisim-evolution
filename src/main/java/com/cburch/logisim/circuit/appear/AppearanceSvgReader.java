@@ -52,16 +52,16 @@ public class AppearanceSvgReader {
   public static class pinInfo {
     private final Location myLocation;
     private final Instance myInstance;
-    private Boolean isMapped;
+    private Boolean pinIsUsed;
     
     public pinInfo(Location loc, Instance inst) {
       myLocation = loc;
       myInstance = inst;
-      isMapped = false;
+      pinIsUsed = false;
     }
     
     public Boolean pinIsAlreadyUsed() {
-      return isMapped;
+      return pinIsUsed;
     }
     
     public Location getPinLocation() {
@@ -73,7 +73,7 @@ public class AppearanceSvgReader {
     }
     
     public void setPinIsUsed() {
-      isMapped = true;
+      pinIsUsed = true;
     }
   }
   
@@ -163,7 +163,7 @@ public class AppearanceSvgReader {
   private static Boolean isInputPinReference(Element elt) {
     final var width = Double.parseDouble(elt.getAttribute("width"));
     final var radius = (int) Math.round(width / 2.0);
-    return radius == AppearancePort.INPUT_RADIUS;
+    return AppearancePort.isInputAppearance(radius);
   }
 
   private static Location getLocation(Element elt) {
