@@ -106,26 +106,24 @@ class XmlWriter {
   }
 
   static int stringCompare(String a, String b) {
-    if (a.equals(b)) return 0;
-    else if (a == null) return -1;
-    else if (b == null) return 1;
-    else return a.compareTo(b);
+    if (a == null) return -1;
+    if (b == null) return 1;
+    return a.compareTo(b);
   }
 
-  static final Comparator<Node> nodeComparator =
-      (a, b) -> {
-        final var na = a.getNodeName();
-        final var nb = b.getNodeName();
-        var c = stringCompare(na, nb);
-        if (c != 0) return c;
-        final var ma = attrsToString(a.getAttributes());
-        final var mb = attrsToString(b.getAttributes());
-        c = stringCompare(ma, mb);
-        if (c != 0) return c;
-        final var va = a.getNodeValue();
-        final var vb = b.getNodeValue();
-        c = stringCompare(va, vb);
-        return c;
+  static final Comparator<Node> nodeComparator = (a, b) -> {
+    final var na = a.getNodeName();
+    final var nb = b.getNodeName();
+    var c = stringCompare(na, nb);
+    if (c != 0) return c;
+    final var ma = attrsToString(a.getAttributes());
+    final var mb = attrsToString(b.getAttributes());
+    c = stringCompare(ma, mb);
+    if (c != 0) return c;
+    final var va = a.getNodeValue();
+    final var vb = b.getNodeValue();
+    c = stringCompare(va, vb);
+    return c;
         // This can happen in some cases, e.g. two text components
         // on top of each other. But it seems rare enough to not
         // worry about, since our normalization here is just for
@@ -133,7 +131,7 @@ class XmlWriter {
         // System.out.printf("sorts equal:\n");
         // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
         // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-      };
+  };
 
   static void sort(Node top) {
     NodeList children = top.getChildNodes();
@@ -157,7 +155,7 @@ class XmlWriter {
       final var a = new Node[n];
       for (int i = 0; i < n; i++) a[i] = children.item(i);
       Arrays.sort(a, nodeComparator);
-      for (int i = 0; i < n; i++) top.insertBefore(a[i], null); // moves a[i] to end
+//      for (int i = 0; i < n; i++) top.insertBefore(a[i], null); // moves a[i] to end
     }
     for (int i = 0; i < n; i++) {
       sort(children.item(i));

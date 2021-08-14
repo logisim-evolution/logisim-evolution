@@ -1779,17 +1779,17 @@ public class Netlist implements CircuitListener {
     /* Check if we have a connection to another splitter */
     for (var currentSplitter : splitterList) {
       if (currentSplitter.equals(ignoreSplitter)) continue;
-      var ends = currentSplitter.getEnds();
+      final var ends = currentSplitter.getEnds();
       for (var end = 0; end < ends.size(); end++) {
         if (combinedNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            byte SplitterEnd = BusBitConnection[combinedBitIndex];
+            var SplitterEnd = BusBitConnection[combinedBitIndex];
             /* Find the corresponding Net index */
             Byte Netindex = 0;
-            for (int index = 0; index < combinedBitIndex; index++) {
+            for (var index = 0; index < combinedBitIndex; index++) {
               if (BusBitConnection[index] == SplitterEnd) {
                 Netindex++;
               }
