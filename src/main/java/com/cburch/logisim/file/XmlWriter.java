@@ -32,14 +32,12 @@ import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.base.Text;
@@ -50,21 +48,16 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.OutputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -74,7 +67,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 class XmlWriter {
 
@@ -106,39 +98,41 @@ class XmlWriter {
   }
 
   static int stringCompare(String a, String b) {
-    if (a.equals(b)) return 0;
-    else if (a == null) return -1;
-    else if (b == null) return 1;
-    else return a.compareTo(b);
+    if (a == null) return -1;
+    if (b == null) return 1;
+    return a.compareTo(b);
+    //for (var i = 0; i < Math.min(a.length(), b.length()); i++) {
+    //  if (a.charAt(i) != b.charAt(i))
+    //    return a.charAt(i) - b.charAt(i);
+    //}
+    //return a.length() - b.length();
+  }
+  
+  static final void swap(Node top, Node node1, Node node2) {
+    final var na = node1.getNodeName();
+    final var nb = node2.getNodeName();
+    var c = stringCompare(na, nb);
+    if (c > 0) {
+      top.insertBefore(node2, node1);
+    } else if (c < 0) return;
+    final var ma = attrsToString(node1.getAttributes());
+    final var mb = attrsToString(node2.getAttributes());
+    c = stringCompare(ma, mb);
+    if (c > 0) {
+      top.insertBefore(node2, node1);
+    } else if (c < 0) return;
+    final var va = node1.getNodeValue();
+    final var vb = node2.getNodeValue();
+    c = stringCompare(va, vb);
+    if (c > 0) {
+      top.insertBefore(node2, node1);
+    }
   }
 
-  static final Comparator<Node> nodeComparator =
-      (a, b) -> {
-        final var na = a.getNodeName();
-        final var nb = b.getNodeName();
-        var c = stringCompare(na, nb);
-        if (c != 0) return c;
-        final var ma = attrsToString(a.getAttributes());
-        final var mb = attrsToString(b.getAttributes());
-        c = stringCompare(ma, mb);
-        if (c != 0) return c;
-        final var va = a.getNodeValue();
-        final var vb = b.getNodeValue();
-        c = stringCompare(va, vb);
-        return c;
-        // This can happen in some cases, e.g. two text components
-        // on top of each other. But it seems rare enough to not
-        // worry about, since our normalization here is just for
-        // ease of comparing circ files during testing.
-        // System.out.printf("sorts equal:\n");
-        // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
-        // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-      };
-
   static void sort(Node top) {
-    NodeList children = top.getChildNodes();
-    int n = children.getLength();
-    String name = top.getNodeName();
+    final var children = top.getChildNodes();
+    final var n = children.getLength();
+    final var name = top.getNodeName();
     // project (contains ordered elements, do not sort)
     // - main
     // - toolbar (contains ordered elements, do not sort)
@@ -153,13 +147,16 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar") && !name.equals("appear")) {
-      final var a = new Node[n];
-      for (int i = 0; i < n; i++) a[i] = children.item(i);
-      Arrays.sort(a, nodeComparator);
-      for (int i = 0; i < n; i++) top.insertBefore(a[i], null); // moves a[i] to end
+    if (name.equals("appear")) return; // do not sort the appearance section, we do not have to go down 
+    if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+      for (var i = 0; i < n-1; i++)
+        for (var j = 0; j < n - i - 1 ; j++) {
+          final var node1 = children.item(j);
+          final var node2 = children.item(j+1);
+          swap(top, node1, node2);
+        }
     }
-    for (int i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
       sort(children.item(i));
     }
   }
