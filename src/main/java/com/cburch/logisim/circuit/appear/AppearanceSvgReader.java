@@ -161,8 +161,8 @@ public class AppearanceSvgReader {
   }
   
   private static Boolean isInputPinReference(Element elt) {
-    final var w = Double.parseDouble(elt.getAttribute("width"));
-    final var radius = (int) Math.round(w / 2.0);
+    final var width = Double.parseDouble(elt.getAttribute("width"));
+    final var radius = (int) Math.round(width / 2.0);
     return radius == AppearancePort.INPUT_RADIUS;
   }
 
