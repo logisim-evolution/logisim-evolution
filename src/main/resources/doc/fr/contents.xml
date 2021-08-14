@@ -133,7 +133,7 @@
 			<tocitem target="wiring_transmis" image="icon_transmis" text="Porte de passage"/>
 			<tocitem target="wiring_extender" image="icon_extender" text="Convertisseur de bits"/>
 		</tocitem>
-		<tocitem target="gates" text="Lirairie portes">
+		<tocitem target="gates" text="Librairies portes">
 			<tocitem target="gates_not" image="icon_not" text="Porte Non"/>
 			<tocitem target="gates_buffer" image="icon_buffer" text="Buffer"/>
 			<tocitem target="gates_basic" image="icon_basic" text="Portes AND/OR/NAND/NOR"/>

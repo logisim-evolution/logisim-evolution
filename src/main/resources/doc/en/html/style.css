@@ -180,10 +180,15 @@ span.totranslate {
 
 /* For list items */
 dt {
-margin-top:5px;
+	margin-top:5px;
 }
 li  {
-margin-top:5px; 
+	margin-top:5px; 
+}
+
+dt.lib {
+	color:#00137f;
+	font-weight:bold;
 }
 
 p.blue {

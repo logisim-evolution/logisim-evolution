@@ -76,11 +76,11 @@
         O <i>buffer</i> e o inversor controlados, são muitas vezes chamados de <em>buffers/inversores tri-state</em>, cada um tem uma entrada para um bit de "controle". O valor desse pino afetará a forma como o componente se comportará:
       </p>
       <ul>
-        <li>Quando o valor nesse pino for 1, então o componente se comporta exatamente como o equivalente não controlado (um <a href="buffer.html">buffer</a> ou um <a href="not.html">inversor</a> (porta NOT)).
+        <li>Quando o valor nesse pino for <b class="unov">1</b>, então o componente se comporta exatamente como o equivalente não controlado um <a href="buffer.html">buffer</a> ou um <a href="not.html">inversor</a> (porta NOT).
         </li>
-        <li>Quando o valor for 0 ou desconhecido (ou seja, flutuante), então o valor da saída componente também será flutuante.
+        <li>Quando o valor for <b class="zerov">0</b> ou flutuante (<b class="uvalue">U</b>), então o valor da saída componente será flutuante (<b class="uvalue">U</b>).
         </li>
-        <li>Quando o valor for um valor de erro (e isso pode ocorrer caso dois valores conflitantes estejam alimentando a entrada), então a saída será um valor de erro.
+        <li>Quando o valor for um valor de erro  (<b class="evalue">E</b>) (e isso pode ocorrer caso dois valores conflitantes estejam alimentando a entrada), então a saída será um valor de erro (<b class="evalue">E</b>).
         </li>
       </ul>
 	  	  <p>
@@ -207,7 +207,7 @@
           Na face oeste :
         </dt>
         <dd>
-          A entrada do componente que será usada para calcular a saída se a entrada de controle for 1. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
+          A entrada do componente que será usada para calcular a saída se a entrada de controle for <b class="unov">1</b>. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
         </dd>
         <dt>
           Na face sul :
@@ -219,7 +219,7 @@
           Na face leste :
         </dt>
         <dd>
-          Saída do componente, a qual estará flutuando se a entrada de controle for 0 ou flutuante; ou igual ao o valor de erro, se a entrada de controle também estiver com erro; ou será calculada com base na entrada, a oeste, se a entrada de controle for 1. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
+          Saída do componente, a qual estará flutuando (<b class="uvalue">U</b>) se a entrada de controle for <b class="zerov">0</b> ou flutuante (<b class="uvalue">U</b>); ou igual ao o valor de erro (<b class="evalue">E</b>), se a entrada de controle também estiver com erro (<b class="evalue">E</b>); ou será calculada com base na entrada, a oeste, se a entrada de controle for <b class="unov">1</b>. Com largura em bits de acordo com o atributo <b class="propertie">Bits de Dados</b>.
         </dd>
       </dl>
       <h2>

@@ -74,18 +74,18 @@
         Behavior
       </h2>
       <p>
-        The controlled buffer and inverter, often called <em>three-state buffers/inverters</em>, each have a one-bit "control" input pin on the south side. The value at this control pin affects how the component behaves:
+        The controlled buffer and inverter often called <em>three-state buffers/inverters</em>, each have a one-bit "control" input pin on the south side. The value at this control pin affects how the component behaves:
       </p>
       <ul>
-        <li>When the value on this pin is 1, then the component behaves just like the respective component (a <a href="buffer.html">buffer</a> or a <a href="not.html">inverter</a> (NOT gate)).
+        <li>When the value on this pin is <b class="unov">1</b> then the component behaves just like the respective component a <a href="buffer.html">buffer</a> or a <a href="not.html">inverter</a> (NOT gate).
         </li>
-        <li>When the value is 0 or unknown (i.e., floating), then the component's output is also floating.
+        <li>When the value is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>) the component's output is floating (<b class="uvalue">U</b>).
         </li>
-        <li>When the value is an error value (such as would occur when two conflicting values are being fed into the input), then the output is an error value.
+        <li>When the value is an error value (<b class="evalue">E</b>) (such as would occur when two conflicting values are being fed into the input) then the output is also an error value (<b class="evalue">E</b>).
         </li>
       </ul>
 	  <p>
-	       <center>
+	    <center>
         <table>
           <tbody>
             <tr>
@@ -203,26 +203,28 @@
       <h2>
         Pins (assuming component faces east, control line right-handed)
       </h2>
+	  <div class="attliste">
       <dl>
-        <dt>
+        <dt class="lib">
           West edge :
         </dt>
         <dd>
-          The component input that will be used to compute the output if the control input is 1. Bit width matches  <b class="propertie">Data Bits</b> attribute.
+          The component input that will be used to compute the output if the control input is <b class="unov">1</b>. Bit width matches  <b class="propertie">Data Bits</b> attribute.
         </dd>
-        <dt>
+        <dt class="lib">
           South edge :
         </dt>
         <dd>
-          The component's control input.  Bit width 1.
+          The component's control input. Bit width 1.
         </dd>
-        <dt>
+        <dt class="lib">
           East edge :
         </dt>
         <dd>
-          The component's output, which will be floating (U) if the control input is 0 or floating (U), the error value (E) if the control input is the error value (E), and will be computed based on the west-side input if the control input is 1.  Bit width matches  <b class="propertie">Data Bits</b> attribute.
+          The component's output, which will be floating (<b class="uvalue">U</b>) if the control input is <b class="zerov">0</b> or floating (<b class="uvalue">U</b>), the error value (<b class="evalue">E</b>) if the control input is the error value (<b class="evalue">E</b>), and will be computed based on the west-side input if the control input is <b class="unov">1</b>.  Bit width matches  <b class="propertie">Data Bits</b> attribute.
         </dd>
       </dl>
+	  </div>
       <h2>
         Attributes
       </h2>
@@ -231,38 +233,38 @@
       </p>
 	  <div class="attliste">
       <dl>
-        <dt>
-          <b class="propertie">Facing</b>
+        <dt class="lib">
+          Facing
         </dt>
         <dd>
           The direction of the component (its output relative to its input).
         </dd>
-        <dt>
-          <b class="propertie">Data Bits</b>
+        <dt class="lib">
+          Data Bits
         </dt>
         <dd>
           The bit width of the component's inputs and outputs.
         </dd>
-        <dt>
-          <b class="propertie">Gate Size</b>
+       <dt class="lib">
+          Gate Size
         </dt>
         <dd>
           (Controlled inverter only) Determines whether to draw a larger or a smaller version of the component.
         </dd>
-        <dt>
-          <b class="propertie">Control Line Location</b>
+        <dt class="lib">
+          Control Line Location
         </dt>
         <dd>
           The location of the control line, imagining we are facing the output from the input: If the component faces east and is <q>right-handed,</q> the control line is to the south; but if it is <q>left-handed,</q> the control line is to the north.
         </dd>
-        <dt>
-          <b class="propertie">Label</b>
+        <dt class="lib">
+          Label
         </dt>
         <dd>
           The text within the label associated with the gate.
         </dd>
-        <dt>
-          <b class="propertie">Label Font</b>
+        <dt class="lib">
+          Label Font
         </dt>
         <dd>
           The font with which to render the label.

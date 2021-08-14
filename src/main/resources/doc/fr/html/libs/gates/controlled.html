@@ -77,15 +77,15 @@
 		Le tampon et l'inverseur contrôlés, souvent appelés <em>tampon/inverseurs à trois états</em>, possèdent chacun une broche d'entrée "Contrôle" d'un bit sur le coté. La valeur sur cette broche de commande affecte le comportement du composant :
       </p>
       <ul>
- 		 <li>Lorsque la valeur sur cette broche est 1, alors le composant se comporte comme le composant correspondant (un <a href="buffer.html">tampon</a> ou un <a href="not.html">inverseur</a> (porte non)).
+ 		 <li>Lorsque la valeur sur cette broche est <b class="unov">1</b>, le composant se comporte exactement comme l'équivalent non contrôlé d'un <a href="buffer.html">tampon</a> ou un <a href="not.html">inverseur</a> (porte Non).
         </li>
-        <li>Lorsque la valeur est 0 ou inconnue (c'est-à-dire flottante), alors la sortie du composant est également flottante.
+        <li>Lorsque la valeur est <b class="zerov">0</b> ou flottante (<b class="uvalue">U</b>) la sortie du composant est flottante (<b class="uvalue">U</b>).
         </li>
-        <li>Lorsque la valeur est une valeur d'erreur (comme cela se produirait lorsque deux valeurs contradictoires sont introduites dans l'entrée), alors la sortie est une valeur d'erreur.
+        <li>Lorsque la valeur est une valeur d'erreur  (<b class="evalue">E</b>) (comme cela se produirait lorsque deux valeurs contradictoires sont introduites dans l'entrée) alors la sortie est aussi une valeur d'erreur (<b class="evalue">E</b>). 
 		</li>
       </ul>
 	  <p>
-	       <center>
+	    <center>
         <table>
           <tbody>
             <tr>
@@ -208,7 +208,7 @@
 		  Bord ouest :
         </dt>
         <dd>
-          L'entrée de la composante qui sera utilisée pour déterminer la sortie si l'entrée de contrôle est à 1. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
+          L'entrée de la composante qui sera utilisée pour déterminer la sortie si l'entrée de contrôle est à <b class="unov">1</b>. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
         </dd>
         <dt>
 		  Bord sud :
@@ -220,7 +220,7 @@
 		  Bord est:
         </dt>
         <dd>
-		  La sortie du composant, qui sera flottante (U) si l'entrée de commande est 0 ou flottante (U), la valeur d'erreur (E) si l'entrée de commande est la valeur d'erreur 8E), et sera déterminée sur la base de l'entrée côté ouest si l'entrée de commande est à 1. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
+		  La sortie du composant, qui sera flottante (<b class="uvalue">U</b>) si l'entrée de commande est <b class="zerov">0</b> ou flottante (<b class="uvalue">U</b>), la valeur d'erreur (<b class="evalue">E</b>) si l'entrée de commande est la valeur d'erreur (<b class="evalue">E</b>), et sera déterminée sur la base de l'entrée côté ouest si l'entrée de commande est à <b class="unov">1</b>. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
         </dd>
       </dl>
       <h2>
