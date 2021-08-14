@@ -103,21 +103,21 @@ class XmlWriter {
   }
   
   static final void swap(Node top, Node nodeA, Node nodeB) {
-    final var na = nodeA.getNodeName();
-    final var nb = nodeB.getNodeName();
-    var compare = stringCompare(na, nb);
+    final var nameNodeA = nodeA.getNodeName();
+    final var nameNodeB = nodeB.getNodeName();
+    var compare = stringCompare(nameNodeA, nameNodeB);
     if (compare > 0) {
       top.insertBefore(nodeB, nodeA);
     } else if (compare < 0) return;
-    final var ma = attrsToString(nodeA.getAttributes());
-    final var mb = attrsToString(nodeB.getAttributes());
-    compare = stringCompare(ma, mb);
+    final var nameAttributesNodeA = attrsToString(nodeA.getAttributes());
+    final var nameAttributesNodeB = attrsToString(nodeB.getAttributes());
+    compare = stringCompare(nameAttributesNodeA, nameAttributesNodeB);
     if (compare > 0) {
       top.insertBefore(nodeB, nodeA);
     } else if (compare < 0) return;
-    final var va = nodeA.getNodeValue();
-    final var vb = nodeB.getNodeValue();
-    compare = stringCompare(va, vb);
+    final var nameNodeValueNodeA = nodeA.getNodeValue();
+    final var nameNodeValueNodeB = nodeB.getNodeValue();
+    compare = stringCompare(nameNodeValueNodeA, nameNodeValueNodeB);
     if (compare > 0) {
       top.insertBefore(nodeB, nodeA);
     }
@@ -125,7 +125,7 @@ class XmlWriter {
 
   static void sort(Node top) {
     final var children = top.getChildNodes();
-    final var nrChildren = children.getLength();
+    final var childrenCount = children.getLength();
     final var name = top.getNodeName();
     // project (contains ordered elements, do not sort)
     // - main
@@ -142,15 +142,15 @@ class XmlWriter {
     //   - comp(s)
     //   - wire(s)
     if (name.equals("appear")) return; // do not sort the appearance section, we do not have to go down 
-    if (nrChildren > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
-      for (var bubbleLoop1 = 0; bubbleLoop1 < nrChildren - 1; bubbleLoop1++)
-        for (var bubbleLoop2 = 0; bubbleLoop2 < nrChildren - bubbleLoop1 - 1; bubbleLoop2++) {
+    if (childrenCount > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+      for (var bubbleLoop1 = 0; bubbleLoop1 < childrenCount - 1; bubbleLoop1++)
+        for (var bubbleLoop2 = 0; bubbleLoop2 < childrenCount - bubbleLoop1 - 1; bubbleLoop2++) {
           final var nodeA = children.item(bubbleLoop2);
           final var nodeB = children.item(bubbleLoop2 + 1);
           swap(top, nodeA, nodeB);
         }
     }
-    for (var childId = 0; childId < nrChildren; childId++) {
+    for (var childId = 0; childId < childrenCount; childId++) {
       sort(children.item(childId));
     }
   }
