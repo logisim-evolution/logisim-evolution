@@ -57,35 +57,35 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     contents.add("  ");
     if (colBased) {
-      for (var r = 0; r < rows; r++)
-        for (var c = 0; c < cols; c++) {
-          final var wire = (rows == 1) ? GetNetName(componentInfo, c, true, netlist) 
-              : GetBusEntryName(componentInfo, c, true, r, netlist);
-          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+      for (var thisRow = 0; thisRow < rows; thisRow++)
+        for (var thisCol = 0; thisCol < cols; thisCol++) {
+          final var wire = (rows == 1) ? GetNetName(componentInfo, thisCol, true, netlist) 
+              : GetBusEntryName(componentInfo, thisCol, true, thisRow, netlist);
+          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
               + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
     } else if (rowBased) {
-      for (var r = 0; r < rows; r++) {
-        for (var c = 0; c < cols; c++) {
-          final var wire = (cols == 1) ? GetNetName(componentInfo, r, true, netlist)
-              : GetBusEntryName(componentInfo, r, true, c, netlist);
-          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+      for (var thisRow = 0; thisRow < rows; thisRow++) {
+        for (var thisCol = 0; thisCol < cols; thisCol++) {
+          final var wire = (cols == 1) ? GetNetName(componentInfo, thisRow, true, netlist)
+              : GetBusEntryName(componentInfo, thisRow, true, thisCol, netlist);
+          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
       }
     } else {
-      for (var r = 0; r < rows; r++) {
-        for (var c = 0; c < cols; c++) {
-          final var rowwire = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
-              : GetBusEntryName(componentInfo, 1, true, r, netlist);
-          final var colwire = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
-              : GetBusEntryName(componentInfo, 0, true, c, netlist);
-          final var idx = r * cols + c + componentInfo.GetLocalBubbleOutputStartId();
+      for (var thisRow = 0; thisRow < rows; thisRow++) {
+        for (var thisCol = 0; thisCol < cols; thisCol++) {
+          final var rowWire = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
+              : GetBusEntryName(componentInfo, 1, true, thisRow, netlist);
+          final var colWire = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
+              : GetBusEntryName(componentInfo, 0, true, thisCol, netlist);
+          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() 
-                + rowwire + HDL.andOperator() + colwire + ";");
+                + rowWire + HDL.andOperator() + colWire + ";");
         }
       }
     }
