@@ -81,7 +81,7 @@ public class AppearanceSvgReader {
     return new pinInfo(loc, inst);
   }
   
-  public static AbstractCanvasObject createShape( Element elt, List<pinInfo> pins, Circuit circuit) {
+  public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
     final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
       final var loc = getLocation(elt);
@@ -98,7 +98,7 @@ public class AppearanceSvgReader {
       for (final var pin : pins) {
         if (pin.pinIsAlreadyUsed()) continue;
         if (pin.getPinLocation().equals(pinLoc)) {
-          final var isInputPin = ((Pin)pin.getPinInstance().getFactory()).isInputPin(pin.getPinInstance());
+          final var isInputPin = ((Pin) pin.getPinInstance().getFactory()).isInputPin(pin.getPinInstance());
           final var isInputRef = isInputPinReference(elt);
           if (isInputPin == isInputRef) {
             pin.setPinIsUsed();

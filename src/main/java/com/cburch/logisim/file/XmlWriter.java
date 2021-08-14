@@ -143,10 +143,10 @@ class XmlWriter {
     //   - wire(s)
     if (name.equals("appear")) return; // do not sort the appearance section, we do not have to go down 
     if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
-      for (var i = 0; i < n-1; i++)
-        for (var j = 0; j < n - i - 1 ; j++) {
+      for (var i = 0; i < n - 1; i++)
+        for (var j = 0; j < n - i - 1; j++) {
           final var node1 = children.item(j);
-          final var node2 = children.item(j+1);
+          final var node2 = children.item(j + 1);
           swap(top, node1, node2);
         }
     }
