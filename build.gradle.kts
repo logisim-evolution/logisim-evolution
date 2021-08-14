@@ -60,7 +60,7 @@ extra.apply {
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
   val jPackageCmd = if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd
-  val parameters = ArrayList<String>(Arrays.asList(
+  val parameters = ArrayList<String>(listOf(
       jPackageCmd,
       "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
@@ -68,14 +68,16 @@ extra.apply {
       "--app-version", project.version as String,
       "--copyright", "Copyright © 2001–" + year + " Logisim-evolution developers",
       "--dest", "${buildDir}/dist"
-  ))
-  val linuxParameters = ArrayList<String>(Arrays.asList(
+  )
+  )
+  val linuxParameters = ArrayList<String>(listOf(
       "--name", project.name,
       "--file-associations", "${projectDir}/support/jpackage/linux/file.jpackage",
       "--icon", "${projectDir}/support/jpackage/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
-  ))
+  )
+  )
   set("sharedParameters", parameters)
   set("linuxParameters", linuxParameters)
   set("jPackageCmd", jPackageCmd)
@@ -144,7 +146,7 @@ tasks.register("createRpm") {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
       parameters.addAll(ext.get("linuxParameters") as ArrayList<String>)
-      parameters.addAll(Arrays.asList(
+      parameters.addAll(listOf(
           "--type", "rpm"
       ))
       val processBuilder2 = ProcessBuilder()
@@ -172,7 +174,7 @@ tasks.register("createMsi") {
   doLast {
     if (OperatingSystem.current().isWindows) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-      parameters.addAll(Arrays.asList(
+      parameters.addAll(listOf(
           "--name", project.name,
           "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
           "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
@@ -209,7 +211,7 @@ tasks.register("createApp") {
       val appDirName = ext.get("appDirName") as String
       delete(appDirName)
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-      parameters.addAll(Arrays.asList(
+      parameters.addAll(listOf(
           "--name", ext.get("uppercaseProjectName") as String,
           "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
           "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
@@ -222,7 +224,7 @@ tasks.register("createApp") {
         throw GradleException("Error while creating the .app directory")
       }
       val pListFilename = "${appDirName}/Contents/Info.plist"
-      val parameters2 = ArrayList<String>(Arrays.asList(
+      val parameters2 = ArrayList<String>(listOf(
           "awk",
           "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
               + "{print >\"${buildDir}/dist/Info.plist\"};"
@@ -238,7 +240,7 @@ tasks.register("createApp") {
       if (process2.waitFor() != 0) {
         throw GradleException("Error while patching Info.plist")
       }
-      val parameters3 = ArrayList<String>(Arrays.asList(
+      val parameters3 = ArrayList<String>(listOf(
           "mv", "${buildDir}/dist/Info.plist", pListFilename
       ))
       val processBuilder3 = ProcessBuilder()
@@ -247,7 +249,7 @@ tasks.register("createApp") {
       if (process3.waitFor() != 0) {
         throw GradleException("Error while moving Info.plist into the .app directory")
       }
-      val parameters4 = ArrayList<String>(Arrays.asList(
+      val parameters4 = ArrayList<String>(listOf(
           "codesign", "--remove-signature", appDirName
       ))
       val processBuilder4 = ProcessBuilder()
@@ -273,7 +275,7 @@ tasks.register("createDmg") {
   outputs.file(ext.get("baseFilename") as String + ".dmg")
   doLast {
     if (OperatingSystem.current().isMacOsX) {
-      val parameters1 = ArrayList<String>(Arrays.asList(
+      val parameters1 = ArrayList<String>(listOf(
           ext.get("jPackageCmd") as String,
           "--type", "dmg",
           "--app-image", ext.get("appDirName") as String,
