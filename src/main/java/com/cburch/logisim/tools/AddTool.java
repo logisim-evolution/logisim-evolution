@@ -554,34 +554,32 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
         for (var x = 0; x < matrix.getNrOfXCopies(); x++) {
           for (var y = 0; y < matrix.getNrOfYCopies(); y++) {
-            final var loc = Location.create(
-                    e.getX() + matrix.GetDeltaX() * x, e.getY() + matrix.GetDeltaY() * y);
+            final var loc = Location.create( e.getX() + matrix.GetDeltaX() * x
+                , e.getY() + matrix.GetDeltaY() * y);
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.GetLabel() != null) {
               if (MatrixPlace)
-                attrsCopy.setValue(
-                    StdAttr.LABEL,
-                    AutoLabler.getMatrixLabel(
-                        canvas.getCircuit(), source, matrix.GetLabel(), x, y));
+                attrsCopy.setValue(StdAttr.LABEL, AutoLabler.getMatrixLabel(canvas.getCircuit()
+                    , source, matrix.GetLabel(), x, y));
               else {
                 attrsCopy.setValue(StdAttr.LABEL, matrix.GetLabel());
               }
             }
-            final var c = source.createComponent(loc, attrsCopy);
+            final var comp = source.createComponent(loc, attrsCopy);
 
-            if (circ.hasConflict(c)) {
+            if (circ.hasConflict(comp)) {
               canvas.setErrorMessage(S.getter("exclusiveError"));
               return;
             }
 
-            final var bds = c.getBounds(g);
+            final var bds = comp.getBounds(g);
             if (bds.getX() < 0 || bds.getY() < 0) {
               canvas.setErrorMessage(S.getter("negativeCoordError"));
               return;
             }
 
-            mutation.add(c);
-            added.add(c);
+            mutation.add(comp);
+            added.add(comp);
           }
         }
         final var action = mutation.toAction(S.getter("addComponentAction", factory.getDisplayGetter()));
