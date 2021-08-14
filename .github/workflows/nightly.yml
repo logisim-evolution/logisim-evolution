@@ -1,5 +1,6 @@
 #
 # Logisim-evolution nightly builder
+# https://github.com/logisim-evolution/logisim-evolution
 #
 # Cron driven Github Action builder, intended to create nightly builds
 # from Logisim-evolution's "develop" branch. It assumes to be invoked
@@ -11,12 +12,15 @@
 
 name: "Nightly"
 on:
-#  push:
-#    branches: [ develop ]
-#  pull_request:
-#    branches: [ develop ]
+  # The "pull_request" trigger is here for debugging purposes and
+  # as work-around for having this worker not yet in main branch.
+  # Keep it disabled once it's merged into main branch as we only
+  # want "schedule" to be the trigger.
+  pull_request:
+    branches: [ develop ]
   schedule:
-    - cron: '0 0 * * *'  # every day at midnight
+    # every day at midnight
+    - cron: "0 0 * * *"
 
 jobs:
   git_check:
@@ -30,16 +34,13 @@ jobs:
       # Base application name and version (read from gradle.properties).
       lse_name: ${{ steps.filter.outputs.lse_name }}
       lse_version: ${{ steps.filter.outputs.lse_version }}
-      # Base name for final artifacts.
-      out_name: ${{ steps.filter.outputs.out_name }}
+      # Base name for final daily build files.
+      base_name: ${{ steps.filter.outputs.base_name }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
         uses: actions/checkout@v2
-        with:
-          # We want develop branch only.
-          ref: 'develop'
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -47,18 +48,34 @@ jobs:
         continue-on-error: true
         # if: ${{ github.event_name == 'schedule' }}
         run: |
-          if [[ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]]; then
-            echo "::set-output name=run_build::${true}"
+          # Have no mercy.
+          set -euo pipefail
+
+          # Short name for branch in which action was triggered.
+          declare -r branch_name="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
+
+          # Get SHA of last commit in that branch.
+          declare -r last_commit_sha="$(git rev-parse HEAD)"
+
+          echo x1
+
+          # Let's see if we have any commits in last 24 hours.
+          if [[ -n "$(git rev-list --after="24 hours" ${last_commit_sha})" ]]; then
+            echo "::set-output name=run_build::true"
           else
             echo "*** No code changes since yesterday. Skipping."
           fi
 
+          # I need to export current version, even if is incorrect for develop branch as it
+          # is part of produced artifacts. We will strip it prior uploading anyway.
+          declare -r lse_version="$(fgrep version gradle.properties | awk '{print $3}')"
           declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
           echo "::set-output name=lse_name::${lse_name}"
-          echo "::set-output name=out_name::${lse_name}_develop_$(date +%Y%m%d)"
-          echo "::set-output name=lse_version::$(fgrep version gradle.properties | awk '{print $3}')"
+          echo "::set-output name=lse_version::${lse_version}"
+          # Base name for uploaded artifacts.
+          echo "::set-output name=base_name::${lse_name}_${branch_name}_$(date +%Y%m%d)"
 
-  # ##################################
+  # ###############################################################################################
 
   # Building for Linux.
   build_linux:
@@ -83,24 +100,31 @@ jobs:
           java-version: 14
           distribution: 'adopt'
 
-      # ##################################
+      # ###########################################################################################
 
       - name: 'Build binary JAR'
         run: |
+          # Have no mercy.
+          set -euo pipefail
+
           chmod +x gradlew
           ./gradlew shadowJar
 
+      # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
         uses: actions/upload-artifact@v2
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
-          name: ${{ needs.git_check.outputs.out_name }}-all_jdk14.jar
+          name: ${{ needs.git_check.outputs.base_name }}-all_jdk14.jar
 
-      # ##################################
+      # ###########################################################################################
 
       - name: 'Build DEB'
         run: |
+          # Have no mercy.
+          set -euo pipefail
+
           chmod +x gradlew
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
@@ -109,12 +133,15 @@ jobs:
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
-          name: ${{ needs.git_check.outputs.out_name }}_amd64.deb
+          name: ${{ needs.git_check.outputs.base_name }}_amd64.deb
 
-        # ##################################
+        # ###########################################################################################
 
       - name: 'Build RPM'
         run: |
+          # Have no mercy.
+          set -euo pipefail
+
           chmod +x gradlew
           # Needs rpm package, but it should be installed already.
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
@@ -124,12 +151,15 @@ jobs:
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
-          name: ${{ needs.git_check.outputs.out_name }}.x86_64.rpm
+          name: ${{ needs.git_check.outputs.base_name }}.x86_64.rpm
 
-        # ##################################
+        # ###########################################################################################
 
       - name: 'Build sources JAR'
         run: |
+          # Have no mercy.
+          set -euo pipefail
+
           chmod +x gradlew
           # Need to clean to have just one JAR or createDistDir task would fail.
           ./gradlew clean
@@ -140,7 +170,7 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
-          name: ${{ needs.git_check.outputs.out_name }}-src.jar
+          name: ${{ needs.git_check.outputs.base_name }}-src.jar
 
   # ##################################
 
@@ -169,6 +199,9 @@ jobs:
 
       - name: "Build DMG"
         run: |
+          # Have no mercy.
+          set -euo pipefail
+
           chmod +x gradlew
           set JAVA_HOME="${JAVA_HOME_14_X64}"
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
@@ -178,9 +211,9 @@ jobs:
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
-          name: ${{ needs.git_check.outputs.out_name }}.dmg
+          name: ${{ needs.git_check.outputs.base_name }}.dmg
 
-  # ##################################
+  # ###############################################################################################
 
   # Building for Windows.
   build_windows:
@@ -195,9 +228,6 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
         uses: actions/checkout@v2
-        with:
-          # We want develop branch only.
-          ref: 'develop'
 
       - name: "Set up JDK"
         uses: actions/setup-java@v2
@@ -213,4 +243,4 @@ jobs:
         if: success()
         with:
           path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.msi
-          name: ${{ needs.git_check.outputs.out_name }}.msi
+          name: ${{ needs.git_check.outputs.base_name }}.msi
