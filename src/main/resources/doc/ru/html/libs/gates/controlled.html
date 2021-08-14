@@ -1,15 +1,35 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ru">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
     <title>
       Управляемый буфер/инвертор
     </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
-  <body bgcolor="#FFFFFF">
-    <h1>
-      <img class="iconlibs" src="../../../../icons/controlledBuffer.gif" alt="#########"> <img class="iconlibs" src="../../../../icons/controlledInverter.gif"alt="#########"> <em>Управляемый буфер/инвертор</em>
-    </h1>
+  <body>
+    <div class="maindiv">
+	 <table>
+        <tbody>
+          <tr>
+            <td>
+              <img class="iconlibs" src="../../../../icons/6464/anscontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/anscontrolledinverter.png" alt="#########" height="32" width="32"><br>
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledinverter.png" alt="#########" height="32" width="32">
+            </td>
+            <td valign="center">
+              <h1>
+                 <em>Управляемый буфер/инвертор</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     <table>
       <tbody>
         <tr>
@@ -33,7 +53,19 @@
             <strong>Внешний вид:</strong>
           </td>
           <td valign="top">
-            <img class="notscal" src="../../../../img-libs/controlled.png" width="74" height="20" alt="#########">
+            <table>
+                <tbody>
+				  <tr>
+				     <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledbuffer.png" alt="#########" height="64" width="64">
+                    </td>
+					<td>
+                      <img class="appearancelibs" src="../../../../img-libs/anscontrolledinverter.png" alt="#########" height="64" width="64">
+                    </td>
+				  </tr>
+			
+                </tbody>
+              </table>
           </td>
         </tr>
       </tbody>
@@ -82,46 +114,48 @@
       Атрибуты
     </h2>
     <p>
-      Когда компонент выбран, или уже добавлен, комбинации от Alt-0 до Alt-9 меняют его атрибут <q>Биты данных</q>, а клавиши со стрелками меняют его атрибут <q>Направление</q>.
+      Когда компонент выбран, или уже добавлен, комбинации от <b class="tkeybd">Alt-0</b> до <b class="tkeybd">Alt-9</b> меняют его атрибут <b class="propertie">Биты данных</b>, а клавиши со стрелками меняют его атрибут <b class="propertie">аправление</b>.
     </p>
+    <div class="attliste">
     <dl>
       <dt>
-        Направление
+        <b class="propertie">Направление</b>
       </dt>
       <dd>
         Направление компонента (его выхода относительно его входа).
       </dd>
       <dt>
-        Биты данных
+        <b class="propertie">Биты данных</b>
       </dt>
       <dd>
         Разрядность входов и выходов компонента.
       </dd>
       <dt>
-        Размер элемента
+        <b class="propertie">Размер элемента</b>
       </dt>
       <dd>
         (Только для управляемого инвертора) Определяет следует отрисовывать большую или меньшую версию компонента.
       </dd>
       <dt>
-        Расположение управляющего входа
+        <b class="propertie">Расположение управляющего входа</b>
       </dt>
       <dd>
         Расположение управляющего входа, если представить, что мы смотрим со стороны входа на выход: если компонент направлен на восток и значение атрибута - <q>По правую руку</q>, то управляющий вход на юге; а если <q>По левую руку</q>, то на севере.
       </dd>
       <dt>
-        Метка
+        <b class="propertie">Метка</b>
       </dt>
       <dd>
         Текст внутри метки, привязанной к элементу.
       </dd>
       <dt>
-        Шрифт метки
+        <b class="propertie">Шрифт метки</b>
       </dt>
       <dd>
         Шрифт, которым отрисовывается метка.
       </dd>
     </dl>
+	</div>
     <h2>
       Поведение Инструмента Нажатие
     </h2>
@@ -135,7 +169,8 @@
       Позволяет редактировать привязанную к элементу метку.
     </p>
     <p>
-      <a href="../index.html">Назад к <em>Справке по библиотеке</em></a>
+      <b>Назад к</b> <a href="../index.html">Справке по библиотеке</a>
     </p>
+	</div>
   </body>
 </html>

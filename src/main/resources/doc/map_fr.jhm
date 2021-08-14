@@ -123,8 +123,8 @@
 	<mapID target="gates_not"           url="fr/html/libs/gates/not.html" />
 	<mapID target="gates_buffer"        url="fr/html/libs/gates/buffer.html" />
 	<mapID target="gates_basic"         url="fr/html/libs/gates/basic.html" />
-	<mapID target="gates_xor"           url="en/html/libs/gates/xor.html" />
-	<mapID target="gates_controlled"    url="en/html/libs/gates/controlled.html" />
+	<mapID target="gates_xor"           url="fr/html/libs/gates/xor.html" />
+	<mapID target="gates_controlled"    url="fr/html/libs/gates/controlled.html" />
 	<mapID target="gates_PLA"           url="en/html/libs/gates/pla.html" />
 	<mapID target="plexers"             url="en/html/libs/plexers/index.html" />
 	<mapID target="plexers_mux"         url="en/html/libs/plexers/mux.html" />

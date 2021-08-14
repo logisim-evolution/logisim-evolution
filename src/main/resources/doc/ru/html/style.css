@@ -206,6 +206,7 @@ table.truthtable {
 td.space {
 	background-color:#ffffff;
 	padding:3;
+	text-align:center;
 }
 td.zerov {
 	color:#008000;
@@ -238,7 +239,8 @@ td.space {
 th.tspace {
 	background-color:#e0e0e0;
 	padding:3;
-	width:20px
+	width:20px;
+	text-align:center;
 }
 
 
@@ -246,30 +248,35 @@ td.tzerov {
 	color:#008000;
 	padding:3;
 	background-color:#e0e0e0;
-	width:18px;
+	width:28px;
+	text-align:center;
 }
 td.tunov {
 	color:#00FF00;
 	padding:3;
 	background-color:#e0e0e0;
-	width:18px;
+	width:28px;
+	text-align:center;
 }
 td.tuvalue {
 	color:#0000FF;
 	padding:3;
 	background-color:#e0e0e0;
-	width:18px;
+	width:28px;
+	text-align:center;
 }
 td.tevalue {
 	color:#FF0000;
 	padding:3;
 	background-color:#e0e0e0;
-	width:18px;
+	width:28px;
+	text-align:center;
 }
 td.tspace {
 	padding:3;
 	background-color:#e0e0e0;
-	width:18px;
+	width:28px;
+	text-align:center;
 }
 
 /* cell  tables */

@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2021-08-12T06:18:10.521000000">
+    <meta name="changed" content="2021-08-12T16:12:32.246000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+	  Tampon/Inverseur contrôlé
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+	   <table>
+        <tbody>
+          <tr>
+            <td>
+             <img class="iconlibs" src="../../../../icons/6464/anscontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/anscontrolledinverter.png" alt="#########" height="32" width="32"><br>
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledbuffer.png" alt="#########" height="32" width="32"> 
+		     <img class="iconlibs" src="../../../../icons/6464/ieccontrolledinverter.png" alt="#########" height="32" width="32">
+            </td>
+            <td valign="center">
+              <h1>
+                <em>Tampon/Inverseur contrôlé</em>
+              </h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Portes</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+			<td valign="top">
+              <table>
+                <tbody>
+				  <tr>
+				     <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/anscontrolledbuffer.png" alt="#########" height="64" width="64">
+                    </td>
+					<td>
+                      <img class="Appearancelibs" src="../../../../img-libs/anscontrolledinverter.png" alt="#########" height="64" width="64">
+                    </td>
+				  </tr>
+			
+                </tbody>
+              </table>
+			  </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+		Le tampon et l'inverseur contrôlés, souvent appelés <em>tampon/inverseurs à trois états</em>, possèdent chacun une broche d'entrée "Contrôle" d'un bit sur le coté. La valeur sur cette broche de commande affecte le comportement du composant :
+      </p>
+      <ul>
+ 		 <li>Lorsque la valeur sur cette broche est 1, alors le composant se comporte comme le composant correspondant (un <a href="buffer.html">tampon</a> ou un <a href="not.html">inverseur</a> (porte non)).
+        </li>
+        <li>Lorsque la valeur est 0 ou inconnue (c'est-à-dire flottante), alors la sortie du composant est également flottante.
+        </li>
+        <li>Lorsque la valeur est une valeur d'erreur (comme cela se produirait lorsque deux valeurs contradictoires sont introduites dans l'entrée), alors la sortie est une valeur d'erreur.
+		</li>
+      </ul>
+	  <p>
+	       <center>
+        <table>
+          <tbody>
+            <tr>
+              <th class="tspace" colspan="2">
+			    Entrées
+			  </th>
+              <th class="tspace" colspan="2">
+                Sorties
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace">
+			     Entrée
+              </th>
+              <th class="tspace">
+                 Cmd.
+              </th>
+              <th class="tspace">
+                Tamp.
+              </th>
+              <th class="tspace">
+                Inv.&nbsp;
+              </th>
+            </tr>
+            <tr>
+              <td class="tspace">
+                Tout
+              </td>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+            <tr>
+              <td class="tevalue">
+                E
+              </td>
+              <td class="tunov">
+                1
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+			  <tr>
+              <td class="tspace">
+                Tout
+              </td>
+              <td class="tspace">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+	  </p>
+      <p>
+        Les tampons contrôlés peuvent être utiles lorsque vous avez un fil (souvent appelé <em>bus</em>) dont la valeur doit correspondre à une des sorties de plusieurs composants. En plaçant un tampon contrôlé entre la sortie de chaque composant et le bus, vous pouvez contrôler si la sortie de ce composant est alimentée ou non sur le bus.
+      </p>
+      <h2>
+        Pins (en supposant que le composant est orienté vers l'est, la ligne de contrôle est à droite)
+      </h2>
+      <dl>
+        <dt>
+		  Bord ouest :
+        </dt>
+        <dd>
+          L'entrée de la composante qui sera utilisée pour déterminer la sortie si l'entrée de contrôle est à 1. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
+        </dd>
+        <dt>
+		  Bord sud :
+        </dt>
+        <dd>
+		  L'entrée de contrôle du composant. largeur de données 1.
+        </dd>
+        <dt>
+		  Bord est:
+        </dt>
+        <dd>
+		  La sortie du composant, qui sera flottante (U) si l'entrée de commande est 0 ou flottante (U), la valeur d'erreur (E) si l'entrée de commande est la valeur d'erreur 8E), et sera déterminée sur la base de l'entrée côté ouest si l'entrée de commande est à 1. Le nombre de bits correspond à l'attribut <b class="propertie">largeur de données</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+		Lorsque le composant est sélectionné ou en cours d'ajout <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifient son attribut <b class="propertie">largeur de données</b> et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Orientation</b>
+        </dt>
+        <dd>
+          La direction du conposant, son entrée relativement à sa sortie.
+        </dd>
+        <dt>
+          <b class="propertie">largeur de données</b>
+        </dt>
+        <dd>
+          La largeur de bit de l'entrées et la sorties du composant.
+        </dd>
+        <dt>
+          <b class="propertie">Dimension dessins</b>
+        </dt>
+        <dd>
+          (Tampon controlé inverseur seulement) Détermine s'il faut dessiner une version plus grande ou plus petite du composant.
+        </dd>
+        <dt>
+          <b class="propertie">Position de la commande</b>
+        </dt>
+        <dd>
+   		   L'emplacement de la ligne de contrôle, en imaginant que nous regardons la sortie depuis l'entrée : Si le composant est orienté vers l'est et est règlé <q>A droite,</q> la ligne de contrôle est au sud ; mais s'il est règlé <q>A gauche,</q> la ligne de contrôle est au nord.
+        </dd>
+        <dt>
+            <b class="propertie">Étiquette</b>
+          </dt>
+          <dd>
+            Le texte de l'étiquette associée à la porte.
+          </dd>
+          <dt>
+            <b class="propertie">Police des étiquettes</b>
+          </dt>
+          <dd>
+            La police avec laquelle l'étiquette doit être rendue.
+          </dd>
+      </dl>
+	  </diV>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Permet de modifier l'étiquette associée à la porte.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

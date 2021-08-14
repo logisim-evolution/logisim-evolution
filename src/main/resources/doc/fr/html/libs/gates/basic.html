@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
-      Portes ET(AND) /OU(OR)/ET NON(NAND)/OU NON(NOR)
+      Portes ET(AND) /OU(OR)/NON-ET(NAND)/NON-OU(NOR)
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
@@ -28,7 +28,7 @@
             </td>
             <td>
               <h1>
-                <em>Portes<br>ET, OU<br>ET NON, OU NON</em>
+                <em>Portes<br>ET, OU<br>NON-ET, NON-OU</em>
               </h1>
             </td>
           </tr>
@@ -68,10 +68,10 @@
                       OU<br>(OR)
                     </th>
                     <th width="50">
-                      ET NON<br>(NAND)
+                      NON-ET<br>(NAND)
                     </th>
                     <th width="50">
-                      OU NON<br>(NOR)
+                      NON-OU<br>(NOR)
                     </th>
                   </tr>
                   <tr>
@@ -118,13 +118,13 @@
         Comportement
       </h2>
       <p>
-        Les portes ET, OU, ET NON et OU NON calculent chacune la fonction respective des entrées, et émettent le résultat sur la sortie.
+        Les portes ET, OU, NON-ET et NON-OU calculent chacune la fonction respective des entrées, et émettent le résultat sur la sortie.
       </p>
       <p>
         Par défaut, les entrées qui ne sont pas connectées,pas même un fil, sont ignorées. De cette façon, vous pouvez insérer une porte à 5 entrées, mais n'attacher que deux entrées et elle fonctionnera comme une porte à 2 entrées; cela vous évite d'avoir à vous soucier de configurer le nombre d'entrées à chaque fois que vous créez une porte.<br>Si toutes les entrées ne sont pas connectées, la sortie sera la valeur d'erreur (<b class="evalue">E</b>). Certains utilisateurs, cependant, préfèrent que Logisim-evolution insiste pour que toutes les entrées soient connectées, car c'est ce qui correspond aux portes du monde réel. Vous pouvez activer ce Comportement en allant dans l'élément de menu   <b class=menu>|&nbsp;Projet&nbsp;|</b> &gt; <b class=menu>|&nbsp;Options...&nbsp;|</b> et en sélectionnant l'onglet <b class=menu>|&nbsp;Simulation&nbsp;|</b> et en sélectionnant le choix <q>Ignorer les entrées indéfinies</q> pour le paramètre <q>Sortie des portes quand indéfinie</q>
       </p>
       <p>
-        La table de vérité à deux entrées pour les portes est la suivante. La lettre <b class="evalue">E</b> représente la valeur d'erreur, et la lettre <b class="uvalue">U</b> représente la valeur flottante.
+        Les tables de vérités à deux entrées pour les portes sont les suivantes. La lettre <b class="evalue">E</b> représente la valeur d'erreur, et la lettre <b class="uvalue">U</b> représente la valeur flottante.
       </p>
       <center>
         <table class="encapsul" border="0">
@@ -281,7 +281,7 @@
                   <tbody>
                     <tr>
                       <th colspan="4">
-                        ET NON<br>(NAND)
+                        NON-ET<br>(NAND)
                       </th>
                     </tr>
                     <tr>
@@ -349,7 +349,7 @@
                   <tbody>
                     <tr>
                       <th colspan="4">
-                        OU NON<br>(NOR)
+                        NON-OU<br>(NOR)
                       </th>
                     </tr>
                     <tr>
@@ -429,7 +429,7 @@
           Bord ouest :
         </dt>
         <dd>
-            Les entrées dans le composant. Il y en aura autant que ce qui est spécifié dans l'attribut <b class="propertie">Nombre d'entrées</b> et largeur de bit selon l'attribut <b class="propertie">Largeur de données</b>.
+            Les entrées dans le composant. Il y en aura autant que ce qui est spécifié dans l'attribut <b class="propertie">Nombre d'entrées</b> et le nombre de bit est définie est définie par l'attribut <b class="propertie">largeur de données</b>.
           <p>
             Notez que si vous utilisez des portes formées, le côté ouest des portes OU et NOR sera incurvé. Néanmoins, les broches d'entrée sont en ligne. Logisim dessinera de courts tronçons pour illustrer cela ; et si vous dépassez un tronçon, il supposera silencieusement que vous n'aviez pas l'intention de le dépasser. Dans la "vue imprimante", ces tronçons ne seront pas dessinés, sauf s'ils sont connectés à des fils.
           </p>
@@ -438,7 +438,7 @@
           Bord est :
         </dt>
         <dd>
-            La sortie de la porte, dont la valeur est calculée sur la base des entrées actuelles comme décrite ci-dessus et la largeur de bit selon l'attribut <b class="propertie">Largeur de données</b>. 
+            La sortie de la porte, dont la valeur est calculée sur la base des entrées actuelles comme décrite ci-dessus et le nombre de bit est définie est définie par l'attribut <b class="propertie">largeur de données</b>.
         </dd>
       </dl>
       <h2>
