@@ -36,7 +36,7 @@ jobs:
             changes:
               - 'src/main/resources/resources/logisim/**/*.properties'
 
-      - name: "Running checker..."
+      - name: "===> SEE HERE FOR LINTING REPORT"
         if: steps.filter.outputs.changes == 'true'
         run: |
           # Have no mercy.
