@@ -113,7 +113,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != SOCMEM_STATE;
+    return attr.isToSave() && attr != SOCMEM_STATE;
   }
 
   @Override

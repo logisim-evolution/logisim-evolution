@@ -264,7 +264,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
       if (aStatic == attr)
         return false;
     }
-    return true;
+    return attr.isToSave();
   }
 
   void setPinInstances(Instance[] value) {

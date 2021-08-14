@@ -124,7 +124,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != NIOS2_STATE;
+    return attr.isToSave() && attr != NIOS2_STATE;
   }
 
   @Override

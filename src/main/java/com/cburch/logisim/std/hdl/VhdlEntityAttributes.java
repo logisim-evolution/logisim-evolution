@@ -146,6 +146,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != VhdlSimConstants.SIM_NAME_ATTR;
+    return attr.isToSave() && attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

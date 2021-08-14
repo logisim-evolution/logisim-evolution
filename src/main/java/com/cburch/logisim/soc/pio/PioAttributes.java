@@ -172,7 +172,7 @@ public class PioAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != PIO_STATE;
+    return attr.isToSave() && attr != PIO_STATE;
   }
 
   @SuppressWarnings("unchecked")

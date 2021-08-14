@@ -119,7 +119,7 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != JTAG_STATE;
+    return attr.isToSave() && attr != JTAG_STATE;
   }
 
   @Override

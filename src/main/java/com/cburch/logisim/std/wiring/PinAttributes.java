@@ -88,7 +88,7 @@ class PinAttributes extends ProbeAttributes {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != ATTR_DUMMY;
+    return attr.isToSave() && attr != ATTR_DUMMY;
   }
 
   @Override
