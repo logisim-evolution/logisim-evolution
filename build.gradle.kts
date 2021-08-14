@@ -47,7 +47,7 @@ java {
 
 task<Jar>("sourcesJar") {
   group = "build"
-  description = "Creates a source jar archive."
+  description = "Creates a source JAR archive file."
   dependsOn.add("classes")
   classifier = "src"
 
@@ -66,7 +66,7 @@ extra.apply {
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", "${project.name}-${project.version}-all.jar",
       "--app-version", project.version as String,
-      "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
+      "--copyright", "Copyright © 2001–" + year + " Logisim-evolution developers",
       "--dest", "${buildDir}/dist"
   ))
   val linuxParameters = ArrayList<String>(Arrays.asList(
@@ -82,10 +82,7 @@ extra.apply {
   val uppercaseProjectName = project.name.substring(0,1).toUpperCase() + project.name.substring(1)
   set("uppercaseProjectName", uppercaseProjectName)
   set("appDirName", "${buildDir}/dist/${uppercaseProjectName}.app")
-  set("dmgFilename", "${buildDir}/dist/${project.name}-${project.version}.dmg")
-  set("rpmFilename", "${buildDir}/dist/${project.name}-${project.version}-1.x86_64.rpm")
-  set("debFilename", "${buildDir}/dist/${project.name}_${project.version}-1_amd64.deb")
-  set("msiFilename", "${buildDir}/dist/${project.name}-${project.version}.msi")
+  set("baseFilename", "${buildDir}/dist/${project.name}-${project.version}")
 }
 
 tasks.register("createDistDir") {
@@ -105,13 +102,18 @@ tasks.register("createDistDir") {
   }
 }
 
+/*
+ * Task: createDeb
+ *
+ * Creates the Linux DEB package file (Debian, Ubuntu and derrivatives).
+ */
 tasks.register("createDeb") {
   group = "build"
-  description = "Makes the Linux platform specific packages"
+  description = "Makes DEB Linux package file."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("debFilename"))
+  outputs.file(ext.get("baseFilename") as String + "-1_amd64.deb")
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -126,13 +128,18 @@ tasks.register("createDeb") {
   }
 }
 
+/*
+ * Task: createRpm
+ *
+ * Creates the Linux RPM package file (RedHat and derrivatives).
+ */
 tasks.register("createRpm") {
   group = "build"
-  description = "Makes the Linux platform specific packages"
+  description = "Makes RPM Linux package file."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("rpmFilename"))
+  outputs.file(ext.get("baseFilename") as String + "-1.x86_64.rpm")
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -150,13 +157,18 @@ tasks.register("createRpm") {
   }
 }
 
+/*
+ * Task: createMsi
+ *
+ * Creates MSI installater file for Microsoft Windows.
+ */
 tasks.register("createMsi") {
   group = "build"
-  description = "Makes the Windows platform specific package"
+  description = "Makes the Windows platform specific package."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/windows")
-  outputs.file(ext.get("msiFilename"))
+  outputs.file(ext.get("baseFilename") as String + ".msi")
   doLast {
     if (OperatingSystem.current().isWindows) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -180,13 +192,18 @@ tasks.register("createMsi") {
   }
 }
 
+/*
+ * Task: createApp
+ *
+ * Creates macOS application.
+ */
 tasks.register("createApp") {
   group = "build"
-  description = "Makes the Mac application"
+  description = "Makes the macOS application."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/macos")
-  outputs.dir(ext.get("appDirName"))
+  outputs.dir(ext.get("appDirName") as String)
   doLast {
     if (OperatingSystem.current().isMacOsX) {
       val appDirName = ext.get("appDirName") as String
@@ -243,12 +260,17 @@ tasks.register("createApp") {
   }
 }
 
+/*
+ * Task: createDmg
+ *
+ * Creates macOS DMG package file.
+ */
 tasks.register("createDmg") {
   group = "build"
-  description = "Makes the Mac dmg package"
+  description = "Makes the Mac DMG package file."
   dependsOn("createApp")
-  inputs.dir(ext.get("appDirName"))
-  outputs.file(ext.get("dmgFilename"))
+  inputs.dir(ext.get("appDirName") as String)
+  outputs.file(ext.get("baseFilename") as String + ".dmg")
   doLast {
     if (OperatingSystem.current().isMacOsX) {
       val parameters1 = ArrayList<String>(Arrays.asList(
@@ -263,15 +285,22 @@ tasks.register("createDmg") {
       processBuilder1.command(parameters1)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating the .dmg package")
+        throw GradleException("Error while creating the DMG package")
       }
     }
   }
 }
 
+/*
+ * Task: jpackage
+ *
+ * Umbrella task to create packages for all supported platforms.
+ *
+ * @deprecated will soon be removed.
+ */
 tasks.register("jpackage") {
   group = "build"
-  description = "Makes the platform specific packages for the current platform"
+  description = "Makes the platform specific packages for the current platform."
   dependsOn("createDeb", "createRpm", "createMsi", "createDmg")
 }
 
