@@ -240,15 +240,41 @@ public enum IOComponentTypes {
       int nrOfPins,
       int nrOfRows,
       int nrOfColumns,
+      int mapRotation,
       IOComponentTypes type) {
     var hasDp = false;
     switch (type) {
       case DIPSwitch: {
-        var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
-        for (var w = 0; w < width; w++)
-          for (var h = 0; h < height; h++) {
-            var index = (width > height) ? (float) w / part : (float) h / part;
-            PartialMap[w][h] = (int) index;
+        var part = (float) 0;
+        switch (mapRotation) {
+          case rotationPlusNinety :
+          case rotationMinusNinety : {
+            part = (float) height / (float) nrOfPins;
+            break;
+          }
+          default : {
+            part = (float) width / (float) nrOfPins;
+            break;
+          }
+        }
+        for (var widthIndex = 0; widthIndex < width; widthIndex++)
+          for (var heightIndex = 0; heightIndex < height; heightIndex++) {
+            var pinIndex = (float) 0;
+            switch (mapRotation) {
+              case rotationPlusNinety : {
+                pinIndex = (height - heightIndex - 1) / part;
+                break;
+              }
+              case rotationMinusNinety : {
+                pinIndex = height / part;
+                break;
+              }
+              default : {
+                pinIndex = widthIndex / part;
+                break;
+              }
+            }
+            PartialMap[widthIndex][heightIndex] = (int) pinIndex;
           }
         break;
       }
@@ -301,6 +327,7 @@ public enum IOComponentTypes {
       int nrOfPins,
       int nrOfRows,
       int nrOfColumns,
+      int mapRotation,
       int x,
       int y,
       Color col,
@@ -310,12 +337,32 @@ public enum IOComponentTypes {
     var hasDp = false;
     switch (type) {
       case DIPSwitch: {
-        final var part = (width > height) ? (float) width / (float) nrOfPins : (float) height / (float) nrOfPins;
-        final var bx = (width > height) ? x + (int) ((float) pinNr * part) : x;
-        final var by = (width > height) ? y : y + (int) ((float) pinNr * part);
-        final var bw = (width > height) ? (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part) : width;
-        final var bh = (width > height) ? height : (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
-        g.fillRect(bx, by, bw, bh);
+        var part = (float) 0;
+        var boxXpos = 0;
+        var boxYpos = 0;
+        var boxWidth = 0;
+        var boxHeight = 0;
+        var yPinNr = pinNr;
+        switch (mapRotation) {
+          case rotationPlusNinety : yPinNr = nrOfPins - pinNr - 1;
+          case rotationMinusNinety : {
+            part = (float) height / (float) nrOfPins;
+            boxXpos = x;
+            boxWidth = width;
+            boxYpos = y + (int) ((float) yPinNr * part);
+            boxHeight = (int) ((float) (yPinNr+1) * part) - (int) ((float) yPinNr * part);
+            break;
+          }
+          default : {
+            part = (float) width / (float) nrOfPins;
+            boxXpos = x + (int) ((float) pinNr * part);
+            boxYpos = y;
+            boxWidth = (int) ((float) (pinNr+1) * part) - (int) ((float) (pinNr * part));
+            boxHeight = height;
+            break;
+          }
+        }
+        g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
       }
       case RGBLED : {

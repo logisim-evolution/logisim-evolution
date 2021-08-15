@@ -865,6 +865,7 @@ public class FPGAIOInformationContainer implements Cloneable {
             NrOfPins, 
             nrOfRows,
             nrOfColumns,
+            myRotation,
             MyType);
       }
       mappaint(g, scale);
@@ -909,6 +910,7 @@ public class FPGAIOInformationContainer implements Cloneable {
           NrOfPins, 
           nrOfRows,
           nrOfColumns,
+          myRotation,
           MyType);
     }
     var selPin = PartialMapArray[xPos - MyRectangle.getXpos()][Ypos - MyRectangle.getYpos()];
@@ -1063,11 +1065,11 @@ public class FPGAIOInformationContainer implements Cloneable {
       if (pinIsMapped.get(i) != null) {
         col = BoardManipulator.getColor(color);
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       } else if (selectable) {
         col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       }
     }
   }
@@ -1084,13 +1086,13 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (NrOfPins == 0 && selectable) {
       alpha = highlighted ? 150 : 100;
       IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns, 
-          x, y, col, alpha, MyType);
+          myRotation, x, y, col, alpha, MyType);
     }
     for (var i = 0; i < NrOfPins; i++) {
       alpha = !highlighted ? 100 : (i == selectedPin && !isCompleteMap()) ? 255 : 150;
       if (pinIsMapped.get(i) != null || selectable) {
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       }
     }
   }
