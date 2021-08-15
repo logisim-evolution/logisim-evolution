@@ -136,7 +136,7 @@ public class LogisimVersion {
   @Override
   public String toString() {
     String result = major + "." + minor + "." + patch;
-    if (!"".equals("")) {
+    if (!suffix.equals("")) {
       result += "-" + suffix;
     }
     return result;
