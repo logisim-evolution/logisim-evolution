@@ -408,9 +408,11 @@ tasks.register("jpackage") {
 tasks {
   compileJava {
     options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
+    dependsOn("generateBuildInfoClassFile")
   }
   compileTestJava {
     options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
+    dependsOn("generateBuildInfoClassFile")
   }
   jar {
     manifest {
@@ -430,7 +432,6 @@ tasks {
       include("LICENSE")
       include("README.md")
     }
-    dependsOn("generateBuildInfoClassFile")
   }
 
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
