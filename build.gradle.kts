@@ -30,7 +30,6 @@ import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.mapOf
 
 plugins {
   checkstyle
@@ -73,6 +72,13 @@ java {
   targetCompatibility = JavaVersion.VERSION_14
 }
 
+java {
+  sourceSets["main"].java {
+    srcDir("${buildDir}/generated/sources/srcgen")
+    srcDir("${buildDir}/generated/logisim/")
+  }
+}
+
 task<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a source JAR archive file."
@@ -96,16 +102,14 @@ extra.apply {
       "--app-version", project.version as String,
       "--copyright", "Copyright © 2001–" + year + " Logisim-evolution developers",
       "--dest", "${buildDir}/dist"
-  )
-  )
+  ))
   val linuxParameters = ArrayList<String>(listOf(
       "--name", project.name,
       "--file-associations", "${projectDir}/support/jpackage/linux/file.jpackage",
       "--icon", "${projectDir}/support/jpackage/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
-  )
-  )
+  ))
   set("sharedParameters", parameters)
   set("linuxParameters", linuxParameters)
   set("jPackageCmd", jPackageCmd)
@@ -321,6 +325,73 @@ tasks.register("createDmg") {
   }
 }
 
+fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, timeoutUnit: TimeUnit = TimeUnit.SECONDS):
+        String = ProcessBuilder(split("\\s(?=(?:[^'\"`]*(['\"`])[^'\"`]*\\1)*[^'\"`]*$)".toRegex()))
+  .directory(workingDir)
+  .redirectOutput(ProcessBuilder.Redirect.PIPE)
+  .redirectError(ProcessBuilder.Redirect.PIPE)
+  .start()
+  .apply { waitFor(timeoutAmount, timeoutUnit) }
+  .run {
+    val error = errorStream.bufferedReader().readText().trim()
+    if (error.isNotEmpty()) {
+      throw Exception(error)
+    }
+    inputStream.bufferedReader().readText().trim()
+  }
+
+/*
+ * Task: generateProjectInfoClassFile
+ *
+ * Generates Java class file with project information like current version, branch name, last commit hash etc.
+ * No need to trigger it manually.
+ */
+tasks.register("generateBuildInfoClassFile") {
+  group = "build"
+  description = "Creates Java class file with vital project information."
+
+  val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
+  val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
+
+  val branch = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
+  val lastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
+  val currentYear = SimpleDateFormat("yyyy").format(Date())
+  val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
+  val currentStampIso8601 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date())
+
+  // Project properties can be accessed via delegation
+  val suffix: String by project
+
+  var lines = arrayOf(
+    "// ************************************************************************",
+    "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
+    "// Use './gradlew generateBuildInfoClassFile' to regenerate if needed.",
+    "// Generated at ${currentStampIso8601}",
+    "// ************************************************************************",
+    "",
+    "package com.cburch.logisim.generated;",
+    "",
+    "import com.cburch.logisim.LogisimVersion;",
+    "",
+    "public final class BuildInfo {",
+    "    public static final String gitBranch = \"${branch}\";",
+    "    public static final String gitLastCommitHash = \"${lastCommitHash}\";",
+    "",
+    "    public static final int currentYear = ${currentYear};",
+    "    public static final String currentDate = \"${currentDate}\";",
+    "    public static final String currentStamp = \"${currentStampIso8601}\";",
+    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${project.version}\");",
+    "    public static final String versionSuffix = \"${suffix}\";",
+    "}",
+  )
+
+  doLast {
+    file(projectInfoDir).mkdirs()
+    file(projectInfoFile).writeText(lines.joinToString("\n"))
+//    println(projectInfoFile)
+  }
+}
+
 /*
  * Task: jpackage
  *
@@ -359,6 +430,7 @@ tasks {
       include("LICENSE")
       include("README.md")
     }
+    dependsOn("generateBuildInfoClassFile")
   }
 
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
