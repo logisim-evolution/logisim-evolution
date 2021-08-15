@@ -120,7 +120,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != RV32IM_STATE;
+    return attr.isToSave() && attr != RV32IM_STATE;
   }
 
   @Override

@@ -196,7 +196,7 @@ public class AttributeSets {
 
         @Override
         public boolean isToSave(Attribute<?> attr) {
-          return true;
+          return attr.isToSave();
         }
 
         @Override
