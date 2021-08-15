@@ -128,7 +128,7 @@ public class Simulator {
     private boolean _autoPropagating = true;
     private boolean _autoTicking = false;
     private double _autoTickFreq = 1.0; // Hz
-    private long _autoTickNanos = Math.round(1e9 / (2 * _autoTickFreq));
+    private long _autoTickNanos = Math.round(1e9 / _autoTickFreq);
     private int _manualTicksRequested = 0;
     private int _manualStepsRequested = 0;
     private boolean _nudgeRequested = false;
@@ -215,7 +215,7 @@ public class Simulator {
       if (_autoTickFreq == freq)
         return false;
       _autoTickFreq = freq;
-      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / (2 * _autoTickFreq));
+      _autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / _autoTickFreq);
       notifyAll();
       return true;
     }
@@ -350,13 +350,11 @@ public class Simulator {
       if (doProp || doNudge)
         try {
           propagated = doProp;
-          // todo: need to fire events in here for chrono fine grained
           final var p = sim.getPropagationListener();
           final var evt = p == null ? null : new Event(sim, false, false, false);
           stepPoints.clear();
           if (prop != null)
-            propagated |=
-                prop.propagate(p, evt); // todo: need to fire events in here for chrono fine grained
+            propagated |= prop.propagate(p, evt);
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();
@@ -393,10 +391,8 @@ public class Simulator {
       // accompanied by a tick, step, or propagate. That allows for a repaint in
       // some components.
       if (ticked || stepped || propagated || doNudge)
-        sim._firePropagationCompleted(
-            ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
+        sim._firePropagationCompleted(ticked, stepped && !propagated, propagated); // todo: fixme: ack, wrong thread!
       if (clockDied) sim.fireSimulatorStateChanged(); // todo: fixme: ack, wrong thread!
-
       return true;
     }
 
