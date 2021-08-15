@@ -61,7 +61,7 @@ class AboutCredits extends JComponent {
     lines = new Lines();
     lines
         .title(Main.APP_DISPLAY_NAME)
-        .h2("Copyright \u00A9" + Main.COPYRIGHT_YEAR + " " + Main.APP_NAME + " developers")
+        .h2("Copyright \u00A9" + Main.COPYRIGHT_YEARS + " " + Main.APP_NAME + " developers")
         .url(Main.APP_URL)
         .space()
         .h1(S.get("creditsRoleFork"))
@@ -81,7 +81,12 @@ class AboutCredits extends JComponent {
         .text("Carl Burch")
         .text("Hendrix College")
         .url("http://www.cburch.com/logisim/")
-        .img(getClass().getClassLoader().getResource(HENDRIX_LOGO_PATH));
+        .img(getClass().getClassLoader().getResource(HENDRIX_LOGO_PATH))
+        .space()
+        .space()
+        .h1(S.get("creditsBuildInfo"))
+        .text(S.get("creditsCompiled", Main.BUILD_STAMP))
+        .text(Main.BUILD_ID);
   }
 
   private long startMillis = 0;
