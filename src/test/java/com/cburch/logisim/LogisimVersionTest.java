@@ -47,7 +47,7 @@ public class LogisimVersionTest {
   /** Test method for {@link com.cburch.logisim.LogisimVersion#fromString(java.lang.String)}. */
   @Test
   public void testFromString() {
-    String tests[] = {"1.2.3", "1.2.3-beta1"};
+    String[] tests = {"1.2.3", "1.2.3-beta1"};
     for (var test : tests) {
       assertNotNull(LogisimVersion.fromString(test));
       assertEquals(test, LogisimVersion.fromString(test).toString());
