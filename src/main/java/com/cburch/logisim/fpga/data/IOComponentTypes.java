@@ -66,6 +66,10 @@ public enum IOComponentTypes {
    * Open and constant are used in the map dialog to be able to map IOcomponents
    * to a constant or a open (hence no connection external of the FPGA/CPLD).
    */
+  
+  public final static int rotationZero = 0;
+  public final static int rotationMinusNinety = -90;
+  public final static int rotationPlusNinety = 90;
 
   public static IOComponentTypes getEnumFromString(String str) {
     for (var elem : KnownComponentSet) {
@@ -136,6 +140,42 @@ public enum IOComponentTypes {
       case DIPSwitch : return DipSwitch.getInputLabel(id);
       case LocalBus  : return ReptarLocalBus.getInputLabel(id);
       default        : return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
+    }
+  }
+  
+  public static Boolean hasRotationAttribute(IOComponentTypes comp) {
+    switch (comp) {
+      case DIPSwitch :
+      case SevenSegment :
+      case LEDArray : return true;
+      default : return false;
+    }
+  }
+  
+  public static String getRotationString(IOComponentTypes comp, int rotation) {
+    switch (comp) {
+      case DIPSwitch : {
+        switch (rotation) {
+          case rotationMinusNinety : return S.get("dipSwitchMinusNinety");
+          case rotationPlusNinety : return S.get("dipSwitchPlusNinety");
+          default : return S.get("dipSwitchZero");
+        }
+      }
+      case SevenSegment : {
+        switch (rotation) {
+          case rotationMinusNinety : return S.get("SevenSegmentMinusNinety");
+          case rotationPlusNinety : return S.get("SevenSegmentPlusNinety");
+          default : return S.get("SevenSegmentZero");
+        }
+      }
+      case LEDArray : {
+        switch (rotation) {
+          case rotationMinusNinety : return S.get("LEDArrayMinusNinety");
+          case rotationPlusNinety : return S.get("LEDArrayPlusNinety");
+          default : return S.get("LEDArrayZero");
+        }
+      }
+      default : return Integer.toString(rotation);
     }
   }
 
