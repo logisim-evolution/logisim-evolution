@@ -70,6 +70,11 @@ public class Attributes {
     public ComponentMapInformationContainer parse(String value) {
       return null;
     }
+    
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
 
     @Override
     public boolean isHidden() {

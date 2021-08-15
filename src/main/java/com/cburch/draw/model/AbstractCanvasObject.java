@@ -168,7 +168,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return true;
+    return attr.isToSave();
   }
 
   @Override

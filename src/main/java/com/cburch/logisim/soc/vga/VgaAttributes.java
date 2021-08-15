@@ -134,7 +134,7 @@ public class VgaAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != VGA_STATE;
+    return attr.isToSave() && attr != VGA_STATE;
   }
 
   @Override

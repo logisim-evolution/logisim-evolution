@@ -41,7 +41,6 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -66,7 +65,6 @@ import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -342,10 +340,10 @@ class XmlReader {
     }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
-      final var pins = new HashMap<Location, Instance>();
+      final var pins = new ArrayList<AppearanceSvgReader.pinInfo>();
       for (final var comp : circData.knownComponents.values()) {
         if (comp.getFactory() == Pin.FACTORY) {
-          pins.put(comp.getLocation(), Instance.getInstanceFor(comp));
+          pins.add(AppearanceSvgReader.getPinInfo(comp.getLocation(), Instance.getInstanceFor(comp)));
         }
       }
 

@@ -817,7 +817,25 @@ public class Circuit {
   }
 
   public boolean hasConflict(Component comp) {
-    return wires.points.hasConflict(comp);
+    return wires.points.hasConflict(comp) || isDoubleMapped(comp);
+  }
+  
+  private boolean isDoubleMapped(Component comp) {
+    final var loc = comp.getLocation();
+    final var existing = wires.points.getNonWires(loc);
+    for (final var existingComp : existing) {
+      if (existingComp.getFactory().equals(comp.getFactory())) {
+        /* we make an exception for the pin in case we have an input placed on an output */
+        if (comp.getFactory() instanceof Pin) {
+          final var dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
+          final var dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
+          if (dir1 == dir2) return true;
+        } else { 
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public boolean isConnected(Location loc, Component ignore) {

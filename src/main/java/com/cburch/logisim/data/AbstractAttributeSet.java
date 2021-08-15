@@ -105,7 +105,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return true;
+    return attr.isToSave();
   }
 
   @Override
