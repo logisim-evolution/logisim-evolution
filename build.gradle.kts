@@ -81,7 +81,7 @@ java {
 
 task<Jar>("sourcesJar") {
   group = "build"
-  description = "Creates a source JAR archive file."
+  description = "Creates a source JAR archive."
   dependsOn.add("classes")
   classifier = "src"
 
@@ -145,7 +145,7 @@ tasks.register("createDistDir") {
  */
 tasks.register("createDeb") {
   group = "build"
-  description = "Makes DEB Linux package file."
+  description = "Makes DEB Linux installation package."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
@@ -171,7 +171,7 @@ tasks.register("createDeb") {
  */
 tasks.register("createRpm") {
   group = "build"
-  description = "Makes RPM Linux package file."
+  description = "Makes RPM Linux installation package."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
@@ -200,7 +200,7 @@ tasks.register("createRpm") {
  */
 tasks.register("createMsi") {
   group = "build"
-  description = "Makes the Windows platform specific package."
+  description = "Makes the Windows installation package."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/windows")
@@ -222,7 +222,7 @@ tasks.register("createMsi") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating the MSI package file.")
+        throw GradleException("Error while creating the MSI package.")
       }
     }
   }
@@ -303,7 +303,7 @@ tasks.register("createApp") {
  */
 tasks.register("createDmg") {
   group = "build"
-  description = "Makes the Mac DMG package file."
+  description = "Makes the macOS DMG package."
   dependsOn("createApp")
   inputs.dir(ext.get("appDirName") as String)
   outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
