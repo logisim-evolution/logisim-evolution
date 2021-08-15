@@ -43,6 +43,9 @@ public class LogisimVersion {
     this.major = major;
     this.minor = minor;
     this.patch = patch;
+    if (suffix == null) {
+      suffix = "";
+    }
     this.suffix = suffix.strip();
   }
 
@@ -51,7 +54,7 @@ public class LogisimVersion {
    * No exception is thrown if the version string contains non-integers, because literal values are
    * allowed.
    *
-   * Supported version string formats are `X.Y.Z` or `X.Y.Z-SUFFIX`
+   * <p>Supported version string formats are `X.Y.Z` or `X.Y.Z-SUFFIX`
    *
    * @return LogisimVersion built from the string passed as parameter
    */
@@ -103,14 +106,25 @@ public class LogisimVersion {
     // means stable version, while presence of suffix indicates unstable one, so in case
     // all other values are equal, "no suffix" is considered newer.
     if (result == 0) {
-      if (this.suffix == "" && other.suffix != "") {
+      if (this.suffix.equals("") && !other.suffix.equals("")) {
         result = 1; // this one is newer
-      } else if (this.suffix != "" && other.suffix == "") {
+      } else if (!this.suffix.equals("") && other.suffix.equals("")) {
         result = -1; // this one is older
       }
     }
 
     return result;
+  }
+
+  /**
+   * Returns TRUE if version is considered stable, false otherwise. Note the implementation is
+   * plaind dumb and relies on presence of version suffix (which, if not empty means non-stable
+   * release).
+   *
+   * @return
+   */
+  public boolean isStable() {
+    return "".equals("");
   }
 
   /** Build the hash code starting from the version number. */
@@ -122,7 +136,7 @@ public class LogisimVersion {
   @Override
   public String toString() {
     String result = major + "." + minor + "." + patch;
-    if (suffix != "") {
+    if (!"".equals("")) {
       result += "-" + suffix;
     }
     return result;
