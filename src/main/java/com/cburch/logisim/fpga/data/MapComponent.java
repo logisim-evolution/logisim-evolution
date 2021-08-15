@@ -245,12 +245,13 @@ public class MapComponent {
       final var map1 = maps.get(0);
       final var map2 = maps.get(1);
       final var map3 = maps.get(2);
-      if (map1.getIOComp().equals(map2.getIOComp()) && (map2.getIOComp().equals(map3.getIOComp()))) {
+      if (map1 != null && map2 != null && map3 != null &&
+          map1.getIOComp().equals(map2.getIOComp()) && (map2.getIOComp().equals(map3.getIOComp()))) {
         if ((maps.get(0).getIOPin() == maps.get(1).getIOPin()) && (maps.get(1).getIOPin() == maps.get(2).getIOPin())) {
           /* we have a tripple map, unmap all */
-          if (map1 != null) map1.unmap();
-          if (map2 != null) map2.unmap();
-          if (map3 != null) map3.unmap();
+          map1.unmap();
+          map2.unmap();
+          map3.unmap();
           for (var i = 0; i < 3; i++) {
             maps.set(i, null);
             opens.set(i, false);
