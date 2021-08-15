@@ -51,7 +51,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
-abstract public class AbstractTtlGate extends InstanceFactory {
+public abstract class AbstractTtlGate extends InstanceFactory {
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
   protected final byte pinnumber;
@@ -315,7 +315,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
           else if (dir == Direction.NORTH)
             g.fillArc(xp + width / 2 - 7, yp + height - 11, 14, 14, 0, 180);
           else // east
-          g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
+            g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
         }
         if (i < this.pinnumber / 2) {
           if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
@@ -502,7 +502,7 @@ abstract public class AbstractTtlGate extends InstanceFactory {
         } else if (i == this.pinnumber / 2 - 1) { // GND
           if (hasvccgnd) {
             ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
-            ps[ps.length - 2].setToolTip(S.getter("GNDPin",Integer.toString(this.pinnumber / 2)));
+            ps[ps.length - 2].setToolTip(S.getter("GNDPin", Integer.toString(this.pinnumber / 2)));
           }
           portindex--;
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output
@@ -523,26 +523,25 @@ abstract public class AbstractTtlGate extends InstanceFactory {
     final var g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.fillRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.setColor(Color.black);
-    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16),
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.drawRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     final var wh1 = AppPreferences.getScaled(3);
     final var wh2 = AppPreferences.getScaled(2);
-    for (int y = 0 ; y < 3 ; y++) {
+    for (int y = 0; y < 3; y++) {
       g.setColor(Color.LIGHT_GRAY);
-      g.fillRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
-      g.fillRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+      g.fillRect(wh2, AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
+      g.fillRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
       g.setColor(Color.BLACK);
-      g.drawRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
-      g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+      g.drawRect(wh2, AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
+      g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
     }
-    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16),
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.drawRoundRect(AppPreferences.getScaled(6), 0, AppPreferences.getScaled(6), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.dispose();
   }
-
 
   @Override
   public String getHDLName(AttributeSet attrs) {

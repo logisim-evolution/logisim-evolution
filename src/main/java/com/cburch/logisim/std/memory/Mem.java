@@ -53,7 +53,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.io.File;
 import java.util.WeakHashMap;
 
-abstract public class Mem extends InstanceFactory {
+public abstract class Mem extends InstanceFactory {
   // Note: The code is meant to be able to handle up to 32-bit addresses, but
   // it
   // hasn't been debugged thoroughly. There are two definite changes I would
@@ -75,45 +75,41 @@ abstract public class Mem extends InstanceFactory {
       this.instance = instance;
     }
 
+    @Override
     public void bytesChanged(HexModel source, long start, long numBytes, long[] values) {
       instance.fireInvalidated();
     }
 
+    @Override
     public void metainfoChanged(HexModel source) {}
   }
 
   public static final int SymbolWidth = 200;
-  public static final Attribute<BitWidth> ADDR_ATTR =
-      Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
+  public static final Attribute<BitWidth> ADDR_ATTR = Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
 
-  public static final Attribute<BitWidth> DATA_ATTR =
-      Attributes.forBitWidth("dataWidth", S.getter("ramDataWidthAttr"));
-  public static final AttributeOption SEL_HIGH =
-      new AttributeOption("high", S.getter("stdTriggerHigh"));
+  public static final Attribute<BitWidth> DATA_ATTR = Attributes.forBitWidth("dataWidth", S.getter("ramDataWidthAttr"));
+  public static final AttributeOption SEL_HIGH = new AttributeOption("high", S.getter("stdTriggerHigh"));
 
-  public static final AttributeOption SEL_LOW =
-      new AttributeOption("low", S.getter("stdTriggerLow"));
+  public static final AttributeOption SEL_LOW = new AttributeOption("low", S.getter("stdTriggerLow"));
 
   public static final Attribute<AttributeOption> ATTR_SELECTION =
-      Attributes.forOption(
-          "Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
+      Attributes.forOption("Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
 
-  public static final AttributeOption SINGLE = new AttributeOption("single",S.getter("memSingle"));
-  public static final AttributeOption DUAL = new AttributeOption("dual",S.getter("memDual"));
-  public static final AttributeOption QUAD = new AttributeOption("quad",S.getter("memQuad"));
-  public static final AttributeOption OCTO = new AttributeOption("octo",S.getter("memOcto"));
-  public static final Attribute<AttributeOption> LINE_ATTR = Attributes.forOption("line", S.getter("memLineSize"),
-               new AttributeOption[] {SINGLE,DUAL,QUAD,OCTO});
-  public static final Attribute<Boolean> ALLOW_MISALIGNED =
-          Attributes.forBoolean("misaligned", S.getter("memMisaligned"));
-  static final AttributeOption WRITEAFTERREAD = new AttributeOption("war",S.getter("memWar"));
-  static final AttributeOption READAFTERWRITE = new AttributeOption("raw",S.getter("memRaw"));
+  public static final AttributeOption SINGLE = new AttributeOption("single", S.getter("memSingle"));
+  public static final AttributeOption DUAL = new AttributeOption("dual", S.getter("memDual"));
+  public static final AttributeOption QUAD = new AttributeOption("quad", S.getter("memQuad"));
+  public static final AttributeOption OCTO = new AttributeOption("octo", S.getter("memOcto"));
+  public static final Attribute<AttributeOption> LINE_ATTR =
+      Attributes.forOption("line", S.getter("memLineSize"), new AttributeOption[] {SINGLE, DUAL, QUAD, OCTO});
+  public static final Attribute<Boolean> ALLOW_MISALIGNED = Attributes.forBoolean("misaligned", S.getter("memMisaligned"));
+  static final AttributeOption WRITEAFTERREAD = new AttributeOption("war", S.getter("memWar"));
+  static final AttributeOption READAFTERWRITE = new AttributeOption("raw", S.getter("memRaw"));
   static final Attribute<AttributeOption> READ_ATTR = Attributes.forOption("readbehav", S.getter("memReadBehav"),
-               new AttributeOption[] {WRITEAFTERREAD,READAFTERWRITE});
-  public static final AttributeOption USEBYTEENABLES = new AttributeOption("byte",S.getter("memByte"));
-  public static final AttributeOption USELINEENABLES = new AttributeOption("line",S.getter("memLine"));
+               new AttributeOption[] {WRITEAFTERREAD, READAFTERWRITE});
+  public static final AttributeOption USEBYTEENABLES = new AttributeOption("byte", S.getter("memByte"));
+  public static final AttributeOption USELINEENABLES = new AttributeOption("line", S.getter("memLine"));
   public static final Attribute<AttributeOption> ENABLES_ATTR = Attributes.forOption("enables", S.getter("memEnables"),
-               new AttributeOption[] {USEBYTEENABLES,USELINEENABLES});
+               new AttributeOption[] {USEBYTEENABLES, USELINEENABLES});
   static final Attribute<Boolean> ASYNC_READ = Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
 
   // other constants
