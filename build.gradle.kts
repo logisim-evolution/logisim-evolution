@@ -28,7 +28,7 @@
 
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import kotlin.collections.ArrayList
 
 plugins {
