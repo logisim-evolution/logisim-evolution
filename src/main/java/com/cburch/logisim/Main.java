@@ -28,10 +28,13 @@
 
 package com.cburch.logisim;
 
+import com.cburch.logisim.generated.BuildInfo;
+
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
+import com.cburch.logisim.util.StringUtil;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -90,10 +93,12 @@ public class Main {
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final String APP_NAME = "Logisim-evolution";
-  public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
-  public static final int COPYRIGHT_YEAR = 2021;
+  public static final LogisimVersion VERSION = BuildInfo.version;
+  public static final String COPYRIGHT_YEARS = "2001-" + BuildInfo.currentYear;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
+  public static final String BUILD_ID = StringUtil.format("%s/%s", BuildInfo.gitBranch, BuildInfo.gitLastCommitHash);
+  public static final String BUILD_STAMP = BuildInfo.currentStamp;
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
