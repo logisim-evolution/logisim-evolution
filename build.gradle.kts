@@ -396,8 +396,6 @@ tasks.register("generateBuildInfoClassFile") {
  * Task: jpackage
  *
  * Umbrella task to create packages for all supported platforms.
- *
- * @deprecated will soon be removed.
  */
 tasks.register("jpackage") {
   group = "build"
