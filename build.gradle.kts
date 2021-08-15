@@ -89,18 +89,20 @@ task<Jar>("sourcesJar") {
 }
 
 extra.apply {
-  val df = SimpleDateFormat("yyyy")
-  val year = df.format(Date())
+  val baseFilename = "${project.name}-${project.version}"
+  set("targetFilePathBase", "${buildDir}/dist/${baseFilename}")
+
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
-  val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
-  val jPackageCmd = if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd
+  val jpackage = javaHome + File.separator + "bin" + File.separator + "jpackage"
+  val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
+  set("jPackageCmd", jPackageCmd)
   val parameters = ArrayList<String>(listOf(
       jPackageCmd,
       "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", "${project.name}-${project.version}-all.jar",
+      "--main-jar", "${baseFilename}-all.jar",
       "--app-version", project.version as String,
-      "--copyright", "Copyright © 2001–" + year + " Logisim-evolution developers",
+      "--copyright", "Copyright ©2001–" + SimpleDateFormat("yyyy").format(Date()) + " Logisim-evolution developers",
       "--dest", "${buildDir}/dist"
   ))
   val linuxParameters = ArrayList<String>(listOf(
@@ -112,26 +114,26 @@ extra.apply {
   ))
   set("sharedParameters", parameters)
   set("linuxParameters", linuxParameters)
-  set("jPackageCmd", jPackageCmd)
+
+  // macOS related stuff
   val uppercaseProjectName = project.name.substring(0,1).toUpperCase() + project.name.substring(1)
   set("uppercaseProjectName", uppercaseProjectName)
   set("appDirName", "${buildDir}/dist/${uppercaseProjectName}.app")
-  set("baseFilename", "${buildDir}/dist/${project.name}-${project.version}")
 }
 
 tasks.register("createDistDir") {
   group = "build"
-  description = "Creates the directory for distribution"
+  description = "Creates the directory for distribution."
   dependsOn("shadowJar")
   inputs.dir("${buildDir}/libs")
   outputs.dir("${buildDir}/dist")
   doLast {
     if (File("${buildDir}/libs").list().count() != 1) {
-      throw GradleException("${buildDir}/libs should just contain a single shadowJar file.")
+      throw GradleException("${buildDir}/libs should just contain a single shadowJar file. Try \"./gradlew clean\" first.")
     }
     val folder = File("${buildDir}/dist")
     if (!folder.exists() && !folder.mkdirs()) {
-      throw GradleException("Unable to create directory \"${buildDir}/dist\"")
+      throw GradleException("Unable to create directory \"${buildDir}/dist\".")
     }
   }
 }
@@ -147,7 +149,7 @@ tasks.register("createDeb") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("baseFilename") as String + "-1_amd64.deb")
+  outputs.file(ext.get("targetFilePathBase") as String + "-1_amd64.deb")
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -173,7 +175,7 @@ tasks.register("createRpm") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("baseFilename") as String + "-1.x86_64.rpm")
+  outputs.file(ext.get("targetFilePathBase") as String + "-1.x86_64.rpm")
   doLast {
     if (OperatingSystem.current().isLinux) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -202,7 +204,7 @@ tasks.register("createMsi") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/windows")
-  outputs.file(ext.get("baseFilename") as String + ".msi")
+  outputs.file(ext.get("targetFilePathBase") as String + ".msi")
   doLast {
     if (OperatingSystem.current().isWindows) {
       val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
@@ -220,7 +222,7 @@ tasks.register("createMsi") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating the .msi package")
+        throw GradleException("Error while creating the MSI package file.")
       }
     }
   }
@@ -253,7 +255,7 @@ tasks.register("createApp") {
       processBuilder1.command(parameters)
       val process1 = processBuilder1.start()
       if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating the .app directory")
+        throw GradleException("Error while creating the .app directory.")
       }
       val pListFilename = "${appDirName}/Contents/Info.plist"
       val parameters2 = ArrayList<String>(listOf(
@@ -270,7 +272,7 @@ tasks.register("createApp") {
       processBuilder2.command(parameters2)
       val process2 = processBuilder2.start()
       if (process2.waitFor() != 0) {
-        throw GradleException("Error while patching Info.plist")
+        throw GradleException("Error while patching Info.plist file.")
       }
       val parameters3 = ArrayList<String>(listOf(
           "mv", "${buildDir}/dist/Info.plist", pListFilename
@@ -279,7 +281,7 @@ tasks.register("createApp") {
       processBuilder3.command(parameters3)
       val process3 = processBuilder3.start()
       if (process3.waitFor() != 0) {
-        throw GradleException("Error while moving Info.plist into the .app directory")
+        throw GradleException("Error while moving Info.plist into the .app directory.")
       }
       val parameters4 = ArrayList<String>(listOf(
           "codesign", "--remove-signature", appDirName
@@ -304,7 +306,7 @@ tasks.register("createDmg") {
   description = "Makes the Mac DMG package file."
   dependsOn("createApp")
   inputs.dir(ext.get("appDirName") as String)
-  outputs.file(ext.get("baseFilename") as String + ".dmg")
+  outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
   doLast {
     if (OperatingSystem.current().isMacOsX) {
       val parameters1 = ArrayList<String>(listOf(
@@ -388,7 +390,6 @@ tasks.register("generateBuildInfoClassFile") {
   doLast {
     file(projectInfoDir).mkdirs()
     file(projectInfoFile).writeText(lines.joinToString("\n"))
-//    println(projectInfoFile)
   }
 }
 
