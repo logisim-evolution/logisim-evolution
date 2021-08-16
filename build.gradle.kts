@@ -355,6 +355,9 @@ tasks.register("generateBuildInfoClassFile") {
   val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
   val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
 
+  inputs.files(fileTree("src/main")).withPropertyName("sourceFiles")
+  outputs.dir(projectInfoDir)
+
   val branch = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
   val lastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
   val currentYear = SimpleDateFormat("yyyy").format(Date())
