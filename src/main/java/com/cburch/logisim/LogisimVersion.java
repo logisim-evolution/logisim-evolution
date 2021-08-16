@@ -124,7 +124,7 @@ public class LogisimVersion {
    * @return
    */
   public boolean isStable() {
-    return "".equals("");
+    return suffix.equals("");
   }
 
   /** Build the hash code starting from the version number. */

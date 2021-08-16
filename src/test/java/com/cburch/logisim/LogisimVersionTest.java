@@ -34,6 +34,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -96,5 +97,20 @@ public class LogisimVersionTest {
     newer = new LogisimVersion(1, 2, 4);
     assertEquals(older, older);
     assertNotEquals(older, newer);
+  }
+
+  @Test
+  public void testIsStable() {
+    final var tests =
+        new HashMap<String, Boolean>() {
+          {
+            put("1.2.3", true);
+            put("1.2.3-rc1", false);
+          }
+        };
+    for (final var test : tests.entrySet()) {
+      final var version = LogisimVersion.fromString(test.getKey());
+      assertEquals(test.getValue(), version.isStable());
+    }
   }
 }
