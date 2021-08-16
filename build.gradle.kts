@@ -355,6 +355,7 @@ tasks.register("generateBuildInfoClassFile") {
   val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
   val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
 
+  // FIXME: we should not have hardcoded path here but use default sourcesSet.
   inputs.files(fileTree("src/main")).withPropertyName("sourceFiles")
   outputs.dir(projectInfoDir)
 
