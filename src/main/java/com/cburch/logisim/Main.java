@@ -92,7 +92,9 @@ public class Main {
 
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-  public static final String APP_NAME = "Logisim-evolution";
+  // @deprecated use BuildInfo instead
+  public static final String APP_NAME = BuildInfo.name;
+  // @deprecated use BuildInfo instead
   public static final LogisimVersion VERSION = BuildInfo.version;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
