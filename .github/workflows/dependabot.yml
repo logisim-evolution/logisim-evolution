@@ -29,6 +29,7 @@ on:
   # Schedule a daily check. Useful if you reference cross-repository
   # issues or pull requests. Can be removed otherwise.
   schedule:
+    #        m h dom mon dow
     - cron: '0 0 * * *'
 
 jobs:
