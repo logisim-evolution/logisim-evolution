@@ -1,0 +1,56 @@
+#
+# Logisim-evolution PR/Issue cross dependency checker
+# https://github.com/logisim-evolution/logisim-evolution
+#
+# Github Action that looks for "DEPENDS_ON" and "BLOCKED_BY" keywords in PR
+# description and then
+# from Logisim-evolution's "develop" branch. It assumes to be invoked
+# daily (once per 24 hrs) and skips building if there was no repo activity
+# during last 24 hours.
+#
+# Marcin Orlowski
+#
+name: Dependabot
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      # Makes sure we always add status check for PRs. Useful only if
+      # this action is required to pass before merging. Can be removed
+      # otherwise.
+      - synchronize
+
+  # Schedule a daily check. Useful if you reference cross-repository
+  # issues or pull requests. Can be removed otherwise.
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/marketplace/actions/dependent-issues
+      - uses: z0al/dependent-issues@v1
+        env:
+          # (Required) The token to use to make API calls to GitHub.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # (Optional) The token to use to make API calls to GitHub for remote repos.
+          # GITHUB_READ_TOKEN: ${{ secrets.GITHUB_READ_TOKEN }}
+        with:
+          # (Optional) The label to use to mark dependent issues
+          label: dependent
+
+          # (Optional) Enable checking for dependencies in issues.
+          # Enable by setting the value to "on". Default "off"
+          check_issues: off
+
+          # (Optional) A comma-separated list of keywords.
+          keywords: DEPENDS_ON, BLOCKED_BY
