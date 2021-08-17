@@ -92,7 +92,11 @@ task<Jar>("sourcesJar") {
 extra.apply {
   val suffix: String by project
   val version = if (suffix != "") "${project.version}-${suffix}" else "${project.version}"
+  // Full version number, i.e. "3.6.0", inc. [optional] release suffix, i.e. "beta1" -> "3.6.0beta1"
   set("appVersion", version)
+  // Bare Version number, ie. "3.6.0", without release suffix -> for "3.6.0beta1" it is "3.6.0".
+  // Use `appVersion` instead, unless absolutely needed.
+  set("appVersionShort", project.version)
 
   val baseFilename = "${project.name}-${version}"
   set("targetFilePathBase", "${buildDir}/dist/${baseFilename}")
@@ -348,7 +352,7 @@ tasks.register("createDmg") {
           "--type", "dmg",
           "--app-image", ext.get("appDirName") as String,
           "--name", project.name,
-          "--app-version", ext.get("appVersion") as String,
+          "--app-version", ext.get("appVersionShort") as String,
           "--dest", "${buildDir}/dist"
       ))
       val processBuilder1 = ProcessBuilder()
