@@ -361,33 +361,38 @@ tasks.register("generateBuildInfoClassFile") {
   inputs.files("$projectDir/gradle.properties", "$projectDir/README.md", "$projectDir/LICENSE.md")
   outputs.dir(projectInfoDir)
 
-  val branch = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
-  val lastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
-  val currentYear = SimpleDateFormat("yyyy").format(Date())
-  val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
-  val currentStampIso8601 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date())
+  val now = Date()
+  val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
+  val branchLastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
+  val currentMillis = Date().time
 
   // Project properties can be accessed via delegation
   val suffix: String by project
 
-  var lines = arrayOf(
+  var buildInfoClass = arrayOf(
     "// ************************************************************************",
     "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
     "// Use './gradlew generateBuildInfoClassFile' to regenerate if needed.",
-    "// Generated at ${currentStampIso8601}",
+    "// Generated at " + SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now),
     "// ************************************************************************",
     "",
     "package com.cburch.logisim.generated;",
     "",
     "import com.cburch.logisim.LogisimVersion;",
+    "import java.util.Date;",
     "",
     "public final class BuildInfo {",
-    "    public static final String gitBranch = \"${branch}\";",
-    "    public static final String gitLastCommitHash = \"${lastCommitHash}\";",
+    "    // Build time VCS details",
+    "    public static final String branchName = \"${branchName}\";",
+    "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
+    "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
     "",
-    "    public static final int currentYear = ${currentYear};",
-    "    public static final String currentDate = \"${currentDate}\";",
-    "    public static final String currentStamp = \"${currentStampIso8601}\";",
+    "    // Project build timestamp",
+    "    public static final long millis = ${currentMillis}L;",
+    "    public static final Date date = new Date();",
+    "    static { date.setTime(millis); }",
+    "",
+    "    // Project version",
     "    public static final LogisimVersion version = LogisimVersion.fromString(\"${project.version}\");",
     "    public static final String versionSuffix = \"${suffix}\";",
     "}",
@@ -395,7 +400,7 @@ tasks.register("generateBuildInfoClassFile") {
 
   doLast {
     file(projectInfoDir).mkdirs()
-    file(projectInfoFile).writeText(lines.joinToString("\n"))
+    file(projectInfoFile).writeText(buildInfoClass.joinToString("\n"))
   }
 }
 

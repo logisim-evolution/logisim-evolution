@@ -31,6 +31,8 @@ package com.cburch.logisim.gui.start;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -40,6 +42,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -61,7 +64,8 @@ class AboutCredits extends JComponent {
     lines = new Lines();
     lines
         .title(Main.APP_DISPLAY_NAME)
-        .h2("Copyright \u00A9" + Main.COPYRIGHT_YEARS + " " + Main.APP_NAME + " developers")
+        .h2(StringUtil.format("Copyright \u00A92001-%d %s developers",
+                String.valueOf(BuildInfo.date.getYear()), Main.APP_NAME))
         .url(Main.APP_URL)
         .space()
         .h1(S.get("creditsRoleFork"))
@@ -85,8 +89,11 @@ class AboutCredits extends JComponent {
         .space()
         .space()
         .h1(S.get("creditsBuildInfo"))
-        .text(S.get("creditsCompiled", Main.BUILD_STAMP))
-        .text(Main.BUILD_ID);
+        .text(
+            S.get(
+                "creditsCompiled",
+                (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")).format(BuildInfo.millis)))
+        .text(BuildInfo.buildId);
   }
 
   private long startMillis = 0;

@@ -94,11 +94,8 @@ public class Main {
 
   public static final String APP_NAME = "Logisim-evolution";
   public static final LogisimVersion VERSION = BuildInfo.version;
-  public static final String COPYRIGHT_YEARS = "2001-" + BuildInfo.currentYear;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
-  public static final String BUILD_ID = StringUtil.format("%s/%s", BuildInfo.gitBranch, BuildInfo.gitLastCommitHash);
-  public static final String BUILD_STAMP = BuildInfo.currentStamp;
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
