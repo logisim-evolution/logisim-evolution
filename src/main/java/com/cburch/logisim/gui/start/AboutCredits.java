@@ -64,8 +64,7 @@ class AboutCredits extends JComponent {
     lines = new Lines();
     lines
         .title(Main.APP_DISPLAY_NAME)
-        .h2(StringUtil.format("Copyright \u00A92001-%d %s developers",
-                String.valueOf(BuildInfo.date.getYear()), Main.APP_NAME))
+        .h2(StringUtil.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, Main.APP_NAME))
         .url(Main.APP_URL)
         .space()
         .h1(S.get("creditsRoleFork"))
