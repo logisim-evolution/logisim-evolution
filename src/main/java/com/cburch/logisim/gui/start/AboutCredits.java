@@ -88,10 +88,7 @@ class AboutCredits extends JComponent {
         .space()
         .space()
         .h1(S.get("creditsBuildInfo"))
-        .text(
-            S.get(
-                "creditsCompiled",
-                (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")).format(BuildInfo.millis)))
+        .text(S.get("creditsCompiled", BuildInfo.dateIso8601))
         .text(BuildInfo.buildId);
   }
 

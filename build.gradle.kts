@@ -430,6 +430,7 @@ tasks.register("generateBuildInfoClassFile") {
       "    // Project build timestamp",
       "    public static final long millis = ${currentMillis}L;",
       "    public static final String year = \"${buildYear}\";",
+      "    public static final String dateIso8601 = \"" + (SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")).format(now.time) + "\";",
       "    public static final Date date = new Date();",
       "    static { date.setTime(millis); }",
       "",
