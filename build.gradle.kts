@@ -355,8 +355,10 @@ tasks.register("generateBuildInfoClassFile") {
   val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
   val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
 
-  // FIXME: we should not have hardcoded path here but use default sourcesSet.
-  inputs.files(fileTree("src/main")).withPropertyName("sourceFiles")
+  // TODO: we should not have hardcoded path here but use default sourcesSet maybe?
+  inputs.dir("$projectDir/src")
+  inputs.dir("$projectDir/support")
+  inputs.files("$projectDir/gradle.properties", "$projectDir/README.md", "$projectDir/LICENSE.md")
   outputs.dir(projectInfoDir)
 
   val branch = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
