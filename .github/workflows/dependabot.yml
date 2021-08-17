@@ -2,11 +2,9 @@
 # Logisim-evolution PR/Issue cross dependency checker
 # https://github.com/logisim-evolution/logisim-evolution
 #
-# Github Action that looks for "DEPENDS_ON" and "BLOCKED_BY" keywords in PR
-# description and then
-# from Logisim-evolution's "develop" branch. It assumes to be invoked
-# daily (once per 24 hrs) and skips building if there was no repo activity
-# during last 24 hours.
+# Github Action that looks for "DEPENDS_ON <ID>" and "BLOCKED_BY <ID>"
+# in PR description and checks state of referenced PRs ensure these
+# are merged first.
 #
 # Marcin Orlowski
 #
