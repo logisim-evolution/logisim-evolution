@@ -368,7 +368,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     if (project.isFileDirty()) {
       // Mind leading space!
-      title.append(" \u0001f4be");
+      title.append(" *");
     }
     title.append(" · v" + BuildInfo.version);
 
