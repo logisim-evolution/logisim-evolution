@@ -91,11 +91,13 @@ task<Jar>("sourcesJar") {
 
 extra.apply {
   val suffix: String by project
-  val version = if (suffix != "") "${project.version}-${suffix}" else "${project.version}"
-  // Full version number, i.e. "3.6.0", inc. [optional] release suffix, i.e. "beta1" -> "3.6.0beta1"
-  set("appVersion", version)
-  // Bare Version number, ie. "3.6.0", without release suffix -> for "3.6.0beta1" it is "3.6.0".
-  // Use `appVersion` instead, unless absolutely needed.
+  // Full version number, i.e. "3.6.0", inc. [optional] release suffix, i.e. "beta1" -> "3.6.0beta1".
+  // NOTE: suffix is prefixed with `-` which I remove here because `jpackage` tool do not like it when
+  // used to build RPM package (DEB is fine though).
+  var version = (if (suffix != "") "${project.version}-${suffix}" else "${project.version}").replace("-", "")
+
+  // Short version, i.e. "3.6.0" (no suffix: for "3.6.0beta1" it is "3.6.0"). Use `appVersion` instead!
+  // This is mostly used by DMG builder as version numbering rule is pretty strict on macOS.
   set("appVersionShort", project.version)
 
   val baseFilename = "${project.name}-${version}"
