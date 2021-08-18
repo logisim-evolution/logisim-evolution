@@ -89,6 +89,7 @@ public class Main {
 
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
+  // FIXME: this should not be here. We need separate class for all these consts!
   public static final String APP_NAME = "Logisim-evolution";
   public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
   public static final int COPYRIGHT_YEAR = 2021;
@@ -98,6 +99,10 @@ public class Main {
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
+
+  // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
+  public static final String DIRTY_MARKER = "\ud83d\udcbe";
+
 
   public static boolean hasGui() {
     return !headless;
