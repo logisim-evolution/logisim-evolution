@@ -288,6 +288,7 @@ tasks.register("createApp") {
         "--name", ext.get("uppercaseProjectName") as String,
         "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
         "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
+        "--app-version", ext.get("appVersionShort") as String,
         "--type", "app-image"
     ))
     val processBuilder1 = ProcessBuilder()
@@ -346,21 +347,23 @@ tasks.register("createDmg") {
   inputs.dir(ext.get("appDirName") as String)
   outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
   doLast {
-    if (OperatingSystem.current().isMacOsX) {
-      val parameters1 = ArrayList<String>(listOf(
-          ext.get("jPackageCmd") as String,
-          "--type", "dmg",
-          "--app-image", ext.get("appDirName") as String,
-          "--name", project.name,
-          "--app-version", ext.get("appVersionShort") as String,
-          "--dest", "${buildDir}/dist"
-      ))
-      val processBuilder1 = ProcessBuilder()
-      processBuilder1.command(parameters1)
-      val process1 = processBuilder1.start()
-      if (process1.waitFor() != 0) {
-        throw GradleException("Error while creating the DMG package")
-      }
+    if (!OperatingSystem.current().isMacOsX) {
+      throw GradleException("This task runs on macOS only.")
+    }
+
+    val parameters1 = ArrayList<String>(listOf(
+        ext.get("jPackageCmd") as String,
+        "--type", "dmg",
+        "--app-image", ext.get("appDirName") as String,
+        "--name", project.name,
+        "--app-version", ext.get("appVersion") as String,
+        "--dest", "${buildDir}/dist"
+    ))
+    val processBuilder1 = ProcessBuilder()
+    processBuilder1.command(parameters1)
+    val process1 = processBuilder1.start()
+    if (process1.waitFor() != 0) {
+      throw GradleException("Error while creating the DMG package")
     }
   }
 }
