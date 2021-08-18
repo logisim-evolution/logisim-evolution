@@ -95,6 +95,7 @@ extra.apply {
   // NOTE: suffix is prefixed with `-` which I remove here because `jpackage` tool do not like it when
   // used to build RPM package (DEB is fine though).
   var version = (if (suffix != "") "${project.version}-${suffix}" else "${project.version}").replace("-", "")
+  set("appVersion", version)
 
   // Short version, i.e. "3.6.0" (no suffix: for "3.6.0beta1" it is "3.6.0"). Use `appVersion` instead!
   // This is mostly used by DMG builder as version numbering rule is pretty strict on macOS.
@@ -173,10 +174,6 @@ tasks.register("createDeb") {
     val procBuilder = ProcessBuilder()
     procBuilder.command(parameters)
 
-    println()
-    println(procBuilder.command().joinToString(" "))
-    println()
-
     val builderProcess = procBuilder.start()
     if (builderProcess.waitFor() != 0) {
       throw GradleException("Error while creating the DEB package.")
@@ -210,20 +207,9 @@ tasks.register("createRpm") {
     val processBuilder2 = ProcessBuilder()
     processBuilder2.command(parameters)
 
-    println()
-    println(processBuilder2.command().joinToString(" "))
-    println()
-
     val process2 = processBuilder2.start()
-    processBuilder2.redirectOutput(Redirect.INHERIT);
-    processBuilder2.redirectError(Redirect.INHERIT);
     val rc = process2.waitFor()
     if (rc != 0) {
-//      BufferedReader rdr = new BufferedReader(isr);
-//      while((line = rdr.readLine()) != null) {
-//        System.out.println(line);
-//      }
-//      process2.outputStream.write(("stop" + System.getProperty("line.separator")).getBytes())
       throw GradleException("Error while creating the RPM package. Exit code: " + process2.exitValue())
     }
   }
