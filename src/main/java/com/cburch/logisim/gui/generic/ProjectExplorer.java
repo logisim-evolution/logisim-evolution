@@ -29,6 +29,7 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -78,7 +79,7 @@ import javax.swing.tree.TreeSelectionModel;
 public class ProjectExplorer extends JTree implements LocaleListener {
   public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
   private static final long serialVersionUID = 1L;
-  private static final String DIRTY_MARKER = "*";
+
   private final Project proj;
   private final MyListener myListener = new MyListener();
   private final MyCellRenderer renderer = new MyCellRenderer();
@@ -208,12 +209,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           label.setToolTipText(tool.getDescription());
         }
       } else if (value instanceof ProjectExplorerLibraryNode) {
-        ProjectExplorerLibraryNode libNode = (ProjectExplorerLibraryNode) value;
-        Library lib = libNode.getValue();
+        final var libNode = (ProjectExplorerLibraryNode) value;
+        final var lib = libNode.getValue();
 
         if (ret instanceof JLabel) {
-          String text = lib.getDisplayName();
-          if (lib.isDirty()) text += DIRTY_MARKER;
+          final var baseName = lib.getDisplayName();
+          var text = baseName;
+          if (lib.isDirty()) {
+            // TODO: Would be nice to use DIRTY_MARKER here instead of "*" but it does not render
+            // corectly in project tree, font seem to have the character as frame title is fine.
+            // Needs to figure out what is different (java fonts?). Keep "*" unless bug is resolved.
+            final var DIRTY_MARKER_LOCAL = "*"; // useless var for easy DIRTY_MARKER hunt in future.
+            text = DIRTY_MARKER_LOCAL + baseName;
+          }
 
           ((JLabel) ret).setText(text);
         }
