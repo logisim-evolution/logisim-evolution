@@ -288,13 +288,42 @@ public enum IOComponentTypes {
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
         final var indexes = getSevenSegmentDisplayArray(hasDp);
-        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
-        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
+        var partX = (float) 0;
+        var partY = (float) 0;
+        switch (mapRotation) {
+          case rotationPlusNinety :
+          case rotationMinusNinety : {
+            partX = (float) width / (float) 7;
+            partY = (float) height / (float) 5; 
+            break;
+          }
+          default : {
+            partX = (float) width / (float) 5;
+            partY = (float) height / (float) 7; 
+            break;
+          }
+        }
+        var xIndex = 0;
+        var yIndex = 0;
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++) {
-            var xpos = (width > height) ? (int) ((float) h / partx) : (int) ((float) w / partx);
-            var ypos = (width > height) ? (int) ((float) w / party) : (int) ((float) h / party);
-            PartialMap[w][h] = indexes[ypos][xpos];
+            switch (mapRotation) {
+              case rotationPlusNinety : {
+                xIndex = (int) ((float) (height - h - 1) / partY);
+                yIndex = (int) ((float) w / partX);
+                break;
+              }
+              case rotationMinusNinety : {
+                xIndex = (int) ((float) h / partY);
+                yIndex = (int) ((float) (width - w - 1) / partX);
+                break;
+              }
+              default : {
+                xIndex = (int) ((float) w / partX);
+                yIndex = (int) ((float) h / partY);
+              }
+            }
+            PartialMap[w][h] = indexes[yIndex][xIndex];
           }
         break;
       }
@@ -375,18 +404,56 @@ public enum IOComponentTypes {
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : {
         final var indexes = getSevenSegmentDisplayArray(hasDp);
-        final var partx = (width > height) ? (float) height / (float) 5.0 : (float) width / (float) 5.0;
-        final var party = (width > height) ? (float) width / (float) 7.0 : (float) height / (float) 7.0;
-        for (var xpos = 0; xpos < 5; xpos++) {
-          for (var ypos = 0; ypos < 7; ypos++) {
-            if (indexes[ypos][xpos] == pinNr) {
-              final var bx = (width > height) ? x + (int) ((float) ypos * party) : x + (int) ((float) xpos * partx);
-              final var by = (width > height) ? y + (int) ((float) xpos * partx) : y + (int) ((float) ypos * party);
-              final var bw = (width > height) ? x + (int) ((float) (ypos + 1) * party) - bx :
-                  x + (int) ((float) (xpos + 1) * partx) - bx;
-              final var bh = (width > height) ? y + (int) ((float) (xpos + 1) * partx) - by : 
-                  y + (int) ((float) (ypos + 1) * party) - by;
-              g.fillRect(bx, by, bw, bh);
+        var partX = (float) 0;
+        var partY = (float) 0;
+        switch (mapRotation) {
+          case rotationPlusNinety :
+          case rotationMinusNinety : {
+            partX = (float) width / (float) 7;
+            partY = (float) height / (float) 5; 
+            break;
+          }
+          default : {
+            partX = (float) width / (float) 5;
+            partY = (float) height / (float) 7; 
+            break;
+          }
+        }
+        var realXIndex = 0;
+        var realXIndexPlusOne = 0;
+        var realYIndex = 0;
+        var realYIndexPlusOne = 0;
+        for (var xIndex = 0; xIndex < 5; xIndex++) {
+          for (var yIndex = 0; yIndex < 7; yIndex++) {
+            if (indexes[yIndex][xIndex] == pinNr) {
+              switch (mapRotation) {
+                case rotationPlusNinety : {
+                  realXIndex = yIndex;
+                  realXIndexPlusOne = yIndex  + 1;
+                  realYIndex = 4 - xIndex;
+                  realYIndexPlusOne = 5 - xIndex;
+                  break;
+                }
+                case rotationMinusNinety : {
+                  realXIndex = 6 - yIndex;
+                  realXIndexPlusOne = 7 - yIndex;
+                  realYIndex = xIndex;
+                  realYIndexPlusOne = xIndex + 1;
+                  break;
+                }
+                default : {
+                  realXIndex = xIndex;
+                  realXIndexPlusOne = xIndex + 1;
+                  realYIndex = yIndex;
+                  realYIndexPlusOne = yIndex + 1;
+                  break;
+                }
+              }
+              final var boxX = x + (int) ((float) realXIndex * partX);
+              final var boxY = y + (int) ((float) realYIndex * partY);
+              final var boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
+              final var boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
+              g.fillRect(boxX, boxY, boxWidth, boxHeight);
             }
           }
         }
