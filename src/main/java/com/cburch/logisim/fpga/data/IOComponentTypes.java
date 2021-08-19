@@ -67,9 +67,9 @@ public enum IOComponentTypes {
    * to a constant or a open (hence no connection external of the FPGA/CPLD).
    */
   
-  public final static int rotationZero = 0;
-  public final static int rotationMinusNinety = -90;
-  public final static int rotationPlusNinety = 90;
+  public static final int rotationZero = 0;
+  public static final int rotationMinusNinety = -90;
+  public static final int rotationPlusNinety = 90;
 
   public static IOComponentTypes getEnumFromString(String str) {
     for (var elem : KnownComponentSet) {
@@ -146,8 +146,8 @@ public enum IOComponentTypes {
   public static Boolean hasRotationAttribute(IOComponentTypes comp) {
     switch (comp) {
       case DIPSwitch :
-      case SevenSegment :
-      case LEDArray : return true;
+        case SevenSegment :
+        case LEDArray : return true;
       default : return false;
     }
   }
@@ -407,14 +407,14 @@ public enum IOComponentTypes {
             boxXpos = x;
             boxWidth = width;
             boxYpos = y + (int) ((float) yPinNr * part);
-            boxHeight = (int) ((float) (yPinNr+1) * part) - (int) ((float) yPinNr * part);
+            boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
             break;
           }
           default : {
             part = (float) width / (float) nrOfPins;
             boxXpos = x + (int) ((float) pinNr * part);
             boxYpos = y;
-            boxWidth = (int) ((float) (pinNr+1) * part) - (int) ((float) (pinNr * part));
+            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) ((float) (pinNr * part));
             boxHeight = height;
             break;
           }
