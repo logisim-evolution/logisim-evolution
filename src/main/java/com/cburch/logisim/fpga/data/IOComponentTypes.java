@@ -146,9 +146,13 @@ public enum IOComponentTypes {
   public static Boolean hasRotationAttribute(IOComponentTypes comp) {
     switch (comp) {
       case DIPSwitch :
-        case SevenSegment :
-        case LEDArray : return true;
-      default : return false;
+      case SevenSegment :
+      case LEDArray : {
+        return true;
+      }
+      default : {
+        return false;
+      }
     }
   }
   
