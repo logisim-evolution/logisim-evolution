@@ -70,7 +70,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (var ledMatrixCol = 0; ledMatrixCol < cols; ledMatrixCol++) {
           final var wire = (rows == 1) ? GetNetName(componentInfo, ledMatrixCol, true, netlist) 
               : GetBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
-          final var idx = ledMatrixRow * cols + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
+          final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
               + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
@@ -89,7 +89,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           final var ledMatrixCol = cols - dotMatrixCol - 1;
           final var wire = (cols == 1) ? GetNetName(componentInfo, ledMatrixRow, true, netlist)
               : GetBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
-          final var idx = ledMatrixRow * cols + dotMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
+          final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
@@ -110,7 +110,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               : GetBusEntryName(componentInfo, 1, true, dotMatrixRow, netlist);
           final var colWire = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
               : GetBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
-          final var idx = ledMatrixRow * cols + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
+          final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() 
                 + rowWire + HDL.andOperator() + colWire + ";");
