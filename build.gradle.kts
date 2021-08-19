@@ -336,7 +336,7 @@ tasks.register("createMsi") {
         "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
         "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
         "--type", "msi",
-        "--win-menu-group", "logisim",
+        "--win-menu-group", "${project.name}",
         "--win-shortcut",
         "--win-dir-chooser",
         "--win-menu"
@@ -368,6 +368,8 @@ tasks.register("createApp") {
     val appDirName = ext.get("appDirName") as String
     delete(appDirName)
 
+    val distDir = "${buildDir}/dist"
+
     var params = ext.get("sharedParameters") as List<String>
     params += listOf(
       "--name", ext.get("uppercaseProjectName") as String,
@@ -383,16 +385,16 @@ tasks.register("createApp") {
     runShellCommand(listOf(
       "awk",
       "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-              + "{print >\"${buildDir}/dist/Info.plist\"};"
+              + "{print >\"${distDir}/Info.plist\"};"
               + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${buildDir}/dist/Info.plist\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${buildDir}/dist/Info.plist\""
+              + "print \"  <string>true</string>\" >\"${distDir}/Info.plist\";"
+              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${distDir}/Info.plist\""
               + "}",
       pListFilename,
     ), "Error while patching Info.plist file.")
 
     runShellCommand(listOf(
-      "mv", "${buildDir}/dist/Info.plist", pListFilename
+      "mv", "${distDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runShellCommand(listOf(
