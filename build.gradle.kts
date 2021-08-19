@@ -568,16 +568,18 @@ tasks {
     }
 
     from(".") {
-      include("LICENSE")
+      include("LICENSE.md")
       include("README.md")
+      include("CHANGES.md")
     }
   }
   shadowJar {
     archiveBaseName.set(project.name)
     archiveVersion.set(ext.get("appVersion") as String)
     from(".") {
-      include("LICENSE")
+      include("LICENSE.md")
       include("README.md")
+      include("CHANGES.md")
     }
   }
 
