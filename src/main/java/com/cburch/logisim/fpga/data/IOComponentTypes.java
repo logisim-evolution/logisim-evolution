@@ -328,15 +328,43 @@ public enum IOComponentTypes {
         break;
       }
       case LEDArray: {
-        /* TODO: for the moment we assume that the columns are on the x-axis and the rows on the y-axis 
-         * rotated array's are not taking into account */
-        final var partx = (float) width / (float) nrOfColumns;
-        final var party = (float) height / (float) nrOfRows;
+        var partX = (float) 0;
+        var partY = (float) 0;
+        switch (mapRotation) {
+          case rotationPlusNinety :
+          case rotationMinusNinety : {
+            partX = (float) width / (float) nrOfRows;
+            partY = (float) height / (float) nrOfColumns;
+            break;
+          }
+          default : {
+            partX = (float) width / (float) nrOfColumns;
+            partY = (float) height / (float) nrOfRows;
+            break;
+          }
+        }
         for (var w = 0; w < width; w++) 
           for (var h = 0; h < height; h++) {
-            var xPos = (int) ((float) w / partx);
-            var yPos = (int) ((float) h / party);
-            PartialMap[w][h] = (yPos * nrOfColumns) + xPos;
+            var realRow = 0;
+            var realColumn = 0;
+            switch (mapRotation) {
+              case rotationPlusNinety : {
+                realRow = (int) ((float) w / partX);
+                realColumn = (int) ((float) (height - h - 1) / partY);
+                break;
+              }
+              case rotationMinusNinety : {
+                realRow = (int) ((float) (width - w - 1) / partX);
+                realColumn = (int) ((float) h / partY);
+                break;
+              }
+              default : {
+                realRow = (int) ((float) h / partY);
+                realColumn = (int) ((float) w / partX);
+                break;
+              }
+            }
+            PartialMap[w][h] = (realRow * nrOfColumns) + realColumn;
           }
         break;
       }
@@ -451,6 +479,7 @@ public enum IOComponentTypes {
               }
               final var boxX = x + (int) ((float) realXIndex * partX);
               final var boxY = y + (int) ((float) realYIndex * partY);
+              /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
               final var boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
               final var boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
               g.fillRect(boxX, boxY, boxWidth, boxHeight);
@@ -460,14 +489,54 @@ public enum IOComponentTypes {
         break;
       }
       case LEDArray: {
-        final var partx = (float) width / (float) nrOfColumns;
-        final var party = (float) height / (float) nrOfRows;
-        final var xPos = pinNr % nrOfColumns;
-        final var yPos = pinNr / nrOfColumns;
-        final var bx = x + (int) ((float) xPos * partx);
-        final var by = y + (int) ((float) yPos * party);
-        final var bw = x + (int) ((float) (xPos + 1) * partx) - bx;
-        final var bh = y + (int) ((float) (yPos + 1) * party) - by;
+        var partX = (float) 0;
+        var partY = (float) 0;
+        final var selectedColumn = pinNr % nrOfColumns;
+        final var selectedRow = pinNr / nrOfColumns;
+        switch (mapRotation) {
+          case rotationPlusNinety :
+          case rotationMinusNinety : {
+            partX = (float) width / (float) nrOfRows;
+            partY = (float) height / (float) nrOfColumns;
+            break;
+          }
+          default : {
+            partX = (float) width / (float) nrOfColumns;
+            partY = (float) height / (float) nrOfRows;
+            break;
+          }
+        }
+        var xPosition = 0;
+        var nextXPosition = 0;
+        var yPosition = 0;
+        var nextYPosition = 0;
+        switch (mapRotation) {
+          case rotationPlusNinety : {
+            xPosition = (int) ((float) selectedRow * partX);
+            nextXPosition = (int) ((float) (selectedRow + 1) * partX);
+            yPosition = (int) ((float) (nrOfColumns - selectedColumn - 1) * partY);
+            nextYPosition = (int) ((float) (nrOfColumns - selectedColumn) * partY);
+            break;
+          }
+          case rotationMinusNinety : {
+            xPosition = (int) ((float) (nrOfRows - selectedRow - 1) * partX);
+            nextXPosition = (int) ((float) (nrOfRows - selectedRow) * partX);
+            yPosition = (int) ((float) selectedColumn * partY);
+            nextYPosition = (int) ((float) (selectedColumn + 1) * partY);
+            break;
+          }
+          default : {
+            xPosition = (int) ((float) selectedColumn * partX);
+            nextXPosition = (int) ((float) (selectedColumn + 1) * partX);
+            yPosition = (int) ((float) selectedRow * partY);
+            nextYPosition = (int) ((float) (selectedRow + 1) * partY);
+            break;
+          }
+        }
+        final var bx = x + xPosition;
+        final var by = y + yPosition;
+        final var bw = nextXPosition - xPosition;
+        final var bh = nextYPosition - yPosition;
         g.fillRect(bx, by, bw, bh);
         break;
       }
