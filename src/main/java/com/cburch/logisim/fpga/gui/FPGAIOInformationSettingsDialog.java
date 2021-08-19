@@ -326,23 +326,6 @@ public class FPGAIOInformationSettingsDialog {
     ActionListener actionListener =
         e -> {
           switch (e.getActionCommand()) {
-            case "rotation" : {
-              final var selectedRotation = mapRotation.getSelectedIndex();
-              switch (selectedRotation) {
-                case 1 : {
-                  info.setMapRotation(IOComponentTypes.rotationMinusNinety);
-                  return;
-                }
-                case 2 : {
-                  info.setMapRotation(IOComponentTypes.rotationPlusNinety);
-                  return;
-                }
-                default : {
-                  info.setMapRotation(IOComponentTypes.rotationZero);
-                  return;
-                }
-              }
-            }
             case "inputSize": {
               var nr = (int) Inputsize.getSelectedItem();
               NrOfPins.put(INPUT_ID, nr);
@@ -443,8 +426,6 @@ public class FPGAIOInformationSettingsDialog {
           break;
         }
       }
-      mapRotation.addActionListener(actionListener);
-      mapRotation.setActionCommand("rotation");
       c.gridy++;
       c.gridwidth = 2;
       contents.add(panel, c);
@@ -786,6 +767,21 @@ public class FPGAIOInformationSettingsDialog {
           if (!IOComponentTypes.InOutComponentSet.contains(myType)) {
             IOcomps.SetDefaultActivity(ActiveInput.getSelectedIndex());
             info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
+          }
+          final var selectedRotation = mapRotation.getSelectedIndex();
+          switch (selectedRotation) {
+            case 1 : {
+              info.setMapRotation(IOComponentTypes.rotationMinusNinety);
+              break;
+            }
+            case 2 : {
+              info.setMapRotation(IOComponentTypes.rotationPlusNinety);
+              break;
+            }
+            default : {
+              info.setMapRotation(IOComponentTypes.rotationZero);
+              break;
+            }
           }
           abort = true;
         }
