@@ -396,8 +396,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     final var bw = (Math.max(s * w + 14, 100));
     final var bh = (Math.max(s * h + 14, 20));
 
-    x += -30;
-    y += -bh;
+    x += (-30);
+    y += (-bh);
 
     g.drawRoundRect(x, y, bw, bh, 6, 6);
     for (var i = 0; i < 6; i++) {

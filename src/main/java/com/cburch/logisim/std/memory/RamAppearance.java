@@ -109,7 +109,7 @@ public class RamAppearance {
         && attrs.getValue(RamAttributes.ATTR_ByteEnables).equals(RamAttributes.BUS_WITH_BYTEENABLES)
         && !async) {
       final var nrBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-      return(nrBits < 9) ? 0 : (nrBits + 7) >> 3;
+      return (nrBits < 9) ? 0 : (nrBits + 7) >> 3;
     }
     return 0;
   }

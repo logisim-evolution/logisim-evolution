@@ -91,9 +91,9 @@ public class FPNegator extends InstanceFactory {
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.BLACK);
-    g.drawLine(x-35, y-15, x-35, y+5);
-    g.drawLine(x-35, y-15, x-25, y-15);
-    g.drawLine(x-35, y-5, x-25, y-5);
+    g.drawLine(x - 35, y - 15, x - 35, y + 5);
+    g.drawLine(x - 35, y - 15, x - 25, y - 15);
+    g.drawLine(x - 35, y - 5, x - 25, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
   }
 
