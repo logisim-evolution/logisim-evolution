@@ -234,7 +234,7 @@ public class RightPanel extends JPanel {
     double f = model.getTimeScale() / tickWidth;
     curX = Math.max(0, posX);
     long t0 = model.getStartTime();
-    curT = +Math.max(t0, snapToPixel((long) f, (long) (t0 + curX * f)));
+    curT = Math.max(t0, snapToPixel((long) f, (long) (t0 + curX * f)));
     if (curT >= model.getEndTime()) {
       curX = Integer.MAX_VALUE; // pin to right side
       curT = Long.MAX_VALUE;

@@ -97,9 +97,9 @@ public class FPMultiplier extends InstanceFactory {
     g.drawLine(x - 15, y - 5, x - 5, y + 5);
     g.drawLine(x - 15, y + 5, x - 5, y - 5);
 
-    g.drawLine(x-35, y-15, x-35, y+5);
-    g.drawLine(x-35, y-15, x-25, y-15);
-    g.drawLine(x-35, y-5, x-25, y-5);
+    g.drawLine(x - 35, y - 15, x - 35, y + 5);
+    g.drawLine(x - 35, y - 15, x - 25, y - 15);
+    g.drawLine(x - 35, y - 5, x - 25, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
   }
 

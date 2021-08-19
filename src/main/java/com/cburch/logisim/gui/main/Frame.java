@@ -362,21 +362,32 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     final var circuit = project.getCurrentCircuit();
     final var name = project.getLogisimFile().getName();
     final var title = new StringBuilder();
-    title.append((circuit != null)
-            ? S.get("titleCircFileKnown", circuit.getName(), name)
-            : S.get("titleFileKnown", name));
 
-    if (project.isFileDirty()) {
-      // Mind leading space!
-      title.append(" *");
-    }
-    title.append(" · v" + BuildInfo.version);
+    title
+        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "") // keep the space
+        .append(
+            (circuit != null)
+                ? S.get("titleCircFileKnown", circuit.getName(), name)
+                : S.get("titleFileKnown", name))
+        .append(" · ")
+        .append(Main.APP_DISPLAY_NAME);
 
-    if (!com.cburch.logisim.generated.BuildInfo.version.isStable()) {
+    if (!BuildInfo.version.isStable()) {
       // Keep leading space!
-      title.append(" (ID:\"" + BuildInfo.buildId + "\", BUILT:" + BuildInfo.dateIso8601 + ")");
+      title
+          .append(" ")
+          .append(StringUtil.format("(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
     }
-    this.setTitle(title.toString().strip());
+
+    // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
+    title
+        .append(" ")
+        .append(
+            project.isFileDirty()
+                ? StringUtil.format("[%s]", S.get("titleUnsavedProjectState").toUpperCase())
+                : "");
+
+    this.setTitle(title.toString().trim());
     myProjectListener.enableSave();
   }
 

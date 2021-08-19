@@ -29,12 +29,10 @@
 package com.cburch.logisim;
 
 import com.cburch.logisim.generated.BuildInfo;
-
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
-import com.cburch.logisim.util.StringUtil;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -102,6 +100,10 @@ public class Main {
   public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean MacOS = MacCompatibility.isRunningOnMac();
+
+  // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
+  public static final String DIRTY_MARKER = "\ud83d\udcbe";
+
 
   public static boolean hasGui() {
     return !headless;

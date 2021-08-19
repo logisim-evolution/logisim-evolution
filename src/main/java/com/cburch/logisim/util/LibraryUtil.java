@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 
 public class LibraryUtil {
 
-  public final static String ID_FIELD_NAME = "_ID";
+  public static final String ID_FIELD_NAME = "_ID";
 
   /**
    * Tries to read unique identifier from object (mainly Library or Tool) stored in object's class
