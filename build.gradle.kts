@@ -29,7 +29,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.lang.ProcessBuilder.Redirect
+import java.io.*
 import kotlin.collections.ArrayList
 
 plugins {
@@ -104,54 +104,130 @@ extra.apply {
   val baseFilename = "${project.name}-${version}"
   set("targetFilePathBase", "${buildDir}/dist/${baseFilename}")
 
+  val shadowJarFilename = "${baseFilename}-all.jar"
+  set("shadowJarFilename", shadowJarFilename)
+
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
-  val jpackage = javaHome + File.separator + "bin" + File.separator + "jpackage"
+  val jpackage = "${javaHome}/bin/jpackage"
   val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
   set("jPackageCmd", jPackageCmd)
-  val sharedParameters = ArrayList<String>(listOf(
+
+  val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
+
+  // Platform-agnostic jpackage parameters shared across all the builds.
+  val params = ArrayList<String>(listOf(
       jPackageCmd,
     "--verbose",
       "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", "${baseFilename}-all.jar",
+      "--main-jar", shadowJarFilename,
       "--app-version", version,
-      "--copyright", "\"Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers\"",
+      "--copyright", "\"${copyrights}\"", // Must be quoted for shell happines.
       "--dest", "${buildDir}/dist"
   ))
-  val linuxParameters = ArrayList<String>(listOf(
+  set("sharedParameters", params)
+
+  // Linux (DEB/RPM) specific settings for jpackage.
+  params.addAll(arrayOf(
       "--name", project.name,
       "--file-associations", "${projectDir}/support/jpackage/linux/file.jpackage",
       "--icon", "${projectDir}/support/jpackage/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
   ))
-  set("sharedParameters", sharedParameters)
-  set("linuxParameters", linuxParameters)
+  set("linuxParameters", params)
 
-  // macOS related stuff
+  // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
   set("uppercaseProjectName", uppercaseProjectName)
   set("appDirName", "${buildDir}/dist/${uppercaseProjectName}.app")
 }
 
+/**
+ * Creates distribution directory and checks if source
+ *
+ */
 tasks.register("createDistDir") {
   group = "build"
   description = "Creates the directory for distribution."
   dependsOn("shadowJar")
-  inputs.dir("${buildDir}/libs")
+  val libsDir = "${buildDir}/libs"
+  inputs.dir(libsDir)
   outputs.dir("${buildDir}/dist")
-  doLast {
-    if (File("${buildDir}/libs").list().count() != 1) {
-      throw GradleException("${buildDir}/libs should just contain a single shadowJar file. Try \"./gradlew clean\" first.")
+
+  doFirst {
+    var jarFiles = File("${buildDir}/libs").list()
+    var jarCount = jarFiles.count()
+
+    if ( jarCount > 1) {
+      logger.warn("Expected 1 shadowJar file, found ${jarCount} in: ${libsDir}")
+
+      val shadowJarFilename = ext.get("shadowJarFilename") as String
+      val expectedShadowJar = File("${libsDir}/${shadowJarFilename}")
+      if (expectedShadowJar.exists()) {
+        logger.warn("Found expected: ${shadowJarFilename}")
+      }
+
+      for (file in jarFiles.filter { file -> file != shadowJarFilename }) {
+        logger.warn("Will remove: ${file}")
+      }
     }
-    val folder = File("${buildDir}/dist")
+  }
+
+  doLast {
+    val folder = File(libsDir)
     if (!folder.exists() && !folder.mkdirs()) {
-      throw GradleException("Unable to create directory \"${buildDir}/dist\".")
+      throw GradleException("Unable to create directory: ${folder.absolutePath}")
+    }
+
+    var jarFiles = File(libsDir).list()
+    var jarCount = jarFiles.count()
+    if ( jarCount > 1) {
+      val expected = ext.get("shadowJarFilename") as String
+      for (file in jarFiles.filter { file -> file != expected }) {
+        if (!delete("${libsDir}/${file}")) {
+          throw GradleException("Failed to remove file: ${file}")
+        }
+      }
     }
   }
 }
 
-/*
+/**
+ * Helper method that concatenates params argument list into valid
+ * shell command and executes it using ProcessBuilder().
+ * Will throw GradleException on failure.
+ *
+ * params: List of strings to construct command line invocation from.
+ * exMsg: Optional exception message to be thrown if invoked command fail.
+ */
+fun runShellCommand(params: List<String>, exMsg: String? = null) {
+  val procBuilder = ProcessBuilder()
+  procBuilder.command(params)
+  val proc = procBuilder.start()
+
+  // Intentional, to keep log indentation. Do not combine into one call with "\n".
+  logger.debug("")
+  logger.debug("PROC CMD: " + params.joinToString(" "))
+  logger.debug("")
+  // our ImputStream is command's output.
+  val stdout = BufferedReader(InputStreamReader(proc.inputStream));
+  var line = stdout.readLine()
+  while (line != null) {
+    logger.debug(line)
+    line = stdout.readLine()
+  }
+
+  val rc = proc.waitFor()
+  // Intentional, to keep log indentation. Do not combine into one call with "\n".
+  logger.debug("")
+  logger.debug("PROC CMD COMPLETED. RC: ${rc}")
+  logger.debug("")
+
+  if (rc != 0) throw GradleException(exMsg ?: "Failed with RC ${rc}: ${params[0]}")
+}
+
+/**
  * Task: createDeb
  *
  * Creates the Linux DEB package file (Debian, Ubuntu and derrivatives).
@@ -162,26 +238,22 @@ tasks.register("createDeb") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("targetFilePathBase") as String + "-1_amd64.deb")
+  outputs.file("${ext.get("targetFilePathBase") as String}-1_amd64.deb")
 
-  doLast {
+  doFirst {
     if (!OperatingSystem.current().isLinux) {
       throw GradleException("This task runs on Linux only.")
     }
+  }
 
-    val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-    parameters.addAll(ext.get("linuxParameters") as ArrayList<String>)
-    val procBuilder = ProcessBuilder()
-    procBuilder.command(parameters)
-
-    val builderProcess = procBuilder.start()
-    if (builderProcess.waitFor() != 0) {
-      throw GradleException("Error while creating the DEB package.")
-    }
+  doLast {
+    val params = ext.get("linuxParameters") as ArrayList<String>
+    params.addAll(arrayOf("--type", "deb"))
+    runShellCommand(params, "Error while creating the DEB package.")
   }
 }
 
-/*
+/**
  * Task: createRpm
  *
  * Creates the Linux RPM package file (RedHat and derrivatives).
@@ -192,30 +264,23 @@ tasks.register("createRpm") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/linux")
-  outputs.file(ext.get("targetFilePathBase") as String + "-1.x86_64.rpm")
+  outputs.file("${ext.get("targetFilePathBase") as String}-1.x86_64.rpm")
 
-  doLast {
+  doFirst {
     if (!OperatingSystem.current().isLinux) {
       throw GradleException("This task runs on Linux only.")
     }
+  }
 
-    val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-    parameters.addAll(ext.get("linuxParameters") as ArrayList<String>)
-    parameters.addAll(listOf(
-        "--type", "rpm"
-    ))
-    val processBuilder2 = ProcessBuilder()
-    processBuilder2.command(parameters)
-
-    val process2 = processBuilder2.start()
-    val rc = process2.waitFor()
-    if (rc != 0) {
-      throw GradleException("Error while creating the RPM package. Exit code: " + process2.exitValue())
-    }
+  doLast {
+    val params = (ext.get("linuxParameters") as ArrayList<String>)
+    params.addAll(arrayOf("--type", "rpm"))
+    runShellCommand(params, "Error while creating the RPM package.")
   }
 }
 
-/*
+
+/**
  * Task: createMsi
  *
  * Creates MSI installater file for Microsoft Windows.
@@ -226,14 +291,16 @@ tasks.register("createMsi") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/windows")
-  outputs.file(ext.get("targetFilePathBase") as String + ".msi")
-  doLast {
+  outputs.file("${ext.get("targetFilePathBase") as String}.msi")
+
+  doFirst {
     if (!OperatingSystem.current().isWindows) {
       throw GradleException("This task runs on Windows only.")
     }
+  }
 
-    val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-    parameters.addAll(listOf(
+  doLast {
+    val params = ext.get("sharedParameters") as List<String> + arrayOf(
         "--name", project.name,
         "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
         "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
@@ -242,17 +309,12 @@ tasks.register("createMsi") {
         "--win-shortcut",
         "--win-dir-chooser",
         "--win-menu"
-    ))
-    val processBuilder1 = ProcessBuilder()
-    processBuilder1.command(parameters)
-    val process1 = processBuilder1.start()
-    if (process1.waitFor() != 0) {
-      throw GradleException("Error while creating the MSI package.")
-    }
+    )
+    runShellCommand(params, "Error while creating the MSI package.")
   }
 }
 
-/*
+/**
  * Task: createApp
  *
  * Creates macOS application.
@@ -264,66 +326,51 @@ tasks.register("createApp") {
   inputs.dir("${buildDir}/libs")
   inputs.dir("${projectDir}/support/jpackage/macos")
   outputs.dir(ext.get("appDirName") as String)
-  doLast {
+
+  doFirst {
     if (!OperatingSystem.current().isMacOsX) {
       throw GradleException("This task runs on macOS only.")
     }
+  }
 
+  doLast {
     val appDirName = ext.get("appDirName") as String
     delete(appDirName)
-    val parameters = ArrayList<String>(ext.get("sharedParameters") as ArrayList<String>)
-    parameters.addAll(listOf(
-        "--name", ext.get("uppercaseProjectName") as String,
-        "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
-        "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
-        "--app-version", ext.get("appVersionShort") as String,
-        "--type", "app-image"
+
+    var params = ext.get("sharedParameters") as ArrayList<String>
+    params.addAll(arrayOf(
+      "--name", ext.get("uppercaseProjectName") as String,
+      "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
+      "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
+      // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
+      "--app-version", ext.get("appVersionShort") as String,
+      "--type", "app-image"
     ))
-    val processBuilder1 = ProcessBuilder()
-    processBuilder1.command(parameters)
-    val process1 = processBuilder1.start()
-    if (process1.waitFor() != 0) {
-      throw GradleException("Error while creating the .app directory.")
-    }
+    runShellCommand(params, "Error while creating the .app directory.")
+
     val pListFilename = "${appDirName}/Contents/Info.plist"
-    val parameters2 = ArrayList<String>(listOf(
-        "awk",
-        "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-            + "{print >\"${buildDir}/dist/Info.plist\"};"
-            + "/NSHighResolutionCapable/{"
-                + "print \"  <string>true</string>\" >\"${buildDir}/dist/Info.plist\";"
-                + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${buildDir}/dist/Info.plist\""
-            + "}",
-        pListFilename
-    ))
-    val processBuilder2 = ProcessBuilder()
-    processBuilder2.command(parameters2)
-    val process2 = processBuilder2.start()
-    if (process2.waitFor() != 0) {
-      throw GradleException("Error while patching Info.plist file.")
-    }
-    val parameters3 = ArrayList<String>(listOf(
-        "mv", "${buildDir}/dist/Info.plist", pListFilename
-    ))
-    val processBuilder3 = ProcessBuilder()
-    processBuilder3.command(parameters3)
-    val process3 = processBuilder3.start()
-    if (process3.waitFor() != 0) {
-      throw GradleException("Error while moving Info.plist into the .app directory.")
-    }
-    val parameters4 = ArrayList<String>(listOf(
+    runShellCommand(listOf(
+      "awk",
+      "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
+              + "{print >\"${buildDir}/dist/Info.plist\"};"
+              + "/NSHighResolutionCapable/{"
+              + "print \"  <string>true</string>\" >\"${buildDir}/dist/Info.plist\";"
+              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${buildDir}/dist/Info.plist\""
+              + "}",
+      pListFilename,
+    ), "Error while patching Info.plist file.")
+
+    runShellCommand(listOf(
+      "mv", "${buildDir}/dist/Info.plist", pListFilename
+    ), "Error while moving Info.plist into the .app directory.")
+
+    runShellCommand(listOf(
         "codesign", "--remove-signature", appDirName
-    ))
-    val processBuilder4 = ProcessBuilder()
-    processBuilder4.command(parameters4)
-    val process4 = processBuilder4.start()
-    if (process4.waitFor() != 0) {
-      throw GradleException("Error while executing: codesign --remove-signature")
-    }
+    ), "Error while executing: codesign --remove-signature")
   }
 }
 
-/*
+/**
  * Task: createDmg
  *
  * Creates macOS DMG package file.
@@ -334,25 +381,23 @@ tasks.register("createDmg") {
   dependsOn("createApp")
   inputs.dir(ext.get("appDirName") as String)
   outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
-  doLast {
+  doFirst {
     if (!OperatingSystem.current().isMacOsX) {
       throw GradleException("This task runs on macOS only.")
     }
+  }
 
-    val parameters1 = ArrayList<String>(listOf(
+  doLast {
+    val params = listOf(
         ext.get("jPackageCmd") as String,
         "--type", "dmg",
         "--app-image", ext.get("appDirName") as String,
         "--name", project.name,
+        // we now can pass full version, even if contains suffix.
         "--app-version", ext.get("appVersion") as String,
         "--dest", "${buildDir}/dist"
-    ))
-    val processBuilder1 = ProcessBuilder()
-    processBuilder1.command(parameters1)
-    val process1 = processBuilder1.start()
-    if (process1.waitFor() != 0) {
-      throw GradleException("Error while creating the DMG package")
-    }
+    )
+    runShellCommand(params, "Error while creating the DMG package")
   }
 }
 
@@ -371,7 +416,7 @@ fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, ti
     inputStream.bufferedReader().readText().trim()
   }
 
-/*
+/**
  * Task: generateProjectInfoClassFile
  *
  * Generates Java class file with project information like current version, branch name, last commit hash etc.
@@ -387,24 +432,24 @@ tasks.register("generateBuildInfoClassFile") {
   val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
 
   // TODO: we should not have hardcoded path here but use default sourcesSet maybe?
-  inputs.dir("$projectDir/src")
-  inputs.dir("$projectDir/support")
-  inputs.files("$projectDir/gradle.properties", "$projectDir/README.md", "$projectDir/LICENSE.md")
+  inputs.dir("${projectDir}/src")
+  inputs.dir("${projectDir}/support")
+  inputs.files("${projectDir}/gradle.properties", "${projectDir}/README.md", "${projectDir}/LICENSE.md")
   outputs.dir(projectInfoDir)
 
   doLast {
-
     val now = Date()
+    val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
     val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
     val branchLastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
     val currentMillis = Date().time
     val buildYear = SimpleDateFormat("yyyy").format(now)
 
-    var buildInfoClass = arrayOf(
+    val buildInfoClass = arrayOf(
       "// ************************************************************************",
       "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
       "// Use './gradlew generateBuildInfoClassFile' to regenerate if needed.",
-      "// Generated at " + SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now),
+      "// Generated at ${nowIso}",
       "// ************************************************************************",
       "",
       "package com.cburch.logisim.generated;",
@@ -419,9 +464,9 @@ tasks.register("generateBuildInfoClassFile") {
       "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
       "",
       "    // Project build timestamp",
-      "    public static final long millis = ${currentMillis}L;",
+      "    public static final long millis = ${currentMillis}L;", // keep traling `L`
       "    public static final String year = \"${buildYear}\";",
-      "    public static final String dateIso8601 = \"" + (SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")).format(now.time) + "\";",
+      "    public static final String dateIso8601 = \"${nowIso}\";",
       "    public static final Date date = new Date();",
       "    static { date.setTime(millis); }",
       "",
@@ -436,24 +481,38 @@ tasks.register("generateBuildInfoClassFile") {
   }
 }
 
-/*
+/**
  * Task: jpackage
  *
  * Umbrella task to create packages for all supported platforms.
  */
-tasks.register("jpackage") {
+tasks.register("createAll") {
   group = "build"
   description = "Makes the platform specific packages for the current platform."
 
-  if (OperatingSystem.current().isLinux) {
-    dependsOn("createDeb", "createRpm")
+  doFirst {
+    if (OperatingSystem.current().isLinux) {
+      dependsOn("createDeb", "createRpm")
+    }
+    if (OperatingSystem.current().isWindows) {
+      dependsOn("createMsi")
+    }
+    if (OperatingSystem.current().isMacOsX) {
+      dependsOn("createDmg")
+    }
   }
-  if (OperatingSystem.current().isWindows) {
-    dependsOn("createMsi")
-  }
-  if (OperatingSystem.current().isMacOsX) {
-    dependsOn("createDmg")
-  }
+}
+
+/**
+ * @deprecated. Use `createAll()`
+ */
+tasks.register("jpackage") {
+  group = "build"
+  var desc = "DEPRECATED: Use `createAll` task instead."
+  description = desc
+
+  logger.warn(desc)
+  dependsOn("createAll")
 }
 
 tasks {
