@@ -115,9 +115,11 @@ extra.apply {
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
+
+
   val params = ArrayList<String>(listOf(
       jPackageCmd,
-    "--verbose",
+      if (logger.isDebugEnabled()) "--verbose" else "",
       "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
@@ -381,6 +383,7 @@ tasks.register("createDmg") {
   dependsOn("createApp")
   inputs.dir(ext.get("appDirName") as String)
   outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
+
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
       throw GradleException("This task runs on macOS only.")
@@ -411,7 +414,7 @@ fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, ti
   .run {
     val error = errorStream.bufferedReader().readText().trim()
     if (error.isNotEmpty()) {
-      throw Exception(error)
+      throw GradleException(error)
     }
     inputStream.bufferedReader().readText().trim()
   }
