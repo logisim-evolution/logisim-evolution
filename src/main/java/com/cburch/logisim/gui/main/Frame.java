@@ -358,13 +358,22 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private void computeTitle() {
     final var circuit = project.getCurrentCircuit();
     final var name = project.getLogisimFile().getName();
+
     final var title =
         (circuit != null)
             ? S.get("titleCircFileKnown", circuit.getName(), name)
             : S.get("titleFileKnown", name);
 
-    final var dirtyMarker = project.isFileDirty() ? "*" : "";
-    this.setTitle(StringUtil.format("%s %s · %s", dirtyMarker, title, Main.APP_DISPLAY_NAME).trim());
+    String dirtyMarkerState = "";
+    String dirtyMarker = "";
+
+    if (project.isFileDirty()) {
+      dirtyMarker = Main.DIRTY_MARKER + "\u0020"; // keep the space
+      // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
+      dirtyMarkerState = StringUtil.format("[%s]", S.get("titleUnsavedProjectState").toUpperCase());
+    }
+
+    this.setTitle(StringUtil.format("%s%s · %s %s", dirtyMarker, title, Main.APP_DISPLAY_NAME, dirtyMarkerState).trim());
     myProjectListener.enableSave();
   }
 
