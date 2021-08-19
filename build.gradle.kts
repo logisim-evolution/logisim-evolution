@@ -30,7 +30,6 @@ import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.io.*
-import kotlin.collections.ArrayList
 
 plugins {
   checkstyle
@@ -89,55 +88,67 @@ task<Jar>("sourcesJar") {
   from(sourceSets.main.get().allSource)
 }
 
+/**
+ * Setting up all shared vars and parameters.
+ */
 extra.apply {
-  val suffix: String by project
-  // Full version number, i.e. "3.6.0", inc. [optional] release suffix, i.e. "beta1" -> "3.6.0beta1".
-  // NOTE: suffix is prefixed with `-` which I remove here because `jpackage` tool do not like it when
-  // used to build RPM package (DEB is fine though).
-  var version = (if (suffix != "") "${project.version}-${suffix}" else "${project.version}").replace("-", "")
-  set("appVersion", version)
+  // NOTE: optional suffix is prefixed with `-` (because of how LogisimVersion class parses it), which
+  // I remove here because `jpackage` tool do not like it when used to build RPM package.
+  val appVersion = (project.version as String).replace("-", "")
+  set("appVersion", appVersion)
+  logger.info("appVersion: ${appVersion}")
 
-  // Short version, i.e. "3.6.0" (no suffix: for "3.6.0beta1" it is "3.6.0"). Use `appVersion` instead!
+  // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
   // This is mostly used by DMG builder as version numbering rule is pretty strict on macOS.
-  set("appVersionShort", project.version)
+  val appVersionShort = (project.version as String).split('-')[0]
+  set("appVersionShort", appVersionShort)
+  logger.info("appVersionShort: ${appVersionShort}")
 
-  val baseFilename = "${project.name}-${version}"
+  // Base name of produced artifacts. Suffixes will be added later by relevant tasks.
+  val baseFilename = "${project.name}-${appVersion}"
   set("targetFilePathBase", "${buildDir}/dist/${baseFilename}")
+  logger.debug("targetFilePathBase: \"${buildDir}/dist/${baseFilename}\"")
 
+  // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
   set("shadowJarFilename", shadowJarFilename)
+  logger.debug("shadowJarFilename: \"${shadowJarFilename}\"")
 
+  // JDK/jpackage vars
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
   val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
   set("jPackageCmd", jPackageCmd)
 
+  // Copytights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
-
-
-  val params = ArrayList<String>(listOf(
+  // val params = ArrayList<String>(listOf(
+  var params = listOf(
       jPackageCmd,
-      if (logger.isDebugEnabled()) "--verbose" else "",
       "--input", "${buildDir}/libs",
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
-      "--app-version", version,
+      "--app-version", appVersion,
       "--copyright", "\"${copyrights}\"", // Must be quoted for shell happines.
       "--dest", "${buildDir}/dist"
-  ))
+  )
+  if (logger.isDebugEnabled()) {
+    params += listOf("--verbose")
+  }
   set("sharedParameters", params)
 
   // Linux (DEB/RPM) specific settings for jpackage.
-  params.addAll(arrayOf(
+  val supportPath = "${projectDir}/support/jpackage/linux"
+  val linuxParams = params + listOf(
       "--name", project.name,
-      "--file-associations", "${projectDir}/support/jpackage/linux/file.jpackage",
-      "--icon", "${projectDir}/support/jpackage/linux/logisim-icon-128.png",
+      "--file-associations", "${supportPath}/file.jpackage",
+      "--icon", "${supportPath}/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
-  ))
-  set("linuxParameters", params)
+  )
+  set("linuxParameters", linuxParams)
 
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
@@ -146,8 +157,7 @@ extra.apply {
 }
 
 /**
- * Creates distribution directory and checks if source
- *
+ * Creates distribution directory and checks if source.
  */
 tasks.register("createDistDir") {
   group = "build"
@@ -167,7 +177,7 @@ tasks.register("createDistDir") {
       val shadowJarFilename = ext.get("shadowJarFilename") as String
       val expectedShadowJar = File("${libsDir}/${shadowJarFilename}")
       if (expectedShadowJar.exists()) {
-        logger.warn("Found expected: ${shadowJarFilename}")
+        logger.warn("Found needed: ${shadowJarFilename}")
       }
 
       for (file in jarFiles.filter { file -> file != shadowJarFilename }) {
@@ -188,13 +198,24 @@ tasks.register("createDistDir") {
       val expected = ext.get("shadowJarFilename") as String
       for (file in jarFiles.filter { file -> file != expected }) {
         if (!delete("${libsDir}/${file}")) {
-          throw GradleException("Failed to remove file: ${file}")
+          throw GradleException("Failed to remove orphaned file: ${file}")
         }
       }
     }
   }
 }
 
+/**
+ * Logs content of given input stream unless it dries.
+ */
+fun logStreamContent(stream: InputStream) {
+  val reader = BufferedReader(InputStreamReader(stream));
+  var line = reader.readLine()
+  while (line != null) {
+    logger.info(line)
+    line = reader.readLine()
+  }
+}
 /**
  * Helper method that concatenates params argument list into valid
  * shell command and executes it using ProcessBuilder().
@@ -203,30 +224,40 @@ tasks.register("createDistDir") {
  * params: List of strings to construct command line invocation from.
  * exMsg: Optional exception message to be thrown if invoked command fail.
  */
-fun runShellCommand(params: List<String>, exMsg: String? = null) {
+fun runShellCommand(params: List<String>, exceptionMsg: String? = null) {
   val procBuilder = ProcessBuilder()
   procBuilder.command(params)
   val proc = procBuilder.start()
 
   // Intentional, to keep log indentation. Do not combine into one call with "\n".
-  logger.debug("")
-  logger.debug("PROC CMD: " + params.joinToString(" "))
-  logger.debug("")
-  // our ImputStream is command's output.
-  val stdout = BufferedReader(InputStreamReader(proc.inputStream));
-  var line = stdout.readLine()
-  while (line != null) {
-    logger.debug(line)
-    line = stdout.readLine()
+  logger.info("")
+  logger.info("CMD: " + params.joinToString(" "))
+  logger.info("")
+
+  // our InputStream is command's stdout.
+  if (logger.isInfoEnabled()) {
+    // Print content of invoked app's stdout stream.
+    logStreamContent(proc.inputStream)
+    logStreamContent(proc.errorStream)
   }
 
-  val rc = proc.waitFor()
-  // Intentional, to keep log indentation. Do not combine into one call with "\n".
-  logger.debug("")
-  logger.debug("PROC CMD COMPLETED. RC: ${rc}")
-  logger.debug("")
+  var rc = -1
+  try {
+    rc = proc.waitFor()
+    // Intentional, to keep log indentation. Do not combine into one call with "\n".
+    logger.debug("")
+    logger.debug("CMD COMPLETED. RC: ${rc}")
+    logger.debug("")
+  } catch (ex:kotlin.Exception) {
+    logger.error(ex.message)
+    logger.error(ex.stackTraceToString())
+  }
 
-  if (rc != 0) throw GradleException(exMsg ?: "Failed with RC ${rc}: ${params[0]}")
+  var exMsg = exceptionMsg ?: ""
+  exMsg = (exMsg + "The \"${params[0]}\" failed with RC ${rc}.").trim()
+  if (rc != 0) {
+    throw GradleException(exMsg)
+  }
 }
 
 /**
@@ -249,8 +280,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = ext.get("linuxParameters") as ArrayList<String>
-    params.addAll(arrayOf("--type", "deb"))
+    val params = ext.get("linuxParameters") as List<String> + listOf("--type", "deb")
     runShellCommand(params, "Error while creating the DEB package.")
   }
 }
@@ -275,8 +305,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = (ext.get("linuxParameters") as ArrayList<String>)
-    params.addAll(arrayOf("--type", "rpm"))
+    val params = ext.get("linuxParameters") as List<String> + listOf("--type", "rpm")
     runShellCommand(params, "Error while creating the RPM package.")
   }
 }
@@ -302,7 +331,7 @@ tasks.register("createMsi") {
   }
 
   doLast {
-    val params = ext.get("sharedParameters") as List<String> + arrayOf(
+    val params = ext.get("sharedParameters") as List<String> + listOf(
         "--name", project.name,
         "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
         "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
@@ -339,15 +368,15 @@ tasks.register("createApp") {
     val appDirName = ext.get("appDirName") as String
     delete(appDirName)
 
-    var params = ext.get("sharedParameters") as ArrayList<String>
-    params.addAll(arrayOf(
+    var params = ext.get("sharedParameters") as List<String>
+    params += listOf(
       "--name", ext.get("uppercaseProjectName") as String,
       "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
       "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
       // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
       "--app-version", ext.get("appVersionShort") as String,
       "--type", "app-image"
-    ))
+    )
     runShellCommand(params, "Error while creating the .app directory.")
 
     val pListFilename = "${appDirName}/Contents/Info.plist"
@@ -420,12 +449,12 @@ fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, ti
   }
 
 /**
- * Task: generateProjectInfoClassFile
+ * Task: genBuildInfo
  *
  * Generates Java class file with project information like current version, branch name, last commit hash etc.
  * No need to trigger it manually.
  */
-tasks.register("generateBuildInfoClassFile") {
+tasks.register("genBuildInfo") {
   group = "build"
   description = "Creates Java class file with vital project information."
 
@@ -451,7 +480,7 @@ tasks.register("generateBuildInfoClassFile") {
     val buildInfoClass = arrayOf(
       "// ************************************************************************",
       "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
-      "// Use './gradlew generateBuildInfoClassFile' to regenerate if needed.",
+      "// Use './gradlew ${name}' to regenerate if needed.",
       "// Generated at ${nowIso}",
       "// ************************************************************************",
       "",
@@ -476,7 +505,8 @@ tasks.register("generateBuildInfoClassFile") {
       "    // Project version",
       "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get("appVersion") as String}\");",
       "    public static final String name = \"${project.name.capitalize().trim()}\";",
-      "}",
+      "} // End of generated BuildInfo",
+      "",
     )
 
     file(projectInfoDir).mkdirs()
@@ -521,11 +551,11 @@ tasks.register("jpackage") {
 tasks {
   compileJava {
     options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
-    dependsOn("generateBuildInfoClassFile")
+    dependsOn("genBuildInfo")
   }
   compileTestJava {
     options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
-    dependsOn("generateBuildInfoClassFile")
+    dependsOn("genBuildInfo")
   }
   jar {
     manifest {
