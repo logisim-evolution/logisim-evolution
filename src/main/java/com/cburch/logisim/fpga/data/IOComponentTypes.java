@@ -176,7 +176,7 @@ public enum IOComponentTypes {
             return S.get("SevenSegmentPlusNinety");
           default : 
             return S.get("SevenSegmentZero");
-      }
+        }
       case LEDArray : 
         switch (rotation) {
           case rotationMinusNinety : 
