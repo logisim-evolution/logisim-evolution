@@ -525,16 +525,14 @@ tasks.register("createAll") {
   group = "build"
   description = "Makes the platform specific packages for the current platform."
 
-  doFirst {
-    if (OperatingSystem.current().isLinux) {
-      dependsOn("createDeb", "createRpm")
-    }
-    if (OperatingSystem.current().isWindows) {
-      dependsOn("createMsi")
-    }
-    if (OperatingSystem.current().isMacOsX) {
-      dependsOn("createDmg")
-    }
+  if (OperatingSystem.current().isLinux) {
+    dependsOn("createDeb", "createRpm")
+  }
+  if (OperatingSystem.current().isWindows) {
+    dependsOn("createMsi")
+  }
+  if (OperatingSystem.current().isMacOsX) {
+    dependsOn("createDmg")
   }
 }
 
