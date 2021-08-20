@@ -57,32 +57,60 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     contents.add("  ");
     if (colBased) {
-      for (var thisRow = 0; thisRow < rows; thisRow++)
-        for (var thisCol = 0; thisCol < cols; thisCol++) {
-          final var wire = (rows == 1) ? GetNetName(componentInfo, thisCol, true, netlist) 
-              : GetBusEntryName(componentInfo, thisCol, true, thisRow, netlist);
-          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
+      /* The simulator uses here following addressing scheme (2x2):
+       *  r1,c0 r1,c1
+       *  r0,c0 r0,c1
+       *  
+       *  hence the rows are inverted to the definition of the LED-Matrix that uses:
+       *  r0,c0 r0,c1
+       *  r1,c0 r1,c1
+       */
+      for (var dotMatrixRow = 0; dotMatrixRow < rows; dotMatrixRow++) {
+        final var ledMatrixRow = rows - dotMatrixRow - 1;
+        for (var ledMatrixCol = 0; ledMatrixCol < cols; ledMatrixCol++) {
+          final var wire = (rows == 1) ? GetNetName(componentInfo, ledMatrixCol, true, netlist) 
+              : GetBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
+          final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
               + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
+      }
     } else if (rowBased) {
-      for (var thisRow = 0; thisRow < rows; thisRow++) {
-        for (var thisCol = 0; thisCol < cols; thisCol++) {
-          final var wire = (cols == 1) ? GetNetName(componentInfo, thisRow, true, netlist)
-              : GetBusEntryName(componentInfo, thisRow, true, thisCol, netlist);
-          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
+      /* The simulator uses here following addressing scheme (2x2):
+       *  r1,c1 r1,c0
+       *  r0,c1 r0,c0
+       *  
+       *  hence the cols are inverted to the definition of the LED-Matrix that uses:
+       *  r0,c0 r0,c1
+       *  r1,c0 r1,c1
+       */
+      for (var ledMatrixRow = 0; ledMatrixRow < rows; ledMatrixRow++) {
+        for (var dotMatrixCol = 0; dotMatrixCol < cols; dotMatrixCol++) {
+          final var ledMatrixCol = cols - dotMatrixCol - 1;
+          final var wire = (cols == 1) ? GetNetName(componentInfo, ledMatrixRow, true, netlist)
+              : GetBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
+          final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() + wire + ";");
         }
       }
     } else {
-      for (var thisRow = 0; thisRow < rows; thisRow++) {
-        for (var thisCol = 0; thisCol < cols; thisCol++) {
+      /* The simulator uses here following addressing scheme (2x2):
+       *  r1,c0 r1,c1
+       *  r0,c0 r0,c1
+       *  
+       *  hence the rows are inverted to the definition of the LED-Matrix that uses:
+       *  r0,c0 r0,c1
+       *  r1,c0 r1,c1
+       */
+      for (var dotMatrixRow = 0; dotMatrixRow < rows; dotMatrixRow++) {
+        final var ledMatrixRow = rows - dotMatrixRow - 1;
+        for (var ledMatrixCol = 0; ledMatrixCol < cols; ledMatrixCol++) {
           final var rowWire = (rows == 1) ? GetNetName(componentInfo, 1, true, netlist)
-              : GetBusEntryName(componentInfo, 1, true, thisRow, netlist);
+              : GetBusEntryName(componentInfo, 1, true, dotMatrixRow, netlist);
           final var colWire = (cols == 1) ? GetNetName(componentInfo, 0, true, netlist)
-              : GetBusEntryName(componentInfo, 0, true, thisCol, netlist);
-          final var idx = thisRow * cols + thisCol + componentInfo.GetLocalBubbleOutputStartId();
+              : GetBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
+          final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.GetLocalBubbleOutputStartId();
           contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + HDL.BracketOpen() + idx + HDL.BracketClose() + HDL.assignOperator() 
                 + rowWire + HDL.andOperator() + colWire + ";");
