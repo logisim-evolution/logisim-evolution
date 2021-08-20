@@ -44,7 +44,7 @@ public class IOComponentsInformation {
   private int DefaultStandard = 0;
   private int DefaultDriveStrength = 0;
   private int DefaultPullSelection = 0;
-  private int DefaultActivity = 0;
+  private int DefaultActivity = 1;
   private final boolean mapMode;
   private final int imageHeight;
   private final FPGAIOInformationContainer[][] lookup;
