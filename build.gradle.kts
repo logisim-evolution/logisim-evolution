@@ -94,20 +94,34 @@ task<Jar>("sourcesJar") {
 extra.apply {
   // NOTE: optional suffix is prefixed with `-` (because of how LogisimVersion class parses it), which
   // I remove here because `jpackage` tool do not like it when used to build RPM package.
+  // Do NOT use `project.version` instead.
   val appVersion = (project.version as String).replace("-", "")
   set("appVersion", appVersion)
   logger.info("appVersion: ${appVersion}")
 
   // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
   // This is mostly used by DMG builder as version numbering rule is pretty strict on macOS.
+  // Do NOT use `project.version` instead.
   val appVersionShort = (project.version as String).split('-')[0]
   set("appVersionShort", appVersionShort)
   logger.info("appVersionShort: ${appVersionShort}")
 
+  // Destination folder where packages are stored.
+  val targetDir="${buildDir}/dist"
+  set("targetDir", targetDir)
+
+  // JAR folder.
+  val libsDir="${buildDir}/libs"
+  set("libsDir", libsDir)
+
+  // The root dir for jpackage extra files.
+  val supportDir="${projectDir}/support/jpackage"
+  set("supportDir", supportDir)
+
   // Base name of produced artifacts. Suffixes will be added later by relevant tasks.
   val baseFilename = "${project.name}-${appVersion}"
-  set("targetFilePathBase", "${buildDir}/dist/${baseFilename}")
-  logger.debug("targetFilePathBase: \"${buildDir}/dist/${baseFilename}\"")
+  set("targetFilePathBase", "${targetDir}/${baseFilename}")
+  logger.debug("targetFilePathBase: \"${targetDir}/${baseFilename}\"")
 
   // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
@@ -127,12 +141,12 @@ extra.apply {
   // val params = ArrayList<String>(listOf(
   var params = listOf(
       jPackageCmd,
-      "--input", "${buildDir}/libs",
+      "--input", "${libsDir}",
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--app-version", appVersion,
       "--copyright", "\"${copyrights}\"", // Must be quoted for shell happines.
-      "--dest", "${buildDir}/dist"
+      "--dest", "${targetDir}"
   )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
@@ -140,7 +154,7 @@ extra.apply {
   set("sharedParameters", params)
 
   // Linux (DEB/RPM) specific settings for jpackage.
-  val supportPath = "${projectDir}/support/jpackage/linux"
+  val supportPath = "${ext.get("supportDir") as String}/linux"
   val linuxParams = params + listOf(
       "--name", project.name,
       "--file-associations", "${supportPath}/file.jpackage",
@@ -153,22 +167,23 @@ extra.apply {
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
   set("uppercaseProjectName", uppercaseProjectName)
-  set("appDirName", "${buildDir}/dist/${uppercaseProjectName}.app")
+  set("appDirName", "${targetDir}/${uppercaseProjectName}.app")
 }
 
 /**
  * Creates distribution directory and checks if source.
  */
 tasks.register("createDistDir") {
+  val libsDir = ext.get("libsDir") as String
+
   group = "build"
   description = "Creates the directory for distribution."
   dependsOn("shadowJar")
-  val libsDir = "${buildDir}/libs"
   inputs.dir(libsDir)
-  outputs.dir("${buildDir}/dist")
+  outputs.dir(ext.get("targetDir") as String)
 
   doFirst {
-    var jarFiles = File("${buildDir}/libs").list()
+    var jarFiles = File(libsDir).list()
     var jarCount = jarFiles.count()
 
     if ( jarCount > 1) {
@@ -226,12 +241,13 @@ fun logStreamContent(stream: InputStream) {
  */
 fun runShellCommand(params: List<String>, exceptionMsg: String? = null) {
   val procBuilder = ProcessBuilder()
+  procBuilder.redirectErrorStream(true) // merge tools' stderr into its stdout
   procBuilder.command(params)
   val proc = procBuilder.start()
 
   // Intentional, to keep log indentation. Do not combine into one call with "\n".
   logger.info("")
-  logger.info("CMD: " + params.joinToString(" "))
+  logger.info("EXECUTING CMD: " + params.joinToString(" "))
   logger.info("")
 
   // our InputStream is command's stdout.
@@ -269,8 +285,8 @@ tasks.register("createDeb") {
   group = "build"
   description = "Makes DEB Linux installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("${buildDir}/libs")
-  inputs.dir("${projectDir}/support/jpackage/linux")
+  inputs.dir(ext.get("libsDir") as String)
+  inputs.dir("${ext.get("supportDir") as String}/linux")
   outputs.file("${ext.get("targetFilePathBase") as String}-1_amd64.deb")
 
   doFirst {
@@ -294,8 +310,8 @@ tasks.register("createRpm") {
   group = "build"
   description = "Makes RPM Linux installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("${buildDir}/libs")
-  inputs.dir("${projectDir}/support/jpackage/linux")
+  inputs.dir(ext.get("libsDir") as String)
+  inputs.dir("${ext.get("supportDir") as String}/linux")
   outputs.file("${ext.get("targetFilePathBase") as String}-1.x86_64.rpm")
 
   doFirst {
@@ -320,8 +336,8 @@ tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("${buildDir}/libs")
-  inputs.dir("${projectDir}/support/jpackage/windows")
+  inputs.dir(ext.get("libsDir") as String)
+  inputs.dir("${ext.get("supportDir") as String}/windows")
   outputs.file("${ext.get("targetFilePathBase") as String}.msi")
 
   doFirst {
@@ -333,10 +349,10 @@ tasks.register("createMsi") {
   doLast {
     val params = ext.get("sharedParameters") as List<String> + listOf(
         "--name", project.name,
-        "--file-associations", "${projectDir}/support/jpackage/windows/file.jpackage",
-        "--icon", "${projectDir}/support/jpackage/windows/Logisim-evolution.ico",
+        "--file-associations", "${ext.get("supportDir") as String}/windows/file.jpackage",
+        "--icon", "${ext.get("supportDir") as String}/windows/Logisim-evolution.ico",
         "--type", "msi",
-        "--win-menu-group", "${project.name}",
+        "--win-menu-group", project.name as String,
         "--win-shortcut",
         "--win-dir-chooser",
         "--win-menu"
@@ -354,8 +370,8 @@ tasks.register("createApp") {
   group = "build"
   description = "Makes the macOS application."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir("${buildDir}/libs")
-  inputs.dir("${projectDir}/support/jpackage/macos")
+  inputs.dir(ext.get("libsDir") as String)
+  inputs.dir("${ext.get("supportDir") as String}/macos")
   outputs.dir(ext.get("appDirName") as String)
 
   doFirst {
@@ -368,33 +384,32 @@ tasks.register("createApp") {
     val appDirName = ext.get("appDirName") as String
     delete(appDirName)
 
-    val distDir = "${buildDir}/dist"
-
     var params = ext.get("sharedParameters") as List<String>
     params += listOf(
       "--name", ext.get("uppercaseProjectName") as String,
-      "--file-associations", "${projectDir}/support/jpackage/macos/file.jpackage",
-      "--icon", "${projectDir}/support/jpackage/macos/Logisim-evolution.icns",
+      "--file-associations", "${ext.get("supportDir") as String}/macos/file.jpackage",
+      "--icon", "${ext.get("supportDir") as String}/macos/Logisim-evolution.icns",
       // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
       "--app-version", ext.get("appVersionShort") as String,
       "--type", "app-image"
     )
     runShellCommand(params, "Error while creating the .app directory.")
 
+    val targetDir = ext.get("targetDir") as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
     runShellCommand(listOf(
       "awk",
       "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-              + "{print >\"${distDir}/Info.plist\"};"
+              + "{print >\"${targetDir}/Info.plist\"};"
               + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${distDir}/Info.plist\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${distDir}/Info.plist\""
+              + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
+              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
               + "}",
       pListFilename,
     ), "Error while patching Info.plist file.")
 
     runShellCommand(listOf(
-      "mv", "${distDir}/Info.plist", pListFilename
+      "mv", "${targetDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runShellCommand(listOf(
@@ -424,13 +439,13 @@ tasks.register("createDmg") {
   doLast {
     val params = listOf(
         ext.get("jPackageCmd") as String,
-        "--type", "dmg",
         "--app-image", ext.get("appDirName") as String,
         "--name", project.name,
-        // we now can pass full version, even if contains suffix.
+        // We can pass full version here, even if contains suffix part too.
         "--app-version", ext.get("appVersion") as String,
-        "--dest", "${buildDir}/dist"
-    )
+        "--dest", ext.get("targetDir") as String,
+        "--type", "dmg",
+      )
     runShellCommand(params, "Error while creating the DMG package")
   }
 }
@@ -453,12 +468,7 @@ fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, ti
 /**
  * Generates Java class file with project information like current version, branch name, last commit hash etc.
  */
-fun genBuildInfo() {
-  // Target location for generated files.
-  val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
-  // Full path to the Java class file to be generated.
-  val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
-
+fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
   val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
@@ -497,9 +507,10 @@ fun genBuildInfo() {
     "",
   )
 
-  logger.info("Generated: ${projectInfoFile}")
-  file(projectInfoDir).mkdirs()
-  file(projectInfoFile).writeText(buildInfoClass.joinToString("\n"))
+  logger.info("Generating: ${buildInfoFilePath}")
+  val buildInfoFile = File(buildInfoFilePath)
+  buildInfoFile.parentFile.mkdirs()
+  file(buildInfoFilePath).writeText(buildInfoClass.joinToString("\n"))
 }
 
 /**
@@ -509,22 +520,21 @@ fun genBuildInfo() {
  * No need to trigger it manually.
  */
 tasks.register("genBuildInfo") {
+  // Target location for generated files.
+  val buildInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
+
   group = "build"
   description = "Creates Java class file with vital project information."
 
-  // Target location for generated files.
-  val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
-  // Full path to the Java class file to be generated.
-  val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
-
   // TODO: we should not have hardcoded path here but use default sourcesSet maybe?
   inputs.dir("${projectDir}/src")
-  inputs.dir("${projectDir}/support")
+  inputs.dir(ext.get("supportDir") as String)
   inputs.files("${projectDir}/gradle.properties", "${projectDir}/README.md", "${projectDir}/LICENSE.md")
-  outputs.dir(projectInfoDir)
+  outputs.dir(buildInfoDir)
 
   doLast {
-    genBuildInfo()
+    // Full path to the Java class file to be generated.
+    genBuildInfo("${buildInfoDir}/BuildInfo.java")
   }
 }
 
