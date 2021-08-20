@@ -138,7 +138,6 @@ extra.apply {
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
-  // val params = ArrayList<String>(listOf(
   var params = listOf(
       jPackageCmd,
       "--input", "${libsDir}",
@@ -221,59 +220,42 @@ tasks.register("createDistDir") {
 }
 
 /**
- * Logs content of given input stream unless it dries.
- */
-fun logStreamContent(stream: InputStream) {
-  val reader = BufferedReader(InputStreamReader(stream));
-  var line = reader.readLine()
-  while (line != null) {
-    logger.info(line)
-    line = reader.readLine()
-  }
-}
-/**
  * Helper method that concatenates params argument list into valid
  * shell command and executes it using ProcessBuilder().
  * Will throw GradleException on failure.
  *
  * params: List of strings to construct command line invocation from.
  * exMsg: Optional exception message to be thrown if invoked command fail.
+ *
+ * Returns content of invoked app's stdout
  */
-fun runShellCommand(params: List<String>, exceptionMsg: String? = null) {
+fun runShellCommand(params: List<String>, exceptionMsg: String): String {
   val procBuilder = ProcessBuilder()
-  procBuilder.redirectErrorStream(true) // merge tools' stderr into its stdout
-  procBuilder.command(params)
+  procBuilder
+    .redirectOutput(ProcessBuilder.Redirect.PIPE)
+    .redirectError(ProcessBuilder.Redirect.PIPE)
+    .command(params)
   val proc = procBuilder.start()
 
-  // Intentional, to keep log indentation. Do not combine into one call with "\n".
-  logger.info("")
-  logger.info("EXECUTING CMD: " + params.joinToString(" "))
-  logger.info("")
-
-  // our InputStream is command's stdout.
-  if (logger.isInfoEnabled()) {
-    // Print content of invoked app's stdout stream.
-    logStreamContent(proc.inputStream)
-    logStreamContent(proc.errorStream)
-  }
+  logger.debug("EXECUTING CMD: " + params.joinToString(" "))
 
   var rc = -1
   try {
     rc = proc.waitFor()
-    // Intentional, to keep log indentation. Do not combine into one call with "\n".
-    logger.debug("")
     logger.debug("CMD COMPLETED. RC: ${rc}")
-    logger.debug("")
-  } catch (ex:kotlin.Exception) {
+  } catch (ex: Exception) {
     logger.error(ex.message)
     logger.error(ex.stackTraceToString())
   }
 
-  var exMsg = exceptionMsg ?: ""
-  exMsg = (exMsg + "The \"${params[0]}\" failed with RC ${rc}.").trim()
   if (rc != 0) {
+    logger.error(proc.errorStream.bufferedReader().readText().trim())
+    logger.error("Command \"${params[0]}\" failed with RC ${rc}.")
+    var exMsg = exceptionMsg ?: ""
     throw GradleException(exMsg)
   }
+
+  return proc.inputStream.bufferedReader().readText().trim()
 }
 
 /**
@@ -326,7 +308,6 @@ tasks.register("createRpm") {
   }
 }
 
-
 /**
  * Task: createMsi
  *
@@ -351,11 +332,11 @@ tasks.register("createMsi") {
         "--name", project.name,
         "--file-associations", "${ext.get("supportDir") as String}/windows/file.jpackage",
         "--icon", "${ext.get("supportDir") as String}/windows/Logisim-evolution.ico",
-        "--type", "msi",
         "--win-menu-group", project.name as String,
         "--win-shortcut",
         "--win-dir-chooser",
-        "--win-menu"
+        "--win-menu",
+        "--type", "msi",
     )
     runShellCommand(params, "Error while creating the MSI package.")
   }
@@ -391,7 +372,7 @@ tasks.register("createApp") {
       "--icon", "${ext.get("supportDir") as String}/macos/Logisim-evolution.icns",
       // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
       "--app-version", ext.get("appVersionShort") as String,
-      "--type", "app-image"
+      "--type", "app-image",
     )
     runShellCommand(params, "Error while creating the .app directory.")
 
@@ -450,29 +431,14 @@ tasks.register("createDmg") {
   }
 }
 
-fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, timeoutUnit: TimeUnit = TimeUnit.SECONDS):
-        String = ProcessBuilder(split("\\s(?=(?:[^'\"`]*(['\"`])[^'\"`]*\\1)*[^'\"`]*$)".toRegex()))
-  .directory(workingDir)
-  .redirectOutput(ProcessBuilder.Redirect.PIPE)
-  .redirectError(ProcessBuilder.Redirect.PIPE)
-  .start()
-  .apply { waitFor(timeoutAmount, timeoutUnit) }
-  .run {
-    val error = errorStream.bufferedReader().readText().trim()
-    if (error.isNotEmpty()) {
-      throw GradleException(error)
-    }
-    inputStream.bufferedReader().readText().trim()
-  }
-
 /**
  * Generates Java class file with project information like current version, branch name, last commit hash etc.
  */
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
-  val branchLastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
+  val branchName = runShellCommand(listOf("git","rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
+  val branchLastCommitHash = runShellCommand(listOf("git","rev-parse", "--short=8", "HEAD"), "Failed getting last commit has.")
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
@@ -577,7 +543,6 @@ val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 tasks {
   compileJava {
     options.compilerArgs = compilerOptions
-
     dependsOn("genBuildInfo")
   }
   compileTestJava {
@@ -618,11 +583,11 @@ tasks {
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
     val archive = configurations.checkstyle.get().resolve().filter {
-      it.name.startsWith("checkstyle")
+      name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
 
-    // FIXME there should be cleaner way of using custom suppression config with built-in style
+    // FIXME: There should be cleaner way of using custom suppression config with built-in style.
     // https://stackoverflow.com/a/64703619/1235698
     System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/config/checkstyle/suppressions.xml")
   }
