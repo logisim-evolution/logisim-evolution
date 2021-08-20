@@ -42,7 +42,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
