@@ -137,9 +137,12 @@ public enum IOComponentTypes {
 
   public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
-      case DIPSwitch : return DipSwitch.getInputLabel(id);
-      case LocalBus  : return ReptarLocalBus.getInputLabel(id);
-      default        : return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
+      case DIPSwitch : 
+        return DipSwitch.getInputLabel(id);
+      case LocalBus  : 
+        return ReptarLocalBus.getInputLabel(id);
+      default        : 
+        return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
   
@@ -147,39 +150,44 @@ public enum IOComponentTypes {
     switch (comp) {
       case DIPSwitch :
       case SevenSegment :
-      case LEDArray : {
+      case LEDArray : 
         return true;
-      }
-      default : {
+      default : 
         return false;
-      }
     }
   }
   
   public static String getRotationString(IOComponentTypes comp, int rotation) {
     switch (comp) {
-      case DIPSwitch : {
+      case DIPSwitch : 
         switch (rotation) {
-          case rotationMinusNinety : return S.get("dipSwitchMinusNinety");
-          case rotationPlusNinety : return S.get("dipSwitchPlusNinety");
-          default : return S.get("dipSwitchZero");
+          case rotationMinusNinety : 
+            return S.get("dipSwitchMinusNinety");
+          case rotationPlusNinety : 
+            return S.get("dipSwitchPlusNinety");
+          default : 
+            return S.get("dipSwitchZero");
         }
-      }
-      case SevenSegment : {
+      case SevenSegment : 
         switch (rotation) {
-          case rotationMinusNinety : return S.get("SevenSegmentMinusNinety");
-          case rotationPlusNinety : return S.get("SevenSegmentPlusNinety");
-          default : return S.get("SevenSegmentZero");
-        }
+          case rotationMinusNinety : 
+            return S.get("SevenSegmentMinusNinety");
+          case rotationPlusNinety : 
+            return S.get("SevenSegmentPlusNinety");
+          default : 
+            return S.get("SevenSegmentZero");
       }
-      case LEDArray : {
+      case LEDArray : 
         switch (rotation) {
-          case rotationMinusNinety : return S.get("LEDArrayMinusNinety");
-          case rotationPlusNinety : return S.get("LEDArrayPlusNinety");
-          default : return S.get("LEDArrayZero");
+          case rotationMinusNinety : 
+            return S.get("LEDArrayMinusNinety");
+          case rotationPlusNinety : 
+            return S.get("LEDArrayPlusNinety");
+          default : 
+            return S.get("LEDArrayZero");
         }
-      }
-      default : return Integer.toString(rotation);
+      default : 
+        return Integer.toString(rotation);
     }
   }
 
@@ -192,13 +200,12 @@ public enum IOComponentTypes {
         return RgbLed.getLabel(id);
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
-      case LEDArray: {
+      case LEDArray: 
         if (nrOfRows != 0 && nrOfColumns != 0 && id >= 0 && id < nrPins) {
           final var row = id / nrOfColumns;
           final var col = id % nrOfColumns;
           return "Row_" + row + "_Col_" + col;
         }
-      }
       default:
         return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
@@ -247,53 +254,46 @@ public enum IOComponentTypes {
       int mapRotation,
       IOComponentTypes type) {
     var hasDp = false;
-    switch (type) {
-      case DIPSwitch: {
-        var part = (float) 0;
+    var part = 0f;
+    var partX = 0f;
+    var partY = 0f;
+    switch (type) { 
+      case DIPSwitch: 
         switch (mapRotation) {
           case rotationPlusNinety :
-          case rotationMinusNinety : {
+          case rotationMinusNinety : 
             part = (float) height / (float) nrOfPins;
             break;
-          }
-          default : {
+          default : 
             part = (float) width / (float) nrOfPins;
             break;
-          }
         }
         for (var widthIndex = 0; widthIndex < width; widthIndex++)
           for (var heightIndex = 0; heightIndex < height; heightIndex++) {
-            var pinIndex = (float) 0;
+            var pinIndex = 0;
             switch (mapRotation) {
-              case rotationPlusNinety : {
-                pinIndex = (height - heightIndex - 1) / part;
+              case rotationPlusNinety : 
+                pinIndex = Math.round((height - heightIndex - 1) / part);
                 break;
-              }
-              case rotationMinusNinety : {
-                pinIndex = height / part;
+              case rotationMinusNinety :
+                pinIndex = Math.round(height / part);
                 break;
-              }
-              default : {
-                pinIndex = widthIndex / part;
+              default :
+                pinIndex = Math.round(widthIndex / part);
                 break;
-              }
             }
-            PartialMap[widthIndex][heightIndex] = (int) pinIndex;
+            PartialMap[widthIndex][heightIndex] = pinIndex;
           }
         break;
-      }
-      case RGBLED: {
-        var part = (float) height / (float) 3;
+      case RGBLED: 
+        part = (float) height / (float) 3;
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++) 
-            PartialMap[w][h] = (int) ((float) h / part);
+            PartialMap[w][h] = Math.round((float) h / part);
         break;
-      }
       case SevenSegment: hasDp = true;
-      case SevenSegmentNoDp : {
+      case SevenSegmentNoDp : 
         final var indexes = getSevenSegmentDisplayArray(hasDp);
-        var partX = (float) 0;
-        var partY = (float) 0;
         switch (mapRotation) {
           case rotationPlusNinety :
           case rotationMinusNinety : {
@@ -313,27 +313,24 @@ public enum IOComponentTypes {
           for (var h = 0; h < height; h++) {
             switch (mapRotation) {
               case rotationPlusNinety : {
-                xIndex = (int) ((float) (height - h - 1) / partY);
-                yIndex = (int) ((float) w / partX);
+                xIndex = Math.round((float) (height - h - 1) / partY);
+                yIndex = Math.round((float) w / partX);
                 break;
               }
               case rotationMinusNinety : {
-                xIndex = (int) ((float) h / partY);
-                yIndex = (int) ((float) (width - w - 1) / partX);
+                xIndex = Math.round((float) h / partY);
+                yIndex = Math.round((float) (width - w - 1) / partX);
                 break;
               }
               default : {
-                xIndex = (int) ((float) w / partX);
-                yIndex = (int) ((float) h / partY);
+                xIndex = Math.round((float) w / partX);
+                yIndex = Math.round((float) h / partY);
               }
             }
             PartialMap[w][h] = indexes[yIndex][xIndex];
           }
         break;
-      }
-      case LEDArray: {
-        var partX = (float) 0;
-        var partY = (float) 0;
+      case LEDArray: 
         switch (mapRotation) {
           case rotationPlusNinety :
           case rotationMinusNinety : {
@@ -353,31 +350,29 @@ public enum IOComponentTypes {
             var realColumn = 0;
             switch (mapRotation) {
               case rotationPlusNinety : {
-                realRow = (int) ((float) w / partX);
-                realColumn = (int) ((float) (height - h - 1) / partY);
+                realRow = Math.round((float) w / partX);
+                realColumn = Math.round((float) (height - h - 1) / partY);
                 break;
               }
               case rotationMinusNinety : {
-                realRow = (int) ((float) (width - w - 1) / partX);
-                realColumn = (int) ((float) h / partY);
+                realRow = Math.round((float) (width - w - 1) / partX);
+                realColumn = Math.round((float) h / partY);
                 break;
               }
               default : {
-                realRow = (int) ((float) h / partY);
-                realColumn = (int) ((float) w / partX);
+                realRow = Math.round((float) h / partY);
+                realColumn = Math.round((float) w / partX);
                 break;
               }
             }
             PartialMap[w][h] = (realRow * nrOfColumns) + realColumn;
           }
         break;
-      }
-      default: {
+      default: 
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++)
             PartialMap[w][h] = -1;
         break;
-      }
     }
   }
   
@@ -396,13 +391,13 @@ public enum IOComponentTypes {
       IOComponentTypes type) {
     g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
     var hasDp = false;
+    var part = 0f;
+    var boxWidth = 0;
+    var boxHeight = 0;
+    var boxXpos = 0;
+    var boxYpos = 0;
     switch (type) {
-      case DIPSwitch: {
-        var part = (float) 0;
-        var boxXpos = 0;
-        var boxYpos = 0;
-        var boxWidth = 0;
-        var boxHeight = 0;
+      case DIPSwitch: 
         var yPinNr = pinNr;
         switch (mapRotation) {
           case rotationPlusNinety : yPinNr = nrOfPins - pinNr - 1;
@@ -410,34 +405,32 @@ public enum IOComponentTypes {
             part = (float) height / (float) nrOfPins;
             boxXpos = x;
             boxWidth = width;
-            boxYpos = y + (int) ((float) yPinNr * part);
-            boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
+            boxYpos = y + Math.round((float) yPinNr * part);
+            boxHeight = Math.round((float) (yPinNr + 1) * part) - Math.round((float) yPinNr * part);
             break;
           }
           default : {
             part = (float) width / (float) nrOfPins;
-            boxXpos = x + (int) ((float) pinNr * part);
+            boxXpos = x + Math.round((float) pinNr * part);
             boxYpos = y;
-            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) ((float) (pinNr * part));
+            boxWidth = Math.round((float) (pinNr + 1) * part) - Math.round((float) (pinNr * part));
             boxHeight = height;
             break;
           }
         }
         g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
-      }
-      case RGBLED : {
-        final var part = (float) height / (float) 3;
-        final var by = y + (int) ((float) pinNr * part);
-        final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
+      case RGBLED : 
+        part = (float) height / (float) 3;
+        final var by = y + Math.round((float) pinNr * part);
+        final var bh = Math.round((float) (pinNr + 1) * part) - Math.round((float) pinNr * part);
         g.fillRect(x, by, width, bh);
         break;
-      }
       case SevenSegment: hasDp = true;
-      case SevenSegmentNoDp : {
+      case SevenSegmentNoDp : 
         final var indexes = getSevenSegmentDisplayArray(hasDp);
-        var partX = (float) 0;
-        var partY = (float) 0;
+        var partX = 0f;
+        var partY = 0f;
         switch (mapRotation) {
           case rotationPlusNinety :
           case rotationMinusNinety : {
@@ -481,20 +474,17 @@ public enum IOComponentTypes {
                   break;
                 }
               }
-              final var boxX = x + (int) ((float) realXIndex * partX);
-              final var boxY = y + (int) ((float) realYIndex * partY);
+              boxXpos = x + Math.round((float) realXIndex * partX);
+              boxYpos = y + Math.round((float) realYIndex * partY);
               /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
-              final var boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
-              final var boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
-              g.fillRect(boxX, boxY, boxWidth, boxHeight);
+              boxWidth = Math.round((float) realXIndexPlusOne * partX) - Math.round((float) realXIndex * partX);
+              boxHeight = Math.round((float) realYIndexPlusOne * partY) - Math.round((float) realYIndex * partY);
+              g.fillRect(boxXpos, boxXpos, boxWidth, boxHeight);
             }
           }
         }
         break;
-      }
-      case LEDArray: {
-        var partX = (float) 0;
-        var partY = (float) 0;
+      case LEDArray: 
         final var selectedColumn = pinNr % nrOfColumns;
         final var selectedRow = pinNr / nrOfColumns;
         switch (mapRotation) {
@@ -516,34 +506,33 @@ public enum IOComponentTypes {
         var nextYPosition = 0;
         switch (mapRotation) {
           case rotationPlusNinety : {
-            xPosition = (int) ((float) selectedRow * partX);
-            nextXPosition = (int) ((float) (selectedRow + 1) * partX);
-            yPosition = (int) ((float) (nrOfColumns - selectedColumn - 1) * partY);
-            nextYPosition = (int) ((float) (nrOfColumns - selectedColumn) * partY);
+            xPosition = Math.round((float) selectedRow * partX);
+            nextXPosition = Math.round((float) (selectedRow + 1) * partX);
+            yPosition = Math.round((float) (nrOfColumns - selectedColumn - 1) * partY);
+            nextYPosition = Math.round((float) (nrOfColumns - selectedColumn) * partY);
             break;
           }
           case rotationMinusNinety : {
-            xPosition = (int) ((float) (nrOfRows - selectedRow - 1) * partX);
-            nextXPosition = (int) ((float) (nrOfRows - selectedRow) * partX);
-            yPosition = (int) ((float) selectedColumn * partY);
-            nextYPosition = (int) ((float) (selectedColumn + 1) * partY);
+            xPosition = Math.round((float) (nrOfRows - selectedRow - 1) * partX);
+            nextXPosition = Math.round((float) (nrOfRows - selectedRow) * partX);
+            yPosition = Math.round((float) selectedColumn * partY);
+            nextYPosition = Math.round((float) (selectedColumn + 1) * partY);
             break;
           }
           default : {
-            xPosition = (int) ((float) selectedColumn * partX);
-            nextXPosition = (int) ((float) (selectedColumn + 1) * partX);
-            yPosition = (int) ((float) selectedRow * partY);
-            nextYPosition = (int) ((float) (selectedRow + 1) * partY);
+            xPosition = Math.round((float) selectedColumn * partX);
+            nextXPosition = Math.round((float) (selectedColumn + 1) * partX);
+            yPosition = Math.round((float) selectedRow * partY);
+            nextYPosition = Math.round((float) (selectedRow + 1) * partY);
             break;
           }
         }
-        final var bx = x + xPosition;
-        final var by = y + yPosition;
-        final var bw = nextXPosition - xPosition;
-        final var bh = nextYPosition - yPosition;
-        g.fillRect(bx, by, bw, bh);
+        boxXpos = x + xPosition;
+        boxYpos = y + yPosition;
+        boxWidth = nextXPosition - xPosition;
+        boxHeight = nextYPosition - yPosition;
+        g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
-      }
       default: {
         g.fillRect(x, y, width, height);
         break;

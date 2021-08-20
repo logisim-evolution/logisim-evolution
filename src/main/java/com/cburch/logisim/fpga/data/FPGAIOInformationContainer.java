@@ -206,7 +206,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         height = Integer.parseInt(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(BoardWriterClass.RectSetString)) {
-        var vals = thisAttr.getNodeValue().split(",");
+        final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 4) {
           try {
             x = Integer.parseUnsignedInt(vals[0]);
@@ -219,7 +219,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         }
       }
       if (thisAttr.getNodeName().equals(BoardWriterClass.LedArrayInfoString)) {
-        var vals = thisAttr.getNodeValue().split(",");
+        final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 3) {
           try {
             nrOfRows = Integer.parseUnsignedInt(vals[0]);
