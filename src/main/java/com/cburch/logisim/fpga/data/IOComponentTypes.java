@@ -273,13 +273,13 @@ public enum IOComponentTypes {
             var pinIndex = 0;
             switch (mapRotation) {
               case rotationCCW90 : 
-                pinIndex = Math.round((height - heightIndex - 1) / part);
+                pinIndex = (int) ((height - heightIndex - 1) / part);
                 break;
               case rotationCW90 :
-                pinIndex = Math.round(height / part);
+                pinIndex = (int) (height / part);
                 break;
               default :
-                pinIndex = Math.round(widthIndex / part);
+                pinIndex = (int) (widthIndex / part);
                 break;
             }
             PartialMap[widthIndex][heightIndex] = pinIndex;
@@ -289,7 +289,7 @@ public enum IOComponentTypes {
         part = (float) height / (float) 3;
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++) 
-            PartialMap[w][h] = Math.round((float) h / part);
+            PartialMap[w][h] = (int) ((float) h / part);
         break;
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : 
@@ -313,18 +313,18 @@ public enum IOComponentTypes {
           for (var h = 0; h < height; h++) {
             switch (mapRotation) {
               case rotationCCW90 : {
-                xIndex = Math.round((float) (height - h - 1) / partY);
-                yIndex = Math.round((float) w / partX);
+                xIndex = (int) ((float) (height - h - 1) / partY);
+                yIndex = (int) ((float) w / partX);
                 break;
               }
               case rotationCW90 : {
-                xIndex = Math.round((float) h / partY);
-                yIndex = Math.round((float) (width - w - 1) / partX);
+                xIndex = (int) ((float) h / partY);
+                yIndex = (int) ((float) (width - w - 1) / partX);
                 break;
               }
               default : {
-                xIndex = Math.round((float) w / partX);
-                yIndex = Math.round((float) h / partY);
+                xIndex = (int) ((float) w / partX);
+                yIndex = (int) ((float) h / partY);
               }
             }
             PartialMap[w][h] = indexes[yIndex][xIndex];
@@ -350,18 +350,18 @@ public enum IOComponentTypes {
             var realColumn = 0;
             switch (mapRotation) {
               case rotationCCW90 : {
-                realRow = Math.round((float) w / partX);
-                realColumn = Math.round((float) (height - h - 1) / partY);
+                realRow = (int) ((float) w / partX);
+                realColumn = (int) ((float) (height - h - 1) / partY);
                 break;
               }
               case rotationCW90 : {
-                realRow = Math.round((float) (width - w - 1) / partX);
-                realColumn = Math.round((float) h / partY);
+                realRow = (int) ((float) (width - w - 1) / partX);
+                realColumn = (int) ((float) h / partY);
                 break;
               }
               default : {
-                realRow = Math.round((float) h / partY);
-                realColumn = Math.round((float) w / partX);
+                realRow = (int) ((float) h / partY);
+                realColumn = (int) ((float) w / partX);
                 break;
               }
             }
@@ -405,15 +405,15 @@ public enum IOComponentTypes {
             part = (float) height / (float) nrOfPins;
             boxXpos = x;
             boxWidth = width;
-            boxYpos = y + Math.round((float) yPinNr * part);
-            boxHeight = Math.round((float) (yPinNr + 1) * part) - Math.round((float) yPinNr * part);
+            boxYpos = y + (int) ((float) yPinNr * part);
+            boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
             break;
           }
           default : {
             part = (float) width / (float) nrOfPins;
-            boxXpos = x + Math.round((float) pinNr * part);
+            boxXpos = x + (int) ((float) pinNr * part);
             boxYpos = y;
-            boxWidth = Math.round((float) (pinNr + 1) * part) - Math.round((float) (pinNr * part));
+            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) ((float) (pinNr * part));
             boxHeight = height;
             break;
           }
@@ -422,8 +422,8 @@ public enum IOComponentTypes {
         break;
       case RGBLED : 
         part = (float) height / (float) 3;
-        final var by = y + Math.round((float) pinNr * part);
-        final var bh = Math.round((float) (pinNr + 1) * part) - Math.round((float) pinNr * part);
+        final var by = y + (int) ((float) pinNr * part);
+        final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
         g.fillRect(x, by, width, bh);
         break;
       case SevenSegment: hasDp = true;
@@ -474,11 +474,11 @@ public enum IOComponentTypes {
                   break;
                 }
               }
-              boxXpos = x + Math.round((float) realXIndex * partX);
-              boxYpos = y + Math.round((float) realYIndex * partY);
+              boxXpos = x + (int) ((float) realXIndex * partX);
+              boxYpos = y + (int) ((float) realYIndex * partY);
               /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
-              boxWidth = Math.round((float) realXIndexPlusOne * partX) - Math.round((float) realXIndex * partX);
-              boxHeight = Math.round((float) realYIndexPlusOne * partY) - Math.round((float) realYIndex * partY);
+              boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
+              boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
               g.fillRect(boxXpos, boxXpos, boxWidth, boxHeight);
             }
           }
@@ -506,24 +506,24 @@ public enum IOComponentTypes {
         var nextYPosition = 0;
         switch (mapRotation) {
           case rotationCCW90 : {
-            xPosition = Math.round((float) selectedRow * partX);
-            nextXPosition = Math.round((float) (selectedRow + 1) * partX);
-            yPosition = Math.round((float) (nrOfColumns - selectedColumn - 1) * partY);
-            nextYPosition = Math.round((float) (nrOfColumns - selectedColumn) * partY);
+            xPosition = (int) ((float) selectedRow * partX);
+            nextXPosition = (int) ((float) (selectedRow + 1) * partX);
+            yPosition = (int) ((float) (nrOfColumns - selectedColumn - 1) * partY);
+            nextYPosition = (int) ((float) (nrOfColumns - selectedColumn) * partY);
             break;
           }
           case rotationCW90 : {
-            xPosition = Math.round((float) (nrOfRows - selectedRow - 1) * partX);
-            nextXPosition = Math.round((float) (nrOfRows - selectedRow) * partX);
-            yPosition = Math.round((float) selectedColumn * partY);
-            nextYPosition = Math.round((float) (selectedColumn + 1) * partY);
+            xPosition = (int) ((float) (nrOfRows - selectedRow - 1) * partX);
+            nextXPosition = (int) ((float) (nrOfRows - selectedRow) * partX);
+            yPosition = (int) ((float) selectedColumn * partY);
+            nextYPosition = (int) ((float) (selectedColumn + 1) * partY);
             break;
           }
           default : {
-            xPosition = Math.round((float) selectedColumn * partX);
-            nextXPosition = Math.round((float) (selectedColumn + 1) * partX);
-            yPosition = Math.round((float) selectedRow * partY);
-            nextYPosition = Math.round((float) (selectedRow + 1) * partY);
+            xPosition = (int) ((float) selectedColumn * partX);
+            nextXPosition = (int) ((float) (selectedColumn + 1) * partX);
+            yPosition = (int) ((float) selectedRow * partY);
+            nextYPosition = (int) ((float) (selectedRow + 1) * partY);
             break;
           }
         }
