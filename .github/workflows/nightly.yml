@@ -74,16 +74,10 @@ jobs:
 
           # I need to export current version, even if is incorrect for develop branch as it
           # is part of produced artifacts. We will strip it prior uploading anyway.
-          declare -r lse_version_base="$(fgrep version gradle.properties | awk '{print $3}')"
-          declare -r lse_suffix="$(fgrep suffix gradle.properties | awk '{print $3}')"
-          declare lse_version="${lse_version_base}"
-          [[ -n "${lse_suffix}" ]] && lse_version="${lse_version}-${lse_suffix}"
-          declare -r lse_version
-
           declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
           echo "::set-output name=lse_name::${lse_name}"
+          declare -r lse_version="$(fgrep version gradle.properties | awk '{print $3}')"
           echo "::set-output name=lse_version::${lse_version}"
-          echo "::set-output name=lse_version_base::${lse_version_base}"
           # Base name for uploaded artifacts.
           echo "::set-output name=base_name::${lse_name}_${branch_name}_$(date +%Y%m%d)"
 
