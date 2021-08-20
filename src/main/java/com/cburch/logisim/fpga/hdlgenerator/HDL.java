@@ -52,7 +52,7 @@ public abstract class HDL {
     return isVHDL() ? 3 : 4;
   }
 
-  public static String getRemakrChar(boolean first,boolean last) {
+  public static String getRemakrChar(boolean first, boolean last) {
     if (isVHDL()) return "-";
     if (first) return "/";
     if (last) return " ";

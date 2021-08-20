@@ -130,7 +130,7 @@ abstract class CircuitDetermination {
 
     @Override
     public CircuitDetermination visitEq(Expression a, Expression b) {
-    	return binary(a.visit(this), b.visit(this), XnorGate.FACTORY);
+      return binary(a.visit(this), b.visit(this), XnorGate.FACTORY);
     }
   }
 

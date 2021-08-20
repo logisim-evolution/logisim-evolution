@@ -1266,7 +1266,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
               sz.height / 2 - 20);
         if (isWest)
           GraphicsUtil.drawArrow2(
-              g, 15, sz.height / 2 + 20, 5, sz.height / 2, 15, sz.height / 2 + -20);
+              g, 15, sz.height / 2 + 20, 5, sz.height / 2, 15, sz.height / 2 + (-20));
         if (isNortheast)
           GraphicsUtil.drawArrow2(g, sz.width - 30, 5, sz.width - 5, 5, sz.width - 5, 30);
         if (isNorthwest) GraphicsUtil.drawArrow2(g, 30, 5, 5, 5, 5, 30);

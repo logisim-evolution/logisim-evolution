@@ -148,7 +148,7 @@ public class Drawgates {
 
   static void paintOr(Graphics g, int x, int y, int width, int height, boolean negated, boolean rightToLeft) {
     final var offset = rightToLeft ? -4 : 0;
-    if (negated) paintNegatedOutput(g, x+offset, y);
+    if (negated) paintNegatedOutput(g, x + offset, y);
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
       if (!rightToLeft) {
         g.drawRect(x - width, y - height / 2, width, height);

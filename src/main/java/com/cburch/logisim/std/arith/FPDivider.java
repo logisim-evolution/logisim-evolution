@@ -98,9 +98,9 @@ public class FPDivider extends InstanceFactory {
     g.drawLine(x - 15, y, x - 5, y);
     g.fillOval(x - 12, y + 3, 4, 4);
 
-    g.drawLine(x-35, y-15, x-35, y+5);
-    g.drawLine(x-35, y-15, x-25, y-15);
-    g.drawLine(x-35, y-5, x-25, y-5);
+    g.drawLine(x - 35, y - 15, x - 35, y + 5);
+    g.drawLine(x - 35, y - 15, x - 25, y - 15);
+    g.drawLine(x - 35, y - 5, x - 25, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
   }
 

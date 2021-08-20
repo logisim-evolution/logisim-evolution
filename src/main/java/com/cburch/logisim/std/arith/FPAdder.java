@@ -97,9 +97,9 @@ public class FPAdder extends InstanceFactory {
     g.drawLine(x - 15, y, x - 5, y);
     g.drawLine(x - 10, y - 5, x - 10, y + 5);
 
-    g.drawLine(x-35, y-15, x-35, y+5);
-    g.drawLine(x-35, y-15, x-25, y-15);
-    g.drawLine(x-35, y-5, x-25, y-5);
+    g.drawLine(x - 35, y - 15, x - 35, y + 5);
+    g.drawLine(x - 35, y - 15, x - 25, y - 15);
+    g.drawLine(x - 35, y - 5, x - 25, y - 5);
     GraphicsUtil.switchToWidth(g, 1);
   }
 

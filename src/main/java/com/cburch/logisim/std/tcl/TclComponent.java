@@ -52,7 +52,7 @@ import java.util.WeakHashMap;
  *
  * @author christian.mueller@heig-vd.ch
  */
-abstract public class TclComponent extends InstanceFactory {
+public abstract class TclComponent extends InstanceFactory {
 
   public static class PortDescription {
 
@@ -104,7 +104,7 @@ abstract public class TclComponent extends InstanceFactory {
     inputs = new Port[0];
     outputs = new Port[0];
 
-    setIcon(new ArithmeticIcon("TCL",3));
+    setIcon(new ArithmeticIcon("TCL", 3));
   }
 
   //
