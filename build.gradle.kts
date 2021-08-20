@@ -550,12 +550,10 @@ tasks.register("jpackage") {
 
 tasks {
   compileJava {
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
-    dependsOn("genBuildInfo")
+    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
   }
   compileTestJava {
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:fallthrough")
-    dependsOn("genBuildInfo")
+    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
   }
   jar {
     manifest {
