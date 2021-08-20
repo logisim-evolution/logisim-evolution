@@ -21,38 +21,37 @@ jobs:
       run_build: ${{ steps.filter.outputs.src }}
 
     steps:
-    - name: "Install packages..."
-      run: sudo apt-get install sysvbanner
+      - name: "Install packages..."
+        run: sudo apt-get install sysvbanner
 
-      # https://github.com/marketplace/actions/checkout
-    - name: "Checkout sources"
-      uses: actions/checkout@v2
+        # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
 
-      # https://github.com/marketplace/actions/paths-changes-filter
-    - name: "Look for changes in monitored locations"
-      uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          src:
-            - 'src/**/*.flex'
-            - 'src/**/*.java'
-            - 'src/**/*.properties'
-            - '*.gradle*'
+        # https://github.com/marketplace/actions/paths-changes-filter
+      - name: "Look for changes in monitored locations"
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'src/**/*.flex'
+              - 'src/**/*.java'
+              - 'src/**/*.properties'
+              - '*.gradle*'
 
-    - name: "WILL BUILD STEP BE RUN?"
-      run: |
-        found="NO"
-        [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
-        echo "::set-output name=run_build::${found}"
-        echo -e "\n****************************************\n"
-        banner "${found}"
-        echo -e "****************************************"
+      - name: "WILL BUILD STEP BE RUN?"
+        run: |
+          found="NO"
+          [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
+          echo "::set-output name=run_build::${found}"
+          echo -e "\n****************************************\n"
+          banner "${found}"
+          echo -e "****************************************"
 
   # Build step.
   build:
     name: "Gradle builder"
-    runs-on: ubuntu-latest
 
     # Will run only if analyze_sources determined it is needed.
     needs: analyze_sources
@@ -60,19 +59,22 @@ jobs:
 
     strategy:
       matrix:
+        runner: [ ubuntu-latest, macos-latest, windows-latest ]
         jdk: [ 14 ]
 
+    runs-on: ${{ matrix.runner }}
+
     steps:
-    - name: "Checkout sources"
-      uses: actions/checkout@v2
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
 
-    - name: "Set up JDK"
-      uses: actions/setup-java@v2
-      with:
-        java-version: ${{ matrix.jdk }}
-        distribution: 'adopt'
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.jdk }}
+          distribution: 'adopt'
 
-    - name: "Build with Gradle"
-      run: |
-       chmod +x gradlew
-       ./gradlew build -x checkstyleMain -x checkstyleTest
+      - name: "Build with Gradle"
+        run: |
+          chmod +x gradlew
+          ./gradlew build -x checkstyleMain -x checkstyleTest
