@@ -74,14 +74,14 @@ java {
 
 java {
   sourceSets["main"].java {
-    srcDir("${buildDir}/generated/sources/srcgen")
     srcDir("${buildDir}/generated/logisim/")
+    srcDir("${buildDir}/generated/sources/srcgen")
   }
 }
 
 task<Jar>("sourcesJar") {
   group = "build"
-  description = "Creates a source JAR archive."
+  description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
   classifier = "src"
 
@@ -534,6 +534,8 @@ tasks.register("createAll") {
   if (OperatingSystem.current().isMacOsX) {
     dependsOn("createDmg")
   }
+
+  dependsOn("genBuildInfo")
 }
 
 /**
@@ -543,9 +545,11 @@ tasks.register("jpackage") {
   group = "build"
   var desc = "DEPRECATED: Use `createAll` task instead."
   description = desc
-
-  logger.warn(desc)
   dependsOn("createAll")
+
+  doFirst {
+    logger.warn(desc)
+  }
 }
 
 tasks {
