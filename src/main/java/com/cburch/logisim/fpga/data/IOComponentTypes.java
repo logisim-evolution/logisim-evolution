@@ -296,36 +296,32 @@ public enum IOComponentTypes {
         final var indexes = getSevenSegmentDisplayArray(hasDp);
         switch (mapRotation) {
           case rotationCCW90 :
-          case rotationCW90 : {
+          case rotationCW90 : 
             partX = (float) width / (float) 7;
             partY = (float) height / (float) 5; 
             break;
-          }
-          default : {
+          default : 
             partX = (float) width / (float) 5;
             partY = (float) height / (float) 7; 
             break;
-          }
         }
         var xIndex = 0;
         var yIndex = 0;
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++) {
             switch (mapRotation) {
-              case rotationCCW90 : {
+              case rotationCCW90 :
                 xIndex = (int) ((float) (height - h - 1) / partY);
                 yIndex = (int) ((float) w / partX);
                 break;
-              }
-              case rotationCW90 : {
+              case rotationCW90 :
                 xIndex = (int) ((float) h / partY);
                 yIndex = (int) ((float) (width - w - 1) / partX);
                 break;
-              }
-              default : {
+              default :
                 xIndex = (int) ((float) w / partX);
                 yIndex = (int) ((float) h / partY);
-              }
+                break;
             }
             PartialMap[w][h] = indexes[yIndex][xIndex];
           }
@@ -333,37 +329,32 @@ public enum IOComponentTypes {
       case LEDArray: 
         switch (mapRotation) {
           case rotationCCW90 :
-          case rotationCW90 : {
+          case rotationCW90 : 
             partX = (float) width / (float) nrOfRows;
             partY = (float) height / (float) nrOfColumns;
             break;
-          }
-          default : {
+          default : 
             partX = (float) width / (float) nrOfColumns;
             partY = (float) height / (float) nrOfRows;
             break;
-          }
         }
         for (var w = 0; w < width; w++) 
           for (var h = 0; h < height; h++) {
             var realRow = 0;
             var realColumn = 0;
             switch (mapRotation) {
-              case rotationCCW90 : {
+              case rotationCCW90 : 
                 realRow = (int) ((float) w / partX);
                 realColumn = (int) ((float) (height - h - 1) / partY);
                 break;
-              }
-              case rotationCW90 : {
+              case rotationCW90 : 
                 realRow = (int) ((float) (width - w - 1) / partX);
                 realColumn = (int) ((float) h / partY);
                 break;
-              }
-              default : {
+              default : 
                 realRow = (int) ((float) h / partY);
                 realColumn = (int) ((float) w / partX);
                 break;
-              }
             }
             PartialMap[w][h] = (realRow * nrOfColumns) + realColumn;
           }
@@ -396,6 +387,8 @@ public enum IOComponentTypes {
     var boxHeight = 0;
     var boxXpos = 0;
     var boxYpos = 0;
+    var partX = 0f;
+    var partY = 0f;
     switch (type) {
       case DIPSwitch: 
         var yPinNr = pinNr;
@@ -429,8 +422,6 @@ public enum IOComponentTypes {
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp : 
         final var indexes = getSevenSegmentDisplayArray(hasDp);
-        var partX = 0f;
-        var partY = 0f;
         switch (mapRotation) {
           case rotationCCW90 :
           case rotationCW90 : {
@@ -452,34 +443,31 @@ public enum IOComponentTypes {
           for (var yIndex = 0; yIndex < 7; yIndex++) {
             if (indexes[yIndex][xIndex] == pinNr) {
               switch (mapRotation) {
-                case rotationCCW90 : {
+                case rotationCCW90 : 
                   realXIndex = yIndex;
                   realXIndexPlusOne = yIndex  + 1;
                   realYIndex = 4 - xIndex;
                   realYIndexPlusOne = 5 - xIndex;
                   break;
-                }
-                case rotationCW90 : {
+                case rotationCW90 : 
                   realXIndex = 6 - yIndex;
                   realXIndexPlusOne = 7 - yIndex;
                   realYIndex = xIndex;
                   realYIndexPlusOne = xIndex + 1;
                   break;
-                }
-                default : {
+                default : 
                   realXIndex = xIndex;
                   realXIndexPlusOne = xIndex + 1;
                   realYIndex = yIndex;
                   realYIndexPlusOne = yIndex + 1;
                   break;
-                }
               }
               boxXpos = x + (int) ((float) realXIndex * partX);
               boxYpos = y + (int) ((float) realYIndex * partY);
               /* the below calculation we do to avoid truncation errors causing empty lines between the segments */
               boxWidth = (int) ((float) realXIndexPlusOne * partX) - (int) ((float) realXIndex * partX);
               boxHeight = (int) ((float) realYIndexPlusOne * partY) - (int) ((float) realYIndex * partY);
-              g.fillRect(boxXpos, boxXpos, boxWidth, boxHeight);
+              g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
             }
           }
         }
