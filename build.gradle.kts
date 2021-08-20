@@ -451,9 +451,61 @@ fun String.runCommand(workingDir: File = File("."), timeoutAmount: Long = 60, ti
   }
 
 /**
+ * Generates Java class file with project information like current version, branch name, last commit hash etc.
+ */
+fun genBuildInfo() {
+  // Target location for generated files.
+  val projectInfoDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/generated"
+  // Full path to the Java class file to be generated.
+  val projectInfoFile = "${projectInfoDir}/BuildInfo.java"
+
+  val now = Date()
+  val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
+  val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
+  val branchLastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
+  val currentMillis = Date().time
+  val buildYear = SimpleDateFormat("yyyy").format(now)
+
+  val buildInfoClass = arrayOf(
+    "// ************************************************************************",
+    "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
+    "// Generated at ${nowIso}",
+    "// ************************************************************************",
+    "",
+    "package com.cburch.logisim.generated;",
+    "",
+    "import com.cburch.logisim.LogisimVersion;",
+    "import java.util.Date;",
+    "",
+    "public final class BuildInfo {",
+    "    // Build time VCS details",
+    "    public static final String branchName = \"${branchName}\";",
+    "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
+    "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
+    "",
+    "    // Project build timestamp",
+    "    public static final long millis = ${currentMillis}L;", // keep traling `L`
+    "    public static final String year = \"${buildYear}\";",
+    "    public static final String dateIso8601 = \"${nowIso}\";",
+    "    public static final Date date = new Date();",
+    "    static { date.setTime(millis); }",
+    "",
+    "    // Project version",
+    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get("appVersion") as String}\");",
+    "    public static final String name = \"${project.name.capitalize().trim()}\";",
+    "} // End of generated BuildInfo",
+    "",
+  )
+
+  logger.info("Generated: ${projectInfoFile}")
+  file(projectInfoDir).mkdirs()
+  file(projectInfoFile).writeText(buildInfoClass.joinToString("\n"))
+}
+
+/**
  * Task: genBuildInfo
  *
- * Generates Java class file with project information like current version, branch name, last commit hash etc.
+ * Wrapper task for genBuildInfo() method generating BuildInfo class.
  * No need to trigger it manually.
  */
 tasks.register("genBuildInfo") {
@@ -472,47 +524,7 @@ tasks.register("genBuildInfo") {
   outputs.dir(projectInfoDir)
 
   doLast {
-    val now = Date()
-    val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-    val branchName = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
-    val branchLastCommitHash = "git rev-parse --short=8 HEAD".runCommand(workingDir = rootDir)
-    val currentMillis = Date().time
-    val buildYear = SimpleDateFormat("yyyy").format(now)
-
-    val buildInfoClass = arrayOf(
-      "// ************************************************************************",
-      "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
-      "// Use './gradlew ${name}' to regenerate if needed.",
-      "// Generated at ${nowIso}",
-      "// ************************************************************************",
-      "",
-      "package com.cburch.logisim.generated;",
-      "",
-      "import com.cburch.logisim.LogisimVersion;",
-      "import java.util.Date;",
-      "",
-      "public final class BuildInfo {",
-      "    // Build time VCS details",
-      "    public static final String branchName = \"${branchName}\";",
-      "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
-      "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
-      "",
-      "    // Project build timestamp",
-      "    public static final long millis = ${currentMillis}L;", // keep traling `L`
-      "    public static final String year = \"${buildYear}\";",
-      "    public static final String dateIso8601 = \"${nowIso}\";",
-      "    public static final Date date = new Date();",
-      "    static { date.setTime(millis); }",
-      "",
-      "    // Project version",
-      "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get("appVersion") as String}\");",
-      "    public static final String name = \"${project.name.capitalize().trim()}\";",
-      "} // End of generated BuildInfo",
-      "",
-    )
-
-    file(projectInfoDir).mkdirs()
-    file(projectInfoFile).writeText(buildInfoClass.joinToString("\n"))
+    genBuildInfo()
   }
 }
 
@@ -534,8 +546,6 @@ tasks.register("createAll") {
   if (OperatingSystem.current().isMacOsX) {
     dependsOn("createDmg")
   }
-
-  dependsOn("genBuildInfo")
 }
 
 /**
@@ -552,13 +562,19 @@ tasks.register("jpackage") {
   }
 }
 
+val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+
 tasks {
   compileJava {
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+    options.compilerArgs = compilerOptions
+
+    dependsOn("genBuildInfo")
   }
   compileTestJava {
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+    options.compilerArgs = compilerOptions
+    dependsOn("genBuildInfo")
   }
+
   jar {
     manifest {
       attributes.putAll(mapOf(
@@ -573,6 +589,7 @@ tasks {
       include("CHANGES.md")
     }
   }
+
   shadowJar {
     archiveBaseName.set(project.name)
     archiveVersion.set(ext.get("appVersion") as String)
