@@ -68,8 +68,8 @@ public enum IOComponentTypes {
    */
   
   public static final int rotationZero = 0;
-  public static final int rotationMinusNinety = -90;
-  public static final int rotationPlusNinety = 90;
+  public static final int rotationCW90 = -90;
+  public static final int rotationCCW90 = 90;
 
   public static IOComponentTypes getEnumFromString(String str) {
     for (var elem : KnownComponentSet) {
@@ -161,28 +161,28 @@ public enum IOComponentTypes {
     switch (comp) {
       case DIPSwitch : 
         switch (rotation) {
-          case rotationMinusNinety : 
-            return S.get("dipSwitchMinusNinety");
-          case rotationPlusNinety : 
-            return S.get("dipSwitchPlusNinety");
+          case rotationCW90 : 
+            return S.get("DipSwitchCW90");
+          case rotationCCW90 : 
+            return S.get("DipSwitchCCW90");
           default : 
-            return S.get("dipSwitchZero");
+            return S.get("DipSwitchZero");
         }
       case SevenSegment : 
         switch (rotation) {
-          case rotationMinusNinety : 
-            return S.get("SevenSegmentMinusNinety");
-          case rotationPlusNinety : 
-            return S.get("SevenSegmentPlusNinety");
+          case rotationCW90 : 
+            return S.get("SevenSegmentCW90");
+          case rotationCCW90 : 
+            return S.get("SevenSegmentCCW90");
           default : 
             return S.get("SevenSegmentZero");
         }
       case LEDArray : 
         switch (rotation) {
-          case rotationMinusNinety : 
-            return S.get("LEDArrayMinusNinety");
-          case rotationPlusNinety : 
-            return S.get("LEDArrayPlusNinety");
+          case rotationCW90 : 
+            return S.get("LEDArrayCW90");
+          case rotationCCW90 : 
+            return S.get("LEDArrayCCW90");
           default : 
             return S.get("LEDArrayZero");
         }
@@ -260,8 +260,8 @@ public enum IOComponentTypes {
     switch (type) { 
       case DIPSwitch: 
         switch (mapRotation) {
-          case rotationPlusNinety :
-          case rotationMinusNinety : 
+          case rotationCCW90 :
+          case rotationCW90 : 
             part = (float) height / (float) nrOfPins;
             break;
           default : 
@@ -272,10 +272,10 @@ public enum IOComponentTypes {
           for (var heightIndex = 0; heightIndex < height; heightIndex++) {
             var pinIndex = 0;
             switch (mapRotation) {
-              case rotationPlusNinety : 
+              case rotationCCW90 : 
                 pinIndex = Math.round((height - heightIndex - 1) / part);
                 break;
-              case rotationMinusNinety :
+              case rotationCW90 :
                 pinIndex = Math.round(height / part);
                 break;
               default :
@@ -295,8 +295,8 @@ public enum IOComponentTypes {
       case SevenSegmentNoDp : 
         final var indexes = getSevenSegmentDisplayArray(hasDp);
         switch (mapRotation) {
-          case rotationPlusNinety :
-          case rotationMinusNinety : {
+          case rotationCCW90 :
+          case rotationCW90 : {
             partX = (float) width / (float) 7;
             partY = (float) height / (float) 5; 
             break;
@@ -312,12 +312,12 @@ public enum IOComponentTypes {
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++) {
             switch (mapRotation) {
-              case rotationPlusNinety : {
+              case rotationCCW90 : {
                 xIndex = Math.round((float) (height - h - 1) / partY);
                 yIndex = Math.round((float) w / partX);
                 break;
               }
-              case rotationMinusNinety : {
+              case rotationCW90 : {
                 xIndex = Math.round((float) h / partY);
                 yIndex = Math.round((float) (width - w - 1) / partX);
                 break;
@@ -332,8 +332,8 @@ public enum IOComponentTypes {
         break;
       case LEDArray: 
         switch (mapRotation) {
-          case rotationPlusNinety :
-          case rotationMinusNinety : {
+          case rotationCCW90 :
+          case rotationCW90 : {
             partX = (float) width / (float) nrOfRows;
             partY = (float) height / (float) nrOfColumns;
             break;
@@ -349,12 +349,12 @@ public enum IOComponentTypes {
             var realRow = 0;
             var realColumn = 0;
             switch (mapRotation) {
-              case rotationPlusNinety : {
+              case rotationCCW90 : {
                 realRow = Math.round((float) w / partX);
                 realColumn = Math.round((float) (height - h - 1) / partY);
                 break;
               }
-              case rotationMinusNinety : {
+              case rotationCW90 : {
                 realRow = Math.round((float) (width - w - 1) / partX);
                 realColumn = Math.round((float) h / partY);
                 break;
@@ -400,8 +400,8 @@ public enum IOComponentTypes {
       case DIPSwitch: 
         var yPinNr = pinNr;
         switch (mapRotation) {
-          case rotationPlusNinety : yPinNr = nrOfPins - pinNr - 1;
-          case rotationMinusNinety : {
+          case rotationCCW90 : yPinNr = nrOfPins - pinNr - 1;
+          case rotationCW90 : {
             part = (float) height / (float) nrOfPins;
             boxXpos = x;
             boxWidth = width;
@@ -432,8 +432,8 @@ public enum IOComponentTypes {
         var partX = 0f;
         var partY = 0f;
         switch (mapRotation) {
-          case rotationPlusNinety :
-          case rotationMinusNinety : {
+          case rotationCCW90 :
+          case rotationCW90 : {
             partX = (float) width / (float) 7;
             partY = (float) height / (float) 5; 
             break;
@@ -452,14 +452,14 @@ public enum IOComponentTypes {
           for (var yIndex = 0; yIndex < 7; yIndex++) {
             if (indexes[yIndex][xIndex] == pinNr) {
               switch (mapRotation) {
-                case rotationPlusNinety : {
+                case rotationCCW90 : {
                   realXIndex = yIndex;
                   realXIndexPlusOne = yIndex  + 1;
                   realYIndex = 4 - xIndex;
                   realYIndexPlusOne = 5 - xIndex;
                   break;
                 }
-                case rotationMinusNinety : {
+                case rotationCW90 : {
                   realXIndex = 6 - yIndex;
                   realXIndexPlusOne = 7 - yIndex;
                   realYIndex = xIndex;
@@ -488,8 +488,8 @@ public enum IOComponentTypes {
         final var selectedColumn = pinNr % nrOfColumns;
         final var selectedRow = pinNr / nrOfColumns;
         switch (mapRotation) {
-          case rotationPlusNinety :
-          case rotationMinusNinety : {
+          case rotationCCW90 :
+          case rotationCW90 : {
             partX = (float) width / (float) nrOfRows;
             partY = (float) height / (float) nrOfColumns;
             break;
@@ -505,14 +505,14 @@ public enum IOComponentTypes {
         var yPosition = 0;
         var nextYPosition = 0;
         switch (mapRotation) {
-          case rotationPlusNinety : {
+          case rotationCCW90 : {
             xPosition = Math.round((float) selectedRow * partX);
             nextXPosition = Math.round((float) (selectedRow + 1) * partX);
             yPosition = Math.round((float) (nrOfColumns - selectedColumn - 1) * partY);
             nextYPosition = Math.round((float) (nrOfColumns - selectedColumn) * partY);
             break;
           }
-          case rotationMinusNinety : {
+          case rotationCW90 : {
             xPosition = Math.round((float) (nrOfRows - selectedRow - 1) * partX);
             nextXPosition = Math.round((float) (nrOfRows - selectedRow) * partX);
             yPosition = Math.round((float) selectedColumn * partY);

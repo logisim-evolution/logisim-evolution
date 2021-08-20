@@ -341,8 +341,8 @@ public class FPGAIOInformationContainer implements Cloneable {
   }
   
   public void setMapRotation(int val) {
-    if ((val == IOComponentTypes.rotationMinusNinety) 
-        || (val == IOComponentTypes.rotationPlusNinety)
+    if ((val == IOComponentTypes.rotationCW90) 
+        || (val == IOComponentTypes.rotationCCW90)
         || (val == IOComponentTypes.rotationZero))
       myRotation = val;
   }
@@ -492,8 +492,8 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (IOComponentTypes.hasRotationAttribute(MyType)) {
         switch (myRotation) {
-          case IOComponentTypes.rotationMinusNinety :
-          case IOComponentTypes.rotationPlusNinety : {
+          case IOComponentTypes.rotationCW90 :
+          case IOComponentTypes.rotationCCW90 : {
             result.setAttribute(BoardWriterClass.mapRotation, Integer.toString(myRotation));
             break;
           }
