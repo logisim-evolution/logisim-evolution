@@ -2,14 +2,15 @@
 
 ---
 
-# Logisim-evolution project logo #
+# Logisim-evolution project artwork #
 
 Designed by Marcin Orlowski <http://MarcinOrlowski.com>
 
 ## SVG files ##
 
-* `logisim-evolution-logo-src.svg` - main logo project file
-* `logisim-evolution-logo.svg` - derived from main project file with all texts converted to paths.
+* `logisim-evolution-logo-src.svg` - main logo project file (with texts as editable strings),
+* `logisim-evolution-logo.svg` - derived from main project file with all texts converted to paths,
+* `logisim-evolution-icon.svg` - project icon.
 
 "NOTE: To properly render the `logisim-evolution-logo-src.svg` (be it in-app, on the web page, or elsewhere)
 one must have all the used fonts installed on the build machine. Otherwise, your renderer/browser will substitute
@@ -25,9 +26,19 @@ The [in-app PNG rendition of the logo](../src/main/resources/resources/logisim/i
 must be rendered as image of 200 px height and proportional width (but less than 600 px) or
 [About.java](../src/main/java/com/cburch/logisim/gui/start/About.java) constants needs to be adjusted to match.
 
+When updating icons, the following locations currently hold a PNG copy of the icon:
+* in-app (LFrame) icon:
+  * src/main/resources/resources/logisim/img/logisim-icon-*.png
+* jpackage:
+  * support/jpackage/linux/*.png
+  * support/jpackage/linux/*.icns
+  * support/jpackage/linux/*.ico
+
+
 ## Fonts ##
 
 The following fonts were used:
 
 * [Electronic Circuit](https://textfonts.net/electronic-circuit-font.html),
 * [A Dripping Marker](https://www.1001freefonts.com/a-dripping-marker.font) by Wick van den Belt.
+
