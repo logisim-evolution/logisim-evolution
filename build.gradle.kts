@@ -268,7 +268,13 @@ tasks.register("createDeb") {
   dependsOn("shadowJar", "createDistDir")
   inputs.dir(ext.get("libsDir") as String)
   inputs.dir("${ext.get("supportDir") as String}/linux")
-  outputs.file("${ext.get("targetFilePathBase") as String}-1_amd64.deb")
+
+  // Debian uses `_` to separate name from version string.
+  // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
+  val appVersion = ext.get("appVersion") as String
+  val targetDir = ext.get("targetDir") as String
+  val debPackagePath = "${targetDir}/${project.name}_${appVersion}-1_amd64.deb"
+  outputs.file(debPackagePath)
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
