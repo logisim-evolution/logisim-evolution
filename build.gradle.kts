@@ -220,16 +220,15 @@ tasks.register("createDistDir") {
 }
 
 /**
- * Helper method that concatenates params argument list into valid
- * shell command and executes it using ProcessBuilder().
- * Will throw GradleException on failure.
+ * Helper method that simplifies runining external commands using ProcessBuilder().
+ * Will throw GradleException on command failure (non-zero return code).
  *
- * params: List of strings to construct command line invocation from.
- * exMsg: Optional exception message to be thrown if invoked command fail.
+ * params: List of strings which signifies the external program file to be invoked and its arguments (if any).
+ * exMsg: Optional error message to be used with thrown exception on failure.
  *
  * Returns content of invoked app's stdout
  */
-fun runShellCommand(params: List<String>, exceptionMsg: String): String {
+fun runCommand(params: List<String>, exceptionMsg: String): String {
   val procBuilder = ProcessBuilder()
   procBuilder
     .redirectOutput(ProcessBuilder.Redirect.PIPE)
@@ -279,7 +278,7 @@ tasks.register("createDeb") {
 
   doLast {
     val params = ext.get("linuxParameters") as List<String> + listOf("--type", "deb")
-    runShellCommand(params, "Error while creating the DEB package.")
+    runCommand(params, "Error while creating the DEB package.")
   }
 }
 
@@ -304,7 +303,7 @@ tasks.register("createRpm") {
 
   doLast {
     val params = ext.get("linuxParameters") as List<String> + listOf("--type", "rpm")
-    runShellCommand(params, "Error while creating the RPM package.")
+    runCommand(params, "Error while creating the RPM package.")
   }
 }
 
@@ -338,7 +337,7 @@ tasks.register("createMsi") {
         "--win-menu",
         "--type", "msi",
     )
-    runShellCommand(params, "Error while creating the MSI package.")
+    runCommand(params, "Error while creating the MSI package.")
   }
 }
 
@@ -374,11 +373,11 @@ tasks.register("createApp") {
       "--app-version", ext.get("appVersionShort") as String,
       "--type", "app-image",
     )
-    runShellCommand(params, "Error while creating the .app directory.")
+    runCommand(params, "Error while creating the .app directory.")
 
     val targetDir = ext.get("targetDir") as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
-    runShellCommand(listOf(
+    runCommand(listOf(
       "awk",
       "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
               + "{print >\"${targetDir}/Info.plist\"};"
@@ -389,11 +388,11 @@ tasks.register("createApp") {
       pListFilename,
     ), "Error while patching Info.plist file.")
 
-    runShellCommand(listOf(
+    runCommand(listOf(
       "mv", "${targetDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
-    runShellCommand(listOf(
+    runCommand(listOf(
         "codesign", "--remove-signature", appDirName
     ), "Error while executing: codesign --remove-signature")
   }
@@ -427,7 +426,7 @@ tasks.register("createDmg") {
         "--dest", ext.get("targetDir") as String,
         "--type", "dmg",
       )
-    runShellCommand(params, "Error while creating the DMG package")
+    runCommand(params, "Error while creating the DMG package")
   }
 }
 
@@ -437,8 +436,8 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runShellCommand(listOf("git","rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
-  val branchLastCommitHash = runShellCommand(listOf("git","rev-parse", "--short=8", "HEAD"), "Failed getting last commit has.")
+  val branchName = runCommand(listOf("git","rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
+  val branchLastCommitHash = runCommand(listOf("git","rev-parse", "--short=8", "HEAD"), "Failed getting last commit has.")
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
