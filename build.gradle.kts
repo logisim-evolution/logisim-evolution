@@ -144,7 +144,7 @@ extra.apply {
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--app-version", appVersion,
-      "--copyright", "\"${copyrights}\"", // Must be quoted for shell happines.
+      "--copyright", "${copyrights}",
       "--dest", "${targetDir}"
   )
   if (logger.isDebugEnabled()) {
