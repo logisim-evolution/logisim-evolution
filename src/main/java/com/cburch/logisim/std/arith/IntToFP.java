@@ -68,7 +68,7 @@ public class IntToFP extends InstanceFactory {
     long mask = w == 64 ? 0 : (-1L) << w;
     mask ^= 0xFFFFFFFFFFFFFFFFL;
     long value = v & mask;
-    if (!unsigned && (value >> (w-1)) != 0) value |= ~mask;
+    if (!unsigned && (value >> (w - 1)) != 0) value |= ~mask;
     if (unsigned) return new BigInteger(Long.toUnsignedString(value));
     return new BigInteger(Long.toString(value));
   }

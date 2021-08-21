@@ -135,28 +135,28 @@ public class AutoLabel {
   }
 
   public boolean isActive(Circuit circ) {
-    if (circ == null) return false;
-    if (!active.containsKey(circ)) return false;
-    return active.get(circ);
+    if (circ != null && active.containsKey(circ)) return active.get(circ);
+    return false;
   }
 
   public void setLabel(String label, Circuit circ, ComponentFactory me) {
-    if (circ == null) return;
-    update(circ, label, true, me);
+    if (circ != null) update(circ, label, true, me);
   }
 
   public void activate(Circuit circ) {
-    if (circ == null) return;
-    if (labelBase.containsKey(circ)
-        && currentIndex.containsKey(circ)
-        && useLabelBaseOnly.containsKey(circ)
-        && useUnderscore.containsKey(circ)) active.put(circ, !labelBase.get(circ).isEmpty());
+    if (circ != null) {
+      if (labelBase.containsKey(circ)
+          && currentIndex.containsKey(circ)
+          && useLabelBaseOnly.containsKey(circ)
+          && useUnderscore.containsKey(circ)) active.put(circ, !labelBase.get(circ).isEmpty());
+    }
   }
 
   public void stop(Circuit circ) {
-    if (circ == null) return;
-    setLabel("", circ, null);
-    active.put(circ, false);
+    if (circ != null) {
+      setLabel("", circ, null);
+      active.put(circ, false);
+    }
   }
 
   public static boolean labelEndsWithNumber(String label) {
@@ -190,8 +190,11 @@ public class AutoLabel {
       currentIndex.put(circ, 0);
       useUnderscore.put(circ, !label.endsWith("_"));
     }
-    if (useFirstLabel) currentLabel.put(circ, label);
-    else currentLabel.put(circ, getNext(circ, me));
+    if (useFirstLabel) {
+      currentLabel.put(circ, label);
+    } else {
+      currentLabel.put(circ, getNext(circ, me));
+    }
   }
 
   public static SortedSet<Component> sort(Set<Component> comps) {
@@ -200,24 +203,16 @@ public class AutoLabel {
     return sorted;
   }
 
-  public String askAndSetLabel(
-      String componentName,
-      String oldLabel,
-      Circuit circ,
-      Component comp,
-      ComponentFactory compFactory,
-      AttributeSet attrs,
-      SetAttributeAction act,
-      boolean createAction) {
+  public String askAndSetLabel(String componentName, String oldLabel, Circuit circ, Component comp, ComponentFactory compFactory,
+      AttributeSet attrs, SetAttributeAction act, boolean createAction) {
     var correct = false;
-     var newLabel = oldLabel;
+    var newLabel = oldLabel;
     while (!correct) {
       newLabel = (String)
               OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
                   S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
-        if (Circuit.IsCorrectLabel(
-                circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
+        if (Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
             && !CorrectLabel.IsKeyword(newLabel, true)) {
           if (createAction) act.set(comp, StdAttr.LABEL, newLabel);
@@ -232,15 +227,8 @@ public class AutoLabel {
     return newLabel;
   }
 
-  public boolean labelKeyboardHandler(
-      int keyCode,
-      AttributeSet attrs,
-      String componentName,
-      Component comp,
-      ComponentFactory compFactory,
-      Circuit circ,
-      SetAttributeAction act,
-      boolean createAction) {
+  public boolean labelKeyboardHandler(int keyCode, AttributeSet attrs, String componentName, Component comp,
+      ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
     switch (keyCode) {
       case KeyEvent.VK_L:
         if (attrs.containsAttribute(StdAttr.LABEL)) {

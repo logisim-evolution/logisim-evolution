@@ -216,6 +216,7 @@ public class LeftPanel extends JTable {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
             clearSelection();
           }
@@ -225,6 +226,7 @@ public class LeftPanel extends JTable {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
             removeSelected();
           }
@@ -234,6 +236,7 @@ public class LeftPanel extends JTable {
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
+          @Override
           public void actionPerformed(ActionEvent e) {
             selectAll();
           }
@@ -244,6 +247,7 @@ public class LeftPanel extends JTable {
     actionMap.put(
         LogisimMenuBar.RAISE,
         new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(-1);
           }
@@ -251,6 +255,7 @@ public class LeftPanel extends JTable {
     actionMap.put(
         LogisimMenuBar.LOWER,
         new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(+1);
           }
@@ -258,6 +263,7 @@ public class LeftPanel extends JTable {
     actionMap.put(
         LogisimMenuBar.RAISE_TOP,
         new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(-2);
           }
@@ -265,6 +271,7 @@ public class LeftPanel extends JTable {
     actionMap.put(
         LogisimMenuBar.LOWER_BOTTOM,
         new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(+2);
           }
@@ -357,10 +364,22 @@ public class LeftPanel extends JTable {
       last = Math.max(last, s.idx);
     }
     if (last == -1) return;
-    else if (d == -2) model.addOrMoveSignals(sel, 0);
-    else if (d == -1) model.addOrMoveSignals(sel, Math.max(0, first - 1));
-    else if (d == +1) model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last + 2));
-    else model.addOrMoveSignals(sel, model.getSignalCount());
+
+    switch (d) {
+      case -2:
+        model.addOrMoveSignals(sel, 0);
+        break;
+      case -1:
+        model.addOrMoveSignals(sel, Math.max(0, first - 1));
+        break;
+      case 1:
+        model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last + 2));
+        break;
+      default:
+        model.addOrMoveSignals(sel, model.getSignalCount());
+        break;
+    }
+
     setSelectedRows(sel);
   }
 

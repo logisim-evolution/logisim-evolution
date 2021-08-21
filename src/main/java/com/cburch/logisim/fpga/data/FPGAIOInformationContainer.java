@@ -94,6 +94,7 @@ public class FPGAIOInformationContainer implements Cloneable {
 
   private IOComponentTypes MyType;
   protected BoardRectangle MyRectangle;
+  protected int myRotation = IOComponentTypes.rotationZero;
   private Map<Integer, String> MyPinLocations;
   private HashSet<Integer> MyInputPins;
   private HashSet<Integer> MyOutputPins;
@@ -185,24 +186,27 @@ public class FPGAIOInformationContainer implements Cloneable {
     } else {
       return;
     }
-    var Attrs = DocumentInfo.getAttributes();
+    var attrs = DocumentInfo.getAttributes();
     int x = -1, y = -1, width = -1, height = -1;
-    for (var i = 0; i < Attrs.getLength(); i++) {
-      var ThisAttr = Attrs.item(i);
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.LocationXString)) {
-        x = Integer.parseInt(ThisAttr.getNodeValue());
+    for (var attributeIndex = 0; attributeIndex < attrs.getLength(); attributeIndex++) {
+      final var thisAttr = attrs.item(attributeIndex);
+      if (thisAttr.getNodeName().equals(BoardWriterClass.mapRotation)) {
+        myRotation = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.LocationYString)) {
-        y = Integer.parseInt(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LocationXString)) {
+        x = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.WidthString)) {
-        width = Integer.parseInt(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LocationYString)) {
+        y = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.HeightString)) {
-        height = Integer.parseInt(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(BoardWriterClass.WidthString)) {
+        width = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.RectSetString)) {
-        var vals = ThisAttr.getNodeValue().split(",");
+      if (thisAttr.getNodeName().equals(BoardWriterClass.HeightString)) {
+        height = Integer.parseInt(thisAttr.getNodeValue());
+      }
+      if (thisAttr.getNodeName().equals(BoardWriterClass.RectSetString)) {
+        final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 4) {
           try {
             x = Integer.parseUnsignedInt(vals[0]);
@@ -214,8 +218,8 @@ public class FPGAIOInformationContainer implements Cloneable {
           }
         }
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.LedArrayInfoString)) {
-        var vals = ThisAttr.getNodeValue().split(",");
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LedArrayInfoString)) {
+        final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 3) {
           try {
             nrOfRows = Integer.parseUnsignedInt(vals[0]);
@@ -227,41 +231,41 @@ public class FPGAIOInformationContainer implements Cloneable {
           }
         }
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.PinLocationString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.PinLocationString)) {
         setNrOfPins(1);
-        MyPinLocations.put(0, ThisAttr.getNodeValue());
+        MyPinLocations.put(0, thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.MultiPinInformationString)) {
-        setNrOfPins(Integer.parseInt(ThisAttr.getNodeValue()));
+      if (thisAttr.getNodeName().equals(BoardWriterClass.MultiPinInformationString)) {
+        setNrOfPins(Integer.parseInt(thisAttr.getNodeValue()));
       }
-      if (ThisAttr.getNodeName().startsWith(BoardWriterClass.MultiPinPrefixString)) {
+      if (thisAttr.getNodeName().startsWith(BoardWriterClass.MultiPinPrefixString)) {
         String Id =
-            ThisAttr.getNodeName().substring(BoardWriterClass.MultiPinPrefixString.length());
-        MyPinLocations.put(Integer.parseInt(Id), ThisAttr.getNodeValue());
+            thisAttr.getNodeName().substring(BoardWriterClass.MultiPinPrefixString.length());
+        MyPinLocations.put(Integer.parseInt(Id), thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(BoardWriterClass.LabelString)) {
-        MyLabel = ThisAttr.getNodeValue();
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LabelString)) {
+        MyLabel = thisAttr.getNodeValue();
       }
-      if (ThisAttr.getNodeName().equals(DriveStrength.DriveAttributeString)) {
-        MyDriveStrength = DriveStrength.getId(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(DriveStrength.DriveAttributeString)) {
+        MyDriveStrength = DriveStrength.getId(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(PullBehaviors.PullAttributeString)) {
-        MyPullBehavior = PullBehaviors.getId(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(PullBehaviors.PullAttributeString)) {
+        MyPullBehavior = PullBehaviors.getId(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(IoStandards.IOAttributeString)) {
-        MyIOStandard = IoStandards.getId(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(IoStandards.IOAttributeString)) {
+        MyIOStandard = IoStandards.getId(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().equals(PinActivity.ActivityAttributeString)) {
-        MyActivityLevel = PinActivity.getId(ThisAttr.getNodeValue());
+      if (thisAttr.getNodeName().equals(PinActivity.ActivityAttributeString)) {
+        MyActivityLevel = PinActivity.getId(thisAttr.getNodeValue());
       }
-      if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.InputSetString)) {
-        InputLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.InputSetString)) {
+        InputLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
-      if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.OutputSetString)) {
-        OutputLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.OutputSetString)) {
+        OutputLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
-      if (ThisAttr.getNodeName().contentEquals(BoardWriterClass.IOSetString)) {
-        IOLocs.addAll(Arrays.asList(ThisAttr.getNodeValue().split(",")));
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.IOSetString)) {
+        IOLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
     }
     if ((x < 0) || (y < 0) || (width < 1) || (height < 1)) {
@@ -334,6 +338,17 @@ public class FPGAIOInformationContainer implements Cloneable {
   
   public int getArrayId() {
     return MyArrayId;
+  }
+  
+  public void setMapRotation(int val) {
+    if ((val == IOComponentTypes.rotationCW90) 
+        || (val == IOComponentTypes.rotationCCW90)
+        || (val == IOComponentTypes.rotationZero))
+      myRotation = val;
+  }
+  
+  public int getMapRotation() {
+    return myRotation;
   }
   
   public int getExternalPinCount() {
@@ -474,6 +489,16 @@ public class FPGAIOInformationContainer implements Cloneable {
             + nrOfColumns
             + ","
             + LedArrayDriving.getStrings().get(Driving));
+      }
+      if (IOComponentTypes.hasRotationAttribute(MyType)) {
+        switch (myRotation) {
+          case IOComponentTypes.rotationCW90 :
+          case IOComponentTypes.rotationCCW90 : {
+            result.setAttribute(BoardWriterClass.mapRotation, Integer.toString(myRotation));
+            break;
+          }
+          default : break;
+        }
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
         var Set = doc.createAttribute(BoardWriterClass.InputSetString);
@@ -840,6 +865,7 @@ public class FPGAIOInformationContainer implements Cloneable {
             NrOfPins, 
             nrOfRows,
             nrOfColumns,
+            myRotation,
             MyType);
       }
       mappaint(g, scale);
@@ -884,6 +910,7 @@ public class FPGAIOInformationContainer implements Cloneable {
           NrOfPins, 
           nrOfRows,
           nrOfColumns,
+          myRotation,
           MyType);
     }
     var selPin = PartialMapArray[xPos - MyRectangle.getXpos()][Ypos - MyRectangle.getYpos()];
@@ -1038,11 +1065,11 @@ public class FPGAIOInformationContainer implements Cloneable {
       if (pinIsMapped.get(i) != null) {
         col = BoardManipulator.getColor(color);
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       } else if (selectable) {
         col = BoardManipulator.getColor(BoardManipulator.SELECTABLE_COLOR_ID);
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       }
     }
   }
@@ -1059,13 +1086,13 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (NrOfPins == 0 && selectable) {
       alpha = highlighted ? 150 : 100;
       IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns, 
-          x, y, col, alpha, MyType);
+          myRotation, x, y, col, alpha, MyType);
     }
     for (var i = 0; i < NrOfPins; i++) {
       alpha = !highlighted ? 100 : (i == selectedPin && !isCompleteMap()) ? 255 : 150;
       if (pinIsMapped.get(i) != null || selectable) {
         IOComponentTypes.paintPartialMap(g, i, height, width, NrOfPins, nrOfRows, nrOfColumns,
-            x, y, col, alpha, MyType);
+            myRotation, x, y, col, alpha, MyType);
       }
     }
   }
