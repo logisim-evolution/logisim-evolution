@@ -4,7 +4,7 @@
 # https://github.com/probot/stale
 #
 # Role:
-# Monitor stale PRs and Issues tagged "incubating", then first pings the autors for an update
+# Monitor PRs and Issues tagged "incubating", then first pings the authors for an update
 # and eventually closes ticket/PR if no there's still no activity detected after a ping.
 
 # Limit to only `issues` or `pulls`
