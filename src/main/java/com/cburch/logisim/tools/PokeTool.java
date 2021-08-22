@@ -147,7 +147,7 @@ public class PokeTool extends Tool {
 
   private static final Color caretColor = new Color(255, 255, 150);
 
-  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
   private final Listener listener;
@@ -174,6 +174,11 @@ public class PokeTool extends Tool {
   @Override
   public boolean equals(Object other) {
     return other instanceof PokeTool;
+  }
+
+  @Override
+  public Cursor getCursor() {
+    return cursor;
   }
 
   @Override

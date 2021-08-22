@@ -139,7 +139,7 @@ public class TextTool extends Tool {
     }
   }
 
-  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
 
   private final MyListener listener = new MyListener();
   private final AttributeSet attrs;
@@ -174,6 +174,11 @@ public class TextTool extends Tool {
   @Override
   public AttributeSet getAttributeSet() {
     return attrs;
+  }
+
+  @Override
+  public Cursor getCursor() {
+    return cursor;
   }
 
   @Override

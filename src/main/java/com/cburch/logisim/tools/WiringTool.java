@@ -64,7 +64,7 @@ public class WiringTool extends Tool {
    */
   public static final String _ID = "Wiring Tool";
 
-  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private static final int HORIZONTAL = 1;
   private static final int VERTICAL = 2;
@@ -160,6 +160,11 @@ public class WiringTool extends Tool {
   @Override
   public boolean equals(Object other) {
     return other instanceof WiringTool;
+  }
+
+  @Override
+  public Cursor getCursor() {
+    return cursor;
   }
 
   @Override

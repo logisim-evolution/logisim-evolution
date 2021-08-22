@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -307,7 +308,7 @@ class Connector {
     }
 
     val impossible = new ArrayList<ConnectionData>();
-    for (val it = connects.iterator(); it.hasNext(); ) {
+    for (Iterator<ConnectionData> it = connects.iterator(); it.hasNext(); ) {
       val conn = it.next();
       val dest = conn.getLocation().translate(dx, dy);
       if (avoid.get(dest) != null) {
