@@ -40,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
+import lombok.val;
 
 class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseListenerContract {
 
@@ -53,8 +53,8 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
     super(new BorderLayout());
     this.project = proj;
 
-    SimulationToolbarModel toolbarModel = new SimulationToolbarModel(proj, menu);
-    Toolbar toolbar = new Toolbar(toolbarModel);
+    val toolbarModel = new SimulationToolbarModel(proj, menu);
+    val toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
     model = new SimulationTreeModel(proj.getRootCircuitStates());
@@ -76,12 +76,11 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
   @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getClickCount() == 2) {
-      TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+      val path = tree.getPathForLocation(e.getX(), e.getY());
       if (path != null) {
-        Object last = path.getLastPathComponent();
+        val last = path.getLastPathComponent();
         if (last instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode node;
-          node = (SimulationTreeCircuitNode) last;
+          val node = (SimulationTreeCircuitNode) last;
           project.setCircuitState(node.getCircuitState());
         }
       }
@@ -101,11 +100,11 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
 
   @Override
   public void projectChanged(ProjectEvent event) {
-    int action = event.getAction();
+    val action = event.getAction();
     if (action == ProjectEvent.ACTION_SET_STATE) {
       model.updateSimulationList(project.getRootCircuitStates());
       model.setCurrentView(project.getCircuitState());
-      TreePath path = model.mapToPath(project.getCircuitState());
+      val path = model.mapToPath(project.getCircuitState());
       if (path != null) {
         tree.scrollPathToVisible(path);
       }

@@ -36,6 +36,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.proj.Project;
+import lombok.val;
 
 public class AttrTableCircuitModel extends AttributeSetTableModel {
   private final Project proj;
@@ -55,10 +56,9 @@ public class AttrTableCircuitModel extends AttributeSetTableModel {
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
     if (!proj.getLogisimFile().contains(circ)) {
-      String msg = S.get("cannotModifyCircuitError");
-      throw new AttrTableSetException(msg);
+      throw new AttrTableSetException(S.get("cannotModifyCircuitError"));
     } else {
-      CircuitMutation xn = new CircuitMutation(circ);
+      val xn = new CircuitMutation(circ);
       xn.setForCircuit(attr, value);
       proj.doAction(xn.toAction(S.getter("changeCircuitAttrAction")));
     }

@@ -37,16 +37,19 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
+import lombok.Setter;
+import lombok.val;
 
 public class LogisimToolbarItem implements ToolbarItem {
   private final MenuListener menu;
   private final LogisimMenuItem action;
   private Icon icon;
+
+  @Setter
   private StringGetter toolTip;
 
   public LogisimToolbarItem(
@@ -78,23 +81,15 @@ public class LogisimToolbarItem implements ToolbarItem {
           AppPreferences.getScaled(AppPreferences.IconSize),
           AppPreferences.getScaled(AppPreferences.IconSize));
     } else {
-      int w = icon.getIconWidth();
-      int h = icon.getIconHeight();
+      val w = icon.getIconWidth();
+      val h = icon.getIconHeight();
       return new Dimension(w, h + 2);
     }
   }
 
   @Override
   public String getToolTip() {
-    if (toolTip != null) {
-      return toolTip.toString();
-    } else {
-      return null;
-    }
-  }
-
-  public void setToolTip(StringGetter toolTip) {
-    this.toolTip = toolTip;
+    return (toolTip != null) ? toolTip.toString() : null;
   }
 
   @Override
@@ -105,12 +100,12 @@ public class LogisimToolbarItem implements ToolbarItem {
   @Override
   public void paintIcon(Component destination, Graphics gfx) {
     if (!isSelectable() && gfx instanceof Graphics2D) {
-      Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+      val c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
       ((Graphics2D) gfx).setComposite(c);
     }
 
     if (icon == null) {
-      int simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
+      val simple = AppPreferences.getScaled(AppPreferences.IconSize) >> 2;
       gfx.setColor(new Color(255, 128, 128));
       gfx.fillRect(simple, simple, 2 * simple, 2 * simple);
       gfx.setColor(Color.BLACK);

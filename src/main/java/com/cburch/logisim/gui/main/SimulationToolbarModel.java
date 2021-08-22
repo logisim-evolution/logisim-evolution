@@ -40,24 +40,26 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
+import lombok.val;
 
 public class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
-  private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
-  private static final SimulationIcon EnableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);
+  private static final SimulationIcon runToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
+  private static final SimulationIcon enableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);
   private final Project project;
   private final LogisimToolbarItem simRunToggle;
   private final LogisimToolbarItem simStep;
   private final LogisimToolbarItem tickEnable;
   private final LogisimToolbarItem tickHalf;
   private final LogisimToolbarItem tickFull;
-  private final List<ToolbarItem> items;
+  @Getter private final List<ToolbarItem> items;
 
   public SimulationToolbarModel(Project project, MenuListener menu) {
     this.project = project;
 
     simRunToggle =
         new LogisimToolbarItem(
-            menu, RunToggleIcon, LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
+            menu, runToggleIcon, LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
     simStep =
         new LogisimToolbarItem(
             menu,
@@ -67,7 +69,7 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
     tickEnable =
         new LogisimToolbarItem(
             menu,
-            EnableDisableIcon,
+                enableDisableIcon,
             LogisimMenuBar.TICK_ENABLE,
             S.getter("simulateEnableTicksTip"));
     tickHalf =
@@ -94,11 +96,6 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
   }
 
   @Override
-  public List<ToolbarItem> getItems() {
-    return items;
-  }
-
-  @Override
   public boolean isSelected(ToolbarItem item) {
     return false;
   }
@@ -112,21 +109,21 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
 
   @Override
   public void stateChanged(ChangeEvent e) {
-    final var sim = project.getSimulator();
-    final var running = sim != null && sim.isAutoPropagating();
-    final var ticking = sim != null && sim.isAutoTicking();
+    val simulator = project.getSimulator();
+    var running = simulator != null && simulator.isAutoPropagating();
+    var ticking = simulator != null && simulator.isAutoTicking();
     if (running) {
-      RunToggleIcon.setType(SimulationIcon.SIM_PAUSE);
+      runToggleIcon.setType(SimulationIcon.SIM_PAUSE);
       simRunToggle.setToolTip(S.getter("simulateStopTip"));
     } else {
-      RunToggleIcon.setType(SimulationIcon.SIM_PLAY);
+      runToggleIcon.setType(SimulationIcon.SIM_PLAY);
       simRunToggle.setToolTip(S.getter("simulateRunTip"));
     }
     if (ticking) {
-      EnableDisableIcon.setType(SimulationIcon.SIM_DISABLE);
+      enableDisableIcon.setType(SimulationIcon.SIM_DISABLE);
       tickEnable.setToolTip(S.getter("simulateDisableTicksTip"));
     } else {
-      EnableDisableIcon.setType(SimulationIcon.SIM_ENABLE);
+      enableDisableIcon.setType(SimulationIcon.SIM_ENABLE);
       tickEnable.setToolTip(S.getter("simulateEnableTicksTip"));
     }
     fireToolbarAppearanceChanged();

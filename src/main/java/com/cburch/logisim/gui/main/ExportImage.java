@@ -31,10 +31,7 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -70,6 +67,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,8 +108,8 @@ public class ExportImage {
 
   public static void doExport(Project proj) {
     // First display circuit/parameter selection dialog
-    Frame frame = proj.getFrame();
-    CircuitJList list = new CircuitJList(proj, true);
+    val frame = proj.getFrame();
+    val list = new CircuitJList(proj, true);
     if (list.getModel().getSize() == 0) {
       OptionPane.showMessageDialog(
           proj.getFrame(),
@@ -120,8 +118,8 @@ public class ExportImage {
           OptionPane.YES_NO_OPTION);
       return;
     }
-    OptionsPanel options = new OptionsPanel(list);
-    int action =
+    val options = new OptionsPanel(list);
+    var action =
         OptionPane.showConfirmDialog(
             frame,
             options,
@@ -129,18 +127,18 @@ public class ExportImage {
             OptionPane.OK_CANCEL_OPTION,
             OptionPane.QUESTION_MESSAGE);
     if (action != OptionPane.OK_OPTION) return;
-    List<Circuit> circuits = list.getSelectedCircuits();
-    final double scale = options.getScale();
-    final boolean printerView = options.getPrinterView();
+    val circuits = list.getSelectedCircuits();
+    val scale = options.getScale();
+    val printerView = options.getPrinterView();
     if (circuits.isEmpty()) return;
 
-    int fmt = options.getImageFormat();
-    ImageFileFilter filter = getFilter(fmt);
+    val fmt = options.getImageFormat();
+    val filter = getFilter(fmt);
     if (filter == null) return;
 
     // Then display file chooser
-    Loader loader = proj.getLogisimFile().getLoader();
-    JFileChooser chooser = loader.createChooser();
+    val loader = proj.getLogisimFile().getLoader();
+    val chooser = loader.createChooser();
     chooser.setAcceptAllFileFilterUsed(false);
     if (circuits.size() > 1) {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -149,15 +147,15 @@ public class ExportImage {
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("exportImageFileSelect"));
     }
-    int returnVal = chooser.showDialog(frame, S.get("exportImageButton"));
+    val returnVal = chooser.showDialog(frame, S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
 
     // Determine whether destination is valid
-    File dest = chooser.getSelectedFile();
+    val dest = chooser.getSelectedFile();
     chooser.setCurrentDirectory(dest.isDirectory() ? dest : dest.getParentFile());
     if (dest.exists()) {
       if (!dest.isDirectory()) {
-        int confirm =
+        val confirm =
             OptionPane.showConfirmDialog(
                 proj.getFrame(),
                 S.get("confirmOverwriteMessage"),
@@ -167,7 +165,7 @@ public class ExportImage {
       }
     } else {
       if (circuits.size() > 1) {
-        boolean created = dest.mkdir();
+        val created = dest.mkdir();
         if (!created) {
           OptionPane.showMessageDialog(
               proj.getFrame(),
@@ -180,8 +178,7 @@ public class ExportImage {
     }
 
     // Create the progress monitor
-    ProgressMonitor monitor =
-        new ProgressMonitor(frame, S.get("exportImageProgress"), null, 0, 10000);
+    val monitor = new ProgressMonitor(frame, S.get("exportImageProgress"), null, 0, 10000);
     monitor.setMillisToDecideToPopup(100);
     monitor.setMillisToPopup(200);
     monitor.setProgress(0);
@@ -224,33 +221,32 @@ public class ExportImage {
     }
 
     private void export(Circuit circuit) {
-      Bounds bds = circuit.getBounds(canvas.getGraphics()).expand(BORDER_SIZE);
-      int width = (int) Math.round(bds.getWidth() * scale);
-      int height = (int) Math.round(bds.getHeight() * scale);
-      Graphics g;
+      val bds = circuit.getBounds(canvas.getGraphics()).expand(BORDER_SIZE);
+      val width = (int) Math.round(bds.getWidth() * scale);
+      val height = (int) Math.round(bds.getHeight() * scale);
+      Graphics gfx;
       Graphics base;
-      BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      val img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
       if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
         base = new TikZWriter();
-        g = base.create();
+        gfx = base.create();
       } else {
         base = img.getGraphics();
-        g = base.create();
-        g.setColor(Color.white);
-        g.fillRect(0, 0, width, height);
-        g.setColor(Color.black);
+        gfx = base.create();
+        gfx.setColor(Color.white);
+        gfx.fillRect(0, 0, width, height);
+        gfx.setColor(Color.black);
       }
-      if (g instanceof Graphics2D) {
-        ((Graphics2D) g).scale(scale, scale);
-        g.translate(-bds.getX(), -bds.getY());
+      if (gfx instanceof Graphics2D) {
+        ((Graphics2D) gfx).scale(scale, scale);
+        gfx.translate(-bds.getX(), -bds.getY());
       } else {
         OptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));
         monitor.close();
       }
 
-      CircuitState circuitState = canvas.getProject().getCircuitState(circuit);
-      ComponentDrawContext context =
-          new ComponentDrawContext(canvas, circuit, circuitState, base, g, printerView);
+      val circuitState = canvas.getProject().getCircuitState(circuit);
+      val context = new ComponentDrawContext(canvas, circuit, circuitState, base, gfx, printerView);
       circuit.draw(context, null);
 
       File where;
@@ -259,7 +255,7 @@ public class ExportImage {
       } else if (filter.accept(dest)) {
         where = dest;
       } else {
-        String newName = dest.getName() + filter.extensions[0];
+        val newName = dest.getName() + filter.extensions[0];
         where = new File(dest.getParentFile(), newName);
       }
       try {
@@ -274,10 +270,10 @@ public class ExportImage {
             ImageIO.write(img, "JPEG", where);
             break;
           case FORMAT_TIKZ:
-            ((TikZWriter) g).WriteFile(where);
+            ((TikZWriter) gfx).WriteFile(where);
             break;
           case FORMAT_SVG:
-            ((TikZWriter) g).WriteSvg(width, height, where);
+            ((TikZWriter) gfx).WriteSvg(width, height, where);
             break;
         }
       } catch (Exception e) {
@@ -286,13 +282,13 @@ public class ExportImage {
         monitor.close();
         return;
       }
-      g.dispose();
+      gfx.dispose();
       monitor.close();
     }
 
     @Override
     public void run() {
-      for (Circuit circ : circuits) {
+      for (val circ : circuits) {
         export(circ);
       }
     }
@@ -307,15 +303,15 @@ public class ExportImage {
       this.type = type;
       this.desc = desc;
       extensions = new String[exts.length];
-      for (int i = 0; i < exts.length; i++) {
+      for (var i = 0; i < exts.length; i++) {
         extensions[i] = "." + exts[i].toLowerCase();
       }
     }
 
     @Override
     public boolean accept(File f) {
-      String name = f.getName().toLowerCase();
-      for (String extension : extensions) {
+      val name = f.getName().toLowerCase();
+      for (val extension : extensions) {
         if (name.endsWith(extension)) return true;
       }
       return f.isDirectory();
@@ -349,7 +345,7 @@ public class ExportImage {
       formatJpg = new JRadioButton("JPEG");
       formatTikZ = new JRadioButton("TikZ");
       formatSvg = new JRadioButton("SVG");
-      ButtonGroup bgroup = new ButtonGroup();
+      val bgroup = new ButtonGroup();
       bgroup.add(formatPng);
       bgroup.add(formatGif);
       bgroup.add(formatJpg);
@@ -365,7 +361,7 @@ public class ExportImage {
       curScale = new JLabel("222%");
       curScale.setHorizontalAlignment(SwingConstants.RIGHT);
       curScale.setVerticalAlignment(SwingConstants.CENTER);
-      Dimension d = curScale.getPreferredSize();
+      val d = curScale.getPreferredSize();
       curJim =
           new Dimension(
               AppPreferences.getScaled(d.width + (d.width >> 1)),
@@ -394,7 +390,7 @@ public class ExportImage {
 
       gbc.gridy++;
       addGb(new JLabel(S.get("labelImageFormat") + " "));
-      Box formatsPanel = new Box(BoxLayout.Y_AXIS);
+      val formatsPanel = new Box(BoxLayout.Y_AXIS);
       formatsPanel.add(formatPng);
       formatsPanel.add(formatGif);
       formatsPanel.add(formatJpg);
@@ -433,8 +429,9 @@ public class ExportImage {
       return Math.pow(2.0, (double) slider.getValue() / SLIDER_DIVISIONS);
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
-      double scale = getScale();
+      val scale = getScale();
       curScale.setText((int) Math.round(100.0 * scale) + "%");
       if (curJim != null) curScale.setPreferredSize(curJim);
       if (e == null) return;

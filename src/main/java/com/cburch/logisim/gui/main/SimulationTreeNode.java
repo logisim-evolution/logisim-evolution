@@ -33,10 +33,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
+import lombok.Getter;
 
 public class SimulationTreeNode implements TreeNode {
   protected final SimulationTreeModel model;
-  protected final SimulationTreeNode parent;
+  @Getter protected final SimulationTreeNode parent;
   protected ArrayList<TreeNode> children;
 
   public SimulationTreeNode(SimulationTreeModel model, SimulationTreeNode parent) {
@@ -45,18 +46,22 @@ public class SimulationTreeNode implements TreeNode {
     this.children = new ArrayList<>();
   }
 
+  @Override
   public Enumeration<TreeNode> children() {
     return Collections.enumeration(children);
   }
 
+  @Override
   public boolean getAllowsChildren() {
     return true;
   }
 
+  @Override
   public TreeNode getChildAt(int index) {
     return children.get(index);
   }
 
+  @Override
   public int getChildCount() {
     return children.size();
   }
@@ -65,18 +70,16 @@ public class SimulationTreeNode implements TreeNode {
     return null;
   }
 
+  @Override
   public int getIndex(TreeNode node) {
     return children.indexOf(node);
-  }
-
-  public TreeNode getParent() {
-    return parent;
   }
 
   public boolean isCurrentView(SimulationTreeModel model) {
     return false;
   }
 
+  @Override
   public boolean isLeaf() {
     return false;
   }

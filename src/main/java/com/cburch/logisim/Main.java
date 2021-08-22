@@ -45,6 +45,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import lombok.val;
 
 public class Main {
   /**
@@ -72,15 +73,15 @@ public class Main {
       e.printStackTrace();
     }
 
-    final var startup = Startup.parseArgs(args);
+    val startup = Startup.parseArgs(args);
     if (startup == null) {
       System.exit(0);
     }
     try {
       startup.run();
     } catch (Throwable e) {
-      final var strWriter = new StringWriter();
-      final var printWriter = new PrintWriter(strWriter);
+      val strWriter = new StringWriter();
+      val printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
       OptionPane.showMessageDialog(null, strWriter.toString());
       System.exit(100);

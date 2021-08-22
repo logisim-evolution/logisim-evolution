@@ -33,39 +33,35 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
+import lombok.Getter;
+import lombok.val;
 
 class AttrTableComponentModel extends AttributeSetTableModel {
   final Project proj;
-  final Circuit circ;
-  final Component comp;
+
+  @Getter
+  final Circuit circuit;
+  @Getter
+  final Component component;
 
   AttrTableComponentModel(Project proj, Circuit circ, Component comp) {
     super(comp.getAttributeSet());
     this.proj = proj;
-    this.circ = circ;
-    this.comp = comp;
+    this.circuit = circ;
+    this.component = comp;
     setInstance(comp.getFactory());
-  }
-
-  public Circuit getCircuit() {
-    return circ;
-  }
-
-  public Component getComponent() {
-    return comp;
   }
 
   @Override
   public String getTitle() {
-    String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-    Location loc = comp.getLocation();
-    String s = comp.getFactory().getDisplayName();
+    val label = component.getAttributeSet().getValue(StdAttr.LABEL);
+    val loc = component.getLocation();
+    var s = component.getFactory().getDisplayName();
     if (label != null && label.length() > 0)
       s += " \"" + label + "\"";
     else if (loc != null)
@@ -75,12 +71,11 @@ class AttrTableComponentModel extends AttributeSetTableModel {
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
-    if (!proj.getLogisimFile().contains(circ)) {
-      String msg = S.get("cannotModifyCircuitError");
-      throw new AttrTableSetException(msg);
+    if (!proj.getLogisimFile().contains(circuit)) {
+      throw new AttrTableSetException(S.get("cannotModifyCircuitError"));
     } else {
-      SetAttributeAction act = new SetAttributeAction(circ, S.getter("changeAttributeAction"));
-      act.set(comp, attr, value);
+      val act = new SetAttributeAction(circuit, S.getter("changeAttributeAction"));
+      act.set(component, attr, value);
       proj.doAction(act);
     }
   }

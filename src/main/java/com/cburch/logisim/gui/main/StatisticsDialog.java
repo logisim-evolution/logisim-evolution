@@ -36,12 +36,10 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.TableSorter;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
-import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -49,7 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
+import lombok.val;
 
 public class StatisticsDialog extends JDialog implements ActionListener {
   private static final long serialVersionUID = 1L;
@@ -59,26 +57,25 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setTitle(S.get("statsDialogTitle", circuitName));
 
-    var table = new StatisticsTable();
-    TableSorter mySorter = new TableSorter(model, table.getTableHeader());
-    Comparator<String> comp =
-        new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
+    val table = new StatisticsTable();
+    val mySorter = new TableSorter(model, table.getTableHeader());
+    Comparator<String> comp = new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
     mySorter.setColumnComparator(String.class, comp);
     table.setModel(mySorter);
-    final var tablePane = new JScrollPane(table);
+    val tablePane = new JScrollPane(table);
 
-    var button = new JButton(S.get("statsCloseButton"));
+    val button = new JButton(S.get("statsCloseButton"));
     button.addActionListener(this);
-    var buttonPanel = new JPanel();
+    val buttonPanel = new JPanel();
     buttonPanel.add(button);
 
-    var contents = this.getContentPane();
+    val contents = this.getContentPane();
     contents.setLayout(new BorderLayout());
     contents.add(tablePane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.PAGE_END);
     this.pack();
 
-    var pref = contents.getPreferredSize();
+    val pref = contents.getPreferredSize();
     if (pref.width > 750 || pref.height > 550) {
       if (pref.width > 750) pref.width = 750;
       if (pref.height > 550) pref.height = 550;
@@ -87,12 +84,12 @@ public class StatisticsDialog extends JDialog implements ActionListener {
   }
 
   public static void show(JFrame parent, LogisimFile file, Circuit circuit) {
-    FileStatistics stats = FileStatistics.compute(file, circuit);
-    StatisticsDialog dlog =
-        new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
+    val stats = FileStatistics.compute(file, circuit);
+    val dlog = new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
     dlog.setVisible(true);
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     this.dispose();
   }
@@ -104,9 +101,10 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       this.fixedAtBottom = fixedAtBottom;
     }
 
+    @Override
     public int compare(String a, String b) {
-      for (int i = fixedAtBottom.length - 1; i >= 0; i--) {
-        String s = fixedAtBottom[i];
+      for (var i = fixedAtBottom.length - 1; i >= 0; i--) {
+        val s = fixedAtBottom[i];
         if (a.equals(s)) return b.equals(s) ? 0 : 1;
         if (b.equals(s)) return -1;
       }
@@ -127,13 +125,13 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       Dimension tableDim = getPreferredSize();
 
       double total = 0;
-      for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
+      for (var i = 0; i < getColumnModel().getColumnCount(); i++) {
         total += percentages[i];
       }
 
-      for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-        TableColumn column = getColumnModel().getColumn(i);
-        double width = tableDim.width * (percentages[i] / total);
+      for (var i = 0; i < getColumnModel().getColumnCount(); i++) {
+        val column = getColumnModel().getColumn(i);
+        var width = tableDim.width * (percentages[i] / total);
         column.setPreferredWidth((int) width);
       }
     }
@@ -152,6 +150,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       return column < 2 ? String.class : Integer.class;
     }
 
+    @Override
     public int getColumnCount() {
       return 5;
     }
@@ -174,18 +173,22 @@ public class StatisticsDialog extends JDialog implements ActionListener {
       }
     }
 
+    @Override
     public int getRowCount() {
       return stats.getCounts().size() + 2;
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
-      List<FileStatistics.Count> counts = stats.getCounts();
-      int countsLen = counts.size();
+      val counts = stats.getCounts();
+      val countsLen = counts.size();
       if (row < 0 || row >= countsLen + 2) return "";
       FileStatistics.Count count;
+
       if (row < countsLen) count = counts.get(row);
       else if (row == countsLen) count = stats.getTotalWithoutSubcircuits();
       else count = stats.getTotalWithSubcircuits();
+
       switch (column) {
         case 0:
           if (row < countsLen) {

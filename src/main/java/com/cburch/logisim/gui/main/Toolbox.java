@@ -36,6 +36,7 @@ import com.cburch.logisim.tools.Tool;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import lombok.val;
 
 class Toolbox extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -44,8 +45,8 @@ class Toolbox extends JPanel {
   Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());
 
-    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame, menu);
-    Toolbar toolbar = new Toolbar(toolbarModel);
+    val toolbarModel = new ToolboxToolbarModel(frame, menu);
+    val toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
     toolbox = new ProjectExplorer(proj, false);

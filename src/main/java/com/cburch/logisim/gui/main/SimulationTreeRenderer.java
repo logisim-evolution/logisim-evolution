@@ -38,6 +38,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import lombok.val;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static final long serialVersionUID = 1L;
@@ -51,14 +52,13 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
       boolean leaf,
       int row,
       boolean hasFocus) {
-    Component ret =
-        super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-    SimulationTreeModel model = (SimulationTreeModel) tree.getModel();
+    val ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+    val model = (SimulationTreeModel) tree.getModel();
     if (ret instanceof JLabel) {
-      JLabel label = (JLabel) ret;
+      val label = (JLabel) ret;
       if (value instanceof SimulationTreeNode) {
-        SimulationTreeNode node = (SimulationTreeNode) value;
-        ComponentFactory factory = node.getComponentFactory();
+        val node = (SimulationTreeNode) value;
+        val factory = node.getComponentFactory();
         if (factory != null) {
           label.setIcon(new RendererIcon(factory, node.isCurrentView(model)));
         }
@@ -76,24 +76,27 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
       this.isCurrentView = isCurrentView;
     }
 
+    @Override
     public int getIconHeight() {
       return 20;
     }
 
+    @Override
     public int getIconWidth() {
       return 20;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
-      ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g);
+      val context = new ComponentDrawContext(c, null, null, g, g);
       factory.paintIcon(context, x, y, factory.createAttributeSet());
 
       // draw magnifying glass if appropriate
       if (isCurrentView) {
-        int tx = x + 13;
-        int ty = y + 13;
-        int[] xp = {tx - 1, x + 18, x + 20, tx + 1};
-        int[] yp = {ty + 1, y + 20, y + 18, ty - 1};
+        val tx = x + 13;
+        val ty = y + 13;
+        final int[] xp = {tx - 1, x + 18, x + 20, tx + 1};
+        final int[] yp = {ty + 1, y + 20, y + 18, ty - 1};
         g.setColor(ProjectExplorer.MAGNIFYING_INTERIOR);
         g.fillOval(x + 5, y + 5, 10, 10);
         g.setColor(Color.BLACK);

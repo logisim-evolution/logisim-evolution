@@ -30,27 +30,21 @@ package com.cburch.logisim.gui.main;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.CircuitTransaction;
-import com.cburch.logisim.circuit.CircuitTransactionResult;
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Location;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
-import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.JoinedAction;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +53,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import lombok.val;
 
 public class SelectionActions {
   private SelectionActions() {}
@@ -90,11 +85,11 @@ public class SelectionActions {
 
   // clears the selection, anchoring all floating elements in selection
   public static Action drop(Selection sel, Collection<Component> comps) {
-    HashSet<Component> floating = new HashSet<>(sel.getFloatingComponents());
-    HashSet<Component> anchored = new HashSet<>(sel.getAnchoredComponents());
-    ArrayList<Component> toDrop = new ArrayList<>();
-    ArrayList<Component> toIgnore = new ArrayList<>();
-    for (Component comp : comps) {
+    val floating = new HashSet<Component>(sel.getFloatingComponents());
+    val anchored = new HashSet<Component>(sel.getAnchoredComponents());
+    val toDrop = new ArrayList<Component>();
+    val toIgnore = new ArrayList<Component>();
+    for (val comp : comps) {
       if (floating.contains(comp)) {
         toDrop.add(comp);
       } else if (anchored.contains(comp)) {
@@ -103,12 +98,12 @@ public class SelectionActions {
       }
     }
     if (toDrop.size() == toIgnore.size()) {
-      for (Component comp : toIgnore) {
+      for (val comp : toIgnore) {
         sel.remove(null, comp);
       }
       return null;
     } else {
-      int numDrop = toDrop.size() - toIgnore.size();
+      val numDrop = toDrop.size() - toIgnore.size();
       return new Drop(sel, toDrop, numDrop);
     }
   }
@@ -121,15 +116,14 @@ public class SelectionActions {
     return new Duplicate(sel);
   }
 
-  private static ComponentFactory findComponentFactory(
-      ComponentFactory factory, ArrayList<Library> libs, boolean acceptNameMatch) {
-    String name = factory.getName();
-    for (Library lib : libs) {
-      for (Tool tool : lib.getTools()) {
+  private static ComponentFactory findComponentFactory(ComponentFactory factory, ArrayList<Library> libs, boolean acceptNameMatch) {
+    val name = factory.getName();
+    for (val lib : libs) {
+      for (val tool : lib.getTools()) {
         if (tool instanceof AddTool) {
-          AddTool addTool = (AddTool) tool;
+          val addTool = (AddTool) tool;
           if (name.equals(addTool.getName())) {
-            ComponentFactory fact = addTool.getFactory(true);
+            val fact = addTool.getFactory(true);
             if (acceptNameMatch) {
               return fact;
             } else if (fact == factory) {
@@ -147,38 +141,33 @@ public class SelectionActions {
   }
 
   private static HashMap<Component, Component> getReplacementMap(Project proj) {
-    HashMap<Component, Component> replMap;
-    replMap = new HashMap<>();
-
-    LogisimFile file = proj.getLogisimFile();
-    ArrayList<Library> libs = new ArrayList<>();
+    val replMap = new HashMap<Component, Component>();
+    val file = proj.getLogisimFile();
+    val libs = new ArrayList<Library>();
     libs.add(file);
     libs.addAll(file.getLibraries());
 
     ArrayList<String> dropped = null;
-    Clipboard clip = Clipboard.get();
-    Collection<Component> comps = clip.getComponents();
-    HashMap<ComponentFactory, ComponentFactory> factoryReplacements;
-    factoryReplacements = new HashMap<>();
-    for (Component comp : comps) {
+    val clip = Clipboard.get();
+    val comps = clip.getComponents();
+    val factoryReplacements = new HashMap<ComponentFactory, ComponentFactory>();
+    for (val comp : comps) {
       if (comp instanceof Wire) continue;
-
-      ComponentFactory compFactory = comp.getFactory();
-
+      val compFactory = comp.getFactory();
       if (compFactory == Text.FACTORY) continue;
 
-      ComponentFactory copyFactory = findComponentFactory(compFactory, libs, false);
+      var copyFactory = findComponentFactory(compFactory, libs, false);
       if (factoryReplacements.containsKey(compFactory)) {
         copyFactory = factoryReplacements.get(compFactory);
       } else if (copyFactory == null) {
-        ComponentFactory candidate = findComponentFactory(compFactory, libs, true);
+        val candidate = findComponentFactory(compFactory, libs, true);
         if (candidate == null) {
           if (dropped == null) {
             dropped = new ArrayList<>();
           }
           dropped.add(compFactory.getDisplayName());
         } else {
-          String msg = S.get("pasteCloneQuery", compFactory.getName());
+          val msg = S.get("pasteCloneQuery", compFactory.getName());
           Object[] opts = {
             S.get("pasteCloneReplace"), S.get("pasteCloneIgnore"), S.get("pasteCloneCancel")
           };
@@ -206,21 +195,21 @@ public class SelectionActions {
       if (copyFactory == null) {
         replMap.put(comp, null);
       } else if (copyFactory != compFactory) {
-        Location copyLoc = comp.getLocation();
-        AttributeSet copyAttrs = (AttributeSet) comp.getAttributeSet().clone();
-        Component copy = copyFactory.createComponent(copyLoc, copyAttrs);
+        val copyLoc = comp.getLocation();
+        val copyAttrs = (AttributeSet) comp.getAttributeSet().clone();
+        val copy = copyFactory.createComponent(copyLoc, copyAttrs);
         replMap.put(comp, copy);
       }
     }
 
     if (dropped != null) {
       Collections.sort(dropped);
-      StringBuilder droppedStr = new StringBuilder();
+      val droppedStr = new StringBuilder();
       droppedStr.append(S.get("pasteDropMessage"));
-      String curName = dropped.get(0);
-      int curCount = 1;
-      int lines = 1;
-      for (int i = 1; i <= dropped.size(); i++) {
+      var curName = dropped.get(0);
+      var curCount = 1;
+      var lines = 1;
+      for (var i = 1; i <= dropped.size(); i++) {
         String nextName = i == dropped.size() ? "" : dropped.get(i);
         if (nextName.equals(curName)) {
           curCount++;
@@ -238,20 +227,19 @@ public class SelectionActions {
       }
 
       lines = Math.max(3, Math.min(7, lines));
-      JTextArea area = new JTextArea(lines, 60);
+      val area = new JTextArea(lines, 60);
       area.setEditable(false);
       area.setText(droppedStr.toString());
       area.setCaretPosition(0);
-      JScrollPane areaPane = new JScrollPane(area);
-      OptionPane.showMessageDialog(
-          proj.getFrame(), areaPane, S.get("pasteDropTitle"), OptionPane.WARNING_MESSAGE);
+      val areaPane = new JScrollPane(area);
+      OptionPane.showMessageDialog(proj.getFrame(), areaPane, S.get("pasteDropTitle"), OptionPane.WARNING_MESSAGE);
     }
 
     return replMap;
   }
 
   public static Action pasteMaybe(Project proj, Selection sel) {
-    HashMap<Component, Component> replacements = getReplacementMap(proj);
+    val replacements = getReplacementMap(proj);
     return new Paste(sel, replacements);
   }
 
@@ -263,7 +251,6 @@ public class SelectionActions {
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   private static class Anchor extends Action {
-
     private final Selection sel;
     private final int numAnchor;
     private final SelectionSave before;
@@ -277,10 +264,10 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
       sel.dropAll(xn);
-      CircuitTransactionResult result = xn.execute();
+      val result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
 
@@ -291,9 +278,8 @@ public class SelectionActions {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
+      val last = (other instanceof JoinedAction) ? ((JoinedAction) other).getLastAction()
+                  : other;
 
       SelectionSave otherAfter = null;
       if (last instanceof Paste) {
@@ -379,10 +365,10 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
       sel.deleteAllHelper(xn);
-      CircuitTransactionResult result = xn.execute();
+      val result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
 
@@ -401,7 +387,6 @@ public class SelectionActions {
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   private static class Drop extends Action {
-
     private final Selection sel;
     private final Component[] drops;
     private final int numDrops;
@@ -418,15 +403,10 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-
-      for (Component comp : drops) {
-        sel.remove(xn, comp);
-      }
-
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
+      for (val comp : drops) sel.remove(xn, comp);
+      xnReverse = xn.execute().getReverseTransaction();
     }
 
     @Override
@@ -436,12 +416,8 @@ public class SelectionActions {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
-
+      val last = (other instanceof JoinedAction) ? ((JoinedAction) other).getLastAction() : other;
       SelectionSave otherAfter = null;
-
       if (last instanceof Paste) {
         otherAfter = ((Paste) last).after;
       } else if (last instanceof Duplicate) {
@@ -468,11 +444,10 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
       sel.duplicateHelper(xn);
-
-      CircuitTransactionResult result = xn.execute();
+      val result = xn.execute();
       xnReverse = result.getReverseTransaction();
       after = SelectionSave.create(sel);
     }
@@ -500,11 +475,11 @@ public class SelectionActions {
     }
 
     private Collection<Component> computeAdditions(Collection<Component> comps) {
-      HashMap<Component, Component> replMap = componentReplacements;
-      ArrayList<Component> toAdd = new ArrayList<>(comps.size());
-      for (Component comp : comps) {
+      val replMap = componentReplacements;
+      val toAdd = new ArrayList<Component>(comps.size());
+      for (val comp : comps) {
         if (replMap.containsKey(comp)) {
-          Component repl = replMap.get(comp);
+          val repl = replMap.get(comp);
           if (repl != null) {
             toAdd.add(repl);
           }
@@ -517,21 +492,21 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Clipboard clip = Clipboard.get();
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-      Collection<Component> comps = clip.getComponents();
-      Collection<Component> toAdd = computeAdditions(comps);
+      val clip = Clipboard.get();
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
+      val comps = clip.getComponents();
+      val toAdd = computeAdditions(comps);
 
-      Canvas canvas = proj.getFrame().getCanvas();
-      Circuit circ = canvas.getCircuit();
+      val canvas = proj.getFrame().getCanvas();
+      val circ = canvas.getCircuit();
 
       /* Check if instantiated circuits are one of the parent circuits */
-      for (Component c : comps) {
-        ComponentFactory factory = c.getFactory();
+      for (val c : comps) {
+        val factory = c.getFactory();
         if (factory instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) factory;
-          Dependencies depends = canvas.getProject().getDependencies();
+          val circFact = (SubcircuitFactory) factory;
+          val depends = canvas.getProject().getDependencies();
           if (!depends.canAdd(circ, circFact.getSubcircuit())) {
             canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S.getter("circularError"));
             return;
@@ -541,7 +516,7 @@ public class SelectionActions {
 
       if (toAdd.size() > 0) {
         sel.pasteHelper(xn, toAdd);
-        CircuitTransactionResult result = xn.execute();
+        val result = xn.execute();
         xnReverse = result.getReverseTransaction();
         after = SelectionSave.create(sel);
       } else {
@@ -580,15 +555,15 @@ public class SelectionActions {
 
     @Override
     public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
+      val circuit = proj.getCurrentCircuit();
+      val xn = new CircuitMutation(circuit);
 
       sel.translateHelper(xn, dx, dy);
       if (replacements != null) {
         xn.replace(replacements);
       }
 
-      CircuitTransactionResult result = xn.execute();
+      val result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
 
@@ -599,10 +574,7 @@ public class SelectionActions {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
-
+      val last = (other instanceof JoinedAction) ? ((JoinedAction) other).getLastAction() : other;
       SelectionSave otherAfter = null;
       if (last instanceof Paste) {
         otherAfter = ((Paste) last).after;

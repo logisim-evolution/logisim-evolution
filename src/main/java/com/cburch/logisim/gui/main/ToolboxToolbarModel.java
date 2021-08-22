@@ -40,6 +40,7 @@ import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
+import lombok.Getter;
 
 class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
   private final Frame frame;
@@ -49,7 +50,8 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
   private final LogisimToolbarItem itemDown;
   private final LogisimToolbarItem itemAppearance;
   private final LogisimToolbarItem itemDelete;
-  private final List<ToolbarItem> items;
+
+  @Getter private final List<ToolbarItem> items;
 
   public ToolboxToolbarModel(Frame frame, MenuListener menu) {
     this.frame = frame;
@@ -97,11 +99,6 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
   }
 
   @Override
-  public List<ToolbarItem> getItems() {
-    return items;
-  }
-
-  @Override
   public boolean isSelected(ToolbarItem item) {
     return (item == itemAppearance) && frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
   }
@@ -113,6 +110,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
     }
   }
 
+  @Override
   public void menuEnableChanged(MenuListener source) {
     fireToolbarAppearanceChanged();
   }

@@ -30,13 +30,11 @@ package com.cburch.logisim.gui.main;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
@@ -47,13 +45,12 @@ import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import java.util.SortedSet;
 import java.util.TreeSet;
+import lombok.val;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {
   private final Project project;
@@ -78,13 +75,13 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     ComponentFactory factory = null;
     String label = null;
     Location loc = null;
-    int factoryCount = 0;
-    int totalCount = 0;
-    boolean variousFound = false;
+    var factoryCount = 0;
+    var totalCount = 0;
+    var variousFound = false;
 
-    Selection selection = frame.getCanvas().getSelection();
-    for (Component comp : selection.getComponents()) {
-      ComponentFactory fact = comp.getFactory();
+    val selection = frame.getCanvas().getSelection();
+    for (val comp : selection.getComponents()) {
+      val fact = comp.getFactory();
       if (fact.equals(factory)) {
         factoryCount++;
       } else if (comp instanceof Wire) {
@@ -113,14 +110,14 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       setInstance(factory);
       return S.get("selectionVarious", "" + totalCount);
     } else if (factoryCount == 0) {
-      Circuit circ = frame.getCanvas().getCircuit();
+      val circ = frame.getCanvas().getCircuit();
       if (circ != null) {
-        String circName = circ.getName();
+        val circName = circ.getName();
         setInstance(circ.getSubcircuitFactory());
         return S.get("circuitAttrTitle", circName);
       } else {
-        VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
-        String circName = hdl.getName();
+        val hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
+        val circName = hdl.getName();
         setInstance(null);
         return S.get("hdlAttrTitle", circName);
       }
@@ -151,30 +148,28 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
-    Selection selection = frame.getCanvas().getSelection();
-    Circuit circuit = frame.getCanvas().getCircuit();
+    val selection = frame.getCanvas().getSelection();
+    val circuit = frame.getCanvas().getCircuit();
     if (selection.isEmpty() && circuit != null) {
-      AttrTableCircuitModel circuitModel = new AttrTableCircuitModel(project, circuit);
+      val circuitModel = new AttrTableCircuitModel(project, circuit);
       circuitModel.setValueRequested(attr, value);
     } else {
-      SetAttributeAction act =
-          new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
+      val act = new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
       AutoLabel labler = null;
       if (attr.equals(StdAttr.LABEL)) {
         labler = new AutoLabel((String) value, circuit);
       }
-      SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
+      val comps = new TreeSet<>(new PositionComparator());
       comps.addAll(selection.getComponents());
-      for (Component comp : comps) {
+      for (val comp : comps) {
         if (!(comp instanceof Wire)) {
           if (comp.getFactory() instanceof SubcircuitFactory) {
-            SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
-            if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
-                || attr.equals(CircuitAttributes.NAME_ATTR)) {
+            val fac = (SubcircuitFactory) comp.getFactory();
+            if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) || attr.equals(CircuitAttributes.NAME_ATTR)) {
               try {
-                CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());
+                val mutation = new CircuitMutation(fac.getSubcircuit());
                 mutation.setForCircuit(attr, value);
-                Action action = mutation.toAction(null);
+                val action = mutation.toAction(null);
                 project.doAction(action);
               } catch (CircuitException ex) {
                 OptionPane.showMessageDialog(project.getFrame(), ex.getMessage());

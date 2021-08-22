@@ -41,10 +41,11 @@ import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.swing.tree.TreeNode;
+import lombok.Getter;
+import lombok.val;
 
-class SimulationTreeCircuitNode extends SimulationTreeNode
-    implements CircuitListener, AttributeListener, Comparator<Component> {
-  private final CircuitState circuitState;
+class SimulationTreeCircuitNode extends SimulationTreeNode implements CircuitListener, AttributeListener, Comparator<Component> {
+  @Getter private final CircuitState circuitState;
   private final Component subcircComp;
 
   public SimulationTreeCircuitNode(
@@ -76,7 +77,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   @Override
   public void circuitChanged(CircuitEvent event) {
-    int action = event.getAction();
+    val action = event.getAction();
     if (action == CircuitEvent.ACTION_SET_NAME) {
       model.fireNodeChanged(this);
     } else {
@@ -89,9 +90,9 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   @Override
   public int compare(Component a, Component b) {
     if (a != b) {
-      var nameA = a.getFactory().getDisplayName();
-      var nameB = b.getFactory().getDisplayName();
-      int ret = nameA.compareToIgnoreCase(nameB);
+      val nameA = a.getFactory().getDisplayName();
+      val nameB = b.getFactory().getDisplayName();
+      val ret = nameA.compareToIgnoreCase(nameB);
       if (ret != 0) return ret;
     }
     return a.getLocation().toString().compareTo(b.getLocation().toString());
@@ -99,13 +100,13 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   // returns true if changed
   private boolean computeChildren() {
-    ArrayList<TreeNode> newChildren = new ArrayList<>();
-    ArrayList<Component> subcircs = new ArrayList<>();
-    for (Component comp : circuitState.getCircuit().getNonWires()) {
+    val newChildren = new ArrayList<TreeNode>();
+    val subcircs = new ArrayList<Component>();
+    for (val comp : circuitState.getCircuit().getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         subcircs.add(comp);
       } else {
-        TreeNode toAdd = model.mapComponentToNode(comp);
+        val toAdd = model.mapComponentToNode(comp);
         if (toAdd != null) {
           newChildren.add(toAdd);
         }
@@ -113,15 +114,15 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
     newChildren.sort(new CompareByName());
     subcircs.sort(this);
-    for (Component comp : subcircs) {
-      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-      CircuitState state = factory.getSubstate(circuitState, comp);
+    for (val comp : subcircs) {
+      val factory = (SubcircuitFactory) comp.getFactory();
+      val state = factory.getSubstate(circuitState, comp);
       SimulationTreeCircuitNode toAdd = null;
-      for (TreeNode o : children) {
-        if (o instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode n = (SimulationTreeCircuitNode) o;
-          if (n.circuitState == state) {
-            toAdd = n;
+      for (val node : children) {
+        if (node instanceof SimulationTreeCircuitNode) {
+          val circuitNode = (SimulationTreeCircuitNode) node;
+          if (circuitNode.circuitState == state) {
+            toAdd = circuitNode;
             break;
           }
         }
@@ -140,10 +141,6 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
-  public CircuitState getCircuitState() {
-    return circuitState;
-  }
-
   @Override
   public ComponentFactory getComponentFactory() {
     return circuitState.getCircuit().getSubcircuitFactory();
@@ -157,7 +154,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   @Override
   public String toString() {
     if (subcircComp != null) {
-      String label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
+      val label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
       if (label != null && !label.equals("")) {
         return label;
       }

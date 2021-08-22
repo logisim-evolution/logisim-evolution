@@ -32,20 +32,23 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import java.util.HashSet;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 
 class Clipboard {
   public static final String contentsProperty = "contents";
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Clipboard.class);
   private static Clipboard current = null;
-  //
-  // instance variables and methods
-  //
+
+  @Getter
   private final HashSet<Component> components;
-  private AttributeSet oldAttrs;
-  private AttributeSet newAttrs;
+  @Getter @Setter
+  private AttributeSet oldAttributeSet;
+  @Getter
+  private AttributeSet newAttributeSet;
 
   /*
    * This function is in charge of copy paste.
@@ -53,17 +56,17 @@ class Clipboard {
    */
   private Clipboard(Selection sel, AttributeSet viewAttrs) {
     components = new HashSet<>();
-    oldAttrs = null;
-    newAttrs = null;
-    for (Component base : sel.getComponents()) {
-      AttributeSet baseAttrs = base.getAttributeSet();
-      AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
+    oldAttributeSet = null;
+    newAttributeSet = null;
+    for (val base : sel.getComponents()) {
+      val baseAttrs = base.getAttributeSet();
+      val copyAttrs = (AttributeSet) baseAttrs.clone();
 
-      Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
+      val copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
       components.add(copy);
       if (baseAttrs == viewAttrs) {
-        oldAttrs = baseAttrs;
-        newAttrs = copyAttrs;
+        oldAttributeSet = baseAttrs;
+        newAttributeSet = copyAttrs;
       }
     }
   }
@@ -98,7 +101,7 @@ class Clipboard {
   }
 
   public static void set(Clipboard value) {
-    Clipboard old = current;
+    val old = current;
     current = value;
     propertySupport.firePropertyChange(contentsProperty, old, current);
   }
@@ -107,19 +110,4 @@ class Clipboard {
     set(new Clipboard(value, oldAttrs));
   }
 
-  public Collection<Component> getComponents() {
-    return components;
-  }
-
-  public AttributeSet getNewAttributeSet() {
-    return newAttrs;
-  }
-
-  public AttributeSet getOldAttributeSet() {
-    return oldAttrs;
-  }
-
-  void setOldAttributeSet(AttributeSet value) {
-    oldAttrs = value;
-  }
 }

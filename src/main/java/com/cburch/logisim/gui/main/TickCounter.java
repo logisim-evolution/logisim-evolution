@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Simulator;
+import lombok.val;
 
 class TickCounter implements Simulator.Listener {
   private static final int QUEUE_LENGTH = 1000;
@@ -52,17 +53,17 @@ class TickCounter implements Simulator.Listener {
   }
 
   public String getTickRate() {
-    int size = queueSize;
+    val size = queueSize;
     if (size <= 1) {
       return "";
     } else {
-      int maxSize = queueTimes.length;
-      int start = queueStart;
-      int end = start + size - 1;
+      val maxSize = queueTimes.length;
+      val start = queueStart;
+      var end = start + size - 1;
       if (end >= maxSize) {
         end -= maxSize;
       }
-      double rate = queueRates[end];
+      var rate = queueRates[end];
       if (rate <= 0 || rate == Double.MAX_VALUE) {
         return "";
       } else {
@@ -71,23 +72,23 @@ class TickCounter implements Simulator.Listener {
         // stability in the rounding - we don't want the result to
         // oscillate rapidly between 990 Hz and 1 KHz - it's better for
         // it to oscillate between 990 Hz and 1005 Hz.
-        int baseLen = size;
+        var baseLen = size;
         if (baseLen > 100) baseLen = 100;
-        int baseStart = end - baseLen + 1;
-        double min = rate;
+        var baseStart = end - baseLen + 1;
+        var min = rate;
         if (baseStart < 0) {
           baseStart += maxSize;
           for (int i = baseStart + maxSize; i < maxSize; i++) {
-            double x = queueRates[i];
+            val x = queueRates[i];
             if (x < min) min = x;
           }
           for (int i = 0; i < end; i++) {
-            double x = queueRates[i];
+            val x = queueRates[i];
             if (x < min) min = x;
           }
         } else {
           for (int i = baseStart; i < end; i++) {
-            double x = queueRates[i];
+            val x = queueRates[i];
             if (x < min) min = x;
           }
         }
@@ -107,7 +108,7 @@ class TickCounter implements Simulator.Listener {
   }
 
   public void updateSimulator(Simulator.Event e) {
-    Simulator sim = e.getSource();
+    val sim = e.getSource();
     if (!sim.isAutoTicking()) {
       queueSize = 0;
     }
@@ -115,10 +116,10 @@ class TickCounter implements Simulator.Listener {
 
   private String roundString(double val, double min) {
     // round so we have only three significant digits
-    int i = 0; // invariant: a = 10^i
-    double a = 1.0; // invariant: a * bm == min, a is power of 10
-    double bm = min;
-    double bv = val;
+    var i = 0; // invariant: a = 10^i
+    var a = 1.0; // invariant: a * bm == min, a is power of 10
+    var bm = min;
+    var bv = val;
     if (bm >= 1000) {
       while (bm >= 1000) {
         i++;
@@ -146,6 +147,7 @@ class TickCounter implements Simulator.Listener {
     }
   }
 
+  @Override
   public void simulatorStateChanged(Simulator.Event e) {
     updateSimulator(e);
   }
@@ -158,19 +160,19 @@ class TickCounter implements Simulator.Listener {
   @Override
   public void propagationCompleted(Simulator.Event e) {
     if (e.didTick()) {
-      Simulator sim = e.getSource();
+      val sim = e.getSource();
       if (!sim.isAutoTicking()) {
         queueSize = 0;
       } else {
-        double freq = sim.getTickFrequency();
+        val freq = sim.getTickFrequency();
         if (freq != tickFrequency) {
           queueSize = 0;
           tickFrequency = freq;
         }
 
-        int curSize = queueSize;
-        int maxSize = queueTimes.length;
-        int start = queueStart;
+        var curSize = queueSize;
+        var maxSize = queueTimes.length;
+        var start = queueStart;
         int end;
         if (curSize < maxSize) { // new sample is added into queue
           end = start + curSize;
@@ -187,14 +189,12 @@ class TickCounter implements Simulator.Listener {
             queueStart = end + 1;
           }
         }
-        long startTime = queueTimes[start];
-        long endTime = System.currentTimeMillis();
-        double rate;
-        if (startTime == endTime || curSize <= 1) {
-          rate = Double.MAX_VALUE;
-        } else {
-          rate = 1000.0 * (curSize - 1) / (endTime - startTime);
-        }
+        val startTime = queueTimes[start];
+        val endTime = System.currentTimeMillis();
+        val rate =
+            (startTime == endTime || curSize <= 1)
+                ? Double.MAX_VALUE
+                : 1000.0 * (curSize - 1) / (endTime - startTime);
         queueTimes[end] = endTime;
         queueRates[end] = rate;
       }

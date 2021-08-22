@@ -35,9 +35,7 @@ import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
 import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
@@ -48,6 +46,7 @@ import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.val;
 
 public class ToolAttributeAction extends Action {
   private final KeyConfigurationResult config;
@@ -63,10 +62,10 @@ public class ToolAttributeAction extends Action {
   }
 
   public static Action create(Tool tool, Attribute<?> attr, Object value) {
-    AttributeSet attrs = tool.getAttributeSet();
-    KeyConfigurationEvent e = new KeyConfigurationEvent(0, attrs, null, null);
-    KeyConfigurationResult r = new KeyConfigurationResult(e, attr, value);
-    return new ToolAttributeAction(r);
+    val attrs = tool.getAttributeSet();
+    val event  = new KeyConfigurationEvent(0, attrs, null, null);
+    val result = new KeyConfigurationResult(event, attr, value);
+    return new ToolAttributeAction(result);
   }
 
   @Override
@@ -77,7 +76,7 @@ public class ToolAttributeAction extends Action {
   @Override
   public void doIt(Project proj) {
     if (affectsAppearance()) {
-      ActionTransaction xn = new ActionTransaction(true);
+      val xn = new ActionTransaction(true);
       xn.execute();
     } else {
       execute(true);
@@ -87,7 +86,7 @@ public class ToolAttributeAction extends Action {
   @Override
   public void undo(Project proj) {
     if (affectsAppearance()) {
-      ActionTransaction xn = new ActionTransaction(true);
+      val xn = new ActionTransaction(true);
       xn.execute();
     } else {
       execute(false);
@@ -95,9 +94,9 @@ public class ToolAttributeAction extends Action {
   }
 
   boolean affectsAppearance() {
-    AttributeSet attrs = config.getEvent().getAttributeSet();
+    val attrs = config.getEvent().getAttributeSet();
     if (attrs instanceof FactoryAttributes) {
-      ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
+      val factory = ((FactoryAttributes) attrs).getFactory();
       if (factory instanceof SubcircuitFactory) {
         for (Attribute<?> attr : config.getAttributeValues().keySet()) {
           if (attr == CircuitAttributes.APPEARANCE_ATTR) return true;
@@ -113,7 +112,7 @@ public class ToolAttributeAction extends Action {
 
   private void execute(boolean forward) {
     if (forward) {
-      AttributeSet attrs = config.getEvent().getAttributeSet();
+      val attrs = config.getEvent().getAttributeSet();
       Map<Attribute<?>, Object> newValues = config.getAttributeValues();
       Map<Attribute<?>, Object> oldValues = new HashMap<>(newValues.size());
       for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
@@ -124,7 +123,7 @@ public class ToolAttributeAction extends Action {
       }
       this.oldValues = oldValues;
     } else {
-      AttributeSet attrs = config.getEvent().getAttributeSet();
+      val attrs = config.getEvent().getAttributeSet();
       Map<Attribute<?>, Object> oldValues = this.oldValues;
       for (Map.Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
         @SuppressWarnings("unchecked")
@@ -143,18 +142,18 @@ public class ToolAttributeAction extends Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      AttributeSet attrs = config.getEvent().getAttributeSet();
+      val accessMap = new HashMap<Circuit, Integer>();
+      val attrs = config.getEvent().getAttributeSet();
       if (attrs instanceof FactoryAttributes) {
-        ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
+        val factory = ((FactoryAttributes) attrs).getFactory();
         if (factory instanceof SubcircuitFactory) {
-          Circuit circuit = ((SubcircuitFactory) factory).getSubcircuit();
-          for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+          val circuit = ((SubcircuitFactory) factory).getSubcircuit();
+          for (val supercirc : circuit.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
         } else if (factory instanceof VhdlEntity) {
-          VhdlEntity vhdl = (VhdlEntity) factory;
-          for (Circuit supercirc : vhdl.getCircuitsUsingThis()) {
+          val vhdl = (VhdlEntity) factory;
+          for (val supercirc : vhdl.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
         }

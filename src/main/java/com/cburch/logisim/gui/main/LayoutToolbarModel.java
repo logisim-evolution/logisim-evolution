@@ -40,7 +40,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import java.awt.Color;
@@ -53,11 +52,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.val;
 
 class LayoutToolbarModel extends AbstractToolbarModel {
   private final Frame frame;
   private final Project proj;
   private final MyListener myListener;
+  @Getter
   private List<ToolbarItem> items;
   private Tool haloedTool;
 
@@ -105,14 +107,9 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   }
 
   @Override
-  public List<ToolbarItem> getItems() {
-    return items;
-  }
-
-  @Override
   public boolean isSelected(ToolbarItem item) {
     if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
+      val tool = ((ToolItem) item).tool;
       return tool == proj.getTool();
     } else {
       return false;
@@ -122,23 +119,18 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   @Override
   public void itemSelected(ToolbarItem item) {
     if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
-      proj.setTool(tool);
+      proj.setTool(((ToolItem) item).tool);
     }
   }
 
-  public void setHaloedTool(Tool t) {
-    if (haloedTool != t) {
-      haloedTool = t;
+  public void setHaloedTool(Tool tool) {
+    if (haloedTool != tool) {
+      haloedTool = tool;
       fireToolbarAppearanceChanged();
     }
   }
 
-  private class MyListener
-      implements ProjectListener,
-          AttributeListener,
-          ToolbarData.ToolbarListener,
-          PropertyChangeListener {
+  private class MyListener implements ProjectListener, AttributeListener, ToolbarData.ToolbarListener, PropertyChangeListener {
     //
     // AttributeListener methods
     //
@@ -157,19 +149,19 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     //
     @Override
     public void projectChanged(ProjectEvent e) {
-      final var act = e.getAction();
+      val act = e.getAction();
       if (act == ProjectEvent.ACTION_SET_TOOL) {
         fireToolbarAppearanceChanged();
       } else if (act == ProjectEvent.ACTION_SET_FILE) {
-        final var old = (LogisimFile) e.getOldData();
+        val old = (LogisimFile) e.getOldData();
         if (old != null) {
-          final var data = old.getOptions().getToolbarData();
+          val data = old.getOptions().getToolbarData();
           data.removeToolbarListener(this);
           data.removeToolAttributeListener(this);
         }
-        final var file = (LogisimFile) e.getData();
+        val file = (LogisimFile) e.getData();
         if (file != null) {
-          final var data = file.getOptions().getToolbarData();
+          val data = file.getOptions().getToolbarData();
           data.addToolbarListener(this);
           data.addToolAttributeListener(this);
         }
@@ -205,7 +197,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
     @Override
     public Dimension getDimension(Object orientation) {
-      final var pad = 2 * AppPreferences.IconBorder;
+      val pad = 2 * AppPreferences.IconBorder;
       return new Dimension(AppPreferences.getIconSize() + pad, AppPreferences.getIconSize() + pad);
     }
 
@@ -213,7 +205,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     public String getToolTip() {
       var ret = tool.getDescription();
       var index = 1;
-      for (final var item : items) {
+      for (val item : items) {
         if (item == this) break;
         if (item instanceof ToolItem) ++index;
       }

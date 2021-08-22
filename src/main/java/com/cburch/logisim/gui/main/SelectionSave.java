@@ -32,35 +32,33 @@ import com.cburch.logisim.comp.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import lombok.Getter;
+import lombok.val;
 
 class SelectionSave {
-  private Component[] floating;
-  private Component[] anchored;
+  @Getter private Component[] floatingComponents;
+  @Getter private Component[] anchoredComponents;
 
   private SelectionSave() {}
 
   public static SelectionSave create(Selection sel) {
-    SelectionSave save = new SelectionSave();
+    val save = new SelectionSave();
 
-    Collection<Component> lifted = sel.getFloatingComponents();
+    val lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
-      save.floating = lifted.toArray(new Component[0]);
+      save.floatingComponents = lifted.toArray(new Component[0]);
     }
 
-    Collection<Component> selected = sel.getAnchoredComponents();
+    val selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
-      save.anchored = selected.toArray(new Component[0]);
+      save.anchoredComponents = selected.toArray(new Component[0]);
     }
 
     return save;
   }
 
   private static boolean isSame(Component[] save, Collection<Component> sel) {
-    if (save == null) {
-      return sel.isEmpty();
-    } else {
-      return toSet(save).equals(sel);
-    }
+    return (save == null) ? sel.isEmpty() : toSet(save).equals(sel);
   }
 
   private static boolean isSame(Component[] a, Component[] b) {
@@ -76,12 +74,12 @@ class SelectionSave {
   }
 
   public boolean isSame(Selection sel) {
-    return isSame(floating, sel.getFloatingComponents())
-        && isSame(anchored, sel.getAnchoredComponents());
+    return isSame(floatingComponents, sel.getFloatingComponents())
+        && isSame(anchoredComponents, sel.getAnchoredComponents());
   }
 
   private static HashSet<Component> toSet(Component[] comps) {
-    HashSet<Component> ret = new HashSet<>(comps.length);
+    val ret = new HashSet<Component>(comps.length);
     ret.addAll(Arrays.asList(comps));
     return ret;
   }
@@ -89,29 +87,21 @@ class SelectionSave {
   @Override
   public boolean equals(Object other) {
     if (other instanceof SelectionSave) {
-      SelectionSave o = (SelectionSave) other;
-      return isSame(this.floating, o.floating) && isSame(this.anchored, o.anchored);
+      val o = (SelectionSave) other;
+      return isSame(this.floatingComponents, o.floatingComponents) && isSame(this.anchoredComponents, o.anchoredComponents);
     } else {
       return false;
     }
   }
 
-  public Component[] getAnchoredComponents() {
-    return anchored;
-  }
-
-  public Component[] getFloatingComponents() {
-    return floating;
-  }
-
   @Override
   public int hashCode() {
-    int ret = 0;
-    if (floating != null) {
-      for (Component c : floating) ret += c.hashCode();
+    var ret = 0;
+    if (floatingComponents != null) {
+      for (val component : floatingComponents) ret += component.hashCode();
     }
-    if (anchored != null) {
-      for (Component c : anchored) ret += c.hashCode();
+    if (anchoredComponents != null) {
+      for (val component : anchoredComponents) ret += component.hashCode();
     }
     return ret;
   }

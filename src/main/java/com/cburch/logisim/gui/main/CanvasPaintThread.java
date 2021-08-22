@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.Rectangle;
+import lombok.val;
 
 class CanvasPaintThread extends UniquelyNamedThread {
   private static final int REPAINT_TIMESPAN = 50; // 50 ms between repaints
@@ -86,7 +87,7 @@ class CanvasPaintThread extends UniquelyNamedThread {
     while (alive) {
       long now = System.currentTimeMillis();
       synchronized (lock) {
-        long wait = nextRepaint - now;
+        var wait = nextRepaint - now;
         while (alive && !(repaintRequested && wait <= 0)) {
           try {
             if (wait > 0) {

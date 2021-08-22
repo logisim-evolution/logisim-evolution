@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JList;
+import lombok.val;
 
 @SuppressWarnings("rawtypes")
 class CircuitJList extends JList {
@@ -44,11 +45,11 @@ class CircuitJList extends JList {
 
   @SuppressWarnings("unchecked")
   public CircuitJList(Project proj, boolean includeEmpty) {
-    LogisimFile file = proj.getLogisimFile();
-    Circuit current = proj.getCurrentCircuit();
-    Vector<Circuit> options = new Vector<>();
-    boolean currentFound = false;
-    for (Circuit circ : file.getCircuits()) {
+    val file = proj.getLogisimFile();
+    val current = proj.getCurrentCircuit();
+    val options = new Vector<Circuit>();
+    var currentFound = false;
+    for (val circ : file.getCircuits()) {
       if (!includeEmpty || circ.getBounds() != Bounds.EMPTY_BOUNDS) {
         if (circ == current) currentFound = true;
         options.add(circ);
@@ -61,10 +62,10 @@ class CircuitJList extends JList {
   }
 
   public List<Circuit> getSelectedCircuits() {
-    Object[] selected = getSelectedValuesList().toArray();
+    val selected = getSelectedValuesList().toArray();
     if (selected.length > 0) {
-      ArrayList<Circuit> ret = new ArrayList<>(selected.length);
-      for (Object sel : selected) {
+      val ret = new ArrayList<Circuit>(selected.length);
+      for (val sel : selected) {
         if (sel instanceof Circuit) ret.add((Circuit) sel);
       }
       return ret;
