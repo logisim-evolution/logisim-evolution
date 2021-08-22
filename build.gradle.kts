@@ -142,10 +142,12 @@ extra.apply {
       jPackageCmd,
       "--input", "${libsDir}",
       "--main-class", "com.cburch.logisim.Main",
+      "--description", "Digital logic designer and simulator",
+      "--vendor", "${project.name} developers",
       "--main-jar", shadowJarFilename,
       "--app-version", appVersion,
       "--copyright", "${copyrights}",
-      "--dest", "${targetDir}"
+      "--dest", "${targetDir}",
   )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
