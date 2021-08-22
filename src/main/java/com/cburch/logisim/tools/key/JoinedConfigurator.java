@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.tools.key;
 
+import lombok.val;
+
 public class JoinedConfigurator implements KeyConfigurator, Cloneable {
   public static JoinedConfigurator create(KeyConfigurator a, KeyConfigurator b) {
     return new JoinedConfigurator(new KeyConfigurator[] {a, b});
@@ -52,7 +54,7 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
       e.printStackTrace();
       return null;
     }
-    int len = this.handlers.length;
+    val len = this.handlers.length;
     ret.handlers = new KeyConfigurator[len];
     for (var i = 0; i < len; i++) {
       ret.handlers[i] = this.handlers[i].clone();
@@ -60,13 +62,14 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
     return ret;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
-    final var hs = handlers;
+    val hs = handlers;
     if (event.isConsumed()) {
       return null;
     }
-    for (KeyConfigurator h : hs) {
-      final var result = h.keyEventReceived(event);
+    for (val h : hs) {
+      val result = h.keyEventReceived(event);
       if (result != null || event.isConsumed()) {
         return result;
       }

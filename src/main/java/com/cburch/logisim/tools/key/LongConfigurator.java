@@ -35,8 +35,7 @@ public class LongConfigurator extends NumericConfigurator<Long> {
     super(attr, min, max, modifiersEx);
   }
 
-  public LongConfigurator(
-      Attribute<Long> attr, long min, long max, int modifiersEx, int radix) {
+  public LongConfigurator(Attribute<Long> attr, long min, long max, int modifiersEx, int radix) {
     super(attr, min, max, modifiersEx, radix);
   }
 

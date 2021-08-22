@@ -30,7 +30,7 @@ package com.cburch.logisim.tools.key;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import java.awt.event.KeyEvent;
+import lombok.val;
 
 public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneable {
   private static final int MAX_TIME_KEY_LASTS = 800;
@@ -81,17 +81,18 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
     return minValue;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
     if (event.getType() == KeyConfigurationEvent.KEY_TYPED) {
-      KeyEvent e = event.getKeyEvent();
-      int digit = Character.digit(e.getKeyChar(), radix);
+      val e = event.getKeyEvent();
+      val digit = Character.digit(e.getKeyChar(), radix);
       if (digit >= 0 && e.getModifiersEx() == modsEx) {
-        long now = System.currentTimeMillis();
-        long sinceLast = now - whenTyped;
-        AttributeSet attrs = event.getAttributeSet();
-        long min = getMinimumValue(attrs);
-        long max = getMaximumValue(attrs);
-        long val = 0;
+        val now = System.currentTimeMillis();
+        val sinceLast = now - whenTyped;
+        val attrs = event.getAttributeSet();
+        val min = getMinimumValue(attrs);
+        val max = getMaximumValue(attrs);
+        var val = 0L;
         if (sinceLast < MAX_TIME_KEY_LASTS) {
           val = radix * curValue;
           if (val > max) {
@@ -110,8 +111,7 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
         curValue = val;
 
         if (val >= min) {
-          Object valObj = createValue(val);
-          return new KeyConfigurationResult(event, attr, valObj);
+          return new KeyConfigurationResult(event, attr, createValue(val));
         }
       }
     }

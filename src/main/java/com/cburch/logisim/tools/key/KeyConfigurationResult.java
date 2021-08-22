@@ -31,28 +31,24 @@ package com.cburch.logisim.tools.key;
 import com.cburch.logisim.data.Attribute;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
+import lombok.Getter;
+import lombok.val;
 
+@Data
 public class KeyConfigurationResult {
   private final KeyConfigurationEvent event;
-  private final Map<Attribute<?>, Object> attrValueMap;
+  private final Map<Attribute<?>, Object> attributeValues;
 
-  public KeyConfigurationResult(KeyConfigurationEvent event, Attribute<?> attr, Object value) {
+  public KeyConfigurationResult(KeyConfigurationEvent event, Attribute<?> attributeValues, Object value) {
     this.event = event;
-    Map<Attribute<?>, Object> singleMap = new HashMap<>(1);
-    singleMap.put(attr, value);
-    this.attrValueMap = singleMap;
+    val singleMap = new HashMap<Attribute<?>, Object>(1);
+    singleMap.put(attributeValues, value);
+    this.attributeValues = singleMap;
   }
 
   public KeyConfigurationResult(KeyConfigurationEvent event, Map<Attribute<?>, Object> values) {
     this.event = event;
-    this.attrValueMap = values;
-  }
-
-  public Map<Attribute<?>, Object> getAttributeValues() {
-    return attrValueMap;
-  }
-
-  public KeyConfigurationEvent getEvent() {
-    return event;
+    this.attributeValues = values;
   }
 }

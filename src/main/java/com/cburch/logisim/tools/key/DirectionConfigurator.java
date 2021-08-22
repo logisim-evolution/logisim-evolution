@@ -31,6 +31,7 @@ package com.cburch.logisim.tools.key;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Direction;
 import java.awt.event.KeyEvent;
+import lombok.val;
 
 public class DirectionConfigurator implements KeyConfigurator, Cloneable {
   private final Attribute<?> attr;
@@ -51,9 +52,10 @@ public class DirectionConfigurator implements KeyConfigurator, Cloneable {
     }
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
     if (event.getType() == KeyConfigurationEvent.KEY_PRESSED) {
-      final var e = event.getKeyEvent();
+      val e = event.getKeyEvent();
       if (e.getModifiersEx() == modsEx) {
         Direction value = null;
         switch (e.getKeyCode()) {

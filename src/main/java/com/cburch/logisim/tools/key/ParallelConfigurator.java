@@ -30,6 +30,7 @@ package com.cburch.logisim.tools.key;
 
 import com.cburch.logisim.data.Attribute;
 import java.util.HashMap;
+import lombok.val;
 
 public class ParallelConfigurator implements KeyConfigurator, Cloneable {
   public static ParallelConfigurator create(KeyConfigurator a, KeyConfigurator b) {
@@ -55,23 +56,24 @@ public class ParallelConfigurator implements KeyConfigurator, Cloneable {
       e.printStackTrace();
       return null;
     }
-    int len = this.handlers.length;
+    val len = this.handlers.length;
     ret.handlers = new KeyConfigurator[len];
-    for (int i = 0; i < len; i++) {
+    for (var i = 0; i < len; i++) {
       ret.handlers[i] = this.handlers[i].clone();
     }
     return ret;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
-    KeyConfigurator[] hs = handlers;
+    val hs = handlers;
     if (event.isConsumed()) {
       return null;
     }
     KeyConfigurationResult first = null;
     HashMap<Attribute<?>, Object> map = null;
-    for (KeyConfigurator h : hs) {
-      KeyConfigurationResult result = h.keyEventReceived(event);
+    for (val h : hs) {
+      val result = h.keyEventReceived(event);
       if (result != null) {
         if (first == null) {
           first = result;
