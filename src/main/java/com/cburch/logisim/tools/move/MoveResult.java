@@ -34,24 +34,26 @@ import com.cburch.logisim.data.Location;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import lombok.Getter;
+import lombok.val;
 
 public class MoveResult {
-  private final ReplacementMap replacements;
-  private final Collection<ConnectionData> unsatisfiedConnections;
-  private final Collection<Location> unconnectedLocations;
-  private final int totalDistance;
+  @Getter private final ReplacementMap replacementMap;
+  @Getter private final Collection<ConnectionData> unsatisfiedConnections;
+  @Getter private final Collection<Location> unconnectedLocations;
+  @Getter private final int totalDistance;
 
   public MoveResult(
       MoveRequest request,
       ReplacementMap replacements,
       Collection<ConnectionData> unsatisfiedConnections,
       int totalDistance) {
-    this.replacements = replacements;
+    this.replacementMap = replacements;
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;
 
-    ArrayList<Location> unconnected = new ArrayList<>();
-    for (ConnectionData conn : unsatisfiedConnections) {
+    val unconnected = new ArrayList<Location>();
+    for (val conn : unsatisfiedConnections) {
       unconnected.add(conn.getLocation());
     }
     unconnectedLocations = unconnected;
@@ -59,39 +61,24 @@ public class MoveResult {
 
   void addUnsatisfiedConnections(Collection<ConnectionData> toAdd) {
     unsatisfiedConnections.addAll(toAdd);
-    for (ConnectionData conn : toAdd) {
+    for (val conn : toAdd) {
       unconnectedLocations.add(conn.getLocation());
     }
   }
 
-  public ReplacementMap getReplacementMap() {
-    return replacements;
-  }
-
-  int getTotalDistance() {
-    return totalDistance;
-  }
-
-  public Collection<Location> getUnconnectedLocations() {
-    return unconnectedLocations;
-  }
-
-  Collection<ConnectionData> getUnsatisifiedConnections() {
-    return unsatisfiedConnections;
-  }
-
   public Collection<Wire> getWiresToAdd() {
     @SuppressWarnings("unchecked")
-    Collection<Wire> ret = (Collection<Wire>) replacements.getAdditions();
+    Collection<Wire> ret = (Collection<Wire>) replacementMap.getAdditions();
     return ret;
   }
 
   public void print(PrintStream out) {
     out.print("MoveResult: ");
-    replacements.print(out);
+    replacementMap.print(out);
   }
-  
+
+  @Override
   public String toString() {
-    return "MoveResult: " + replacements.toString();
+    return "MoveResult: " + replacementMap.toString();
   }
 }

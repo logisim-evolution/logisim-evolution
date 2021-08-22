@@ -36,6 +36,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.soc.data.SocSupport;
 import java.util.ArrayList;
+import lombok.val;
 
 public interface CircuitStateHolder {
   class HierarchyInfo {
@@ -52,9 +53,9 @@ public interface CircuitStateHolder {
 
     public void registerCircuitListener(CircuitListener l) {
       if (mainCircuit != null) mainCircuit.addCircuitListener(l);
-      for (final var c : components) {
+      for (val c : components) {
         if (c.getFactory() instanceof SubcircuitFactory) {
-          final var f = (SubcircuitFactory) c.getFactory();
+          val f = (SubcircuitFactory) c.getFactory();
           f.getSubcircuit().addCircuitListener(l);
         }
       }
@@ -62,26 +63,26 @@ public interface CircuitStateHolder {
 
     public void deregisterCircuitListener(CircuitListener l) {
       if (mainCircuit != null) mainCircuit.addCircuitListener(l);
-      for (final var c : components) {
+      for (val c : components) {
         if (c.getFactory() instanceof SubcircuitFactory) {
-          final var f = (SubcircuitFactory) c.getFactory();
+          val f = (SubcircuitFactory) c.getFactory();
           f.getSubcircuit().removeCircuitListener(l);
         }
       }
     }
 
     public void registerComponentListener(ComponentListener l) {
-      for (Component c : components) c.addComponentListener(l);
+      for (val c : components) c.addComponentListener(l);
     }
 
     public void deregisterComponentListener(ComponentListener l) {
-      for (Component c : components) c.addComponentListener(l);
+      for (val c : components) c.addComponentListener(l);
     }
 
     public String getName() {
-      final var s = new StringBuilder();
+      val s = new StringBuilder();
       if (mainCircuit != null) s.append(mainCircuit.getName());
-      for (final var c : components) {
+      for (val c : components) {
         if (s.length() != 0) s.append(":");
         s.append(SocSupport.getComponentName(c));
       }
@@ -89,8 +90,8 @@ public interface CircuitStateHolder {
     }
 
     public HierarchyInfo getCopy() {
-      final var copy = new HierarchyInfo(mainCircuit);
-      for (final var c : components) copy.addComponent(c);
+      val copy = new HierarchyInfo(mainCircuit);
+      for (val c : components) copy.addComponent(c);
       return copy;
     }
   }

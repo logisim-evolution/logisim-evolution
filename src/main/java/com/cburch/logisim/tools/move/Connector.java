@@ -36,29 +36,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import lombok.val;
 
 class Connector {
   static MoveResult computeWires(MoveRequest req) {
-    MoveGesture gesture = req.getMoveGesture();
-    int dx = req.getDeltaX();
-    int dy = req.getDeltaY();
-    ArrayList<ConnectionData> baseConnects;
-    baseConnects = new ArrayList<>(gesture.getConnections());
-    ArrayList<ConnectionData> impossible =
-        pruneImpossible(baseConnects, gesture.getFixedAvoidanceMap(), dx, dy);
+    val gesture = req.getMoveGesture();
+    val dx = req.getDeltaX();
+    val dy = req.getDeltaY();
+    val baseConnects = new ArrayList<ConnectionData>(gesture.getConnections());
+    val impossible = pruneImpossible(baseConnects, gesture.getFixedAvoidanceMap(), dx, dy);
 
-    AvoidanceMap selAvoid = AvoidanceMap.create(gesture.getSelected(), dx, dy);
-    HashMap<ConnectionData, Set<Location>> pathLocs;
-    pathLocs = new HashMap<>();
-    HashMap<ConnectionData, List<SearchNode>> initNodes;
-    initNodes = new HashMap<>();
-    for (ConnectionData conn : baseConnects) {
-      HashSet<Location> connLocs = new HashSet<>();
-      ArrayList<SearchNode> connNodes = new ArrayList<>();
+    val selAvoid = AvoidanceMap.create(gesture.getSelected(), dx, dy);
+    val pathLocs = new HashMap<ConnectionData, Set<Location>>();
+    val initNodes = new HashMap<ConnectionData, List<SearchNode>>();
+    for (val conn : baseConnects) {
+      val connLocs = new HashSet<Location>();
+      val connNodes = new ArrayList<SearchNode>();
       processConnection(conn, dx, dy, connLocs, connNodes, selAvoid);
       pathLocs.put(conn, connLocs);
       initNodes.put(conn, connNodes);
@@ -82,13 +78,12 @@ class Connector {
       default:
         tries = MAX_ORDERING_TRIES;
     }
-    long stopTime = System.currentTimeMillis() + MAX_SECONDS * 1000;
-    for (int tryNum = 0; tryNum < tries && stopTime - System.currentTimeMillis() > 0; tryNum++) {
+    val stopTime = System.currentTimeMillis() + MAX_SECONDS * 1000;
+    for (var tryNum = 0; tryNum < tries && stopTime - System.currentTimeMillis() > 0; tryNum++) {
       if (ConnectorThread.isOverrideRequested()) {
         return null;
       }
-      ArrayList<ConnectionData> connects;
-      connects = new ArrayList<>(baseConnects);
+      val connects = new ArrayList<ConnectionData>(baseConnects);
       if (tryNum < 2) {
         sortConnects(connects, dx, dy);
         if (tryNum == 1) {
@@ -98,19 +93,19 @@ class Connector {
         Collections.shuffle(connects);
       }
 
-      MoveResult candidate = tryList(req, gesture, connects, dx, dy, pathLocs, initNodes, stopTime);
+      val candidate = tryList(req, gesture, connects, dx, dy, pathLocs, initNodes, stopTime);
       if (candidate == null) {
         return null;
       } else if (bestResult == null) {
         bestResult = candidate;
       } else {
-        int unsatisfied1 = bestResult.getUnsatisifiedConnections().size();
-        int unsatisfied2 = candidate.getUnsatisifiedConnections().size();
+        val unsatisfied1 = bestResult.getUnsatisfiedConnections().size();
+        val unsatisfied2 = candidate.getUnsatisfiedConnections().size();
         if (unsatisfied2 < unsatisfied1) {
           bestResult = candidate;
         } else if (unsatisfied2 == unsatisfied1) {
-          int dist1 = bestResult.getTotalDistance();
-          int dist2 = candidate.getTotalDistance();
+          val dist1 = bestResult.getTotalDistance();
+          val dist2 = candidate.getTotalDistance();
           if (dist2 < dist1) {
             bestResult = candidate;
           }
@@ -126,9 +121,9 @@ class Connector {
   }
 
   private static ArrayList<Location> convertToPath(SearchNode last) {
-    SearchNode next = last;
-    SearchNode prev = last.getPrevious();
-    ArrayList<Location> ret = new ArrayList<>();
+    var next = last;
+    var prev = last.getPrevious();
+    val ret = new ArrayList<Location>();
     ret.add(next.getLocation());
     while (prev != null) {
       if (prev.getDirection() != next.getDirection()) {
@@ -144,14 +139,13 @@ class Connector {
     return ret;
   }
 
-  private static SearchNode findShortestPath(
-      List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
-    PriorityQueue<SearchNode> q = new PriorityQueue<>(nodes);
-    HashSet<SearchNode> visited = new HashSet<>();
-    int iters = 0;
+  private static SearchNode findShortestPath(List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
+    val q = new PriorityQueue<SearchNode>(nodes);
+    val visited = new HashSet<SearchNode>();
+    var iters = 0;
     while (!q.isEmpty() && iters < MAX_SEARCH_ITERATIONS) {
       iters++;
-      SearchNode n = q.remove();
+      val n = q.remove();
       if (iters % 64 == 0 && ConnectorThread.isOverrideRequested() || n == null) {
         return null;
       }
@@ -162,10 +156,10 @@ class Connector {
       if (!added) {
         continue;
       }
-      Location loc = n.getLocation();
-      Direction dir = n.getDirection();
-      int neighbors = 3;
-      Object allowed = avoid.get(loc);
+      val loc = n.getLocation();
+      var dir = n.getDirection();
+      var neighbors = 3;
+      var allowed = avoid.get(loc);
       if (allowed != null && n.isStart() && pathLocs.contains(loc)) {
         allowed = null;
       }
@@ -212,7 +206,7 @@ class Connector {
           default: // must be 3
             oDir = dir.reverse();
         }
-        SearchNode o = n.next(oDir, allowed != null);
+        val o = n.next(oDir, allowed != null);
         if (o != null && !visited.contains(o)) {
           q.add(o);
         }
@@ -228,10 +222,10 @@ class Connector {
       HashSet<Location> connLocs,
       ArrayList<SearchNode> connNodes,
       AvoidanceMap selAvoid) {
-    Location cur = conn.getLocation();
-    Location dest = cur.translate(dx, dy);
+    val cur = conn.getLocation();
+    val dest = cur.translate(dx, dy);
     if (selAvoid.get(cur) == null) {
-      Direction preferred = conn.getDirection();
+      var preferred = conn.getDirection();
       if (preferred == null) {
         if (Math.abs(dx) > Math.abs(dy)) {
           preferred = dx > 0 ? Direction.EAST : Direction.WEST;
@@ -244,20 +238,20 @@ class Connector {
       connNodes.add(new SearchNode(conn, cur, preferred, dest));
     }
 
-    for (Wire w : conn.getWirePath()) {
-      for (Location loc : w) {
+    for (val wire : conn.getWirePath()) {
+      for (val loc : wire) {
         if (selAvoid.get(loc) == null || loc.equals(dest)) {
-          boolean added = connLocs.add(loc);
+          var added = connLocs.add(loc);
           if (added) {
             Direction dir = null;
-            if (w.endsAt(loc)) {
-              if (w.isVertical()) {
-                int y0 = loc.getY();
-                int y1 = w.getOtherEnd(loc).getY();
+            if (wire.endsAt(loc)) {
+              if (wire.isVertical()) {
+                val y0 = loc.getY();
+                val y1 = wire.getOtherEnd(loc).getY();
                 dir = y0 < y1 ? Direction.NORTH : Direction.SOUTH;
               } else {
-                int x0 = loc.getX();
-                int x1 = w.getOtherEnd(loc).getX();
+                val x0 = loc.getX();
+                val x1 = wire.getOtherEnd(loc).getX();
                 dir = x0 < x1 ? Direction.WEST : Direction.EAST;
               }
             }
@@ -274,23 +268,23 @@ class Connector {
       AvoidanceMap avoid,
       ReplacementMap repl,
       Set<Location> unmarkable) {
-    Iterator<Location> pathIt = path.iterator();
-    Location loc0 = pathIt.next();
+    val pathIt = path.iterator();
+    var loc0 = pathIt.next();
     if (!loc0.equals(conn.getLocation())) {
-      Location pathLoc = conn.getWirePathStart();
-      boolean found = loc0.equals(pathLoc);
-      for (Wire w : conn.getWirePath()) {
-        Location nextLoc = w.getOtherEnd(pathLoc);
+      var pathLoc = conn.getWirePathStart();
+      var found = loc0.equals(pathLoc);
+      for (val wire : conn.getWirePath()) {
+        val nextLoc = wire.getOtherEnd(pathLoc);
         if (found) { // existing wire will be removed
-          repl.remove(w);
-          avoid.unmarkWire(w, nextLoc, unmarkable);
-        } else if (w.contains(loc0)) { // wires after this will be
+          repl.remove(wire);
+          avoid.unmarkWire(wire, nextLoc, unmarkable);
+        } else if (wire.contains(loc0)) { // wires after this will be
           // removed
           found = true;
           if (!loc0.equals(nextLoc)) {
-            avoid.unmarkWire(w, nextLoc, unmarkable);
-            Wire shortenedWire = Wire.create(pathLoc, loc0);
-            repl.replace(w, shortenedWire);
+            avoid.unmarkWire(wire, nextLoc, unmarkable);
+            val shortenedWire = Wire.create(pathLoc, loc0);
+            repl.replace(wire, shortenedWire);
             avoid.markWire(shortenedWire, 0, 0);
           }
         }
@@ -298,29 +292,28 @@ class Connector {
       }
     }
     while (pathIt.hasNext()) {
-      Location loc1 = pathIt.next();
-      Wire newWire = Wire.create(loc0, loc1);
+      val loc1 = pathIt.next();
+      val newWire = Wire.create(loc0, loc1);
       repl.add(newWire);
       avoid.markWire(newWire, 0, 0);
       loc0 = loc1;
     }
   }
 
-  private static ArrayList<ConnectionData> pruneImpossible(
-      ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
-    ArrayList<Wire> pathWires = new ArrayList<>();
-    for (ConnectionData conn : connects) {
+  private static ArrayList<ConnectionData> pruneImpossible(ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
+    val pathWires = new ArrayList<Wire>();
+    for (val conn : connects) {
       pathWires.addAll(conn.getWirePath());
     }
 
-    ArrayList<ConnectionData> impossible = new ArrayList<>();
-    for (Iterator<ConnectionData> it = connects.iterator(); it.hasNext(); ) {
-      ConnectionData conn = it.next();
-      Location dest = conn.getLocation().translate(dx, dy);
+    val impossible = new ArrayList<ConnectionData>();
+    for (val it = connects.iterator(); it.hasNext(); ) {
+      val conn = it.next();
+      val dest = conn.getLocation().translate(dx, dy);
       if (avoid.get(dest) != null) {
-        boolean isInPath = false;
-        for (Wire w : pathWires) {
-          if (w.contains(dest)) {
+        var isInPath = false;
+        for (val wire : pathWires) {
+          if (wire.contains(dest)) {
             isInPath = true;
             break;
           }
@@ -342,10 +335,10 @@ class Connector {
    */
   private static void sortConnects(ArrayList<ConnectionData> connects, final int dx, final int dy) {
     connects.sort((ac, bc) -> {
-      Location a = ac.getLocation();
-      Location b = bc.getLocation();
-      int abx = a.getX() - b.getX();
-      int aby = a.getY() - b.getY();
+      val a = ac.getLocation();
+      val b = bc.getLocation();
+      val abx = a.getX() - b.getX();
+      val aby = a.getY() - b.getY();
       return abx * dx + aby * dy;
     });
   }
@@ -359,13 +352,13 @@ class Connector {
       HashMap<ConnectionData, Set<Location>> pathLocs,
       HashMap<ConnectionData, List<SearchNode>> initNodes,
       long stopTime) {
-    AvoidanceMap avoid = gesture.getFixedAvoidanceMap().cloneMap();
+    val avoid = gesture.getFixedAvoidanceMap().cloneMap();
     avoid.markAll(gesture.getSelected(), dx, dy);
 
-    ReplacementMap replacements = new ReplacementMap();
-    ArrayList<ConnectionData> unconnected = new ArrayList<>();
-    int totalDistance = 0;
-    for (ConnectionData conn : connects) {
+    val replacements = new ReplacementMap();
+    val unconnected = new ArrayList<ConnectionData>();
+    var totalDistance = 0;
+    for (val conn : connects) {
       if (ConnectorThread.isOverrideRequested()) {
         return null;
       }
@@ -373,12 +366,12 @@ class Connector {
         unconnected.add(conn);
         continue;
       }
-      List<SearchNode> connNodes = initNodes.get(conn);
-      Set<Location> connPathLocs = pathLocs.get(conn);
-      SearchNode n = findShortestPath(connNodes, connPathLocs, avoid);
+      val connNodes = initNodes.get(conn);
+      val connPathLocs = pathLocs.get(conn);
+      val n = findShortestPath(connNodes, connPathLocs, avoid);
       if (n != null) { // normal case - a path was found
         totalDistance += n.getDistance();
-        ArrayList<Location> path = convertToPath(n);
+        val path = convertToPath(n);
         processPath(path, conn, avoid, replacements, connPathLocs);
       } else if (ConnectorThread.isOverrideRequested()) {
         return null; // search was aborted: return null to indicate this

@@ -32,22 +32,21 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import java.util.List;
+import lombok.Getter;
 
 class ConnectionData {
-  private final Location loc;
-
-  private final Direction dir;
+  @Getter private final Location location;
+  @Getter private final Direction direction;
 
   /**
    * The list of wires leading up to this point - we may well want to truncate this path somewhat.
    */
-  private final List<Wire> wirePath;
-
-  private final Location wirePathStart;
+  @Getter private final List<Wire> wirePath;
+  @Getter private final Location wirePathStart;
 
   public ConnectionData(Location loc, Direction dir, List<Wire> wirePath, Location wirePathStart) {
-    this.loc = loc;
-    this.dir = dir;
+    this.location = loc;
+    this.direction = dir;
     this.wirePath = wirePath;
     this.wirePathStart = wirePathStart;
   }
@@ -56,30 +55,14 @@ class ConnectionData {
   public boolean equals(Object other) {
     if (other instanceof ConnectionData) {
       ConnectionData o = (ConnectionData) other;
-      return this.loc.equals(o.loc) && this.dir.equals(o.dir);
+      return this.location.equals(o.location) && this.direction.equals(o.direction);
     } else {
       return false;
     }
   }
 
-  public Direction getDirection() {
-    return dir;
-  }
-
-  public Location getLocation() {
-    return loc;
-  }
-
-  public List<Wire> getWirePath() {
-    return wirePath;
-  }
-
-  public Location getWirePathStart() {
-    return wirePathStart;
-  }
-
   @Override
   public int hashCode() {
-    return loc.hashCode() * 31 + (dir == null ? 0 : dir.hashCode());
+    return location.hashCode() * 31 + (direction == null ? 0 : direction.hashCode());
   }
 }

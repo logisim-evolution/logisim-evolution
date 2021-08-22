@@ -31,7 +31,6 @@ package com.cburch.logisim.tools.move;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
@@ -41,23 +40,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.val;
 
 public class MoveGesture {
   private static Set<ConnectionData> computeConnections(Circuit circuit, Set<Component> selected) {
     if (selected == null || selected.isEmpty()) return Collections.emptySet();
 
     // first identify locations that might be connected
-    Set<Location> locs = new HashSet<>();
-    for (Component comp : selected) {
-      for (EndData end : comp.getEnds()) {
+    val locs = new HashSet<Location>();
+    for (val comp : selected) {
+      for (val end : comp.getEnds()) {
         locs.add(end.getLocation());
       }
     }
 
     // now see which of them require connection
-    Set<ConnectionData> conns = new HashSet<>();
-    for (Location loc : locs) {
-      boolean found = false;
+    val conns = new HashSet<ConnectionData>();
+    for (val loc : locs) {
+      var found = false;
       for (Component comp : circuit.getComponents(loc)) {
         if (!selected.contains(comp)) {
           found = true;
@@ -67,16 +67,16 @@ public class MoveGesture {
       if (found) {
         List<Wire> wirePath;
         Location wirePathStart;
-        Wire lastOnPath = findWire(circuit, loc, selected, null);
+        val lastOnPath = findWire(circuit, loc, selected, null);
         if (lastOnPath == null) {
           wirePath = Collections.emptyList();
           wirePathStart = loc;
         } else {
           wirePath = new ArrayList<>();
           Location cur = loc;
-          for (Wire w = lastOnPath; w != null; w = findWire(circuit, cur, selected, w)) {
-            wirePath.add(w);
-            cur = w.getOtherEnd(cur);
+          for (var wire = lastOnPath; wire != null; wire = findWire(circuit, cur, selected, wire)) {
+            wirePath.add(wire);
+            cur = wire.getOtherEnd(cur);
           }
           Collections.reverse(wirePath);
           wirePathStart = cur;
@@ -84,9 +84,9 @@ public class MoveGesture {
 
         Direction dir = null;
         if (lastOnPath != null) {
-          Location other = lastOnPath.getOtherEnd(loc);
-          int dx = loc.getX() - other.getX();
-          int dy = loc.getY() - other.getY();
+          val other = lastOnPath.getOtherEnd(loc);
+          val dx = loc.getX() - other.getX();
+          val dy = loc.getY() - other.getY();
           if (Math.abs(dx) > Math.abs(dy)) {
             dir = dx > 0 ? Direction.EAST : Direction.WEST;
           } else {
@@ -101,7 +101,7 @@ public class MoveGesture {
 
   private static Wire findWire(Circuit circ, Location loc, Set<Component> ignore, Wire ignoreW) {
     Wire ret = null;
-    for (Component comp : circ.getComponents(loc)) {
+    for (val comp : circ.getComponents(loc)) {
       if (!ignore.contains(comp) && comp != ignoreW) {
         if (ret == null && comp instanceof Wire) {
           ret = (Wire) comp;
@@ -134,7 +134,7 @@ public class MoveGesture {
   }
 
   public boolean enqueueRequest(int dx, int dy) {
-    MoveRequest request = new MoveRequest(this, dx, dy);
+    val request = new MoveRequest(this, dx, dy);
     synchronized (cachedResults) {
       Object result = cachedResults.get(request);
       if (result == null) {
@@ -147,7 +147,7 @@ public class MoveGesture {
   }
 
   public MoveResult findResult(int dx, int dy) {
-    MoveRequest request = new MoveRequest(this, dx, dy);
+    val request = new MoveRequest(this, dx, dy);
     synchronized (cachedResults) {
       return cachedResults.get(request);
     }
@@ -172,7 +172,7 @@ public class MoveGesture {
   }
 
   Set<ConnectionData> getConnections() {
-    Set<ConnectionData> ret = connections;
+    var ret = connections;
     if (ret == null) {
       ret = computeConnections(circuit, selected);
       connections = ret;
@@ -181,9 +181,9 @@ public class MoveGesture {
   }
 
   AvoidanceMap getFixedAvoidanceMap() {
-    AvoidanceMap ret = initAvoid;
+    var ret = initAvoid;
     if (ret == null) {
-      HashSet<Component> comps = new HashSet<>(circuit.getNonWires());
+      val comps = new HashSet<Component>(circuit.getNonWires());
       comps.addAll(circuit.getWires());
       comps.removeAll(selected);
       ret = AvoidanceMap.create(comps, 0, 0);

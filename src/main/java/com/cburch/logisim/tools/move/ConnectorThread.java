@@ -30,6 +30,7 @@ package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.util.UniquelyNamedThread;
+import lombok.val;
 
 class ConnectorThread extends UniquelyNamedThread {
   public static void enqueueRequest(MoveRequest req, boolean priority) {
@@ -91,16 +92,15 @@ class ConnectorThread extends UniquelyNamedThread {
       }
 
       try {
-        MoveResult result = Connector.computeWires(req);
+        val result = Connector.computeWires(req);
         if (result != null) {
-          MoveGesture gesture = req.getMoveGesture();
+          val gesture = req.getMoveGesture();
           gesture.notifyResult(req, result);
         }
       } catch (Exception t) {
         t.printStackTrace();
         if (wasOverride) {
-          MoveResult result =
-              new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
+          val result = new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
           req.getMoveGesture().notifyResult(req, result);
         }
       }

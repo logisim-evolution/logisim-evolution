@@ -47,6 +47,8 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import lombok.Getter;
+import lombok.val;
 
 public class TextTool extends Tool {
   /**
@@ -58,12 +60,13 @@ public class TextTool extends Tool {
   public static final String _ID = "Text Tool";
 
   private class MyListener implements CaretListener, CircuitListener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getCircuit() != caretCircuit) {
         event.getCircuit().removeCircuitListener(this);
         return;
       }
-      final var action = event.getAction();
+      val action = event.getAction();
       if (action == CircuitEvent.ACTION_REMOVE) {
         if (event.getData() == caretComponent) {
           caret.cancelEditing();
@@ -75,6 +78,7 @@ public class TextTool extends Tool {
       }
     }
 
+    @Override
     public void editingCanceled(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -89,6 +93,7 @@ public class TextTool extends Tool {
       caret = null;
     }
 
+    @Override
     public void editingStopped(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -97,13 +102,13 @@ public class TextTool extends Tool {
       caret.removeCaretListener(this);
       caretCircuit.removeCircuitListener(this);
 
-      final var val = caret.getText();
+      val val = caret.getText();
       var isEmpty = (val == null || val.equals(""));
       Action a;
-      final var proj = caretCanvas.getProject();
+      val proj = caretCanvas.getProject();
       if (caretCreatingText) {
         if (!isEmpty) {
-          final var xn = new CircuitMutation(caretCircuit);
+          val xn = new CircuitMutation(caretCircuit);
           xn.add(caretComponent);
           a = xn.toAction(S.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
@@ -111,15 +116,15 @@ public class TextTool extends Tool {
         }
       } else {
         if (isEmpty && caretComponent.getFactory() instanceof Text) {
-          final var xn = new CircuitMutation(caretCircuit);
+          val xn = new CircuitMutation(caretCircuit);
           xn.add(caretComponent);
           a = xn.toAction(S.getter("removeComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
-          Object obj = caretComponent.getFeature(TextEditable.class);
+          val obj = caretComponent.getFeature(TextEditable.class);
           if (obj == null) { // should never happen
             a = null;
           } else {
-            final var editable = (TextEditable) obj;
+            val editable = (TextEditable) obj;
             a = editable.getCommitAction(caretCircuit, e.getOldText(), e.getText());
           }
         }
@@ -134,7 +139,7 @@ public class TextTool extends Tool {
     }
   }
 
-  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
 
   private final MyListener listener = new MyListener();
   private final AttributeSet attrs;
@@ -169,11 +174,6 @@ public class TextTool extends Tool {
   @Override
   public AttributeSet getAttributeSet() {
     return attrs;
-  }
-
-  @Override
-  public Cursor getCursor() {
-    return cursor;
   }
 
   @Override
@@ -217,8 +217,8 @@ public class TextTool extends Tool {
 
   @Override
   public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
-    final var proj = canvas.getProject();
-    final var circ = canvas.getCircuit();
+    val proj = canvas.getProject();
+    val circ = canvas.getCircuit();
 
     if (!proj.getLogisimFile().contains(circ)) {
       if (caret != null) caret.cancelEditing();
@@ -235,13 +235,13 @@ public class TextTool extends Tool {
 
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
-    final var proj = canvas.getProject();
-    final var circ = canvas.getCircuit();
+    val proj = canvas.getProject();
+    val circ = canvas.getCircuit();
 
     /*
      * This is made to remove an annoying bug that do not unselect current selection
      */
-    final var act = SelectionActions.dropAll(canvas.getSelection());
+    val act = SelectionActions.dropAll(canvas.getSelection());
     canvas.getProject().doAction(act);
 
     if (!proj.getLogisimFile().contains(circ)) {
@@ -263,14 +263,14 @@ public class TextTool extends Tool {
     // caret will be null at this point
 
     // Otherwise search for a new caret.
-    int x = e.getX();
-    int y = e.getY();
-    final var loc = Location.create(x, y);
-    final var event = new ComponentUserEvent(canvas, x, y);
+    val x = e.getX();
+    val y = e.getY();
+    val loc = Location.create(x, y);
+    val event = new ComponentUserEvent(canvas, x, y);
 
     // First search in selection.
-    for (final var comp : proj.getSelection().getComponentsContaining(loc, g)) {
-      final var editable = (TextEditable) comp.getFeature(TextEditable.class);
+    for (val comp : proj.getSelection().getComponentsContaining(loc, g)) {
+      val editable = (TextEditable) comp.getFeature(TextEditable.class);
       if (editable != null) {
         caret = editable.getTextCaret(event);
         if (caret != null) {
@@ -284,8 +284,8 @@ public class TextTool extends Tool {
 
     // Then search in circuit
     if (caret == null) {
-      for (final var comp : circ.getAllContaining(loc, g)) {
-        final var editable = (TextEditable) comp.getFeature(TextEditable.class);
+      for (val comp : circ.getAllContaining(loc, g)) {
+        val editable = (TextEditable) comp.getFeature(TextEditable.class);
         if (editable != null) {
           caret = editable.getTextCaret(event);
           if (caret != null) {
@@ -301,10 +301,10 @@ public class TextTool extends Tool {
     // if nothing found, create a new label
     if (caret == null) {
       if (loc.getX() < 0 || loc.getY() < 0) return;
-      final var copy = (AttributeSet) attrs.clone();
+      val copy = (AttributeSet) attrs.clone();
       caretComponent = Text.FACTORY.createComponent(loc, copy);
       caretCreatingText = true;
-      final var editable = (TextEditable) caretComponent.getFeature(TextEditable.class);
+      val editable = (TextEditable) caretComponent.getFeature(TextEditable.class);
       if (editable != null) {
         caret = editable.getTextCaret(event);
         proj.getFrame().viewComponentAttributes(circ, caretComponent);
@@ -322,8 +322,8 @@ public class TextTool extends Tool {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    final var proj = canvas.getProject();
-    final var circ = canvas.getCircuit();
+    val proj = canvas.getProject();
+    val circ = canvas.getCircuit();
 
     if (!proj.getLogisimFile().contains(circ)) {
       if (caret != null) caret.cancelEditing();

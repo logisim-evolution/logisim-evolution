@@ -35,6 +35,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Icon;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FactoryDescription {
 
-  public static List<Tool> getTools(
-      Class<? extends Library> base, FactoryDescription[] descriptions) {
+  public static List<Tool> getTools(Class<? extends Library> base, FactoryDescription[] descriptions) {
     var tools = new Tool[descriptions.length];
     for (var i = 0; i < tools.length; i++) {
       tools[i] = new AddTool(base, descriptions[i]);
@@ -94,7 +94,7 @@ public class FactoryDescription {
   }
 
   public ComponentFactory getFactory(Class<? extends Library> libraryClass) {
-    final var ret = factory;
+    val ret = factory;
     if (factory != null || factoryLoadAttempted) {
       return ret;
     }
@@ -102,18 +102,18 @@ public class FactoryDescription {
     var errorMsg = "";
     try {
       errorMsg = "Getting class loader";
-      final var loader = this.factoryClass.getClassLoader();
+      val loader = this.factoryClass.getClassLoader();
       errorMsg = "Loading class";
-      Class<?> factoryCls = loader.loadClass(this.factoryClass.getCanonicalName());
+      val factoryCls = loader.loadClass(this.factoryClass.getCanonicalName());
       errorMsg = "Creating instance";
-      Object factoryValue = factoryCls.getDeclaredConstructor().newInstance();
+      val factoryValue = factoryCls.getDeclaredConstructor().newInstance();
       errorMsg = "Converting to ComponentFactory";
       factory = (ComponentFactory) factoryValue;
       factoryLoadAttempted = true;
       return factory;
     } catch (Exception t) {
-      final var name = t.getClass().getName();
-      final var m = t.getMessage();
+      val name = t.getClass().getName();
+      val m = t.getMessage();
 
       errorMsg += ": " + name;
       if (m != null) errorMsg += ": " + m;
@@ -146,7 +146,7 @@ public class FactoryDescription {
   }
 
   public String getToolTip() {
-    StringGetter getter = toolTip;
+    val getter = toolTip;
     return getter == null ? null : getter.toString();
   }
 

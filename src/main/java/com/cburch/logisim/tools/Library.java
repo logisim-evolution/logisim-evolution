@@ -32,6 +32,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.util.LibraryUtil;
 import java.util.Collections;
 import java.util.List;
+import lombok.val;
 
 public abstract class Library {
   private boolean hidden = false;
@@ -41,7 +42,7 @@ public abstract class Library {
   }
 
   public boolean containsFromSource(Tool query) {
-    for (final var tool : getTools()) {
+    for (val tool : getTools()) {
       if (tool.sharesSource(query)) {
         return true;
       }
@@ -65,7 +66,7 @@ public abstract class Library {
   }
 
   public Library getLibrary(String name) {
-    for (final var lib : getLibraries()) {
+    for (val lib : getLibraries()) {
       if (lib.getName().equals(name)) {
         return lib;
       }
@@ -76,7 +77,7 @@ public abstract class Library {
   public abstract boolean removeLibrary(String name);
 
   public Tool getTool(String name) {
-    for (final var tool : getTools()) {
+    for (val tool : getTools()) {
       if (tool.getName().equals(name)) {
         return tool;
       }
@@ -87,8 +88,8 @@ public abstract class Library {
   public abstract List<? extends Tool> getTools();
 
   public int indexOf(ComponentFactory query) {
-    int index = -1;
-    for (final var obj : getTools()) {
+    var index = -1;
+    for (val obj : getTools()) {
       index++;
       if (obj instanceof AddTool) {
         AddTool tool = (AddTool) obj;

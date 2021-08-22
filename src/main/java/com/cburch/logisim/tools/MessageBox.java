@@ -32,6 +32,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import lombok.val;
 
 public class MessageBox {
 
@@ -62,7 +63,7 @@ public class MessageBox {
       textArea.setText(description);
       textArea.setCaretPosition(0);
 
-      final var scrollPane = new JScrollPane(textArea);
+      val scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(640, 480));
       OptionPane.showMessageDialog(null, scrollPane, title, type);
     } else {

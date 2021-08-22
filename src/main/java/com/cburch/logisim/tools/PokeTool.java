@@ -52,6 +52,8 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
+import lombok.Getter;
+import lombok.val;
 
 public class PokeTool extends Tool {
   /**
@@ -63,8 +65,9 @@ public class PokeTool extends Tool {
   public static final String _ID = "Poke Tool";
 
   private class Listener implements CircuitListener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
-      final var circ = pokedCircuit;
+      val circ = pokedCircuit;
       if (event.getCircuit() == circ
           && circ != null
           && (event.getAction() == CircuitEvent.ACTION_REMOVE
@@ -92,7 +95,7 @@ public class PokeTool extends Tool {
 
     @Override
     public void draw(Graphics g) {
-      final var v = canvas.getCircuitState().getValue(wire.getEnd0());
+      val v = canvas.getCircuitState().getValue(wire.getEnd0());
       var radix1 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX1.get());
       var radix2 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX2.get());
       if (radix1 == null) radix1 = RadixOption.RADIX_2;
@@ -104,7 +107,7 @@ public class PokeTool extends Tool {
       if (v.getWidth() == 32 || v.getWidth() == 64) {
         vStr += " / " + RadixOption.RADIX_FLOAT.toString(v);
       }
-      final var fm = g.getFontMetrics();
+      val fm = g.getFontMetrics();
       g.setColor(caretColor);
 
       var margin = 2;
@@ -116,7 +119,7 @@ public class PokeTool extends Tool {
       }
       var h = fm.getAscent() + fm.getDescent() + 2 * margin;
 
-      final var r = canvas.getViewableRect();
+      val r = canvas.getViewableRect();
       var dx = Math.max(0, w - (r.x + r.width - x));
       var dxx1 = (dx > w / 2) ? -30 : 15; // offset of callout stem
       var dxx2 = (dx > w / 2) ? -15 : 30; // offset of callout stem
@@ -144,14 +147,14 @@ public class PokeTool extends Tool {
 
   private static final Color caretColor = new Color(255, 255, 150);
 
-  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
   private final Listener listener;
   private Circuit pokedCircuit;
   private Component pokedComponent;
   private Caret pokeCaret;
-  private Point OldPosition;
+  private Point oldPosition;
 
   public PokeTool() {
     this.listener = new Listener();
@@ -171,11 +174,6 @@ public class PokeTool extends Tool {
   @Override
   public boolean equals(Object other) {
     return other instanceof PokeTool;
-  }
-
-  @Override
-  public Cursor getCursor() {
-    return cursor;
   }
 
   @Override
@@ -224,13 +222,13 @@ public class PokeTool extends Tool {
       canvas.getProject().repaintCanvas();
     } else {
       // move scrollpane dragging hand
-      final var m = canvas.getMousePosition();
-      if (OldPosition == null || m == null) {
-        OldPosition = m;
+      val m = canvas.getMousePosition();
+      if (oldPosition == null || m == null) {
+        oldPosition = m;
         return;
       }
-      int x = (int) (OldPosition.getX() - m.getX());
-      int y = (int) (OldPosition.getY() - m.getY());
+      val x = (int) (oldPosition.getX() - m.getX());
+      val y = (int) (oldPosition.getY() - m.getY());
       canvas.setCursor(move);
       canvas.setScrollBar(canvas.getHorizzontalScrollBar() + x, canvas.getVerticalScrollBar() + y);
     }
@@ -238,9 +236,9 @@ public class PokeTool extends Tool {
 
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-    final var loc = Location.create(x, y);
+    val x = e.getX();
+    val y = e.getY();
+    val loc = Location.create(x, y);
     var dirty = false;
     canvas.setHighlightedWires(WireSet.EMPTY);
     if (pokeCaret != null && !pokeCaret.getBounds(g).contains(loc)) {
@@ -248,24 +246,23 @@ public class PokeTool extends Tool {
       removeCaret(true);
     }
     if (pokeCaret == null) {
-      final var event = new ComponentUserEvent(canvas, x, y);
-      final var circ = canvas.getCircuit();
-      for (final var c : circ.getAllContaining(loc, g)) {
+      val event = new ComponentUserEvent(canvas, x, y);
+      val circ = canvas.getCircuit();
+      for (val c : circ.getAllContaining(loc, g)) {
         if (pokeCaret != null) break;
 
         if (c instanceof Wire) {
-          final var caret = new WireCaret(
-                  canvas, (Wire) c, x, y, canvas.getProject().getOptions().getAttributeSet());
+          val caret = new WireCaret(canvas, (Wire) c, x, y, canvas.getProject().getOptions().getAttributeSet());
           setPokedComponent(circ, c, caret);
           canvas.setHighlightedWires(circ.getWireSet((Wire) c));
         } else {
-          final var p = (Pokable) c.getFeature(Pokable.class);
+          val p = (Pokable) c.getFeature(Pokable.class);
           if (p != null) {
-            final var caret = p.getPokeCaret(event);
+            val caret = p.getPokeCaret(event);
             setPokedComponent(circ, c, caret);
-            final var attrs = c.getAttributeSet();
+            val attrs = c.getAttributeSet();
             if (attrs != null && attrs.getAttributes().size() > 0) {
-              final var proj = canvas.getProject();
+              val proj = canvas.getProject();
               proj.getFrame().viewComponentAttributes(circ, c);
             }
           }
@@ -281,7 +278,7 @@ public class PokeTool extends Tool {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    OldPosition = null;
+    oldPosition = null;
     if (pokeCaret != null) {
       pokeCaret.mouseReleased(e);
       canvas.getProject().repaintCanvas();
@@ -290,10 +287,10 @@ public class PokeTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    final var g2 = (Graphics2D) c.getGraphics().create();
+    val g2 = (Graphics2D) c.getGraphics().create();
     g2.translate(x, y);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
-    final var p = new GeneralPath();
+    val p = new GeneralPath();
     p.moveTo(scale(6), scale(15));
     p.quadTo(scale(5), scale(10), scale(1), scale(7));
     p.quadTo(scale(2.5), scale(4), scale(4), scale(7));
@@ -318,9 +315,9 @@ public class PokeTool extends Tool {
   }
 
   private void removeCaret(boolean normal) {
-    final var caret = pokeCaret;
+    val caret = pokeCaret;
     if (caret != null) {
-      final var circ = pokedCircuit;
+      val circ = pokedCircuit;
       if (normal)
         caret.stopEditing();
       else

@@ -29,93 +29,55 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.data.Bounds;
+import lombok.Getter;
+import lombok.Setter;
 
 public class MatrixPlacerInfo {
 
-  private final String OldLabel;
-  private String SharedLabel;
-  private int NrOfXCopies = 1;
-  private int NrOfYCopies = 1;
-  private int XDisplacement = 1;
-  private int YDisplacement = 1;
-  private int XDmin = 1;
-  private int YDmin = 1;
+  private final String oldLabel;
+  @Getter @Setter private String label;
+  @Getter @Setter private int nrOfXCopies = 1;
+  @Getter @Setter private int nrOfYCopies = 1;
+  @Getter private int displacementX = 1;
+  @Getter private int displacementY = 1;
+  @Getter private int minimalDisplacementX = 1;
+  @Getter private int minimalDisplacementY = 1;
 
-  public MatrixPlacerInfo(String Label) {
-    SharedLabel = Label;
-    OldLabel = Label;
+  public MatrixPlacerInfo(String label) {
+    this.label = label;
+    oldLabel = label;
   }
 
-  void SetBounds(Bounds bds) {
-    XDisplacement = XDmin = (bds.getWidth() + 9) / 10;
-    YDisplacement = YDmin = (bds.getHeight() + 9) / 10;
+  void setBounds(Bounds bds) {
+    displacementX = minimalDisplacementX = (bds.getWidth() + 9) / 10;
+    displacementY = minimalDisplacementY = (bds.getHeight() + 9) / 10;
   }
 
-  int getMinimalXDisplacement() {
-    return XDmin;
+  void undoLabel() {
+    label = oldLabel;
   }
 
-  int getMinimalYDisplacement() {
-    return YDmin;
+  int getDeltaX() {
+    return displacementX * 10;
   }
 
-  String GetLabel() {
-    return SharedLabel;
+  void setDeltaX(int value) {
+    if (value > 0) displacementX = (value + 9) / 10;
   }
 
-  void UndoLabel() {
-    SharedLabel = OldLabel;
+  void setDisplacementX(int value) {
+    if (value > 0) displacementX = value;
   }
 
-  void SetLabel(String Lab) {
-    SharedLabel = Lab;
+  int getDeltaY() {
+    return displacementY * 10;
   }
 
-  int getNrOfXCopies() {
-    return NrOfXCopies;
+  void setDeltaY(int value) {
+    if (value > 0) displacementY = (value + 9) / 10;
   }
 
-  void setNrOfXCopies(int val) {
-    NrOfXCopies = val;
-  }
-
-  int getNrOfYCopies() {
-    return NrOfYCopies;
-  }
-
-  void setNrOfYCopies(int val) {
-    NrOfYCopies = val;
-  }
-
-  int GetDeltaX() {
-    return XDisplacement * 10;
-  }
-
-  void SetDeltaX(int value) {
-    if (value > 0) XDisplacement = (value + 9) / 10;
-  }
-
-  void setXDisplacement(int value) {
-    if (value > 0) XDisplacement = value;
-  }
-
-  int getXDisplacement() {
-    return XDisplacement;
-  }
-
-  int GetDeltaY() {
-    return YDisplacement * 10;
-  }
-
-  void SetDeltaY(int value) {
-    if (value > 0) YDisplacement = (value + 9) / 10;
-  }
-
-  void setYisplacement(int value) {
-    if (value > 0) YDisplacement = value;
-  }
-
-  int getYDisplacement() {
-    return YDisplacement;
+  void setDisplacementY(int value) {
+    if (value > 0) displacementY = value;
   }
 }

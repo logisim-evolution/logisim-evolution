@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.val;
 
 public class SelectTool extends Tool {
   /**
@@ -83,12 +84,14 @@ public class SelectTool extends Tool {
       this.dy = dy;
     }
 
+    @Override
     public String toString() {
       return S.get("moveWorkingMsg");
     }
   }
 
   private class Listener implements Selection.Listener {
+    @Override
     public void selectionChanged(Event event) {
       keyHandlers = null;
     }
@@ -101,6 +104,7 @@ public class SelectTool extends Tool {
       this.canvas = canvas;
     }
 
+    @Override
     public void requestSatisfied(MoveGesture gesture, int dx, int dy) {
       clearCanvasMessage(canvas, dx, dy);
     }
@@ -109,7 +113,7 @@ public class SelectTool extends Tool {
   private static void clearCanvasMessage(Canvas canvas, int dx, int dy) {
     Object getter = canvas.getErrorMessage();
     if (getter instanceof ComputingMessage) {
-      ComputingMessage msg = (ComputingMessage) getter;
+      val msg = (ComputingMessage) getter;
       if (msg.dx == dx && msg.dy == dy) {
         canvas.setErrorMessage(null);
         canvas.repaint();
@@ -154,7 +158,7 @@ public class SelectTool extends Tool {
   }
 
   private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
-    final var bds = proj.getSelection().getBounds(g);
+    val bds = proj.getSelection().getBounds(g);
     int dx;
     int dy;
     if (bds == Bounds.EMPTY_BOUNDS) {
@@ -165,7 +169,7 @@ public class SelectTool extends Tool {
       dy = Math.max(e.getY() - start.getY(), -bds.getY());
     }
 
-    final var sel = proj.getSelection();
+    val sel = proj.getSelection();
     if (sel.shouldSnap()) {
       dx = Canvas.snapXToGrid(dx);
       dy = Canvas.snapYToGrid(dy);
@@ -181,75 +185,74 @@ public class SelectTool extends Tool {
 
   @Override
   public void draw(Canvas canvas, ComponentDrawContext context) {
-    final var proj = canvas.getProject();
+    val proj = canvas.getProject();
     var dx = curDx;
     var dy = curDy;
     if (state == MOVING) {
       proj.getSelection().drawGhostsShifted(context, dx, dy);
 
-      final var gesture = moveGesture;
+      val gesture = moveGesture;
       if (gesture != null && drawConnections && (dx != 0 || dy != 0)) {
-        final var result = gesture.findResult(dx, dy);
+        val result = gesture.findResult(dx, dy);
         if (result != null) {
-          final var wiresToAdd = result.getWiresToAdd();
-          final var g = context.getGraphics();
-          GraphicsUtil.switchToWidth(g, 3);
-          g.setColor(Color.GRAY);
-          for (final var w : wiresToAdd) {
-            final var loc0 = w.getEnd0();
-            final var loc1 = w.getEnd1();
-            g.drawLine(loc0.getX(), loc0.getY(), loc1.getX(), loc1.getY());
+          val wiresToAdd = result.getWiresToAdd();
+          val gfx = context.getGraphics();
+          GraphicsUtil.switchToWidth(gfx, 3);
+          gfx.setColor(Color.GRAY);
+          for (val wire : wiresToAdd) {
+            val loc0 = wire.getEnd0();
+            val loc1 = wire.getEnd1();
+            gfx.drawLine(loc0.getX(), loc0.getY(), loc1.getX(), loc1.getY());
           }
-          GraphicsUtil.switchToWidth(g, 1);
-          g.setColor(COLOR_UNMATCHED);
-          for (final var conn : result.getUnconnectedLocations()) {
-            final var connX = conn.getX();
-            final var connY = conn.getY();
-            g.fillOval(connX - 3, connY - 3, 6, 6);
-            g.fillOval(connX + dx - 3, connY + dy - 3, 6, 6);
+          GraphicsUtil.switchToWidth(gfx, 1);
+          gfx.setColor(COLOR_UNMATCHED);
+          for (val conn : result.getUnconnectedLocations()) {
+            val connX = conn.getX();
+            val connY = conn.getY();
+            gfx.fillOval(connX - 3, connY - 3, 6, 6);
+            gfx.fillOval(connX + dx - 3, connY + dy - 3, 6, 6);
           }
         }
       }
     } else if (state == RECT_SELECT) {
-      int left = start.getX();
-      int right = left + dx;
+      var left = start.getX();
+      var right = left + dx;
       if (left > right) {
-        int i = left;
+        val oldLeft = left;
         left = right;
-        right = i;
+        right = oldLeft;
       }
-      int top = start.getY();
-      int bot = top + dy;
-      if (top > bot) {
-        int i = top;
-        top = bot;
-        bot = i;
+      var top = start.getY();
+      var bottom = top + dy;
+      if (top > bottom) {
+        val oldTop = top;
+        top = bottom;
+        bottom = oldTop;
       }
 
-      final var gBase = context.getGraphics();
-      int w = right - left - 1;
-      int h = bot - top - 1;
-      if (w > 2 && h > 2) {
+      val gBase = context.getGraphics();
+      var width = right - left - 1;
+      var height = bottom - top - 1;
+      if (width > 2 && height > 2) {
         gBase.setColor(BACKGROUND_RECT_SELECT);
-        gBase.fillRect(left + 1, top + 1, w - 1, h - 1);
+        gBase.fillRect(left + 1, top + 1, width - 1, height - 1);
       }
 
-      final var circ = canvas.getCircuit();
-      final var bds = Bounds.create(left, top, right - left, bot - top);
-      for (final var c : circ.getAllWithin(bds)) {
-        final var cloc = c.getLocation();
-        final var gDup = gBase.create();
+      val circ = canvas.getCircuit();
+      val bounds = Bounds.create(left, top, right - left, bottom - top);
+      for (val c : circ.getAllWithin(bounds)) {
+        val cloc = c.getLocation();
+        val gDup = gBase.create();
         context.setGraphics(gDup);
-        c.getFactory()
-            .drawGhost(context, COLOR_RECT_SELECT, cloc.getX(), cloc.getY(), c.getAttributeSet());
+        c.getFactory().drawGhost(context, COLOR_RECT_SELECT, cloc.getX(), cloc.getY(), c.getAttributeSet());
         gDup.dispose();
       }
 
       gBase.setColor(COLOR_RECT_SELECT);
       GraphicsUtil.switchToWidth(gBase, 2);
-      if (w < 0) w = 0;
-      if (h < 0) h = 0;
-      gBase.drawRect(left, top, w, h);
+      if (width < 0) width = 0;
+      if (height < 0) height = 0;
+      gBase.drawRect(left, top, width, height);
     }
   }
 
@@ -280,27 +283,27 @@ public class SelectTool extends Tool {
 
   @Override
   public Set<Component> getHiddenComponents(Canvas canvas) {
-    if (state == MOVING) {
-      int dx = curDx;
-      int dy = curDy;
-      if (dx == 0 && dy == 0) {
-        return null;
-      }
-
-      final var sel = canvas.getSelection().getComponents();
-      final var gesture = moveGesture;
-      if (gesture != null && drawConnections) {
-        final var result = gesture.findResult(dx, dy);
-        if (result != null) {
-          final var ret = new HashSet<Component>(sel);
-          ret.addAll(result.getReplacementMap().getRemovals());
-          return ret;
-        }
-      }
-      return sel;
-    } else {
+    if (state != MOVING) {
       return null;
     }
+
+    val dx = curDx;
+    val dy = curDy;
+    if (dx == 0 && dy == 0) {
+      return null;
+    }
+
+    val sel = canvas.getSelection().getComponents();
+    val gesture = moveGesture;
+    if (gesture != null && drawConnections) {
+      val result = gesture.findResult(dx, dy);
+      if (result != null) {
+        val ret = new HashSet<Component>(sel);
+        ret.addAll(result.getReplacementMap().getRemovals());
+        return ret;
+      }
+    }
+    return sel;
   }
 
   private void handleMoveDrag(Canvas canvas, int dx, int dy, int modsEx) {
@@ -347,24 +350,22 @@ public class SelectTool extends Tool {
     if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else {
-      final var comps = AutoLabel.sort(canvas.getProject().getSelection().getComponents());
-      final var KeybEvent = e.getKeyCode();
-      var KeyTaken = false;
-      for (final var comp : comps) {
-        final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        KeyTaken |=
+      val comps = AutoLabel.sort(canvas.getProject().getSelection().getComponents());
+      val keyboardEvent = e.getKeyCode();
+      var keyTaken = false;
+      for (val comp : comps) {
+        val act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+        keyTaken |=
             GateKeyboardModifier.TookKeyboardStrokes(
-                KeybEvent, comp, comp.getAttributeSet(), canvas, act, true);
+                keyboardEvent, comp, comp.getAttributeSet(), canvas, act, true);
         if (!act.isEmpty()) canvas.getProject().doAction(act);
       }
-      if (!KeyTaken) {
-        for (Component comp : comps) {
-          final var act =
-              new SetAttributeAction(
-                  canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-          KeyTaken |=
+      if (!keyTaken) {
+        for (val comp : comps) {
+          val act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+          keyTaken |=
               AutoLabler.labelKeyboardHandler(
-                  KeybEvent,
+                  keyboardEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
                   comp,
@@ -375,12 +376,12 @@ public class SelectTool extends Tool {
           if (!act.isEmpty()) canvas.getProject().doAction(act);
         }
       }
-      if (!KeyTaken)
-        switch (KeybEvent) {
+      if (!keyTaken)
+        switch (keyboardEvent) {
           case KeyEvent.VK_BACK_SPACE:
           case KeyEvent.VK_DELETE:
             if (!canvas.getSelection().isEmpty()) {
-              final var act = SelectionActions.clear(canvas.getSelection());
+              val act = SelectionActions.clear(canvas.getSelection());
               canvas.getProject().doAction(act);
               e.consume();
             }
@@ -407,13 +408,13 @@ public class SelectTool extends Tool {
   }
 
   @Override
-  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseDragged(Canvas canvas, Graphics gfx, MouseEvent e) {
     if (state == MOVING) {
-      final var proj = canvas.getProject();
-      computeDxDy(proj, e, g);
+      val proj = canvas.getProject();
+      computeDxDy(proj, e, gfx);
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else if (state == RECT_SELECT) {
-      final var proj = canvas.getProject();
+      val proj = canvas.getProject();
       curDx = e.getX() - start.getX();
       curDy = e.getY() - start.getY();
       proj.repaintCanvas();
@@ -421,11 +422,11 @@ public class SelectTool extends Tool {
   }
 
   @Override
-  public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mousePressed(Canvas canvas, Graphics gfx, MouseEvent e) {
     canvas.requestFocusInWindow();
-    final var proj = canvas.getProject();
-    final var sel = proj.getSelection();
-    final var circuit = canvas.getCircuit();
+    val proj = canvas.getProject();
+    val sel = proj.getSelection();
+    val circuit = canvas.getCircuit();
     start = Location.create(e.getX(), e.getY());
     curDx = 0;
     curDy = 0;
@@ -433,14 +434,14 @@ public class SelectTool extends Tool {
 
     // if the user clicks into the selection,
     // selection is being modified
-    final var in_sel = sel.getComponentsContaining(start, g);
+    val in_sel = sel.getComponentsContaining(start, gfx);
     if (!in_sel.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
         setState(proj, MOVING);
         proj.repaintCanvas();
         return;
       } else {
-        final var act = SelectionActions.drop(sel, in_sel);
+        val act = SelectionActions.drop(sel, in_sel);
         if (act != null) {
           proj.doAction(act);
         }
@@ -449,17 +450,17 @@ public class SelectTool extends Tool {
 
     // if the user clicks into a component outside selection, user
     // wants to add/reset selection
-    final var clicked = circuit.getAllContaining(start, g);
+    val clicked = circuit.getAllContaining(start, gfx);
     if (!clicked.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
         if (sel.getComponentsContaining(start).isEmpty()) {
-          final var act = SelectionActions.dropAll(sel);
+          val act = SelectionActions.dropAll(sel);
           if (act != null) {
             proj.doAction(act);
           }
         }
       }
-      for (final var comp : clicked) {
+      for (val comp : clicked) {
         if (!in_sel.contains(comp)) {
           sel.add(comp);
         }
@@ -472,7 +473,7 @@ public class SelectTool extends Tool {
     // The user clicked on the background. This is a rectangular
     // selection (maybe with the shift key down).
     if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
-      final var act = SelectionActions.dropAll(sel);
+      val act = SelectionActions.dropAll(sel);
       if (act != null) {
         proj.doAction(act);
       }
@@ -483,7 +484,7 @@ public class SelectTool extends Tool {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    final var proj = canvas.getProject();
+    val proj = canvas.getProject();
     if (state == MOVING) {
       setState(proj, IDLE);
       computeDxDy(proj, e, g);
@@ -495,7 +496,7 @@ public class SelectTool extends Tool {
         } else if (proj.getSelection().hasConflictWhenMoved(dx, dy)) {
           canvas.setErrorMessage(S.getter("exclusiveError"));
         } else {
-          final var connect = shouldConnect(canvas, e.getModifiersEx());
+          val connect = shouldConnect(canvas, e.getModifiersEx());
           drawConnections = false;
           ReplacementMap repl;
           if (connect) {
@@ -508,27 +509,27 @@ public class SelectTool extends Tool {
                       canvas.getSelection().getAnchoredComponents());
             }
             canvas.setErrorMessage(new ComputingMessage(dx, dy), COLOR_COMPUTING);
-            final var result = gesture.forceRequest(dx, dy);
+            val result = gesture.forceRequest(dx, dy);
             clearCanvasMessage(canvas, dx, dy);
             repl = result.getReplacementMap();
           } else {
             repl = null;
           }
-          final var sel = proj.getSelection();
+          val sel = proj.getSelection();
           proj.doAction(SelectionActions.translate(sel, dx, dy, repl));
         }
       }
       moveGesture = null;
       proj.repaintCanvas();
     } else if (state == RECT_SELECT) {
-      final var bds = Bounds.create(start).add(start.getX() + curDx, start.getY() + curDy);
-      final var circuit = canvas.getCircuit();
-      final var sel = proj.getSelection();
-      final var in_sel = sel.getComponentsWithin(bds, g);
-      for (final var comp : circuit.getAllWithin(bds, g)) {
+      val bds = Bounds.create(start).add(start.getX() + curDx, start.getY() + curDy);
+      val circuit = canvas.getCircuit();
+      val sel = proj.getSelection();
+      val in_sel = sel.getComponentsWithin(bds, g);
+      for (val comp : circuit.getAllWithin(bds, g)) {
         if (!in_sel.contains(comp)) sel.add(comp);
       }
-      final var act = SelectionActions.drop(sel, in_sel);
+      val act = SelectionActions.drop(sel, in_sel);
       if (act != null) {
         proj.doAction(act);
       }
@@ -536,17 +537,17 @@ public class SelectTool extends Tool {
       proj.repaintCanvas();
     }
     if (e.getClickCount() >= 2) {
-      final var comps = canvas.getProject().getSelection().getComponents();
+      val comps = canvas.getProject().getSelection().getComponents();
       if (comps.size() == 1) {
-        for (final var comp : comps) {
+        for (val comp : comps) {
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-            final var OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            final var act =
+            val oldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL);
+            val act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
             AutoLabler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
-                OldLabel,
+                oldLabel,
                 canvas.getCircuit(),
                 comp,
                 comp.getFactory(),
@@ -569,13 +570,13 @@ public class SelectTool extends Tool {
     var handlers = keyHandlers;
     if (handlers == null) {
       handlers = new HashMap<>();
-      final var sel = canvas.getSelection();
-      for (final var comp : sel.getComponents()) {
-        final var factory = comp.getFactory();
-        final var attrs = comp.getAttributeSet();
-        Object handler = factory.getFeature(KeyConfigurator.class, attrs);
+      val sel = canvas.getSelection();
+      for (val comp : sel.getComponents()) {
+        val factory = comp.getFactory();
+        val attrs = comp.getAttributeSet();
+        val handler = factory.getFeature(KeyConfigurator.class, attrs);
         if (handler != null) {
-          final var base = (KeyConfigurator) handler;
+          val base = (KeyConfigurator) handler;
           handlers.put(comp, base.clone());
         }
       }
@@ -584,13 +585,12 @@ public class SelectTool extends Tool {
 
     if (!handlers.isEmpty()) {
       var consume = false;
-      ArrayList<KeyConfigurationResult> results;
-      results = new ArrayList<>();
-      for (final var entry : handlers.entrySet()) {
-        final var comp = entry.getKey();
-        final var handler = entry.getValue();
-        final var event = new KeyConfigurationEvent(type, comp.getAttributeSet(), e, comp);
-        final var result = handler.keyEventReceived(event);
+      val results = new ArrayList<KeyConfigurationResult>();
+      for (val entry : handlers.entrySet()) {
+        val comp = entry.getKey();
+        val handler = entry.getValue();
+        val event = new KeyConfigurationEvent(type, comp.getAttributeSet(), e, comp);
+        val result = handler.keyEventReceived(event);
         consume |= event.isConsumed();
         if (result != null) {
           results.add(result);
@@ -600,11 +600,11 @@ public class SelectTool extends Tool {
         e.consume();
       }
       if (!results.isEmpty()) {
-        final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        for (final var result : results) {
-          final var comp = (Component) result.getEvent().getData();
-          final var newValues = result.getAttributeValues();
-          for (final var entry : newValues.entrySet()) {
+        val act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+        for (val result : results) {
+          val comp = (Component) result.getEvent().getData();
+          val newValues = result.getAttributeValues();
+          for (val entry : newValues.entrySet()) {
             act.set(comp, entry.getKey(), entry.getValue());
           }
         }
@@ -617,7 +617,7 @@ public class SelectTool extends Tool {
 
   @Override
   public void select(Canvas canvas) {
-    final var sel = canvas.getSelection();
+    val sel = canvas.getSelection();
     if (!selectionsAdded.contains(sel)) {
       sel.addListener(selListener);
     }
@@ -631,8 +631,8 @@ public class SelectTool extends Tool {
   }
 
   private boolean shouldConnect(Canvas canvas, int modsEx) {
-    final var shiftReleased = (modsEx & MouseEvent.SHIFT_DOWN_MASK) == 0;
-    final var dflt = AppPreferences.MOVE_KEEP_CONNECT.getBoolean();
+    val shiftReleased = (modsEx & MouseEvent.SHIFT_DOWN_MASK) == 0;
+    val dflt = AppPreferences.MOVE_KEEP_CONNECT.getBoolean();
     if (shiftReleased) {
       return dflt;
     } else {

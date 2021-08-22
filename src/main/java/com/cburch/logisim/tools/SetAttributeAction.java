@@ -38,6 +38,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.val;
 
 public class SetAttributeAction extends Action {
   private final StringGetter nameGetter;
@@ -59,25 +60,25 @@ public class SetAttributeAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    final var xn = new CircuitMutation(circuit);
+    val xn = new CircuitMutation(circuit);
     int len = values.size();
     oldValues.clear();
     for (var i = 0; i < len; i++) {
-      final var comp = comps.get(i);
-      final var attr = attrs.get(i);
-      Object value = values.get(i);
+      val comp = comps.get(i);
+      val attr = attrs.get(i);
+      val value = values.get(i);
       if (circuit.contains(comp)) {
         oldValues.add(null);
         xn.set(comp, attr, value);
       } else {
-        final var compAttrs = comp.getAttributeSet();
+        val compAttrs = comp.getAttributeSet();
         oldValues.add(compAttrs.getValue(attr));
         compAttrs.setValue(attr, value);
       }
     }
 
     if (!xn.isEmpty()) {
-      final var result = xn.execute();
+      val result = xn.execute();
       xnReverse = result.getReverseTransaction();
     }
   }
@@ -93,7 +94,7 @@ public class SetAttributeAction extends Action {
 
   public void set(Component comp, Attribute<?> attr, Object value) {
     @SuppressWarnings("unchecked")
-    final var a = (Attribute<Object>) attr;
+    val a = (Attribute<Object>) attr;
     comps.add(comp);
     attrs.add(a);
     values.add(value);
@@ -102,10 +103,10 @@ public class SetAttributeAction extends Action {
   @Override
   public void undo(Project proj) {
     if (xnReverse != null) xnReverse.execute();
-    for (int i = oldValues.size() - 1; i >= 0; i--) {
-      final var comp = comps.get(i);
-      final var attr = attrs.get(i);
-      Object value = oldValues.get(i);
+    for (var i = oldValues.size() - 1; i >= 0; i--) {
+      val comp = comps.get(i);
+      val attr = attrs.get(i);
+      val value = oldValues.get(i);
       if (value != null) {
         comp.getAttributeSet().setValue(attr, value);
       }

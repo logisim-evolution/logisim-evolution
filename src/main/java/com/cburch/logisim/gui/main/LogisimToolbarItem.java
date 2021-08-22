@@ -115,6 +115,7 @@ public class LogisimToolbarItem implements ToolbarItem {
     }
   }
 
+  // FIXME: This looks like unused method. Remove?
   public void setIcon(String iconName) {
     this.icon = Icons.getIcon(iconName);
   }

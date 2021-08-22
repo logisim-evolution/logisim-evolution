@@ -30,6 +30,7 @@ package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +41,14 @@ class SearchNode implements Comparable<SearchNode> {
   private static final int CROSSING_PENALTY = 20;
   private static final int TURN_PENALTY = 50;
 
-  private final Location loc;
-  private final Direction dir;
-  private final ConnectionData conn;
-  private final Location dest;
-  private final int dist;
-  private final int heur;
-  private final boolean extendsWire;
-  private final SearchNode prev;
+  @Getter private final Location location;
+  @Getter private final Direction direction;
+  @Getter private final ConnectionData connection;
+  @Getter private final Location destination;
+  @Getter private final int distance;
+  @Getter private final int heuristicValue;
+  @Getter private final boolean exendingWire;
+  @Getter private final SearchNode previous;
 
   public SearchNode(ConnectionData conn, Location src, Direction srcDir, Location dst) {
     this(src, srcDir, conn, dst, 0, srcDir != null, null);
@@ -61,34 +62,30 @@ class SearchNode implements Comparable<SearchNode> {
       int dist,
       boolean extendsWire,
       SearchNode prev) {
-    this.loc = loc;
-    this.dir = dir;
-    this.conn = conn;
-    this.dest = dest;
-    this.dist = dist;
-    this.heur = dist + this.getHeuristic();
-    this.extendsWire = extendsWire;
-    this.prev = prev;
+    this.location = loc;
+    this.direction = dir;
+    this.connection = conn;
+    this.destination = dest;
+    this.distance = dist;
+    this.heuristicValue = dist + this.getHeuristic();
+    this.exendingWire = extendsWire;
+    this.previous = prev;
   }
 
+  @Override
   public int compareTo(SearchNode o) {
-    int ret = this.heur - o.heur;
-
-    if (ret == 0) {
-      return this.hashCode() - o.hashCode();
-    } else {
-      return ret;
-    }
+    val ret = this.heuristicValue - o.heuristicValue;
+    return (ret == 0) ? this.hashCode() - o.hashCode() : ret;
   }
 
   @Override
   public boolean equals(Object other) {
     if (other instanceof SearchNode) {
-      SearchNode o = (SearchNode) other;
+      val o = (SearchNode) other;
 
-      return (this.loc.equals(o.loc)
-          && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
-          && this.dest.equals(o.dest));
+      return (this.location.equals(o.location)
+          && (this.direction == null ? o.direction == null : (o.direction != null && this.direction.equals(o.direction)))
+          && this.destination.equals(o.destination));
 
       /*
        * // This code causes a null pointer exception whenever this.dir is
@@ -101,30 +98,14 @@ class SearchNode implements Comparable<SearchNode> {
     }
   }
 
-  public ConnectionData getConnection() {
-    return conn;
-  }
-
-  public Location getDestination() {
-    return dest;
-  }
-
-  public Direction getDirection() {
-    return dir;
-  }
-
-  public int getDistance() {
-    return dist;
-  }
-
   private int getHeuristic() {
-    Location cur = loc;
-    Location dst = dest;
-    Direction curDir = dir;
-    int dx = dst.getX() - cur.getX();
-    int dy = dst.getY() - cur.getY();
-    int ret = -1;
-    if (extendsWire) {
+    val cur = location;
+    val dst = destination;
+    val curDir = direction;
+    val dx = dst.getX() - cur.getX();
+    val dy = dst.getY() - cur.getY();
+    var ret = -1;
+    if (exendingWire) {
       ret = -1;
       if (curDir == Direction.EAST) {
         if (dx > 0) ret = dx / 10 * 9 + Math.abs(dy);
@@ -139,7 +120,7 @@ class SearchNode implements Comparable<SearchNode> {
     if (ret < 0) {
       ret = Math.abs(dx) + Math.abs(dy);
     }
-    boolean penalizeDoubleTurn = false;
+    var penalizeDoubleTurn = false;
     if (curDir == Direction.EAST) {
       penalizeDoubleTurn = dx < 0;
     } else if (curDir == Direction.WEST) {
@@ -159,66 +140,48 @@ class SearchNode implements Comparable<SearchNode> {
     return ret;
   }
 
-  public int getHeuristicValue() {
-    return heur;
-  }
-
-  public Location getLocation() {
-    return loc;
-  }
-
-  public SearchNode getPrevious() {
-    return prev;
-  }
-
   @Override
   public int hashCode() {
-    int dirHash = dir == null ? 0 : dir.hashCode();
-    return ((loc.hashCode() * 31) + dirHash) * 31 + dest.hashCode();
+    val dirHash = direction == null ? 0 : direction.hashCode();
+    return ((location.hashCode() * 31) + dirHash) * 31 + destination.hashCode();
   }
 
   public boolean isDestination() {
-    return dest.equals(loc);
-  }
-
-  public boolean isExtendingWire() {
-    return extendsWire;
+    return destination.equals(location);
   }
 
   public boolean isStart() {
-    return prev == null;
+    return previous == null;
   }
 
   public SearchNode next(Direction moveDir, boolean crossing) {
-    int newDist = dist;
-    Direction connDir = conn.getDirection();
-    Location nextLoc = loc.translate(moveDir, 10);
-    boolean exWire = extendsWire && moveDir == connDir;
+    var newDist = distance;
+    val connDir = connection.getDirection();
+    val nextLoc = location.translate(moveDir, 10);
+    val exWire = exendingWire && moveDir == connDir;
     if (exWire) {
       newDist += 9;
     } else {
       newDist += 10;
     }
     if (crossing) newDist += CROSSING_PENALTY;
-    if (moveDir != dir) newDist += TURN_PENALTY;
-    if (nextLoc.getX() < 0 || nextLoc.getY() < 0) {
-      return null;
-    } else {
-      return new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
-    }
+    if (moveDir != direction) newDist += TURN_PENALTY;
+    return (nextLoc.getX() < 0 || nextLoc.getY() < 0)
+        ? null
+        : new SearchNode(nextLoc, moveDir, connection, destination, newDist, exWire, this);
   }
 
   @Override
   public String toString() {
-    return loc
+    return location
         + "/"
-        + (dir == null ? "null" : dir.toString())
-        + (extendsWire ? "+" : "-")
+        + (direction == null ? "null" : direction.toString())
+        + (exendingWire ? "+" : "-")
         + "/"
-        + dest
+        + destination
         + ":"
-        + dist
+        + distance
         + "+"
-        + (heur - dist);
+        + (heuristicValue - distance);
   }
 }

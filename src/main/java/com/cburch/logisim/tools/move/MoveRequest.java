@@ -28,41 +28,11 @@
 
 package com.cburch.logisim.tools.move;
 
+import lombok.Data;
+
+@Data
 class MoveRequest {
-  private final MoveGesture gesture;
-  private final int dx;
-  private final int dy;
-
-  public MoveRequest(MoveGesture gesture, int dx, int dy) {
-    this.gesture = gesture;
-    this.dx = dx;
-    this.dy = dy;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (other instanceof MoveRequest) {
-      MoveRequest o = (MoveRequest) other;
-      return this.gesture == o.gesture && this.dx == o.dx && this.dy == o.dy;
-    } else {
-      return false;
-    }
-  }
-
-  public int getDeltaX() {
-    return dx;
-  }
-
-  public int getDeltaY() {
-    return dy;
-  }
-
-  public MoveGesture getMoveGesture() {
-    return gesture;
-  }
-
-  @Override
-  public int hashCode() {
-    return (gesture.hashCode() * 31 + dx) * 31 + dy;
-  }
+  private final MoveGesture moveGesture;
+  private final int deltaX;
+  private final int deltaY;
 }

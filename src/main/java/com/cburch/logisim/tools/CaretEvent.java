@@ -28,26 +28,11 @@
 
 package com.cburch.logisim.tools;
 
+import lombok.Data;
+
+@Data
 public class CaretEvent {
   private final Caret caret;
-  private final String oldtext;
-  private final String newtext;
-
-  public CaretEvent(Caret caret, String oldtext, String newtext) {
-    this.caret = caret;
-    this.oldtext = oldtext;
-    this.newtext = newtext;
-  }
-
-  public Caret getCaret() {
-    return caret;
-  }
-
-  public String getOldText() {
-    return oldtext;
-  }
-
-  public String getText() {
-    return newtext;
-  }
+  private final String oldText;
+  private final String text;
 }

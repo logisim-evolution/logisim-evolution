@@ -52,6 +52,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
+import lombok.Getter;
+import lombok.val;
 
 public class WiringTool extends Tool {
   /**
@@ -62,7 +64,7 @@ public class WiringTool extends Tool {
    */
   public static final String _ID = "Wiring Tool";
 
-  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  @Getter private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private static final int HORIZONTAL = 1;
   private static final int VERTICAL = 2;
@@ -81,34 +83,31 @@ public class WiringTool extends Tool {
     super.select(null);
   }
 
-  private Wire checkForRepairs(Canvas canvas, Wire w, Location end) {
-    if (w.getLength() <= 10) return w; // don't repair a short wire to nothing
-    if (!canvas.getCircuit().getNonWires(end).isEmpty()) return w;
+  private Wire checkForRepairs(Canvas canvas, Wire wire, Location end) {
+    if (wire.getLength() <= 10) return wire; // don't repair a short wire to nothing
+    if (!canvas.getCircuit().getNonWires(end).isEmpty()) return wire;
 
-    int delta = (end.equals(w.getEnd0()) ? 10 : -10);
-    Location cand;
-    if (w.isVertical()) {
-      cand = Location.create(end.getX(), end.getY() + delta);
-    } else {
-      cand = Location.create(end.getX() + delta, end.getY());
-    }
+    val delta = (end.equals(wire.getEnd0()) ? 10 : -10);
+    val cand = wire.isVertical()
+            ? Location.create(end.getX(), end.getY() + delta)
+            : Location.create(end.getX() + delta, end.getY());
 
-    for (final var comp : canvas.getCircuit().getNonWires(cand)) {
+    for (val comp : canvas.getCircuit().getNonWires(cand)) {
       if (comp.getBounds().contains(end, 2)) {
-        final var repair = (WireRepair) comp.getFeature(WireRepair.class);
-        if (repair != null && repair.shouldRepairWire(new WireRepairData(w, cand))) {
-          w = Wire.create(w.getOtherEnd(end), cand);
+        val repair = (WireRepair) comp.getFeature(WireRepair.class);
+        if (repair != null && repair.shouldRepairWire(new WireRepairData(wire, cand))) {
+          wire = Wire.create(wire.getOtherEnd(end), cand);
           canvas.repaint(end.getX() - 13, end.getY() - 13, 26, 26);
-          return w;
+          return wire;
         }
       }
     }
-    return w;
+    return wire;
   }
 
   private boolean computeMove(int newX, int newY) {
     if (cur.getX() == newX && cur.getY() == newY) return false;
-    final var start = this.start;
+    val start = this.start;
     if (direction == 0) {
       if (newX != start.getX()) direction = HORIZONTAL;
       else if (newY != start.getY()) direction = VERTICAL;
@@ -124,13 +123,13 @@ public class WiringTool extends Tool {
 
   @Override
   public void draw(Canvas canvas, ComponentDrawContext context) {
-    final var g = context.getGraphics();
+    val gfx = context.getGraphics();
     if (exists) {
       var e0 = start;
       var e1 = cur;
-      final var shortenBefore = willShorten(start, cur);
+      val shortenBefore = willShorten(start, cur);
       if (shortenBefore != null) {
-        final var shorten = getShortenResult(shortenBefore, start, cur);
+        val shorten = getShortenResult(shortenBefore, start, cur);
         if (shorten == null) {
           return;
         } else {
@@ -138,34 +137,29 @@ public class WiringTool extends Tool {
           e1 = shorten.getEnd1();
         }
       }
-      final var x0 = e0.getX();
-      final var y0 = e0.getY();
-      final var x1 = e1.getX();
-      final var y1 = e1.getY();
+      val x0 = e0.getX();
+      val y0 = e0.getY();
+      val x1 = e1.getX();
+      val y1 = e1.getY();
 
-      g.setColor(Color.BLACK);
-      GraphicsUtil.switchToWidth(g, 3);
+      gfx.setColor(Color.BLACK);
+      GraphicsUtil.switchToWidth(gfx, 3);
       if (direction == HORIZONTAL) {
-        if (x0 != x1) g.drawLine(x0, y0, x1, y0);
-        if (y0 != y1) g.drawLine(x1, y0, x1, y1);
+        if (x0 != x1) gfx.drawLine(x0, y0, x1, y0);
+        if (y0 != y1) gfx.drawLine(x1, y0, x1, y1);
       } else if (direction == VERTICAL) {
-        if (y0 != y1) g.drawLine(x0, y0, x0, y1);
-        if (x0 != x1) g.drawLine(x0, y1, x1, y1);
+        if (y0 != y1) gfx.drawLine(x0, y0, x0, y1);
+        if (x0 != x1) gfx.drawLine(x0, y1, x1, y1);
       }
     } else if (AppPreferences.ADD_SHOW_GHOSTS.getBoolean() && inCanvas) {
-      g.setColor(Color.GRAY);
-      g.fillOval(cur.getX() - 2, cur.getY() - 2, 5, 5);
+      gfx.setColor(Color.GRAY);
+      gfx.fillOval(cur.getX() - 2, cur.getY() - 2, 5, 5);
     }
   }
 
   @Override
   public boolean equals(Object other) {
     return other instanceof WiringTool;
-  }
-
-  @Override
-  public Cursor getCursor() {
-    return cursor;
   }
 
   @Override
@@ -223,36 +217,36 @@ public class WiringTool extends Tool {
   }
 
   @Override
-  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseDragged(Canvas canvas, Graphics gfx, MouseEvent e) {
     if (exists) {
       Canvas.snapToGrid(e);
-      int curX = e.getX();
-      int curY = e.getY();
+      val curX = e.getX();
+      val curY = e.getY();
       if (!computeMove(curX, curY)) return;
       hasDragged = true;
 
-      final var rect = new Rectangle();
+      val rect = new Rectangle();
       rect.add(start.getX(), start.getY());
       rect.add(cur.getX(), cur.getY());
       rect.add(curX, curY);
       rect.grow(3, 3);
 
       cur = Location.create(curX, curY);
-      super.mouseDragged(canvas, g, e);
+      super.mouseDragged(canvas, gfx, e);
 
       Wire shorten = null;
       if (startShortening) {
-        for (final var w : canvas.getCircuit().getWires(start)) {
-          if (w.contains(cur)) {
-            shorten = w;
+        for (val wire : canvas.getCircuit().getWires(start)) {
+          if (wire.contains(cur)) {
+            shorten = wire;
             break;
           }
         }
       }
       if (shorten == null) {
-        for (final var w : canvas.getCircuit().getWires(cur)) {
-          if (w.contains(start)) {
-            shorten = w;
+        for (val wire : canvas.getCircuit().getWires(cur)) {
+          if (wire.contains(start)) {
+            shorten = wire;
             break;
           }
         }
@@ -282,8 +276,8 @@ public class WiringTool extends Tool {
     } else {
       Canvas.snapToGrid(e);
       inCanvas = true;
-      final var curX = e.getX();
-      final var curY = e.getY();
+      val curX = e.getX();
+      val curY = e.getY();
       if (cur.getX() != curX || cur.getY() != curY) {
         cur = Location.create(curX, curY);
       }
@@ -321,8 +315,8 @@ public class WiringTool extends Tool {
     if (!exists) return;
 
     Canvas.snapToGrid(e);
-    final var curX = e.getX();
-    final var curY = e.getY();
+    val curX = e.getX();
+    val curY = e.getY();
     if (computeMove(curX, curY)) {
       cur = Location.create(curX, curY);
     }
@@ -330,7 +324,7 @@ public class WiringTool extends Tool {
       exists = false;
       super.mouseReleased(canvas, g, e);
 
-      final var ws = new ArrayList<Wire>(2);
+      val ws = new ArrayList<Wire>(2);
       if (cur.getY() == start.getY() || cur.getX() == start.getX()) {
         var w = Wire.create(cur, start);
         w = checkForRepairs(canvas, w, w.getEnd0());
@@ -352,10 +346,10 @@ public class WiringTool extends Tool {
         if (w1.getLength() > 0) ws.add(w1);
       }
       if (!ws.isEmpty()) {
-        final var mutation = new CircuitMutation(canvas.getCircuit());
+        val mutation = new CircuitMutation(canvas.getCircuit());
         mutation.addAll(ws);
-        final var desc = (ws.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
-        final var act = mutation.toAction(desc);
+        val desc = (ws.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
+        val act = mutation.toAction(desc);
         canvas.getProject().doAction(act);
         lastAction = act;
       }
@@ -364,7 +358,7 @@ public class WiringTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    final var g2 = (Graphics2D) c.getGraphics().create();
+    val g2 = (Graphics2D) c.getGraphics().create();
     g2.translate(x, y);
     int[] points = {3, 13, 8, 13, 8, 3, 13, 3};
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
@@ -376,7 +370,7 @@ public class WiringTool extends Tool {
           AppPreferences.getScaled(points[i + 2]),
           AppPreferences.getScaled(points[i + 3]));
     g2.setColor(Value.TRUE_COLOR);
-    final var wh = AppPreferences.getScaled(5);
+    val wh = AppPreferences.getScaled(5);
     g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(11), wh, wh);
     g2.setColor(Value.UNKNOWN_COLOR);
     g2.fillOval(AppPreferences.getScaled(11), AppPreferences.getScaled(1), wh, wh);
@@ -384,13 +378,13 @@ public class WiringTool extends Tool {
   }
 
   private boolean performShortening(Canvas canvas, Location drag0, Location drag1) {
-    final var shorten = willShorten(drag0, drag1);
+    val shorten = willShorten(drag0, drag1);
     if (shorten == null) {
       return false;
     } else {
-      final var xn = new CircuitMutation(canvas.getCircuit());
+      val xn = new CircuitMutation(canvas.getCircuit());
       StringGetter actName;
-      final var result = getShortenResult(shorten, drag0, drag1);
+      val result = getShortenResult(shorten, drag0, drag1);
       if (result == null) {
         xn.remove(shorten);
         actName = S.getter("removeComponentAction", shorten.getFactory().getDisplayGetter());
@@ -425,7 +419,7 @@ public class WiringTool extends Tool {
   }
 
   private Wire willShorten(Location drag0, Location drag1) {
-    final var shorten = shortening;
+    val shorten = shortening;
     if (shorten == null) {
       return null;
     } else if (shorten.endsAt(drag0) || shorten.endsAt(drag1)) {

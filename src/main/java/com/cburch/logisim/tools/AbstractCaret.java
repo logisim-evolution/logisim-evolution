@@ -33,11 +33,12 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import lombok.Setter;
 
 public class AbstractCaret implements Caret {
   private final ArrayList<CaretListener> listeners = new ArrayList<>();
   private final List<CaretListener> listenersView;
-  private Bounds bounds = Bounds.EMPTY_BOUNDS;
+  @Setter private Bounds bounds = Bounds.EMPTY_BOUNDS;
 
   public AbstractCaret() {
     listenersView = Collections.unmodifiableList(listeners);
@@ -67,10 +68,5 @@ public class AbstractCaret implements Caret {
   @Override
   public void removeCaretListener(CaretListener e) {
     listeners.remove(e);
-  }
-
-  // configuration methods
-  public void setBounds(Bounds value) {
-    bounds = value;
   }
 }

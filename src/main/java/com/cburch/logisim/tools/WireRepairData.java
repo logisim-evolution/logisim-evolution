@@ -30,21 +30,10 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
+import lombok.Data;
 
+@Data
 public class WireRepairData {
   private final Wire wire;
   private final Location point;
-
-  public WireRepairData(Wire wire, Location point) {
-    this.wire = wire;
-    this.point = point;
-  }
-
-  public Location getPoint() {
-    return point;
-  }
-
-  public Wire getWire() {
-    return wire;
-  }
 }

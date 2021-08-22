@@ -70,6 +70,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import lombok.val;
 
 public class AddTool extends Tool implements Transferable, PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
@@ -149,7 +150,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     this.bounds = null;
     this.attrs = new FactoryAttributes(source);
     attrs.addAttributeListener(new MyAttributeListener());
-    final var value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
+    val value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
     this.shouldSnap = value == null || value;
     if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
       AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
@@ -182,11 +183,11 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   private Tool determineNext(Project proj) {
-    final var afterAdd = AppPreferences.ADD_AFTER.get();
+    val afterAdd = AppPreferences.ADD_AFTER.get();
     if (afterAdd.equals(AppPreferences.ADD_AFTER_UNCHANGED)) {
       return null;
     } else { // switch to Edit Tool
-      final var base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
+      val base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
       if (base == null) {
         return null;
       } else {
@@ -199,37 +200,37 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   public void draw(Canvas canvas, ComponentDrawContext context) {
     // next "if" suggested roughly by Kevin Walsh of Cornell to take care of
     // repaint problems on OpenJDK under Ubuntu
-    final var x = lastX;
-    final var y = lastY;
+    val x = lastX;
+    val y = lastY;
     if (x == INVALID_COORD || y == INVALID_COORD) return;
-    final var source = getFactory();
+    val source = getFactory();
     if (source == null) return;
-    final var base = getBaseAttributes();
-    final var bds = source.getOffsetBounds(base);
-    Color DrawColor;
+    val base = getBaseAttributes();
+    val bds = source.getOffsetBounds(base);
+    Color drawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
-      source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+      drawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
+      source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (MatrixPlace) {
-        source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
-        source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
+        source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
+        source.drawGhost(context, drawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
             context,
-            DrawColor,
+            drawColor,
             x + bds.getWidth() + 3,
             y + bds.getHeight() + 3,
             getBaseAttributes());
       }
     } else if (state == SHOW_ADD) {
-      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
-      source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+      drawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
+      source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (MatrixPlace) {
-        source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
-        source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
+        source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
+        source.drawGhost(context, drawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
             context,
-            DrawColor,
+            drawColor,
             x + bds.getWidth() + 3,
             y + bds.getHeight() + 3,
             getBaseAttributes());
@@ -240,7 +241,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
+    val o = (AddTool) other;
     if (this.description != null) {
       return this.descriptionBase == o.descriptionBase && this.description.equals(o.description);
     } else {
@@ -249,7 +250,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   private void expose(java.awt.Component c, int x, int y) {
-    final var bds = getBounds();
+    val bds = getBounds();
     c.repaint(x + bds.getX(), y + bds.getY(), bds.getWidth(), bds.getHeight());
   }
 
@@ -273,9 +274,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       if (source == null) {
         ret = Bounds.EMPTY_BOUNDS;
       } else {
-        final var base = getBaseAttributes();
-        final var bds = source.getOffsetBounds(base);
-        final var mbds = Bounds.create(bds.getX(), bds.getY(), bds.getWidth() * 2, bds.getHeight() * 2);
+        val base = getBaseAttributes();
+        val bds = source.getOffsetBounds(base);
+        val mbds = Bounds.create(bds.getX(), bds.getY(), bds.getWidth() * 2, bds.getHeight() * 2);
         ret = mbds.expand(5);
       }
       bounds = ret;
@@ -296,11 +297,11 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public String getDescription() {
     String ret;
-    final var desc = description;
+    val desc = description;
     if (desc != null) {
       ret = desc.getToolTip();
     } else {
-      final var source = getFactory();
+      val source = getFactory();
       if (source != null) {
         ret = (String) source.getFeature(ComponentFactory.TOOL_TIP, getAttributeSet());
       } else {
@@ -315,7 +316,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public String getDisplayName() {
-    final var desc = description;
+    val desc = description;
     return desc == null ? factory.getDisplayName() : desc.getDisplayName();
   }
 
@@ -324,8 +325,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (ret == null && !sourceLoadAttempted) {
       ret = description.getFactory(descriptionBase);
       if (ret != null) {
-        final var base = getBaseAttributes();
-        final var value = (Boolean) ret.getFeature(ComponentFactory.SHOULD_SNAP, base);
+        val base = getBaseAttributes();
+        val value = (Boolean) ret.getFeature(ComponentFactory.SHOULD_SNAP, base);
         shouldSnap = value == null || value;
       }
       factory = ret;
@@ -340,13 +341,13 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public String getName() {
-    FactoryDescription desc = description;
+    val desc = description;
     return desc == null ? factory.getName() : desc.getName();
   }
 
   @Override
   public int hashCode() {
-    FactoryDescription desc = description;
+    val desc = description;
     return desc != null ? desc.hashCode() : factory.hashCode();
   }
 
@@ -362,13 +363,13 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_PRESSED);
 
     if (!event.isConsumed() && event.getModifiersEx() == 0) {
-      int KeybEvent = event.getKeyCode();
-      final var Component = getFactory().getDisplayName();
-      if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null, attrs, canvas, null, false))
+      val keyboardEvent = event.getKeyCode();
+      val component = getFactory().getDisplayName();
+      if (!GateKeyboardModifier.TookKeyboardStrokes(keyboardEvent, null, attrs, canvas, null, false))
         if (AutoLabler.labelKeyboardHandler(
-            KeybEvent,
+            keyboardEvent,
             getAttributeSet(),
-            Component,
+            component,
             null,
             getFactory(),
             canvas.getCircuit(),
@@ -376,7 +377,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             false)) {
           canvas.repaint();
         } else
-          switch (KeybEvent) {
+          switch (keyboardEvent) {
             case KeyEvent.VK_X:
               MatrixPlace = !MatrixPlace;
               canvas.repaint();
@@ -401,12 +402,12 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
               else setFacing(canvas, Direction.NORTH);
               break;
             case KeyEvent.VK_ESCAPE:
-              final var proj = canvas.getProject();
-              final var base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
-              final var next = (base == null) ? null : base.getTool(EditTool._ID);
+              val proj = canvas.getProject();
+              val base = proj.getLogisimFile().getLibrary(BaseLibrary._ID);
+              val next = (base == null) ? null : base.getTool(EditTool._ID);
               if (next != null) {
                 proj.setTool(next);
-                final var act = SelectionActions.dropAll(canvas.getSelection());
+                val act = SelectionActions.dropAll(canvas.getSelection());
                 if (act != null) {
                   proj.doAction(act);
                 }
@@ -472,14 +473,14 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
     // verify the addition would be valid
-    final var circ = canvas.getCircuit();
+    val circ = canvas.getCircuit();
     if (!canvas.getProject().getLogisimFile().contains(circ)) {
       canvas.setErrorMessage(S.getter("cannotModifyError"));
       return;
     }
     if (factory instanceof SubcircuitFactory) {
-      final var circFact = (SubcircuitFactory) factory;
-      final var depends = canvas.getProject().getDependencies();
+      val circFact = (SubcircuitFactory) factory;
+      val depends = canvas.getProject().getDependencies();
       if (!depends.canAdd(circ, circFact.getSubcircuit())) {
         canvas.setErrorMessage(S.getter("circularError"));
         return;
@@ -493,14 +494,14 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    final var added = new ArrayList<Component>();
+    val added = new ArrayList<Component>();
     if (state == SHOW_ADD) {
-      final var circ = canvas.getCircuit();
+      val circ = canvas.getCircuit();
       if (!canvas.getProject().getLogisimFile().contains(circ)) return;
       if (shouldSnap) Canvas.snapToGrid(e);
       moveTo(canvas, g, e.getX(), e.getY());
 
-      final var source = getFactory();
+      val source = getFactory();
       if (source == null) return;
       String Label = null;
       if (attrs.containsAttribute(StdAttr.LABEL)) {
@@ -516,24 +517,24 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
           AutoLabler.setLabel("", canvas.getCircuit(), source);
       }
 
-      final var matrix = new MatrixPlacerInfo(Label);
+      val matrix = new MatrixPlacerInfo(Label);
       if (MatrixPlace) {
-        final var base = getBaseAttributes();
-        final var bds = source.getOffsetBounds(base).expand(5);
-        matrix.SetBounds(bds);
-        final var diag =
+        val base = getBaseAttributes();
+        val bds = source.getOffsetBounds(base).expand(5);
+        matrix.setBounds(bds);
+        val diag =
             new MatrixPlacerDialog(
                 matrix, source.getName(), AutoLabler.isActive(canvas.getCircuit()));
         var okay = false;
         while (!okay) {
           if (!diag.execute()) return;
-          if (SyntaxChecker.isVariableNameAcceptable(matrix.GetLabel(), true)) {
-            AutoLabler.setLabel(matrix.GetLabel(), canvas.getCircuit(), source);
+          if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
+            AutoLabler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
                 AutoLabler.correctMatrixBaseLabel(
                     canvas.getCircuit(),
                     source,
-                    matrix.GetLabel(),
+                    matrix.getLabel(),
                     matrix.getNrOfXCopies(),
                     matrix.getNrOfYCopies());
             AutoLabler.setLabel(Label, canvas.getCircuit(), source);
@@ -543,36 +544,36 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                   "Base label either has wrong syntax or is contained in circuit",  // FIXME: hardcoded string
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);
-              matrix.UndoLabel();
+              matrix.undoLabel();
             }
-          } else matrix.UndoLabel();
+          } else matrix.undoLabel();
         }
       }
 
       try {
-        final var mutation = new CircuitMutation(circ);
+        val mutation = new CircuitMutation(circ);
 
         for (var x = 0; x < matrix.getNrOfXCopies(); x++) {
           for (var y = 0; y < matrix.getNrOfYCopies(); y++) {
-            final var loc = Location.create(e.getX() + (matrix.GetDeltaX() * x),
-                e.getY() + (matrix.GetDeltaY() * y));
-            final var attrsCopy = (AttributeSet) attrs.clone();
-            if (matrix.GetLabel() != null) {
+            val loc = Location.create(e.getX() + (matrix.getDeltaX() * x),
+                e.getY() + (matrix.getDeltaY() * y));
+            val attrsCopy = (AttributeSet) attrs.clone();
+            if (matrix.getLabel() != null) {
               if (MatrixPlace)
                 attrsCopy.setValue(StdAttr.LABEL, AutoLabler.getMatrixLabel(canvas.getCircuit(),
-                    source, matrix.GetLabel(), x, y));
+                    source, matrix.getLabel(), x, y));
               else {
-                attrsCopy.setValue(StdAttr.LABEL, matrix.GetLabel());
+                attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());
               }
             }
-            final var comp = source.createComponent(loc, attrsCopy);
+            val comp = source.createComponent(loc, attrsCopy);
 
             if (circ.hasConflict(comp)) {
               canvas.setErrorMessage(S.getter("exclusiveError"));
               return;
             }
 
-            final var bds = comp.getBounds(g);
+            val bds = comp.getBounds(g);
             if (bds.getX() < 0 || bds.getY() < 0) {
               canvas.setErrorMessage(S.getter("negativeCoordError"));
               return;
@@ -582,7 +583,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             added.add(comp);
           }
         }
-        final var action = mutation.toAction(S.getter("addComponentAction", factory.getDisplayGetter()));
+        val action = mutation.toAction(S.getter("addComponentAction", factory.getDisplayGetter()));
         canvas.getProject().doAction(action);
         lastAddition = action;
         canvas.repaint();
@@ -596,11 +597,11 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       setState(canvas, SHOW_NONE);
     }
 
-    final var proj = canvas.getProject();
-    final var next = determineNext(proj);
+    val proj = canvas.getProject();
+    val next = determineNext(proj);
     if (next != null) {
       proj.setTool(next);
-      final var act = SelectionActions.dropAll(canvas.getSelection());
+      val act = SelectionActions.dropAll(canvas.getSelection());
       if (act != null) {
         proj.doAction(act);
       }
@@ -617,9 +618,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    final var desc = description;
+    val desc = description;
     if (desc != null && !desc.isFactoryLoaded()) {
-      final var icon = desc.getIcon();
+      val icon = desc.getIcon();
       if (icon != null) {
         icon.paintIcon(c.getDestination(), c.getGraphics(), x + 2, y + 2);
         return;
@@ -628,7 +629,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
     ComponentFactory source = getFactory();
     if (source != null) {
-      final var base = getBaseAttributes();
+      val base = getBaseAttributes();
       source.paintIcon(c, x, y, base);
     }
   }
@@ -636,19 +637,19 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   private void processKeyEvent(Canvas canvas, KeyEvent event, int type) {
     var handler = keyHandler;
     if (!keyHandlerTried) {
-      final var source = getFactory();
-      final var baseAttrs = getBaseAttributes();
+      val source = getFactory();
+      val baseAttrs = getBaseAttributes();
       handler = (KeyConfigurator) source.getFeature(KeyConfigurator.class, baseAttrs);
       keyHandler = handler;
       keyHandlerTried = true;
     }
 
     if (handler != null) {
-      final var baseAttrs = getBaseAttributes();
-      final var e = new KeyConfigurationEvent(type, baseAttrs, event, this);
-      final var r = handler.keyEventReceived(e);
+      val baseAttrs = getBaseAttributes();
+      val e = new KeyConfigurationEvent(type, baseAttrs, event, this);
+      val r = handler.keyEventReceived(e);
       if (r != null) {
-        final var act = ToolAttributeAction.create(r);
+        val act = ToolAttributeAction.create(r);
         canvas.getProject().doAction(act);
       }
     }
@@ -661,23 +662,23 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   private void setFacing(Canvas canvas, Direction facing) {
-    final var source = getFactory();
+    val source = getFactory();
     if (source == null) return;
-    final var base = getBaseAttributes();
-    Object feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
+    val base = getBaseAttributes();
+    val feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
     @SuppressWarnings("unchecked")
     Attribute<Direction> attr = (Attribute<Direction>) feature;
     if (attr != null) {
-      final var act = ToolAttributeAction.create(this, attr, facing);
+      val act = ToolAttributeAction.create(this, attr, facing);
       canvas.getProject().doAction(act);
     }
   }
 
   private Direction getFacing() {
-    final var source = getFactory();
+    val source = getFactory();
     if (source == null) return Direction.NORTH;
-    final var base = getBaseAttributes();
-    Object feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
+    val base = getBaseAttributes();
+    val feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
     @SuppressWarnings("unchecked")
     Attribute<Direction> attr = (Attribute<Direction>) feature;
     if (attr != null) return base.getValue(attr);
@@ -700,7 +701,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   @Override
   public boolean sharesSource(Tool other) {
     if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
+    val o = (AddTool) other;
     if (this.sourceLoadAttempted && o.sourceLoadAttempted) {
       return this.factory.equals(o.factory);
     } else if (this.description == null) {
