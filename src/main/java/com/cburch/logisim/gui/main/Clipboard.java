@@ -43,12 +43,9 @@ class Clipboard {
       new PropertyChangeWeakSupport(Clipboard.class);
   private static Clipboard current = null;
 
-  @Getter
-  private final HashSet<Component> components;
-  @Getter @Setter
-  private AttributeSet oldAttributeSet;
-  @Getter
-  private AttributeSet newAttributeSet;
+  @Getter private final HashSet<Component> components;
+  @Getter @Setter private AttributeSet oldAttributeSet;
+  @Getter private AttributeSet newAttributeSet;
 
   /*
    * This function is in charge of copy paste.

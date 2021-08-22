@@ -43,9 +43,7 @@ import lombok.val;
 
 public class AttrTableToolModel extends AttributeSetTableModel {
   final Project proj;
-
-  @Getter
-  final Tool tool;
+  @Getter final Tool tool;
 
   public AttrTableToolModel(Project proj, Tool tool) {
     super(tool.getAttributeSet());

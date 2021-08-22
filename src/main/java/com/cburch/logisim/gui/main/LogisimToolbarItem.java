@@ -48,9 +48,7 @@ public class LogisimToolbarItem implements ToolbarItem {
   private final MenuListener menu;
   private final LogisimMenuItem action;
   private Icon icon;
-
-  @Setter
-  private StringGetter toolTip;
+  @Setter private StringGetter toolTip;
 
   public LogisimToolbarItem(
       MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {

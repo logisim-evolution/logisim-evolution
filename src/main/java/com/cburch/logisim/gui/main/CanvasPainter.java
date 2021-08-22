@@ -53,10 +53,8 @@ class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
   private final Canvas canvas;
-  @Getter
-  private final GridPainter gridPainter;
-  @Getter
-  private Component haloedComponent = null;
+  @Getter private final GridPainter gridPainter;
+  @Getter private Component haloedComponent = null;
   private Circuit haloedCircuit = null;
   private WireSet highlightedWires = WireSet.EMPTY;
 

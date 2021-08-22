@@ -59,8 +59,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   private final Frame frame;
   private final Project proj;
   private final MyListener myListener;
-  @Getter
-  private List<ToolbarItem> items;
+  @Getter private List<ToolbarItem> items;
   private Tool haloedTool;
 
   public LayoutToolbarModel(Frame frame, Project proj) {
