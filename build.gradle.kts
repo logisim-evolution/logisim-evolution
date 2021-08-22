@@ -10,7 +10,6 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
-//  id("io.freefair.lombok") version "6.1.0"
 }
 
 repositories {
