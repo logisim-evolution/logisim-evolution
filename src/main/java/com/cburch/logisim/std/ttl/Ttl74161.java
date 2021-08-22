@@ -190,18 +190,21 @@ public class Ttl74161 extends AbstractTtlGate {
             data = new TTLRegisterData(BitWidth.create(4));
             state.setData(data);
         }
-
+        
+        
         boolean triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
-        if (triggered) {
+        
+        if (nClear.toLongValue() == 0) {
+            data.setValue(Value.createKnown(BitWidth.create(4), counter));
+        }
+        else if (triggered) {
 
             Value nClear = state.getPortValue(PORT_INDEX_nCLR);
             Value nLoad = state.getPortValue(PORT_INDEX_nLOAD);
 
             long counter;
-
-            if (nClear.toLongValue() == 0) {
-                counter = 0;
-            } else if (nLoad.toLongValue() == 0) {
+            
+            if (nLoad.toLongValue() == 0) {
                 counter = state.getPortValue(PORT_INDEX_A).toLongValue();
                 counter += state.getPortValue(PORT_INDEX_B).toLongValue() << 1;
                 counter += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
@@ -217,7 +220,6 @@ public class Ttl74161 extends AbstractTtlGate {
                 }
             }
             data.setValue(Value.createKnown(BitWidth.create(4), counter));
-
         }
 
         Value vA = data.getValue().get(0);
