@@ -68,7 +68,7 @@ extra.apply {
       "--app-version", project.version as String,
       "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
       "--dest", "${buildDir}/dist",
-      "--description", "Digital logic designer and simulator",
+      "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
   ))
   val linuxParameters = ArrayList<String>(Arrays.asList(
