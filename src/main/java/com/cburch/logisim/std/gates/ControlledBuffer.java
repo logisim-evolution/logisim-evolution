@@ -265,15 +265,7 @@ class ControlledBuffer extends InstanceFactory {
     final var width = state.getAttributeValue(StdAttr.WIDTH);
     if (control == Value.TRUE) {
       final var in = state.getPortValue(1);
-      final var newState = Value.createKnown(in.getBitWidth(),0);
-      for (var bit = 0; bit < in.getWidth(); bit++) {
-        if (in.get(bit).isUnknown()) {
-          newState.set(bit, Value.ERROR);
-        } else {
-          newState.set(bit, isInverter ? in.get(bit).not() : in.get(bit));
-        }
-      }
-      state.setPort(0, newState, GateAttributes.DELAY);
+      state.setPort(0, isInverter ? in.not() : in.not().not(), GateAttributes.DELAY);
     } else if (control == Value.ERROR || control == Value.UNKNOWN) {
       state.setPort(0, Value.createError(width), GateAttributes.DELAY);
     } else {
