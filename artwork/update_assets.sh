@@ -20,8 +20,9 @@ declare -r DEST_DIR="${ROOT}/build/resources/icons/"
 # local -r dest="${ROOT}build/resources/main/resources/logisim/img/"
 
 declare -r SUPPORT_DIR="${ROOT}/support/jpackage/"
+declare -r IMG_DIR="${ROOT}/src/main/resources/resources/logisim/img/"
 
-# Generates icon from SVG file.
+# Generates PNG file from SVG source.
 function svg_to_png {
 	local -r src="${1:-}"
 	local -r dest="${2:-}"
@@ -46,6 +47,15 @@ function generate_png_icons {
 	done
 }
 
+# ##############################################################################
+
+# Update logo PNG
+declare -r logo_src="${SRC_DIR}/logisim-evolution-logo-src.svg"
+declare -r logo_width=550
+declare -r logo_dest="${IMG_DIR}/logisim-evolution-logo.png"
+svg_to_png "${logo_src}" "${logo_dest}" "${logo_width}" 
+
+# Update icon PNGs
 generate_png_icons
 
 
@@ -54,7 +64,7 @@ for width in ${SIZES[*]}; do src_pngs+=("${DEST_DIR}/logisim-icon-${width}.png")
 
 # Copy icons into sources
 for icon in ${src_pngs[*]}; do
-	cp -f "${icon}" "${ROOT}/src/main/resources/resources/logisim/img/$(basename "${icon}")"
+	cp -f "${icon}" "${IMG_DIR}/$(basename "${icon}")"
 done
 
 
