@@ -27,6 +27,7 @@ must be rendered as image of 200 px height and proportional width (but less than
 [About.java](../src/main/java/com/cburch/logisim/gui/start/About.java) constants needs to be adjusted to match.
 
 When updating icons, the following locations currently hold a PNG copy of the icon:
+
 * in-app (LFrame) icon:
   * src/main/resources/resources/logisim/img/logisim-icon-*.png
 * jpackage:
@@ -45,4 +46,3 @@ The following fonts were used:
 
 * [Electronic Circuit](https://textfonts.net/electronic-circuit-font.html),
 * [A Dripping Marker](https://www.1001freefonts.com/a-dripping-marker.font) by Wick van den Belt.
-
