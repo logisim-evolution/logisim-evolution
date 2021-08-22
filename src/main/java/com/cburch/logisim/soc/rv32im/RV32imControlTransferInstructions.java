@@ -185,9 +185,9 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
         break;
       default:
-        s.append(RV32im_state.registerABINames[source2])
+        s.append(RV32im_state.registerABINames[source1])
             .append(",")
-            .append(RV32im_state.registerABINames[source1])
+            .append(RV32im_state.registerABINames[source2])
             .append(",pc");
         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
     }
