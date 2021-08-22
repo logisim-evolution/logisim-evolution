@@ -10,6 +10,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
+//  id("io.freefair.lombok") version "6.1.0"
 }
 
 repositories {
@@ -38,6 +39,11 @@ dependencies {
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
   testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
+
+  compileOnly("org.projectlombok:lombok:1.18.20")
+  annotationProcessor("org.projectlombok:lombok:1.18.20")
+  testCompileOnly("org.projectlombok:lombok:1.18.20")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.20")
 }
 
 java {
