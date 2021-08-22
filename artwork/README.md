@@ -34,6 +34,10 @@ When updating icons, the following locations currently hold a PNG copy of the ic
   * support/jpackage/linux/*.icns
   * support/jpackage/linux/*.ico
 
+## Tools ##
+
+Use `update_assets.sh` shell script to regenerated all PNG icons and logos using SVG source files.
+NOTE: please see script header for list of required external utilties you need to install first!
 
 ## Fonts ##
 
