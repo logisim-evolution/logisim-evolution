@@ -149,7 +149,7 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
   @Override
   public void projectChanged(ProjectEvent e) {
     val action = e.getAction();
-    switch(action) {
+    switch (action) {
       case ProjectEvent.ACTION_SET_FILE:
       case ProjectEvent.ACTION_SET_CURRENT:
       case ProjectEvent.ACTION_SELECTION:

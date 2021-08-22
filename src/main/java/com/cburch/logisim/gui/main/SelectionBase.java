@@ -84,7 +84,7 @@ class SelectionBase {
   }
 
   private static boolean shouldSnapComponent(Component comp) {
-    val shouldSnapValue = (Boolean)comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
+    val shouldSnapValue = (Boolean) comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
     return shouldSnapValue == null || shouldSnapValue;
   }
 
