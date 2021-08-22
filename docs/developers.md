@@ -32,7 +32,12 @@ that support it, including [Eclipse](https://www.eclipse.org) and [IntelliJ IDEA
 
 ## Import project into IDE ##
 
-How to import a Gradle project:
+> **NOTE:** Our project uses `Project Lombok` to reduce number of boilerplate code. Please
+> see [Project Lombok setup instructions](https://projectlombok.org/setup/overview) for
+> IDE integration details.
+
+`Logisim-evolution` is a [Gradle](https://gradle.org) projct, so all you need to know to successfuly import project into your
+favorite IDE is this:
 
 * [How to import Gradle project into Eclipse](https://www.eclipse.org/community/eclipse_newsletter/2018/february/buildship.php),
 * [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
