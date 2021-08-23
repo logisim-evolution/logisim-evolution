@@ -73,7 +73,7 @@ public class Port {
   @Getter private final int type;
   private final BitWidth fixedBitWidth;
 
-  @Getter private final Attribute<BitWidth> widthAttibute;
+  @Getter private final Attribute<BitWidth> widthAttribute;
 
   private final boolean exclude;
 
@@ -88,7 +88,7 @@ public class Port {
     this.dy = dy;
     this.type = toType(type);
     this.fixedBitWidth = null;
-    this.widthAttibute = attr;
+    this.widthAttribute = attr;
     this.exclude = toExclusive(exclude);
     this.toolTip = null;
   }
@@ -102,7 +102,7 @@ public class Port {
     this.dy = dy;
     this.type = toType(type);
     this.fixedBitWidth = bits;
-    this.widthAttibute = null;
+    this.widthAttribute = null;
     this.exclude = toExclusive(exclude);
     this.toolTip = null;
   }
@@ -129,7 +129,7 @@ public class Port {
     if (fixedBitWidth != null) {
       return new EndData(pt, fixedBitWidth, type, exclude);
     }
-    val val = attrs.getValue(widthAttibute);
+    val val = attrs.getValue(widthAttribute);
     if (!(val instanceof BitWidth)) {
       throw new IllegalArgumentException("Width attribute not set");
     }

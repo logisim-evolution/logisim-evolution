@@ -35,6 +35,10 @@ public class InstanceDataSingleton implements InstanceData, Cloneable {
 
   private Object value;
 
+  public InstanceDataSingleton(Object value) {
+    this.value = value;
+  }
+
   @Override
   public InstanceDataSingleton clone() {
     try {

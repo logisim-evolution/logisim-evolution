@@ -46,28 +46,28 @@ import lombok.val;
 
 public class InstancePainter implements InstanceState {
   private final ComponentDrawContext context;
-  @Setter private InstanceComponent instanceComponent;
+  @Setter private InstanceComponent instance;
   private InstanceFactory factory;
   private AttributeSet attrs;
 
   public InstancePainter(ComponentDrawContext context, InstanceComponent instance) {
     this.context = context;
-    this.instanceComponent = instance;
+    this.instance = instance;
   }
 
   //
   // helper methods for drawing common elements in components
   //
   public void drawBounds() {
-    context.drawBounds(instanceComponent);
+    context.drawBounds(instance);
   }
 
   public void drawClock(int i, Direction dir) {
-    context.drawClock(instanceComponent, i, dir);
+    context.drawClock(instance, i, dir);
   }
 
   public void drawClockSymbol(int xpos, int ypos) {
-    context.drawClockSymbol(instanceComponent, xpos, ypos);
+    context.drawClockSymbol(instance, xpos, ypos);
   }
 
   public void drawDongle(int x, int y) {
@@ -83,25 +83,25 @@ public class InstancePainter implements InstanceState {
   }
 
   public void drawHandles() {
-    context.drawHandles(instanceComponent);
+    context.drawHandles(instance);
   }
 
   public void drawLabel() {
-    if (instanceComponent != null) {
-      instanceComponent.drawLabel(context);
+    if (instance != null) {
+      instance.drawLabel(context);
     }
   }
 
   public void drawPort(int i) {
-    context.drawPin(instanceComponent, i);
+    context.drawPin(instance, i);
   }
 
   public void drawPort(int i, String label, Direction dir) {
-    context.drawPin(instanceComponent, i, label, dir);
+    context.drawPin(instance, i, label, dir);
   }
 
   public void drawPorts() {
-    context.drawPins(instanceComponent);
+    context.drawPins(instance);
   }
 
   public void drawRectangle(Bounds bds, String label) {
@@ -114,23 +114,23 @@ public class InstancePainter implements InstanceState {
 
   @Override
   public void fireInvalidated() {
-    instanceComponent.fireInvalidated();
+    instance.fireInvalidated();
   }
 
   @Override
   public AttributeSet getAttributeSet() {
-    val c = instanceComponent;
+    val c = instance;
     return c == null ? attrs : c.getAttributeSet();
   }
 
   @Override
   public <E> E getAttributeValue(Attribute<E> attr) {
-    val as = (instanceComponent == null) ? attrs : instanceComponent.getAttributeSet();
+    val as = (instance == null) ? attrs : instance.getAttributeSet();
     return as.getValue(attr);
   }
 
   public Bounds getBounds() {
-    return (instanceComponent == null) ? factory.getOffsetBounds(attrs) : instanceComponent.getBounds();
+    return (instance == null) ? factory.getOffsetBounds(attrs) : instance.getBounds();
   }
 
   public Circuit getCircuit() {
@@ -145,9 +145,9 @@ public class InstancePainter implements InstanceState {
   @Override
   public InstanceData getData() {
     val circState = context.getCircuitState();
-    if (circState == null || instanceComponent == null)
+    if (circState == null || instance == null)
       throw new UnsupportedOperationException("setData on InstancePainter");
-    return (InstanceData) circState.getData(instanceComponent);
+    return (InstanceData) circState.getData(instance);
   }
 
   public CircuitState getCircuitState() {
@@ -160,7 +160,7 @@ public class InstancePainter implements InstanceState {
 
   @Override
   public InstanceFactory getFactory() {
-    return (instanceComponent == null) ? factory : (InstanceFactory) instanceComponent.getFactory();
+    return (instance == null) ? factory : (InstanceFactory) instance.getFactory();
   }
 
   public Object getGateShape() {
@@ -183,17 +183,17 @@ public class InstancePainter implements InstanceState {
   //
   @Override
   public Instance getInstance() {
-    return (instanceComponent == null) ? null : instanceComponent.getInstance();
+    return (instance == null) ? null : instance.getInstance();
   }
 
   public Location getLocation() {
-    return (instanceComponent == null) ? Location.create(0, 0) : instanceComponent.getLocation();
+    return (instance == null) ? Location.create(0, 0) : instance.getLocation();
   }
 
   public Bounds getOffsetBounds() {
-    if (instanceComponent == null) return factory.getOffsetBounds(attrs);
-    val loc = instanceComponent.getLocation();
-    return instanceComponent.getBounds().translate(-loc.getX(), -loc.getY());
+    if (instance == null) return factory.getOffsetBounds(attrs);
+    val loc = instance.getLocation();
+    return instance.getBounds().translate(-loc.getX(), -loc.getY());
   }
 
   @Override
@@ -204,7 +204,7 @@ public class InstancePainter implements InstanceState {
   @Override
   public Value getPortValue(int portIndex) {
     val s = context.getCircuitState();
-    if (instanceComponent != null && s != null) return s.getValue(instanceComponent.getEnd(portIndex).getLocation());
+    if (instance != null && s != null) return s.getValue(instance.getEnd(portIndex).getLocation());
     return Value.UNKNOWN;
   }
 
@@ -233,8 +233,8 @@ public class InstancePainter implements InstanceState {
   @Override
   public boolean isPortConnected(int index) {
     val circ = context.getCircuit();
-    val loc = instanceComponent.getEnd(index).getLocation();
-    return circ.isConnected(loc, instanceComponent);
+    val loc = instance.getEnd(index).getLocation();
+    return circ.isConnected(loc, instance);
   }
 
   public boolean isPrintView() {
@@ -244,13 +244,13 @@ public class InstancePainter implements InstanceState {
   @Override
   public void setData(InstanceData value) {
     val circState = context.getCircuitState();
-    if (circState == null || instanceComponent == null)
+    if (circState == null || instance == null)
       throw new UnsupportedOperationException("setData on InstancePainter");
-    circState.setData(instanceComponent, value);
+    circState.setData(instance, value);
   }
 
   void setFactory(InstanceFactory factory, AttributeSet attrs) {
-    this.instanceComponent = null;
+    this.instance = null;
     this.factory = factory;
     this.attrs = attrs;
   }
@@ -265,10 +265,10 @@ public class InstancePainter implements InstanceState {
   }
 
   public void drawRoundBounds(Bounds bds, Color color) {
-    context.drawRoundBounds(instanceComponent, bds, color);
+    context.drawRoundBounds(instance, bds, color);
   }
 
   public void drawRoundBounds(Color color) {
-    context.drawRoundBounds(instanceComponent, color);
+    context.drawRoundBounds(instance, color);
   }
 }

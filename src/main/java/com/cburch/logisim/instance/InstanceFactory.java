@@ -272,6 +272,15 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     this.ports = new UnmodifiableList<>(ports);
   }
 
+  @Override
+  public Bounds getOffsetBounds(AttributeSet attrs) {
+    val ret = offsetBounds;
+    if (ret == null)
+      throw new RuntimeException(
+          "offset bounds unknown: use setOffsetBounds() or override getOffsetBounds()");
+    return ret;
+  }
+
   public boolean providesSubCircuitMenu() {
     return false;
   }
