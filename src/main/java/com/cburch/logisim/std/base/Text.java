@@ -46,9 +46,9 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import lombok.val;
 
 public class Text extends InstanceFactory {
   /**
@@ -135,12 +135,12 @@ public class Text extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
-    TextAttributes attrs = (TextAttributes) attrsBase;
-    String text = attrs.getText();
+    val attrs = (TextAttributes) attrsBase;
+    val text = attrs.getText();
     if (text == null || text.equals("")) {
       return Bounds.EMPTY_BOUNDS;
     } else {
-      Bounds bds = attrs.getOffsetBounds();
+      var bds = attrs.getOffsetBounds();
       if (bds == null) {
         bds =
             StringUtil.estimateBounds(
@@ -171,49 +171,49 @@ public class Text extends InstanceFactory {
   //
   @Override
   public void paintGhost(InstancePainter painter) {
-    TextAttributes attrs = (TextAttributes) painter.getAttributeSet();
-    String text = attrs.getText();
+    val attrs = (TextAttributes) painter.getAttributeSet();
+    val text = attrs.getText();
     if (text == null || text.equals("")) return;
 
-    int halign = attrs.getHorizontalAlign();
-    int valign = attrs.getVerticalAlign();
-    Graphics g = painter.getGraphics();
-    Font old = g.getFont();
-    g.setFont(attrs.getFont());
-    GraphicsUtil.drawText(g, text, 0, 0, halign, valign);
+    val halign = attrs.getHorizontalAlign();
+    val valign = attrs.getVerticalAlign();
+    val gfx = painter.getGraphics();
+    val old = gfx.getFont();
+    gfx.setFont(attrs.getFont());
+    GraphicsUtil.drawText(gfx, text, 0, 0, halign, valign);
 
-    String textTrim = text.endsWith(" ") ? text.substring(0, text.length() - 1) : text;
+    val textTrim = text.endsWith(" ") ? text.substring(0, text.length() - 1) : text;
     Bounds newBds;
     if (textTrim.equals("")) {
       newBds = Bounds.EMPTY_BOUNDS;
     } else {
-      Rectangle bdsOut = GraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
+      val bdsOut = GraphicsUtil.getTextBounds(gfx, textTrim, 0, 0, halign, valign);
       newBds = Bounds.create(bdsOut).expand(4);
     }
     if (attrs.setOffsetBounds(newBds)) {
-      Instance instance = painter.getInstance();
+      val instance = painter.getInstance();
       if (instance != null) instance.recomputeBounds();
     }
 
-    g.setFont(old);
+    gfx.setFont(old);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
-    Graphics g = painter.getGraphics();
-    g.translate(x, y);
-    g.setColor(Color.BLACK);
+    val loc = painter.getLocation();
+    val x = loc.getX();
+    val y = loc.getY();
+    val gfx = painter.getGraphics();
+    gfx.translate(x, y);
+    gfx.setColor(Color.BLACK);
     paintGhost(painter);
-    g.translate(-x, -y);
+    gfx.translate(-x, -y);
   }
 
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
-    TextIcon t = new TextIcon();
+    val g2 = (Graphics2D) painter.getGraphics().create();
+    val t = new TextIcon();
     t.paintIcon(null, g2, 0, 0);
     g2.dispose();
   }

@@ -45,7 +45,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
-import java.awt.Graphics;
+import lombok.val;
 
 public class bin2bcd extends InstanceFactory {
   /**
@@ -69,18 +69,19 @@ public class bin2bcd extends InstanceFactory {
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
 
+  @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    BitWidth nrofbits = painter.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(Math.pow(2.0, nrofbits.getWidth())) + 1.0);
+    val gfx = painter.getGraphics();
+    val nrOfBits = painter.getAttributeValue(bin2bcd.ATTR_BinBits);
+    int nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
 
-    g.setColor(Color.GRAY);
+    gfx.setColor(Color.GRAY);
     painter.drawBounds();
     painter.drawPort(BINin, "Bin", Direction.EAST);
-    for (int i = NrOfPorts; i > 0; i--)
+    for (var i = nrOfPorts; i > 0; i--)
       painter.drawPort(
-          (NrOfPorts - i) + 1,
-          Integer.toString((int) Math.pow(10.0, NrOfPorts - i)),
+          (nrOfPorts - i) + 1,
+          Integer.toString((int) Math.pow(10.0, nrOfPorts - i)),
           Direction.NORTH);
   }
 
@@ -100,38 +101,38 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    return Bounds.create((int) (-0.5 * InnerDistance), -20, NrOfPorts * InnerDistance, 40);
+    val nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    val nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    return Bounds.create((int) (-0.5 * InnerDistance), -20, nrOfPorts * InnerDistance, 40);
   }
 
   @Override
   public void propagate(InstanceState state) {
-    int bin_value =
+    var binValue =
         (state.getPortValue(BINin).isFullyDefined()
                 & !state.getPortValue(BINin).isUnknown()
                 & !state.getPortValue(BINin).isErrorValue()
             ? (int) state.getPortValue(BINin).toLongValue()
             : -1);
-    BitWidth NrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(Math.pow(2.0, NrOfBits.getWidth())) + 1.0);
-    for (int i = NrOfPorts; i > 0; i--) {
-      int value = (int) (Math.pow(10, i - 1));
-      int number = bin_value / value;
+    val nrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
+    val nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
+    for (var i = nrOfPorts; i > 0; i--) {
+      val value = (int) (Math.pow(10, i - 1));
+      val number = binValue / value;
       state.setPort(i, Value.createKnown(BitWidth.create(4), number), PER_DELAY);
-      bin_value -= number * value;
+      binValue -= number * value;
     }
   }
 
   private void updatePorts(Instance instance) {
-    BitWidth nrofbits = instance.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    Port[] ps = new Port[NrOfPorts + 1];
+    val nrOfBits = instance.getAttributeValue(bin2bcd.ATTR_BinBits);
+    val nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    val ps = new Port[nrOfPorts + 1];
     ps[BINin] = new Port((int) (-0.5 * InnerDistance), 0, Port.INPUT, bin2bcd.ATTR_BinBits);
     ps[BINin].setToolTip(S.getter("BinaryInputTip"));
-    for (int i = NrOfPorts; i > 0; i--) {
-      ps[i] = new Port((NrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
-      int value = (int) Math.pow(10.0, i - 1);
+    for (var i = nrOfPorts; i > 0; i--) {
+      ps[i] = new Port((nrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
+      val value = (int) Math.pow(10.0, i - 1);
       ps[i].setToolTip(S.getter(Integer.toString(value)));
     }
     instance.setPorts(ps);
@@ -139,12 +140,12 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
+    val completeName = new StringBuilder();
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    CompleteName.append("_").append(NrOfPorts).append("_bcd_ports");
-    return CompleteName.toString();
+    val nrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    completeName.append("_").append(nrOfPorts).append("_bcd_ports");
+    return completeName.toString();
   }
 
   @Override

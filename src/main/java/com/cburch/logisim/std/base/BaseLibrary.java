@@ -42,6 +42,8 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 
 public class BaseLibrary extends Library {
   /**
@@ -52,13 +54,13 @@ public class BaseLibrary extends Library {
    */
   public static final String _ID = "Base";
 
-  private final List<Tool> tools;
+  @Getter private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
 
   public BaseLibrary() {
     setHidden();
-    WiringTool wiring = new WiringTool();
+    val wiring = new WiringTool();
 
     tools = Arrays.asList(
         new PokeTool(),
@@ -75,7 +77,7 @@ public class BaseLibrary extends Library {
 
   @Override
   public Tool getTool(String name) {
-    Tool t = super.getTool(name);
+    val t = super.getTool(name);
     if (t == null) {
       if (name.equals(Text._ID))
         return textAdder; // needed by XmlCircuitReader
@@ -89,10 +91,6 @@ public class BaseLibrary extends Library {
   }
 
   @Override
-  public List<Tool> getTools() {
-    return tools;
-  }
-
   public boolean removeLibrary(String Name) {
     return false;
   }

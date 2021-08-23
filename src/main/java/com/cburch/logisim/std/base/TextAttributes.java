@@ -37,23 +37,25 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.val;
 
 class TextAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
           Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
-  private String text;
-  private Font font;
-  private AttributeOption halign;
-  private AttributeOption valign;
-  private Bounds offsetBounds;
+  @Getter private String text;
+  @Getter private Font font;
+  private AttributeOption horizAlign;
+  private AttributeOption vertAlign;
+  @Getter private Bounds offsetBounds;
 
   public TextAttributes() {
     text = "";
     font = StdAttr.DEFAULT_LABEL_FONT;
-    halign = Text.ATTR_HALIGN.parse("center");
-    valign = Text.ATTR_VALIGN.parse("base");
+    horizAlign = Text.ATTR_HALIGN.parse("center");
+    vertAlign = Text.ATTR_VALIGN.parse("base");
     offsetBounds = null;
   }
 
@@ -67,20 +69,8 @@ class TextAttributes extends AbstractAttributeSet {
     return ATTRIBUTES;
   }
 
-  Font getFont() {
-    return font;
-  }
-
   int getHorizontalAlign() {
-    return (Integer) halign.getValue();
-  }
-
-  Bounds getOffsetBounds() {
-    return offsetBounds;
-  }
-
-  String getText() {
-    return text;
+    return (Integer) horizAlign.getValue();
   }
 
   @Override
@@ -88,18 +78,18 @@ class TextAttributes extends AbstractAttributeSet {
   public <V> V getValue(Attribute<V> attr) {
     if (attr == Text.ATTR_TEXT) return (V) text;
     if (attr == Text.ATTR_FONT) return (V) font;
-    if (attr == Text.ATTR_HALIGN) return (V) halign;
-    if (attr == Text.ATTR_VALIGN) return (V) valign;
+    if (attr == Text.ATTR_HALIGN) return (V) horizAlign;
+    if (attr == Text.ATTR_VALIGN) return (V) vertAlign;
     return null;
   }
 
   int getVerticalAlign() {
-    return (Integer) valign.getValue();
+    return (Integer) vertAlign.getValue();
   }
 
   boolean setOffsetBounds(Bounds value) {
-    Bounds old = offsetBounds;
-    boolean same = Objects.equals(old, value);
+    val old = offsetBounds;
+    val same = Objects.equals(old, value);
     if (!same) {
       offsetBounds = value;
     }
@@ -113,9 +103,9 @@ class TextAttributes extends AbstractAttributeSet {
     } else if (attr == Text.ATTR_FONT) {
       font = (Font) value;
     } else if (attr == Text.ATTR_HALIGN) {
-      halign = (AttributeOption) value;
+      horizAlign = (AttributeOption) value;
     } else if (attr == Text.ATTR_VALIGN) {
-      valign = (AttributeOption) value;
+      vertAlign = (AttributeOption) value;
     } else {
       throw new IllegalArgumentException("unknown attribute");
     }

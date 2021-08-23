@@ -42,7 +42,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
+import lombok.val;
 
 public class bcd2sevenseg extends InstanceFactory {
   /**
@@ -89,14 +89,13 @@ public class bcd2sevenseg extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds MyBounds = painter.getBounds();
-    if (!painter.isPrintView())
-      g.setColor(Color.BLUE);
+    val gfx = painter.getGraphics();
+    val MyBounds = painter.getBounds();
+    if (!painter.isPrintView()) gfx.setColor(Color.BLUE);
     painter.drawRectangle(MyBounds, "");
     painter.drawPort(BCDin, "BCD", Direction.SOUTH);
-    for (int i = 0; i < 7; i++) painter.drawPort(i);
-    g.setColor(Color.BLACK);
+    for (var i = 0; i < 7; i++) painter.drawPort(i);
+    gfx.setColor(Color.BLACK);
     painter.drawRectangle(
         MyBounds.getX() + 5,
         MyBounds.getY() + 20,
@@ -110,7 +109,7 @@ public class bcd2sevenseg extends InstanceFactory {
     if (state.getPortValue(BCDin).isFullyDefined()
         & !state.getPortValue(BCDin).isErrorValue()
         & !state.getPortValue(BCDin).isUnknown()) {
-      int value = (int) state.getPortValue(BCDin).toLongValue();
+      val value = (int) state.getPortValue(BCDin).toLongValue();
       switch (value) {
         case 0:
           state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
@@ -213,7 +212,7 @@ public class bcd2sevenseg extends InstanceFactory {
           break;
       }
     } else {
-      for (int i = 0; i < 7; i++)
+      for (var i = 0; i < 7; i++)
         state.setPort(i, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
     }
   }
