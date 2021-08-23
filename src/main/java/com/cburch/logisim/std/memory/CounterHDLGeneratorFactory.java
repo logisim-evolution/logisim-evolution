@@ -74,9 +74,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new ContentBuilder();
     contents.addRemarkBlock(
-            "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
-                + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down"
-            );
+        "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
+            + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
     if (HDL.isVHDL()) {
       contents
           .add("   CompareOut   <= s_carry;")

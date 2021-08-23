@@ -96,16 +96,15 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         for (var i = 0; i < nrOfInputs; i++) {
           var localSpaces = " ";
           if (i < 10) localSpaces = allignmentSpaces;
-          // FIXME: why we need this code at all? What will happen
-          // if we remove these aligment spaces completely?
+          // FIXME: why we need this code at all? What will happenif we remove these aligment spaces completely?
           else if (i < 100)
             localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 1);
           else if (i < 1000)
             localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
           contents
-                  .add("   s_real_input_%d%s <= NOT( Input_%d )", (i + 1), localSpaces, (i + 1))
-          .add("%s   WHEN s_signal_invert_mask(%d) = '1' ELSE", whenLineBegin, i)
-          .add(whenLineBegin + "Input_" + (i + 1) + ";");
+              .add("   s_real_input_%d%s <= NOT( Input_%d )", (i + 1), localSpaces, (i + 1))
+              .add("%s   WHEN s_signal_invert_mask(%d) = '1' ELSE", whenLineBegin, i)
+              .add(whenLineBegin + "Input_" + (i + 1) + ";");
         }
       } else {
         contents.add("   assign s_signal_invert_mask = %s;", BUBBLES_MASK);

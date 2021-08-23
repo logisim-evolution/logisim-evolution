@@ -141,21 +141,21 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add("             s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
       }
       contents
-        .add(
-            "         END IF;",
-            "      END IF;",
-            "   END PROCESS InputRegs;")
-        .empty()
-        .add(
-            "   TickPipeReg : PROCESS(Clock)",
-            "   BEGIN",
-            "      IF (Clock'event AND (Clock = '1')) THEN",
-            "          s_TickDelayLine(0)          <= Tick;",
-            "          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);",
-            "      END IF;",
-            "   END PROCESS TickPipeReg;",
-            "")
-        .addRemarkBlock("Here the actual memorie(s) is(are) defined");
+          .add(
+              "         END IF;",
+              "      END IF;",
+              "   END PROCESS InputRegs;")
+          .empty()
+          .add(
+              "   TickPipeReg : PROCESS(Clock)",
+              "   BEGIN",
+              "      IF (Clock'event AND (Clock = '1')) THEN",
+              "          s_TickDelayLine(0)          <= Tick;",
+              "          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);",
+              "      END IF;",
+              "   END PROCESS TickPipeReg;")
+          .empty()
+          .addRemarkBlock("Here the actual memorie(s) is(are) defined");
 
       if (byteEnables) {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;

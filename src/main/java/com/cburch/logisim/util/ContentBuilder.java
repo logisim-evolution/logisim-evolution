@@ -96,11 +96,6 @@ public class ContentBuilder {
     return repeat(lines, "");
   }
 
-  /**
-   * Adds
-   * @param lines
-   * @return
-   */
   public ContentBuilder add(String... lines) {
     return add(Arrays.asList(lines));
   }

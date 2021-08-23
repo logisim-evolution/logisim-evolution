@@ -75,9 +75,9 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDL.isVHDL()) {
       contents.add(
-        "   MakeRom : PROCESS( Address )",
-        "      BEGIN",
-        "         CASE (Address) IS");
+              "   MakeRom : PROCESS( Address )",
+              "      BEGIN",
+              "         CASE (Address) IS");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
           contents.add("            WHEN %s => Data <= %s;",

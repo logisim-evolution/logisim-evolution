@@ -134,12 +134,13 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             .add("      else if (Tick) s_current_state_reg[1] <= s_next_state;")
             .add("   end");
       } else {
-        contents.add("   always @(*)")
-        .add("   begin")
-        .add("      if (Reset) s_current_state_reg <= 2'b0;")
-        .add("      else if (Preset) s_current_state_reg <= 2'b1;")
-        .add("      else if (Tick & (Clock == %s)) s_current_state_reg <= {s_next_state,s_next_state};", ACTIVITY_LEVEL_STR)
-        .add("   end");
+        contents
+            .add("   always @(*)")
+            .add("   begin")
+            .add("      if (Reset) s_current_state_reg <= 2'b0;")
+            .add("      else if (Preset) s_current_state_reg <= 2'b1;")
+            .add("      else if (Tick & (Clock == %s)) s_current_state_reg <= {s_next_state,s_next_state};", ACTIVITY_LEVEL_STR)
+            .add("   end");
       }
     }
     contents.add("");
