@@ -36,20 +36,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Template {
 
   public static Template create(InputStream in) {
-    final var reader = new InputStreamReader(in);
-    final var buf = new char[4096];
-    final var dest = new StringBuilder();
+    val reader = new InputStreamReader(in);
+    val buf = new char[4096];
+    val dest = new StringBuilder();
     while (true) {
       try {
-        int nbytes = reader.read(buf);
-        if (nbytes < 0) break;
-        dest.append(buf, 0, nbytes);
+        val nrOfBytes = reader.read(buf);
+        if (nrOfBytes < 0) break;
+        dest.append(buf, 0, nrOfBytes);
       } catch (IOException e) {
         break;
       }
@@ -58,8 +59,8 @@ public class Template {
   }
 
   public static Template createEmpty() {
-    final var circName = S.get("newCircuitName");
-    final var buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    val circName = S.get("newCircuitName");
+    val buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<project source=\"" + Main.VERSION
         + "\" version=\"1.0\">"
         + " <circuit name=\"" + circName + "\" />"

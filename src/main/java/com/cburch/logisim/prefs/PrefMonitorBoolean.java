@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
+import lombok.val;
 
 public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements ActionListener {
   protected final boolean dflt;
@@ -48,6 +49,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     prefs.addPreferenceChangeListener(this);
   }
 
+  @Override
   public Boolean get() {
     return value;
   }
@@ -57,13 +59,14 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     return value;
   }
 
+  @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    final var prefs = event.getNode();
-    final var prop = event.getKey();
-    final var name = getIdentifier();
+    val prefs = event.getNode();
+    val prop = event.getKey();
+    val name = getIdentifier();
     if (prop.equals(name)) {
-      final var oldValue = value;
-      final var newValue = prefs.getBoolean(name, dflt);
+      val oldValue = value;
+      val newValue = prefs.getBoolean(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
@@ -71,6 +74,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     }
   }
 
+  @Override
   public void set(Boolean newValue) {
     if (value != newValue) {
       AppPreferences.getPrefs().putBoolean(getIdentifier(), newValue);

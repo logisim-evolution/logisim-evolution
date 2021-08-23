@@ -29,6 +29,7 @@
 package com.cburch.logisim.prefs;
 
 import java.util.prefs.PreferenceChangeEvent;
+import lombok.val;
 
 class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   private final int dflt;
@@ -38,32 +39,34 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
     super(name);
     this.dflt = dflt;
     this.value = dflt;
-    final var prefs = AppPreferences.getPrefs();
+    val prefs = AppPreferences.getPrefs();
     set(prefs.getInt(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }
 
+  @Override
   public Integer get() {
     return value;
   }
 
+  @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    final var prefs = event.getNode();
-    final var prop = event.getKey();
-    final var name = getIdentifier();
+    val prefs = event.getNode();
+    val prop = event.getKey();
+    val name = getIdentifier();
     if (prop.equals(name)) {
-      final var oldValue = value;
-      final var newValue = prefs.getInt(name, dflt);
+      val oldValue = value;
+      val newValue = prefs.getInt(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
-        AppPreferences.firePropertyChange(
-            name, oldValue, newValue);
+        AppPreferences.firePropertyChange(name, oldValue, newValue);
       }
     }
   }
 
+  @Override
   public void set(Integer newValue) {
-    final var newVal = newValue;
+    val newVal = newValue;
     if (value != newVal) {
       AppPreferences.getPrefs().putInt(getIdentifier(), newVal);
     }

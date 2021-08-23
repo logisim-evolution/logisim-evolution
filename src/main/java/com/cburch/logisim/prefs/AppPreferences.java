@@ -59,6 +59,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import lombok.val;
 
 public class AppPreferences {
   //
@@ -67,10 +68,10 @@ public class AppPreferences {
   private static class LocalePreference extends PrefMonitorString {
     private static Locale findLocale(String lang) {
       Locale[] check;
-      for (int set = 0; set < 2; set++) {
+      for (var set = 0; set < 2; set++) {
         if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
         else check = Locale.getAvailableLocales();
-        for (Locale loc : check) {
+        for (val loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
           }
@@ -82,7 +83,7 @@ public class AppPreferences {
     public LocalePreference() {
       super("locale", "");
 
-      String localeStr = this.get();
+      val localeStr = this.get();
       if (localeStr != null && !localeStr.equals("")) {
         LocaleManager.setLocale(new Locale(localeStr));
       }
@@ -104,8 +105,8 @@ public class AppPreferences {
   private static class MyListener implements PreferenceChangeListener, LocaleListener {
     @Override
     public void localeChanged() {
-      final var loc = LocaleManager.getLocale();
-      final var lang = loc.getLanguage();
+      val loc = LocaleManager.getLocale();
+      val lang = loc.getLanguage();
       if (LOCALE != null) {
         LOCALE.set(lang);
       }
@@ -113,22 +114,22 @@ public class AppPreferences {
 
     @Override
     public void preferenceChange(PreferenceChangeEvent event) {
-      final var prefs = event.getNode();
-      final var prop = event.getKey();
+      val prefs = event.getNode();
+      val prop = event.getKey();
       if (ACCENTS_REPLACE.getIdentifier().equals(prop)) {
         getPrefs();
         LocaleManager.setReplaceAccents(ACCENTS_REPLACE.getBoolean());
       } else if (prop.equals(TEMPLATE_TYPE)) {
-        int oldValue = templateType;
-        int value = prefs.getInt(TEMPLATE_TYPE, TEMPLATE_UNKNOWN);
+        val oldValue = templateType;
+        val value = prefs.getInt(TEMPLATE_TYPE, TEMPLATE_UNKNOWN);
         if (value != oldValue) {
           templateType = value;
           propertySupport.firePropertyChange(TEMPLATE, oldValue, value);
           propertySupport.firePropertyChange(TEMPLATE_TYPE, oldValue, value);
         }
       } else if (prop.equals(TEMPLATE_FILE)) {
-        final var oldValue = templateFile;
-        final var value = convertFile(prefs.get(TEMPLATE_FILE, null));
+        val oldValue = templateFile;
+        val value = convertFile(prefs.get(TEMPLATE_FILE, null));
         if (!Objects.equals(value, oldValue)) {
           templateFile = value;
           if (templateType == TEMPLATE_CUSTOM) {
@@ -157,16 +158,14 @@ public class AppPreferences {
     try {
       getPrefs(true).clear();
     } catch (BackingStoreException ignored) {
+      // do nothing
     }
   }
 
   private static File convertFile(String fileName) {
-    if (fileName == null || fileName.equals("")) {
-      return null;
-    } else {
-      final var file = new File(fileName);
-      return file.canRead() ? file : null;
-    }
+    if (fileName == null || fileName.equals("")) return null;
+    val file = new File(fileName);
+    return file.canRead() ? file : null;
   }
 
   private static <E> PrefMonitor<E> create(PrefMonitor<E> monitor) {
@@ -182,13 +181,13 @@ public class AppPreferences {
   }
 
   private static Template getCustomTemplate() {
-    File toRead = templateFile;
+    val toRead = templateFile;
     if (customTemplateFile == null || !(customTemplateFile.equals(toRead))) {
       if (toRead == null) {
         customTemplate = null;
         customTemplateFile = null;
       } else {
-        try (final var reader = new FileInputStream(toRead)) {
+        try (val reader = new FileInputStream(toRead)) {
           customTemplate = Template.create(reader);
           customTemplateFile = templateFile;
         } catch (Exception t) {
@@ -208,8 +207,8 @@ public class AppPreferences {
 
   private static Template getPlainTemplate() {
     if (plainTemplate == null) {
-      final var ld = Startup.class.getClassLoader();
-      final var in = ld.getResourceAsStream("resources/logisim/default.templ");
+      val ld = Startup.class.getClassLoader();
+      val in = ld.getResourceAsStream("resources/logisim/default.templ");
       if (in == null) {
         plainTemplate = getEmptyTemplate();
       } else {
@@ -233,7 +232,7 @@ public class AppPreferences {
     if (prefs == null) {
       synchronized (AppPreferences.class) {
         if (prefs == null) {
-          final var p = Preferences.userNodeForPackage(Main.class);
+          val p = Preferences.userNodeForPackage(Main.class);
           if (shouldClear) {
             try {
               p.clear();
@@ -285,7 +284,7 @@ public class AppPreferences {
   //
   public static int getTemplateType() {
     getPrefs();
-    int ret = templateType;
+    var ret = templateType;
     if (ret == TEMPLATE_CUSTOM && templateFile == null) {
       ret = TEMPLATE_UNKNOWN;
     }
@@ -294,7 +293,7 @@ public class AppPreferences {
 
   public static void handleGraphicsAcceleration() {
     try {
-      final var accel = GRAPHICS_ACCELERATION.get();
+      val accel = GRAPHICS_ACCELERATION.get();
       System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
       System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
     } catch (Exception ignored) {
@@ -305,8 +304,7 @@ public class AppPreferences {
     propertySupport.removePropertyChangeListener(listener);
   }
 
-  public static void removePropertyChangeListener(
-      String propertyName, PropertyChangeListener listener) {
+  public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     propertySupport.removePropertyChangeListener(propertyName, listener);
   }
 
@@ -339,27 +337,28 @@ public class AppPreferences {
   }
 
   public static void setScaledFonts(Component[] comp) {
-    for (final var component : comp) {
+    for (val component : comp) {
       if (component instanceof Container) setScaledFonts(((Container) component).getComponents());
       try {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();
         component.repaint();
       } catch (Exception ignored) {
+        // do nothing
       }
     }
   }
 
   public static int getDownScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    var scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     scale *= extScale;
     return (int) ((float) value / scale);
   }
 
   public static int getDownScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    val scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     return (int) ((float) value / scale);
   }
 
@@ -370,54 +369,53 @@ public class AppPreferences {
 
   public static int getScaled(int value, float extScale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    var scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     scale *= extScale;
     return (int) ((float) value * scale);
   }
 
   public static int getScaled(int value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    val scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     return (int) ((float) value * scale);
   }
 
   public static float getScaled(float value) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    val scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     return value * scale;
   }
 
   public static float getScaled(float value, float extscale) {
     getPrefs();
-    float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
+    var scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;
     scale *= extscale;
     return value * scale;
   }
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
+    val scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
     return value * scale;
   }
 
   public static Font getScaledFont(Font myfont) {
     if (myfont != null) return myfont.deriveFont(getScaled((float) FontSize));
-    else return null;
+    return null;
   }
 
   public static Font getScaledFont(Font myfont, float scale) {
     if (myfont != null) return myfont.deriveFont(getScaled((float) FontSize, scale));
-    else return null;
+    return null;
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
-    Image iconImage = icon.getImage();
-    return new ImageIcon(
-        iconImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
+    val iconImage = icon.getImage();
+    return new ImageIcon(iconImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon, float scale) {
-    final var iconImage = icon.getImage();
+    val iconImage = icon.getImage();
     return new ImageIcon(
         iconImage.getScaledInstance(
             getScaled(IconSize, scale), getScaled(IconSize, scale), Image.SCALE_SMOOTH));
@@ -572,7 +570,7 @@ public class AppPreferences {
   public static AttributeOption getDefaultAppearance() {
     if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString()))
       return StdAttr.APPEAR_EVOLUTION;
-    else return StdAttr.APPEAR_CLASSIC;
+    return StdAttr.APPEAR_CLASSIC;
   }
 
   public static AttributeOption getDefaultCircuitAppearance() {
@@ -583,8 +581,7 @@ public class AppPreferences {
     else return StdAttr.APPEAR_CLASSIC;
   }
 
-  public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES =
-      create(new PrefMonitorBooleanConvert("oldIO", true));
+  public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBooleanConvert("oldIO", true));
   public static final PrefMonitor<Double> SCALE_FACTOR =
       create(
           new PrefMonitorDouble(
@@ -597,9 +594,7 @@ public class AppPreferences {
                   1.0)));
 
   public static final PrefMonitor<String> ADD_AFTER =
-      create(
-          new PrefMonitorStringOpts(
-              "afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
+      create(new PrefMonitorStringOpts("afterAdd", new String[] {ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED}, ADD_AFTER_EDIT));
 
   public static final String PIN_APPEAR_DOT_SMALL = "dot-small";
   public static final String PIN_APPEAR_DOT_MEDIUM = "dot-medium";
@@ -621,23 +616,16 @@ public class AppPreferences {
   public static final PrefMonitor<String> POKE_WIRE_RADIX2;
 
   static {
-    final var radixOptions = RadixOption.OPTIONS;
-    final var radixStrings = new String[radixOptions.length];
+    val radixOptions = RadixOption.OPTIONS;
+    val radixStrings = new String[radixOptions.length];
     for (var i = 0; i < radixOptions.length; i++) {
       radixStrings[i] = radixOptions[i].getSaveString();
     }
-    POKE_WIRE_RADIX1 =
-        create(
-            new PrefMonitorStringOpts(
-                "pokeRadix1", radixStrings, RadixOption.RADIX_2.getSaveString()));
-    POKE_WIRE_RADIX2 =
-        create(
-            new PrefMonitorStringOpts(
-                "pokeRadix2", radixStrings, RadixOption.RADIX_10_SIGNED.getSaveString()));
+    POKE_WIRE_RADIX1 = create(new PrefMonitorStringOpts("pokeRadix1", radixStrings, RadixOption.RADIX_2.getSaveString()));
+    POKE_WIRE_RADIX2 = create(new PrefMonitorStringOpts("pokeRadix2", radixStrings, RadixOption.RADIX_10_SIGNED.getSaveString()));
   }
 
-  public static final PrefMonitor<Boolean> Memory_Startup_Unknown =
-      create(new PrefMonitorBoolean("MemStartUnknown", false));
+  public static final PrefMonitor<Boolean> Memory_Startup_Unknown = create(new PrefMonitorBoolean("MemStartUnknown", false));
 
   // Simulation preferences
   public static final PrefMonitor<Integer> TRUE_COLOR =
@@ -741,8 +729,7 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("AntiAliassing", true));
 
   // Third party softwares preferences
-  public static final PrefMonitor<String> QUESTA_PATH =
-      create(new PrefMonitorString("questaPath", ""));
+  public static final PrefMonitor<String> QUESTA_PATH = create(new PrefMonitorString("questaPath", ""));
 
   public static final PrefMonitor<Boolean> QUESTA_VALIDATION =
       create(new PrefMonitorBoolean("questaValidation", false));

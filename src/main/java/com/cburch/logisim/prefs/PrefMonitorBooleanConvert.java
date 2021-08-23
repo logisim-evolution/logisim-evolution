@@ -35,6 +35,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
+import lombok.val;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
@@ -54,19 +55,17 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
   @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    final var prefs = event.getNode();
-    final var prop = event.getKey();
-    final var name = getIdentifier();
+    val prefs = event.getNode();
+    val prop = event.getKey();
+    val name = getIdentifier();
     if (prop.equals(name)) {
-      final var oldValue = value;
-      final var newValue = prefs.getBoolean(name, dflt);
+      val oldValue = value;
+      val newValue = prefs.getBoolean(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
         if (!myListeners.isEmpty()) {
-          final var e =
-              new ConvertEvent(
-                  newValue ? ProbeAttributes.APPEAR_EVOLUTION_NEW : StdAttr.APPEAR_CLASSIC);
+          val e = new ConvertEvent(newValue ? ProbeAttributes.APPEAR_EVOLUTION_NEW : StdAttr.APPEAR_CLASSIC);
           Object[] options = {S.get("OptionYes"), S.get("OptionNo")};
           int ret =
               OptionPane.showOptionDialog(
@@ -87,6 +86,6 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
   }
 
   private void fireConvertAction(ConvertEvent e) {
-    for (ConvertEventListener l : myListeners) l.attributeValueChanged(e);
+    for (val l : myListeners) l.attributeValueChanged(e);
   }
 }

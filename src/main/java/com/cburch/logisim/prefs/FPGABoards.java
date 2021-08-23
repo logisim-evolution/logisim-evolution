@@ -56,6 +56,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import lombok.val;
 
 public class FPGABoards implements ActionListener {
 
@@ -93,11 +94,11 @@ public class FPGABoards implements ActionListener {
     }
 
     public int nrOfExternalBoards() {
-      final var iter = externalBoards.iterator();
+      val iter = externalBoards.iterator();
       var removed = false;
       while (iter.hasNext()) {
-        final var file = iter.next();
-        final var f = new File(file);
+        val file = iter.next();
+        val f = new File(file);
         if (!f.exists() || f.isDirectory()) {
           buildInBoards.RemoveExternalBoard(file);
           removeFromPrefs(file);
@@ -105,13 +106,9 @@ public class FPGABoards implements ActionListener {
           removed = true;
         }
       }
-      if (removed)
-        fireChange(
-            new ListDataEvent(
-                this,
-                ListDataEvent.CONTENTS_CHANGED,
-                externalBoards.size(),
-                ListDataEvent.INTERVAL_REMOVED));
+      if (removed) {
+        fireChange(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, externalBoards.size(), ListDataEvent.INTERVAL_REMOVED));
+      }
       return externalBoards.size();
     }
 
@@ -126,8 +123,7 @@ public class FPGABoards implements ActionListener {
 
     @Override
     public String getElementAt(int index) {
-      int size = nrOfExternalBoards();
-      return (index < size) ? BoardList.getBoardName(externalBoards.get(index)) : null;
+      return (index < getSize()) ? BoardList.getBoardName(externalBoards.get(index)) : null;
     }
 
     @Override
@@ -141,7 +137,7 @@ public class FPGABoards implements ActionListener {
     }
 
     private void fireChange(ListDataEvent e) {
-      for (final var listener : myListeners) {
+      for (val listener : myListeners) {
         switch (e.getType()) {
           case ListDataEvent.CONTENTS_CHANGED:
             listener.contentsChanged(e);
@@ -162,7 +158,7 @@ public class FPGABoards implements ActionListener {
     public void insertSorted(String value) {
       add(value);
       Comparable<String> cmp = BoardList.getBoardName(value);
-      for (int i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
+      for (var i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
         Collections.swap(this, i, i - 1);
     }
   }
@@ -172,7 +168,7 @@ public class FPGABoards implements ActionListener {
     if (e.getSource().equals(addButton)) {
       addBoard(false);
     } else if (e.getSource().equals(removeButton)) {
-      final var board = boardNamesList.getSelectedValue();
+      val board = boardNamesList.getSelectedValue();
       if (removeBoard(board)) {
         if (AppPreferences.SelectedBoard.get().equals(board)) {
           if (boardSelector != null && boardSelector.getItemCount() >= 2)
@@ -203,8 +199,8 @@ public class FPGABoards implements ActionListener {
     }
   }
 
-  private static final String ExtBoard = "ExtBoardDescr";
-  private static final int MaxBoards = 20;
+  private static final String extBoard = "ExtBoardDescr";
+  private static final int maxBoards = 20;
   private final BoardList buildInBoards = new BoardList();
   private JScrollPane boardPane;
   private JList<String> boardNamesList;
@@ -214,14 +210,14 @@ public class FPGABoards implements ActionListener {
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
 
   FPGABoards() {
-    final var prefs = AppPreferences.getPrefs();
-    for (var i = 0; i < MaxBoards; i++) {
-      final var encoding = prefs.get(ExtBoard + i, null);
+    val prefs = AppPreferences.getPrefs();
+    for (var i = 0; i < maxBoards; i++) {
+      val encoding = prefs.get(extBoard + i, null);
       if (encoding != null) {
         addExternalBoard(encoding, i, prefs);
       }
     }
-    final var selectedBoard = AppPreferences.SelectedBoard.get();
+    val selectedBoard = AppPreferences.SelectedBoard.get();
     if (!buildInBoards.GetBoardNames().contains(selectedBoard)) {
       AppPreferences.SelectedBoard.set(buildInBoards.GetBoardNames().get(0));
     }
@@ -229,35 +225,35 @@ public class FPGABoards implements ActionListener {
 
   private boolean addExternalBoard(String filename, int oldindex, Preferences prefs) {
     /* first we check if the file exists */
-    final var f = new File(filename);
+    val f = new File(filename);
     if (!f.exists() || f.isDirectory()) {
       if (prefs != null) {
-        prefs.remove(ExtBoard + oldindex);
+        prefs.remove(extBoard + oldindex);
       }
       return false;
     }
     /* we check if the list is full and clean-up */
-    if (extBoardModel.nrOfExternalBoards() == MaxBoards) return false;
+    if (extBoardModel.nrOfExternalBoards() == maxBoards) return false;
     /* then we check if the file is already in the list */
     if (extBoardModel.contains(filename)) {
-      if (prefs != null) prefs.remove(ExtBoard + oldindex);
+      if (prefs != null) prefs.remove(extBoard + oldindex);
       return false;
     }
     extBoardModel.insert(filename);
     buildInBoards.AddExternalBoard(filename);
-    final var index = extBoardModel.indexOf(filename);
-    if ((index != oldindex) && (oldindex != MaxBoards)) {
-      prefs.remove(ExtBoard + oldindex);
-      prefs.put(ExtBoard + index, filename);
-    } else if (oldindex == MaxBoards) {
+    val index = extBoardModel.indexOf(filename);
+    if ((index != oldindex) && (oldindex != maxBoards)) {
+      prefs.remove(extBoard + oldindex);
+      prefs.put(extBoard + index, filename);
+    } else if (oldindex == maxBoards) {
       rebuildPrefsTree();
     }
     return true;
   }
 
   public boolean addExternalBoard(String filename) {
-    final var prefs = AppPreferences.getPrefs();
-    return addExternalBoard(filename, MaxBoards, prefs);
+    val prefs = AppPreferences.getPrefs();
+    return addExternalBoard(filename, maxBoards, prefs);
   }
 
   public String getBoardFilePath(String boardName) {
@@ -281,10 +277,10 @@ public class FPGABoards implements ActionListener {
   }
 
   public JPanel addRemovePanel() {
-    final var panel = new JPanel();
-    final int nrBoards = extBoardModel.nrOfExternalBoards();
-    final var thisLayout = new GridBagLayout();
-    final var c = new GridBagConstraints();
+    val panel = new JPanel();
+    val nrBoards = extBoardModel.nrOfExternalBoards();
+    val thisLayout = new GridBagLayout();
+    val c = new GridBagConstraints();
     panel.setLayout(thisLayout);
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     c.gridwidth = 2;
@@ -310,7 +306,7 @@ public class FPGABoards implements ActionListener {
     c.gridx = 1;
     addButton = new JButton();
     addButton.setText(S.get("AddBoard"));
-    addButton.setEnabled(nrBoards < MaxBoards);
+    addButton.setEnabled(nrBoards < maxBoards);
     addButton.addActionListener(this);
     panel.add(addButton, c);
     c.gridy = 3;
@@ -324,8 +320,8 @@ public class FPGABoards implements ActionListener {
   }
 
   private void updateButtons() {
-    final var size = extBoardModel.nrOfExternalBoards();
-    if (addButton != null) addButton.setEnabled(size < MaxBoards);
+    val size = extBoardModel.nrOfExternalBoards();
+    if (addButton != null) addButton.setEnabled(size < maxBoards);
     if (removeButton != null) removeButton.setEnabled(size > 0);
   }
 
@@ -337,7 +333,7 @@ public class FPGABoards implements ActionListener {
     var index = 1;
     var found = false;
     if (update) AppPreferences.SelectedBoard.set(board);
-    for (String item : buildInBoards.GetBoardNames()) {
+    for (val item : buildInBoards.GetBoardNames()) {
       boardSelector.addItem(item);
       if (item.equals(AppPreferences.SelectedBoard.get())) {
         boardSelector.setSelectedIndex(index);
@@ -354,16 +350,16 @@ public class FPGABoards implements ActionListener {
   }
 
   private void removeFromPrefs(String fname) {
-    final var prefs = AppPreferences.getPrefs();
-    for (var i = 0; i < MaxBoards; i++) {
-      final var name = prefs.get(ExtBoard + i, null);
-      if ((name != null) && (name.equals(fname))) prefs.remove(ExtBoard + i);
+    val prefs = AppPreferences.getPrefs();
+    for (var i = 0; i < maxBoards; i++) {
+      val name = prefs.get(extBoard + i, null);
+      if ((name != null) && (name.equals(fname))) prefs.remove(extBoard + i);
     }
   }
 
   private boolean removeBoard(String name) {
     if (name == null) return false;
-    final var qualifier = buildInBoards.GetBoardFilePath(name);
+    val qualifier = buildInBoards.GetBoardFilePath(name);
     if (extBoardModel.contains(qualifier)) {
       extBoardModel.remove(qualifier);
     } else return false;
@@ -373,27 +369,25 @@ public class FPGABoards implements ActionListener {
   }
 
   private void rebuildPrefsTree() {
-    final var prefs = AppPreferences.getPrefs();
+    val prefs = AppPreferences.getPrefs();
     for (var i = 0; i < extBoardModel.getSize(); i++) {
-      prefs.put(ExtBoard + i, extBoardModel.get(i));
+      prefs.put(extBoard + i, extBoardModel.get(i));
     }
-    for (int i = extBoardModel.getSize(); i < MaxBoards; i++) {
-      prefs.remove(ExtBoard + i);
+    for (int i = extBoardModel.getSize(); i < maxBoards; i++) {
+      prefs.remove(extBoard + i);
     }
   }
 
   private boolean addBoard(boolean updateSelection) {
-    if (extBoardModel.getSize() >= MaxBoards) {
-      OptionPane.showMessageDialog(
-          null, S.get("MaxBoardsReached"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
+    if (extBoardModel.getSize() >= maxBoards) {
+      OptionPane.showMessageDialog(null, S.get("MaxBoardsReached"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     var boardFileName = getBoardFile();
     if (boardFileName == null) return false;
     var test = new BoardReaderClass(boardFileName);
     if (test.GetBoardInformation() == null) {
-      OptionPane.showMessageDialog(
-          null, S.get("InvalidFileFormat"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(null, S.get("InvalidFileFormat"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     if (buildInBoards.GetBoardNames().contains(BoardList.getBoardName(boardFileName))) {
@@ -414,19 +408,19 @@ public class FPGABoards implements ActionListener {
   }
 
   private String getBoardFile() {
-    final var fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
-    final var filter = new FileNameExtensionFilter("Board files", "xml", "xml");
+    val fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
+    val filter = new FileNameExtensionFilter("Board files", "xml", "xml");
     fc.setFileFilter(filter);
     fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    final var test = new File(AppPreferences.FPGA_Workspace.get());
+    val test = new File(AppPreferences.FPGA_Workspace.get());
     if (test.exists()) {
       fc.setSelectedFile(test);
     }
     fc.setDialogTitle(S.get("BoardSelection"));
-    final var retval = fc.showOpenDialog(null);
+    val retval = fc.showOpenDialog(null);
     if (retval == JFileChooser.APPROVE_OPTION) {
-      final var file = fc.getSelectedFile();
-      return file.getPath();
-    } else return null;
+      return fc.getSelectedFile().getPath();
+    }
+    return null;
   }
 }

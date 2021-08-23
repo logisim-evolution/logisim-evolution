@@ -29,15 +29,9 @@
 package com.cburch.logisim.prefs;
 
 import com.cburch.logisim.data.AttributeOption;
+import lombok.Data;
 
+@Data
 public class ConvertEvent {
   private final AttributeOption value;
-
-  public ConvertEvent(AttributeOption value) {
-    this.value = value;
-  }
-
-  public AttributeOption getValue() {
-    return value;
-  }
 }

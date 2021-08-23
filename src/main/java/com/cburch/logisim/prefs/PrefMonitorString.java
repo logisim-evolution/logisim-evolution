@@ -30,6 +30,7 @@ package com.cburch.logisim.prefs;
 
 import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
+import lombok.val;
 
 class PrefMonitorString extends AbstractPrefMonitor<String> {
   private static boolean isSame(String a, String b) {
@@ -43,22 +44,24 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
   PrefMonitorString(String name, String dflt) {
     super(name);
     this.dflt = dflt;
-    final var prefs = AppPreferences.getPrefs();
+    val prefs = AppPreferences.getPrefs();
     this.value = prefs.get(name, dflt);
     prefs.addPreferenceChangeListener(this);
   }
 
+  @Override
   public String get() {
     return value;
   }
 
+  @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    final var prefs = event.getNode();
-    final var prop = event.getKey();
-    final var name = getIdentifier();
+    val prefs = event.getNode();
+    val prop = event.getKey();
+    val name = getIdentifier();
     if (prop.equals(name)) {
-      final var oldValue = value;
-      final var newValue = prefs.get(name, dflt);
+      val oldValue = value;
+      val newValue = prefs.get(name, dflt);
       if (!isSame(oldValue, newValue)) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
@@ -66,8 +69,9 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
     }
   }
 
+  @Override
   public void set(String newValue) {
-    final var oldValue = value;
+    val oldValue = value;
     if (!isSame(oldValue, newValue)) {
       value = newValue;
       AppPreferences.getPrefs().put(getIdentifier(), newValue);
