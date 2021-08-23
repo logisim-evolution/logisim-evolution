@@ -62,13 +62,14 @@ public class BaseLibrary extends Library {
     setHidden();
     val wiring = new WiringTool();
 
-    tools = Arrays.asList(
-        new PokeTool(),
-        new EditTool(selectTool, wiring),
-        wiring,
-        new TextTool(),
-        new MenuTool());
-    }
+    tools =
+        Arrays.asList(
+            new PokeTool(),
+            new EditTool(selectTool, wiring),
+            wiring,
+            new TextTool(),
+            new MenuTool());
+  }
 
   @Override
   public boolean contains(ComponentFactory querry) {
