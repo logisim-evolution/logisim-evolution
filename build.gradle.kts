@@ -131,21 +131,21 @@ extra.apply {
   // JDK/jpackage vars
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
-  val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
-  set("jPackageCmd", jPackageCmd)
+//  val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
+  set("jPackageCmd", jpackage)
 
   // Copytights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
-      jPackageCmd,
-      "--input", "${libsDir}",
+      jpackage,
+      "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--app-version", appVersion,
-      "--copyright", "${copyrights}",
-      "--dest", "${targetDir}"
+      "--copyright", copyrights,
+      "--dest", targetDir
   )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
