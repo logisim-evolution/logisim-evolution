@@ -38,15 +38,12 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
 import java.util.List;
+import lombok.val;
 
 public final class Instance implements Location.At {
 
   public static Instance getInstanceFor(Component comp) {
-    if (comp instanceof InstanceComponent) {
-      return ((InstanceComponent) comp).getInstance();
-    } else {
-      return null;
-    }
+    return (comp instanceof InstanceComponent) ? ((InstanceComponent) comp).getInstance() : null;
   }
 
   public static InstanceComponent getComponentFor(Instance instance) {
@@ -95,6 +92,7 @@ public final class Instance implements Location.At {
     return (InstanceFactory) comp.getFactory();
   }
 
+  @Override
   public Location getLocation() {
     return comp.getLocation();
   }
@@ -123,8 +121,7 @@ public final class Instance implements Location.At {
     comp.setPorts(ports);
   }
 
-  public void setTextField(
-      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+  public void setTextField(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
     comp.setTextField(labelAttr, fontAttr, x, y, halign, valign);
   }
 
@@ -142,7 +139,7 @@ public final class Instance implements Location.At {
 
   public void computeLabelTextField(int avoid, Object labelLoc) {
     if (avoid != 0) {
-      Direction facing = getAttributeValue(StdAttr.FACING);
+      val facing = getAttributeValue(StdAttr.FACING);
       if (facing == Direction.NORTH)
         avoid = (avoid & 0x10) | ((avoid << 1) & 0xf) | ((avoid & 0xf) >> 3);
       else if (facing == Direction.EAST)
@@ -152,44 +149,44 @@ public final class Instance implements Location.At {
     }
 
     Bounds bds = getBounds();
-    int x = bds.getX() + bds.getWidth() / 2;
-    int y = bds.getY() + bds.getHeight() / 2;
-    int halign = GraphicsUtil.H_CENTER;
-    int valign = GraphicsUtil.V_CENTER;
+    var x = bds.getX() + bds.getWidth() / 2;
+    var y = bds.getY() + bds.getHeight() / 2;
+    var horizAlign = GraphicsUtil.H_CENTER;
+    var vertAlign = GraphicsUtil.V_CENTER;
     if (labelLoc == StdAttr.LABEL_CENTER) {
-      int offset = 0;
+      var offset = 0;
       if ((avoid & AVOID_CENTER) != 0) offset = 3;
       x = bds.getX() + (bds.getWidth() - offset) / 2;
       y = bds.getY() + (bds.getHeight() - offset) / 2;
     } else if (labelLoc == Direction.NORTH) {
       y = bds.getY() - 2;
-      valign = GraphicsUtil.V_BOTTOM;
+      vertAlign = GraphicsUtil.V_BOTTOM;
       if ((avoid & AVOID_TOP) != 0) {
         x += 2;
-        halign = GraphicsUtil.H_LEFT;
+        horizAlign = GraphicsUtil.H_LEFT;
       }
     } else if (labelLoc == Direction.SOUTH) {
       y = bds.getY() + bds.getHeight() + 2;
-      valign = GraphicsUtil.V_TOP;
+      vertAlign = GraphicsUtil.V_TOP;
       if ((avoid & AVOID_BOTTOM) != 0) {
         x += 2;
-        halign = GraphicsUtil.H_LEFT;
+        horizAlign = GraphicsUtil.H_LEFT;
       }
     } else if (labelLoc == Direction.EAST) {
       x = bds.getX() + bds.getWidth() + 2;
-      halign = GraphicsUtil.H_LEFT;
+      horizAlign = GraphicsUtil.H_LEFT;
       if ((avoid & AVOID_RIGHT) != 0) {
         y -= 2;
-        valign = GraphicsUtil.V_BOTTOM;
+        vertAlign = GraphicsUtil.V_BOTTOM;
       }
     } else if (labelLoc == Direction.WEST) {
       x = bds.getX() - 2;
-      halign = GraphicsUtil.H_RIGHT;
+      horizAlign = GraphicsUtil.H_RIGHT;
       if ((avoid & AVOID_LEFT) != 0) {
         y -= 2;
-        valign = GraphicsUtil.V_BOTTOM;
+        vertAlign = GraphicsUtil.V_BOTTOM;
       }
     }
-    setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
+    setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, horizAlign, vertAlign);
   }
 }

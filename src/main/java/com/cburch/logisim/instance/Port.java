@@ -34,6 +34,9 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.StringGetter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 
 public class Port {
   private static String defaultExclusive(String s) {
@@ -67,14 +70,14 @@ public class Port {
   public static final String SHARED = "shared";
   private final int dx;
   private final int dy;
-  private final int type;
-  private final BitWidth widthFixed;
+  @Getter private final int type;
+  private final BitWidth fixedBitWidth;
 
-  private final Attribute<BitWidth> widthAttr;
+  @Getter private final Attribute<BitWidth> widthAttibute;
 
   private final boolean exclude;
 
-  private StringGetter toolTip;
+  @Setter private StringGetter toolTip;
 
   public Port(int dx, int dy, String type, Attribute<BitWidth> attr) {
     this(dx, dy, type, attr, defaultExclusive(type));
@@ -84,8 +87,8 @@ public class Port {
     this.dx = dx;
     this.dy = dy;
     this.type = toType(type);
-    this.widthFixed = null;
-    this.widthAttr = attr;
+    this.fixedBitWidth = null;
+    this.widthAttibute = attr;
     this.exclude = toExclusive(exclude);
     this.toolTip = null;
   }
@@ -98,8 +101,8 @@ public class Port {
     this.dx = dx;
     this.dy = dy;
     this.type = toType(type);
-    this.widthFixed = bits;
-    this.widthAttr = null;
+    this.fixedBitWidth = bits;
+    this.widthAttibute = null;
     this.exclude = toExclusive(exclude);
     this.toolTip = null;
   }
@@ -113,7 +116,7 @@ public class Port {
   }
 
   public BitWidth getFixedBitWidth() {
-    return widthFixed == null ? BitWidth.UNKNOWN : widthFixed;
+    return fixedBitWidth == null ? BitWidth.UNKNOWN : fixedBitWidth;
   }
 
   public String getToolTip() {
@@ -121,28 +124,15 @@ public class Port {
     return getter == null ? null : getter.toString();
   }
 
-  public int getType() {
-    return type;
-  }
-
-  public Attribute<BitWidth> getWidthAttribute() {
-    return widthAttr;
-  }
-  
-  public void setToolTip(StringGetter value) {
-    toolTip = value;
-  }
-
   public EndData toEnd(Location loc, AttributeSet attrs) {
-    Location pt = loc.translate(dx, dy);
-    if (widthFixed != null) {
-      return new EndData(pt, widthFixed, type, exclude);
-    } else {
-      Object val = attrs.getValue(widthAttr);
-      if (!(val instanceof BitWidth)) {
-        throw new IllegalArgumentException("Width attribute not set");
-      }
-      return new EndData(pt, (BitWidth) val, type, exclude);
+    val pt = loc.translate(dx, dy);
+    if (fixedBitWidth != null) {
+      return new EndData(pt, fixedBitWidth, type, exclude);
     }
+    val val = attrs.getValue(widthAttibute);
+    if (!(val instanceof BitWidth)) {
+      throw new IllegalArgumentException("Width attribute not set");
+    }
+    return new EndData(pt, (BitWidth) val, type, exclude);
   }
 }

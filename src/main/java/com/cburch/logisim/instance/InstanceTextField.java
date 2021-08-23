@@ -42,7 +42,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.tools.Caret;
@@ -51,6 +50,7 @@ import com.cburch.logisim.tools.TextEditable;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import lombok.val;
 
 public class InstanceTextField implements AttributeListener, TextFieldListener, TextEditable {
   private Canvas canvas;
@@ -75,7 +75,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public void attributeValueChanged(AttributeEvent e) {
-    Attribute<?> attr = e.getAttribute();
+    val attr = e.getAttribute();
     if (attr == labelAttr) {
       updateField(comp.getAttributeSet());
     } else if (attr == fontAttr) {
@@ -88,7 +88,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   private void createField(AttributeSet attrs, String text) {
-    Font font = attrs.getValue(fontAttr);
+    val font = attrs.getValue(fontAttr);
     field = new TextField(fieldX, fieldY, halign, valign, font);
     field.setText(text);
     field.addTextFieldListener(this);
@@ -96,12 +96,12 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   void draw(Component comp, ComponentDrawContext context) {
     if (field != null && isLabelVisible) {
-      Graphics g = context.getGraphics().create();
-      Color currentColor = g.getColor();
-      if (!context.isPrintView()) g.setColor(fontColor);
-      field.draw(g);
-      g.setColor(currentColor);
-      g.dispose();
+      val gfx = context.getGraphics().create();
+      val currentColor = gfx.getColor();
+      if (!context.isPrintView()) gfx.setColor(fontColor);
+      field.draw(gfx);
+      gfx.setColor(currentColor);
+      gfx.dispose();
     }
   }
 
@@ -111,32 +111,33 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
-    SetAttributeAction act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
-    act.set(comp, labelAttr, newText);
-    return act;
+    val action = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
+    action.set(comp, labelAttr, newText);
+    return action;
   }
 
   @Override
   public Caret getTextCaret(ComponentUserEvent event) {
     canvas = event.getCanvas();
-    Graphics g = canvas.getGraphics();
+    val gfx = canvas.getGraphics();
 
     // if field is absent, create it empty
     // and if it is empty, just return a caret at its beginning
     if (field == null) createField(comp.getAttributeSet(), "");
-    String text = field.getText();
-    if (text == null || text.equals("")) return field.getCaret(g, 0);
+    val text = field.getText();
+    if (text == null || text.equals("")) return field.getCaret(gfx, 0);
 
-    Bounds bds = field.getBounds(g);
+    var bds = field.getBounds(gfx);
     if (bds.getWidth() < 4 || bds.getHeight() < 4) {
-      Location loc = comp.getLocation();
+      val loc = comp.getLocation();
       bds = bds.add(Bounds.create(loc).expand(2));
     }
 
-    int x = event.getX();
-    int y = event.getY();
-    if (bds.contains(x, y)) return field.getCaret(g, x, y);
-    else return null;
+    val x = event.getX();
+    val y = event.getY();
+    if (bds.contains(x, y)) return field.getCaret(gfx, x, y);
+
+    return null;
   }
 
   private boolean shouldRegister() {
@@ -145,23 +146,22 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public void textChanged(TextFieldEvent e) {
-    String prev = e.getOldText();
-    String next = e.getText();
+    val prev = e.getOldText();
+    val next = e.getText();
     if (!next.equals(prev)) {
       comp.getAttributeSet().setValue(labelAttr, next);
     }
   }
 
-  void update(
-      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
-    final var wasReg = shouldRegister();
+  void update(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+    val wasReg = shouldRegister();
     this.labelAttr = labelAttr;
     this.fontAttr = fontAttr;
     this.fieldX = x;
     this.fieldY = y;
     this.halign = halign;
     this.valign = valign;
-    final var shouldReg = shouldRegister();
+    val shouldReg = shouldRegister();
     var attrs = comp.getAttributeSet();
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
       isLabelVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
@@ -172,7 +172,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   private void updateField(AttributeSet attrs) {
-    String text = attrs.getValue(labelAttr);
+    val text = attrs.getValue(labelAttr);
     if (text == null || text.equals("")) {
       if (field != null) {
         field.removeTextFieldListener(this);
@@ -182,7 +182,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
       if (field == null) {
         createField(attrs, text);
       } else {
-        Font font = attrs.getValue(fontAttr);
+        val font = attrs.getValue(fontAttr);
         if (font != null) field.setFont(font);
         field.setLocation(fieldX, fieldY, halign, valign);
         field.setText(text);

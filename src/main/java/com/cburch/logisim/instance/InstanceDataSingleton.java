@@ -28,12 +28,12 @@
 
 package com.cburch.logisim.instance;
 
-public class InstanceDataSingleton implements InstanceData, Cloneable {
-  private Object value;
+import lombok.Data;
 
-  public InstanceDataSingleton(Object value) {
-    this.value = value;
-  }
+@Data
+public class InstanceDataSingleton implements InstanceData, Cloneable {
+
+  private Object value;
 
   @Override
   public InstanceDataSingleton clone() {
@@ -42,13 +42,5 @@ public class InstanceDataSingleton implements InstanceData, Cloneable {
     } catch (CloneNotSupportedException e) {
       return null;
     }
-  }
-
-  public Object getValue() {
-    return value;
-  }
-
-  public void setValue(Object value) {
-    this.value = value;
   }
 }
