@@ -40,27 +40,6 @@ import java.util.Collection;
  * examples.
  */
 public class ContentBuilder {
-
-  /**
-   * Helper class to simplify building ContentBuilder content with the string formating helper.
-   */
-  public class Line {
-    protected String line = "";
-
-    public Line(String line) {
-      this.line = line;
-    }
-
-    public Line(String fmt, Object... args) {
-      this(String.format(fmt, args));
-    }
-
-    @Override
-    public String toString() {
-      return this.line;
-    }
-  }
-
   private static final int DEFAULT_INDENT = 3;
 
   private ArrayList<String> contents;
@@ -74,10 +53,6 @@ public class ContentBuilder {
   public ContentBuilder clear() {
     contents.clear();
     return this;
-  }
-
-  public ContentBuilder add(Line line) {
-    return this.add(line.toString());
   }
 
   /**
@@ -102,21 +77,30 @@ public class ContentBuilder {
     return add(String.format(fmt, args));
   }
 
-  public ContentBuilder add() {
-    return add("");
-  }
-
-  public ContentBuilder empty() {
-    return empty(1);
-  }
-
-  public ContentBuilder empty(int lines) {
-    for (var i = 0; i < lines; i++) {
-      empty();
-    }
+  public ContentBuilder repeat(int count, String line) {
+    for (var i = 0; i < count; i++) contents.add(line);
     return this;
   }
 
+  /**
+   * Appends single empty line to the content buffer.
+   */
+  public ContentBuilder empty() {
+    return repeat(1, "");
+  }
+
+  /**
+   * Appends `lines` count of empty line to the content buffer.
+   */
+  public ContentBuilder empty(int lines) {
+    return repeat(lines, "");
+  }
+
+  /**
+   * Adds
+   * @param lines
+   * @return
+   */
   public ContentBuilder add(String... lines) {
     return add(Arrays.asList(lines));
   }
@@ -157,18 +141,10 @@ public class ContentBuilder {
     var oneLine = new StringBuilder();
     var contents = new ArrayList<String>();
     var maxWordLength = 0;
-    for (var word : remarkWords) {
-      if (word.length() > maxWordLength) {
-        maxWordLength = word.length();
-      }
-    }
-    if (maxRemarkLength < maxWordLength) {
-      return contents;
-    }
+    for (var word : remarkWords) if (word.length() > maxWordLength) maxWordLength = word.length();
+    if (maxRemarkLength < maxWordLength) return contents;
     /* we start with generating the first remark line */
-    while (oneLine.length() < nrOfIndentSpaces) {
-      oneLine.append(" ");
-    }
+    while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < maxLineLength - nrOfIndentSpaces; i++) {
       oneLine.append(HDL.getRemakrChar(i == 0, i == maxLineLength - nrOfIndentSpaces - 1));
     }
@@ -188,9 +164,7 @@ public class ContentBuilder {
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
-      while (oneLine.length() < nrOfIndentSpaces) {
-        oneLine.append(" ");
-      }
+      while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
       if (oneLine.length() == nrOfIndentSpaces) {
         /* we put the preamble */
         oneLine.append(HDL.getRemarkStart());
@@ -198,18 +172,14 @@ public class ContentBuilder {
       if (remarkWord.endsWith("\\")) {
         /* Forced new line */
         oneLine.append(remarkWord, 0, remarkWord.length() - 1);
-        while (oneLine.length() < (maxLineLength - HDL.remarkOverhead())) {
-          oneLine.append(" ");
-        }
+        while (oneLine.length() < (maxLineLength - HDL.remarkOverhead())) oneLine.append(" ");
       } else {
         oneLine.append(remarkWord).append(" ");
       }
     }
     if (oneLine.length() > (nrOfIndentSpaces + HDL.remarkOverhead())) {
       /* we have an unfinished remark line */
-      while (oneLine.length() < (maxLineLength - HDL.remarkOverhead())) {
-        oneLine.append(" ");
-      }
+      while (oneLine.length() < (maxLineLength - HDL.remarkOverhead())) oneLine.append(" ");
       oneLine
           .append(" ")
           .append(HDL.getRemakrChar(false, false))
@@ -218,9 +188,7 @@ public class ContentBuilder {
       oneLine.setLength(0);
     }
     /* we end with generating the last remark line */
-    while (oneLine.length() < nrOfIndentSpaces) {
-      oneLine.append(" ");
-    }
+    while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < maxLineLength - nrOfIndentSpaces; i++)
       oneLine.append(HDL.getRemakrChar(i == maxLineLength - nrOfIndentSpaces - 1, i == 0));
     contents.add(oneLine.toString());

@@ -146,7 +146,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var redIn = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
     final var greenIn = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
     final var blueIn = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
