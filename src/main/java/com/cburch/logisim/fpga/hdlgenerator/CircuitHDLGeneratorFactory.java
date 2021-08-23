@@ -380,10 +380,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-//    var contents = new ArrayList<String>();
-    var contents = new ContentBuilder();
+    final var contents = new ContentBuilder();
     var isFirstLine = true;
-    var temp = new StringBuilder();
+    final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();
     /* we start with the connection of the clock sources */
     for (final var clockSource : theNetlist.GetClockSources()) {
@@ -453,8 +452,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       final var myInput = theNetlist.GetInputPin(i);
       contents.add(
           getSignalMap(
-              CorrectLabel.getCorrectLabel(
-                  myInput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+              CorrectLabel.getCorrectLabel(myInput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               myInput,
               0,
               3,
@@ -471,8 +469,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       NetlistComponent MyOutput = theNetlist.GetOutputPin(i);
       contents.add(
           getSignalMap(
-              CorrectLabel.getCorrectLabel(
-                  MyOutput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+              CorrectLabel.getCorrectLabel(MyOutput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               MyOutput,
               0,
               3,
@@ -508,8 +505,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           var compId = worker.getComponentStringIdentifier();
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
-            contents.add("");
-            contents.add(MakeRemarkBlock("Here all normal components are defined", 3));
+            contents.add("").add(MakeRemarkBlock("Here all normal components are defined", 3));
             isFirstLine = false;
           }
           contents.add(worker.GetComponentMap(theNetlist, id++, comp, null, compName));
@@ -525,13 +521,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         var compName = comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
         if (comp.IsGatedInstance())  compName = compName.concat("_gated");
-        var compId = worker.getComponentStringIdentifier();
+        final var compId = worker.getComponentStringIdentifier();
         var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
         final var compMap = worker.GetComponentMap(theNetlist, id++, comp, null, compName);
         if (!compMap.isEmpty()) {
           if (isFirstLine) {
-            contents.add("");
-            contents.addRemarkBlock("Here all sub-circuits are defined");
+            contents.add("").addRemarkBlock("Here all sub-circuits are defined");
             isFirstLine = false;
           }
           compIds.remove(compId);
@@ -616,6 +611,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             }
           }
           if (map == null || compPin < 0) {
+            // FIXME: hardcoded string
             Reporter.Report.AddError("BUG: did not find IOpin");
             continue;
           }
@@ -702,7 +698,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           if (topLevel) {
             portMap.put(pinLabel, preamble + pinLabel);
           } else {
-            int endid = nets.GetEndIndex(componentInfo, pinLabel, true);
+            final var endid = nets.GetEndIndex(componentInfo, pinLabel, true);
             if (endid < 0) {
               // FIXME: hardcoded string
               Reporter.Report.AddFatalError(
@@ -737,9 +733,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (nrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
       if (isOutput) {
-        if (!comp.EndIsConnected(endIndex)) {
-          return " ";
-        }
+        if (!comp.EndIsConnected(endIndex)) return " ";
         source.append(portName);
         destination.append(GetNetName(comp, endIndex, true, theNets));
       } else {
@@ -750,13 +744,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
         source.append(GetNetName(comp, endIndex, true, theNets));
         destination.append(portName);
-        if (!comp.EndIsConnected(endIndex)) {
-          return contents.toString();
-        }
+        if (!comp.EndIsConnected(endIndex)) return contents.toString();
       }
-      while (destination.length() < SallignmentSize) {
-        destination.append(" ");
-      }
+      while (destination.length() < SallignmentSize) destination.append(" ");
       contents
           .append(tab)
           .append(HDL.assignPreamble())
@@ -772,23 +762,15 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       /* First we check if the bus has a connection */
       var connected = false;
       for (var i = 0; i < nrOfBits; i++) {
-        if (connectionInformation.GetConnection((byte) i).GetParentNet() != null) {
-          connected = true;
-        }
+        if (connectionInformation.GetConnection((byte) i).GetParentNet() != null) connected = true;
       }
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
-        if (isOutput) {
-          return contents.toString();
-        } else {
-          // FIXME: hardcoded string
-          Reporter.Report.AddSevereWarning(
-              "Found an unconnected output bus pin, tied all the pin bits to ground!");
-        }
+        if (isOutput) return contents.toString();
+        // FIXME: hardcoded string
+        Reporter.Report.AddSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
         destination.append(portName);
-        while (destination.length() < SallignmentSize) {
-          destination.append(" ");
-        }
+        while (destination.length() < SallignmentSize) destination.append(" ");
         contents
             .append(tab)
             .append(HDL.assignPreamble())
@@ -812,9 +794,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             destination.append(portName);
             source.append(GetBusNameContinues(comp, endIndex, theNets));
           }
-          while (destination.length() < SallignmentSize) {
-            destination.append(" ");
-          }
+          while (destination.length() < SallignmentSize) destination.append(" ");
           contents
               .append(tab)
               .append(HDL.assignPreamble())
@@ -843,14 +823,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             final var solderPoint = connectionInformation.GetConnection((byte) bit);
             if (solderPoint.GetParentNet() == null) {
               /* The net is not connected */
-              if (isOutput) {
-                continue;
-              } else {
-                // FIXME: hardcoded string
-                Reporter.Report.AddSevereWarning(
-                        String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
-                source.append(HDL.GetZeroVector(1, true));
-              }
+              if (isOutput) continue;
+              // FIXME: hardcoded string
+              Reporter.Report.AddSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
+              source.append(HDL.GetZeroVector(1, true));
             } else {
               /*
                * The net is connected, we have to find out if the
@@ -882,12 +858,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 }
               }
             }
-            while (destination.length() < SallignmentSize) {
-              destination.append(" ");
-            }
-            if (bit != 0) {
-              contents.append("\n");
-            }
+            while (destination.length() < SallignmentSize) destination.append(" ");
+            if (bit != 0) contents.append("\n");
             contents
                 .append(tab)
                 .append(HDL.assignPreamble())
