@@ -36,6 +36,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -106,76 +107,64 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents = new ContentBuilder();
+    final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDL.isVHDL()) {
-      contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3));
+      contents.addRemarkBlock("Here the control signals are defined");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          contents.add(
-              "   s_byte_enable_"
-                  + i
-                  + " <= s_ByteEnableReg("
-                  + i
-                  + ") AND s_TickDelayLine(2) AND s_OEReg;");
-          contents.add(
-              "   s_we_"
-                  + i
-                  + "          <= s_ByteEnableReg("
-                  + i
-                  + ") AND s_TickDelayLine(0) AND s_WEReg;");
+          contents
+              .add("   s_byte_enable_%1$d <= s_ByteEnableReg(%1$d) AND s_TickDelayLine(2) AND s_OEReg;", i)
+              .add("   s_we_%1$d          <= s_ByteEnableReg(%1$d) AND s_TickDelayLine(0) AND s_WEReg;", i);
         }
       } else {
-        contents.add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;");
-        contents.add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
+        contents
+            .add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;")
+            .add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
       }
-      contents.add("");
-      contents.addAll(MakeRemarkBlock("Here the input registers are defined", 3));
-      contents.add("   InputRegs : PROCESS (Clock , Tick , Address , DataIn , WE , OE )");
-      contents.add("   BEGIN");
-      contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-      contents.add("         IF (Tick = '1') THEN");
-      contents.add("             s_DataInReg        <= DataIn;");
-      contents.add("             s_Address_reg      <= Address;");
-      contents.add("             s_WEReg            <= WE;");
-      contents.add("             s_OEReg            <= OE;");
+      contents
+          .empty()
+          .addRemarkBlock("Here the input registers are defined")
+          .add(
+              "   InputRegs : PROCESS (Clock , Tick , Address , DataIn , WE , OE )",
+              "   BEGIN",
+              "      IF (Clock'event AND (Clock = '1')) THEN",
+              "         IF (Tick = '1') THEN",
+              "             s_DataInReg        <= DataIn;",
+              "             s_Address_reg      <= Address;",
+              "             s_WEReg            <= WE;",
+              "             s_OEReg            <= OE;");
       if (byteEnables) {
-        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          contents.add(
-              "             s_ByteEnableReg("
-                  + i
-                  + ") <= ByteEnable"
-                  + i
-                  + ";");
-        }
+        for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
+          contents.add("             s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
       }
-      contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS InputRegs;");
-      contents.add("");
-      contents.add("   TickPipeReg : PROCESS(Clock)");
-      contents.add("   BEGIN");
-      contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-      contents.add("          s_TickDelayLine(0)          <= Tick;");
-      contents.add("          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS TickPipeReg;");
-      contents.add("");
-      contents.addAll(MakeRemarkBlock("Here the actual memorie(s) is(are) defined", 3));
+      contents
+        .add(
+            "         END IF;",
+            "      END IF;",
+            "   END PROCESS InputRegs;")
+        .empty()
+        .add(
+            "   TickPipeReg : PROCESS(Clock)",
+            "   BEGIN",
+            "      IF (Clock'event AND (Clock = '1')) THEN",
+            "          s_TickDelayLine(0)          <= Tick;",
+            "          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);",
+            "      END IF;",
+            "   END PROCESS TickPipeReg;",
+            "")
+        .addRemarkBlock("Here the actual memorie(s) is(are) defined");
+
       if (byteEnables) {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          contents.add(
-              "   Mem"
-                  + i
-                  + " : PROCESS( Clock , s_we_"
-                  + i
-                  + ", s_DataInReg, s_Address_reg)");
-          contents.add("   BEGIN");
-          contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          contents.add("            IF (s_we_" + i + " = '1') THEN");
+          contents
+              .add("   Mem%1$d : PROCESS( Clock , s_we_%1$d, s_DataInReg, s_Address_reg)", i)
+              .add("   BEGIN")
+              .add("      IF (Clock'event AND (Clock = '1')) THEN")
+              .add("         IF (s_we_" + i + " = '1') THEN");
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -184,87 +173,64 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           final var memName =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1) && truncated)
                   ? "s_trunc_mem_contents"
-                  : "s_byte_mem_" + i + "_contents";
-          contents.add(
-              "               "
-                  + memName
-                  + "(to_integer(unsigned(s_Address_reg))) <= s_DataInReg("
-                  + endIndex
-                  + " DOWNTO "
-                  + startIndex
-                  + ");");
-          contents.add("            END IF;");
-          contents.add(
-              "            s_ram_data_out("
-                  + endIndex
-                  + " DOWNTO "
-                  + startIndex
-                  + ") <= "
-                  + memName
-                  + "(to_integer(unsigned(s_Address_reg)));");
-          contents.add("      END IF;");
-          contents.add("   END PROCESS Mem" + i + ";");
-          contents.add("");
+                  : String.format("s_byte_mem_%d_contents", i);
+          contents
+              .add("            %s(to_integer(unsigned(s_Address_reg))) <= s_DataInReg(%d DOWNTO %d);", memName, endIndex, startIndex)
+              .add("         END IF;")
+              .add("         s_ram_data_out(%d DOWNTO %d) <= %s(to_integer(unsigned(s_Address_reg)));", endIndex, startIndex, memName)
+              .add("      END IF;")
+              .add("   END PROCESS Mem" + i + ";")
+              .add("");
         }
       } else {
-        contents.add("   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)");
-        contents.add("   BEGIN");
-        contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-        contents.add("            IF (s_we = '1') THEN");
-        contents.add(
-            "               s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;");
-        contents.add("            END IF;");
-        contents.add(
-            "            s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));");
-        contents.add("      END IF;");
-        contents.add("   END PROCESS Mem;");
-        contents.add("");
+        contents
+            .add(
+                "   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)",
+                "   BEGIN",
+                "      IF (Clock'event AND (Clock = '1')) THEN",
+                "         IF (s_we = '1') THEN",
+                "            s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;",
+                "         END IF;",
+                "         s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));",
+                "      END IF;",
+                "   END PROCESS Mem;")
+            .empty();
       }
-      contents.addAll(MakeRemarkBlock("Here the output register is defined", 3));
+      contents.addRemarkBlock("Here the output register is defined");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-          contents.add(
-              "   Res"
-                  + i
-                  + " : PROCESS( Clock , s_byte_enable_"
-                  + i
-                  + ", s_ram_data_out)");
-          contents.add("   BEGIN");
-          contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          contents.add("         IF (s_byte_enable_" + i + " = '1') THEN");
+          contents
+              .add("   Res%1$d : PROCESS( Clock , s_byte_enable_%1$d, s_ram_data_out)", i)
+              .add("   BEGIN")
+              .add("      IF (Clock'event AND (Clock = '1')) THEN")
+              .add("         IF (s_byte_enable_%s = '1') THEN", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
-          contents.add(
-              "           DataOut("
-                  + endIndex
-                  + " DOWNTO "
-                  + startIndex
-                  + ") <= s_ram_data_out("
-                  + endIndex
-                  + " DOWNTO "
-                  + startIndex
-                  + ");");
-          contents.add("         END IF;");
-          contents.add("      END IF;");
-          contents.add("   END PROCESS Res" + i + ";");
-          contents.add("");
+          contents
+              .add("           DataOut(%1$d DOWNTO %2$d) <= s_ram_data_out(%1$d DOWNTO %2$d);", endIndex, startIndex)
+              .add("         END IF;")
+              .add("      END IF;")
+              .add("   END PROCESS Res%d;", i)
+              .empty();
         }
       } else {
-        contents.add("   Res : PROCESS( Clock , s_oe, s_ram_data_out)");
-        contents.add("   BEGIN");
-        contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-        contents.add("         IF (s_oe = '1') THEN");
-        contents.add("           DataOut <= s_ram_data_out;");
-        contents.add("         END IF;");
-        contents.add("      END IF;");
-        contents.add("   END PROCESS Res;");
-        contents.add("");
+        contents
+            .add(
+                "   Res : PROCESS( Clock , s_oe, s_ram_data_out)",
+                "   BEGIN",
+                "      IF (Clock'event AND (Clock = '1')) THEN",
+                "         IF (s_oe = '1') THEN",
+                "           DataOut <= s_ram_data_out;",
+                "         END IF;",
+                "      END IF;",
+                "   END PROCESS Res;")
+            .empty();
       }
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

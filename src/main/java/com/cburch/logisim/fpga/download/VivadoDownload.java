@@ -38,6 +38,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.ContentBuilder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -211,7 +212,7 @@ public class VivadoDownload implements VendorDownload {
       contents.add("");
     }
 
-    contents.addAll(GetPinLocStrings());
+    contents.addAll(getPinLocStrings());
     if (!FileWriter.WriteContents(xdcFile, contents)) return false;
     contents.clear();
 
@@ -243,38 +244,23 @@ public class VivadoDownload implements VendorDownload {
     return FileWriter.WriteContents(loadBitstreamFile, contents);
   }
 
-  private ArrayList<String> GetPinLocStrings() {
-    var contents = new ArrayList<String>();
+  private ArrayList<String> getPinLocStrings() {
+    final var contents = new ContentBuilder();
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
-          contents.add(
-              "set_property PACKAGE_PIN "
-                  + map.getPinLocation(i)
-                  + " [get_ports {"
-                  + netName
-                  + "}]");
+          contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", map.getPinLocation(i), netName);
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
-              contents.add(
-                  "    set_property IOSTANDARD "
-                      + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
-                      + " [get_ports {"
-                      + netName
-                      + "}]");
+            final var ioStandard = info.GetIOStandard();
+            // FIXME: this code looks like copy&paste&paste issue?
+            if (ioStandard != IoStandards.Unknown && ioStandard != IoStandards.DefaulStandard) {
+              contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
             }
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
-              contents.add(
-                  "    set_property IOSTANDARD "
-                      + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
-                      + " [get_ports {"
-                      + netName
-                      + "}]");
+            if (ioStandard != IoStandards.Unknown && ioStandard != IoStandards.DefaulStandard) {
+              contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
             }
           }
         }
@@ -282,9 +268,9 @@ public class VivadoDownload implements VendorDownload {
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
     for (var key : LedArrayMap.keySet()) {
-      contents.add("set_property PACKAGE_PIN " + key + " [get_ports {" + LedArrayMap.get(key) + "}]");
+      contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", key, LedArrayMap.get(key));
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

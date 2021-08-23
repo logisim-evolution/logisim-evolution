@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -62,54 +63,49 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new ContentBuilder();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
       contents.add("   make_mux : PROCESS( Enable,");
       for (var i = 0; i < (1 << nrOfSelectBits); i++)
-        contents.add("                       MuxIn_" + i + ",");
-      contents.add("                       Sel )");
-      contents.add("   BEGIN");
-      contents.add("      IF (Enable = '0') THEN");
+        contents.add("                       MuxIn_%d,", i);
+      contents
+          .add("                       Sel )")
+          .add("   BEGIN")
+          .add("      IF (Enable = '0') THEN");
       if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
         contents.add("         MuxOut <= (OTHERS => '0');");
-      else contents.add("         MuxOut <= '0';");
+      else
+        contents.add("         MuxOut <= '0';");
       contents.add("                        ELSE");
       contents.add("         CASE (Sel) IS");
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add(
-            "            WHEN "
-                + IntToBin(i, nrOfSelectBits)
-                + " => MuxOut <= MuxIn_"
-                + i
-                + ";");
-      contents.add(
-          "            WHEN OTHERS  => MuxOut <= MuxIn_"
-              + ((1 << nrOfSelectBits) - 1)
-              + ";");
-      contents.add("         END CASE;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_mux;");
+        contents.add("            WHEN %s => MuxOut <= MuxIn_%d;", IntToBin(i, nrOfSelectBits), i);
+      contents
+          .add("            WHEN OTHERS  => MuxOut <= MuxIn_%d;", (1 << nrOfSelectBits) - 1)
+          .add("         END CASE;")
+          .add("      END IF;")
+          .add("   END PROCESS make_mux;");
     } else {
-      contents.add("   assign MuxOut = s_selected_vector;");
-      contents.add("");
-      contents.add("   always @(*)");
-      contents.add("   begin");
-      contents.add("      if (~Enable) s_selected_vector <= 0;");
-      contents.add("      else case (Sel)");
+      contents
+          .add("   assign MuxOut = s_selected_vector;")
+          .add("")
+          .add("   always @(*)")
+          .add("   begin")
+          .add("      if (~Enable) s_selected_vector <= 0;")
+          .add("      else case (Sel)");
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
-        contents.add("         " + IntToBin(i, nrOfSelectBits) + ":");
-        contents.add("            s_selected_vector <= MuxIn_" + i + ";");
+        contents
+            .add("         %s:", IntToBin(i, nrOfSelectBits))
+            .add("            s_selected_vector <= MuxIn_%d;", i);
       }
-      contents.add("         default:");
-      contents.add(
-          "            s_selected_vector <= MuxIn_"
-              + ((1 << nrOfSelectBits) - 1)
-              + ";");
-      contents.add("      endcase");
-      contents.add("   end");
+      contents
+          .add("         default:")
+          .add("            s_selected_vector <= MuxIn_%d;", (1 << nrOfSelectBits) - 1)
+          .add("      endcase")
+          .add("   end");
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

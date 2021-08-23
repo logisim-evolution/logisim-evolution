@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -61,7 +62,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new ContentBuilder();
     var space = "  ";
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var numOutputs = (1 << nrOfSelectBits);
@@ -71,23 +72,17 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
       final var binValue = IntToBin(i, nrOfSelectBits);
       if (HDL.isVHDL()) {
-        contents.add("   DemuxOut_" + i + space + "<= DemuxIn WHEN sel = " + binValue + " AND");
+        contents.add("   DemuxOut_%d%s<= DemuxIn WHEN sel = %s AND", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
         } else {
           contents.add("                               Enable = '1' ELSE '0';");
         }
       } else {
-        contents.add(
-            "   assign DemuxOut_"
-                + i
-                + space
-                + " = (Enable&(sel == "
-                + binValue
-                + " )) ? DemuxIn : 0;");
+        contents.add("   assign DemuxOut_%d%s = (Enable&(sel == %s )) ? DemuxIn : 0;", i, space, binValue);
       }
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

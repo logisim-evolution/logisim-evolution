@@ -40,9 +40,11 @@ import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.ContentBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -92,6 +94,7 @@ public class AlteraDownload implements VendorDownload {
     cablename = "";
   }
 
+  @Override
   public void SetMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
@@ -199,99 +202,86 @@ public class AlteraDownload implements VendorDownload {
       ScriptFile = new File(ScriptPath + AlteraTclFile);
       return ScriptFile.exists();
     }
-    var FileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
-    var Contents = new ArrayList<String>();
-    Contents.add("# Load Quartus II Tcl Project package");
-    Contents.add("package require ::quartus::project");
-    Contents.add("");
-    Contents.add("set need_to_close_project 0");
-    Contents.add("set make_assignments 1");
-    Contents.add("");
-    Contents.add("# Check that the right project is open");
-    Contents.add("if {[is_project_open]} {");
-    Contents.add("    if {[string compare $quartus(project) \""
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName
-        + "\"]} {");
-    Contents.add("        puts \"Project "
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName
-        + " is not open\"");
-    Contents.add("        set make_assignments 0");
-    Contents.add("    }");
-    Contents.add("} else {");
-    Contents.add("    # Only open if not already open");
-    Contents.add("    if {[project_exists " + ToplevelHDLGeneratorFactory.FPGAToplevelName + "]} {");
-    Contents.add("        project_open -revision "
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName
-        + " "
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName);
-    Contents.add("    } else {");
-    Contents.add("        project_new -revision "
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName
-        + " "
-        + ToplevelHDLGeneratorFactory.FPGAToplevelName);
-    Contents.add("    }");
-    Contents.add("    set need_to_close_project 1");
-    Contents.add("}");
-    Contents.add("# Make assignments");
-    Contents.add("if {$make_assignments} {");
-    Contents.addAll(GetAlteraAssignments(BoardInfo));
-    Contents.add("");
-    Contents.add("    # Include all entities and gates");
-    Contents.add("");
+    var fileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
+    var c = new ContentBuilder();
+    c.add("# Load Quartus II Tcl Project package")
+        .add("package require ::quartus::project")
+        .add("")
+        .add("set need_to_close_project 0")
+        .add("set make_assignments 1")
+        .add("")
+        .add("# Check that the right project is open")
+        .add("if {[is_project_open]} {")
+        .add("    if {[string compare $quartus(project) \"%s\"]} {", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("        puts \"Project %s is not open\"", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("        set make_assignments 0")
+        .add("    }")
+        .add("} else {")
+        .add("    # Only open if not already open")
+        .add("    if {[project_exists %s]} {", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("        project_open -revision %s %s", ToplevelHDLGeneratorFactory.FPGAToplevelName, ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("    } else {")
+        .add("        project_new -revision %s %s", ToplevelHDLGeneratorFactory.FPGAToplevelName, ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("    }")
+        .add("    set need_to_close_project 1")
+        .add("}")
+        .add("# Make assignments")
+        .add("if {$make_assignments} {")
+        .add(GetAlteraAssignments(BoardInfo))
+        .add("")
+        .add("    # Include all entities and gates")
+        .add("");
     for (var entity : Entities) {
-      Contents.add("    set_global_assignment -name " + FileType + " \"" + entity + "\"");
+      c.add("    set_global_assignment -name %s \"%s\"", fileType, entity);
     }
     for (var architecture : Architectures) {
-      Contents.add("    set_global_assignment -name " + FileType + " \"" + architecture + "\"");
+      c.add("    set_global_assignment -name %s \"%s\"", fileType, architecture);
     }
-    Contents.add("");
-    Contents.add("    # Map fpga_clk and ionets to fpga pins");
+    c.add("");
+    c.add("    # Map fpga_clk and ionets to fpga pins");
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      Contents.add("    set_location_assignment "
-          + BoardInfo.fpga.getClockPinLocation()
-          + " -to "
-          + TickComponentHDLGeneratorFactory.FPGAClock);
+      c.add("    set_location_assignment %s -to %s", BoardInfo.fpga.getClockPinLocation(), TickComponentHDLGeneratorFactory.FPGAClock);
     }
-    Contents.addAll(GetPinLocStrings());
-    Contents.add("    # Commit assignments");
-    Contents.add("    export_assignments");
-    Contents.add("");
-    Contents.add("    # Close project");
-    Contents.add("    if {$need_to_close_project} {");
-    Contents.add("        project_close");
-    Contents.add("    }");
-    Contents.add("}");
-    return FileWriter.WriteContents(ScriptFile, Contents);
+    c.add(GetPinLocStrings())
+        .add("    # Commit assignments")
+        .add("    export_assignments")
+        .add("")
+        .add("    # Close project")
+        .add("    if {$need_to_close_project} {")
+        .add("        project_close")
+        .add("    }")
+        .add("}");
+    return FileWriter.WriteContents(ScriptFile, c.get());
   }
 
   private ArrayList<String> GetPinLocStrings() {
-    var Contents = new ArrayList<String>();
-    var Temp = new StringBuilder();
+    final var contents = new ArrayList<String>();
+    final var temp = new StringBuilder();
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
-          Temp.setLength(0);
-          Temp.append("    set_location_assignment ");
-          Temp.append(map.getPinLocation(i)).append(" -to ");
-          if (map.isExternalInverted(i)) Temp.append("n_");
-          Temp.append(map.getHdlString(i));
-          Contents.add(Temp.toString());
+          temp.setLength(0);
+          temp.append("    set_location_assignment ");
+          temp.append(map.getPinLocation(i)).append(" -to ");
+          if (map.isExternalInverted(i)) temp.append("n_");
+          temp.append(map.getHdlString(i));
+          contents.add(temp.toString());
           if (map.requiresPullup(i)) {
-            Temp.setLength(0);
-            Temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
-            if (map.isExternalInverted(i)) Temp.append("n_");
-            Temp.append(map.getHdlString(i));
-            Contents.add(Temp.toString());
+            temp.setLength(0);
+            temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
+            if (map.isExternalInverted(i)) temp.append("n_");
+            temp.append(map.getHdlString(i));
+            contents.add(temp.toString());
           }
         }
       }
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
     for (var key : LedArrayMap.keySet()) {
-      Contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
+      contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
     }
-    return Contents;
+    return contents;
   }
 
   private static ArrayList<String> GetAlteraAssignments(BoardInformation CurrentBoard) {

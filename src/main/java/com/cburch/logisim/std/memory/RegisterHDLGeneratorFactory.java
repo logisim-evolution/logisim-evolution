@@ -36,6 +36,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -44,7 +45,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String NrOfBitsStr = "NrOfBits";
   private static final int NrOfBitsId = -1;
-  private static final String ActiveLevelStr = "ActiveLevel";
+  private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
   private static final int ActiveLevelId = -2;
 
   @Override
@@ -65,45 +66,47 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new ContentBuilder();
     if (HDL.isVHDL()) {
-      contents.add("   Q <= s_state_reg;");
-      contents.add("");
-      contents.add("   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )");
-      contents.add("   BEGIN");
-      contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
+      contents.add(
+          "   Q <= s_state_reg;",
+          "",
+          "   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
+          "   BEGIN",
+          "      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
       if (Netlist.IsFlipFlop(attrs)) {
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 1) THEN");
-        contents.add("         IF (Clock'event AND (Clock = '1')) THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 0) THEN");
-        contents.add("         IF (Clock'event AND (Clock = '0')) THEN");
-        contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
+        contents
+            .add("      ELSIF (%s = 1) THEN", ACTIVE_LEVEL_STR)
+            .add("         IF (Clock'event AND (Clock = '1')) THEN")
+            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
+            .add("               s_state_reg <= D;")
+            .add("            END IF;")
+            .add("         END IF;")
+            .add("      ELSIF (%s = 0) THEN", ACTIVE_LEVEL_STR)
+            .add("         IF (Clock'event AND (Clock = '0')) THEN")
+            .add("         IF (ClockEnable = '1' AND Tick = '1') THEN")
+            .add("            s_state_reg <= D;")
+            .add("         END IF;")
+            .add("      END IF;");
 
         /////
         // Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
         //           + ActiveLevelStr + ",1)) )) THEN");
       } else {
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 1) THEN");
-        contents.add("         IF (Clock = '1') THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 0) THEN");
-        contents.add("         IF (Clock = '0') THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        // Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
-        //            + ActiveLevelStr + ",1)) ) THEN");
+        contents
+            .add("      ELSIF (%s = 1) THEN", ACTIVE_LEVEL_STR)
+            .add("         IF (Clock = '1') THEN")
+            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
+            .add("               s_state_reg <= D;")
+            .add("            END IF;")
+            .add("         END IF;")
+            .add("      ELSIF (%s = 0) THEN", ACTIVE_LEVEL_STR)
+            .add("         IF (Clock = '0') THEN")
+            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
+            .add("               s_state_reg <= D;")
+            .add("            END IF;")
+            .add("         END IF;");
+        // .add("      ELSIF (Clock = std_logic_vector(to_unsigned(%s,1)) ) THEN", ACTIVE_LEVEL_STR);
       }
       // Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
       // Contents.add("            s_state_reg <= D;");
@@ -112,32 +115,32 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.add("   END PROCESS make_memory;");
     } else {
       if (!Netlist.IsFlipFlop(attrs)) {
-        contents.add("   assign Q = s_state_reg;");
-        contents.add("");
-        contents.add("   always @(*)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg <= 0;");
-        contents.add(
-            "      else if ((Clock==" + ActiveLevelStr + ")&ClockEnable&Tick) s_state_reg <= D;");
-        contents.add("   end");
+        contents
+            .add("   assign Q = s_state_reg;")
+            .add("")
+            .add("   always @(*)")
+            .add("   begin")
+            .add("      if (Reset) s_state_reg <= 0;")
+            .add("      else if ((Clock==%s)&ClockEnable&Tick) s_state_reg <= D;", ACTIVE_LEVEL_STR)
+            .add("   end");
       } else {
-        contents.add(
-            "   assign Q = (" + ActiveLevelStr + ") ? s_state_reg : s_state_reg_neg_edge;");
-        contents.add("");
-        contents.add("   always @(posedge Clock or posedge Reset)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg <= 0;");
-        contents.add("      else if (ClockEnable&Tick) s_state_reg <= D;");
-        contents.add("   end");
-        contents.add("");
-        contents.add("   always @(negedge Clock or posedge Reset)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg_neg_edge <= 0;");
-        contents.add("      else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;");
-        contents.add("   end");
+        contents
+            .add("   assign Q = (%s) ? s_state_reg : s_state_reg_neg_edge;", ACTIVE_LEVEL_STR)
+            .add("")
+            .add("   always @(posedge Clock or posedge Reset)")
+            .add("   begin")
+            .add("      if (Reset) s_state_reg <= 0;")
+            .add("      else if (ClockEnable&Tick) s_state_reg <= D;")
+            .add("   end")
+            .add("")
+            .add("   always @(negedge Clock or posedge Reset)")
+            .add("   begin")
+            .add("      if (Reset) s_state_reg_neg_edge <= 0;")
+            .add("      else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;")
+            .add("   end");
       }
     }
-    return contents;
+    return contents.get();
   }
 
   @Override
@@ -150,7 +153,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ActiveLevelStr);
+    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
     map.put(NrOfBitsId, NrOfBitsStr);
     return map;
   }
@@ -177,7 +180,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (gatedclock && activeLow) {
       activeLevel = 0;
     }
-    map.put(ActiveLevelStr, activeLevel);
+    map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(
         NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;

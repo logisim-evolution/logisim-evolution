@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -54,7 +55,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new ContentBuilder();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var numOutputs = (1 << nrOfSelectBits);
     var space = " ";
@@ -62,19 +63,15 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       final var binValue = IntToBin(i, nrOfSelectBits);
       if (i == 10) space = "";
       if (HDL.isVHDL()) {
-        contents.add("   DecoderOut_" + i + space + "<= '1' WHEN sel = " + binValue + " AND");
-        contents.add(space + "                             Enable = '1' ELSE '0';");
+        contents
+            .add("   DecoderOut_%d%s<= '1' WHEN sel = %s AND", i, space, binValue)
+            .add("   DecoderOut_%d%s<= '1' WHEN sel = %s AND", i, space, binValue)
+            .add("%s                             Enable = '1' ELSE '0';", space);
       } else {
-        contents.add(
-            "   assign DecoderOut_"
-                + i
-                + space
-                + " = (Enable&(sel == "
-                + binValue
-                + ")) ? 1'b1 : 1'b0;");
+        contents.add("   assign DecoderOut_%d%s = (Enable&(sel == %s)) ? 1'b1 : 1'b0;", i, space, binValue);
       }
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.util.ContentBuilder;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,7 +43,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static String nrOfLedsString = "nrOfLeds";
   public static String activeLowString = "activeLow";
   public static String LedArrayName = "LedArrayLedDefault";
-  
+
   public static ArrayList<String> getGenericMap(int nrOfRows,
       int nrOfColumns,
       long FpgaClockFrequency,
@@ -57,14 +58,14 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
     }
     return map;
   }
-  
+
   public static ArrayList<String> getPortMap(int id) {
     final var map = new ArrayList<String>();
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs 
+      map.add("      PORT MAP ( "
+          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
           + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs 
+          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
           + id
           + ",");
       map.add("                 "
@@ -74,7 +75,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
           + id
           + ");");
     } else {
-      map.add("      (." 
+      map.add("      (."
           + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
@@ -89,7 +90,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
     }
     return map;
   }
-  
+
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
@@ -114,32 +115,28 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new ContentBuilder();
     if (HDL.isVHDL()) {
-      contents.add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE");
-      contents.add("      " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "(n) <= NOT("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(n)) WHEN activeLow = 1 ELSE " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(n);");
-      contents.add("   END GENERATE;");
+      contents
+          .add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE")
+          .add("      %s(n) <= NOT(%s(n)) WHEN activeLow = 1 ELSE %s(n);",
+              LedArrayGenericHDLGeneratorFactory.LedArrayOutputs,
+              LedArrayGenericHDLGeneratorFactory.LedArrayInputs,
+              LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("   END GENERATE;");
     } else {
-      contents.add("   genvar i;");
-      contents.add("   generate");
-      contents.add("      for (i = 0; i < nrOfLeds; i = i + 1) begin");
-      contents.add("         assign " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "[i] = (activeLow == 1) ? ~" 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "[n] : " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "[n];");
-      contents.add("      end");
-      contents.add("   endgenerate");
+      contents
+          .add("   genvar i;")
+          .add("   generate")
+          .add("      for (i = 0; i < nrOfLeds; i = i + 1) begin")
+          .add("         assign %s[i] = (activeLow == 1) ? ~%s[n] : %s[n];",
+              LedArrayGenericHDLGeneratorFactory.LedArrayOutputs,
+              LedArrayGenericHDLGeneratorFactory.LedArrayInputs,
+              LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("      end")
+          .add("   endgenerate");
     }
-    return contents;
+    return contents.get();
   }
 
 
@@ -147,7 +144,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public String getComponentStringIdentifier() {
     return LedArrayName;
   }
-  
+
   @Override
   public String GetSubDir() {
     /*

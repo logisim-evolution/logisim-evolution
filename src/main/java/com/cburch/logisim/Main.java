@@ -54,6 +54,12 @@ public class Main {
    */
   public static void main(String[] args) {
     System.setProperty("apple.awt.application.name", APP_NAME);
+
+    var lng1 = 256L;
+    var lng2 = 1024L;
+    System.out.println(String.format("long2 : %2$d, long1: %1$d %%", lng2, lng1));
+
+
     try {
       if (!GraphicsEnvironment.isHeadless()) {
         FlatLightLaf.installLafInfo();

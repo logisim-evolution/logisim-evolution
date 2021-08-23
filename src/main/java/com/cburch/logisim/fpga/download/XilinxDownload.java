@@ -41,6 +41,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.ContentBuilder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -62,9 +63,9 @@ public class XilinxDownload implements VendorDownload {
   private MappableResourcesContainer MapInfo;
   private final BoardInformation BoardInfo;
   private final ArrayList<String> Entities;
-  private final ArrayList<String> Architectures;
+  private final ArrayList<String> architectures;
   private final String HDLType;
-  private final String BitfileExt;
+  private final String bitfileExt;
   private final boolean IsCPLD;
   private final boolean writeToFlash;
 
@@ -91,7 +92,7 @@ public class XilinxDownload implements VendorDownload {
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
-    this.Architectures = Architectures;
+    this.architectures = Architectures;
     this.HDLType = HDLType;
     this.writeToFlash = WriteToFlash;
     IsCPLD =
@@ -100,7 +101,7 @@ public class XilinxDownload implements VendorDownload {
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XCR3")
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XC9500")
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XA9500");
-    BitfileExt = (IsCPLD) ? "jed" : "bit";
+    bitfileExt = (IsCPLD) ? "jed" : "bit";
   }
 
   @Override
@@ -146,7 +147,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + BitfileExt).exists();
+    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt).exists();
   }
 
   @Override
@@ -167,7 +168,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
-      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + BitfileExt);
+      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt);
       var bitfile_buffer = new byte[BUFFER_SIZE];
       var bitfile_buffer_size = 0;
       BufferedInputStream bitfile_in;
@@ -213,16 +214,13 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    var Contents = new ArrayList<String>();
-    for (var entity : Entities) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
-    }
-    for (var architecture : Architectures) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
-    }
-    if (!FileWriter.WriteContents(VhdlListFile, Contents)) return false;
-    Contents.clear();
-    Contents.add(
+    var contents = new ContentBuilder();
+    for (var entity : Entities) contents.add("%s work \"%s\"", HDLType.toUpperCase(), entity);
+    for (var arch : architectures) contents.add("%s work \"%s\"", HDLType.toUpperCase(), arch);
+    if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;
+
+    contents.clear();
+    contents.add(
         "run -top "
             + ToplevelHDLGeneratorFactory.FPGAToplevelName
             + " -ofn logisim.ngc -ofmt NGC -ifn "
@@ -230,73 +228,55 @@ public class XilinxDownload implements VendorDownload {
             + vhdl_list_file
             + " -ifmt mixed -p "
             + GetFPGADeviceString(BoardInfo));
-    if (!FileWriter.WriteContents(ScriptFile, Contents)) return false;
-    Contents.clear();
-    Contents.add("setmode -bscan");
+    if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
+
+    contents.clear();
+    contents.add("setmode -bscan");
     if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
       if (BoardInfo.fpga.getFlashName() == null) {
         Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", BoardInfo.getBoardName()));
       }
-      final var FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
-      var McsFile = ScriptPath + File.separator + mcs_file;
-      Contents.add("setmode -pff");
-      Contents.add("setSubMode -pffserial");
-      Contents.add("addPromDevice -p " + JTAGPos + " -size 0 -name " + BoardInfo.fpga.getFlashName());
-      Contents.add("addDesign -version 0 -name \"0\"");
-      Contents.add("addDeviceChain -index 0");
-      Contents.add("addDevice -p "
-          + JTAGPos
-          + " -file "
-          + ToplevelHDLGeneratorFactory.FPGAToplevelName
-          + "."
-          + BitfileExt);
-      Contents.add("generate -format mcs -fillvalue FF -output " + McsFile);
-      Contents.add("setMode -bs");
-      Contents.add("setCable -port auto");
-      Contents.add("identify");
-      Contents.add("assignFile -p " + FlashPos + " -file " + McsFile);
-      Contents.add("program -p " + FlashPos + " -e -v");
+      final var flashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
+      final var mcsFile = ScriptPath + File.separator + mcs_file;
+      contents
+          .add("setmode -pff")
+          .add("setSubMode -pffserial")
+          .add("addPromDevice -p %s -size 0 -name %s", JTAGPos, BoardInfo.fpga.getFlashName())
+          .add("addDesign -version 0 -name \"0\"")
+          .add("addDeviceChain -index 0")
+          .add("addDevice -p %s -file %s.%s", ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+          .add("generate -format mcs -fillvalue FF -output " + mcsFile)
+          .add("setMode -bs")
+          .add("setCable -port auto")
+          .add("identify")
+          .add("assignFile -p %s -file %s", flashPos, mcsFile)
+          .add("program -p %s -e -v", flashPos);
     } else {
-      Contents.add("setcable -p auto");
-      Contents.add("identify");
+      contents.add("setcable -p auto").add("identify");
       if (!IsCPLD) {
-        Contents.add("assignFile -p "
-            + JTAGPos
-            + " -file "
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
-            + "."
-            + BitfileExt);
-        Contents.add("program -p " + JTAGPos + " -onlyFpga");
+        contents
+            .add("assignFile -p %s -file %s.%s", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+            .add("program -p %s -onlyFpga", JTAGPos);
       } else {
-        Contents.add("assignFile -p " + JTAGPos + " -file logisim." + BitfileExt);
-        Contents.add("program -p " + JTAGPos + " -e");
+        contents
+            .add("assignFile -p %s -file logisim.%s", JTAGPos, bitfileExt)
+            .add("program -p %s -e", JTAGPos);
       }
     }
-    Contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, Contents)) return false;
-    Contents.clear();
+    contents.add("quit");
+    if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
+
+    contents.clear();
+    final var clockLabel = TickComponentHDLGeneratorFactory.FPGAClock;
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      Contents.add("NET \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" "
-          + GetXilinxClockPin(BoardInfo)
-          + " ;");
-      Contents.add("NET \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" TNM_NET = \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" ;");
-      Contents.add("TIMESPEC \"TS_"
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" = PERIOD \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" "
-          + Download.GetClockFrequencyString(BoardInfo)
-          + " HIGH 50 % ;");
-      Contents.add("");
+      contents
+          .add("NET \"%s\" %s ;", clockLabel, GetXilinxClockPin(BoardInfo))
+          .add("NET \"%1$s\" TNM_NET = \"%1%s\" ;", clockLabel)
+          .add("TIMESPEC \"TS_%1$s\" = PERIOD \"%1$s\" %2$s HIGH 50 %% ;", clockLabel, Download.GetClockFrequencyString(BoardInfo))
+          .add("");
     }
-    Contents.addAll(GetPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, Contents);
+    contents.add(GetPinLocStrings());
+    return FileWriter.WriteContents(UcfFile, contents.get());
   }
 
   private ArrayList<String> GetPinLocStrings() {
