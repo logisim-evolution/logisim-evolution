@@ -42,8 +42,8 @@ import java.util.TreeMap;
 
 public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String nrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STR = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
 
   @Override
   public String getComponentStringIdentifier() {
@@ -52,27 +52,27 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("BinValue", NrOfBitsId);
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put("BinValue", NR_OF_BITS_ID);
+    return inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    for (int i = 1; i <= NrOfPorts; i++) {
-      Outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
+    final var outputs = new TreeMap<String, Integer>();
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    for (var i = 1; i <= nrOfPorts; i++) {
+      outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
     }
-    return Outputs;
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> ParameterList = new TreeMap<>();
-    ParameterList.put(NrOfBitsId, nrOfBitsStr);
-    return ParameterList;
+    final var parameterList = new TreeMap<Integer, String>();
+    parameterList.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
+    return parameterList;
   }
 
   @Override
@@ -87,23 +87,23 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    ParameterMap.put(nrOfBitsStr, BinBits);
-    return ParameterMap;
+    final var parameterMap = new TreeMap<String, Integer>();
+    final var binBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    parameterMap.put(NR_OF_BITS_STR, binBits);
+    return parameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
-    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Nets));
-    for (int i = 1; i <= NrOfPorts; i++)
-      PortMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, ComponentInfo, i, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var portMap = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    final var binBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfPorts = (int) (Math.log10(1 << binBits) + 1.0);
+    portMap.putAll(GetNetMap("BinValue", true, componentInfo, 0, nets));
+    for (var i = 1; i <= nrOfPorts; i++)
+      portMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, componentInfo, i, nets));
+    return portMap;
   }
 
   @Override
@@ -152,96 +152,102 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (HDL.isVHDL()) {
       switch (nrOfPorts) {
         case 2:
-          contents.add("   s_level_0(6 DOWNTO %s) <= (OTHERS => '0');", nrOfBitsStr);
-          contents.add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", nrOfBitsStr);
-          contents.add("   s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);");
-          contents.add("   s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);");
-          contents.add("   s_level_2(6)          <= s_level_1(6);");
-          contents.add("   s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);");
-          contents.add("   s_level_3(0)          <= s_level_2(0);");
-          contents.add("   ");
-          contents.add("   BCD1  <= s_level_3( 3 DOWNTO 0);");
-          contents.add("   BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);");
-          contents.add(getAdd3Block("s_level_0", 6, "s_level_1", 6, "C1"));
-          contents.add(getAdd3Block("s_level_1", 5, "s_level_2", 5, "C2"));
-          contents.add(getAdd3Block("s_level_2", 4, "s_level_3", 4, "C3"));
+          contents
+              .add("   s_level_0(6 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add(
+                  "   s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);",
+                  "   s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);",
+                  "   s_level_2(6)          <= s_level_1(6);",
+                  "   s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);",
+                  "   s_level_3(0)          <= s_level_2(0);",
+                  "   ",
+                  "   BCD1  <= s_level_3( 3 DOWNTO 0);",
+                  "   BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);")
+              .add(getAdd3Block("s_level_0", 6, "s_level_1", 6, "C1"))
+              .add(getAdd3Block("s_level_1", 5, "s_level_2", 5, "C2"))
+              .add(getAdd3Block("s_level_2", 4, "s_level_3", 4, "C3"));
           break;
         case 3:
-          contents.add("   s_level_0(10 DOWNTO %s) <= (OTHERS => '0');", nrOfBitsStr);
-          contents.add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", nrOfBitsStr);
-          contents.add("   s_level_1(10)          <= s_level_0(10);");
-          contents.add("   s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);");
-          contents.add("   s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);");
-          contents.add("   s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);");
-          contents.add("   s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);");
-          contents.add("   s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);");
-          contents.add("   s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);");
-          contents.add("   s_level_5(10)          <= s_level_4(10);");
-          contents.add("   s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);");
-          contents.add("   s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);");
-          contents.add("   s_level_6(0)           <= s_level_5(0);");
-          contents.add("   ");
-          contents.add("   BCD1   <= s_level_6( 3 DOWNTO 0 );");
-          contents.add("   BCD10  <= s_level_6( 7 DOWNTO 4 );");
-          contents.add("   BCD100 <= \"0\"&s_level_6(10 DOWNTO 8);");
-          contents.add(getAdd3Block("s_level_0", 9, "s_level_1", 9, "C0"));
-          contents.add(getAdd3Block("s_level_1", 8, "s_level_2", 8, "C1"));
-          contents.add(getAdd3Block("s_level_2", 7, "s_level_3", 7, "C2"));
-          contents.add(getAdd3Block("s_level_3", 6, "s_level_4", 6, "C3"));
-          contents.add(getAdd3Block("s_level_4", 5, "s_level_5", 5, "C4"));
-          contents.add(getAdd3Block("s_level_5", 4, "s_level_6", 4, "C5"));
-          contents.add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C6"));
-          contents.add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C7"));
-          contents.add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C8"));
+          contents
+              .add("   s_level_0(10 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add(
+                  "   s_level_1(10)          <= s_level_0(10);",
+                  "   s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);",
+                  "   s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);",
+                  "   s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);",
+                  "   s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);",
+                  "   s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);",
+                  "   s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);",
+                  "   s_level_5(10)          <= s_level_4(10);",
+                  "   s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);",
+                  "   s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);",
+                  "   s_level_6(0)           <= s_level_5(0);",
+                  "   ",
+                  "   BCD1   <= s_level_6( 3 DOWNTO 0 );",
+                  "   BCD10  <= s_level_6( 7 DOWNTO 4 );",
+                  "   BCD100 <= \"0\"&s_level_6(10 DOWNTO 8);")
+              .add(getAdd3Block("s_level_0", 9, "s_level_1", 9, "C0"))
+              .add(getAdd3Block("s_level_1", 8, "s_level_2", 8, "C1"))
+              .add(getAdd3Block("s_level_2", 7, "s_level_3", 7, "C2"))
+              .add(getAdd3Block("s_level_3", 6, "s_level_4", 6, "C3"))
+              .add(getAdd3Block("s_level_4", 5, "s_level_5", 5, "C4"))
+              .add(getAdd3Block("s_level_5", 4, "s_level_6", 4, "C5"))
+              .add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C6"))
+              .add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C7"))
+              .add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C8"));
           break;
         case 4:
-          contents.add("   s_level_0(15 DOWNTO %s) <= (OTHERS => '0');", nrOfBitsStr);
-          contents.add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", nrOfBitsStr);
-          contents.add("   s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);");
-          contents.add("   s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);");
-          contents.add("   s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);");
-          contents.add("   s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);");
-          contents.add("   s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);");
-          contents.add("   s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);");
-          contents.add("   s_level_4(15)            <= s_level_3(15);");
-          contents.add("   s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);");
-          contents.add("   s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);");
-          contents.add("   s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);");
-          contents.add("   s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);");
-          contents.add("   s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);");
-          contents.add("   s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);");
-          contents.add("   s_level_8(15)            <= s_level_7(15);");
-          contents.add("   s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);");
-          contents.add("   s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);");
-          contents.add("   s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);");
-          contents.add("   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);");
-          contents.add("   s_level_10(0)            <= s_level_9(0);");
-          contents.add("   ");
-          contents.add("   BCD1    <= s_level_10( 3 DOWNTO  0 );");
-          contents.add("   BCD10   <= s_level_10( 7 DOWNTO  4 );");
-          contents.add("   BCD100  <= s_level_10(11 DOWNTO  8);");
-          contents.add("   BCD1000 <= s_level_10(15 DOWNTO 12);");
-          contents.add(getAdd3Block("s_level_0", 13, "s_level_1", 13, "C0"));
-          contents.add(getAdd3Block("s_level_1", 12, "s_level_2", 12, "C1"));
-          contents.add(getAdd3Block("s_level_2", 11, "s_level_3", 11, "C2"));
-          contents.add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C3"));
-          contents.add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C4"));
-          contents.add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C5"));
-          contents.add(getAdd3Block("s_level_6", 7, "s_level_7", 7, "C6"));
-          contents.add(getAdd3Block("s_level_7", 6, "s_level_8", 6, "C7"));
-          contents.add(getAdd3Block("s_level_8", 5, "s_level_9", 5, "C8"));
-          contents.add(getAdd3Block("s_level_9", 4, "s_level_10", 4, "C9"));
-          contents.add(getAdd3Block("s_level_3", 14, "s_level_4", 14, "C10"));
-          contents.add(getAdd3Block("s_level_4", 13, "s_level_5", 13, "C11"));
-          contents.add(getAdd3Block("s_level_5", 12, "s_level_6", 12, "C12"));
-          contents.add(getAdd3Block("s_level_6", 11, "s_level_7", 11, "C13"));
-          contents.add(getAdd3Block("s_level_7", 10, "s_level_8", 10, "C14"));
-          contents.add(getAdd3Block("s_level_8", 9, "s_level_9", 9, "C15"));
-          contents.add(getAdd3Block("s_level_9", 8, "s_level_10", 8, "C16"));
-          contents.add(getAdd3Block("s_level_6", 15, "s_level_7", 15, "C17"));
-          contents.add(getAdd3Block("s_level_7", 14, "s_level_8", 14, "C18"));
-          contents.add(getAdd3Block("s_level_8", 13, "s_level_9", 13, "C19"));
-          contents.add(getAdd3Block("s_level_9", 12, "s_level_10", 12, "C20"));
+          contents
+              .add("   s_level_0(15 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add("   s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);")
+              .add(
+                  "   s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);",
+                  "   s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);",
+                  "   s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);",
+                  "   s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);",
+                  "   s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);",
+                  "   s_level_4(15)            <= s_level_3(15);",
+                  "   s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);",
+                  "   s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);",
+                  "   s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);",
+                  "   s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);",
+                  "   s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);",
+                  "   s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);",
+                  "   s_level_8(15)            <= s_level_7(15);",
+                  "   s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);",
+                  "   s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);",
+                  "   s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);",
+                  "   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);",
+                  "   s_level_10(0)            <= s_level_9(0);",
+                  "   ",
+                  "   BCD1    <= s_level_10( 3 DOWNTO  0 );",
+                  "   BCD10   <= s_level_10( 7 DOWNTO  4 );",
+                  "   BCD100  <= s_level_10(11 DOWNTO  8);",
+                  "   BCD1000 <= s_level_10(15 DOWNTO 12);")
+              .add(getAdd3Block("s_level_0", 13, "s_level_1", 13, "C0"))
+              .add(getAdd3Block("s_level_1", 12, "s_level_2", 12, "C1"))
+              .add(getAdd3Block("s_level_2", 11, "s_level_3", 11, "C2"))
+              .add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C3"))
+              .add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C4"))
+              .add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C5"))
+              .add(getAdd3Block("s_level_6", 7, "s_level_7", 7, "C6"))
+              .add(getAdd3Block("s_level_7", 6, "s_level_8", 6, "C7"))
+              .add(getAdd3Block("s_level_8", 5, "s_level_9", 5, "C8"))
+              .add(getAdd3Block("s_level_9", 4, "s_level_10", 4, "C9"))
+              .add(getAdd3Block("s_level_3", 14, "s_level_4", 14, "C10"))
+              .add(getAdd3Block("s_level_4", 13, "s_level_5", 13, "C11"))
+              .add(getAdd3Block("s_level_5", 12, "s_level_6", 12, "C12"))
+              .add(getAdd3Block("s_level_6", 11, "s_level_7", 11, "C13"))
+              .add(getAdd3Block("s_level_7", 10, "s_level_8", 10, "C14"))
+              .add(getAdd3Block("s_level_8", 9, "s_level_9", 9, "C15"))
+              .add(getAdd3Block("s_level_9", 8, "s_level_10", 8, "C16"))
+              .add(getAdd3Block("s_level_6", 15, "s_level_7", 15, "C17"))
+              .add(getAdd3Block("s_level_7", 14, "s_level_8", 14, "C18"))
+              .add(getAdd3Block("s_level_8", 13, "s_level_9", 13, "C19"))
+              .add(getAdd3Block("s_level_9", 12, "s_level_10", 12, "C20"));
           break;
       }
     } else {
@@ -252,23 +258,24 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
     ContentBuilder contents = new ContentBuilder();
-    contents.add("   ");
-    contents.add("   ADD3_%s : PROCESS(%s)", processName, srcName);
-    contents.add("   BEGIN");
-    contents.add("      CASE (%s( %d DOWNTO %d ) ) IS", srcName, srcStartId, (srcStartId - 3));
-    contents.add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0001\" => %s( %d DOWNTO %d ) <= \"0001\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0010\" => %s( %d DOWNTO %d ) <= \"0010\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0011\" => %s( %d DOWNTO %d ) <= \"0011\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0100\" => %s( %d DOWNTO %d ) <= \"0100\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0101\" => %s( %d DOWNTO %d ) <= \"1000\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0110\" => %s( %d DOWNTO %d ) <= \"1001\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0111\" => %s( %d DOWNTO %d ) <= \"1010\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"1000\" => %s( %d DOWNTO %d ) <= \"1011\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"1001\" => %s( %d DOWNTO %d ) <= \"1100\";", destName, destStartId, (destStartId-3));
-    contents.add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId-3));
-    contents.add("      END CASE;");
-    contents.add("   END PROCESS ADD3_%s;", processName);
+    contents
+        .add("   ")
+        .add("   ADD3_%s : PROCESS(%s)", processName, srcName)
+        .add("   BEGIN")
+        .add("      CASE (%s( %d DOWNTO %d ) ) IS", srcName, srcStartId, (srcStartId - 3))
+        .add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0001\" => %s( %d DOWNTO %d ) <= \"0001\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0010\" => %s( %d DOWNTO %d ) <= \"0010\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0011\" => %s( %d DOWNTO %d ) <= \"0011\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0100\" => %s( %d DOWNTO %d ) <= \"0100\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0101\" => %s( %d DOWNTO %d ) <= \"1000\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0110\" => %s( %d DOWNTO %d ) <= \"1001\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0111\" => %s( %d DOWNTO %d ) <= \"1010\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"1000\" => %s( %d DOWNTO %d ) <= \"1011\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"1001\" => %s( %d DOWNTO %d ) <= \"1100\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId - 3))
+        .add("      END CASE;")
+        .add("   END PROCESS ADD3_%s;", processName);
     return contents.get();
   }
 }

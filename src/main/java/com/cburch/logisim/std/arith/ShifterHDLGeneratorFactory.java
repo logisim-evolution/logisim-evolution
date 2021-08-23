@@ -175,10 +175,11 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = new ContentBuilder();
     final var nrOfBitsToShift = (1 << stageNumber);
-    contents.add("   /***************************************************************************")
-    .add("    ** Here stage %s of the binary shift tree is defined                     **", stageNumber)
-    .add("    ***************************************************************************/")
-    .empty();
+    contents
+        .add("   /***************************************************************************")
+        .add("    ** Here stage %s of the binary shift tree is defined                     **", stageNumber)
+        .add("    ***************************************************************************/")
+        .empty();
     if (stageNumber == 0) {
       contents
           .add("   assign s_stage_0_shiftin = ((%s == 1) || (%s == 3))", shiftModeStr, shiftModeStr)
@@ -213,10 +214,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = new ContentBuilder();
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
-      .add("   -----------------------------------------------------------------------------")
-      .add("   --- Here stage %s of the binary shift tree is defined                     ---", stageNumber)
-      .add("   -----------------------------------------------------------------------------")
-      .empty();
+        .add("   -----------------------------------------------------------------------------")
+        .add("   --- Here stage %s of the binary shift tree is defined                     ---", stageNumber)
+        .add("   -----------------------------------------------------------------------------")
+        .empty();
 
     if (stageNumber == 0) {
       contents
