@@ -204,8 +204,8 @@ public class AlteraDownload implements VendorDownload {
     }
     final var fileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
     final var topLevelName = ToplevelHDLGeneratorFactory.FPGAToplevelName;
-    final var content = new ContentBuilder();
-    content
+    final var contents = new ContentBuilder();
+    contents
         .add("# Load Quartus II Tcl Project package")
         .add("package require ::quartus::project")
         .add("")
@@ -234,17 +234,17 @@ public class AlteraDownload implements VendorDownload {
         .add("    # Include all entities and gates")
         .add("");
     for (var entity : Entities) {
-      content.add("    set_global_assignment -name %s \"%s\"", fileType, entity);
+      contents.add("    set_global_assignment -name %s \"%s\"", fileType, entity);
     }
     for (var architecture : Architectures) {
-      content.add("    set_global_assignment -name %s \"%s\"", fileType, architecture);
+      contents.add("    set_global_assignment -name %s \"%s\"", fileType, architecture);
     }
-    content.add("");
-    content.add("    # Map fpga_clk and ionets to fpga pins");
+    contents.add("");
+    contents.add("    # Map fpga_clk and ionets to fpga pins");
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      content.add("    set_location_assignment %s -to %s", BoardInfo.fpga.getClockPinLocation(), TickComponentHDLGeneratorFactory.FPGAClock);
+      contents.add("    set_location_assignment %s -to %s", BoardInfo.fpga.getClockPinLocation(), TickComponentHDLGeneratorFactory.FPGAClock);
     }
-    content
+    contents
         .add(GetPinLocStrings())
         .add(
             "    # Commit assignments",
@@ -255,7 +255,7 @@ public class AlteraDownload implements VendorDownload {
             "        project_close",
             "    }",
             "}");
-    return FileWriter.WriteContents(ScriptFile, content.get());
+    return FileWriter.WriteContents(ScriptFile, contents.get());
   }
 
   private ArrayList<String> GetPinLocStrings() {

@@ -50,9 +50,9 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
     final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
 
-    final var content = new ContentBuilder();
+    final var contents = new ContentBuilder();
     if (HDL.isVHDL()) {
-      content
+      contents
           .add("      PORT MAP ( %1$s => %1$s%2$d,", rowAddress, id)
           .add("                 %1$s => %1$s,", clock)
           .add("                 %1$s => %1$s%2$d,", redOuts, id)
@@ -62,7 +62,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
           .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
     } else {
-      content
+      contents
           .add("      (.%1$s(%1$s%2$d),", rowAddress, id)
           .add("       .%1$s(%1$s),", clock)
           .add("       .%1$s(%1$s%2$d),", redOuts, id)
@@ -72,7 +72,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
           .add("       .%1$s(s_%1$s%2$d)); ", blueIns, id);
     }
-    return content.get();
+    return contents.get();
   }
 
   @Override

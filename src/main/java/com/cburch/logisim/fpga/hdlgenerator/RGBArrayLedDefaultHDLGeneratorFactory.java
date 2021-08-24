@@ -50,9 +50,9 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
     final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
 
-    final var content = new ContentBuilder();
+    final var contents = new ContentBuilder();
     if (HDL.isVHDL()) {
-      content
+      contents
           .add("      PORT MAP ( %1$s => %1$s%2$d,", redOuts, id)
           .add("                 %1$s => %1$s%2$d,", greenOuts, id)
           .add("                 %1$s => %1$s%2$d,", blueOuts, id)
@@ -60,7 +60,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
           .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
     } else {
-      content
+      contents
           .add("      (.%1$s(%1$s%2$d),", redOuts, id)
           .add("       .%1$s(%1$s%2$d),", greenOuts, id)
           .add("       .%1$s(%1$s%2$d),", blueOuts, id)
@@ -68,7 +68,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
           .add("       .%1$s(s_%1$s%2$d));", blueIns, id);
     }
-    return content.get();
+    return contents.get();
   }
 
   @Override

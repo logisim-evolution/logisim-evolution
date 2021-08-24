@@ -119,7 +119,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var content = new ContentBuilder();
+    final var contents = new ContentBuilder();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
@@ -128,29 +128,29 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var regs = GetRegList(attrs);
     final var mems = GetMemList(attrs);
     final var oneLine = new StringBuilder();
-    content.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
+    contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
-        content.add(libs);
-        content.empty();
+        contents.add(libs);
+        contents.empty();
       }
-      content.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
-      content.add("");
+      contents.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
+      contents.add("");
       final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
       if (nrOfTypes > 0) {
-        content.addRemarkBlock("Here all private types are defined");
+        contents.addRemarkBlock("Here all private types are defined");
         for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
-          content.add("   %s;", thisType);
+          contents.add("   %s;", thisType);
         }
-        content.empty();
+        contents.empty();
       }
       final var components = GetComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty()) {
-        content.addRemarkBlock("Here all used components are defined").add(components).add("");
+        contents.addRemarkBlock("Here all used components are defined").add(components).add("");
       }
 
-      content.addRemarkBlock("Here all used signals are defined");
+      contents.addRemarkBlock("Here all used signals are defined");
       for (final var wire : wires.keySet()) {
         oneLine.append(wire);
         while (oneLine.length() < SallignmentSize) oneLine.append(" ");
@@ -162,8 +162,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (wires.get(wire) < 0) {
             if (!params.containsKey(wires.get(wire))) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              content.clear();
-              return content.get();
+              contents.clear();
+              return contents.get();
             }
             oneLine.append("(").append(params.get(wires.get(wire))).append("-1)");
           } else {
@@ -175,7 +175,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           oneLine.append(" DOWNTO 0 );");
         }
-        content.add("   SIGNAL " + oneLine);
+        contents.add("   SIGNAL " + oneLine);
         oneLine.setLength(0);
       }
 
@@ -190,8 +190,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (regs.get(reg) < 0) {
             if (!params.containsKey(regs.get(reg))) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              content.clear();
-              return content.get();
+              contents.clear();
+              return contents.get();
             }
             oneLine.append("(").append(params.get(regs.get(reg))).append("-1)");
           } else {
@@ -203,7 +203,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           oneLine.append(" DOWNTO 0 );");
         }
-        content.add("   SIGNAL " + oneLine);
+        contents.add("   SIGNAL " + oneLine);
         oneLine.setLength(0);
       }
 
@@ -213,26 +213,26 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(": ");
         oneLine.append(GetType(mems.get(Mem)));
         oneLine.append(";");
-        content.add("   SIGNAL " + oneLine);
+        contents.add("   SIGNAL " + oneLine);
         oneLine.setLength(0);
       }
-      content.add("");
-      content.add("BEGIN");
-      content.add(GetModuleFunctionality(theNetlist, attrs));
-      content.add("END PlatformIndependent;");
+      contents.add("");
+      contents.add("BEGIN");
+      contents.add(GetModuleFunctionality(theNetlist, attrs));
+      contents.add("END PlatformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
       final var indenting = new StringBuilder();
       while (indenting.length() < preamble.length()) indenting.append(" ");
       if (inputs.isEmpty() && outputs.isEmpty() && inOuts.isEmpty()) {
-        content.add(preamble + " );");
+        contents.add(preamble + " );");
       } else {
         final var thisLine = new StringBuilder();
         for (final var inp : inputs.keySet()) {
           if (thisLine.length() == 0) {
             thisLine.append(preamble).append(inp);
           } else {
-            content.add(thisLine + ",");
+            contents.add(thisLine + ",");
             thisLine.setLength(0);
             thisLine.append(indenting).append(inp);
           }
@@ -241,7 +241,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (thisLine.length() == 0) {
             thisLine.append(preamble).append(outp);
           } else {
-            content.add(thisLine + ",");
+            contents.add(thisLine + ",");
             thisLine.setLength(0);
             thisLine.append(indenting).append(outp);
           }
@@ -250,24 +250,24 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (thisLine.length() == 0) {
             thisLine.append(preamble).append(io);
           } else {
-            content.add(thisLine + ",");
+            contents.add(thisLine + ",");
             thisLine.setLength(0);
             thisLine.append(indenting).append(io);
           }
         }
         if (thisLine.length() != 0) {
-          content.add(thisLine + ");");
+          contents.add(thisLine + ");");
         } else {
           Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
         }
       }
       if (!params.isEmpty()) {
-        content.empty();
-        content.addRemarkBlock("Here all module parameters are defined with a dummy value");
+        contents.empty();
+        contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : params.keySet()) {
-          content.add("   parameter %s = 1;", params.get(param));
+          contents.add("   parameter %s = 1;", params.get(param));
         }
-        content.empty();
+        contents.empty();
       }
       var firstline = true;
       var nrOfBits = 0;
@@ -279,7 +279,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return content.clear().get();
+            return contents.clear().get();
           }
           oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
@@ -294,10 +294,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append("  ").append(inp).append(";");
         if (firstline) {
           firstline = false;
-          content.add("");
-          content.addRemarkBlock("Here the inputs are defined");
+          contents.add("");
+          contents.addRemarkBlock("Here the inputs are defined");
         }
-        content.add(oneLine.toString());
+        contents.add(oneLine.toString());
       }
       firstline = true;
       for (final var outp : outputs.keySet()) {
@@ -308,8 +308,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            content.clear();
-            return content.get();
+            contents.clear();
+            return contents.get();
           }
           oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
@@ -324,9 +324,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(" ").append(outp).append(";");
         if (firstline) {
           firstline = false;
-          content.empty().addRemarkBlock("Here the outputs are defined");
+          contents.empty().addRemarkBlock("Here the outputs are defined");
         }
-        content.add(oneLine.toString());
+        contents.add(oneLine.toString());
       }
       firstline = true;
       for (final var io : inOuts.keySet()) {
@@ -338,7 +338,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return content.clear().get();
+            return contents.clear().get();
           }
           oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
@@ -353,9 +353,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(" ").append(io).append(";");
         if (firstline) {
           firstline = false;
-          content.empty().addRemarkBlock("Here the ios are defined");
+          contents.empty().addRemarkBlock("Here the ios are defined");
         }
-        content.add(oneLine.toString());
+        contents.add(oneLine.toString());
       }
       firstline = true;
       for (final var wire : wires.keySet()) {
@@ -366,7 +366,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return content.clear().get();
+            return contents.clear().get();
           }
           oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
@@ -379,10 +379,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
-          content.empty();
-          content.addRemarkBlock("Here the internal wires are defined");
+          contents.empty();
+          contents.addRemarkBlock("Here the internal wires are defined");
         }
-        content.add(oneLine.toString());
+        contents.add(oneLine.toString());
       }
       for (final var reg : regs.keySet()) {
         oneLine.setLength(0);
@@ -392,7 +392,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return content.clear().get();
+            return contents.clear().get();
           }
           oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
@@ -405,19 +405,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
-          content
+          contents
               .empty()
               .addRemarkBlock("Here the internal registers are defined");
         }
-        content.add(oneLine.toString());
+        contents.add(oneLine.toString());
       }
       /* TODO: Add memlist */
       if (!firstline) {
-        content.empty();
+        contents.empty();
       }
-      content.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
     }
-    return content.get();
+    return contents.get();
   }
 
   public String GetBusEntryName(
