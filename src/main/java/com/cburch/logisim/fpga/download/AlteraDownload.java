@@ -202,9 +202,11 @@ public class AlteraDownload implements VendorDownload {
       ScriptFile = new File(ScriptPath + AlteraTclFile);
       return ScriptFile.exists();
     }
-    var fileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
-    var c = new ContentBuilder();
-    c.add("# Load Quartus II Tcl Project package")
+    final var fileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
+    final var topLevelName = ToplevelHDLGeneratorFactory.FPGAToplevelName;
+    final var content = new ContentBuilder();
+    content
+        .add("# Load Quartus II Tcl Project package")
         .add("package require ::quartus::project")
         .add("")
         .add("set need_to_close_project 0")
@@ -212,16 +214,16 @@ public class AlteraDownload implements VendorDownload {
         .add("")
         .add("# Check that the right project is open")
         .add("if {[is_project_open]} {")
-        .add("    if {[string compare $quartus(project) \"%s\"]} {", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-        .add("        puts \"Project %s is not open\"", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("    if {[string compare $quartus(project) \"%s\"]} {", topLevelName)
+        .add("        puts \"Project %s is not open\"", topLevelName)
         .add("        set make_assignments 0")
         .add("    }")
         .add("} else {")
         .add("    # Only open if not already open")
-        .add("    if {[project_exists %s]} {", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-        .add("        project_open -revision %s %s", ToplevelHDLGeneratorFactory.FPGAToplevelName, ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("    if {[project_exists %s]} {", topLevelName)
+        .add("        project_open -revision %s %s", topLevelName, topLevelName)
         .add("    } else {")
-        .add("        project_new -revision %s %s", ToplevelHDLGeneratorFactory.FPGAToplevelName, ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("        project_new -revision %s %s", topLevelName, topLevelName)
         .add("    }")
         .add("    set need_to_close_project 1")
         .add("}")
@@ -232,26 +234,28 @@ public class AlteraDownload implements VendorDownload {
         .add("    # Include all entities and gates")
         .add("");
     for (var entity : Entities) {
-      c.add("    set_global_assignment -name %s \"%s\"", fileType, entity);
+      content.add("    set_global_assignment -name %s \"%s\"", fileType, entity);
     }
     for (var architecture : Architectures) {
-      c.add("    set_global_assignment -name %s \"%s\"", fileType, architecture);
+      content.add("    set_global_assignment -name %s \"%s\"", fileType, architecture);
     }
-    c.add("");
-    c.add("    # Map fpga_clk and ionets to fpga pins");
+    content.add("");
+    content.add("    # Map fpga_clk and ionets to fpga pins");
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      c.add("    set_location_assignment %s -to %s", BoardInfo.fpga.getClockPinLocation(), TickComponentHDLGeneratorFactory.FPGAClock);
+      content.add("    set_location_assignment %s -to %s", BoardInfo.fpga.getClockPinLocation(), TickComponentHDLGeneratorFactory.FPGAClock);
     }
-    c.add(GetPinLocStrings())
-        .add("    # Commit assignments")
-        .add("    export_assignments")
-        .add("")
-        .add("    # Close project")
-        .add("    if {$need_to_close_project} {")
-        .add("        project_close")
-        .add("    }")
-        .add("}");
-    return FileWriter.WriteContents(ScriptFile, c.get());
+    content
+        .add(GetPinLocStrings())
+        .add(
+            "    # Commit assignments",
+            "    export_assignments",
+            "",
+            "    # Close project",
+            "    if {$need_to_close_project} {",
+            "        project_close",
+            "    }",
+            "}");
+    return FileWriter.WriteContents(ScriptFile, content.get());
   }
 
   private ArrayList<String> GetPinLocStrings() {
@@ -371,26 +375,27 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean FlashDevice() {
-    final var JicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic";
+    final var jicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic";
     Reporter.Report.print("==>");
     Reporter.Report.print("==> " + S.get("AlteraFlash"));
     Reporter.Report.print("==>");
-    if (!new File(SandboxPath + JicFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError", JicFile));
+    if (!new File(SandboxPath + jicFile).exists()) {
+      Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    var command = new ArrayList<String>();
-    command.add(alteraVendor.getBinaryPath(1));
-    command.add("-c");
-    command.add(cablename);
-    command.add("-m");
-    command.add("jtag");
-    command.add("-o");
-    command.add("P;" + JicFile);
-    final var Prog = new ProcessBuilder(command);
-    Prog.directory(new File(SandboxPath));
+    final var command = new ContentBuilder();
+    command
+        .add(alteraVendor.getBinaryPath(1))
+        .add("-c")
+        .add(cablename)
+        .add("-m")
+        .add("jtag")
+        .add("-o")
+        .add("P;%s", jicFile);
+    final var prog = new ProcessBuilder(command.get());
+    prog.directory(new File(SandboxPath));
     try {
-      final var result = Download.execute(Prog, null);
+      final var result = Download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
         return false;
