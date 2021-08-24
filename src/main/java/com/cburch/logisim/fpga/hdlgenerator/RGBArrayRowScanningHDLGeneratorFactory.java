@@ -40,103 +40,37 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public static String RGBArrayName = "RGBArrayRowScanning";
 
   public static ArrayList<String> getPortMap(int id) {
+    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
+    final var rowAddress = LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress;
+    final var redOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs;
+    final var greenOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs;
+    final var blueOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs;
+
+    final var redIns = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
+    final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
+    final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
+
     final var content = new ContentBuilder();
     if (HDL.isVHDL()) {
-      content.add("      PORT MAP ( "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + ",");
-      content.add("                 "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + " => "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + id
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + id
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + id
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + id
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + id
-          + ",");
-      content.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + id
-          + ");");
+      content
+          .add("      PORT MAP ( %1$s => %1$s%2$d,", rowAddress, id)
+          .add("                 %1$s => %1$s,", clock)
+          .add("                 %1$s => %1$s%2$d,", redOuts, id)
+          .add("                 %1$s => %1$s%2$d,", greenOuts, id)
+          .add("                 %1$s => %1$s%2$d,", blueOuts, id)
+          .add("                 %1$s => s_%1$s%2$d,", redIns, id)
+          .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
+          .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
     } else {
-      content.add("      (."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + "),");
-      content.add("       ."
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "("
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + id
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + id
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + id
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + id
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + id
-          + "),");
-      content.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + id
-          + "));");
+      content
+          .add("      (.%1$s(%1$s%2$d),", rowAddress, id)
+          .add("       .%1$s(%1$s),", clock)
+          .add("       .%1$s(%1$s%2$d),", redOuts, id)
+          .add("       .%1$s(%1$s%2$d),", greenOuts, id)
+          .add("       .%1$s(%1$s%2$d),", blueOuts, id)
+          .add("       .%1$s(s_%1$s%2$d),", redIns, id)
+          .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
+          .add("       .%1$s(s_%1$s%2$d)); ", blueIns, id);
     }
     return content.get();
   }
