@@ -39,6 +39,7 @@ jobs:
             - 'src/**/*.java'
             - 'src/**/*.properties'
             - '*.gradle*'
+            - 'gradle.properties'
 
     - name: "WILL BUILD STEP BE RUN?"
       run: |
