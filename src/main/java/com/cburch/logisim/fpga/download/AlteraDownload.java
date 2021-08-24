@@ -259,33 +259,33 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ArrayList<String> GetPinLocStrings() {
-    final var contents = new ArrayList<String>();
-    final var temp = new StringBuilder();
+    var Contents = new ArrayList<String>();
+    var Temp = new StringBuilder();
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
-          temp.setLength(0);
-          temp.append("    set_location_assignment ");
-          temp.append(map.getPinLocation(i)).append(" -to ");
-          if (map.isExternalInverted(i)) temp.append("n_");
-          temp.append(map.getHdlString(i));
-          contents.add(temp.toString());
+          Temp.setLength(0);
+          Temp.append("    set_location_assignment ");
+          Temp.append(map.getPinLocation(i)).append(" -to ");
+          if (map.isExternalInverted(i)) Temp.append("n_");
+          Temp.append(map.getHdlString(i));
+          Contents.add(Temp.toString());
           if (map.requiresPullup(i)) {
-            temp.setLength(0);
-            temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
-            if (map.isExternalInverted(i)) temp.append("n_");
-            temp.append(map.getHdlString(i));
-            contents.add(temp.toString());
+            Temp.setLength(0);
+            Temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
+            if (map.isExternalInverted(i)) Temp.append("n_");
+            Temp.append(map.getHdlString(i));
+            Contents.add(Temp.toString());
           }
         }
       }
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
     for (var key : LedArrayMap.keySet()) {
-      contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
+      Contents.add("    set_location_assignment " + LedArrayMap.get(key) + " -to " + key);
     }
-    return contents;
+    return Contents;
   }
 
   private static ArrayList<String> GetAlteraAssignments(BoardInformation CurrentBoard) {

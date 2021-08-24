@@ -40,105 +40,105 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public static String RGBArrayName = "RGBArrayRowScanning";
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var content = new ContentBuilder();
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( "
+      content.add("      PORT MAP ( "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
           + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + TickComponentHDLGeneratorFactory.FPGAClock
           + " => "
           + TickComponentHDLGeneratorFactory.FPGAClock
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
           + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
           + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
           + " => "
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + " => s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + " => s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + id
           + ",");
-      map.add("                 "
+      content.add("                 "
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + " => s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + id
           + ");");
     } else {
-      map.add("      (."
+      content.add("      (."
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + TickComponentHDLGeneratorFactory.FPGAClock
           + "("
           + TickComponentHDLGeneratorFactory.FPGAClock
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
           + "("
           + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + "(s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + "(s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
           + id
           + "),");
-      map.add("       ."
+      content.add("       ."
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + "(s_"
           + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
           + id
           + "));");
     }
-    return map;
+    return content.get();
   }
 
   @Override

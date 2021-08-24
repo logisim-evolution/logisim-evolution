@@ -60,35 +60,17 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   }
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
+    final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayOutputs;
+    final var map = new ContentBuilder();
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + ");");
+      map.add("      PORT MAP ( %1$s => %1$s%2$d,", outs, id);
+      map.add("                 %1$s => s_%1$s%2$d);", ins, id);
     } else {
-      map.add("      (."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + "));");
+      map.add("      (.%1$s(%1$s%2$d),", outs, id);
+      map.add("       .%1$s(s_%1$s%2$d));", ins, id);
     }
-    return map;
+    return map.get();
   }
 
   @Override
@@ -115,30 +97,26 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
+    final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayOutputs;
+
     final var contents = new ContentBuilder();
     if (HDL.isVHDL()) {
       contents
           .add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE")
-          .add("      %s(n) <= NOT(%s(n)) WHEN activeLow = 1 ELSE %s(n);",
-              LedArrayGenericHDLGeneratorFactory.LedArrayOutputs,
-              LedArrayGenericHDLGeneratorFactory.LedArrayInputs,
-              LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("      %1$s(n) <= NOT(%2$s(n)) WHEN activeLow = 1 ELSE %2$s(n);", outs, ins)
           .add("   END GENERATE;");
     } else {
       contents
           .add("   genvar i;")
           .add("   generate")
           .add("      for (i = 0; i < nrOfLeds; i = i + 1) begin")
-          .add("         assign %s[i] = (activeLow == 1) ? ~%s[n] : %s[n];",
-              LedArrayGenericHDLGeneratorFactory.LedArrayOutputs,
-              LedArrayGenericHDLGeneratorFactory.LedArrayInputs,
-              LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("         assign %1$s[i] = (activeLow == 1) ? ~%2$s[n] : %2$s[n];", outs, ins)
           .add("      end")
           .add("   endgenerate");
     }
     return contents.get();
   }
-
 
   @Override
   public String getComponentStringIdentifier() {

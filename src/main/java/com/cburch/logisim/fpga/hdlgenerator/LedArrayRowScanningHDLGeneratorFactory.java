@@ -191,6 +191,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   }
 
   public ArrayList<String> getRowCounterCode() {
+    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
     final var c = new ContentBuilder();
     if (HDL.isVHDL()) {
       c.add("")
@@ -198,21 +199,19 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           .add("")
           .add("   s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, %s)) ELSE '0';", scanningCounterBitsString)
           .add("")
-          .add(
-              "   s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation")
-          .add("                            std_logic_vector(to_unsigned(%s-1, %s)) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, %s)) ELSE ",
-              scanningCounterValueString, scanningCounterBitsString, scanningCounterBitsString)
-          .add("                            std_logic_vector(unsigned(s_scanningCounterReg)-1);")
-          .add("")
-          .add("   s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation")
-          .add("                       s_rowCounterReg WHEN s_tickReg = '0' ELSE")
-          .add("                       std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))")
-          .add("                          WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE")
-          .add("                       std_logic_vector(unsigned(s_rowCounterReg)-1);")
-          .add("")
-          .add("   makeFlops : PROCESS (%s) IS", TickComponentHDLGeneratorFactory.FPGAClock)
+          .add("   s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation")
+          .add("                            std_logic_vector(to_unsigned(%s-1, %s)) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, %s)) ELSE ", scanningCounterValueString, scanningCounterBitsString, scanningCounterBitsString)
+          .add("                            std_logic_vector(unsigned(s_scanningCounterReg)-1);",
+              "",
+              "   s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
+              "                       s_rowCounterReg WHEN s_tickReg = '0' ELSE",
+              "                       std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))",
+              "                          WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE",
+              "                       std_logic_vector(unsigned(s_rowCounterReg)-1);",
+              "")
+          .add("   makeFlops : PROCESS (%s) IS", clock)
           .add("   BEGIN")
-          .add("      IF (rising_edge(%s)) THEN", TickComponentHDLGeneratorFactory.FPGAClock)
+          .add("      IF (rising_edge(%s)) THEN", clock)
           .add("         s_rowCounterReg      <= s_rowCounterNext;")
           .add("         s_scanningCounterReg <= s_scanningCounterNext;")
           .add("         s_tickReg            <= s_tickNext;")
@@ -221,33 +220,39 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           .add("");
     } else {
       c.add("")
-          .add("   assign rowAddress = s_rowCounterReg;")
-          .add("")
-          .add("   assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;")
+          .add(
+              "   assign rowAddress = s_rowCounterReg;",
+              "",
+              "   assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;")
           .add("   assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? %s : s_scanningCounterReg - 1;", scanningCounterValueString)
-          .add("   assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ")
-          .add("                             (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;")
-          .add("")
+          .add(
+              "   assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ",
+              "                             (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
+              "")
           .add(MakeRemarkBlock("Here the simulation only initial is defined", 3))
-          .add("   initial")
-          .add("   begin")
-          .add("      s_rowCounterReg      = 0;")
-          .add("      s_scanningCounterReg = 0;")
-          .add("      s_tickReg            = 1'b0;")
-          .add("   end")
-          .add("")
-          .add("   always @(posedge %s)", TickComponentHDLGeneratorFactory.FPGAClock)
-          .add("   begin")
-          .add("       s_rowCounterReg      = s_rowCounterNext;")
-          .add("       s_scanningCounterReg = s_scanningCounterNext;")
-          .add("       s_tickReg            = s_tickNext;")
-          .add("   end");
+          .add(
+              "   initial",
+              "   begin",
+              "      s_rowCounterReg      = 0;",
+              "      s_scanningCounterReg = 0;",
+              "      s_tickReg            = 1'b0;",
+              "   end",
+              "")
+          .add("   always @(posedge %s)", clock)
+          .add(
+              "   begin",
+              "       s_rowCounterReg      = s_rowCounterNext;",
+              "       s_scanningCounterReg = s_scanningCounterNext;",
+              "       s_tickReg            = s_tickNext;",
+              "   end");
     }
     return c.get();
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
+    final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs;
     final var c = new ContentBuilder();
     c.add(getRowCounterCode());
     if (HDL.isVHDL()) {
@@ -255,23 +260,23 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           .add("   BEGIN")
           .add("      s_maxLedInputs <= (OTHERS => '0');")
           .add("      IF (%s = 1) THEN", activeLowString)
-          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, ins)
           .add("      ELSE")
-          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, ins)
           .add("      END IF;")
           .add("   END PROCESS makeVirtualInputs;")
           .add("")
           .add("   GenOutputs : FOR n IN %s-1 DOWNTO 0 GENERATE", nrOfColumnsString)
-          .add("      %s(n) <= s_maxLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs, nrOfColumnsString)
+          .add("      %s(n) <= s_maxLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", outs, nrOfColumnsString)
           .add("   END GENERATE GenOutputs;");
     } else {
       c.add("")
           .add("   genvar i;")
           .add("   generate")
           .add("      for (i = 0; i < %s; i = i + 1) begin", nrOfColumnsString)
-          .add("         assign %s[i] = (activeLow == 1)", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
-          .add("            ? ~%s[%s * s_rowCounterReg + i]", LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfColumnsString)
-          .add("            : %s[%s * s_rowCounterReg + i];", LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfColumnsString)
+          .add("         assign %s[i] = (activeLow == 1)", outs)
+          .add("            ? ~%s[%s * s_rowCounterReg + i]", ins, nrOfColumnsString)
+          .add("            : %s[%s * s_rowCounterReg + i];", ins, nrOfColumnsString)
           .add("      end")
           .add("   endgenerate");
     }

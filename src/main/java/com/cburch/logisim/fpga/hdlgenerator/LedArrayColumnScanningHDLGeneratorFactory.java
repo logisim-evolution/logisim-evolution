@@ -249,6 +249,9 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var arrayIns = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
+    final var arrayRowOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs;
+
     final var c = new ContentBuilder();
     c.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
@@ -256,14 +259,14 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           .add("   BEGIN")
           .add("      s_maxLedInputs <= (OTHERS => '0');")
           .add("      IF (%s = 1) THEN", activeLowString)
-          .add("         s_maxLedInputs( %s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("         s_maxLedInputs( %s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, arrayIns)
           .add("      ELSE")
-          .add("         s_maxLedInputs( %s-1 DOWNTO 0) <= %s;", nrOfLedsString, LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("         s_maxLedInputs( %s-1 DOWNTO 0) <= %s;", nrOfLedsString, arrayIns)
           .add("      END IF;")
           .add("   END PROCESS makeVirtualInputs;")
           .add("")
           .add("   GenOutputs : FOR n IN %s-1 DOWNTO 0 GENERATE", nrOfRowsString)
-          .add("      %s(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+          .add("      %s(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);", arrayRowOuts)
           .add("   END GENERATE GenOutputs;");
     } else {
       c.add("")
@@ -271,8 +274,8 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           .add("   generate")
           .add("      for (i = 0; i < %s; i = i + 1) begin", nrOfColumnsString)
           .add("         assign %s[i] = (activeLow == 1)")
-          .add("             ? ~%s[i*nrOfColumns+s_columnCounterReg]", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs, LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-          .add("             : %s[i*nrOfColumns+s_columnCounterReg];", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+          .add("             ? ~%s[i*nrOfColumns+s_columnCounterReg]", arrayRowOuts, arrayIns)
+          .add("             : %s[i*nrOfColumns+s_columnCounterReg];", arrayIns)
           .add("      end")
           .add("   endgenerate");
     }
