@@ -28,6 +28,7 @@
 
 package com.cburch.logisim;
 
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -89,10 +90,10 @@ public class Main {
 
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-  // FIXME: this should not be here. We need separate class for all these consts!
-  public static final String APP_NAME = "Logisim-evolution";
-  public static final LogisimVersion VERSION = new LogisimVersion(3, 5, 0);
-  public static final int COPYRIGHT_YEAR = 2021;
+  // @deprecated use BuildInfo instead
+  public static final String APP_NAME = BuildInfo.name;
+  // @deprecated use BuildInfo instead
+  public static final LogisimVersion VERSION = BuildInfo.version;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
 
