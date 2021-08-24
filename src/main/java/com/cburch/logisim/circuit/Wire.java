@@ -82,10 +82,10 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public static final AttributeOption VALUE_HORZ = new AttributeOption("horz", S.getter("wireDirectionHorzOption"));
   public static final AttributeOption VALUE_VERT = new AttributeOption("vert", S.getter("wireDirectionVertOption"));
 
-  public static final Attribute<AttributeOption> dir_attr = Attributes.forOption("direction", S.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
-  public static final Attribute<Integer> len_attr = Attributes.forInteger("length", S.getter("wireLengthAttr"));
+  public static final Attribute<AttributeOption> DIR_ATTR = Attributes.forOption("direction", S.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
+  public static final Attribute<Integer> LEN_ATTR = Attributes.forInteger("length", S.getter("wireLengthAttr"));
 
-  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(dir_attr, len_attr);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(DIR_ATTR, LEN_ATTR);
 
   private static final Cache cache = new Cache();
 
@@ -276,9 +276,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == dir_attr) {
+    if (attr == DIR_ATTR) {
       return (V) (is_x_equal ? VALUE_VERT : VALUE_HORZ);
-    } else if (attr == len_attr) {
+    } else if (attr == LEN_ATTR) {
       return (V) Integer.valueOf(getLength());
     } else {
       return null;

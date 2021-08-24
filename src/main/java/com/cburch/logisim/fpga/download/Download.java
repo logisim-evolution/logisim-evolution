@@ -147,7 +147,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (RootSheet == null) return;
     var steps = BasicSteps;
     switch (Vendor) {
-      case VendorSoftware.VendorAltera:
+      case VendorSoftware.VENDOR_ALTERA:
         Downloader =
             new AlteraDownload(
                 GetProjDir(TopLevelSheet),
@@ -158,7 +158,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
                 AppPreferences.HDL_Type.get(),
                 writeToFlash);
         break;
-      case VendorSoftware.VendorXilinx:
+      case VendorSoftware.VENDOR_XILINX:
         Downloader =
             new XilinxDownload(
                 GetProjDir(TopLevelSheet),
@@ -169,7 +169,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
                 AppPreferences.HDL_Type.get(),
                 writeToFlash);
         break;
-      case VendorSoftware.VendorVivado:
+      case VendorSoftware.VENDOR_VIVADO:
         Downloader =
             new VivadoDownload(
                 GetProjDir(TopLevelSheet),

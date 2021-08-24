@@ -49,7 +49,7 @@ import javax.swing.event.ChangeListener;
 @SuppressWarnings("serial")
 public class MenuSimulate extends Menu {
 
-  public static final Double[] SupportedTickFrequencies = {
+  public static final Double[] SUPPORTED_TICK_FREQUENCIES = {
     2048000.0, 1024000.0, 512000.0, 256000.0, 128000.0, 64000.0, 32000.0, 16000.0, 8000.0, 4000.0,
     2000.0, 1000.0, 512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
   };
@@ -64,7 +64,7 @@ public class MenuSimulate extends Menu {
   private final MenuItemImpl tickHalf;
   private final MenuItemImpl tickFull;
   private final JMenu tickFreq = new JMenu();
-  private final TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
+  private final TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SUPPORTED_TICK_FREQUENCIES.length];
   private final JMenu downStateMenu = new JMenu();
   private final ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<>();
   private final JMenu upStateMenu = new JMenu();
@@ -104,8 +104,8 @@ public class MenuSimulate extends Menu {
     ticksEnabled.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
 
     final var bgroup = new ButtonGroup();
-    for (var i = 0; i < SupportedTickFrequencies.length; i++) {
-      tickFreqs[i] = new TickFrequencyChoice(SupportedTickFrequencies[i]);
+    for (var i = 0; i < SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      tickFreqs[i] = new TickFrequencyChoice(SUPPORTED_TICK_FREQUENCIES[i]);
       bgroup.add(tickFreqs[i]);
       tickFreq.add(tickFreqs[i]);
     }
@@ -165,7 +165,7 @@ public class MenuSimulate extends Menu {
 
   public static ArrayList<String> getTickFrequencyStrings() {
     final var result = new ArrayList<String>();
-    for (final var supportedTickFrequency : SupportedTickFrequencies) {
+    for (final var supportedTickFrequency : SUPPORTED_TICK_FREQUENCIES) {
       if (supportedTickFrequency < 1000) {
         final var small = (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001);
         final var freqHz = "" + ((small) ? (int) Math.round(supportedTickFrequency) : supportedTickFrequency);

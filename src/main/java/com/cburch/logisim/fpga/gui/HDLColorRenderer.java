@@ -40,10 +40,10 @@ import javax.swing.table.TableCellRenderer;
 
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel implements TableCellRenderer {
-  public static final String NoSupportString = "HDL_NOT_SUPPORTED";
-  public static final String SupportString = "HDL_SUPPORTED";
-  public static final String UnKnownString = "HDL_UNKNOWN";
-  public static final String RequiredFieldString = ">_HDL_REQUIRED_FIELD_<";
+  public static final String NO_SUPPORT_STRING = "HDL_NOT_SUPPORTED";
+  public static final String SUPPORT_STRING = "HDL_SUPPORTED";
+  public static final String UNKNOWN_STRING = "HDL_UNKNOWN";
+  public static final String REQUIRED_FIELD_STRING = ">_HDL_REQUIRED_FIELD_<";
   private static final ArrayList<String> CorrectStrings = new ArrayList<>();
 
   Border border = null;
@@ -51,30 +51,31 @@ public class HDLColorRenderer extends JLabel implements TableCellRenderer {
   public HDLColorRenderer() {
     setOpaque(true);
     CorrectStrings.clear();
-    CorrectStrings.add(NoSupportString);
-    CorrectStrings.add(UnKnownString);
+    CorrectStrings.add(NO_SUPPORT_STRING);
+    CorrectStrings.add(UNKNOWN_STRING);
   }
 
+  @Override
   public Component getTableCellRendererComponent(
       JTable table, Object Info, boolean isSelected, boolean hasFocus, int row, int column) {
     /* we have a difference between the first row and the rest */
     if (row == 0) {
       String value = (String) Info;
-      boolean passive = value.equals(NoSupportString);
+      boolean passive = value.equals(NO_SUPPORT_STRING);
       Color newColor = (passive) ? Color.red : Color.green;
-      if (value.equals(UnKnownString)) newColor = table.getGridColor();
+      if (value.equals(UNKNOWN_STRING)) newColor = table.getGridColor();
       if (column == 1) setBackground(newColor);
       setForeground(Color.black);
       if (column == 0) setText(value);
       else {
-        if (value.equals(NoSupportString)) setText(S.get("FPGANotSupported"));
-        else if (value.equals(SupportString)) setText(S.get("FPGASupported"));
+        if (value.equals(NO_SUPPORT_STRING)) setText(S.get("FPGANotSupported"));
+        else if (value.equals(SUPPORT_STRING)) setText(S.get("FPGASupported"));
         else setText(S.get("FPGAUnknown"));
       }
       setHorizontalAlignment(JLabel.CENTER);
     } else {
       String myInfo = (String) Info;
-      if (myInfo != null && myInfo.equals(RequiredFieldString)) {
+      if (myInfo != null && myInfo.equals(REQUIRED_FIELD_STRING)) {
         setBackground(Color.YELLOW);
         setForeground(Color.BLUE);
         setText("HDL Required");

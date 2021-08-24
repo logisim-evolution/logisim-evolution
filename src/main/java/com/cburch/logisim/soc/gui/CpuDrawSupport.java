@@ -46,8 +46,8 @@ import java.awt.event.MouseEvent;
 
 public class CpuDrawSupport {
 
-  public static final int NrOfTraces = 21;
-  public static final int TRACEHEIGHT = 20;
+  public static final int NrOfTraces = 21;    // FIXME: CAPITALIZE_CASE
+  public static final int TRACE_HEIGHT = 20;
 
   public static final Bounds busConBounds = Bounds.create(50, 600, 280, 20);
   public static final Bounds simStateBounds = Bounds.create(340, 600, 270, 20);
@@ -242,7 +242,7 @@ public class CpuDrawSupport {
       int yOff = 30;
       for (TraceInfo t : cpu.getTraces()) {
         t.paint(g2, yOff, scale);
-        yOff += TRACEHEIGHT;
+        yOff += TRACE_HEIGHT;
       }
     }
     g2.dispose();

@@ -56,7 +56,7 @@ import org.w3c.dom.Element;
 public class AlteraDownload implements VendorDownload {
 
   private final VendorSoftware alteraVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
+      VendorSoftware.getSoftware(VendorSoftware.VENDOR_ALTERA);
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
@@ -81,8 +81,8 @@ public class AlteraDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -92,6 +92,7 @@ public class AlteraDownload implements VendorDownload {
     cablename = "";
   }
 
+  @Override
   public void SetMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
@@ -302,13 +303,13 @@ public class AlteraDownload implements VendorDownload {
     final var Package = CurrentBoard.fpga.getPackage().split(" ");
     result.add(Assignment + "DEVICE_FILTER_PACKAGE " + Package[0]);
     result.add(Assignment + "DEVICE_FILTER_PIN_COUNT " + Package[1]);
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.Float) {
+    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.FLOAT) {
       result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT TRI-STATED\"");
     }
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) {
       result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT PULLUP\"");
     }
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) {
       result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT PULLDOWN\"");
     }
     result.add(
@@ -414,7 +415,7 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean LoadProgrammerSof() {
     final var FpgaDevice = StripPackageSpeed();
-    final var ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)).getParent()
+    final var ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VENDOR_ALTERA)).getParent()
         + File.separator
         + "common"
         + File.separator

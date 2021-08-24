@@ -341,7 +341,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetInputList(Netlist MyNetList, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     for (int i = 0; i < MyNetList.NumberOfClockTrees(); i++) {
-      Inputs.put(ClockTreeName + i, ClockHDLGeneratorFactory.NrOfClockBits);
+      Inputs.put(ClockTreeName + i, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (MyNetList.RequiresGlobalClockConnection()) {
       Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);

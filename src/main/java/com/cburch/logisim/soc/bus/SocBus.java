@@ -65,7 +65,7 @@ public class SocBus extends SocInstanceFactory {
   public static final SocBusMenuProvider MENU_PROVIDER = new SocBusMenuProvider();
 
   public SocBus() {
-    super(_ID, S.getter("SocBusComponent"), SocBus);
+    super(_ID, S.getter("SocBusComponent"), SOC_BUS);
     setIcon(new ArithmeticIcon("SOCBus", 3));
   }
 
@@ -81,7 +81,7 @@ public class SocBus extends SocInstanceFactory {
         0,
         640,
         (attrs.getValue(SocBusAttributes.NrOfTracesAttr).getWidth() + 1)
-            * SocBusStateInfo.TraceHeight);
+            * SocBusStateInfo.TRACE_HEIGHT);
   }
 
   @Override

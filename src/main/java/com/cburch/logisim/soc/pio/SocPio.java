@@ -61,11 +61,11 @@ public class SocPio extends SocInstanceFactory {
    */
   public static final String _ID = "SocPio";
 
-  public static final int ResetIndex = 0;
-  public static final int IRQIndex = 1;
+  public static final int RESET_INDEX = 0;
+  public static final int IRQ_INDEX = 1;
 
   public SocPio() {
-    super(_ID, S.getter("SocPioComponent"), SocSlave);
+    super(_ID, S.getter("SocPioComponent"), SOC_SLAVE);
     setIcon(new ArithmeticIcon("SocPIO", 3));
     setOffsetBounds(Bounds.create(0, 0, 380, 120));
   }
@@ -99,11 +99,11 @@ public class SocPio extends SocInstanceFactory {
     nrOfPorts += index;
     Port[] ps = new Port[nrOfPorts];
     if (hasIrq) {
-      ps[IRQIndex] = new Port(20, 0, Port.OUTPUT, 1);
-      ps[IRQIndex].setToolTip(S.getter("SocPioIrqOutput"));
+      ps[IRQ_INDEX] = new Port(20, 0, Port.OUTPUT, 1);
+      ps[IRQ_INDEX].setToolTip(S.getter("SocPioIrqOutput"));
     }
-    ps[ResetIndex] = new Port(0, 110, Port.INPUT, 1);
-    ps[ResetIndex].setToolTip(S.getter("SocPioResetInput"));
+    ps[RESET_INDEX] = new Port(0, 110, Port.INPUT, 1);
+    ps[RESET_INDEX].setToolTip(S.getter("SocPioResetInput"));
     if (dir == PioAttributes.PORT_INPUT || dir == PioAttributes.PORT_INOUT) {
       for (int b = 0; b < nrBits; b++) {
         ps[index + b] = new Port(370 - b * 10, 120, Port.INPUT, 1);
@@ -143,13 +143,13 @@ public class SocPio extends SocInstanceFactory {
   }
 
   private void paintPins(InstancePainter painter, Graphics2D g2, Location loc) {
-    painter.drawPort(ResetIndex, "Reset", Direction.EAST);
+    painter.drawPort(RESET_INDEX, "Reset", Direction.EAST);
     int nrBits = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
     AttributeOption dir = painter.getAttributeValue(PioAttributes.PIO_DIRECTION);
     int index = 1;
     if (hasIrqPin(painter.getAttributeSet())) {
       index++;
-      painter.drawPort(IRQIndex, "IRQ", Direction.NORTH);
+      painter.drawPort(IRQ_INDEX, "IRQ", Direction.NORTH);
     }
     if (dir == PioAttributes.PORT_INPUT || dir == PioAttributes.PORT_INOUT) {
       for (int b = 0; b < nrBits; b++) painter.drawPort(index + b);

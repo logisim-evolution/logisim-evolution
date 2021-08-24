@@ -45,7 +45,7 @@ import java.util.Locale;
 public class VivadoDownload implements VendorDownload {
 
   private final VendorSoftware vivadoVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
+      VendorSoftware.getSoftware(VendorSoftware.VENDOR_VIVADO);
   private final String ScriptPath;
   private final String SandboxPath;
   private final String xdcPath;
@@ -69,9 +69,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
-    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDCPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -193,8 +193,8 @@ public class VivadoDownload implements VendorDownload {
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 
-      if (BoardInfo.fpga.getClockStandard() != IoStandards.DefaulStandard
-          && BoardInfo.fpga.getClockStandard() != IoStandards.Unknown) {
+      if (BoardInfo.fpga.getClockStandard() != IoStandards.DEFAUL_STANDARD
+          && BoardInfo.fpga.getClockStandard() != IoStandards.UNKNOWN) {
         final var clockIoStandard = IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()];
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
@@ -258,8 +258,8 @@ public class VivadoDownload implements VendorDownload {
                   + "}]");
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.UNKNOWN
+                && info.GetIOStandard() != IoStandards.DEFAUL_STANDARD) {
               contents.add(
                   "    set_property IOSTANDARD "
                       + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
@@ -267,8 +267,8 @@ public class VivadoDownload implements VendorDownload {
                       + netName
                       + "}]");
             }
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.UNKNOWN
+                && info.GetIOStandard() != IoStandards.DEFAUL_STANDARD) {
               contents.add(
                   "    set_property IOSTANDARD "
                       + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())

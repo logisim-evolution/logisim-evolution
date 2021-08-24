@@ -47,17 +47,17 @@ public class PinActivity {
   public static LinkedList<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
+    result.add(BEHAVIOR_STRINGS[0]);
+    result.add(BEHAVIOR_STRINGS[1]);
 
     return result;
   }
 
-  public static final String ActivityAttributeString = "ActivityLevel";
-  public static final char ActiveLow = 0;
-  public static final char ActiveHigh = 1;
+  public static final String ACTIVITY_ATTRIBUTE_STRING = "ActivityLevel";
+  public static final char ACTIVE_LOW = 0;
+  public static final char ACTIVE_HIGH = 1;
 
   public static final char Unknown = 255;
 
-  public static final String[] Behavior_strings = {"Active low", "Active high"};
+  public static final String[] BEHAVIOR_STRINGS = {"Active low", "Active high"};
 }

@@ -105,9 +105,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return FileWriter.WriteContents(OutFile, Contents);
   }
 
-  public static final int MaxLineLength = 80;
+  public static final int MaxLineLength = 80; // FIXME: CAPITALIZE_CASE
 
   /* Here the common predefined methods are defined */
+  @Override
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
@@ -115,6 +116,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return true;
   }
 
+  @Override
   public ArrayList<String> GetArchitecture(
       Netlist TheNetlist,
       AttributeSet attrs,
@@ -552,12 +554,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new ArrayList<>();
   }
 
+  @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
     var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
     return Contents;
   }
 
+  @Override
   public ArrayList<String> GetComponentMap(
       Netlist Nets,
       Long ComponentId,
@@ -701,6 +705,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents;
   }
 
+  @Override
   public String getComponentStringIdentifier() {
     return "AComponent";
   }
@@ -728,6 +733,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new ArrayList<>();
   }
 
+  @Override
   public ArrayList<String> GetInlinedCode(
       Netlist Nets,
       Long ComponentId,
@@ -1015,6 +1021,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
+  @Override
   public String GetRelativeDirectory() {
     var Subdir = GetSubDir();
     if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
@@ -1044,7 +1051,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeSet<>();
   }
 
-  private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs, 
+  private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs,
       String ComponentName, Boolean IsEntity) {
     var Contents = new ArrayList<String>();
     final var InputsList = GetInputList(TheNetlist, attrs);
@@ -1218,14 +1225,17 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
+  @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return false;
   }
 
+  @Override
   public boolean IsOnlyInlined() {
     return false;
   }
 
+  @Override
   public boolean IsOnlyInlined(IOComponentTypes map) {
     return true;
   }

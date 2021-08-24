@@ -147,20 +147,20 @@ public class BusTransactionInsertionGui extends JFrame
     int action = SocBusTransaction.WordAccess;
     String format = "%08X";
     if (halfTrans.isSelected()) {
-      action = SocBusTransaction.HalfWordAccess;
+      action = SocBusTransaction.HALF_WORD_ACCESS;
       format = "%04X";
       data &= 0xFFFF;
     }
     if (byteTrans.isSelected()) {
-      action = SocBusTransaction.ByteAccess;
+      action = SocBusTransaction.BYTE_ACCESS;
       format = "%02X";
       data &= 0xFF;
     }
     inputDataValue.setText(String.format(format, data));
     int type = 0;
     if (readAction.isSelected()) type |= SocBusTransaction.READTransaction;
-    if (writeAction.isSelected()) type |= SocBusTransaction.WRITETransaction;
-    if (atomicAction.isSelected()) type |= SocBusTransaction.ATOMICTransaction;
+    if (writeAction.isSelected()) type |= SocBusTransaction.WRITE_TRANSACTION;
+    if (atomicAction.isSelected()) type |= SocBusTransaction.ATOMIC_TRANSACTION;
     SocBusTransaction trans =
         new SocBusTransaction(type, addr, data, action, S.get("SocTransInsManual"));
     myBus.getSocSimulationManager().initializeTransaction(trans, myBusId, circuitState);

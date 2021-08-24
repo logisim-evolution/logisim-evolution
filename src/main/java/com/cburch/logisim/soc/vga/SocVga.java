@@ -61,7 +61,7 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
   public static final String _ID = "SocVga";
 
   public SocVga() {
-    super(_ID, S.getter("SocVgaComponent"), SocSlave | SocSniffer | SocMaster);
+    super(_ID, S.getter("SocVgaComponent"), SOC_SLAVE | SOC_SNIFFER | SOC_MASTER);
     setIcon(new ArithmeticIcon("SocVGA", 3));
   }
 
