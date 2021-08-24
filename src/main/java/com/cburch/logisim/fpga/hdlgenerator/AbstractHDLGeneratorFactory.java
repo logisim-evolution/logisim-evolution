@@ -37,7 +37,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,7 +119,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);

@@ -32,7 +32,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -75,7 +75,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var nrOfGates = (IsInverter()) ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
       contents.addRemarkBlock("Here gate %d is described", i).add(GetLogicFunction(i));

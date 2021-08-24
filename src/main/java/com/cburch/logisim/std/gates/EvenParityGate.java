@@ -36,7 +36,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ class EvenParityGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      final var contents = new ContentBuilder();
+      final var contents = new LineBuffer();
       contents.add(GetParity(true, nrOfInputs, bitwidth > 1)).empty();
       return contents.get();
     }

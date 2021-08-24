@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -61,7 +61,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add("   -- Output Signals")

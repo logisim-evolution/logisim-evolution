@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -63,7 +63,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
       contents.add("   make_mux : PROCESS( Enable,");

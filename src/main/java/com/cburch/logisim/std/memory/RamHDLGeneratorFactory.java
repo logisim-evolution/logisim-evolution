@@ -36,7 +36,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -108,7 +108,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDL.isVHDL()) {

@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -191,7 +191,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   }
 
   public ArrayList<String> getColumnCounterCode() {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add("")
@@ -252,7 +252,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     final var arrayIns = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
     final var arrayRowOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs;
 
-    final var c = new ContentBuilder();
+    final var c = new LineBuffer();
     c.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
       c.add("   makeVirtualInputs : PROCESS ( internalLeds ) IS")

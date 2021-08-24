@@ -40,7 +40,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -204,7 +204,7 @@ public class AlteraDownload implements VendorDownload {
     }
     final var fileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
     final var topLevelName = ToplevelHDLGeneratorFactory.FPGAToplevelName;
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     contents
         .add("# Load Quartus II Tcl Project package")
         .add("package require ::quartus::project")
@@ -383,7 +383,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    final var command = new ContentBuilder();
+    final var command = new LineBuffer();
     command
         .add(alteraVendor.getBinaryPath(1))
         .add("-c")

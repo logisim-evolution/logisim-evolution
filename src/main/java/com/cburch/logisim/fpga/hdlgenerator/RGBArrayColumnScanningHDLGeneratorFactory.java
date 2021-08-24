@@ -1,6 +1,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -21,7 +21,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     final var redIns = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
     final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
     final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add("      PORT MAP ( %1$s => %1$s%2$d,", columnAddress, id)
@@ -89,7 +89,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     final var greenOut = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
     final var blueOut = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
 
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
       contents

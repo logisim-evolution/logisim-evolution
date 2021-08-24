@@ -38,7 +38,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -245,7 +245,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ArrayList<String> getPinLocStrings() {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {

@@ -37,7 +37,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -58,7 +58,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       Netlist nets,
       AttributeSet attrs,
       String componentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     contents.add(FileWriter.getGenerateRemark(componentName, nets.projName()));
     if (HDL.isVHDL()) {
       contents
@@ -169,7 +169,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -208,7 +208,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add("   GenBits : FOR n IN (%s-1) DOWNTO 0 GENERATE", NR_OF_BITS_STR)

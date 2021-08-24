@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
@@ -51,7 +51,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var triName = GetNetName(componentInfo, 2, true, nets);
     var inpName = "";
     var outpName = "";

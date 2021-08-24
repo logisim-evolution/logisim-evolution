@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -59,7 +59,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       contents
@@ -173,7 +173,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
         .add("   /***************************************************************************")
@@ -211,7 +211,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
         .add("   -----------------------------------------------------------------------------")

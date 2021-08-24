@@ -35,7 +35,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -146,7 +146,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
     if (HDL.isVHDL()) {
@@ -257,7 +257,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
-    ContentBuilder contents = new ContentBuilder();
+    LineBuffer contents = new LineBuffer();
     contents
         .add("   ")
         .add("   ADD3_%s : PROCESS(%s)", processName, srcName)

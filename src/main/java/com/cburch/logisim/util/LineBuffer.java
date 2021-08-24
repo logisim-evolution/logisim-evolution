@@ -32,6 +32,8 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is intended to simplify building any HDL content, which usually contains of fixed text
@@ -39,18 +41,18 @@ import java.util.Collection;
  * under the hood, reducing the number of explicit calls made to build a text line. See usage
  * examples.
  */
-public class ContentBuilder {
+public class LineBuffer {
   private static final int DEFAULT_INDENT = 3;
 
   private ArrayList<String> contents;
 
   public static final int maxLineLength = 80;
 
-  public ContentBuilder() {
+  public LineBuffer() {
     contents = new java.util.ArrayList<String>();
   }
 
-  public ContentBuilder clear() {
+  public LineBuffer clear() {
     contents.clear();
     return this;
   }
@@ -58,10 +60,9 @@ public class ContentBuilder {
   /**
    * Adds single line to the content buffer.
    *
-   * @param line
-   * @return
+   * @param line String to be added to the content buffer.
    */
-  public ContentBuilder add(String line) {
+  public LineBuffer add(String line) {
     contents.add(line);
     return this;
   }
@@ -71,32 +72,46 @@ public class ContentBuilder {
    *
    * @param fmt Formatting string as accepted by String.format()
    * @param args Optional arguments
-   * @return
    */
-  public ContentBuilder add(String fmt, Object... args) {
+  public LineBuffer add(String fmt, Object... args) {
     return add(String.format(fmt, args));
   }
 
-  public ContentBuilder repeat(int count, String line) {
+  /**
+   * Key-Value formatter. Will look for all occurences of keys from provided map and replace with
+   * values. To enforce key uniquess and avoid too-greedy replacing, the fmt string must wrap key in
+   * double curly braces, i.e. in map `("foo", "bar")`, in formatting string `This {{key}} will be
+   * replaced.`. Processed string is then added to content buffer.
+   *
+   * @param fmt Formatting string. Wrap keys in `{{` and `}}`.
+   * @param map Search-Replace map.
+   */
+  public LineBuffer add(String fmt, HashMap<String, String> map) {
+    for (Map.Entry<String, String> set : map.entrySet()) {
+      final var search = String.format("{{%s}}", set.getKey());
+      fmt = fmt.replace(search, set.getValue());
+    }
+    add(fmt);
+
+    return this;
+  }
+
+  public LineBuffer repeat(int count, String line) {
     for (var i = 0; i < count; i++) contents.add(line);
     return this;
   }
 
-  /**
-   * Appends single empty line to the content buffer.
-   */
-  public ContentBuilder empty() {
+  /** Appends single empty line to the content buffer. */
+  public LineBuffer empty() {
     return repeat(1, "");
   }
 
-  /**
-   * Appends `lines` count of empty line to the content buffer.
-   */
-  public ContentBuilder empty(int lines) {
+  /** Appends `lines` count of empty line to the content buffer. */
+  public LineBuffer empty(int lines) {
     return repeat(lines, "");
   }
 
-  public ContentBuilder add(String... lines) {
+  public LineBuffer add(String... lines) {
     return add(Arrays.asList(lines));
   }
 
@@ -106,7 +121,7 @@ public class ContentBuilder {
    * @param lines
    * @return
    */
-  public ContentBuilder add(Collection<String> lines) {
+  public LineBuffer add(Collection<String> lines) {
     contents.addAll(lines);
     return this;
   }
@@ -120,11 +135,11 @@ public class ContentBuilder {
     return contents;
   }
 
-  public ContentBuilder addRemarkBlock(String remarkText) {
+  public LineBuffer addRemarkBlock(String remarkText) {
     return addRemarkBlock(remarkText, DEFAULT_INDENT);
   }
 
-  public ContentBuilder addRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
+  public LineBuffer addRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
     add(buildRemarkBlock(remarkText, nrOfIndentSpaces));
     return this;
   }

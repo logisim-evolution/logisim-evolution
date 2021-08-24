@@ -41,7 +41,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -214,7 +214,7 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    var contents = new ContentBuilder();
+    var contents = new LineBuffer();
     for (var entity : Entities) contents.add("%s work \"%s\"", HDLType.toUpperCase(), entity);
     for (var arch : architectures) contents.add("%s work \"%s\"", HDLType.toUpperCase(), arch);
     if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;

@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -43,7 +43,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -82,7 +82,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     return contents
         .add("   COMPONENT LocalBus")
         .add("      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;")
@@ -109,7 +109,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     return contents
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())

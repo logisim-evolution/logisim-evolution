@@ -35,14 +35,14 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
     final var busName = GetBusName(componentInfo, HexDigit.HEX, nets);
     final var dpName = GetNetName(componentInfo, HexDigit.DP, true, nets);

@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.util.ContentBuilder;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -62,7 +62,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getPortMap(int id) {
     final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
     final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayOutputs;
-    final var map = new ContentBuilder();
+    final var map = new LineBuffer();
     if (HDL.isVHDL()) {
       map.add("      PORT MAP ( %1$s => %1$s%2$d,", outs, id);
       map.add("                 %1$s => s_%1$s%2$d);", ins, id);
@@ -100,7 +100,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
     final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
     final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayOutputs;
 
-    final var contents = new ContentBuilder();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
           .add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE")
