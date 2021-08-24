@@ -45,7 +45,7 @@ public class SocBusTransaction {
   public static final int BLOCK_MARKER = 14;
   public static final int BLOCK_HEX = 78;
 
-  public static final int READTransaction = 1;  // FIXME: CAPITALIZE_CASE
+  public static final int READTransaction = 1;  // FIXME: SCREAM_CASE
   public static final int WRITE_TRANSACTION = 2;
   public static final int ATOMIC_TRANSACTION = 4;
 

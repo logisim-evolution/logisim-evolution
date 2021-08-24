@@ -44,8 +44,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final String NrOfCounterBitsStr = "NrOfBits";
   private static final Integer NrOfCounterBitsId = -2;
 
-  public static final String FPGAClock = "FPGA_GlobalClock";  // FIXME: CAPITALIZE_CASE
-  public static final String FPGATick = "s_FPGA_Tick";  // FIXME: CAPITALIZE_CASE
+  public static final String FPGAClock = "FPGA_GlobalClock";  // FIXME: SCREAM_CASE
+  public static final String FPGATick = "s_FPGA_Tick";  // FIXME: SCREAM_CASE
 
   public TickComponentHDLGeneratorFactory(
       long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {

@@ -42,11 +42,11 @@ import java.util.TreeMap;
 public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public static final int NR_OF_CLOCK_BITS = 5;
-  public static final int DerivedClockIndex = 0;    // FIXME: CAPITALIZE_CASE
-  public static final int InvertedDerivedClockIndex = 1;    // FIXME: CAPITALIZE_CASE
-  public static final int PositiveEdgeTickIndex = 2;    // FIXME: CAPITALIZE_CASE
-  public static final int NegativeEdgeTickIndex = 3;    // FIXME: CAPITALIZE_CASE
-  public static final int GlobalClockIndex = 4;   // FIXME: CAPITALIZE_CASE
+  public static final int DerivedClockIndex = 0;    // FIXME: SCREAM_CASE
+  public static final int InvertedDerivedClockIndex = 1;    // FIXME: SCREAM_CASE
+  public static final int PositiveEdgeTickIndex = 2;    // FIXME: SCREAM_CASE
+  public static final int NegativeEdgeTickIndex = 3;    // FIXME: SCREAM_CASE
+  public static final int GlobalClockIndex = 4;   // FIXME: SCREAM_CASE
   private static final String HighTickStr = "HighTicks";
   private static final int HighTickId = -1;
   private static final String LowTickStr = "LowTicks";
