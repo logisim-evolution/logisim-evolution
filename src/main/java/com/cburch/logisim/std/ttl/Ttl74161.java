@@ -81,7 +81,7 @@ public class Ttl74161 extends AbstractTtlGate {
       "A1/QB",
       "A0/QA",
       "TC/RC0 (Terminal Count)"
-    }; 
+  }; 
   private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15}; 
 
   public Ttl74161() {
