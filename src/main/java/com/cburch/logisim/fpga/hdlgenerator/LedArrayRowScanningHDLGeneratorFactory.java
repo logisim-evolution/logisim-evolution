@@ -35,6 +35,7 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import javax.sound.sampled.Line;
 
 public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -56,89 +57,77 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   public static String scanningCounterValueString = "scanningCounterReloadValue";
   public static String maxNrLedsString = "maxNrLedsAddrColumns";
 
-  public static ArrayList<String> getGenericMap(int nrOfRows,
-      int nrOfColumns,
-      long FpgaClockFrequency,
-      boolean activeLow) {
-    final var map = new ArrayList<String>();
+  public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
     final var nrRowAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
     final var scanningReload = (int) (FpgaClockFrequency / (long) 1000);
     final var nrOfScanningBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrRowAddrBits)) * nrOfRows;
+
+    final var contents =
+        (new LineBuffer())
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfLedsVal", nrOfRows * nrOfColumns)
+            .addPair("nrOfRows", nrOfRowsString)
+            .addPair("nrOfRowsVal", nrOfRows)
+            .addPair("nrOfColumns", nrOfColumnsString)
+            .addPair("nrOfColumnsVal", nrOfColumns)
+            .addPair("nrOfRowAddressBits", nrOfRowAddressBitsString)
+            .addPair("nrOfRowAddressBitsVal", nrRowAddrBits)
+            .addPair("scanningCounterBits", scanningCounterBitsString)
+            .addPair("scanningCounterBitsVal", nrOfScanningBits)
+            .addPair("scanningCounterValue", scanningCounterValueString)
+            .addPair("scanningCounterValueVal", scanningReload - 1)
+            .addPair("maxNrLeds", maxNrLedsString)
+            .addPair("maxNrLedsVal", maxNrLeds)
+            .addPair("activeLow", activeLowString)
+            .addPair("activeLowVal", activeLow ? "1" : "0");
+
     if (HDL.isVHDL()) {
-      map.add("      GENERIC MAP ( " + nrOfLedsString + " => " + (nrOfRows * nrOfColumns) + ",");
-      map.add("                    " + nrOfRowsString + " => " + nrOfRows + ",");
-      map.add("                    " + nrOfColumnsString + " => " + nrOfColumns + ",");
-      map.add("                    " + nrOfRowAddressBitsString + " => " + nrRowAddrBits + ",");
-      map.add("                    " + scanningCounterBitsString + " => " + nrOfScanningBits + ",");
-      map.add("                    " + scanningCounterValueString + " => " + (scanningReload - 1) + ",");
-      map.add("                    " + maxNrLedsString + " => " + maxNrLeds + ",");
-      map.add("                    " + activeLowString + " => " + ((activeLow) ? "1" : "0") + ")");
+      contents.add(
+          "GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},",
+          "              {{nrOfRows}} => {{nrOfRowsVal}},",
+          "              {{nrOfColumns}} => {{nrOfColumnsVal}},",
+          "              {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},",
+          "              {{scanningCounterBits}} => {{scanningCounterBitsVal}},",
+          "              {{scanningCounterValue}} => {{scanningCounterValueVal}},",
+          "              {{maxNrLeds}} => {{maxNrLedsVal}},",
+          "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      map.add("      #( ." + nrOfLedsString + "(" + (nrOfRows * nrOfColumns) + "),");
-      map.add("         ." + nrOfRowsString + "(" + nrOfRows + "),");
-      map.add("         ." + nrOfColumnsString + "(" + nrOfColumns + "),");
-      map.add("         ." + nrOfRowAddressBitsString + "(" + nrRowAddrBits + "),");
-      map.add("         ." + scanningCounterBitsString + "(" + nrOfScanningBits + "),");
-      map.add("         ." + scanningCounterValueString + "(" + (scanningReload - 1) + "),");
-      map.add("         ." + maxNrLedsString + "(" + maxNrLeds + "),");
-      map.add("         ." + activeLowString + "(" + ((activeLow) ? "1" : "0") + "))");
+      contents.add(
+          "#( .{{nrOfLeds}}({{nrOfLedsVal}}),",
+          "   .{{nrOfRows}}({{nrOfRowsVal}}),",
+          "   .{{nrOfColumns}}({{nrOfColumns}}),",
+          "   .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),",
+          "   .{{scanningCounterBits}}({{scanningCounterBitsVal}}),",
+          "   .{{scanningCounterValue}}({{scanningCounterValueVal}}),",
+          "   .{{maxNrLeds}}({{maxNrLedsVal}}),",
+          "   .{{activeLow}}({{activeLowVal}}) )");
     }
-    return map;
+    return contents.getWithIndent(6);
   }
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var map =
+        (new LineBuffer())
+            .addPair("rowAddr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .addPair("colOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+                .addPair("id", id);
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + " => "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + ");");
+      map.add(
+          "PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},",
+          "           {{outs}} => {{outs}}{{id}},",
+          "           {{clock}} => {{clock}},",
+          "           {{ins}} => => s_{{ins}}{{id}} );");
     } else {
-      map.add("      (."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + id
-          + "),");
-      map.add("       ."
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "("
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + "));");
+      map.add(
+          "( .{{rowAddr}}({{rowAddr}}{{id}}),",
+          "  .{{outs}}({{outs}}{{id}}),",
+          "  .{{clock}}({{clock}}),",
+          "  .{{ins}}(s_{{ins}}{{id}}) );");
     }
-    return map;
+    return map.getWithIndent(6);
   }
 
   @Override
