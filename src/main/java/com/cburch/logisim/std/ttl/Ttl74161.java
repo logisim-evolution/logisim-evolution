@@ -149,15 +149,6 @@ public class Ttl74161 extends AbstractTtlGate {
     }
   }
 
-  private TtlRegisterData getData(InstanceState state) {
-    var data = (TtlRegisterData) state.getData();
-    if (data == null) {
-      data = new TtlRegisterData(BitWidth.create(4));
-      state.setData(data);
-    }
-    return data;
-  }
-
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var gfx = (Graphics2D) painter.getGraphics();
@@ -195,34 +186,36 @@ public class Ttl74161 extends AbstractTtlGate {
       data = new TtlRegisterData(BitWidth.create(4));
       state.setData(data);
     }
-
+    
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
-    if (triggered) {
-      Value nClear = state.getPortValue(PORT_INDEX_nCLR);
-      Value nLoad = state.getPortValue(PORT_INDEX_nLOAD);
-
-      long counter;
-
-      if (nClear.toLongValue() == 0) {
-        counter = 0;
-      } else if (nLoad.toLongValue() == 0) {
+    final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
+    var counter = data.getValue().toLongValue();
+    
+    if (nClear == 0) {
+      counter = 0;
+    } else if (triggered) {
+      final var nLoad = state.getPortValue(PORT_INDEX_nLOAD);
+      if (nLoad.toLongValue() == 0) {
         counter = state.getPortValue(PORT_INDEX_A).toLongValue();
         counter += state.getPortValue(PORT_INDEX_B).toLongValue() << 1;
         counter += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
         counter += state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
       } else {
-        counter = data.getValue().toLongValue();
-        var enpAndEnt = state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT));
-        if (enpAndEnt.toLongValue() == 1) {
+        final var enpAndEnt = state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue();
+        if (enpAndEnt == 1) {
           counter++;
           if (counter > 15) {
             counter = 0;
           }
+        } else {
+          return; // Nothing to do as no change
         }
       }
-      data.setValue(Value.createKnown(BitWidth.create(4), counter));
+    } else {
+      return; // Nothing to do as no change
     }
 
+    data.setValue(Value.createKnown(BitWidth.create(4), counter));
     final var vA = data.getValue().get(0);
     final var vB = data.getValue().get(1);
     final var vC = data.getValue().get(2);
