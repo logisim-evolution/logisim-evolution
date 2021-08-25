@@ -118,6 +118,10 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
+  public LineBuffer add(StringBuilder sb) {
+    return add(sb.toString());
+  }
+
   /**
    * Formats string using @String.format() and adds to the buffer.
    *
