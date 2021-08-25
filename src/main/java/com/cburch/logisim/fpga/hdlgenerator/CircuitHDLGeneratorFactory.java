@@ -261,7 +261,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    final var Contents = new LineBuffer();
+    final var Contents = (new LineBuffer()).withHdlPairs();
     final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
@@ -283,18 +283,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
-            String line =
-                "   "
-                    + HDL.assignPreamble()
-                    + OneLine
-                    + HDL.assignOperator()
-                    + BusName
-                    + TheNets.GetNetId(Source.GetParentNet())
-                    + HDL.BracketOpen()
-                    + Source.GetParentNetBitIndex()
-                    + HDL.BracketClose()
-                    + ";";
-            Contents.addUnique(line);
+
+            Contents.addUnique("   {{assign}} %s {{=}} %s%d{{bracketOpen}}%s{{bracketClose}};",
+                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()),
+                Source.GetParentNetBitIndex());
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
@@ -381,7 +373,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer()).withHdlPairs();
     var isFirstLine = true;
     final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();
@@ -411,28 +403,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       String ConnectedNet = GetNetName(clockSource, 0, true, theNetlist);
       temp.setLength(0);
       temp.append(ConnectedNet);
+      // Padding
       while (temp.length() < SallignmentSize) {
         temp.append(" ");
       }
       if (!theNetlist.RequiresGlobalClockConnection()) {
-        contents.add(
-            "   "
-                + HDL.assignPreamble()
-                + temp
-                + HDL.assignOperator()
-                + clockNet
-                + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.DerivedClockIndex
-                + HDL.BracketClose()
-                + ";");
+        contents.add("   {{assign}}%s {{=}} %s{{bracketOpen}}%s{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DerivedClockIndex);
       } else {
-        contents.add(
-            "   "
-                + HDL.assignPreamble()
-                + temp
-                + HDL.assignOperator()
-                + TickComponentHDLGeneratorFactory.FPGAClock
-                + ";");
+        contents.add("   {{assign}} %s {{=}} %s;", temp, TickComponentHDLGeneratorFactory.FPGAClock);
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */

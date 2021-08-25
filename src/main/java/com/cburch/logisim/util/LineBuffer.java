@@ -78,7 +78,13 @@ public class LineBuffer implements RandomAccess {
         .addPair("=", HDL.assignOperator())
         .addPair("or", HDL.orOperator())
         .add("and", HDL.andOperator())
-        .add("not", HDL.notOperator());
+        .add("not", HDL.notOperator())
+        .add("bracketOpen", HDL.BracketOpen())
+        .add("bracketClose", HDL.BracketClose())
+        .add("<", HDL.BracketOpen())
+        .add(">", HDL.BracketClose())
+        .add("0b", HDL.zeroBit())
+        .add("1b", HDL.oneBit());
   }
 
   public Pairs withPairs() {

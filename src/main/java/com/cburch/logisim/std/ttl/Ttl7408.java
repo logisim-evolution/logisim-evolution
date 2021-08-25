@@ -54,10 +54,10 @@ public class Ttl7408 extends AbstractTtlGate {
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       return (new LineBuffer())
-      .add("%s gate_" + index + "_O" + HDL.assignOperator()
-              + "gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B;", HDL.assignPreamble());
-      Contents.add("");
-      return Contents;
+          .withHdlPairs()
+          .add("{{assign}} gate_%1$d_O {{=}} gate_%1$d_A {{and}} gate_%1$dB;", index)
+          .add("")
+          .getWithIndent();
     }
   }
 
