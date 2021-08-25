@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -61,13 +62,13 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       Long ComponentId,
       NetlistComponent ComponentInfo,
       String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new LineBuffer();
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     if (ComponentInfo.EndIsConnected(0)) {
       long ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
       if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        Contents.add(
+        Contents.addHdl(
             "   "
                 + HDL.assignPreamble()
                 + GetNetName(ComponentInfo, 0, true, Nets)

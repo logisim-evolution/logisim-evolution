@@ -530,9 +530,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    var Contents = new ArrayList<String>();
-    if (HDL.isVHDL()) Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
-    return Contents;
+    var Contents = new LineBuffer();
+    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
+    return Contents.get();
   }
 
   @Override
@@ -542,7 +542,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
       String Name) {
-    var Contents = new ArrayList<String>();
+    final var Contents = new ArrayList<String>();
     final var ParameterMap = GetParameterMap(Nets, ComponentInfo);
     final var PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
     final var CompName = (Name != null && !Name.isEmpty()) ? Name :
@@ -689,13 +689,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName) {
-    var Contents = new ArrayList<String>();
+    var Contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
-      Contents.addAll(FileWriter.getExtendedLibrary());
-      Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
+      Contents.add(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()))
+          .add(FileWriter.getExtendedLibrary())
+          .add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
     }
-    return Contents;
+    return Contents.get();
   }
 
   /* Here all public entries for HDL generation are defined */

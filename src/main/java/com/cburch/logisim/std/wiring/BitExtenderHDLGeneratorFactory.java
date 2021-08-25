@@ -35,6 +35,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -45,7 +46,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Long ComponentId,
       NetlistComponent ComponentInfo,
       String CircuitName) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new LineBuffer();
     int NrOfPins = ComponentInfo.NrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
       if (!ComponentInfo.EndIsConnected(i)) {
@@ -53,17 +54,13 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
             "Bit Extender component has floating input connection in circuit \""
                 + CircuitName
                 + "\"!");
-        return Contents;
+        // return empty buffer.
+        return Contents.get();
       }
     }
     if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
-      Contents.add(
-          "   "
-              + HDL.assignPreamble()
-              + GetNetName(ComponentInfo, 0, true, Nets)
-              + HDL.assignOperator()
-              + GetNetName(ComponentInfo, 1, true, Nets));
+      Contents.add("{{assign}} %s {{=}} %s", GetNetName(ComponentInfo, 0, true, Nets), GetNetName(ComponentInfo, 1, true, Nets));
       Contents.add("");
     } else {
       /*
@@ -97,35 +94,17 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       for (int bit = 0; bit < ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth(); bit++) {
         if (bit < ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth()) {
           if (ComponentInfo.getEnd(1).NrOfBits() > 1) {
-            Contents.add(
-                "   "
-                    + HDL.assignPreamble()
-                    + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
-                    + HDL.assignOperator()
-                    + GetBusEntryName(ComponentInfo, 1, true, bit, Nets)
-                    + ";");
+            Contents.add("{{assign}} %s {{=}} %s;", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), GetBusEntryName(ComponentInfo, 1, true, bit, Nets));
           } else {
-            Contents.add(
-                "   "
-                    + HDL.assignPreamble()
-                    + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
-                    + HDL.assignOperator()
-                    + GetNetName(ComponentInfo, 1, true, Nets)
-                    + ";");
+            Contents.add("{{assign}} %s {{=}} %s;", GetBusEntryName(ComponentInfo, 0, true, bit, Nets) + GetNetName(ComponentInfo, 1, true, Nets));
           }
         } else {
-          Contents.add(
-              "   "
-                  + HDL.assignPreamble()
-                  + GetBusEntryName(ComponentInfo, 0, true, bit, Nets)
-                  + HDL.assignOperator()
-                  + Replacement
-                  + ";");
+          Contents.add("{{assign}} %s {{=}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), Replacement);
         }
       }
       Contents.add("");
     }
-    return Contents;
+    return Contents.getWithIndent();
   }
 
   @Override

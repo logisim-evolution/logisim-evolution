@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import javax.sound.sampled.Line;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -260,8 +261,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    ArrayList<String> Contents = new ArrayList<>();
-    StringBuilder OneLine = new StringBuilder();
+    final var Contents = new LineBuffer();
+    final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
       if (ThisNet.IsForcedRootNet()) {
@@ -293,7 +294,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                     + Source.GetParentNetBitIndex()
                     + HDL.BracketClose()
                     + ";";
-            if (!Contents.contains(line)) Contents.add(line);
+            Contents.addUnique(line);
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
@@ -303,9 +304,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .append(HDL.BracketOpen())
                 .append(Source.GetParentNetBitIndex())
                 .append(HDL.BracketClose());
-            while (OneLine.length() < SallignmentSize) {
-              OneLine.append(" ");
-            }
+            while (OneLine.length() < SallignmentSize) OneLine.append(" ");
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
               OneLine.append(BusName)
@@ -316,13 +315,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            String line = "   " + HDL.assignPreamble() + OneLine + ";";
-            if (!Contents.contains(line)) Contents.add(line);
+            Contents.addUnique("   %s%s;", HDL.assignPreamble(), OneLine);
           }
         }
       }
     }
-    return Contents;
+    return Contents.get();
   }
 
   @Override

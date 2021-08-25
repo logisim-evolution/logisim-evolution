@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,14 @@ public class LineBuffer implements RandomAccess {
 
   protected Pairs pairs = new Pairs();
 
+  public LineBuffer withHdlPairs() {
+    return addPair("assign", HDL.assignPreamble())
+        .addPair("=", HDL.assignOperator())
+        .addPair("or", HDL.orOperator())
+        .add("and", HDL.andOperator())
+        .add("not", HDL.notOperator());
+  }
+
   public Pairs withPairs() {
     return pairs;
   }
@@ -105,6 +114,34 @@ public class LineBuffer implements RandomAccess {
     return contents.isEmpty();
   }
 
+  public boolean contains(Object obj) {
+    return contents.contains(obj);
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Adds line to the buffer only if line is not present already.
+   *
+   * @param line Line to optionally add.
+   */
+  public LineBuffer addUnique(String line) {
+    addUnique(line, true);
+    return this;
+  }
+
+  public LineBuffer addUnique(String line, boolean applyMap) {
+    if (!contains(line)) add(line, applyMap);
+    return this;
+  }
+
+
+  public LineBuffer addUnique(String fmt, Object... args) {
+    var line = String.format(fmt, args);
+    line = applyMap(line, pairs);
+    return addUnique(line);
+  }
+
   /* ********************************************************************************************* */
 
   /**
@@ -114,7 +151,14 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line) {
-    contents.add(applyMap(line, pairs));
+    return add(line, true);
+  }
+
+  public LineBuffer add(String line, boolean applyMap) {
+    if (applyMap) {
+      line = applyMap(line, pairs);
+    }
+    contents.add(line);
     return this;
   }
 
@@ -147,6 +191,21 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer add(String format, Pairs pairs) {
     return add(applyMap(format, pairs));
+  }
+
+  /**
+   * Adds all lines from given collection to content buffer.
+   *
+   * @param lines
+   * @return
+   */
+  public LineBuffer add(Collection<String> lines) {
+    for (final var line : lines) add(line);
+    return this;
+  }
+
+  public LineBuffer add(String... lines) {
+    return add(Arrays.asList(lines));
   }
 
   /* ********************************************************************************************* */
@@ -191,21 +250,6 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer empty(int count) {
     return repeat(count, "");
-  }
-
-  public LineBuffer add(String... lines) {
-    return add(Arrays.asList(lines));
-  }
-
-  /**
-   * Adds all lines from given collection to content buffer.
-   *
-   * @param lines
-   * @return
-   */
-  public LineBuffer add(Collection<String> lines) {
-    for (final var line : lines) add(line);
-    return this;
   }
 
   /**
@@ -367,6 +411,14 @@ public class LineBuffer implements RandomAccess {
   }
 
   /* ********************************************************************************************* */
+
+  public LineBuffer addPairs(Pairs pairs) {
+    for (final var pair : pairs.entrySet()) {
+      addPair(pair.getKey(), pair.getValue());
+    }
+
+    return this;
+  }
 
   public LineBuffer addPair(String key, Object value) {
     pairs.add(key, value);
