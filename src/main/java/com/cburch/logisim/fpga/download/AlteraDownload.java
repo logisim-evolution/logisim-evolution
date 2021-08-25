@@ -202,15 +202,12 @@ public class AlteraDownload implements VendorDownload {
       return scriptFile.exists();
     }
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
-    final var contents =
-        new LineBuffer(
-            new LineBuffer.Pairs() {
-              {
-                add("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName);
-                add("fileType", fileType);
-                add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
-              }
-            });
+    final var contents = new LineBuffer();
+    contents
+        .withPairs()
+        .add("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .add("fileType", fileType)
+        .add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
 
     contents
         .add(
@@ -297,28 +294,32 @@ public class AlteraDownload implements VendorDownload {
     return contents.get();
   }
 
-  private static ArrayList<String> getAlteraAssignments(BoardInformation CurrentBoard) {
-    var result = new ArrayList<String>();
-    var Assignment = "    set_global_assignment -name ";
-    result.add(Assignment + "FAMILY \"" + CurrentBoard.fpga.getTechnology() + "\"");
-    result.add(Assignment + "DEVICE " + CurrentBoard.fpga.getPart());
-    final var Package = CurrentBoard.fpga.getPackage().split(" ");
-    result.add(Assignment + "DEVICE_FILTER_PACKAGE " + Package[0]);
-    result.add(Assignment + "DEVICE_FILTER_PIN_COUNT " + Package[1]);
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.Float) {
-      result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT TRI-STATED\"");
-    }
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
-      result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT PULLUP\"");
-    }
-    if (CurrentBoard.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
-      result.add(Assignment + "RESERVE_ALL_UNUSED_PINS \"AS INPUT PULLDOWN\"");
-    }
-    result.add(
-        Assignment + "FMAX_REQUIREMENT \"" + Download.GetClockFrequencyString(CurrentBoard) + "\"");
-    result.add(Assignment + "RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
-    result.add(Assignment + "CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
-    return result;
+  private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
+    final var contents = new LineBuffer();
+
+    final var pkg = currentBoard.fpga.getPackage().split(" ");
+
+    final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
+    final var behavior = switch (currentBehavior) {
+      case PullBehaviors.PullUp -> "PULLUP";
+      case PullBehaviors.PullDown -> "PULLDOWN";
+      case PullBehaviors.Float -> "TRI-STATED";
+      default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
+    };
+    contents.withPairs()
+            .add("assign", "set_global_assignment -name")
+            .add("behavior", behavior);
+
+    return contents
+        .add("{{assign}} FAMILY \"%s\"", currentBoard.fpga.getTechnology())
+        .add("{{assign}} DEVICE %s", currentBoard.fpga.getPart())
+        .add("{{assign}} DEVICE_FILTER_PACKAGE %s", pkg[0])
+        .add("{{assign}} DEVICE_FILTER_PIN_COUNT %s", pkg[1])
+        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{behavior}}\"")
+        .add("{{assign}} FMAX_REQUIREMENT \"%s\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assign}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .add("{{assign}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .getWithIndent();
   }
 
   @Override
@@ -392,8 +393,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    final var command =
-            new LineBuffer();
+    final var command = new LineBuffer();
     command
         .add(alteraVendor.getBinaryPath(1))
         .add("-c")
@@ -418,8 +418,8 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean LoadProgrammerSof() {
-    final var FpgaDevice = StripPackageSpeed();
-    final var ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)).getParent()
+    final var fpgaDevice = StripPackageSpeed();
+    final var programmerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)).getParent()
         + File.separator
         + "common"
         + File.separator
@@ -428,27 +428,27 @@ public class AlteraDownload implements VendorDownload {
         + "programmer"
         + File.separator
         + "sfl_"
-        + FpgaDevice.toLowerCase()
+        + fpgaDevice.toLowerCase()
         + ".sof";
     Reporter.Report.print("==>");
     Reporter.Report.print("==> " + S.get("AlteraProgSof"));
     Reporter.Report.print("==>");
-    if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
+    if (!new File(programmerSofFile).exists()) {
+      Reporter.Report.AddError(S.get("AlteraProgSofError", programmerSofFile));
       return false;
     }
-    var command = new ArrayList<String>();
-    command.add(alteraVendor.getBinaryPath(1));
-    command.add("-c");
-    command.add(cablename);
-    command.add("-m");
-    command.add("jtag");
-    command.add("-o");
-    command.add("P;" + ProgrammerSofFile);
-    final var Prog = new ProcessBuilder(command);
-    Prog.directory(new File(SandboxPath));
+    final var command = new LineBuffer();
+    command.add(alteraVendor.getBinaryPath(1))
+            .add("-c")
+            .add(cablename)
+            .add("-m")
+            .add("jtag")
+            .add("-o")
+            .add("P;%s", programmerSofFile);
+    final var prog = new ProcessBuilder(command.get());
+    prog.directory(new File(SandboxPath));
     try {
-      final var result = Download.execute(Prog, null);
+      final var result = Download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
         return false;
