@@ -255,10 +255,6 @@ public class VivadoDownload implements VendorDownload {
           final var info = map.getFpgaInfo(i);
           if (info != null) {
             final var ioStandard = info.GetIOStandard();
-            // FIXME: this code looks like copy&paste&paste issue?
-            if (ioStandard != IoStandards.Unknown && ioStandard != IoStandards.DefaulStandard) {
-              contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
-            }
             if (ioStandard != IoStandards.Unknown && ioStandard != IoStandards.DefaulStandard) {
               contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
             }

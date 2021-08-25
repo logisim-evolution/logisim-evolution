@@ -106,13 +106,6 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           "   {{greenOuts}}(n) <= NOT({{greenIns}}(n)) WHEN activeLow = 1 ELSE {{greenIns}}(n);",
           "   {{blueOuts }}(n) <= NOT({{blueIns }}(n)) WHEN activeLow = 1 ELSE {{blueIns }}(n);",
           "END GENERATE;");
-
-      contents.add(
-          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
-          "   {{redOuts  }}(n) <= NOT({{redIns  }}(n)) WHEN activeLow = 1 ELSE {{redIns  }}(n);",
-          "   {{greenOuts}}(n) <= NOT({{greenIns}}(n)) WHEN activeLow = 1 ELSE {{greenIns}}(n);",
-          "   {{blueOuts }}(n) <= NOT({{blueIns }}(n)) WHEN activeLow = 1 ELSE {{blueIns }}(n);",
-          "END GENERATE;");
     } else {
       contents.add(
           "genvar i;",
