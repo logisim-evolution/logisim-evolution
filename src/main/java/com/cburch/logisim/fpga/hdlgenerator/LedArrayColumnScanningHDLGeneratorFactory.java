@@ -122,10 +122,10 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "           {{ins}} => s_{{ins}}{{id}} );");
     } else {
       contents.add(
-          "(.{{columnAddress}}({{columnAddress}}{{id}}),",
-          " .{{outs}}({{outs}}{{id}}),",
-          " .{{clock}}({{clock}}),",
-          " .{{ins}}({{s_{{ins}}{{id}}) );");
+          "( .{{columnAddress}}({{columnAddress}}{{id}}),",
+          "  .{{outs}}({{outs}}{{id}}),",
+          "  .{{clock}}({{clock}}),",
+          "  .{{ins}}({{s_{{ins}}{{id}}) );");
     }
     return contents.getWithIndent(6);
   }
@@ -181,15 +181,12 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   public ArrayList<String> getColumnCounterCode() {
     final var contents =
-        new LineBuffer(
-            new LineBuffer.Pairs() {
-              {
-                add("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress);
-                add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
-                add("counterBits", scanningCounterBitsString);
-                add("counterValue", scanningCounterValueString);
-              }
-            });
+        (new LineBuffer())
+            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("counterBits", scanningCounterBitsString)
+            .addPair("counterValue", scanningCounterValueString);
+
     if (HDL.isVHDL()) {
       contents.add(
           "",
@@ -255,9 +252,9 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
             .addPair("nrOfLeds", nrOfLedsString)
             .addPair("nrOfRows", nrOfRowsString)
-            .addPair("activeLow", activeLowString);
+            .addPair("activeLow", activeLowString)
+            .add(getColumnCounterCode());
 
-    contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
       contents
           .add("makeVirtualInputs : PROCESS ( internalLeds ) IS",
