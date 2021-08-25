@@ -144,19 +144,22 @@ extra.apply {
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", "${project.name}-${project.version}-all.jar",
       "--app-version", project.version as String,
-      "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
+      "--copyright", "Copyright © 2001–${SimpleDateFormat("yyyy").format(Date())} Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
       "--dest", "${buildDir}/dist",
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
-  ))
-  val linuxParameters = ArrayList<String>(Arrays.asList(
-      "--name", project.name,
-      "--file-associations", "${supportPath}/file.jpackage",
-      "--icon", "${supportPath}/logisim-icon-128.png",
-      "--install-dir", "/opt",
-      "--linux-shortcut"
   )
-  set("linuxParameters", linuxParams)
+  val linuxParameters = ArrayList<String>()
+  linuxParameters.add("--name")
+  linuxParameters.add(project.name)
+  linuxParameters.add("--file-associations")
+  linuxParameters.add("${supportDir}/file.jpackage")
+  linuxParameters.add("--icon")
+  linuxParameters.add("${supportDir}/logisim-icon-128.png")
+  linuxParameters.add("--install-dir")
+  linuxParameters.add("/opt")
+  linuxParameters.add("--linux-shortcut")
+  set("linuxParameters", linuxParameters)
 
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
