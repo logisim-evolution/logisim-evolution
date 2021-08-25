@@ -119,7 +119,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var contents = new LineBuffer();
+    final var Contents = new LineBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
@@ -127,297 +127,297 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var wires = GetWireList(attrs, theNetlist);
     final var regs = GetRegList(attrs);
     final var mems = GetMemList(attrs);
-    final var oneLine = new StringBuilder();
-    contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
+    final var OneLine = new StringBuilder();
+    Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
-        contents.add(libs);
-        contents.empty();
+        Contents.add(libs);
+        Contents.empty();
       }
-      contents.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
-      contents.add("");
+      Contents.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
+      Contents.add("");
       final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
       if (nrOfTypes > 0) {
-        contents.addRemarkBlock("Here all private types are defined");
+        Contents.addRemarkBlock("Here all private types are defined");
         for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
-          contents.add("   %s;", thisType);
+          Contents.add("   %s;", thisType);
         }
-        contents.empty();
+        Contents.empty();
       }
       final var components = GetComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty()) {
-        contents.addRemarkBlock("Here all used components are defined").add(components).add("");
+        Contents.addRemarkBlock("Here all used components are defined").add(components).add("");
       }
 
-      contents.addRemarkBlock("Here all used signals are defined");
+      Contents.addRemarkBlock("Here all used signals are defined");
       for (final var wire : wires.keySet()) {
-        oneLine.append(wire);
-        while (oneLine.length() < SallignmentSize) oneLine.append(" ");
-        oneLine.append(": std_logic");
+        OneLine.append(wire);
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        OneLine.append(": std_logic");
         if (wires.get(wire) == 1) {
-          oneLine.append(";");
+          OneLine.append(";");
         } else {
-          oneLine.append("_vector( ");
+          OneLine.append("_vector( ");
           if (wires.get(wire) < 0) {
             if (!params.containsKey(wires.get(wire))) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              contents.clear();
-              return contents.get();
+              Contents.clear();
+              return Contents.get();
             }
-            oneLine.append("(").append(params.get(wires.get(wire))).append("-1)");
+            OneLine.append("(").append(params.get(wires.get(wire))).append("-1)");
           } else {
             if (wires.get(wire) == 0) {
-              oneLine.append("0");
+              OneLine.append("0");
             } else {
-              oneLine.append((wires.get(wire) - 1));
+              OneLine.append((wires.get(wire) - 1));
             }
           }
-          oneLine.append(" DOWNTO 0 );");
+          OneLine.append(" DOWNTO 0 );");
         }
-        contents.add("   SIGNAL " + oneLine);
-        oneLine.setLength(0);
+        Contents.add("   SIGNAL " + OneLine);
+        OneLine.setLength(0);
       }
 
       for (final var reg : regs.keySet()) {
-        oneLine.append(reg);
-        while (oneLine.length() < SallignmentSize) oneLine.append(" ");
-        oneLine.append(": std_logic");
+        OneLine.append(reg);
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        OneLine.append(": std_logic");
         if (regs.get(reg) == 1) {
-          oneLine.append(";");
+          OneLine.append(";");
         } else {
-          oneLine.append("_vector( ");
+          OneLine.append("_vector( ");
           if (regs.get(reg) < 0) {
             if (!params.containsKey(regs.get(reg))) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              contents.clear();
-              return contents.get();
+              Contents.clear();
+              return Contents.get();
             }
-            oneLine.append("(").append(params.get(regs.get(reg))).append("-1)");
+            OneLine.append("(").append(params.get(regs.get(reg))).append("-1)");
           } else {
             if (regs.get(reg) == 0) {
-              oneLine.append("0");
+              OneLine.append("0");
             } else {
-              oneLine.append((regs.get(reg) - 1));
+              OneLine.append((regs.get(reg) - 1));
             }
           }
-          oneLine.append(" DOWNTO 0 );");
+          OneLine.append(" DOWNTO 0 );");
         }
-        contents.add("   SIGNAL " + oneLine);
-        oneLine.setLength(0);
+        Contents.add("   SIGNAL " + OneLine);
+        OneLine.setLength(0);
       }
 
       for (final var Mem : mems.keySet()) {
-        oneLine.append(Mem);
-        while (oneLine.length() < SallignmentSize) oneLine.append(" ");
-        oneLine.append(": ");
-        oneLine.append(GetType(mems.get(Mem)));
-        oneLine.append(";");
-        contents.add("   SIGNAL " + oneLine);
-        oneLine.setLength(0);
+        OneLine.append(Mem);
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        OneLine.append(": ");
+        OneLine.append(GetType(mems.get(Mem)));
+        OneLine.append(";");
+        Contents.add("   SIGNAL " + OneLine);
+        OneLine.setLength(0);
       }
-      contents.add("");
-      contents.add("BEGIN");
-      contents.add(GetModuleFunctionality(theNetlist, attrs));
-      contents.add("END PlatformIndependent;");
+      Contents.add("");
+      Contents.add("BEGIN");
+      Contents.add(GetModuleFunctionality(theNetlist, attrs));
+      Contents.add("END PlatformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
       final var indenting = new StringBuilder();
       while (indenting.length() < preamble.length()) indenting.append(" ");
       if (inputs.isEmpty() && outputs.isEmpty() && inOuts.isEmpty()) {
-        contents.add(preamble + " );");
+        Contents.add(preamble + " );");
       } else {
-        final var thisLine = new StringBuilder();
+        final var ThisLine = new StringBuilder();
         for (final var inp : inputs.keySet()) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(inp);
+          if (ThisLine.length() == 0) {
+            ThisLine.append(preamble).append(inp);
           } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(inp);
+            Contents.add(ThisLine + ",");
+            ThisLine.setLength(0);
+            ThisLine.append(indenting).append(inp);
           }
         }
         for (final var outp : outputs.keySet()) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(outp);
+          if (ThisLine.length() == 0) {
+            ThisLine.append(preamble).append(outp);
           } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(outp);
+            Contents.add(ThisLine + ",");
+            ThisLine.setLength(0);
+            ThisLine.append(indenting).append(outp);
           }
         }
         for (final var io : inOuts.keySet()) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(io);
+          if (ThisLine.length() == 0) {
+            ThisLine.append(preamble).append(io);
           } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(io);
+            Contents.add(ThisLine + ",");
+            ThisLine.setLength(0);
+            ThisLine.append(indenting).append(io);
           }
         }
-        if (thisLine.length() != 0) {
-          contents.add(thisLine + ");");
+        if (ThisLine.length() != 0) {
+          Contents.add(ThisLine + ");");
         } else {
           Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
         }
       }
       if (!params.isEmpty()) {
-        contents.empty();
-        contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
+        Contents.empty();
+        Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : params.keySet()) {
-          contents.add("   parameter %s = 1;", params.get(param));
+          Contents.add("   parameter %s = 1;", params.get(param));
         }
-        contents.empty();
+        Contents.empty();
       }
       var firstline = true;
       var nrOfBits = 0;
       for (final var inp : inputs.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   input");
+        OneLine.setLength(0);
+        OneLine.append("   input");
         nrOfBits = inputs.get(inp);
         if (nrOfBits < 0) {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
+            return Contents.clear().get();
           }
-          oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
           if (nrOfBits > 1) {
-            oneLine.append("[").append(nrOfBits - 1).append(":0]");
+            OneLine.append("[").append(nrOfBits - 1).append(":0]");
           } else {
             if (nrOfBits == 0) {
-              oneLine.append("[0:0]");
+              OneLine.append("[0:0]");
             }
           }
         }
-        oneLine.append("  ").append(inp).append(";");
+        OneLine.append("  ").append(inp).append(";");
         if (firstline) {
           firstline = false;
-          contents.add("");
-          contents.addRemarkBlock("Here the inputs are defined");
+          Contents.add("");
+          Contents.addRemarkBlock("Here the inputs are defined");
         }
-        contents.add(oneLine.toString());
+        Contents.add(OneLine.toString());
       }
       firstline = true;
       for (final var outp : outputs.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   output");
+        OneLine.setLength(0);
+        OneLine.append("   output");
         nrOfBits = outputs.get(outp);
         if (nrOfBits < 0) {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            contents.clear();
-            return contents.get();
+            Contents.clear();
+            return Contents.get();
           }
-          oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
           if (nrOfBits > 1) {
-            oneLine.append("[").append(nrOfBits - 1).append(":0]");
+            OneLine.append("[").append(nrOfBits - 1).append(":0]");
           } else {
             if (nrOfBits == 0) {
-              oneLine.append("[0:0]");
+              OneLine.append("[0:0]");
             }
           }
         }
-        oneLine.append(" ").append(outp).append(";");
+        OneLine.append(" ").append(outp).append(";");
         if (firstline) {
           firstline = false;
-          contents.empty().addRemarkBlock("Here the outputs are defined");
+          Contents.empty().addRemarkBlock("Here the outputs are defined");
         }
-        contents.add(oneLine.toString());
+        Contents.add(OneLine.toString());
       }
       firstline = true;
       for (final var io : inOuts.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   inout");
+        OneLine.setLength(0);
+        OneLine.append("   inout");
         nrOfBits = inOuts.get(io);
         if (nrOfBits < 0) {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
+            return Contents.clear().get();
           }
-          oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
           if (nrOfBits > 1) {
-            oneLine.append("[").append(nrOfBits - 1).append(":0]");
+            OneLine.append("[").append(nrOfBits - 1).append(":0]");
           } else {
             if (nrOfBits == 0) {
-              oneLine.append("[0:0]");
+              OneLine.append("[0:0]");
             }
           }
         }
-        oneLine.append(" ").append(io).append(";");
+        OneLine.append(" ").append(io).append(";");
         if (firstline) {
           firstline = false;
-          contents.empty().addRemarkBlock("Here the ios are defined");
+          Contents.empty().addRemarkBlock("Here the ios are defined");
         }
-        contents.add(oneLine.toString());
+        Contents.add(OneLine.toString());
       }
       firstline = true;
       for (final var wire : wires.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   wire");
+        OneLine.setLength(0);
+        OneLine.append("   wire");
         nrOfBits = wires.get(wire);
         if (nrOfBits < 0) {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
+            return Contents.clear().get();
           }
-          oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
           if (nrOfBits > 1) {
-            oneLine.append("[").append(nrOfBits - 1).append(":0]");
+            OneLine.append("[").append(nrOfBits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) oneLine.append("[0:0]");
+            if (nrOfBits == 0) OneLine.append("[0:0]");
           }
         }
-        oneLine.append(" ").append(wire).append(";");
+        OneLine.append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
-          contents.empty();
-          contents.addRemarkBlock("Here the internal wires are defined");
+          Contents.empty();
+          Contents.addRemarkBlock("Here the internal wires are defined");
         }
-        contents.add(oneLine.toString());
+        Contents.add(OneLine.toString());
       }
       for (final var reg : regs.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   reg");
+        OneLine.setLength(0);
+        OneLine.append("   reg");
         nrOfBits = regs.get(reg);
         if (nrOfBits < 0) {
           /* we have a parameterized array */
           if (!params.containsKey(nrOfBits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
+            return Contents.clear().get();
           }
-          oneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
         } else {
           if (nrOfBits > 1) {
-            oneLine.append("[").append(nrOfBits - 1).append(":0]");
+            OneLine.append("[").append(nrOfBits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) oneLine.append("[0:0]");
+            if (nrOfBits == 0) OneLine.append("[0:0]");
           }
         }
-        oneLine.append(" ").append(reg).append(";");
+        OneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
-          contents
+          Contents
               .empty()
               .addRemarkBlock("Here the internal registers are defined");
         }
-        contents.add(oneLine.toString());
+        Contents.add(OneLine.toString());
       }
       /* TODO: Add memlist */
       if (!firstline) {
-        contents.empty();
+        Contents.empty();
       }
-      contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      Contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
     }
-    return contents.get();
+    return Contents.get();
   }
 
   public String GetBusEntryName(
