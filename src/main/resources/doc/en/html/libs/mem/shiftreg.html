@@ -50,9 +50,6 @@
       <p>
         This register consists of several stages, where each clock may lead to each stage receiving the value in the previous stage, while a new value is loaded into the first stage. The component optionally also supports parallel loads and stores to all stages' values.
       </p>
-      <p>
-        The <var>clear</var> input resets all stages to 0 (all zeroes) asynchronously; that is, as long as the <var>clear</var> input is 1, all values are pinned to 0, regardless of the clock input.
-      </p>
       <h2>
         Pins
       </h2>
@@ -61,52 +58,52 @@
       </p>
       <dl>
         <dt>
-          West edge, top pin (input, bit width 1)
+          West edge, top pin labeled <var>R</var> (input, bit width 1)
         </dt>
         <dd>
-          Shift: When 1 or disconnected, all stages advance with the clock trigger; but if it is 0, no advance takes place. This input is ignored if the Load input is 1.
+          Clear: When 1, all stages are reset to 0 (all zeroes) asynchronously; that is, as long as the <var>clear</var> input is 1, all values are pinned to 0, regardless of the clock input.
         </dd>
         <dt>
-          West edge, middle pin (input, bit width matches Data Bits attribute)
+          West edge, second pin labeled <var>M2 [load]</var> (input, bit width 1)
         </dt>
         <dd>
-          Data: When advancing the stages, the value found at this input is loaded into the first stage.
+          Load: When 1 and <var>clear</var> is 0, all stages are loaded from data pins. When 0 or disconnected, no load occurs.
         </dd>
         <dt>
-          West edge, bottom pin marked with triangle (input, bit width 1)
+          West edge, third pin labeled <var>M1 [shift]</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Shift: When 1 or disconnected, all stages advance with the clock trigger; but if it is 0, no advance takes place. This input is ignored if <var>load</var> is 1.
+        </dd>
+        <dt>
+          West edge, fourth pin labeled <var>1&#8594;C3</var> marked with triangle (input, bit width 1)
         </dt>
         <dd>
           Clock: At the instant that this is triggered as specified by the Trigger attribute, the component may advance the stages or load new values.
         </dd>
         <dt>
-          *North edge, left pin (input, bit width 1)
+          West edge, fifth pin labeled <var>1,3D</var> (input, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          Load: When this 1, the values found on the other north-edge pins are loaded into all stages at the next clock trigger. When 0 or disconnected, no load occurs.
+          Data: When advancing the stages, the value found at this input is loaded into the first stage.
         </dd>
         <dt>
-          *North edge, other pins (input, bit width matches Data Bits attribute)
+          *West edge, other pins labeled <var>2,3D</var> (input, bit width matches Data Bits attribute)
         </dt>
         <dd>
-          Data: These values are loaded into all stages when the clock is triggered while the <var>load</var> input is 1. The leftmost input corresponds to the youngest stage.
+          Data: These values are loaded into all stages when the clock is triggered while the <var>load</var> input is 1. The topmost input corresponds to the first (youngest) stage.
         </dd>
         <dt>
-          South edge, left pin (input, bit width 1)
-        </dt>
-        <dd>
-          Clear: When this is 1, all stages are asynchronously reset to 0, and all other inputs are ignored.
-        </dd>
-        <dt>
-          *South edge, other pins (output, bit width matches Data Bits attribute)
-        </dt>
-        <dd>
-          Output: Emits the value stored in each stage, with the youngest stage reflected on the leftmost of the pins (next to the <var>clear</var> input).
-        </dd>
-        <dt>
-          East edge (output, bit width matches Data Bits attribute)
+          East edge bottom pin (output, bit width matches Data Bits attribute)
         </dt>
         <dd>
           Output: Emits the value stored in the final (oldest) stage.
+        </dd>
+        <dt>
+          *East edge, other pins (output, bit width matches Data Bits attribute)
+        </dt>
+        <dd>
+          Output: Emits the value stored in each stage, with the first (youngest) stage reflected on the topmost pin.
         </dd>
       </dl>
       <h2>
@@ -132,7 +129,7 @@
           Parallel Load
         </dt>
         <dd>
-          If <q>yes,</q> then the component includes inputs and outputs facilitating parallel access to all the stages' values.
+          If <q>yes</q>, then the component includes inputs and outputs facilitating parallel access to all the stages' values.
         </dd>
         <dt>
           Trigger
