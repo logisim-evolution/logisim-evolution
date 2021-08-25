@@ -73,7 +73,7 @@ jobs:
       # We need bash here as java-wrappers.sh may not work with other shells.
       shell: bash
       run: |
-        VERSION="8.44"
+        VERSION="8.45.1"
         JAR="checkstyle-${VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${VERSION}/${JAR}"
 
