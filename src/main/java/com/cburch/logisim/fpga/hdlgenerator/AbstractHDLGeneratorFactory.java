@@ -221,38 +221,38 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.add(GetModuleFunctionality(theNetlist, attrs));
       Contents.add("END PlatformIndependent;");
     } else {
-      final var preamble = String.format("module %s( ", componentName);
-      final var indenting = new StringBuilder();
-      while (indenting.length() < preamble.length()) indenting.append(" ");
+      final var Preamble = String.format("module %s( ", componentName);
+      final var Indenting = new StringBuilder();
+      while (Indenting.length() < Preamble.length()) Indenting.append(" ");
       if (inputs.isEmpty() && outputs.isEmpty() && inOuts.isEmpty()) {
-        Contents.add(preamble + " );");
+        Contents.add(Preamble + " );");
       } else {
         final var ThisLine = new StringBuilder();
         for (final var inp : inputs.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(preamble).append(inp);
+            ThisLine.append(Preamble).append(inp);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(indenting).append(inp);
+            ThisLine.append(Indenting).append(inp);
           }
         }
         for (final var outp : outputs.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(preamble).append(outp);
+            ThisLine.append(Preamble).append(outp);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(indenting).append(outp);
+            ThisLine.append(Indenting).append(outp);
           }
         }
         for (final var io : inOuts.keySet()) {
           if (ThisLine.length() == 0) {
-            ThisLine.append(preamble).append(io);
+            ThisLine.append(Preamble).append(io);
           } else {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(indenting).append(io);
+            ThisLine.append(Indenting).append(io);
           }
         }
         if (ThisLine.length() != 0) {
@@ -270,23 +270,23 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.empty();
       }
       var firstline = true;
-      var nrOfBits = 0;
+      var nr_of_bits = 0;
       for (final var inp : inputs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   input");
-        nrOfBits = inputs.get(inp);
-        if (nrOfBits < 0) {
+        nr_of_bits = inputs.get(inp);
+        if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!params.containsKey(nrOfBits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return Contents.clear().get();
           }
-          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
-          if (nrOfBits > 1) {
-            OneLine.append("[").append(nrOfBits - 1).append(":0]");
+          if (nr_of_bits > 1) {
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) {
+            if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
@@ -303,20 +303,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       for (final var outp : outputs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   output");
-        nrOfBits = outputs.get(outp);
-        if (nrOfBits < 0) {
+        nr_of_bits = outputs.get(outp);
+        if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!params.containsKey(nrOfBits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
             return Contents.get();
           }
-          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
-          if (nrOfBits > 1) {
-            OneLine.append("[").append(nrOfBits - 1).append(":0]");
+          if (nr_of_bits > 1) {
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) {
+            if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
@@ -332,20 +332,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       for (final var io : inOuts.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   inout");
-        nrOfBits = inOuts.get(io);
-        if (nrOfBits < 0) {
+        nr_of_bits = inOuts.get(io);
+        if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!params.containsKey(nrOfBits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return Contents.clear().get();
           }
-          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
-          if (nrOfBits > 1) {
-            OneLine.append("[").append(nrOfBits - 1).append(":0]");
+          if (nr_of_bits > 1) {
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) {
+            if (nr_of_bits == 0) {
               OneLine.append("[0:0]");
             }
           }
@@ -361,19 +361,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       for (final var wire : wires.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   wire");
-        nrOfBits = wires.get(wire);
-        if (nrOfBits < 0) {
+        nr_of_bits = wires.get(wire);
+        if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!params.containsKey(nrOfBits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return Contents.clear().get();
           }
-          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
-          if (nrOfBits > 1) {
-            OneLine.append("[").append(nrOfBits - 1).append(":0]");
+          if (nr_of_bits > 1) {
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) OneLine.append("[0:0]");
+            if (nr_of_bits == 0) OneLine.append("[0:0]");
           }
         }
         OneLine.append(" ").append(wire).append(";");
@@ -387,19 +387,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       for (final var reg : regs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   reg");
-        nrOfBits = regs.get(reg);
-        if (nrOfBits < 0) {
+        nr_of_bits = regs.get(reg);
+        if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!params.containsKey(nrOfBits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return Contents.clear().get();
           }
-          OneLine.append("[").append(params.get(nrOfBits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
-          if (nrOfBits > 1) {
-            OneLine.append("[").append(nrOfBits - 1).append(":0]");
+          if (nr_of_bits > 1) {
+            OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nrOfBits == 0) OneLine.append("[0:0]");
+            if (nr_of_bits == 0) OneLine.append("[0:0]");
           }
         }
         OneLine.append(" ").append(reg).append(";");
