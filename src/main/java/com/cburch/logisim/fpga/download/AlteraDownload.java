@@ -204,10 +204,9 @@ public class AlteraDownload implements VendorDownload {
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
     final var contents = new LineBuffer();
     contents
-        .withPairs()
-        .add("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-        .add("fileType", fileType)
-        .add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+        .addPair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .addPair("fileType", fileType)
+        .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
 
     contents
         .add(
@@ -288,10 +287,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
-    final var contents = new LineBuffer();
-
     final var pkg = currentBoard.fpga.getPackage().split(" ");
-
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
       case PullBehaviors.PullUp -> "PULLUP";
@@ -299,11 +295,10 @@ public class AlteraDownload implements VendorDownload {
       case PullBehaviors.Float -> "TRI-STATED";
       default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
-    contents.withPairs()
-            .add("assign", "set_global_assignment -name")
-            .add("behavior", behavior);
 
-    return contents
+    return (new LineBuffer())
+        .addPair("assign", "set_global_assignment -name")
+        .addPair("behavior", behavior)
         .add("{{assign}} FAMILY \"%s\"", currentBoard.fpga.getTechnology())
         .add("{{assign}} DEVICE %s", currentBoard.fpga.getPart())
         .add("{{assign}} DEVICE_FILTER_PACKAGE %s", pkg[0])

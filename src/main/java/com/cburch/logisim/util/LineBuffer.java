@@ -367,6 +367,13 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
+  public LineBuffer addPair(String key, Object value) {
+    pairs.add(key, value);
+    return this;
+  }
+
+  /* ********************************************************************************************* */
+
   public static class Pairs extends HashMap<String, Object> {
     public Pairs() {
       // empty

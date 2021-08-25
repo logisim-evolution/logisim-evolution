@@ -57,31 +57,32 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public static String LedArrayName = "LedArrayColumnScanning";
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
-    final var map = new LineBuffer();
     final var nrColAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
     final var scanningReload = (int) (fpgaClockFrequency / (long) 1000);
+    final var nrOfScanningBitsCount = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
 
-    map.withPairs()
-        .add("nrOfLeds", nrOfLedsString)
-        .add("ledsCount", nrOfRows * nrOfColumns)
-        .add("maxNrLeds", maxNrLedsString)
-        .add("maxNrLedsCount", maxNrLeds)
-        .add("nrOfRows", nrOfRowsString)
-        .add("nrOfRowsCount", nrOfRows)
-        .add("nrOfColumns", nrOfColumnsString)
-        .add("nrOfColumnsCount", nrOfColumns)
-        .add("activeLow", activeLowString)
-        .add("activeLowValue", activeLow ? "1" : "0")
-        .add("nrColAddrBits", nrOfColumnAddressBitsString)
-        .add("nrColAddrBitsCount", nrColAddrBits)
-        .add("scanningCounterBits", scanningCounterBitsString)
-        .add("nrOfScanningBitsCount", LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload))
-        .add("scanningCounter", scanningCounterValueString)
-        .add("scanningValue", (scanningReload - 1));
+    final var contents =
+        (new LineBuffer())
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("ledsCount", nrOfRows * nrOfColumns)
+            .addPair("maxNrLeds", maxNrLedsString)
+            .addPair("maxNrLedsCount", maxNrLeds)
+            .addPair("nrOfRows", nrOfRowsString)
+            .addPair("nrOfRowsCount", nrOfRows)
+            .addPair("nrOfColumns", nrOfColumnsString)
+            .addPair("nrOfColumnsCount", nrOfColumns)
+            .addPair("activeLow", activeLowString)
+            .addPair("activeLowValue", activeLow ? "1" : "0")
+            .addPair("nrColAddrBits", nrOfColumnAddressBitsString)
+            .addPair("nrColAddrBitsCount", nrColAddrBits)
+            .addPair("scanningCounterBits", scanningCounterBitsString)
+            .addPair("nrOfScanningBitsCount", nrOfScanningBitsCount)
+            .addPair("scanningCounter", scanningCounterValueString)
+            .addPair("scanningValue", (scanningReload - 1));
 
     if (HDL.isVHDL()) {
-      map.add(
+      contents.add(
           "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
           "              {{nrOfRows}} => {{nrOfRowsCount}},",
           "              {{nrOfColumns}} => {{nrOfColumnsCount}},",
@@ -91,7 +92,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "              {{maxNrLeds}} => {{maxNrLedsCount}},",
           "              {{activeLow}} => {{activeLowValue}} )");
     } else {
-      map.add(
+      contents.add(
           "#( .{{nrOfLeds}}({{ledsCount}}),",
           "   .{{nrOfRows}}({{nrOfRowsCount}}),",
           "   .{{nrOfColumns}}({{nrOfColumnsCount}}),",
@@ -101,31 +102,32 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "   .{{maxNrLeds}}({{maxNrLedsCount}}),",
           "   .{{activeLow}}({{activeLowValue}}) )");
     }
-    return map.getWithIndent(6);
+    return contents.getWithIndent(6);
   }
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new LineBuffer();
-    map.withPairs()
-        .add("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-        .add("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-        .add("clock", TickComponentHDLGeneratorFactory.FPGAClock)
-        .add("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-        .add("id", id);
+    final var contents =
+        (new LineBuffer())
+            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .addPair("id", id);
+
     if (HDL.isVHDL()) {
-      map.add(
+      contents.add(
           "PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},",
           "           {{outs}} => {{outs}}{{id}},",
           "           {{clock}} => {{clock}},",
           "           {{ins}} => s_{{ins}}{{id}} );");
     } else {
-      map.add(
+      contents.add(
           "(.{{columnAddress}}({{columnAddress}}{{id}}),",
           " .{{outs}}({{outs}}{{id}}),",
           " .{{clock}}({{clock}}),",
           " .{{ins}}({{s_{{ins}}{{id}}) );");
     }
-    return map.getWithIndent(6);
+    return contents.getWithIndent(6);
   }
 
   @Override
@@ -247,14 +249,13 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    contents
-        .withPairs()
-        .add("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-        .add("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-        .add("nrOfLeds", nrOfLedsString)
-        .add("nrOfRows", nrOfRowsString)
-        .add("activeLow", activeLowString);
+    final var contents =
+        (new LineBuffer())
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfRows", nrOfRowsString)
+            .addPair("activeLow", activeLowString);
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {

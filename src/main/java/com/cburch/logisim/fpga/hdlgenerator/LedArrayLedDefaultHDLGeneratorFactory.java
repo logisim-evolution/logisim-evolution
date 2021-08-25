@@ -45,32 +45,32 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static String LedArrayName = "LedArrayLedDefault";
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
-    final var map = new LineBuffer();
-    map.withPairs()
-            .add("nrOfLeds", nrOfLedsString)
-            .add("ledsCount", nrOfRows * nrOfColumns)
-            .add("rows", nrOfRows)
-            .add("cols", nrOfColumns)
-            .add("activeLow", activeLow)
-            .add("activeLowVal", activeLow ? "1" : "0");
+    final var contents =
+        (new LineBuffer())
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("ledsCount", nrOfRows * nrOfColumns)
+            .addPair("rows", nrOfRows)
+            .addPair("cols", nrOfColumns)
+            .addPair("activeLow", activeLow)
+            .addPair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      map.add(
+      contents.add(
           "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
           "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      map.add(
+      contents.add(
           "#( .{{nrOfLeds}}({{ledsCount}}),",
           "   .{{activeLow}}({{activeLowVal}}) )");
     }
-    return map.getWithIndent(6);
+    return contents.getWithIndent(6);
   }
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new LineBuffer();
-    map.withPairs()
-        .add("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-        .add("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+    final var map =
+        (new LineBuffer())
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
       map.add(
           "PORT MAP ( {{outs}} => {{outs}}{{id}},",
@@ -107,11 +107,10 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    contents
-        .withPairs()
-        .add("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-        .add("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+    final var contents =
+        (new LineBuffer())
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
     if (HDL.isVHDL()) {
       contents.add(
