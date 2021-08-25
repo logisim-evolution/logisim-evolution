@@ -40,35 +40,41 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
   public static String RGBArrayName = "RGBArrayLedDefault";
 
-  public static ArrayList<String> getPortMap(int id) {
-    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
-    final var columnAddress = LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress;
-    final var redOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs;
-    final var greenOuts = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
-    final var blueOuts = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
-    final var redIns = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
+  private static final LineBuffer.Pairs sharedPairs =
+      new LineBuffer.Pairs() {
+        {
+          add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+          add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
+          add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
+          add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+          add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+          add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+          add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+        }
+      };
 
-    final var contents = new LineBuffer();
+  public static ArrayList<String> getPortMap(int id) {
+    final var contents = new LineBuffer(sharedPairs);
+    contents.add("id", id);
+
     if (HDL.isVHDL()) {
-      contents
-          .add("      PORT MAP ( %1$s => %1$s%2$d,", redOuts, id)
-          .add("                 %1$s => %1$s%2$d,", greenOuts, id)
-          .add("                 %1$s => %1$s%2$d,", blueOuts, id)
-          .add("                 %1$s => s_%1$s%2$d,", redIns, id)
-          .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
-          .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
+      contents.add(
+          "PORT MAP ( {{redOuts   }} => {{redOuts}}{{id}},",
+          "            {{greenOuts}} => {{greenOuts}}{{id}},",
+          "            {{blueOuts }} => {{blueOuts}}{{id}},",
+          "            {{redIns   }} => s_{{redIns}}{{id}},",
+          "            {{greenIns }} => s_{{greenIns}}{{id}},",
+          "            {{blueIns  }} => s_{{blueIns}}{{id}} );");
     } else {
-      contents
-          .add("      (.%1$s(%1$s%2$d),", redOuts, id)
-          .add("       .%1$s(%1$s%2$d),", greenOuts, id)
-          .add("       .%1$s(%1$s%2$d),", blueOuts, id)
-          .add("       .%1$s(s_%1$s%2$d),", redIns, id)
-          .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
-          .add("       .%1$s(s_%1$s%2$d));", blueIns, id);
+      contents.add(
+          "(.{{redOuts  }}({{redOuts}}{{id}}),",
+          " .{{greenOuts}}({{greenOuts}}{{id}}),",
+          " .{{blueOuts }}({{blueOuts}}{{id}}),",
+          " .{{redIns   }}(s_{{redIns}}{{id}}),",
+          " .{{greenIns }}(s_{{greenIns}}{{id}}),",
+          " .{{blueIns  }}(s_{{blueIns}}{{id}}));");
     }
-    return contents.get();
+    return contents.getWithIndent(6);
   }
 
   @Override
@@ -91,33 +97,34 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var redIn = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIn = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIn = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-    final var redOut = LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs;
-    final var greenOut = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
-    final var blueOut = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
+    final var contents = new LineBuffer(sharedPairs);
 
-    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      contents
-          .add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE")
-          .add("      %s(n) <= NOT(%s(n)) WHEN activeLow = 1 ELSE %s(n);", redOut, redIn, redIn)
-          .add("      %s(n) <= NOT(%s(n)) WHEN activeLow = 1 ELSE %s(n);", greenOut, greenIn, greenIn)
-          .add("      %s(n) <= NOT(%s(n)) WHEN activeLow = 1 ELSE %s(n);", blueOut, blueIn, blueIn)
-          .add("   END GENERATE;");
+      contents.add(
+          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
+          "   {{redOuts  }}(n) <= NOT({{redIns  }}(n)) WHEN activeLow = 1 ELSE {{redIns  }}(n);",
+          "   {{greenOuts}}(n) <= NOT({{greenIns}}(n)) WHEN activeLow = 1 ELSE {{greenIns}}(n);",
+          "   {{blueOuts }}(n) <= NOT({{blueIns }}(n)) WHEN activeLow = 1 ELSE {{blueIns }}(n);",
+          "END GENERATE;");
+
+      contents.add(
+          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
+          "   {{redOuts  }}(n) <= NOT({{redIns  }}(n)) WHEN activeLow = 1 ELSE {{redIns  }}(n);",
+          "   {{greenOuts}}(n) <= NOT({{greenIns}}(n)) WHEN activeLow = 1 ELSE {{greenIns}}(n);",
+          "   {{blueOuts }}(n) <= NOT({{blueIns }}(n)) WHEN activeLow = 1 ELSE {{blueIns }}(n);",
+          "END GENERATE;");
     } else {
-      contents
-          .add("   genvar i;")
-          .add("   generate")
-          .add("      for (i = 0; i < nrOfLeds; i = i + 1) begin")
-          .add("         assign %s[i] = (activeLow == 1) ? ~%s[n] : %s[n];", redOut, redIn, redIn)
-          .add("         assign %s[i] = (activeLow == 1) ? ~%s[n] : %s[n];", greenOut, greenIn, greenIn)
-          .add("         assign %s[i] = (activeLow == 1) ? ~%s[n] : %s[n];", blueOut, blueIn, blueIn)
-          .add("      end")
-          .add("   endgenerate");
+      contents.add(
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < nrOfLeds; i = i + 1) begin",
+          "      assign {{redOuts  }}[i] = (activeLow == 1) ? ~{{redIns}}[n] : {{redIns}}[n];",
+          "      assign {{greenOuts}}[i] = (activeLow == 1) ? ~{{greenIns}}[n] : {{greenIns}}[n];",
+          "      assign {{blueOuts }}[i] = (activeLow == 1) ? ~{{blueIns}}[n] : {{blueIns}}[n];",
+          "   end",
+          "endgenerate");
     }
-    return contents.get();
+    return contents.getWithIndent(3);
   }
 
   @Override

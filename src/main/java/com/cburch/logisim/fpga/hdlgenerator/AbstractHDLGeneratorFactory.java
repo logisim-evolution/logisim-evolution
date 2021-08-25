@@ -1214,9 +1214,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return true;
   }
 
-  /* Here all global helper methods are defined
-  * @deprecated
-  * */
+  /**
+   * @deprecated Use LineBuffer's addRemarkBlock() instead.
+   */
   protected ArrayList<String> MakeRemarkBlock(String RemarkText, Integer NrOfIndentSpaces) {
     final var maxRemarkLength = MaxLineLength - 2 * HDL.remarkOverhead() - NrOfIndentSpaces;
     var remarkWords = RemarkText.split(" ");

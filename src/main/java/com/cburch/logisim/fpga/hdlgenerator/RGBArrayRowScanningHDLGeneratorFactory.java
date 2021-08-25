@@ -38,41 +38,45 @@ import java.util.TreeMap;
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
   public static String RGBArrayName = "RGBArrayRowScanning";
+    public static ArrayList<String> getPortMap(int id) {
+      final var contents =
+              new LineBuffer(
+                      new LineBuffer.Pairs() {
+                        {
+                          add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+                          add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+                          add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+                          add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs);
+                          add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs);
+                          add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
+                          add("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress);
+                          add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+                          add("id", id);
+                        }
+                      });
 
-  public static ArrayList<String> getPortMap(int id) {
-    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
-    final var rowAddress = LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress;
-    final var redOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs;
-    final var greenOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs;
-    final var blueOuts = LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs;
-
-    final var redIns = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-
-    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      contents
-          .add("      PORT MAP ( %1$s => %1$s%2$d,", rowAddress, id)
-          .add("                 %1$s => %1$s,", clock)
-          .add("                 %1$s => %1$s%2$d,", redOuts, id)
-          .add("                 %1$s => %1$s%2$d,", greenOuts, id)
-          .add("                 %1$s => %1$s%2$d,", blueOuts, id)
-          .add("                 %1$s => s_%1$s%2$d,", redIns, id)
-          .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
-          .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
+      contents.add(
+          "PORT MAP ( {{rowAddress}} => {{rowAddress}}{{id}}",
+          "           {{clock     }} => {{clock}},",
+          "           {{redOuts   }} => {{redOuts}}{{id}},",
+          "           {{greenOuts }} => {{greenOuts}}{{id}},",
+          "           {{blueOuts  }} => {{blueOuts}}{{id}},",
+          "           {{redIns    }} => s_{{redIns}}{{id}},",
+          "           {{greenIns  }} => s_{{greenIns}}{{id}},",
+          "           {{blueIns   }} => s_{{blueIns}}{{id}});");
     } else {
-      contents
-          .add("      (.%1$s(%1$s%2$d),", rowAddress, id)
-          .add("       .%1$s(%1$s),", clock)
-          .add("       .%1$s(%1$s%2$d),", redOuts, id)
-          .add("       .%1$s(%1$s%2$d),", greenOuts, id)
-          .add("       .%1$s(%1$s%2$d),", blueOuts, id)
-          .add("       .%1$s(s_%1$s%2$d),", redIns, id)
-          .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
-          .add("       .%1$s(s_%1$s%2$d)); ", blueIns, id);
+      contents.add(
+          "(.{{rowAddress}}({{rowAddress}}{{id}}),",
+          " .{{clock     }}({{clock}}),",
+          " .{{redOuts   }}({{redOuts}}{{id}}),",
+          " .{{greenOuts }}({{greenOuts}}{{id}}),",
+          " .{{blueOuts  }}({{blueOuts}}{{id}}),",
+          " .{{redIns    }}(s_{{redIns}}{{id}}),",
+          " .{{greenIns  }}(s_{{greenIns}}{{id}}),",
+          " .{{blueIns   }}(s_{{blueIns}}{{id}})); ");
     }
-    return contents.get();
+    return contents.getWithIndent(6);
   }
 
   @Override
@@ -108,58 +112,64 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var redIn = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIn = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIn = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-
-    final var redOut = LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs;
-    final var greenOut = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
-    final var blueOut = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
-
-    final var contents = new LineBuffer();
+    final var contents =
+        new LineBuffer(
+            new LineBuffer.Pairs() {
+              {
+                add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+                add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+                add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+                add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
+                add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
+                add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+                add("activeLow", activeLowString);
+                add("nrOfLeds", nrOfLedsString);
+                add("nrOfColumns", nrOfColumnsString);
+              }
+            });
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
-      contents
-          .add("   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS")
-          .add("   BEGIN")
-          .add("      s_maxRedLedInputs <= (OTHERS => '0');")
-          .add("      s_maxGreenLedInputs <= (OTHERS => '0');")
-          .add("      s_maxBlueLedInputs <= (OTHERS => '0');")
-          .add("      IF (%s = 1) THEN", activeLowString)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, redIn)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, greenIn)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, blueIn)
-          .add("      ELSE")
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, redIn)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, greenIn)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, blueIn)
-          .add("      END IF;")
-          .add("   END PROCESS makeVirtualInputs;")
-          .add()
-          .add("   GenOutputs : FOR n IN " + nrOfColumnsString + "-1 DOWNTO 0 GENERATE")
-          .add("      %s(n) <= s_maxRedLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", redOut, nrOfColumnsString)
-          .add("      %s(n) <= s_maxRedLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", greenOut, nrOfColumnsString)
-          .add("      %s(n) <= s_maxRedLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", blueOut, nrOfColumnsString)
-          .add("   END GENERATE GenOutputs;");
+      contents.add(
+          "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
+          "BEGIN",
+          "   s_maxRedLedInputs <= (OTHERS => '0');",
+          "   s_maxGreenLedInputs <= (OTHERS => '0');",
+          "   s_maxBlueLedInputs <= (OTHERS => '0');",
+          "   IF ({{activeLow}} = 1) THEN",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{redIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{greenIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{blueIns}};",
+          "   ELSE",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{redIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{greenIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{blueIns}};",
+          "   END IF;",
+          "END PROCESS makeVirtualInputs;",
+          "",
+          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
+          "   {{redOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{greenOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{blueOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "END GENERATE GenOutputs;");
     } else {
-      contents
-          .add()
-          .add("   genvar i;")
-          .add("   generate")
-          .add("      for (i = 0; i < %s; i = i + 1) begin", nrOfColumnsString)
-          .add("         assign %s[i] = (activeLow == 1)", redOut)
-          .add("            ? ~%s[%s * s_rowCounterReg + i]", redIn, nrOfColumnsString)
-          .add("            : %s[%s * s_rowCounterReg + i];", redIn, nrOfColumnsString)
-          .add("         assign %s[i] = (activeLow == 1)", greenOut)
-          .add("            ? ~%s[%s * s_rowCounterReg + i]", greenIn, nrOfColumnsString)
-          .add("            : %s[%s * s_rowCounterReg + i];", greenIn, nrOfColumnsString)
-          .add("         assign %s[i] = (activeLow == 1)", blueOut)
-          .add("            ? ~%s[%s * s_rowCounterReg + i]", blueIn, nrOfColumnsString)
-          .add("            : %s[%s * s_rowCounterReg + i];", blueIn, nrOfColumnsString)
-          .add("      end")
-          .add("   endgenerate");
+      contents.add(
+          "",
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
+          "      assign {{redOuts}}[i] = (activeLow == 1)",
+          "         ? ~{{redIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{redIns}}[nrOfColumns * s_rowCounterReg + i];",
+          "      assign {{greenOuts}}[i] = (activeLow == 1)",
+          "         ? ~{{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "          : {{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "      assign {{blueOuts}}[i] = (activeLow == 1)",
+          "          ? ~{{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "   end",
+          "endgenerate");
     }
-    return contents.get();
+    return contents.getWithIndent(3);
   }
 
   @Override
