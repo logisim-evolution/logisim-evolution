@@ -142,24 +142,26 @@ extra.apply {
       jpackage,
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", "${project.name}-${project.version}-all.jar",
-      "--app-version", project.version as String,
-      "--copyright", "Copyright © 2001–${SimpleDateFormat("yyyy").format(Date())} Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
-      "--dest", "${buildDir}/dist",
-      "--description", "Digital logic design tool and simulator",
-      "--vendor", "${project.name} developers",
+       "--main-jar", shadowJarFilename,
+      "--app-version", appVersion,
+      "--copyright", copyrights,
+      "--dest", targetDir
   )
-  val linuxParameters = ArrayList<String>()
-  linuxParameters.add("--name")
-  linuxParameters.add(project.name)
-  linuxParameters.add("--file-associations")
-  linuxParameters.add("${supportDir}/file.jpackage")
-  linuxParameters.add("--icon")
-  linuxParameters.add("${supportDir}/logisim-icon-128.png")
-  linuxParameters.add("--install-dir")
-  linuxParameters.add("/opt")
-  linuxParameters.add("--linux-shortcut")
-  set("linuxParameters", linuxParameters)
+  if (logger.isDebugEnabled()) {
+    params += listOf("--verbose")
+  }
+  set("sharedParameters", params)
+
+  // Linux (DEB/RPM) specific settings for jpackage.
+  val supportPath = "${ext.get("supportDir") as String}/linux"
+  val linuxParams = params + listOf(
+      "--name", project.name,
+      "--file-associations", "${supportPath}/file.jpackage",
+      "--icon", "${supportPath}/logisim-icon-128.png",
+      "--install-dir", "/opt",
+      "--linux-shortcut"
+  )
+  set("linuxParameters", linuxParams)
 
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
