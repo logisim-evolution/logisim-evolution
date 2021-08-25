@@ -47,7 +47,7 @@ public class Ttl74163 extends Ttl74161 {
     if (triggered) {
       final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
       final var nLoad = state.getPortValue(PORT_INDEX_nLOAD).toLongValue();
-      var counter = data.getValue().toLongValue();;
+      var counter = data.getValue().toLongValue();
 
       if (nClear == 0) {
         counter = 0;
