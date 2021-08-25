@@ -84,7 +84,7 @@ public class LineBufferTest extends TestBase {
             " {{   bar}} ", " BAR "
             );
 
-    final var pairs = this.lb.getPairs()
+    final var pairs = this.lb.withPairs()
             .add("foo", "FOO")
             .add("bar", "BAR");
 

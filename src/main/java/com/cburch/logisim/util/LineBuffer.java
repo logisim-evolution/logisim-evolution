@@ -100,7 +100,7 @@ public class LineBuffer implements RandomAccess {
     return contents.isEmpty();
   }
 
-  /***********************************************************************************************/
+  /* ********************************************************************************************* */
 
   /**
    * Adds single line to the content buffer.
@@ -142,7 +142,7 @@ public class LineBuffer implements RandomAccess {
     return add(applyMap(fmt, map));
   }
 
-  /***********************************************************************************************/
+  /* ********************************************************************************************* */
 
   /**
    * Applies search-replace var to provided string.
@@ -244,7 +244,7 @@ public class LineBuffer implements RandomAccess {
     return result;
   }
 
-  /***********************************************************************************************/
+  /* ********************************************************************************************* */
 
   /**
    * Builds and adds remark block to the contents buffer.
@@ -333,7 +333,7 @@ public class LineBuffer implements RandomAccess {
     return contents;
   }
 
-  /***********************************************************************************************/
+  /* ********************************************************************************************* */
 
   /**
    * Both objects are equal if their content (and its order) is exatcly the same.
@@ -358,11 +358,7 @@ public class LineBuffer implements RandomAccess {
     return contents.toString();
   }
 
-  /***********************************************************************************************/
-
-  public static Pairs getPairs() {
-    return new Pairs();
-  }
+  /* ********************************************************************************************* */
 
   public static class Pairs extends HashMap<String, Object> {
     public Pairs() {
@@ -379,6 +375,6 @@ public class LineBuffer implements RandomAccess {
     }
   }
 
-  /***********************************************************************************************/
+  /* ********************************************************************************************* */
 
 } // end of LineBuffer
