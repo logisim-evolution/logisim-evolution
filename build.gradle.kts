@@ -67,6 +67,21 @@ dependencies {
   testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
 }
 
+/**
+ * Strings used as keys to reference shared variables (via `ext.*`)
+ */
+val APP_DIR_NAME = "appDirName"
+val APP_VERSION = "appVersion"
+val APP_VERSION_SHORT = "appVersionShort"
+val JPACKAGE = "jpackage"
+val LIBS_DIR = "libsDir"
+val LINUX_PARAMS = "linuxParameters"
+val SHADOW_JAR_FILE_NAME = "shadowJarFilename"
+val SHARED_PARAMS = "sharedParameters"
+val SUPPORT_DIR = "supportDir"
+val TARGET_DIR = "targetDir"
+val TARGET_FILE_PATH_BASE = "targetFilePathBase"
+
 java {
   sourceCompatibility = JavaVersion.VERSION_14
   targetCompatibility = JavaVersion.VERSION_14
@@ -112,7 +127,7 @@ extra.apply {
 
   // JAR folder.
   val libsDir="${buildDir}/libs"
-  set("libsDir", libsDir)
+  set(LIBS_DIR, libsDir)
 
   // The root dir for jpackage extra files.
   val supportDir="${projectDir}/support/jpackage"
@@ -131,8 +146,7 @@ extra.apply {
   // JDK/jpackage vars
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
-//  val jPackageCmd = if (jpackage.contains(" ")) "\"" + jpackage + "\"" else jpackage
-  set("jPackageCmd", jpackage)
+  set("jpackage", jpackage)
 
   // Copytights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
@@ -142,22 +156,23 @@ extra.apply {
       jpackage,
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
-       "--main-jar", shadowJarFilename,
+      "--main-jar", shadowJarFilename,
       "--app-version", appVersion,
       "--copyright", copyrights,
-      "--dest", targetDir
-  )
+      "--dest", targetDir,
+      "--description", "Digital logic design tool and simulator",
+      "--vendor", "${project.name} developers",
+    )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
   }
   set("sharedParameters", params)
 
   // Linux (DEB/RPM) specific settings for jpackage.
-  val supportPath = "${ext.get("supportDir") as String}/linux"
   val linuxParams = params + listOf(
       "--name", project.name,
-      "--file-associations", "${supportPath}/file.jpackage",
-      "--icon", "${supportPath}/logisim-icon-128.png",
+      "--file-associations", "${supportDir}/linux/file.jpackage",
+      "--icon", "${supportDir}/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
       "--linux-shortcut"
   )
@@ -173,13 +188,16 @@ extra.apply {
  * Creates distribution directory and checks if source.
  */
 tasks.register("createDistDir") {
-  val libsDir = ext.get("libsDir") as String
+  val libsDir = ext.get(LIBS_DIR) as String
 
   group = "build"
   description = "Creates the directory for distribution."
   dependsOn("shadowJar")
+
+  val shadowJarFilename = ext.get(SHADOW_JAR_FILE_NAME) as String
+
   inputs.dir(libsDir)
-  outputs.dir(ext.get("targetDir") as String)
+  outputs.dir(ext.get(TARGET_DIR) as String)
 
   doFirst {
     var jarFiles = File(libsDir).list()
@@ -188,7 +206,6 @@ tasks.register("createDistDir") {
     if ( jarCount > 1) {
       logger.warn("Expected 1 shadowJar file, found ${jarCount} in: ${libsDir}")
 
-      val shadowJarFilename = ext.get("shadowJarFilename") as String
       val expectedShadowJar = File("${libsDir}/${shadowJarFilename}")
       if (expectedShadowJar.exists()) {
         logger.warn("Found needed: ${shadowJarFilename}")
@@ -209,8 +226,8 @@ tasks.register("createDistDir") {
     var jarFiles = File(libsDir).list()
     var jarCount = jarFiles.count()
     if ( jarCount > 1) {
-      val expected = ext.get("shadowJarFilename") as String
-      for (file in jarFiles.filter { file -> file != expected }) {
+      // Value of shadowJarFileName is our needed JAR file. Remove the rest.
+      for (file in jarFiles.filter { file -> file != shadowJarFilename }) {
         if (!delete("${libsDir}/${file}")) {
           throw GradleException("Failed to remove orphaned file: ${file}")
         }
@@ -266,13 +283,13 @@ tasks.register("createDeb") {
   group = "build"
   description = "Makes DEB Linux installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get("libsDir") as String)
-  inputs.dir("${ext.get("supportDir") as String}/linux")
+  inputs.dir(ext.get(LIBS_DIR) as String)
+  inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
 
   // Debian uses `_` to separate name from version string.
   // https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html
-  val appVersion = ext.get("appVersion") as String
-  val targetDir = ext.get("targetDir") as String
+  val appVersion = ext.get(APP_VERSION) as String
+  val targetDir = ext.get(TARGET_DIR) as String
   val debPackagePath = "${targetDir}/${project.name}_${appVersion}-1_amd64.deb"
   outputs.file(debPackagePath)
 
@@ -283,7 +300,7 @@ tasks.register("createDeb") {
   }
 
   doLast {
-    val params = ext.get("linuxParameters") as List<String> + listOf("--type", "deb")
+    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "deb")
     runCommand(params, "Error while creating the DEB package.")
   }
 }
@@ -297,9 +314,9 @@ tasks.register("createRpm") {
   group = "build"
   description = "Makes RPM Linux installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get("libsDir") as String)
-  inputs.dir("${ext.get("supportDir") as String}/linux")
-  outputs.file("${ext.get("targetFilePathBase") as String}-1.x86_64.rpm")
+  inputs.dir(ext.get(LIBS_DIR) as String)
+  inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-1.x86_64.rpm")
 
   doFirst {
     if (!OperatingSystem.current().isLinux) {
@@ -308,7 +325,7 @@ tasks.register("createRpm") {
   }
 
   doLast {
-    val params = ext.get("linuxParameters") as List<String> + listOf("--type", "rpm")
+    val params = ext.get(LINUX_PARAMS) as List<String> + listOf("--type", "rpm")
     runCommand(params, "Error while creating the RPM package.")
   }
 }
@@ -322,9 +339,12 @@ tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get("libsDir") as String)
-  inputs.dir("${ext.get("supportDir") as String}/windows")
-  outputs.file("${ext.get("targetFilePathBase") as String}.msi")
+
+  val supportDir = ext.get(SUPPORT_DIR) as String;
+
+  inputs.dir(ext.get(LIBS_DIR) as String)
+  inputs.dir("${supportDir}/windows")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -333,10 +353,10 @@ tasks.register("createMsi") {
   }
 
   doLast {
-    val params = ext.get("sharedParameters") as List<String> + listOf(
+    val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
         "--name", project.name,
-        "--file-associations", "${ext.get("supportDir") as String}/windows/file.jpackage",
-        "--icon", "${ext.get("supportDir") as String}/windows/Logisim-evolution.ico",
+        "--file-associations", "${supportDir}/windows/file.jpackage",
+        "--icon", "${supportDir}/windows/Logisim-evolution.ico",
         "--win-menu-group", project.name as String,
         "--win-shortcut",
         "--win-dir-chooser",
@@ -353,12 +373,15 @@ tasks.register("createMsi") {
  * Creates macOS application.
  */
 tasks.register("createApp") {
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val appDirName = ext.get(APP_DIR_NAME) as String
+
   group = "build"
   description = "Makes the macOS application."
   dependsOn("shadowJar", "createDistDir")
-  inputs.dir(ext.get("libsDir") as String)
-  inputs.dir("${ext.get("supportDir") as String}/macos")
-  outputs.dir(ext.get("appDirName") as String)
+  inputs.dir(ext.get(LIBS_DIR) as String)
+  inputs.dir("${SUPPORT_DIR}/macos")
+  outputs.dir(appDirName)
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -367,21 +390,20 @@ tasks.register("createApp") {
   }
 
   doLast {
-    val appDirName = ext.get("appDirName") as String
     delete(appDirName)
 
-    var params = ext.get("sharedParameters") as List<String>
+    var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
-      "--name", ext.get("uppercaseProjectName") as String,
-      "--file-associations", "${ext.get("supportDir") as String}/macos/file.jpackage",
-      "--icon", "${ext.get("supportDir") as String}/macos/Logisim-evolution.icns",
+      "--name", ext.get(TARGET_FILE_PATH_BASE) as String,
+      "--file-associations", "${supportDir}/macos/file.jpackage",
+      "--icon", "${supportDir}/macos/Logisim-evolution.icns",
       // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
-      "--app-version", ext.get("appVersionShort") as String,
+      "--app-version", ext.get(APP_VERSION_SHORT) as String,
       "--type", "app-image",
     )
     runCommand(params, "Error while creating the .app directory.")
 
-    val targetDir = ext.get("targetDir") as String
+    val targetDir = ext.get(TARGET_DIR) as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
     runCommand(listOf(
       "awk",
@@ -413,8 +435,11 @@ tasks.register("createDmg") {
   group = "build"
   description = "Makes the macOS DMG package."
   dependsOn("createApp")
-  inputs.dir(ext.get("appDirName") as String)
-  outputs.file(ext.get("targetFilePathBase") as String + ".dmg")
+
+  val appDirName = ext.get(APP_DIR_NAME) as String
+
+  inputs.dir(appDirName)
+  outputs.file(ext.get(TARGET_FILE_PATH_BASE) as String + ".dmg")
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -424,12 +449,12 @@ tasks.register("createDmg") {
 
   doLast {
     val params = listOf(
-        ext.get("jPackageCmd") as String,
-        "--app-image", ext.get("appDirName") as String,
+        ext.get(JPACKAGE) as String,
+        "--app-image", appDirName,
         "--name", project.name,
         // We can pass full version here, even if contains suffix part too.
-        "--app-version", ext.get("appVersion") as String,
-        "--dest", ext.get("targetDir") as String,
+        "--app-version", ext.get(APP_VERSION) as String,
+        "--dest", ext.get(TARGET_DIR) as String,
         "--type", "dmg",
       )
     runCommand(params, "Error while creating the DMG package")
@@ -472,7 +497,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    static { date.setTime(millis); }",
     "",
     "    // Project version",
-    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get("appVersion") as String}\");",
+    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get(APP_VERSION) as String}\");",
     "    public static final String name = \"${project.name.capitalize().trim()}\";",
     "} // End of generated BuildInfo",
     "",
@@ -499,7 +524,7 @@ tasks.register("genBuildInfo") {
 
   // TODO: we should not have hardcoded path here but use default sourcesSet maybe?
   inputs.dir("${projectDir}/src")
-  inputs.dir(ext.get("supportDir") as String)
+  inputs.dir(ext.get(SUPPORT_DIR) as String)
   inputs.files("${projectDir}/gradle.properties", "${projectDir}/README.md", "${projectDir}/LICENSE.md")
   outputs.dir(buildInfoDir)
 
@@ -572,7 +597,7 @@ tasks {
 
   shadowJar {
     archiveBaseName.set(project.name)
-    archiveVersion.set(ext.get("appVersion") as String)
+    archiveVersion.set(ext.get(APP_VERSION) as String)
     from(".") {
       include("LICENSE.md")
       include("README.md")
