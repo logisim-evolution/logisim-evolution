@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -37,13 +35,13 @@ public class Ttl74163 extends Ttl74161 {
 
   public static final String _ID = "74163";
 
+  public Ttl74163() {
+    super(_ID);
+  }
+
   @Override
   public void ttlpropagate(InstanceState state) {
-    var data = (TtlRegisterData) state.getData();
-    if (data == null) {
-      data = new TtlRegisterData(BitWidth.create(4));
-      state.setData(data);
-    }
+    var data = getStateData(state);
 
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
     if (triggered) {
@@ -69,20 +67,7 @@ public class Ttl74163 extends Ttl74161 {
           return; // Nothing changed so return
         }
       }
-      
-      data.setValue(Value.createKnown(BitWidth.create(4), counter));
-      final var vA = data.getValue().get(0);
-      final var vB = data.getValue().get(1);
-      final var vC = data.getValue().get(2);
-      final var vD = data.getValue().get(3);
-
-      state.setPort(PORT_INDEX_QA, vA, 1);
-      state.setPort(PORT_INDEX_QB, vB, 1);
-      state.setPort(PORT_INDEX_QC, vC, 1);
-      state.setPort(PORT_INDEX_QD, vD, 1);
-
-      // RC0 = QA AND QB AND QC AND QD AND ENT
-      state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
+      updateState(state, counter);
     } 
   }
 

@@ -66,28 +66,31 @@ public class Ttl74161 extends AbstractTtlGate {
   public static final int PORT_INDEX_QB = 11;
   public static final int PORT_INDEX_QA = 12;
   public static final int PORT_INDEX_RC0 = 13;
+  private static final String[] PORT_NAMES = {
+      "MR/CLR (Reset, active LOW)",
+      "CP/CLK (Clock)",
+      "D0/A",
+      "D1/B",
+      "D2/C",
+      "D3/D",
+      "CE/ENP (Count Enable)",
+      "PE/LOAD (Parallel Enable, active LOW)",
+      "CET/ENT (Count Enable Carry)",
+      "Q3/QD",
+      "Q2/QC",
+      "A1/QB",
+      "A0/QA",
+      "TC/RC0 (Terminal Count)"
+    }; 
+  private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15}; 
 
   public Ttl74161() {
-    super(
-        _ID,
-        (byte) 16,
-        new byte[] {11, 12, 13, 14, 15},
-        new String[] {
-          "MR/CLR (Reset, active LOW)",
-          "CP/CLK (Clock)",
-          "D0/A",
-          "D1/B",
-          "D2/C",
-          "D3/D",
-          "CE/ENP (Count Enable)",
-          "PE/LOAD (Parallel Enable, active LOW)",
-          "CET/ENT (Count Enable Carry)",
-          "Q3/QD",
-          "Q2/QC",
-          "A1/QB",
-          "A0/QA",
-          "TC/RC0 (Terminal Count)"
-        });
+    super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
+    super.setInstancePoker(Poker.class);
+  }
+  
+  public Ttl74161(String name) {
+    super(name, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
     super.setInstancePoker(Poker.class);
   }
 
@@ -129,13 +132,13 @@ public class Ttl74161 extends AbstractTtlGate {
         var index = getIndex(state, e);
 
         final var p = TTLGetTranslatedXY(state, e);
-        System.out.print("x=");
-        System.out.print(p.x);
-        System.out.print(",y=");
-        System.out.print(p.y);
-        System.out.print(",i=");
-        System.out.print(index);
-        System.out.println(index);
+        //System.out.print("x=");
+        //System.out.print(p.x);
+        //System.out.print(",y=");
+        //System.out.print(p.y);
+        //System.out.print(",i=");
+        //System.out.print(index);
+        //System.out.println(index);
 
         final var data = (TtlRegisterData) state.getData();
         if (data == null) return;
@@ -178,15 +181,37 @@ public class Ttl74161 extends AbstractTtlGate {
       gfx.setColor(Color.BLACK);
     }
   }
+  
+  public static void updateState(InstanceState state, Long value) {
+    var data = (TtlRegisterData) state.getData();
+    
+    data.setValue(Value.createKnown(BitWidth.create(4), value));
+    final var vA = data.getValue().get(0);
+    final var vB = data.getValue().get(1);
+    final var vC = data.getValue().get(2);
+    final var vD = data.getValue().get(3);
 
-  @Override
-  public void ttlpropagate(InstanceState state) {
+    state.setPort(PORT_INDEX_QA, vA, 1);
+    state.setPort(PORT_INDEX_QB, vB, 1);
+    state.setPort(PORT_INDEX_QC, vC, 1);
+    state.setPort(PORT_INDEX_QD, vD, 1);
+
+    // RC0 = QA AND QB AND QC AND QD AND ENT
+    state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
+  }
+  
+  public static TtlRegisterData getStateData(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       data = new TtlRegisterData(BitWidth.create(4));
       state.setData(data);
     }
-    
+    return data;
+  }
+
+  @Override
+  public void ttlpropagate(InstanceState state) {
+    var data = getStateData(state);
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
     final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
     var counter = data.getValue().toLongValue();
@@ -214,20 +239,7 @@ public class Ttl74161 extends AbstractTtlGate {
     } else {
       return; // Nothing to do as no change
     }
-
-    data.setValue(Value.createKnown(BitWidth.create(4), counter));
-    final var vA = data.getValue().get(0);
-    final var vB = data.getValue().get(1);
-    final var vC = data.getValue().get(2);
-    final var vD = data.getValue().get(3);
-
-    state.setPort(PORT_INDEX_QA, vA, 1);
-    state.setPort(PORT_INDEX_QB, vB, 1);
-    state.setPort(PORT_INDEX_QC, vC, 1);
-    state.setPort(PORT_INDEX_QD, vD, 1);
-
-    // RC0 = QA AND QB AND QC AND QD AND ENT
-    state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
+    updateState(state, counter);
   }
 
   @Override
