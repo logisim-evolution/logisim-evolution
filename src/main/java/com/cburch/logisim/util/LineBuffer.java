@@ -65,7 +65,11 @@ public class LineBuffer implements RandomAccess {
     return contents.size();
   }
 
-  protected Pairs pairs = null;
+  protected Pairs pairs = new Pairs();
+
+  public Pairs withPairs() {
+    return pairs;
+  }
 
   public LineBuffer withPairs(Pairs pairs) {
     this.pairs = pairs;
@@ -78,7 +82,7 @@ public class LineBuffer implements RandomAccess {
   }
 
   public LineBuffer clearPairs() {
-    this.pairs = null;
+    pairs.clear();
     return this;
   }
 

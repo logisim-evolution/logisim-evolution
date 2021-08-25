@@ -246,8 +246,8 @@ public class VivadoDownload implements VendorDownload {
 
   private ArrayList<String> getPinLocStrings() {
     final var contents = new LineBuffer();
-    for (var key : MapInfo.getMappableResources().keySet()) {
-      var map = MapInfo.getMappableResources().get(key);
+    for (final var key : MapInfo.getMappableResources().keySet()) {
+      final var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
@@ -267,7 +267,7 @@ public class VivadoDownload implements VendorDownload {
       }
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
-    for (var key : LedArrayMap.keySet()) {
+    for (final var key : LedArrayMap.keySet()) {
       contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", key, LedArrayMap.get(key));
     }
     return contents.get();

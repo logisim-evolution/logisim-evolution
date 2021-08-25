@@ -38,22 +38,20 @@ import java.util.TreeMap;
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
   public static String RGBArrayName = "RGBArrayRowScanning";
-    public static ArrayList<String> getPortMap(int id) {
-      final var contents =
-              new LineBuffer(
-                      new LineBuffer.Pairs() {
-                        {
-                          add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
-                          add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
-                          add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-                          add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs);
-                          add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs);
-                          add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
-                          add("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress);
-                          add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
-                          add("id", id);
-                        }
-                      });
+
+  public static ArrayList<String> getPortMap(int id) {
+    final var contents = new LineBuffer();
+    contents
+        .withPairs()
+        .add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+        .add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+        .add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+        .add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
+        .add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
+        .add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs)
+        .add("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+        .add("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+        .add("id", id);
 
     if (HDL.isVHDL()) {
       contents.add(
@@ -109,24 +107,20 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     return wires;
   }
 
-
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents =
-        new LineBuffer(
-            new LineBuffer.Pairs() {
-              {
-                add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
-                add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
-                add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-                add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
-                add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
-                add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
-                add("activeLow", activeLowString);
-                add("nrOfLeds", nrOfLedsString);
-                add("nrOfColumns", nrOfColumnsString);
-              }
-            });
+    final var contents = new LineBuffer();
+    contents
+        .withPairs()
+        .add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+        .add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+        .add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+        .add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
+        .add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
+        .add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs)
+        .add("activeLow", activeLowString)
+        .add("nrOfLeds", nrOfLedsString)
+        .add("nrOfColumns", nrOfColumnsString);
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
       contents.add(
