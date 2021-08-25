@@ -130,16 +130,6 @@ public class Ttl74161 extends AbstractTtlGate {
       if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
       if (isPressed && isInside(state, e)) {
         var index = getIndex(state, e);
-
-        final var p = TTLGetTranslatedXY(state, e);
-        //System.out.print("x=");
-        //System.out.print(p.x);
-        //System.out.print(",y=");
-        //System.out.print(p.y);
-        //System.out.print(",i=");
-        //System.out.print(index);
-        //System.out.println(index);
-
         final var data = (TtlRegisterData) state.getData();
         if (data == null) return;
         var current = data.getValue().toLongValue();
@@ -183,7 +173,7 @@ public class Ttl74161 extends AbstractTtlGate {
   }
   
   public static void updateState(InstanceState state, Long value) {
-    var data = (TtlRegisterData) state.getData();
+    var data = getStateData(state);
     
     data.setValue(Value.createKnown(BitWidth.create(4), value));
     final var vA = data.getValue().get(0);
