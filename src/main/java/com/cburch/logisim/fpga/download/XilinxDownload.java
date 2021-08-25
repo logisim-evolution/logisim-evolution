@@ -221,13 +221,12 @@ public class XilinxDownload implements VendorDownload {
 
     contents.clear();
     contents.add(
-        "run -top "
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
-            + " -ofn logisim.ngc -ofmt NGC -ifn "
-            + ScriptPath.replace(ProjectPath, "../")
-            + vhdl_list_file
-            + " -ifmt mixed -p "
-            + GetFPGADeviceString(boardInfo));
+        "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
+        ToplevelHDLGeneratorFactory.FPGAToplevelName,
+        ScriptPath.replace(ProjectPath, "../"),
+        vhdl_list_file,
+        GetFPGADeviceString(boardInfo));
+
     if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
 
     contents.clear();
