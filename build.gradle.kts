@@ -142,14 +142,19 @@ extra.apply {
       jpackage,
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", "${project.name}-${project.version}-all.jar",
-      "--app-version", project.version as String,
-      "--copyright", "Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.",
-      "--dest", "${buildDir}/dist",
-      "--description", "Digital logic design tool and simulator",
-      "--vendor", "${project.name} developers",
-  ))
-  val linuxParameters = ArrayList<String>(Arrays.asList(
+       "--main-jar", shadowJarFilename,
+      "--app-version", appVersion,
+      "--copyright", copyrights,
+      "--dest", targetDir
+  )
+  if (logger.isDebugEnabled()) {
+    params += listOf("--verbose")
+  }
+  set("sharedParameters", params)
+
+  // Linux (DEB/RPM) specific settings for jpackage.
+  val supportPath = "${ext.get("supportDir") as String}/linux"
+  val linuxParams = params + listOf(
       "--name", project.name,
       "--file-associations", "${supportPath}/file.jpackage",
       "--icon", "${supportPath}/logisim-icon-128.png",
