@@ -75,23 +75,92 @@ public class LineBufferTest extends TestBase {
 
   @Test
   public void testFormatter() {
-    final Map<String, String> tests = Map.of(
+    final Map<String, String> tests =
+        Map.of(
             " {{foo}} ", " FOO ",
             " {{bar}} ", " BAR ",
             " {{foo}} {{bar}} ", " FOO BAR ",
             " {{bar  }} ", " BAR ",
             " {{   bar  }} ", " BAR ",
-            " {{   bar}} ", " BAR "
-            );
+            " {{   bar}} ", " BAR ");
 
-    final var pairs = this.lb.withPairs()
-            .add("foo", "FOO")
-            .add("bar", "BAR");
+    final var pairs =
+        new LineBuffer.Pairs() {
+          {
+            add("foo", "FOO");
+            add("bar", "BAR");
+          }
+        };
 
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer();
       lb.add(test.getKey(), pairs);
       final var expected = new LineBuffer(test.getValue());
+      assertEquals(expected, lb);
+    }
+  }
+
+  @Test
+  public void testFormatterWithGlobalPairs() {
+    final Map<String, String> tests =
+        Map.of(
+            " {{foo}} ", " FOO ",
+            " {{bar}} ", " BAR ",
+            " {{foo}} {{bar}} ", " FOO BAR ",
+            " {{bar  }} ", " BAR ",
+            " {{   bar  }} ", " BAR ",
+            " {{   bar}} ", " BAR ");
+
+    final var pairs =
+        new LineBuffer.Pairs() {
+          {
+            add("foo", "FOO");
+            add("bar", "BAR");
+          }
+        };
+
+    for (final var test : tests.entrySet()) {
+      final var lb = new LineBuffer(pairs);
+      lb.add(test.getKey());
+      final var expected = new LineBuffer(test.getValue(), pairs);
+      assertEquals(expected, lb);
+    }
+  }
+
+  @Test
+  public void testFormatterMixedPairs() {
+    final Map<String, String> tests =
+        Map.of(
+            " {{foo}} ", " FOO ",
+            " {{bar}} ", " BAR ",
+            " {{foo}} {{bar}} ", " FOO BAR ",
+            " {{bar  }} ", " BAR ",
+            " {{   bar  }} ", " BAR ",
+            " {{   bar}} ", " BAR ",
+            " {{bang}} ", " BANG ");
+
+    final var pairs =
+        new LineBuffer.Pairs() {
+          {
+            add("foo", "FOO");
+            add("bar", "BAR");
+          }
+        };
+
+    for (final var test : tests.entrySet()) {
+      final var lb = new LineBuffer(pairs);
+      lb.add(test.getKey(), new LineBuffer.Pairs("bang", "BANG"));
+
+      final var expPairs =
+          new LineBuffer.Pairs() {
+            {
+              add("foo", "FOO");
+              add("bar", "BAR");
+              add("bang", "BANG");
+            }
+          };
+
+      final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
     }
   }

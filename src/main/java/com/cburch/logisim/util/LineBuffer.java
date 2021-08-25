@@ -52,6 +52,11 @@ public class LineBuffer implements RandomAccess {
     add(line);
   }
 
+  public LineBuffer(String line, Pairs pairs) {
+    withPairs(pairs);
+    add(line);
+  }
+
   public LineBuffer() {
     super();
   }
@@ -109,9 +114,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line) {
-    if (pairs != null) {}
-
-    contents.add(line);
+    contents.add(applyMap(line, pairs));
     return this;
   }
 
