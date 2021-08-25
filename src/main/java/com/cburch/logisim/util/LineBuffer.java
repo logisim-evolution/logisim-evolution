@@ -206,6 +206,10 @@ public class LineBuffer implements RandomAccess {
     return contents;
   }
 
+  public ArrayList<String> getWithIndent() {
+    return getWithIndent(DEFAULT_INDENT, " ");
+  }
+
   /**
    * Returns content buffer as ArrayList() with every single entry prefixed by `howMany` spaces.
    *
