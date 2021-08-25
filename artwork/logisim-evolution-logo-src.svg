@@ -3,24 +3,22 @@
 
 <svg
    width="373"
-   height="135.5"
-   viewBox="0 0 98.689577 35.851043"
+   height="138"
+   viewBox="0 0 98.689577 36.512501"
    version="1.1"
    id="svg64115"
    inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
-   sodipodi:docname="logisim-evolution-logo-src.svg"
+   sodipodi:docname="logisim-evolution-logo.svg"
    inkscape:export-filename="/home/carlos/dev/projects/logisim-evolution/src/main/resources/resources/logisim/img/logisim-evolution-logo.png"
-   inkscape:export-xdpi="141.69742"
-   inkscape:export-ydpi="141.69742"
+   inkscape:export-xdpi="105.9"
+   inkscape:export-ydpi="105.9"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:inkscape0="https://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi0="https://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd">
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <title
      id="title71625">Logisim-evolution project logo</title>
   <sodipodi:namedview
@@ -30,22 +28,21 @@
      borderopacity="1.0"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="false"
+     inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
      units="px"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:zoom="1.9350293"
-     inkscape:cx="62.272959"
-     inkscape:cy="161.49626"
-     inkscape:window-width="2886"
+     inkscape:cx="168.4729"
+     inkscape:cy="189.40282"
+     inkscape:window-width="2425"
      inkscape:window-height="1553"
-     inkscape:window-x="416"
-     inkscape:window-y="328"
+     inkscape:window-x="1110"
+     inkscape:window-y="199"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g68170"
-     borderlayer="false" />
+     inkscape:current-layer="layer4" />
   <defs
      id="defs64112" />
   <g
@@ -124,168 +121,34 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer10"
+     id="layer4"
      inkscape:label="texts"
-     style="display:none">
-    <g
-       inkscape:groupmode="layer"
-       id="layer8"
-       inkscape:label="logisim"
-       style="display:inline">
-      <text
-         xml:space="preserve"
-         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
-         x="-1.1271147"
-         y="24.227375"
-         id="text34859-5"><tspan
-           sodipodi:role="line"
-           id="tspan34857-9"
-           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
-           x="-1.1271147"
-           y="24.227375">LOGISIM</tspan></text>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="layer9"
-       inkscape:label="evolution">
-      <text
-         xml:space="preserve"
-         style="font-size:18.3444px;line-height:1.25;font-family:'a dripping marker';-inkscape-font-specification:'a dripping marker';letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff0000;stroke-width:0.264583"
-         x="38.08284"
-         y="43.758877"
-         id="text41880-7"
-         transform="rotate(-14.065357)"
-         inkscape:transform-center-x="-3.776291"
-         inkscape:transform-center-y="5.4092766"><tspan
-           sodipodi:role="line"
-           id="tspan41878-5"
-           style="font-size:18.3444px;fill:#d10000;fill-opacity:1;stroke-width:0.264583"
-           x="38.08284"
-           y="43.758877">evolution</tspan></text>
-    </g>
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="g68178"
-     inkscape:label="texts copy"
      style="display:inline">
-    <g
-       inkscape:groupmode="layer"
-       id="layer7"
-       inkscape:label="o"
-       style="display:inline">
-      <g
-         id="g70812"
-         transform="matrix(0.7699465,0,0,0.7699465,-51.549006,20.772594)"
-         style="stroke-width:1.2988">
-        <g
-           id="g72614"
-           transform="matrix(0.83333326,0,0,0.83333326,15.927696,-0.96668307)"
-           style="stroke-width:1.55856">
-          <circle
-             style="opacity:1;fill:#d00000;fill-opacity:1;stroke:#008000;stroke-width:0.779275;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-             id="path71594"
-             cx="93.935913"
-             cy="-11.553981"
-             r="12.786353" />
-          <path
-             class="st0"
-             d="m 105.84217,-11.553981 c 0,6.588125 -5.31813,11.90625 -11.906254,11.90625 -6.588125,0 -11.90625,-5.318125 -11.90625,-11.90625 0,-6.588125 5.318125,-11.90625 11.90625,-11.90625 2.191,0.0088 4.243351,0.607665 6.006345,1.645783 3.516869,2.070865 5.882279,5.8898 5.899909,10.260467 z"
-             id="path991"
-             style="display:inline;fill:#008000;fill-opacity:1;stroke:#5b2929;stroke-width:0.412367;stroke-opacity:1"
-             sodipodi:nodetypes="csscsc" />
-          <path
-             class="st2"
-             d="m 93.935916,0.749144 c -6.799792,0 -12.303125,-5.503334 -12.303125,-12.303125 0,-6.799792 5.503333,-12.303125 12.303125,-12.303125 6.799794,0 12.303124,5.503333 12.303124,12.303125 0,6.799791 -5.50333,12.303125 -12.303124,12.303125 z m 0,-23.8125 c -6.35,0 -11.509375,5.159375 -11.509375,11.509375 0,6.35 5.159375,11.509375 11.509375,11.509375 6.350004,0 11.509374,-5.159375 11.509374,-11.509375 0,-6.35 -5.15937,-11.509375 -11.509374,-11.509375 z"
-             id="path995"
-             style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:0.412367;stroke-opacity:1" />
-          <g
-             inkscape0:label="Layer 1"
-             inkscape0:groupmode="layer"
-             id="g9094"
-             transform="matrix(0.46923086,0,0,0.46923086,2.91317,-198.59611)"
-             style="display:inline;stroke-width:0.878813">
-            <g
-               id="g9092"
-               transform="matrix(0.1061068,0,0,0.1061068,156.44586,342.20134)"
-               style="stroke-width:0.878813">
-              <path
-                 sodipodi0:nodetypes="cscscsc"
-                 id="path9090"
-                 d="m 236.45571,380.51302 c 0,0 40.16262,75.69466 42.4264,150.51273 2.02031,65.76093 -38.38579,151.52288 -38.38579,151.52288 0,0 129.47042,-6.60826 200.51528,-57.57869 58.23726,-41.78175 99.50003,-91.92388 99.50003,-91.92388 0,0 -36.75872,-49.27214 -112.63202,-100.00511 -32.15512,-21.50064 -73.84699,-34.27657 -110.10913,-41.83108 -44.80145,-9.3335 -81.31477,-10.69685 -81.31477,-10.69685 z"
-                 style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-                 sodipodi:nodetypes="cccscssc" />
-              <path
-                 style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-                 d="m 540.89972,533.04606 46.86658,0.30737"
-                 id="path50746" />
-              <path
-                 style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-                 d="m 146.47752,411.80692 106.1322,0.30737"
-                 id="path50746-7" />
-              <path
-                 style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:31.3033;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-                 d="m 146.88279,652.06994 110.95229,0.30737"
-                 id="path50746-8" />
-            </g>
-          </g>
-        </g>
-      </g>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="g68170"
-       inkscape:label="gisim"
-       style="display:inline">
-      <text
-         xml:space="preserve"
-         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
-         x="30.093723"
-         y="24.227375"
-         id="text68168"><tspan
-           sodipodi:role="line"
-           id="tspan68166"
-           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
-           x="30.093723"
-           y="24.227375">GISIM</tspan></text>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="g68184"
-       inkscape:label="L"
-       style="display:inline">
-      <text
-         xml:space="preserve"
-         style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
+    <text
+       xml:space="preserve"
+       style="font-size:33.701px;line-height:1.25;font-family:'Electronic Circuit';-inkscape-font-specification:'Electronic Circuit, Normal';letter-spacing:0px;word-spacing:0px;display:inline;fill:#008000;stroke-width:0.264583"
+       x="-1.1271147"
+       y="24.227375"
+       id="text34859"><tspan
+         sodipodi:role="line"
+         id="tspan34857"
+         style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
          x="-1.1271147"
-         y="24.227375"
-         id="text68182"><tspan
-           sodipodi:role="line"
-           id="tspan68180"
-           style="font-size:33.701px;fill:#008000;stroke-width:0.264583"
-           x="-1.1271147"
-           y="24.227375">L</tspan></text>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="g68176"
-       inkscape:label="evolution"
-       style="display:inline">
-      <text
-         xml:space="preserve"
-         style="font-size:18.3444px;line-height:1.25;font-family:'a dripping marker';-inkscape-font-specification:'a dripping marker';letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff0000;stroke-width:0.264583"
+         y="24.227375">LOGISIM</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18.3444px;line-height:1.25;font-family:'a dripping marker';-inkscape-font-specification:'a dripping marker';letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff0000;stroke-width:0.264583"
+       x="38.08284"
+       y="43.758877"
+       id="text41880"
+       transform="rotate(-14.065357)"
+       inkscape:transform-center-x="-3.776291"
+       inkscape:transform-center-y="5.4092766"><tspan
+         sodipodi:role="line"
+         id="tspan41878"
+         style="font-size:18.3444px;fill:#ff0000;stroke-width:0.264583"
          x="38.08284"
-         y="43.758877"
-         id="text68174"
-         transform="rotate(-14.065357)"
-         inkscape:transform-center-x="-3.776291"
-         inkscape:transform-center-y="5.4092766"><tspan
-           sodipodi:role="line"
-           id="tspan68172"
-           style="font-size:18.3444px;fill:#d10000;fill-opacity:1;stroke-width:0.264583"
-           x="38.08284"
-           y="43.758877">evolution</tspan></text>
-    </g>
+         y="43.758877">evolution</tspan></text>
   </g>
   <metadata
      id="metadata71623">
