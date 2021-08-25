@@ -294,10 +294,10 @@ public class AlteraDownload implements VendorDownload {
 
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
-        case PullBehaviors.PullUp -> "PULLUP";
-        case PullBehaviors.PullDown -> "PULLDOWN";
-        case PullBehaviors.Float -> "TRI-STATED";
-        default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
+      case PullBehaviors.PullUp -> "PULLUP";
+      case PullBehaviors.PullDown -> "PULLDOWN";
+      case PullBehaviors.Float -> "TRI-STATED";
+      default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
     contents.withPairs()
             .add("assign", "set_global_assignment -name")

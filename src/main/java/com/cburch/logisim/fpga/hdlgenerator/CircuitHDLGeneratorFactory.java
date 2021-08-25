@@ -184,21 +184,24 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   /* here the private handles are defined */
   private String GetBubbleIndex(NetlistComponent comp, int type) {
     switch (type) {
-      case 0 : return HDL.BracketOpen()
-                      + comp.GetLocalBubbleInputEndId()
-                      + HDL.vectorLoopId()
-                      + comp.GetLocalBubbleInputStartId()
-                      + HDL.BracketClose();
-      case 1 : return HDL.BracketOpen()
-                      + comp.GetLocalBubbleOutputEndId()
-                      + HDL.vectorLoopId()
-                      + comp.GetLocalBubbleOutputStartId()
-                      + HDL.BracketClose();
-      case 2 : return HDL.BracketOpen()
-                      + comp.GetLocalBubbleInOutEndId()
-                      + HDL.vectorLoopId()
-                      + comp.GetLocalBubbleInOutStartId()
-                      + HDL.BracketClose();
+      case 0:
+        return HDL.BracketOpen()
+            + comp.GetLocalBubbleInputEndId()
+            + HDL.vectorLoopId()
+            + comp.GetLocalBubbleInputStartId()
+            + HDL.BracketClose();
+      case 1:
+        return HDL.BracketOpen()
+            + comp.GetLocalBubbleOutputEndId()
+            + HDL.vectorLoopId()
+            + comp.GetLocalBubbleOutputStartId()
+            + HDL.BracketClose();
+      case 2:
+        return HDL.BracketOpen()
+            + comp.GetLocalBubbleInOutEndId()
+            + HDL.vectorLoopId()
+            + comp.GetLocalBubbleInOutStartId()
+            + HDL.BracketClose();
     }
     return "";
   }
