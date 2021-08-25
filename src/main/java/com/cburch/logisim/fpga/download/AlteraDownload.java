@@ -62,7 +62,7 @@ public class AlteraDownload implements VendorDownload {
   private final String ProjectPath;
   private final String SandboxPath;
   private final Netlist RootNetList;
-  private MappableResourcesContainer MapInfo;
+  private MappableResourcesContainer mapInfo;
   private final BoardInformation boardInfo;
   private final ArrayList<String> entities;
   private final ArrayList<String> architectures;
@@ -95,7 +95,7 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public void SetMapableResources(MappableResourcesContainer resources) {
-    MapInfo = resources;
+    mapInfo = resources;
   }
 
   @Override
@@ -266,32 +266,25 @@ public class AlteraDownload implements VendorDownload {
 
   private ArrayList<String> getPinLocStrings() {
     final var contents = new LineBuffer();
-    final var temp = new StringBuilder();
-    for (final var key : MapInfo.getMappableResources().keySet()) {
-      final var map = MapInfo.getMappableResources().get(key);
+
+    for (final var key : mapInfo.getMappableResources().keySet()) {
+      final var map = mapInfo.getMappableResources().get(key);
+
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
-          temp.setLength(0);
-          temp.append("    set_location_assignment ");
-          temp.append(map.getPinLocation(i)).append(" -to ");
-          if (map.isExternalInverted(i)) temp.append("n_");
-          temp.append(map.getHdlString(i));
-          contents.add(temp);
+          final var inv = map.isExternalInverted(i) ? "n_" : "";
+          contents.add("set_location_assignment %s -to %s%s", map.getPinLocation(i), inv, map.getHdlString(i));
           if (map.requiresPullup(i)) {
-            temp.setLength(0);
-            temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
-            if (map.isExternalInverted(i)) temp.append("n_");
-            temp.append(map.getHdlString(i));
-            contents.add(temp);
+            contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to %s%s", inv, map.getHdlString(i));
           }
         }
       }
     }
-    final var ledArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, boardInfo);
+    final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, RootNetList, boardInfo);
     for (final var key : ledArrayMap.keySet()) {
-      contents.add("    set_location_assignment %s-to %s", ledArrayMap.get(key), key);
+      contents.add("set_location_assignment %s-to %s", ledArrayMap.get(key), key);
     }
-    return contents.get();
+    return contents.getWithIndent(4);
   }
 
   private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
