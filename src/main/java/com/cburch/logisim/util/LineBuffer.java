@@ -42,11 +42,11 @@ import java.util.RandomAccess;
  * examples.
  */
 public class LineBuffer implements RandomAccess {
-  private static final int DEFAULT_INDENT = 3;
+  public static final int MAX_LINE_LENGTH = 80;
+  public static final int DEFAULT_INDENT = 3;
+  public static final String DEFAULT_INDENT_STR = " ";
 
   private ArrayList<String> contents = new java.util.ArrayList<String>();
-
-  public static final int MAX_LINE_LENGTH = 80;
 
   public LineBuffer(String line) {
     add(line);
@@ -137,12 +137,12 @@ public class LineBuffer implements RandomAccess {
    * trailing spaces are ignored, which lets i.e. aligning placeholders. All these `{{foo}}`, `{{
    * foo}}` and `{{foo }}` are equivalent. Processed string is then added to content buffer.
    *
-   * @param startFmt Formatting string. Wrap keys in `{{` and `}}`.
-   * @param map Search-Replace map.
+   * @param format Formatting string. Wrap keys in `{{` and `}}`.
+   * @param pairs Search-Replace map.
    * @return Instance of self for easy chaining.
    */
-  public LineBuffer add(String fmt, Pairs map) {
-    return add(applyMap(fmt, map));
+  public LineBuffer add(String format, Pairs pairs) {
+    return add(applyMap(format, pairs));
   }
 
   /* ********************************************************************************************* */
@@ -150,17 +150,17 @@ public class LineBuffer implements RandomAccess {
   /**
    * Applies search-replace var to provided string.
    *
-   * @param fmt String to format, with (optional) `{{placeholders}}`.
-   * @param map Instance of `Pairs` holdinhg replacements for placeholders.
+   * @param format String to format, with (optional) `{{placeholders}}`.
+   * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
    */
-  protected String applyMap(String fmt, Pairs map) {
-    if (map != null) {
-      for (final var set : map.entrySet()) {
+  protected String applyMap(String format, Pairs pairs) {
+    if (pairs != null) {
+      for (final var set : pairs.entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
-        fmt = fmt.replaceAll(searchRegExp, set.getValue().toString());
+        format = format.replaceAll(searchRegExp, set.getValue().toString());
       }
     }
-    return fmt;
+    return format;
   }
 
   /**
@@ -214,7 +214,7 @@ public class LineBuffer implements RandomAccess {
   }
 
   public ArrayList<String> getWithIndent() {
-    return getWithIndent(DEFAULT_INDENT, " ");
+    return getWithIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
   }
 
   /**
@@ -223,7 +223,7 @@ public class LineBuffer implements RandomAccess {
    * @param howMany Number of spaces to prefix each line with.
    */
   public ArrayList<String> getWithIndent(int howMany) {
-    return getWithIndent(howMany, " ");
+    return getWithIndent(howMany, DEFAULT_INDENT_STR);
   }
 
   /**
