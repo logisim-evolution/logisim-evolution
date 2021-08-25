@@ -448,8 +448,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     isFirstLine = true;
     for (var i = 0; i < theNetlist.NumberOfInputPorts(); i++) {
       if (isFirstLine) {
-        contents.add("");
-        contents.add(MakeRemarkBlock("Here all input connections are defined", 3));
+        contents.add("").addRemarkBlock("Here all input connections are defined");
         isFirstLine = false;
       }
       final var myInput = theNetlist.GetInputPin(i);
@@ -508,7 +507,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           var compId = worker.getComponentStringIdentifier();
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
-            contents.add("").add(MakeRemarkBlock("Here all normal components are defined", 3));
+            contents.add("").addRemarkBlock("Here all normal components are defined");
             isFirstLine = false;
           }
           contents.add(worker.GetComponentMap(theNetlist, id++, comp, null, compName));

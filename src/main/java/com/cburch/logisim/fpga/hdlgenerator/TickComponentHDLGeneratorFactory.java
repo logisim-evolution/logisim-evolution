@@ -76,7 +76,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add("")
             .addRemarkBlock("Here the Output is defined");
     if (TheNetlist.RequiresGlobalClockConnection()) {
-      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
+      Contents.add(HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
       Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
     }

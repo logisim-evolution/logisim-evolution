@@ -209,9 +209,9 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     contents.add("");
 
     /* Here the map is performed */
-    contents.addAll(MakeRemarkBlock("Here the toplevel component is connected", 3));
+    contents.addRemarkBlock("Here the toplevel component is connected");
     final var dut = new CircuitHDLGeneratorFactory(myCircuit);
-    contents.addAll(
+    contents.add(
         dut.GetComponentMap(
             theNetlist,
             0L,
@@ -229,7 +229,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 myLedArrays.indexOf(array),
                 fpgaClockFrequency,
                 array.GetActivityLevel() == PinActivity.ActiveLow));
-        contents.addAll(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
+        contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
     return contents.get();
