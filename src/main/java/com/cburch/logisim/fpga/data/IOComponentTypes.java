@@ -144,14 +144,10 @@ public enum IOComponentTypes {
   }
 
   public static Boolean hasRotationAttribute(IOComponentTypes comp) {
-    switch (comp) {
-      case DIPSwitch :
-      case SevenSegment :
-      case LEDArray :
-        return true;
-      default :
-        return false;
-    }
+    return switch (comp) {
+      case DIPSwitch, SevenSegment, LEDArray -> true;
+      default -> false;
+    };
   }
 
   public static String getRotationString(IOComponentTypes comp, int rotation) {

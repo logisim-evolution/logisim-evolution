@@ -123,25 +123,25 @@ public class SocBusTransaction {
   }
 
   public String getShortErrorMessage() {
-    switch (Error) {
-      case NO_ERROR: return S.get("SocTransactionSuccessfullShort");
-      case NO_RESPONS_ERROR: return S.get("SocTransactionNoResponsShort");
-      case NO_SLAVES_ERROR: return S.get("SocTransactionNoSlavesAttachedShort");
-      case MULTIPLE_SLAVES_ERROR: return S.get("SocTransactionMultipleSlaveAnswersShort");
-      case NONE_ATOMIC_READ_WRITE_ERROR: return S.get("SocTransactionNoneAtomicRWShort");
-      case NO_SOC_BUS_CONNECTED_ERROR: return S.get("SocTransactionNoBusConnectedShort");
-      case MISALIGNED_ADDRESS_ERROR: return S.get("SocTransactionMisalignedAddressShort");
-      case ACCESS_TYPE_NOT_SUPPORTED_ERROR:
+    return switch (Error) {
+      case NO_ERROR -> S.get("SocTransactionSuccessfullShort");
+      case NO_RESPONS_ERROR -> S.get("SocTransactionNoResponsShort");
+      case NO_SLAVES_ERROR -> S.get("SocTransactionNoSlavesAttachedShort");
+      case MULTIPLE_SLAVES_ERROR -> S.get("SocTransactionMultipleSlaveAnswersShort");
+      case NONE_ATOMIC_READ_WRITE_ERROR -> S.get("SocTransactionNoneAtomicRWShort");
+      case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnectedShort");
+      case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddressShort");
+      case ACCESS_TYPE_NOT_SUPPORTED_ERROR ->
         switch (access) {
-          case BYTE_ACCESS: return S.get("SocTransactionByteAccesNoSupportShort");
-          case HALF_WORD_ACCESS: return S.get("SocTransactionHalfWordAccesNoSupportShort");
-          default             : return S.get("SocTransactionWordAccesNoSupportShort");
-        }
-      case READ_ONLY_ACCESS_ERROR: return S.get("SocTransactionReadOnlyAccessErrorShort");
-      case WRITE_ONLY_ACCESS_ERROR: return S.get("SocTransactionWriteOnlyAccessErrorShort");
-      case REGISTER_DOES_NOT_EXIST_ERROR: return S.get("SocTransactionRegisterDoesNotExistShort");
-    }
-    return S.get("SocTransactionUnknownErrorShort");
+          case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
+          case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
+          default -> S.get("SocTransactionWordAccesNoSupportShort");
+        };
+      case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessErrorShort");
+      case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessErrorShort");
+      case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExistShort");
+        default -> S.get("SocTransactionUnknownErrorShort");
+    };
   }
 
   public int getType() {

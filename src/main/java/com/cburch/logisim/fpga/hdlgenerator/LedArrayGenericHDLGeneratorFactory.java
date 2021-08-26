@@ -250,11 +250,11 @@ public class LedArrayGenericHDLGeneratorFactory {
   public static ArrayList<String> getArrayConnections(FPGAIOInformationContainer array, int id) {
     final var connections = new ArrayList<String>();
     connections.addAll(
-      switch (array.getArrayDriveMode()) {
-        case LedArrayDriving.LED_DEFAULT, LedArrayDriving.LED_ROW_SCANNING, LedArrayDriving.LED_COLUMN_SCANNING -> getLedArrayConnections(array, id);
-        case LedArrayDriving.RgbDefault, LedArrayDriving.RgbRowScanning, LedArrayDriving.RgbColumnScanning -> getRGBArrayConnections(array, id);
-        default -> throw new IllegalStateException("Unexpected value: " + array.getArrayDriveMode());
-      });
+        switch (array.getArrayDriveMode()) {
+          case LedArrayDriving.LED_DEFAULT, LedArrayDriving.LED_ROW_SCANNING, LedArrayDriving.LED_COLUMN_SCANNING -> getLedArrayConnections(array, id);
+          case LedArrayDriving.RgbDefault, LedArrayDriving.RgbRowScanning, LedArrayDriving.RgbColumnScanning -> getRGBArrayConnections(array, id);
+          default -> throw new IllegalStateException("Unexpected value: " + array.getArrayDriveMode());
+        });
     connections.add("");
     return connections;
   }
