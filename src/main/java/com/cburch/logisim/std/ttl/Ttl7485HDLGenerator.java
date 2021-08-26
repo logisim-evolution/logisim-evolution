@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -84,26 +85,28 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   oppA   <= A3&A2&A1&A0;");
-    contents.add("   oppB   <= B3&B2&B1&B0;");
-    contents.add("   gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';");
-    contents.add("   eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';");
-    contents.add("   lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';");
-    contents.add(" ");
-    contents.add("   CompIn <= AgtBin&AltBin&AeqBin;");
-    contents.add("   WITH (CompIn) SELECT CompOut <= ");
-    contents.add("      \"100\" WHEN \"100\",");
-    contents.add("      \"010\" WHEN \"010\",");
-    contents.add("      \"000\" WHEN \"110\",");
-    contents.add("      \"110\" WHEN \"000\",");
-    contents.add("      \"001\" WHEN OTHERS;");
-    contents.add(" ");
-    contents.add("   AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);");
-    contents.add("   AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);");
-    contents.add("   AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);");
-    return contents;
+  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+    final var contents = new LineBuffer();
+    return contents
+        .add(
+            "   oppA   <= A3&A2&A1&A0;",
+            "   oppB   <= B3&B2&B1&B0;",
+            "   gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';",
+            "   eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';",
+            "   lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';",
+            " ",
+            "   CompIn <= AgtBin&AltBin&AeqBin;",
+            "   WITH (CompIn) SELECT CompOut <= ",
+            "      \"100\" WHEN \"100\",",
+            "      \"010\" WHEN \"010\",",
+            "      \"000\" WHEN \"110\",",
+            "      \"110\" WHEN \"000\",",
+            "      \"001\" WHEN OTHERS;",
+            " ",
+            "   AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2,",
+            "   AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1,",
+            "   AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);")
+        .get();
   }
 
   @Override

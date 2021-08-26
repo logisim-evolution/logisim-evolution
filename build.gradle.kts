@@ -81,6 +81,7 @@ val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
 val TARGET_DIR = "targetDir"
 val TARGET_FILE_PATH_BASE = "targetFilePathBase"
+val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_14
@@ -111,19 +112,19 @@ extra.apply {
   // I remove here because `jpackage` tool do not like it when used to build RPM package.
   // Do NOT use `project.version` instead.
   val appVersion = (project.version as String).replace("-", "")
-  set("appVersion", appVersion)
+  set(APP_VERSION, appVersion)
   logger.info("appVersion: ${appVersion}")
 
   // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
-  // This is mostly used by DMG builder as version numbering rule is pretty strict on macOS.
+  // This is mostly used by createApp as version numbering rule is pretty strict on macOS.
   // Do NOT use `project.version` instead.
   val appVersionShort = (project.version as String).split('-')[0]
-  set("appVersionShort", appVersionShort)
+  set(APP_VERSION_SHORT, appVersionShort)
   logger.info("appVersionShort: ${appVersionShort}")
 
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
-  set("targetDir", targetDir)
+  set(TARGET_DIR, targetDir)
 
   // JAR folder.
   val libsDir="${buildDir}/libs"
@@ -131,24 +132,24 @@ extra.apply {
 
   // The root dir for jpackage extra files.
   val supportDir="${projectDir}/support/jpackage"
-  set("supportDir", supportDir)
+  set(SUPPORT_DIR, supportDir)
 
   // Base name of produced artifacts. Suffixes will be added later by relevant tasks.
   val baseFilename = "${project.name}-${appVersion}"
-  set("targetFilePathBase", "${targetDir}/${baseFilename}")
+  set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
   logger.debug("targetFilePathBase: \"${targetDir}/${baseFilename}\"")
 
   // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
-  set("shadowJarFilename", shadowJarFilename)
+  set(SHADOW_JAR_FILE_NAME, shadowJarFilename)
   logger.debug("shadowJarFilename: \"${shadowJarFilename}\"")
 
   // JDK/jpackage vars
   val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
   val jpackage = "${javaHome}/bin/jpackage"
-  set("jpackage", jpackage)
+  set(JPACKAGE, jpackage)
 
-  // Copytights note.
+  // Copyrights note.
   val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
@@ -162,11 +163,11 @@ extra.apply {
       "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
-    )
+  )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
   }
-  set("sharedParameters", params)
+  set(SHARED_PARAMS, params)
 
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
@@ -176,12 +177,12 @@ extra.apply {
       "--install-dir", "/opt",
       "--linux-shortcut"
   )
-  set("linuxParameters", linuxParams)
+  set(LINUX_PARAMS, linuxParams)
 
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
-  set("uppercaseProjectName", uppercaseProjectName)
-  set("appDirName", "${targetDir}/${uppercaseProjectName}.app")
+  set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
+  set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
 }
 
 /**
@@ -380,7 +381,7 @@ tasks.register("createApp") {
   description = "Makes the macOS application."
   dependsOn("shadowJar", "createDistDir")
   inputs.dir(ext.get(LIBS_DIR) as String)
-  inputs.dir("${SUPPORT_DIR}/macos")
+  inputs.dir("${supportDir}/macos")
   outputs.dir(appDirName)
 
   doFirst {
@@ -394,7 +395,7 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
-      "--name", ext.get(TARGET_FILE_PATH_BASE) as String,
+      "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
       "--file-associations", "${supportDir}/macos/file.jpackage",
       "--icon", "${supportDir}/macos/Logisim-evolution.icns",
       // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
@@ -608,7 +609,7 @@ tasks {
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
     // Checkstyle version to use
-    toolVersion = "8.43"
+    toolVersion = "8.45"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698

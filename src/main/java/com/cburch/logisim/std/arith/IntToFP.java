@@ -80,7 +80,7 @@ public class IntToFP extends InstanceFactory {
         new Object[] {BitWidth.create(8), BitWidth.create(32), SIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIcon(new ArithmeticIcon("I→FP", 2));
+    setIcon(new ArithmeticIcon("I\u2192FP", 2));
 
     final var ps = new Port[3];
     ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
@@ -99,7 +99,7 @@ public class IntToFP extends InstanceFactory {
 
     g.setColor(Color.GRAY);
     painter.drawPort(IN);
-    painter.drawPort(OUT, "I→F", Direction.WEST);
+    painter.drawPort(OUT, "I\u2192F", Direction.WEST);
     painter.drawPort(ERR);
   }
 

@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -67,26 +68,25 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    PLATable tt = attrs.getValue(PLA.ATTR_TABLE);
-    int outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
+    final var contents = new LineBuffer();
+    final var tt = attrs.getValue(PLA.ATTR_TABLE);
+    final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
     if (HDL.isVHDL()) {
       var leader = "    Result <= ";
       final var indent = "              ";
       if (tt.rows().isEmpty()) {
-        contents.add(leader + zeros(outSz) + ";");
+        contents.add("%s%s;", leader, zeros(outSz));
       } else {
         for (PLATable.Row r : tt.rows()) {
-          contents.add(
-              leader + bits(r.outBits) + " WHEN std_match(Index, " + bits(r.inBits) + ") ELSE");
+          contents.add("%s%s WHEN std_match(Index, %s) ELSE", leader + bits(r.outBits), bits(r.inBits));
           leader = indent;
         }
-        contents.add(leader + zeros(outSz) + ";");
+        contents.add("%s%s;", leader, zeros(outSz));
       }
     } else {
-      // todo
+      // TODO
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

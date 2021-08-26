@@ -28,119 +28,54 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
   public static String RGBArrayName = "RGBArrayRowScanning";
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var contents =
+        (new LineBuffer())
+            .addPair("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .addPair("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .addPair("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .addPair("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
+            .addPair("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
+            .addPair("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs)
+            .addPair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("id", id);
+
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress 
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress 
-          + id
-          + ",");
-      map.add("                 "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + " => "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + id
-          + ");");
+      contents.add(
+          "PORT MAP ( {{rowAddress}} => {{rowAddress}}{{id}}",
+          "           {{clock     }} => {{clock}},",
+          "           {{redOuts   }} => {{redOuts}}{{id}},",
+          "           {{greenOuts }} => {{greenOuts}}{{id}},",
+          "           {{blueOuts  }} => {{blueOuts}}{{id}},",
+          "           {{redIns    }} => s_{{redIns}}{{id}},",
+          "           {{greenIns  }} => s_{{greenIns}}{{id}},",
+          "           {{blueIns   }} => s_{{blueIns}}{{id}});");
     } else {
-      map.add("      (." 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + "),");
-      map.add("       ." 
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "("
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "),");
-      map.add("       ." 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + id
-          + "),");
-      map.add("       ." 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + id
-          + "),");
-      map.add("       ." 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + id
-          + "));");
+      contents.add(
+          "(.{{rowAddress}}({{rowAddress}}{{id}}),",
+          " .{{clock     }}({{clock}}),",
+          " .{{redOuts   }}({{redOuts}}{{id}}),",
+          " .{{greenOuts }}({{greenOuts}}{{id}}),",
+          " .{{blueOuts  }}({{blueOuts}}{{id}}),",
+          " .{{redIns    }}(s_{{redIns}}{{id}}),",
+          " .{{greenIns  }}(s_{{greenIns}}{{id}}),",
+          " .{{blueIns   }}(s_{{blueIns}}{{id}})); ");
     }
-    return map;
+    return contents.getWithIndent(6);
   }
-  
+
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
@@ -170,90 +105,69 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     wires.put("s_maxGreenLedInputs", maxNrLedsGeneric);
     return wires;
   }
-  
-  
+
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.addAll(getRowCounterCode());
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents =
+        (new LineBuffer())
+            .addPair("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .addPair("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .addPair("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .addPair("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
+            .addPair("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
+            .addPair("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs)
+            .addPair("activeLow", activeLowString)
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfColumns", nrOfColumnsString);
+
+    contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
-      contents.add("   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS");
-      contents.add("   BEGIN");
-      contents.add("      s_maxRedLedInputs <= (OTHERS => '0');");
-      contents.add("      s_maxGreenLedInputs <= (OTHERS => '0');");
-      contents.add("      s_maxBlueLedInputs <= (OTHERS => '0');");
-      contents.add("      IF (" + activeLowString + " = 1) THEN");
-      contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= NOT " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + ";");
-      contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= NOT " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + ";");
-      contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= NOT " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + ";");
-      contents.add("                                       ELSE");
-      contents.add("         s_maxRedLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)   <= " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + ";");
-      contents.add("         s_maxGreenLedInputs( " + nrOfLedsString + "-1 DOWNTO 0) <= " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + ";");
-      contents.add("         s_maxBlueLedInputs( " + nrOfLedsString + "-1 DOWNTO 0)  <= " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + ";");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS makeVirtualInputs;");
-      contents.add("");
-      contents.add("   GenOutputs : FOR n IN " + nrOfColumnsString + "-1 DOWNTO 0 GENERATE");
-      contents.add("      " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + "(n)   <= s_maxRedLedInputs(" + nrOfColumnsString + "*to_integer(unsigned(s_rowCounterReg)) + n);");
-      contents.add("      " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + "(n) <= s_maxGreenLedInputs(" + nrOfColumnsString + "*to_integer(unsigned(s_rowCounterReg)) + n);");
-      contents.add("      " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + "(n)  <= s_maxBlueLedInputs(" + nrOfColumnsString + "*to_integer(unsigned(s_rowCounterReg)) + n);");
-      contents.add("   END GENERATE GenOutputs;");
+      contents.add(
+          "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
+          "BEGIN",
+          "   s_maxRedLedInputs <= (OTHERS => '0');",
+          "   s_maxGreenLedInputs <= (OTHERS => '0');",
+          "   s_maxBlueLedInputs <= (OTHERS => '0');",
+          "   IF ({{activeLow}} = 1) THEN",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{redIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{greenIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{blueIns}};",
+          "   ELSE",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{redIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{greenIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{blueIns}};",
+          "   END IF;",
+          "END PROCESS makeVirtualInputs;",
+          "",
+          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
+          "   {{redOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{greenOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{blueOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "END GENERATE GenOutputs;");
     } else {
-      contents.add("");
-      contents.add("   genvar i;");
-      contents.add("   generate");
-      contents.add("      for (i = 0; i < " + nrOfColumnsString + "; i = i + 1) begin");
-      contents.add("         assign " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs
-          + "[i]  = (activeLow == 1) ? ~" 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i] : ");
-      contents.add("                                                       " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i];");
-      contents.add("         assign " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs
-          + "[i]  = (activeLow == 1) ? ~" 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i] : ");
-      contents.add("                                                       " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i];");
-      contents.add("         assign " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs
-          + "[i]  = (activeLow == 1) ? ~" 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i] : ");
-      contents.add("                                                       " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs
-          + "[" + nrOfColumnsString + "*s_rowCounterReg + i];");
-      contents.add("      end");
-      contents.add("   endgenerate");
+      contents.add(
+          "",
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
+          "      assign {{redOuts}}[i] = (activeLow == 1)",
+          "         ? ~{{redIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{redIns}}[nrOfColumns * s_rowCounterReg + i];",
+          "      assign {{greenOuts}}[i] = (activeLow == 1)",
+          "         ? ~{{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "          : {{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "      assign {{blueOuts}}[i] = (activeLow == 1)",
+          "          ? ~{{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "   end",
+          "endgenerate");
     }
-    return contents;
+    return contents.getWithIndent(3);
   }
 
   @Override
   public String getComponentStringIdentifier() {
     return RGBArrayName;
   }
-  
+
 }
