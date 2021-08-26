@@ -89,23 +89,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("highTick", HighTickStr)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
-/*
-    if (TheNetlist.RawFPGAClock()) {
-      if (HighTicks != LowTicks) {
-        Reporter.AddFatalError("Clock component detected with " +HighTicks+":"+LowTicks+ " hi:lo duty cycle,"
-            + " but maximum clock speed was selected. Only 1:1 duty cycle is supported with "
-            + " maximum clock speed.");
-      }
-      if (HDLType.equals(VHDL)) {
-        Contents.add("   ClockBus <= GlobalClock & '1' & '1' & NOT(GlobalClock) & GlobalClock;");
-      } else {
-        Contents.add("   assign ClockBus = {GlobalClock, 3'b1, 3'b1, ~GlobalClock, GlobalClock};");
-      }
-      Contents.add("");
-      return Contents;
-    }
-*/
-
     if (HDL.isVHDL()) {
       Contents.add(
           "ClockBus <= GlobalClock&s_output_regs;",
@@ -133,8 +116,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];",
           "end");
     }
-    Contents.add("");
-    Contents.addRemarkBlock("Here the control signals are defined");
+    Contents.add("").addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
       Contents.add(
           "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
@@ -162,8 +144,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "   s_counter_reg = 0;",
               "end");
     }
-    Contents.add("");
-    Contents.addRemarkBlock("Here the state registers are defined");
+    Contents.add("").addRemarkBlock("Here the state registers are defined");
     if (HDL.isVHDL()) {
       Contents.add(
           "makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,",
