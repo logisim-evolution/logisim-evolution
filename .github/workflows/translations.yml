@@ -51,8 +51,8 @@ jobs:
           # Read currently supported languages from settings.properties
           declare -r "langs_list=$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
 
-          # Turn list into comma separated one
-          declare -r langs="${langs_list// /,}"
+          # Remove base language from list and turn it into a comma separated one
+          declare -r langs="${${langs_list//en /}// /,}"
 
           # Validate.
           failed=
