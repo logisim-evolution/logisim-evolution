@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -47,14 +48,13 @@ class XorGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      if (isOneHot) {
-        Contents.addAll(GetOneHot(false, nrOfInputs, bitwidth > 1));
-      } else {
-        Contents.addAll(GetParity(false, nrOfInputs, bitwidth > 1));
-      }
-      Contents.add("");
-      return Contents;
+      return (new LineBuffer())
+          .add(
+              isOneHot
+                  ? GetOneHot(false, nrOfInputs, bitwidth > 1)
+                  : GetParity(false, nrOfInputs, bitwidth > 1))
+          .add("")
+          .get();
     }
   }
 

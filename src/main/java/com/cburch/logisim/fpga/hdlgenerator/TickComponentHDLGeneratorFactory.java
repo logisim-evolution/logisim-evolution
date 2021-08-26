@@ -69,28 +69,24 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = (new LineBuffer())
-            .addPair("nrOfCounterBits", NrOfCounterBitsStr);
-    Contents.add("");
-    Contents.addRemarkBlock("Here the Output is defined");
+    final var Contents =
+        (new LineBuffer())
+            .addPair("nrOfCounterBits", NrOfCounterBitsStr)
+            .add("")
+            .addRemarkBlock("Here the Output is defined");
     if (TheNetlist.RequiresGlobalClockConnection()) {
       Contents.add(HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
-      Contents.add(HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
+      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
     }
-
-    final var assignVal = TheNetlist.RequiresGlobalClockConnection() ? "'1'" : "s_tick_reg";
-    Contents
-        .add("%sFPGATick %s %s;", HDL.assignPreamble(), HDL.assignOperator(), assignVal)
-        .add("")
-        .addRemarkBlock("Here the update logic is defined");
-
+    Contents.add("");
+    Contents.addRemarkBlock("Here the update logic is defined");
     if (HDL.isVHDL()) {
       Contents.add(
           "s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';",
           "s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!",
           "                 std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE",
-          "                   std_logic_vector(unsigned(s_count_reg)-1);",
+          "                 std_logic_vector(unsigned(s_count_reg)-1);",
           "");
     } else {
       Contents.add(
@@ -106,9 +102,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               "end",
               "");
     }
-
     Contents.addRemarkBlock("Here the flipflops are defined");
-
     if (HDL.isVHDL()) {
       Contents.add(
           "make_tick : PROCESS( FPGAClock , s_tick_next )",

@@ -35,6 +35,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -84,25 +85,26 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   enable <= tick and NOT(nCLKen);");
-    Contents.add("   nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;");
-    Contents.add("   Q0     <= state(0);");
-    Contents.add("   Q1     <= state(1);");
-    Contents.add("   Q2     <= state(2);");
-    Contents.add("   Q3     <= state(3);");
-    Contents.add("   Q4     <= state(4);");
-    Contents.add("   Q5     <= state(5);");
-    Contents.add("   Q6     <= state(6);");
-    Contents.add("   Q7     <= state(7);");
-    Contents.add(" ");
-    Contents.add("   dffs : PROCESS( CLK , nCLR ) IS");
-    Contents.add("      BEGIN");
-    Contents.add("         IF (nCLR = '1') THEN state <= (OTHERS => '0');");
-    Contents.add("         ELSIF (rising_edge(CLK)) THEN state <= nexts;");
-    Contents.add("         END IF;");
-    Contents.add("      END PROCESS dffs;");
-    return Contents;
+    return (new LineBuffer())
+        .add(
+            "enable <= tick and NOT(nCLKen);",
+            "nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;",
+            "Q0     <= state(0);",
+            "Q1     <= state(1);",
+            "Q2     <= state(2);",
+            "Q3     <= state(3);",
+            "Q4     <= state(4);",
+            "Q5     <= state(5);",
+            "Q6     <= state(6);",
+            "Q7     <= state(7);",
+            "",
+            "dffs : PROCESS( CLK , nCLR ) IS",
+            "   BEGIN",
+            "      IF (nCLR = '1') THEN state <= (OTHERS => '0');",
+            "      ELSIF (rising_edge(CLK)) THEN state <= nexts;",
+            "      END IF;",
+            "   END PROCESS dffs;")
+        .getWithIndent();
   }
 
   @Override

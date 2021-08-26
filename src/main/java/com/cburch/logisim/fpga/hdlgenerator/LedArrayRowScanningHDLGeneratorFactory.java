@@ -35,6 +35,7 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import javax.sound.sampled.Line;
 
 public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -56,89 +57,77 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   public static String scanningCounterValueString = "scanningCounterReloadValue";
   public static String maxNrLedsString = "maxNrLedsAddrColumns";
 
-  public static ArrayList<String> getGenericMap(int nrOfRows,
-      int nrOfColumns,
-      long FpgaClockFrequency,
-      boolean activeLow) {
-    final var map = new ArrayList<String>();
+  public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
     final var nrRowAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
     final var scanningReload = (int) (FpgaClockFrequency / (long) 1000);
     final var nrOfScanningBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrRowAddrBits)) * nrOfRows;
+
+    final var contents =
+        (new LineBuffer())
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfLedsVal", nrOfRows * nrOfColumns)
+            .addPair("nrOfRows", nrOfRowsString)
+            .addPair("nrOfRowsVal", nrOfRows)
+            .addPair("nrOfColumns", nrOfColumnsString)
+            .addPair("nrOfColumnsVal", nrOfColumns)
+            .addPair("nrOfRowAddressBits", nrOfRowAddressBitsString)
+            .addPair("nrOfRowAddressBitsVal", nrRowAddrBits)
+            .addPair("scanningCounterBits", scanningCounterBitsString)
+            .addPair("scanningCounterBitsVal", nrOfScanningBits)
+            .addPair("scanningCounterValue", scanningCounterValueString)
+            .addPair("scanningCounterValueVal", scanningReload - 1)
+            .addPair("maxNrLeds", maxNrLedsString)
+            .addPair("maxNrLedsVal", maxNrLeds)
+            .addPair("activeLow", activeLowString)
+            .addPair("activeLowVal", activeLow ? "1" : "0");
+
     if (HDL.isVHDL()) {
-      map.add("      GENERIC MAP ( " + nrOfLedsString + " => " + (nrOfRows * nrOfColumns) + ",");
-      map.add("                    " + nrOfRowsString + " => " + nrOfRows + ",");
-      map.add("                    " + nrOfColumnsString + " => " + nrOfColumns + ",");
-      map.add("                    " + nrOfRowAddressBitsString + " => " + nrRowAddrBits + ",");
-      map.add("                    " + scanningCounterBitsString + " => " + nrOfScanningBits + ",");
-      map.add("                    " + scanningCounterValueString + " => " + (scanningReload - 1) + ",");
-      map.add("                    " + maxNrLedsString + " => " + maxNrLeds + ",");
-      map.add("                    " + activeLowString + " => " + ((activeLow) ? "1" : "0") + ")");
+      contents.add(
+          "GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},",
+          "              {{nrOfRows}} => {{nrOfRowsVal}},",
+          "              {{nrOfColumns}} => {{nrOfColumnsVal}},",
+          "              {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},",
+          "              {{scanningCounterBits}} => {{scanningCounterBitsVal}},",
+          "              {{scanningCounterValue}} => {{scanningCounterValueVal}},",
+          "              {{maxNrLeds}} => {{maxNrLedsVal}},",
+          "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      map.add("      #( ." + nrOfLedsString + "(" + (nrOfRows * nrOfColumns) + "),");
-      map.add("         ." + nrOfRowsString + "(" + nrOfRows + "),");
-      map.add("         ." + nrOfColumnsString + "(" + nrOfColumns + "),");
-      map.add("         ." + nrOfRowAddressBitsString + "(" + nrRowAddrBits + "),");
-      map.add("         ." + scanningCounterBitsString + "(" + nrOfScanningBits + "),");
-      map.add("         ." + scanningCounterValueString + "(" + (scanningReload - 1) + "),");
-      map.add("         ." + maxNrLedsString + "(" + maxNrLeds + "),");
-      map.add("         ." + activeLowString + "(" + ((activeLow) ? "1" : "0") + "))");
+      contents.add(
+          "#( .{{nrOfLeds}}({{nrOfLedsVal}}),",
+          "   .{{nrOfRows}}({{nrOfRowsVal}}),",
+          "   .{{nrOfColumns}}({{nrOfColumns}}),",
+          "   .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),",
+          "   .{{scanningCounterBits}}({{scanningCounterBitsVal}}),",
+          "   .{{scanningCounterValue}}({{scanningCounterValueVal}}),",
+          "   .{{maxNrLeds}}({{maxNrLedsVal}}),",
+          "   .{{activeLow}}({{activeLowVal}}) )");
     }
-    return map;
+    return contents.getWithIndent(6);
   }
 
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var map =
+        (new LineBuffer())
+            .addPair("rowAddr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .addPair("colOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+                .addPair("id", id);
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + id
-          + ",");
-      map.add("                 "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + " => "
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + ");");
+      map.add(
+          "PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},",
+          "           {{outs}} => {{outs}}{{id}},",
+          "           {{clock}} => {{clock}},",
+          "           {{ins}} => => s_{{ins}}{{id}} );");
     } else {
-      map.add("      (."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs
-          + id
-          + "),");
-      map.add("       ."
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "("
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + "));");
+      map.add(
+          "( .{{rowAddr}}({{rowAddr}}{{id}}),",
+          "  .{{outs}}({{outs}}{{id}}),",
+          "  .{{clock}}({{clock}}),",
+          "  .{{ins}}(s_{{ins}}{{id}}) );");
     }
-    return map;
+    return map.getWithIndent(6);
   }
 
   @Override
@@ -191,96 +180,107 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   }
 
   public ArrayList<String> getRowCounterCode() {
-    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
-    final var c = new LineBuffer();
+    final var contents =
+        (new LineBuffer())
+            .addPair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .addPair("bits", scanningCounterBitsString)
+            .addPair("value", scanningCounterValueString)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
     if (HDL.isVHDL()) {
-      c.add("")
-          .add("   %s <= s_rowCounterReg;", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-          .add("")
-          .add("   s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, %s)) ELSE '0';", scanningCounterBitsString)
-          .add("")
-          .add("   s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation")
-          .add("                            std_logic_vector(to_unsigned(%s-1, %s)) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, %s)) ELSE ", scanningCounterValueString, scanningCounterBitsString, scanningCounterBitsString)
-          .add("                            std_logic_vector(unsigned(s_scanningCounterReg)-1);",
-              "",
-              "   s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-              "                       s_rowCounterReg WHEN s_tickReg = '0' ELSE",
-              "                       std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))",
-              "                          WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE",
-              "                       std_logic_vector(unsigned(s_rowCounterReg)-1);",
-              "")
-          .add("   makeFlops : PROCESS (%s) IS", clock)
-          .add("   BEGIN")
-          .add("      IF (rising_edge(%s)) THEN", clock)
-          .add("         s_rowCounterReg      <= s_rowCounterNext;")
-          .add("         s_scanningCounterReg <= s_scanningCounterNext;")
-          .add("         s_tickReg            <= s_tickNext;")
-          .add("      END IF;")
-          .add("   END PROCESS makeFlops;")
-          .add("");
+      contents.add(
+          "",
+          "{{rowAddress}} <= s_rowCounterReg;",
+          "",
+          "s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';",
+          "",
+          "s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
+          "                         std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE ",
+          "                         std_logic_vector(unsigned(s_scanningCounterReg)-1);",
+          "",
+          "s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
+          "                    s_rowCounterReg WHEN s_tickReg = '0' ELSE",
+          "                    std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))",
+          "                       WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE",
+          "                    std_logic_vector(unsigned(s_rowCounterReg)-1);",
+          "",
+          "makeFlops : PROCESS ({{clock}}) IS",
+          "BEGIN",
+          "   IF (rising_edge({{clock}})) THEN",
+          "      s_rowCounterReg      <= s_rowCounterNext;",
+          "      s_scanningCounterReg <= s_scanningCounterNext;",
+          "      s_tickReg            <= s_tickNext;",
+          "   END IF;",
+          "END PROCESS makeFlops;",
+          "");
     } else {
-      c.add("")
+      contents
           .add(
-              "   assign rowAddress = s_rowCounterReg;",
               "",
-              "   assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;")
-          .add("   assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? %s : s_scanningCounterReg - 1;", scanningCounterValueString)
-          .add(
-              "   assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ",
-              "                             (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
+              "assign rowAddress = s_rowCounterReg;",
+              "",
+              "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
+              "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;",
+              "assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ",
+              "                          (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
               "")
-          .add(MakeRemarkBlock("Here the simulation only initial is defined", 3))
+          .addRemarkBlock("Here the simulation only initial is defined")
           .add(
-              "   initial",
-              "   begin",
-              "      s_rowCounterReg      = 0;",
-              "      s_scanningCounterReg = 0;",
-              "      s_tickReg            = 1'b0;",
-              "   end",
-              "")
-          .add("   always @(posedge %s)", clock)
-          .add(
-              "   begin",
-              "       s_rowCounterReg      = s_rowCounterNext;",
-              "       s_scanningCounterReg = s_scanningCounterNext;",
-              "       s_tickReg            = s_tickNext;",
-              "   end");
+              "initial",
+              "begin",
+              "   s_rowCounterReg      = 0;",
+              "   s_scanningCounterReg = 0;",
+              "   s_tickReg            = 1'b0;",
+              "end",
+              "",
+              "always @(posedge {{clock}})",
+              "begin",
+              "    s_rowCounterReg      = s_rowCounterNext;",
+              "    s_scanningCounterReg = s_scanningCounterNext;",
+              "    s_tickReg            = s_tickNext;",
+              "end");
     }
-    return c.get();
+    return contents.getWithIndent();
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var ins = LedArrayGenericHDLGeneratorFactory.LedArrayInputs;
-    final var outs = LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs;
-    final var c = new LineBuffer();
-    c.add(getRowCounterCode());
+    final var contents =
+        (new LineBuffer())
+            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
+            .addPair("activeLow", activeLowString)
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfColumns", nrOfColumnsString)
+            .add(getRowCounterCode());
+
     if (HDL.isVHDL()) {
-      c.add("   makeVirtualInputs : PROCESS ( internalLeds ) IS")
-          .add("   BEGIN")
-          .add("      s_maxLedInputs <= (OTHERS => '0');")
-          .add("      IF (%s = 1) THEN", activeLowString)
-          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, ins)
-          .add("      ELSE")
-          .add("         s_maxLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, ins)
-          .add("      END IF;")
-          .add("   END PROCESS makeVirtualInputs;")
-          .add("")
-          .add("   GenOutputs : FOR n IN %s-1 DOWNTO 0 GENERATE", nrOfColumnsString)
-          .add("      %s(n) <= s_maxLedInputs(%s * to_integer(unsigned(s_rowCounterReg)) + n);", outs, nrOfColumnsString)
-          .add("   END GENERATE GenOutputs;");
+      contents.add(
+          "makeVirtualInputs : PROCESS ( internalLeds ) IS",
+          "BEGIN",
+          "   s_maxLedInputs <= (OTHERS => '0');",
+          "   IF ({{activeLow}} = 1) THEN",
+          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};",
+          "   ELSE",
+          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};",
+          "   END IF;",
+          "END PROCESS makeVirtualInputs;",
+          "",
+          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
+          "   {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "END GENERATE GenOutputs;");
     } else {
-      c.add("")
-          .add("   genvar i;")
-          .add("   generate")
-          .add("      for (i = 0; i < %s; i = i + 1) begin", nrOfColumnsString)
-          .add("         assign %s[i] = (activeLow == 1)", outs)
-          .add("            ? ~%s[%s * s_rowCounterReg + i]", ins, nrOfColumnsString)
-          .add("            : %s[%s * s_rowCounterReg + i];", ins, nrOfColumnsString)
-          .add("      end")
-          .add("   endgenerate");
+      contents.add(
+          "",
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
+          "      assign {{outs}}[i] = (activeLow == 1)",
+          "         ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "   end",
+          "endgenerate");
     }
-    return c.get();
+    return contents.getWithIndent();
   }
 
   @Override

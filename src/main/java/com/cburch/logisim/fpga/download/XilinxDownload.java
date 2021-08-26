@@ -331,83 +331,84 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Synth() {
-    var command = new ArrayList<String>();
-    command.add(xilinxVendor.getBinaryPath(0));
-    command.add("-ifn");
-    command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + script_file);
-    command.add("-ofn");
-    command.add("logisim.log");
-    final var stage0 = new ProcessBuilder(command);
+    final var command = new LineBuffer();
+    command
+        .add(xilinxVendor.getBinaryPath(0))
+        .add("-ifn")
+        .add(ScriptPath.replace(ProjectPath, "../") + File.separator + script_file)
+        .add("-ofn")
+        .add("logisim.log");
+    final var stage0 = new ProcessBuilder(command.get());
     stage0.directory(new File(SandboxPath));
     return stage0;
   }
 
   private ProcessBuilder Stage1Constraints() {
-    var command = new ArrayList<String>();
-    command.add(xilinxVendor.getBinaryPath(1));
-    command.add("-intstyle");
-    command.add("ise");
-    command.add("-uc");
-    command.add(UcfPath.replace(ProjectPath, "../") + File.separator + ucf_file);
-    command.add("logisim.ngc");
-    command.add("logisim.ngd");
-    final var stage1 = new ProcessBuilder(command);
+    final var command = new LineBuffer();
+    command
+        .add(xilinxVendor.getBinaryPath(1))
+        .add("-intstyle")
+        .add("ise")
+        .add("-uc")
+        .add(UcfPath.replace(ProjectPath, "../") + File.separator + ucf_file)
+        .add("logisim.ngc")
+        .add("logisim.ngd");
+    final var stage1 = new ProcessBuilder(command.get());
     stage1.directory(new File(SandboxPath));
     return stage1;
   }
 
   private ProcessBuilder Stage2Map() {
     if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
-    var command = new ArrayList<String>();
-    command.add(xilinxVendor.getBinaryPath(2));
-    command.add("-intstyle");
-    command.add("ise");
-    command.add("-o");
-    command.add("logisim_map");
-    command.add("logisim.ngd");
-    final var stage2 = new ProcessBuilder(command);
+    final var command = new LineBuffer();
+    command
+        .add(xilinxVendor.getBinaryPath(2))
+        .add("-intstyle")
+        .add("ise")
+        .add("-o")
+        .add("logisim_map")
+        .add("logisim.ngd");
+    final var stage2 = new ProcessBuilder(command.get());
     stage2.directory(new File(SandboxPath));
     return stage2;
   }
 
   private ProcessBuilder Stage3PAR() {
-    var command = new ArrayList<String>();
+    final var command = new LineBuffer();
     if (!IsCPLD) {
-      command.add(xilinxVendor.getBinaryPath(3));
-      command.add("-w");
-      command.add("-intstyle");
-      command.add("ise");
-      command.add("-ol");
-      command.add("high");
-      command.add("logisim_map");
-      command.add("logisim_par");
-      command.add("logisim_map.pcf");
+      command
+          .add(xilinxVendor.getBinaryPath(3))
+          .add("-w")
+          .add("-intstyle")
+          .add("ise")
+          .add("-ol")
+          .add("high")
+          .add("logisim_map")
+          .add("logisim_par")
+          .add("logisim_map.pcf");
     } else {
-      command.add(xilinxVendor.getBinaryPath(6));
-      command.add("-p");
-      command.add(boardInfo.fpga.getPart().toUpperCase()
-          + "-"
-          + boardInfo.fpga.getSpeedGrade()
-          + "-"
-          + boardInfo.fpga.getPackage().toUpperCase());
-      command.add("-intstyle");
-      command.add("ise");
-      /* TODO: do correct termination type */
-      command.add("-terminate");
-      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) {
-        command.add("pullup");
-      } else if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) {
-        command.add("pulldown");
-      } else {
-        command.add("float");
-      }
-      command.add("-loc");
-      command.add("on");
-      command.add("-log");
-      command.add("logisim_cpldfit.log");
-      command.add("logisim.ngd");
+      final var pinPullBehavior = switch (boardInfo.fpga.getUnusedPinsBehavior()) {
+        case PullBehaviors.PULL_UP -> "pullup";
+        case PullBehaviors.PULL_DOWN -> "pulldown";
+        default -> "float";
+      };
+      final var fpga = boardInfo.fpga;
+      command
+          .add(xilinxVendor.getBinaryPath(6))
+          .add("-p")
+          .add("%s-%s-%s", fpga.getPart().toUpperCase(), fpga.getSpeedGrade(), fpga.getPackage().toUpperCase())
+          .add("-intstyle")
+          .add("ise")
+          /* TODO: do correct termination type */
+          .add("-terminate")
+          .add(pinPullBehavior)
+          .add("-loc")
+          .add("on")
+          .add("-log")
+          .add("logisim_cpldfit.log")
+          .add("logisim.ngd");
     }
-    final var stage3 = new ProcessBuilder(command);
+    final var stage3 = new ProcessBuilder(command.get());
     stage3.directory(new File(SandboxPath));
     return stage3;
   }

@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import javax.sound.sampled.Line;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -260,8 +261,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    ArrayList<String> Contents = new ArrayList<>();
-    StringBuilder OneLine = new StringBuilder();
+    final var Contents = (new LineBuffer()).withHdlPairs();
+    final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
       if (ThisNet.IsForcedRootNet()) {
@@ -282,18 +283,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
             }
-            String line =
-                "   "
-                    + HDL.assignPreamble()
-                    + OneLine
-                    + HDL.assignOperator()
-                    + BusName
-                    + TheNets.GetNetId(Source.GetParentNet())
-                    + HDL.BracketOpen()
-                    + Source.GetParentNetBitIndex()
-                    + HDL.BracketClose()
-                    + ";";
-            if (!Contents.contains(line)) Contents.add(line);
+
+            Contents.addUnique("   {{assign}} %s {{=}} %s%d{{bracketOpen}}%s{{bracketClose}};",
+                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()),
+                Source.GetParentNetBitIndex());
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
@@ -303,9 +296,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .append(HDL.BracketOpen())
                 .append(Source.GetParentNetBitIndex())
                 .append(HDL.BracketClose());
-            while (OneLine.length() < SallignmentSize) {
-              OneLine.append(" ");
-            }
+            while (OneLine.length() < SallignmentSize) OneLine.append(" ");
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
               OneLine.append(BusName)
@@ -316,13 +307,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            String line = "   " + HDL.assignPreamble() + OneLine + ";";
-            if (!Contents.contains(line)) Contents.add(line);
+            Contents.addUnique("   %s%s;", HDL.assignPreamble(), OneLine);
           }
         }
       }
     }
-    return Contents;
+    return Contents.get();
   }
 
   @Override
@@ -383,7 +373,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer()).withHdlPairs();
     var isFirstLine = true;
     final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();
@@ -413,28 +403,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       String ConnectedNet = GetNetName(clockSource, 0, true, theNetlist);
       temp.setLength(0);
       temp.append(ConnectedNet);
+      // Padding
       while (temp.length() < SallignmentSize) {
         temp.append(" ");
       }
       if (!theNetlist.RequiresGlobalClockConnection()) {
-        contents.add(
-            "   "
-                + HDL.assignPreamble()
-                + temp
-                + HDL.assignOperator()
-                + clockNet
-                + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.DerivedClockIndex
-                + HDL.BracketClose()
-                + ";");
+        contents.add("   {{assign}}%s {{=}} %s{{bracketOpen}}%s{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DerivedClockIndex);
       } else {
-        contents.add(
-            "   "
-                + HDL.assignPreamble()
-                + temp
-                + HDL.assignOperator()
-                + TickComponentHDLGeneratorFactory.FPGAClock
-                + ";");
+        contents.add("   {{assign}} %s {{=}} %s;", temp, TickComponentHDLGeneratorFactory.FPGAClock);
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */
