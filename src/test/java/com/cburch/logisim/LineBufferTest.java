@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.cburch.logisim.std.memory.Random;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -72,6 +73,40 @@ public class LineBufferTest extends TestBase {
   }
 
   /* ********************************************************************************************* */
+
+  /** Tests is plain add(String) works as expected. */
+  @Test
+  public void testAdd() {
+    final var tests =
+        new ArrayList<String>() {
+          {
+            add(getRandomString());
+            add(" {{placeholders}} should not be processed");
+          }
+        };
+
+    for(final var test: tests) {
+      final var lb = new LineBuffer();
+      lb.add(test);
+
+      assertEquals(1, lb.size());
+      assertEquals(test, lb.get(0));
+    }
+  }
+
+  /**
+   * Tests is add(String, Object...) works as expected.
+   */
+  @Test
+  public void testAddVarArgs() {
+    final var lb = new LineBuffer();
+    final var foo = getRandomString();
+    final var bar = getRandomInt(0, 100);
+
+    lb.add("%s%d", foo, bar);
+    assertEquals(1, lb.size());
+    assertEquals(foo + bar, lb.get(0));
+  }
 
   @Test
   public void testFormatter() {

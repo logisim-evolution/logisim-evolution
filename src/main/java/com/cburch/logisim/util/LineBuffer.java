@@ -261,6 +261,11 @@ public class LineBuffer implements RandomAccess {
     return repeat(count, "");
   }
 
+
+  public String get(int index) {
+    return contents.get(index);
+  }
+
   /**
    * Returns content buffer as ArrayList()
    *
