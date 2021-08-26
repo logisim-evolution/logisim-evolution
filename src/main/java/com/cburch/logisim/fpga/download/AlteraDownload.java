@@ -57,8 +57,8 @@ import org.w3c.dom.Element;
 public class AlteraDownload implements VendorDownload {
 
   private final VendorSoftware alteraVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
-  private final String scriptPath;
+      VendorSoftware.getSoftware(VendorSoftware.VENDOR_ALTERA);
+  private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
   private final Netlist RootNetList;
@@ -82,8 +82,8 @@ public class AlteraDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
-    this.scriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.entities = Entities;
@@ -167,7 +167,7 @@ public class AlteraDownload implements VendorDownload {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(0));
     command.add("-t");
-    command.add(scriptPath.replace(ProjectPath, ".." + File.separator) + alteraTclFile);
+    command.add(ScriptPath.replace(ProjectPath, ".." + File.separator) + alteraTclFile);
     final var stage0 = new ProcessBuilder(command);
     stage0.directory(new File(SandboxPath));
     return stage0;
@@ -196,9 +196,9 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean CreateDownloadScripts() {
-    var scriptFile = FileWriter.GetFilePointer(scriptPath, alteraTclFile);
+    var scriptFile = FileWriter.GetFilePointer(ScriptPath, alteraTclFile);
     if (scriptFile == null) {
-      scriptFile = new File(scriptPath + alteraTclFile);
+      scriptFile = new File(ScriptPath + alteraTclFile);
       return scriptFile.exists();
     }
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
@@ -290,9 +290,9 @@ public class AlteraDownload implements VendorDownload {
     final var pkg = currentBoard.fpga.getPackage().split(" ");
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
-      case PullBehaviors.PullUp -> "PULLUP";
-      case PullBehaviors.PullDown -> "PULLDOWN";
-      case PullBehaviors.Float -> "TRI-STATED";
+      case PullBehaviors.PULL_UP -> "PULLUP";
+      case PullBehaviors.PULL_DOWN -> "PULLDOWN";
+      case PullBehaviors.FLOAT -> "TRI-STATED";
       default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
 
@@ -406,8 +406,8 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean LoadProgrammerSof() {
-    final var fpgaDevice = StripPackageSpeed();
-    final var programmerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)).getParent()
+    final var FpgaDevice = StripPackageSpeed();
+    final var ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VENDOR_ALTERA)).getParent()
         + File.separator
         + "common"
         + File.separator
@@ -416,13 +416,13 @@ public class AlteraDownload implements VendorDownload {
         + "programmer"
         + File.separator
         + "sfl_"
-        + fpgaDevice.toLowerCase()
+        + FpgaDevice.toLowerCase()
         + ".sof";
     Reporter.Report.print("==>");
     Reporter.Report.print("==> " + S.get("AlteraProgSof"));
     Reporter.Report.print("==>");
-    if (!new File(programmerSofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraProgSofError", programmerSofFile));
+    if (!new File(ProgrammerSofFile).exists()) {
+      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
     final var command = new LineBuffer();
@@ -432,7 +432,7 @@ public class AlteraDownload implements VendorDownload {
             .add("-m")
             .add("jtag")
             .add("-o")
-            .add("P;%s", programmerSofFile);
+            .add("P;%s", ProgrammerSofFile);
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {
@@ -459,7 +459,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean CreateJicFile() {
-    if (!new File(scriptPath + AlteraCofFile).exists()) {
+    if (!new File(ScriptPath + AlteraCofFile).exists()) {
       Reporter.Report.AddError(S.get("AlteraNoCof"));
       return false;
     }
@@ -469,7 +469,7 @@ public class AlteraDownload implements VendorDownload {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
-    command.add((scriptPath + AlteraCofFile).replace(ProjectPath, "../"));
+    command.add((ScriptPath + AlteraCofFile).replace(ProjectPath, "../"));
     final var Jic = new ProcessBuilder(command);
     Jic.directory(new File(SandboxPath));
     try {
@@ -543,7 +543,7 @@ public class AlteraDownload implements VendorDownload {
       transformer.setOutputProperty(OutputKeys.ENCODING, "US-ASCII");
       transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
       var source = new DOMSource(CofFile);
-      var result = new StreamResult(new File(scriptPath + AlteraCofFile));
+      var result = new StreamResult(new File(ScriptPath + AlteraCofFile));
       transformer.transform(source, result);
     } catch (ParserConfigurationException | TransformerException e) {
       Reporter.Report.AddError(S.get("AlteraErrorCof"));

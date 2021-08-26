@@ -69,11 +69,13 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private int base;
   private String errorMessage;
 
+  @Override
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -86,17 +88,17 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     switch (operation) {
       case INSTR_SB:
         toBeStored &= 0xFF;
-        transType = SocBusTransaction.ByteAccess;
+        transType = SocBusTransaction.BYTE_ACCESS;
         // fall through
       case INSTR_SH:
         toBeStored &= 0xFFFF;
-        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_SW:
         if (transType < 0) transType = SocBusTransaction.WordAccess;
         SocBusTransaction trans =
             new SocBusTransaction(
-                SocBusTransaction.WRITETransaction,
+                SocBusTransaction.WRITE_TRANSACTION,
                 ElfHeader.getIntValue(address),
                 toBeStored,
                 transType,
@@ -105,11 +107,11 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
         return !transactionHasError(trans);
       case INSTR_LB:
       case INSTR_LBU:
-        transType = SocBusTransaction.ByteAccess;
+        transType = SocBusTransaction.BYTE_ACCESS;
         // fall through
       case INSTR_LH:
       case INSTR_LHU:
-        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_LW:
         if (transType < 0) transType = SocBusTransaction.WordAccess;
@@ -158,6 +160,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return trans.hasError();
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid)
       return null;
@@ -171,20 +174,24 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -223,15 +230,18 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return errorMessage;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)

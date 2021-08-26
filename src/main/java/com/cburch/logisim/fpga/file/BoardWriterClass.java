@@ -50,19 +50,19 @@ public class BoardWriterClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardWriterClass.class);
 
-  public static final String BoardInformationSectionString = "BoardInformation";
-  public static final String ClockInformationSectionString = "ClockInformation";
-  public static final String InputSetString = "InputPinSet";
-  public static final String OutputSetString = "OutputPinSet";
-  public static final String IOSetString = "BiDirPinSet";
-  public static final String RectSetString = "Rect_x_y_w_h";
-  public static final String LedArrayInfoString = "LedArrayInfo";
-  public static final String mapRotation = "rotation";
-  public static final String[] ClockSectionStrings = {
+  public static final String BOARD_INFORMATION_SECTION_STRING = "BoardInformation";
+  public static final String CLOCK_INFORMATION_SECTION_STRING = "ClockInformation";
+  public static final String INPUT_SET_STRING = "InputPinSet";
+  public static final String OUTPUT_SET_STRING = "OutputPinSet";
+  public static final String IO_SET_STRING = "BiDirPinSet";
+  public static final String RECT_SET_STRING = "Rect_x_y_w_h";
+  public static final String LED_ARRAY_INFO_STRING = "LedArrayInfo";
+  public static final String MAP_ROTATION = "rotation";
+  public static final String[] CLOCK_SECTION_STRINGS = {
     "Frequency", "FPGApin", "PullBehavior", "IOStandard"
   };
-  public static final String FPGAInformationSectionString = "FPGAInformation";
-  public static final String[] FPGASectionStrings = {
+  public static final String FPGA_INFORMATION_SECTION_STRING = "FPGAInformation";
+  public static final String[] FPGA_SECTION_STRINGS = {
     "Vendor",
     "Part",
     "Family",
@@ -73,17 +73,17 @@ public class BoardWriterClass {
     "FlashName",
     "FlashPos"
   };
-  public static final String UnusedPinsString = "UnusedPins";
-  public static final String ComponentsSectionString = "IOComponents";
-  public static final String LocationXString = "LocationX";
-  public static final String LocationYString = "LocationY";
-  public static final String WidthString = "Width";
-  public static final String HeightString = "Height";
-  public static final String PinLocationString = "FPGAPinName";
-  public static final String ImageInformationString = "BoardPicture";
-  public static final String MultiPinInformationString = "NrOfPins";
-  public static final String MultiPinPrefixString = "FPGAPin_";
-  public static final String LabelString = "Label";
+  public static final String UNUSED_PINS_STRING = "UnusedPins";
+  public static final String COMPONENTS_SECTION_STRING = "IOComponents";
+  public static final String LOCATION_X_STRING = "LocationX";
+  public static final String LOCATION_Y_STRING = "LocationY";
+  public static final String WIDTH_STRING = "Width";
+  public static final String HEIGHT_STRING = "Height";
+  public static final String PIN_LOCATION_STRING = "FPGAPinName";
+  public static final String IMAGE_INFORMATION_STRING = "BoardPicture";
+  public static final String MULTI_PIN_INFORMATION_STRING = "NrOfPins";
+  public static final String MULTI_PIN_PREFIX_STRING = "FPGAPin_";
+  public static final String LABEL_STRING = "Label";
   private DocumentBuilderFactory factory;
   private DocumentBuilder parser;
   private Document boardInfo;
@@ -99,53 +99,53 @@ public class BoardWriterClass {
 
       final var root = boardInfo.createElement(BoardInfo.getBoardName());
       boardInfo.appendChild(root);
-      final var fpgainfo = boardInfo.createElement(BoardInformationSectionString);
+      final var fpgainfo = boardInfo.createElement(BOARD_INFORMATION_SECTION_STRING);
       root.appendChild(fpgainfo);
       final var comment = boardInfo.createComment("This section decribes the FPGA and its clock");
       fpgainfo.appendChild(comment);
-      final var clkinfo = boardInfo.createElement(ClockInformationSectionString);
-      clkinfo.setAttribute(ClockSectionStrings[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
-      final var pin = boardInfo.createAttribute(ClockSectionStrings[1]);
+      final var clkinfo = boardInfo.createElement(CLOCK_INFORMATION_SECTION_STRING);
+      clkinfo.setAttribute(CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
+      final var pin = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[1]);
       pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase());
       clkinfo.setAttributeNode(pin);
-      final var pull = boardInfo.createAttribute(ClockSectionStrings[2]);
-      pull.setValue(PullBehaviors.Behavior_strings[BoardInfo.fpga.getClockPull()]);
+      final var pull = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[2]);
+      pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPull()]);
       clkinfo.setAttributeNode(pull);
-      final var IOS = boardInfo.createAttribute(ClockSectionStrings[3]);
+      final var IOS = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[3]);
       IOS.setValue(IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()]);
       clkinfo.setAttributeNode(IOS);
       fpgainfo.appendChild(clkinfo);
-      final var FPGA = boardInfo.createElement(FPGAInformationSectionString);
-      FPGA.setAttribute(FPGASectionStrings[0], VendorSoftware.Vendors[BoardInfo.fpga.getVendor()].toUpperCase());
-      final var part = boardInfo.createAttribute(FPGASectionStrings[1]);
+      final var FPGA = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
+      FPGA.setAttribute(FPGA_SECTION_STRINGS[0], VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
+      final var part = boardInfo.createAttribute(FPGA_SECTION_STRINGS[1]);
       part.setValue(BoardInfo.fpga.getPart());
       FPGA.setAttributeNode(part);
-      final var tech = boardInfo.createAttribute(FPGASectionStrings[2]);
+      final var tech = boardInfo.createAttribute(FPGA_SECTION_STRINGS[2]);
       tech.setValue(BoardInfo.fpga.getTechnology());
       FPGA.setAttributeNode(tech);
-      final var box = boardInfo.createAttribute(FPGASectionStrings[3]);
+      final var box = boardInfo.createAttribute(FPGA_SECTION_STRINGS[3]);
       box.setValue(BoardInfo.fpga.getPackage());
       FPGA.setAttributeNode(box);
-      final var speed = boardInfo.createAttribute(FPGASectionStrings[4]);
+      final var speed = boardInfo.createAttribute(FPGA_SECTION_STRINGS[4]);
       speed.setValue(BoardInfo.fpga.getSpeedGrade());
       FPGA.setAttributeNode(speed);
-      final var usbtmc = boardInfo.createAttribute(FPGASectionStrings[5]);
+      final var usbtmc = boardInfo.createAttribute(FPGA_SECTION_STRINGS[5]);
       usbtmc.setValue(BoardInfo.fpga.USBTMCDownloadRequired().toString());
       FPGA.setAttributeNode(usbtmc);
-      final var jtagPos = boardInfo.createAttribute(FPGASectionStrings[6]);
+      final var jtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[6]);
       jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition()));
       FPGA.setAttributeNode(jtagPos);
-      final var flashName = boardInfo.createAttribute(FPGASectionStrings[7]);
+      final var flashName = boardInfo.createAttribute(FPGA_SECTION_STRINGS[7]);
       flashName.setValue(String.valueOf(BoardInfo.fpga.getFlashName()));
       FPGA.setAttributeNode(flashName);
-      final var flashJtagPos = boardInfo.createAttribute(FPGASectionStrings[8]);
+      final var flashJtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[8]);
       flashJtagPos.setValue(String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition()));
       FPGA.setAttributeNode(flashJtagPos);
-      final var UnusedPins = boardInfo.createElement(UnusedPinsString);
+      final var UnusedPins = boardInfo.createElement(UNUSED_PINS_STRING);
       fpgainfo.appendChild(FPGA);
-      UnusedPins.setAttribute("PullBehavior", PullBehaviors.Behavior_strings[BoardInfo.fpga.getUnusedPinsBehavior()]);
+      UnusedPins.setAttribute("PullBehavior", PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getUnusedPinsBehavior()]);
       fpgainfo.appendChild(UnusedPins);
-      final var Components = boardInfo.createElement(ComponentsSectionString);
+      final var Components = boardInfo.createElement(COMPONENTS_SECTION_STRING);
       root.appendChild(Components);
       Comment Compcmd = boardInfo.createComment("This section describes all Components present on the boards");
       Components.appendChild(Compcmd);
@@ -154,7 +154,7 @@ public class BoardWriterClass {
       }
       final var writer = new ImageXmlFactory();
       writer.CreateStream(BoardImage);
-      final var BoardPicture = boardInfo.createElement(ImageInformationString);
+      final var BoardPicture = boardInfo.createElement(IMAGE_INFORMATION_STRING);
       root.appendChild(BoardPicture);
       final var Pictcmd = boardInfo.createComment("This section hold the board picture");
       BoardPicture.appendChild(Pictcmd);

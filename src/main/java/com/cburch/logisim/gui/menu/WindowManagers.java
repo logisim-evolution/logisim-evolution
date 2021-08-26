@@ -78,7 +78,7 @@ public class WindowManagers {
       initialized = true;
       if (Main.ANALYZE) AnalyzerManager.initialize();
       PreferencesFrame.initializeManager();
-      Projects.addPropertyChangeListener(Projects.projectListProperty, myListener);
+      Projects.addPropertyChangeListener(Projects.PROJECT_LIST_PROPERTY, myListener);
       computeListeners();
     }
   }

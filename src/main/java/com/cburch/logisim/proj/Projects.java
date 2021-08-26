@@ -28,11 +28,9 @@
 
 package com.cburch.logisim.proj;
 
-import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -85,7 +83,7 @@ public class Projects {
 
       if (frame == proj.getFrame() && !openProjects.contains(proj)) {
         openProjects.add(proj);
-        propertySupport.firePropertyChange(projectListProperty, null, null);
+        propertySupport.firePropertyChange(PROJECT_LIST_PROPERTY, null, null);
       }
     }
   }
@@ -162,7 +160,7 @@ public class Projects {
     frame.removeWindowListener(listener);
     openProjects.remove(proj);
     proj.getSimulator().shutDown();
-    propertySupport.firePropertyChange(projectListProperty, null, null);
+    propertySupport.firePropertyChange(PROJECT_LIST_PROPERTY, null, null);
   }
 
   public static void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -210,7 +208,7 @@ public class Projects {
 
     if (frame.isVisible() && !openProjects.contains(proj)) {
       openProjects.add(proj);
-      propertySupport.firePropertyChange(projectListProperty, null, null);
+      propertySupport.firePropertyChange(PROJECT_LIST_PROPERTY, null, null);
     }
     frame.addWindowListener(myListener);
   }
@@ -224,7 +222,7 @@ public class Projects {
     return false;
   }
 
-  public static final String projectListProperty = "projectList";
+  public static final String PROJECT_LIST_PROPERTY = "projectList";
 
   private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
 

@@ -58,6 +58,7 @@ public class PioState implements SocBusSlaveInterface {
       reset();
     }
 
+    @Override
     public PioRegState clone() {
       try {
         return (PioRegState) super.clone();
@@ -274,7 +275,7 @@ public class PioState implements SocBusSlaveInterface {
       regs = new PioRegState();
       state.setData(regs);
     }
-    if (state.getPortValue(SocPio.ResetIndex) == Value.TRUE)
+    if (state.getPortValue(SocPio.RESET_INDEX) == Value.TRUE)
       regs.reset();
     int index = inputGeneratesIrq() ? 2 : 1;
     int nrOfBits = nrOfIOs.getWidth();
@@ -289,7 +290,7 @@ public class PioState implements SocBusSlaveInterface {
       int irqs = irqSource & regs.interruptMask;
       boolean isIrq = irqs != 0;
       if (!regs.oldIrqValid || isIrq != regs.oldIrq)
-        state.setPort(SocPio.IRQIndex, isIrq ? Value.TRUE : Value.FALSE, 10);
+        state.setPort(SocPio.IRQ_INDEX, isIrq ? Value.TRUE : Value.FALSE, 10);
       regs.oldIrqValid = true;
       regs.oldIrq = isIrq;
     }
@@ -317,7 +318,7 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleOutputWriteTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_INPUT)
-      trans.setError(SocBusTransaction.ReadOnlyAccessError);
+      trans.setError(SocBusTransaction.READ_ONLY_ACCESS_ERROR);
     else {
       PioRegState pdata = getRegPropagateState();
       pdata.outputRegister = trans.getWriteData();
@@ -327,14 +328,14 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleInputReadTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_OUTPUT)
-      trans.setError(SocBusTransaction.WriteOnlyAccessError);
+      trans.setError(SocBusTransaction.WRITE_ONLY_ACCESS_ERROR);
     else
       trans.setReadData(handleOperations(getPropagateState(), true));
   }
 
   private void handleDirectionRegister(SocBusTransaction trans) {
     if (direction != PioAttributes.PORT_BIDIR) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
@@ -346,7 +347,7 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleIrqMaskRegister(SocBusTransaction trans) {
     if (!inputGeneratesIrq()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
@@ -358,7 +359,7 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleCaptureRegister(SocBusTransaction trans) {
     if (!inputIsCapturedSynchronisely()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
@@ -375,11 +376,11 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleOutputBitOperation(SocBusTransaction trans, boolean clear) {
     if (!outputSupportsBitManipulations()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     if (trans.isReadTransaction()) {
-      trans.setError(SocBusTransaction.WriteOnlyAccessError);
+      trans.setError(SocBusTransaction.WRITE_ONLY_ACCESS_ERROR);
     }
     PioRegState s = getRegPropagateState();
     int mask = trans.getWriteData();
@@ -410,7 +411,7 @@ public class PioState implements SocBusSlaveInterface {
     long start = SocSupport.convUnsignedInt(startAddress);
     int index = (int) (addr - start);
     if (trans.getAccessType() != SocBusTransaction.WordAccess) {
-      trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
+      trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
     }
     switch (index) {
@@ -434,7 +435,7 @@ public class PioState implements SocBusSlaveInterface {
         handleOutputBitOperation(trans, true);
         break;
       default:
-        trans.setError(SocBusTransaction.MisalignedAddressError);
+        trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
         break;
     }
   }

@@ -38,21 +38,20 @@ import java.util.TreeMap;
 
 public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private final long FpgaClockFrequency;
-  private final double TickFrequency;
-  // private boolean useFPGAClock;
+  private final long fpgaClockFrequency;
+  private final double tickFrequency;
   private static final String ReloadValueStr = "ReloadValue";
   private static final Integer ReloadValueId = -1;
   private static final String NrOfCounterBitsStr = "NrOfBits";
   private static final Integer NrOfCounterBitsId = -2;
 
-  public static final String FPGAClock = "FPGA_GlobalClock";
-  public static final String FPGATick = "s_FPGA_Tick";
+  public static final String FPGAClock = "FPGA_GlobalClock";  // FIXME: SCREAM_CASE
+  public static final String FPGATick = "s_FPGA_Tick";  // FIXME: SCREAM_CASE
 
   public TickComponentHDLGeneratorFactory(
       long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
-    FpgaClockFrequency = fpga_clock_frequency;
-    TickFrequency = tick_frequency;
+    fpgaClockFrequency = fpga_clock_frequency;
+    tickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;
   }
 
@@ -154,7 +153,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    double ReloadValueAcc = ((double) FpgaClockFrequency) / TickFrequency;
+    double ReloadValueAcc = ((double) fpgaClockFrequency) / tickFrequency;
     long ReloadValue = (long) ReloadValueAcc;
     int nr_of_bits = 0;
     if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = 0x7FFFFFFF;

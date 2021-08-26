@@ -90,7 +90,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   };
 
   public Nios2() {
-    super(_ID, S.getter("Nios2Component"), SocMaster);
+    super(_ID, S.getter("Nios2Component"), SOC_MASTER);
     setIcon(new ArithmeticIcon("uP", 2));
     setOffsetBounds(Bounds.create(0, 0, 640, 650));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);

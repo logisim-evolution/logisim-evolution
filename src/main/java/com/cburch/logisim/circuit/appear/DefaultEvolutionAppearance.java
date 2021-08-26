@@ -62,14 +62,14 @@ public class DefaultEvolutionAppearance {
     int MaxRightLabelLength = 0;
     int TitleWidth =
         (CircuitName == null)
-            ? 14 * DrawAttr.FixedFontCharWidth
-            : CircuitName.length() * DrawAttr.FixedFontCharWidth;
+            ? 14 * DrawAttr.FIXED_FONT_CHAR_WIDTH
+            : CircuitName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
 
     if (!pins.isEmpty()) {
       for (Instance pin : pins) {
         Direction pinEdge;
         Text label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
-        int LabelWidth = label.getText().length() * DrawAttr.FixedFontCharWidth;
+        int LabelWidth = label.getText().length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
         if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
           pinEdge = Direction.EAST;
           if (LabelWidth > MaxRightLabelLength) MaxRightLabelLength = LabelWidth;
@@ -90,15 +90,15 @@ public class DefaultEvolutionAppearance {
     int numWest = edge.get(Direction.WEST).size();
     int maxVert = Math.max(numEast, numWest);
 
-    int dy = ((DrawAttr.FixedFontHeight + (DrawAttr.FixedFontHeight >> 2) + 5) / 10) * 10;
+    int dy = ((DrawAttr.FIXED_FONT_HEIGHT + (DrawAttr.FIXED_FONT_HEIGHT >> 2) + 5) / 10) * 10;
     int textWidth =
         (FixedSize)
-            ? 25 * DrawAttr.FixedFontCharWidth
+            ? 25 * DrawAttr.FIXED_FONT_CHAR_WIDTH
             : Math.max((MaxLeftLabelLength + MaxRightLabelLength + 35), (TitleWidth + 15));
-    int Thight = ((DrawAttr.FixedFontHeight + 10) / 10) * 10;
+    int Thight = ((DrawAttr.FIXED_FONT_HEIGHT + 10) / 10) * 10;
     int width = (textWidth / 10) * 10 + 20;
     int height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;
-    int sdy = (DrawAttr.FixedFontAscent - DrawAttr.FixedFontDescent) >> 1;
+    int sdy = (DrawAttr.FIXED_FONT_ASCENT - DrawAttr.FIXED_FONT_DESCENT) >> 1;
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -136,7 +136,7 @@ public class DefaultEvolutionAppearance {
         Label = Label.concat("...");
       }
     }
-    Text label = new Text(rx + (width >> 1), ry + (height - DrawAttr.FixedFontDescent - 5), Label);
+    Text label = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), Label);
     label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
     label.getLabel().setColor(Color.WHITE);
     label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);

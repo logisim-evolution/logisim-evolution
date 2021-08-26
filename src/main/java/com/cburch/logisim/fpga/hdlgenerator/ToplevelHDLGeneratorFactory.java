@@ -54,10 +54,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final boolean requiresFPGAClock;
   private final boolean hasLedArray;
   private final ArrayList<FPGAIOInformationContainer> myLedArrays;
-  private final HashMap<String, Boolean> ledArrayTypesUsed; 
+  private final HashMap<String, Boolean> ledArrayTypesUsed;
 
 
-  public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel, 
+  public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
       MappableResourcesContainer ioComponents) {
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
@@ -74,7 +74,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ledArrays.add(comp);
           comp.setArrayId(ledArrays.indexOf(comp));
           hasLedArray = true;
-          if (!(comp.getArrayDriveMode() == LedArrayDriving.LedDefault) 
+          if (!(comp.getArrayDriveMode() == LedArrayDriving.LED_DEFAULT)
               && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
             hasScanningLedArray = true;
         }
@@ -85,11 +85,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     this.ledArrayTypesUsed = ledArrayTypesUsed;
     myLedArrays = ledArrays;
   }
-  
+
   public boolean hasLedArray() {
     return hasLedArray;
   }
-  
+
   public boolean hasLedArrayType(String type) {
     if (!ledArrayTypesUsed.containsKey(type)) return false;
     return ledArrayTypesUsed.get(type);
@@ -120,7 +120,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .getFactory()
                   .getHDLName(theNetlist.GetAllClockSources().get(0).getAttributeSet())));
     }
-    for (final var type : LedArrayDriving.Driving_strings) {
+    for (final var type : LedArrayDriving.DRIVING_STRINGS) {
       if (hasLedArrayType(type)) {
         final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
         final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
@@ -159,9 +159,9 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     for (var ledArray : myLedArrays) {
       outputs.putAll(LedArrayGenericHDLGeneratorFactory.getExternalSignals(
-          ledArray.getArrayDriveMode(), 
-          ledArray.getNrOfRows(), 
-          ledArray.getNrOfColumns(), 
+          ledArray.getArrayDriveMode(),
+          ledArray.getNrOfRows(),
+          ledArray.getNrOfColumns(),
           myLedArrays.indexOf(ledArray)));
     }
     return outputs;
@@ -221,12 +221,12 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.addAll(MakeRemarkBlock("Here the Led arrays are connected", 3));
       for (var array : myLedArrays) {
         contents.addAll(LedArrayGenericHDLGeneratorFactory.GetComponentMap(
-            array.getArrayDriveMode(), 
-            array.getNrOfRows(), 
-            array.getNrOfColumns(), 
+            array.getArrayDriveMode(),
+            array.getNrOfRows(),
+            array.getNrOfColumns(),
             myLedArrays.indexOf(array),
             fpgaClockFrequency,
-            array.GetActivityLevel() == PinActivity.ActiveLow));
+            array.GetActivityLevel() == PinActivity.ACTIVE_LOW));
         contents.addAll(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
@@ -256,7 +256,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
         wires.put(
             "s_" + ClockTreeName + clockBus,
-            ClockHDLGeneratorFactory.NrOfClockBits);
+            ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
       }
     }
     if (nrOfInputBubbles > 0) {
@@ -311,9 +311,9 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     for (final var ledArray : myLedArrays) {
       wires.putAll(LedArrayGenericHDLGeneratorFactory.getInternalSignals(
-          ledArray.getArrayDriveMode(), 
-          ledArray.getNrOfRows(), 
-          ledArray.getNrOfColumns(), 
+          ledArray.getArrayDriveMode(),
+          ledArray.getNrOfRows(),
+          ledArray.getNrOfColumns(),
           myLedArrays.indexOf(ledArray)));
     }
     return wires;

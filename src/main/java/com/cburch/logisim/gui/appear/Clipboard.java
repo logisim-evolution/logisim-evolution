@@ -32,7 +32,7 @@ import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
 
 class Clipboard {
-  public static final String contentsProperty = "appearance";
+  public static final String CONTENTS_PROPERTY = "appearance";
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Clipboard.class);
   private static ClipboardContents current = ClipboardContents.EMPTY;
@@ -71,6 +71,6 @@ class Clipboard {
   public static void set(ClipboardContents value) {
     ClipboardContents old = current;
     current = value;
-    propertySupport.firePropertyChange(contentsProperty, old, current);
+    propertySupport.firePropertyChange(CONTENTS_PROPERTY, old, current);
   }
 }

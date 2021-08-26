@@ -112,6 +112,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
       memInfo = new ArrayList<>();
     }
 
+    @Override
     public SocMemoryInfo clone() {
       try {
         return (SocMemoryInfo) super.clone();
@@ -182,10 +183,12 @@ public class SocMemoryState implements SocBusSlaveInterface {
     listeners = new ArrayList<>();
   }
 
+  @Override
   public Integer getStartAddress() {
     return startAddress;
   }
 
+  @Override
   public Integer getMemorySize() {
     return sizeInBytes;
   }
@@ -231,6 +234,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     return true;
   }
 
+  @Override
   public String getName() {
     if (attachedBus == null || attachedBus.getComponent() == null)
       return "BUG: Unknown";
@@ -242,17 +246,20 @@ public class SocMemoryState implements SocBusSlaveInterface {
     return name;
   }
 
+  @Override
   public InstanceComponent getComponent() {
     if (attachedBus == null || attachedBus.getComponent() == null)
       return null;
     return (InstanceComponent) attachedBus.getComponent();
   }
 
+  @Override
   public void registerListener(SocBusSlaveListener l) {
     if (!listeners.contains(l))
       listeners.add(l);
   }
 
+  @Override
   public void removeListener(SocBusSlaveListener l) {
     listeners.remove(l);
   }
@@ -291,7 +298,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     int adbit1 = (address >> 1) & 1;
     switch (type) {
       case SocBusTransaction.WordAccess : return value;
-      case SocBusTransaction.HalfWordAccess:
+      case SocBusTransaction.HALF_WORD_ACCESS:
         if (adbit1 == 1)
           return (value >> 16) & 0xFFFF;
         else
@@ -310,7 +317,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     int wdata = data;
     if (type != SocBusTransaction.WordAccess) {
       int oldData = performReadAction(address, SocBusTransaction.WordAccess);
-      if (type == SocBusTransaction.HalfWordAccess) {
+      if (type == SocBusTransaction.HALF_WORD_ACCESS) {
         int bit1 = (address >> 1) & 1;
         int mdata = data & 0xFFFF;
         if (bit1 == 1) {

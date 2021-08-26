@@ -42,7 +42,7 @@ public class FPGAClass {
       if (iter.next().equalsIgnoreCase(identifier)) return result;
       result++;
     }
-    return VendorSoftware.VendorUnknown;
+    return VendorSoftware.VENDOR_UNKNOWN;
   }
 
   private long ClockFrequency;

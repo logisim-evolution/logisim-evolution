@@ -69,7 +69,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   public static final String _ID = "Rv32im";
 
   public Rv32im_riscv() {
-    super(_ID, S.getter("Rv32imComponent"), SocMaster);
+    super(_ID, S.getter("Rv32imComponent"), SOC_MASTER);
     setIcon(new ArithmeticIcon("uP", 2));
     setOffsetBounds(Bounds.create(0, 0, 640, 640));
     setInstancePoker(CpuDrawSupport.SimStatePoker.class);
