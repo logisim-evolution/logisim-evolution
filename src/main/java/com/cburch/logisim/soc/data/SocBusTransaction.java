@@ -110,11 +110,11 @@ public class SocBusTransaction {
       case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnected");
       case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddress");
       case ACCESS_TYPE_NOT_SUPPORTED_ERROR ->
-        switch (access) {
-          case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupport");
-          case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupport");
-          default -> S.get("SocTransactionWordAccesNoSupport");
-        };
+              switch (access) {
+                case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupport");
+                case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupport");
+                default -> S.get("SocTransactionWordAccesNoSupport");
+              };
       case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessError");
       case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessError");
       case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExist");
@@ -132,15 +132,15 @@ public class SocBusTransaction {
       case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnectedShort");
       case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddressShort");
       case ACCESS_TYPE_NOT_SUPPORTED_ERROR ->
-        switch (access) {
-          case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
-          case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
-          default -> S.get("SocTransactionWordAccesNoSupportShort");
-        };
+              switch (access) {
+                case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
+                case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
+                default -> S.get("SocTransactionWordAccesNoSupportShort");
+              };
       case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessErrorShort");
       case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessErrorShort");
       case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExistShort");
-        default -> S.get("SocTransactionUnknownErrorShort");
+      default -> S.get("SocTransactionUnknownErrorShort");
     };
   }
 

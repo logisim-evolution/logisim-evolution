@@ -165,7 +165,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     return Double.parseDouble(number.toString()) * switch (extention) {
       case 'K' -> 1000;
       case 'M' -> 1000000;
-      default -> throw new IllegalStateException("Unexpected value: " + extention);
+      default -> 1;
     };
   }
 
