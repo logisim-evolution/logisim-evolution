@@ -765,7 +765,7 @@ public class FPGAIOInformationSettingsDialog {
             info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
           }
           final var selectedRotation = mapRotation.getSelectedIndex();
-          info.setMapRotation( switch (selectedRotation) {
+          info.setMapRotation(switch (selectedRotation) {
             case 1 -> IOComponentTypes.ROTATION_CW_90;
             case 2 -> IOComponentTypes.ROTATION_CCW_90;
             default -> IOComponentTypes.ROTATION_ZERO;
