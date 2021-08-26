@@ -36,9 +36,9 @@ public class LedArrayGenericHDLGeneratorFactory {
       case LedArrayDriving.LED_DEFAULT -> new LedArrayLedDefaultHDLGeneratorFactory();
       case LedArrayDriving.LED_ROW_SCANNING -> new LedArrayRowScanningHDLGeneratorFactory();
       case LedArrayDriving.LED_COLUMN_SCANNING -> new LedArrayColumnScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbDefault  -> new RGBArrayLedDefaultHDLGeneratorFactory();
-      case LedArrayDriving.RgbRowScanning  -> new RGBArrayRowScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbColumnScanning  -> new RGBArrayColumnScanningHDLGeneratorFactory();
+      case LedArrayDriving.RgbDefault -> new RGBArrayLedDefaultHDLGeneratorFactory();
+      case LedArrayDriving.RgbRowScanning -> new RGBArrayRowScanningHDLGeneratorFactory();
+      case LedArrayDriving.RgbColumnScanning -> new RGBArrayColumnScanningHDLGeneratorFactory();
       default -> null;
     };
   }

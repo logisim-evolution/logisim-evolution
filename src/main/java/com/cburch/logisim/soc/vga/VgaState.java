@@ -86,21 +86,26 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
         return false;
       clear();
       switch (getMode()) {
-        case VgaAttributes.MODE_160_120 : lineSize = 160;
-                                          nrOfLines = 120;
-                                          break;
-        case VgaAttributes.MODE_320_240 : lineSize = 320;
-                                          nrOfLines = 240;
-                                          break;
-        case VgaAttributes.MODE_640_480 : lineSize = 640;
-                                          nrOfLines = 480;
-                                          break;
-        case VgaAttributes.MODE_800_600 : lineSize = 800;
-                                          nrOfLines = 600;
-                                          break;
-        case VgaAttributes.MODE_1024_768: lineSize = 1024;
-                                          nrOfLines = 768;
-                                          break;
+        case VgaAttributes.MODE_160_120:
+          lineSize = 160;
+          nrOfLines = 120;
+          break;
+        case VgaAttributes.MODE_320_240:
+          lineSize = 320;
+          nrOfLines = 240;
+          break;
+        case VgaAttributes.MODE_640_480:
+          lineSize = 640;
+          nrOfLines = 480;
+          break;
+        case VgaAttributes.MODE_800_600:
+          lineSize = 800;
+          nrOfLines = 600;
+          break;
+        case VgaAttributes.MODE_1024_768:
+          lineSize = 1024;
+          nrOfLines = 768;
+          break;
       }
       myImage = new BufferedImage(lineSize, nrOfLines, BufferedImage.TYPE_INT_RGB);
       return true;

@@ -162,14 +162,11 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
         extention = TickIndex.charAt(i);
       i++;
     }
-    ret = Double.parseDouble(number.toString());
-    switch (extention) {
-      case 'K' : ret *= 1000;
-                 break;
-      case 'M' : ret *= 1000000;
-                 break;
-    }
-    return ret;
+    return Double.parseDouble(number.toString()) * switch (extention) {
+      case 'K' -> 1000;
+      case 'M' -> 1000000;
+      default -> throw new IllegalStateException("Unexpected value: " + extention);
+    };
   }
 
   private void recalculateFrequency() {
