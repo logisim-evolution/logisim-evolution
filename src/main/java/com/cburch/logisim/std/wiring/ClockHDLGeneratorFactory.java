@@ -81,13 +81,16 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = (new LineBuffer())
+    final var Contents =
+        (new LineBuffer())
             .addPair("phase", PhaseStr)
             .addPair("nrOfBits", NrOfBitsStr)
             .addPair("lowTick", LowTickStr)
             .addPair("highTick", HighTickStr)
-    .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
-/*    if (TheNetlist.RawFPGAClock()) {
+            .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
+
+/*
+    if (TheNetlist.RawFPGAClock()) {
       if (HighTicks != LowTicks) {
         Reporter.AddFatalError("Clock component detected with " +HighTicks+":"+LowTicks+ " hi:lo duty cycle,"
             + " but maximum clock speed was selected. Only 1:1 duty cycle is supported with "
@@ -101,59 +104,63 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("");
       return Contents;
     }
-*/    if (HDL.isVHDL()) {
+*/
+
+    if (HDL.isVHDL()) {
       Contents.add(
-          "   ClockBus <= GlobalClock&s_output_regs;",
-          "   makeOutputs : PROCESS( GlobalClock )",
-          "   BEGIN",
-          "      IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
-          "         s_buf_regs(0)     <= s_derived_clock_reg({{phase}}-1);",
-          "         s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}}-1));",
-          "         s_output_regs(0)  <= s_buf_regs(0);",
-          "         s_output_regs(1)  <= s_buf_regs(1);",
-          "         s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}}-1);",
-          "         s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}}-1));",
-          "      END IF;",
-          "   END PROCESS makeOutputs;");
+          "ClockBus <= GlobalClock&s_output_regs;",
+          "makeOutputs : PROCESS( GlobalClock )",
+          "BEGIN",
+          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "      s_buf_regs(0)     <= s_derived_clock_reg({{phase}}-1);",
+          "      s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}}-1));",
+          "      s_output_regs(0)  <= s_buf_regs(0);",
+          "      s_output_regs(1)  <= s_buf_regs(1);",
+          "      s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}}-1);",
+          "      s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}}-1));",
+          "   END IF;",
+          "END PROCESS makeOutputs;");
     } else {
       Contents.add(
-          "   assign ClockBus = {GlobalClock,s_output_regs};",
-          "   always @(posedge GlobalClock)",
-          "   begin",
-          "      s_buf_regs[0]    <= s_derived_clock_reg[{{phase}}-1];",
-          "      s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}}-1];",
-          "      s_output_regs[0] <= s_buf_regs[0];",
-          "      s_output_regs[1] <= s_output_regs[1];",
-          "      s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}}-1];",
-          "      s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];",
-          "   end");
+          "assign ClockBus = {GlobalClock,s_output_regs};",
+          "always @(posedge GlobalClock)",
+          "begin",
+          "   s_buf_regs[0]    <= s_derived_clock_reg[{{phase}}-1];",
+          "   s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}}-1];",
+          "   s_output_regs[0] <= s_buf_regs[0];",
+          "   s_output_regs[1] <= s_output_regs[1];",
+          "   s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}}-1];",
+          "   s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];",
+          "end");
     }
     Contents.add("");
     Contents.addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
       Contents.add(
-          "   s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
-          "   s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
-          "                           WHEN s_counter_is_zero = '0' ELSE",
-          "                        std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBitsStr}}))",
-          "                           WHEN s_derived_clock_reg(0) = '1' ELSE",
-          "                        std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBitsStr}}));"
+          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
+          "s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
+          "                       WHEN s_counter_is_zero = '0' ELSE",
+          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBitsStr}}))",
+          "                       WHEN s_derived_clock_reg(0) = '1' ELSE",
+          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBitsStr}}));"
       );
     } else {
       Contents.add(
-              "   assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;",
-              "   assign s_counter_next = (s_counter_is_zero == 1'b0) ? s_counter_reg - 1 :",
-              "                           (s_derived_clock_reg[0] == 1'b1) ? {{lowTick}} - 1 :",
-              "                                                           {{highTick}} - 1;",
+              "assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;",
+              "assign s_counter_next = (s_counter_is_zero == 1'b0)",
+              "                           ? s_counter_reg - 1",
+              "                           : (s_derived_clock_reg[0] == 1'b1)",
+              "                              ? {{lowTick}} - 1",
+              "                              : {{highTick}} - 1;",
               "")
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
           .add(
-              "   initial",
-              "   begin",
-              "      s_output_regs = 0;",
-              "      s_derived_clock_reg = 0;",
-              "      s_counter_reg = 0;",
-              "   end");
+              "initial",
+              "begin",
+              "   s_output_regs = 0;",
+              "   s_derived_clock_reg = 0;",
+              "   s_counter_reg = 0;",
+              "end");
     }
     Contents.add("");
     Contents.addRemarkBlock("Here the state registers are defined");
