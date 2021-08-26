@@ -65,12 +65,12 @@ public abstract class DownloadBase {
     "ucf",
     "xdc"
   };
-  public static final Integer VerilogSourcePath = 0;
-  public static final Integer VHDLSourcePath = 1;
-  public static final Integer ScriptPath = 2;
-  public static final Integer SandboxPath = 3;
-  public static final Integer UCFPath = 4;
-  public static final Integer XDCPath = 5;
+  public static final Integer VERILOG_SOURCE_PATH = 0;
+  public static final Integer VHDL_SOURCE_PATH = 1;
+  public static final Integer SCRIPT_PATH = 2;
+  public static final Integer SANDBOX_PATH = 3;
+  public static final Integer UCF_PATH = 4;
+  public static final Integer XDC_PATH = 5;
 
   protected boolean VendorSoftwarePresent() {
     return VendorSoftware.toolsPresent(
@@ -104,7 +104,7 @@ public abstract class DownloadBase {
      * name plus component/sub-circuit name
      */
     MyMappableResources = RootSheet.getBoardMap(MyBoardInformation.getBoardName());
-    if (MyMappableResources == null) 
+    if (MyMappableResources == null)
       MyMappableResources = new MappableResourcesContainer(MyBoardInformation, RootSheet);
     else
       MyMappableResources.updateMapableComponents();
@@ -114,7 +114,7 @@ public abstract class DownloadBase {
 
   protected boolean MapDesignCheckIOs() {
     if (MyMappableResources.isCompletelyMapped()) return true;
-    var confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
+    var confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"),
         S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
@@ -225,10 +225,10 @@ public abstract class DownloadBase {
         return false;
       }
     }
-    final var Top = new ToplevelHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), 
+    final var Top = new ToplevelHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(),
         frequency, RootSheet, MyMappableResources);
     if (Top.hasLedArray()) {
-      for (var type : LedArrayDriving.Driving_strings) {
+      for (var type : LedArrayDriving.DRIVING_STRINGS) {
         if (Top.hasLedArrayType(type)) {
           Worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
           final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
@@ -290,9 +290,9 @@ public abstract class DownloadBase {
           GetVHDLFiles(SourcePath, Path + File.separator + thisFile.getName(), Entities, Behaviors, HDLType);
         }
       } else {
-        var EntityMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension + ".vhd" : ".v";
+        var EntityMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.ENTITY_EXTENSION + ".vhd" : ".v";
         var ArchitecturMask = (HDLType.equals(HDLGeneratorFactory.VHDL))
-            ? FileWriter.ArchitectureExtension + ".vhd"
+            ? FileWriter.ARCHITECTURE_EXTENSION + ".vhd"
             : "#not_searched#";
         if (thisFile.getName().endsWith(EntityMask)) {
           Entities.add((Path + File.separator + thisFile.getName()).replace("\\", "/"));
@@ -332,7 +332,7 @@ public abstract class DownloadBase {
       return false;
     }
   }
-  
+
   public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps,
       Netlist nets,
       BoardInformation board) {
@@ -344,10 +344,10 @@ public abstract class DownloadBase {
           hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
             ledArrayMaps.put(LedArrayGenericHDLGeneratorFactory.getExternalSignalName(
-                comp.getArrayDriveMode(), 
-                comp.getNrOfRows(), 
-                comp.getNrOfColumns(), 
-                comp.getArrayId(), 
+                comp.getArrayDriveMode(),
+                comp.getNrOfRows(),
+                comp.getNrOfColumns(),
+                comp.getArrayId(),
                 pin), comp.getPinLocation(pin));
           }
         }

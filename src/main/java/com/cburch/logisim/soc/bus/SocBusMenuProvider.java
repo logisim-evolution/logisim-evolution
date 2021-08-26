@@ -319,14 +319,17 @@ public class SocBusMenuProvider implements ActionListener {
             new JTable(traceModel) {
               private static final long serialVersionUID = 1L;
 
+              @Override
               public TableCellRenderer getCellRenderer(int row, int column) {
                 return traceModel.getCellRenderer();
               }
 
+              @Override
               protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                   private static final long serialVersionUID = 1L;
 
+                  @Override
                   public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
                     int index = columnModel.getColumnIndexAtX(p.x);
@@ -348,7 +351,7 @@ public class SocBusMenuProvider implements ActionListener {
             new ListeningFrame(S.getter("TraceWindowTitleDoubleClickOnTraceToRemoveTrace"));
         myTraceFrame.add(scroll);
         myTraceFrame.setSize(
-            AppPreferences.getScaled(SocBusStateInfo.BlockWidth), AppPreferences.getScaled(320));
+                AppPreferences.getScaled(SocBusStateInfo.BLOCK_WIDTH), AppPreferences.getScaled(320));
       }
       myTraceFrame.setVisible(true);
       int fstate = myTraceFrame.getExtendedState();

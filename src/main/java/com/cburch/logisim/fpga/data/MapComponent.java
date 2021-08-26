@@ -219,13 +219,13 @@ public class MapComponent {
   public boolean isExternalInverted(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
-    return maps.get(pin).getIOComp().GetActivityLevel() == PinActivity.ActiveLow;
+    return maps.get(pin).getIOComp().GetActivityLevel() == PinActivity.ACTIVE_LOW;
   }
 
   public boolean requiresPullup(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
-    return maps.get(pin).getIOComp().GetPullBehavior() == PullBehaviors.PullUp;
+    return maps.get(pin).getIOComp().GetPullBehavior() == PullBehaviors.PULL_UP;
   }
 
   public FPGAIOInformationContainer getFpgaInfo(int pin) {

@@ -52,7 +52,7 @@ public class LayoutEditHandler extends EditHandler
     this.frame = frame;
 
     Project proj = frame.getProject();
-    Clipboard.addPropertyChangeListener(Clipboard.contentsProperty, this);
+    Clipboard.addPropertyChangeListener(Clipboard.CONTENTS_PROPERTY, this);
     proj.addProjectListener(this);
     proj.addLibraryListener(this);
   }
@@ -119,6 +119,7 @@ public class LayoutEditHandler extends EditHandler
     proj.doAction(SelectionActions.duplicate(sel));
   }
 
+  @Override
   public void libraryChanged(LibraryEvent e) {
     int action = e.getAction();
     if (action == LibraryEvent.ADD_LIBRARY) {
@@ -149,6 +150,7 @@ public class LayoutEditHandler extends EditHandler
     }
   }
 
+  @Override
   public void projectChanged(ProjectEvent e) {
     int action = e.getAction();
     if (action == ProjectEvent.ACTION_SET_FILE) {
@@ -160,8 +162,9 @@ public class LayoutEditHandler extends EditHandler
     }
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
-    if (event.getPropertyName().equals(Clipboard.contentsProperty)) {
+    if (event.getPropertyName().equals(Clipboard.CONTENTS_PROPERTY)) {
       computeEnabled();
     }
   }

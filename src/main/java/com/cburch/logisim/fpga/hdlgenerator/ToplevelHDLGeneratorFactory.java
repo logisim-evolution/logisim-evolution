@@ -47,7 +47,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-
   private final long fpgaClockFrequency;
   private final double tickFrequency;
   private final Circuit myCircuit;
@@ -56,7 +55,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final boolean hasLedArray;
   private final ArrayList<FPGAIOInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
-
 
   public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
       MappableResourcesContainer ioComponents) {
@@ -75,7 +73,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ledArrays.add(comp);
           comp.setArrayId(ledArrays.indexOf(comp));
           hasLedArray = true;
-          if (!(comp.getArrayDriveMode() == LedArrayDriving.LedDefault)
+          if (!(comp.getArrayDriveMode() == LedArrayDriving.LED_DEFAULT)
               && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
             hasScanningLedArray = true;
         }
@@ -121,7 +119,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .getFactory()
                   .getHDLName(theNetlist.GetAllClockSources().get(0).getAttributeSet())));
     }
-    for (final var type : LedArrayDriving.Driving_strings) {
+    for (final var type : LedArrayDriving.DRIVING_STRINGS) {
       if (hasLedArrayType(type)) {
         final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
         final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
@@ -228,7 +226,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 array.getNrOfColumns(),
                 myLedArrays.indexOf(array),
                 fpgaClockFrequency,
-                array.GetActivityLevel() == PinActivity.ActiveLow));
+                array.GetActivityLevel() == PinActivity.ACTIVE_LOW));
         contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
@@ -258,7 +256,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
         wires.put(
             "s_" + ClockTreeName + clockBus,
-            ClockHDLGeneratorFactory.NrOfClockBits);
+            ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
       }
     }
     if (nrOfInputBubbles > 0) {

@@ -54,7 +54,7 @@ import java.util.ArrayList;
 public class XilinxDownload implements VendorDownload {
 
   private final VendorSoftware xilinxVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+      VendorSoftware.getSoftware(VendorSoftware.VENDOR_XILINX);
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
@@ -86,9 +86,9 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
-    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCFPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.Entities = Entities;
@@ -295,19 +295,19 @@ public class XilinxDownload implements VendorDownload {
           Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetPullBehavior() != PullBehaviors.Unknown
-                && info.GetPullBehavior() != PullBehaviors.Float) {
+            if (info.GetPullBehavior() != PullBehaviors.UNKNOWN
+                && info.GetPullBehavior() != PullBehaviors.FLOAT) {
               Temp.append("| ")
                   .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
                   .append(" ");
             }
-            if (info.GetDrive() != DriveStrength.Unknown
-                && info.GetDrive() != DriveStrength.DefaulStength) {
+            if (info.GetDrive() != DriveStrength.UNKNOWN
+                && info.GetDrive() != DriveStrength.DEFAULT_STENGTH) {
               Temp.append("| DRIVE = ")
                   .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.UNKNOWN
+                && info.GetIOStandard() != IoStandards.DEFAULT_STANDARD) {
               Temp.append("| IOSTANDARD = ")
                   .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
                   .append(" ");
@@ -388,8 +388,8 @@ public class XilinxDownload implements VendorDownload {
           .add("logisim_map.pcf");
     } else {
       final var pinPullBehavior = switch(boardInfo.fpga.getUnusedPinsBehavior()) {
-        case PullBehaviors.PullUp -> "pullup";
-        case PullBehaviors.PullDown -> "pulldown";
+        case PullBehaviors.PULL_UP -> "pullup";
+        case PullBehaviors.PULL_DOWN -> "pulldown";
         default -> "float";
       };
       final var fpga = boardInfo.fpga;
@@ -418,11 +418,11 @@ public class XilinxDownload implements VendorDownload {
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4));
       command.add("-w");
-      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) {
         command.add("-g");
         command.add("UnusedPin:PULLUP");
       }
-      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) {
         command.add("-g");
         command.add("UnusedPin:PULLDOWN");
       }
@@ -452,14 +452,14 @@ public class XilinxDownload implements VendorDownload {
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
     var result = new StringBuilder();
     result.append("LOC = \"").append(CurrentBoard.fpga.getClockPinLocation()).append("\"");
-    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
+    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PULL_UP) {
       result.append(" | PULLUP");
     }
-    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullDown) {
+    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PULL_DOWN) {
       result.append(" | PULLDOWN");
     }
-    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DefaulStandard
-        && CurrentBoard.fpga.getClockStandard() != IoStandards.Unknown) {
+    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
+        && CurrentBoard.fpga.getClockStandard() != IoStandards.UNKNOWN) {
       result.append(" | IOSTANDARD = ")
           .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
     }

@@ -206,10 +206,10 @@ public class AssemblerInfo {
         byte datab = data.containsKey(i) ? data.get(i) : 0;
         SocBusTransaction trans =
             new SocBusTransaction(
-                SocBusTransaction.WRITETransaction,
+                SocBusTransaction.WRITE_TRANSACTION,
                 SocSupport.convUnsignedLong(i),
                 datab,
-                SocBusTransaction.ByteAccess,
+                SocBusTransaction.BYTE_ACCESS,
                 "Assembler");
         cpu.insertTransaction(trans, true, state);
         if (hasInstructions()) super.addExecutableFlag();

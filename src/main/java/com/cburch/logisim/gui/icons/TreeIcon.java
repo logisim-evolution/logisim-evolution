@@ -38,10 +38,10 @@ public class TreeIcon extends BaseIcon {
 
   private final Rectangle paper =
       new Rectangle(
-          AppPreferences.IconBorder,
-          AppPreferences.IconBorder,
-          AppPreferences.IconSize - 3 * AppPreferences.IconBorder,
-          AppPreferences.IconSize - 2 * AppPreferences.IconBorder);
+          AppPreferences.ICON_BORDER,
+          AppPreferences.ICON_BORDER,
+          AppPreferences.IconSize - 3 * AppPreferences.ICON_BORDER,
+          AppPreferences.IconSize - 2 * AppPreferences.ICON_BORDER);
   private final int[] backsheet = new int[] {0, 0, 4, 0, 7, 3, 13, 3, 13, 15, 0, 15};
   private final int[] frontsheetClosed = new int[] {0, 3, 13, 3, 13, 15, 0, 15};
   private final int[] frontsheetOpen = new int[] {2, 11, 15, 11, 13, 15, 0, 15};
@@ -53,6 +53,7 @@ public class TreeIcon extends BaseIcon {
     this.closed = closed;
   }
 
+  @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.yellow.darker().darker());
     GeneralPath path = new GeneralPath();

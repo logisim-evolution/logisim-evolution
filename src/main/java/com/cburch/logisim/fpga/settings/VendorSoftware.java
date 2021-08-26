@@ -34,15 +34,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class VendorSoftware {
-  public static final char VendorAltera = 0;
-  public static final char VendorXilinx = 1;
-  public static final char VendorVivado = 2;
-  public static final char VendorUnknown = 255;
-  public static final String[] Vendors = {"Altera", "Xilinx", "Vivado"};
+  public static final char VENDOR_ALTERA = 0;
+  public static final char VENDOR_XILINX = 1;
+  public static final char VENDOR_VIVADO = 2;
+  public static final char VENDOR_UNKNOWN = 255;
+  public static final String[] VENDORS = {"Altera", "Xilinx", "Vivado"};
+
   private static final String XilinxName = "XilinxToolsPath";
   private static final String AlteraName = "AlteraToolsPath";
   private static final String VivadoName = "VivadoToolsPath";
-  public static String Unknown = "Unknown";
+  public static final String UNKNOWN = "Unknown";
 
   private final char vendor;
   private final String name;
@@ -56,11 +57,11 @@ public class VendorSoftware {
 
   public String getToolPath() {
     switch (vendor) {
-      case VendorAltera:
+      case VENDOR_ALTERA:
         return AppPreferences.QuartusToolPath.get();
-      case VendorXilinx:
+      case VENDOR_XILINX:
         return AppPreferences.ISEToolPath.get();
-      case VendorVivado:
+      case VENDOR_VIVADO:
         return AppPreferences.VivadoToolPath.get();
     }
     return "Unknown";
@@ -85,21 +86,21 @@ public class VendorSoftware {
   public static LinkedList<String> getVendorStrings() {
     LinkedList<String> result = new LinkedList<>();
 
-    result.add(VendorSoftware.Vendors[0]);
-    result.add(VendorSoftware.Vendors[1]);
-    result.add(VendorSoftware.Vendors[2]);
+    result.add(VendorSoftware.VENDORS[0]);
+    result.add(VendorSoftware.VENDORS[1]);
+    result.add(VendorSoftware.VENDORS[2]);
 
     return result;
   }
 
   public static String getVendorString(char vendor) {
     switch (vendor) {
-      case VendorAltera:
-        return Vendors[0];
-      case VendorXilinx:
-        return Vendors[1];
-      case VendorVivado:
-        return Vendors[2];
+      case VENDOR_ALTERA:
+        return VENDORS[0];
+      case VENDOR_XILINX:
+        return VENDORS[1];
+      case VENDOR_VIVADO:
+        return VENDORS[2];
       default:
         return "Unknown";
     }
@@ -107,12 +108,12 @@ public class VendorSoftware {
 
   public static VendorSoftware getSoftware(char vendor) {
     switch (vendor) {
-      case VendorAltera:
-        return new VendorSoftware(VendorAltera, AlteraName, load(VendorAltera));
-      case VendorXilinx:
-        return new VendorSoftware(VendorXilinx, XilinxName, load(VendorXilinx));
-      case VendorVivado:
-        return new VendorSoftware(VendorVivado, VivadoName, load(VendorVivado));
+      case VENDOR_ALTERA:
+        return new VendorSoftware(VENDOR_ALTERA, AlteraName, load(VENDOR_ALTERA));
+      case VENDOR_XILINX:
+        return new VendorSoftware(VENDOR_XILINX, XilinxName, load(VENDOR_XILINX));
+      case VENDOR_VIVADO:
+        return new VendorSoftware(VENDOR_VIVADO, VivadoName, load(VENDOR_VIVADO));
       default:
         return null;
     }
@@ -120,11 +121,11 @@ public class VendorSoftware {
 
   public static String GetToolPath(char vendor) {
     switch (vendor) {
-      case VendorAltera:
+      case VENDOR_ALTERA:
         return AppPreferences.QuartusToolPath.get();
-      case VendorXilinx:
+      case VENDOR_XILINX:
         return AppPreferences.ISEToolPath.get();
-      case VendorVivado:
+      case VENDOR_VIVADO:
         return AppPreferences.VivadoToolPath.get();
       default:
         return null;
@@ -134,13 +135,13 @@ public class VendorSoftware {
   public static boolean setToolPath(char vendor, String path) {
     if (!toolsPresent(vendor, path)) return false;
     switch (vendor) {
-      case VendorAltera:
+      case VENDOR_ALTERA:
         AppPreferences.QuartusToolPath.set(path);
         return true;
-      case VendorXilinx:
+      case VENDOR_XILINX:
         AppPreferences.ISEToolPath.set(path);
         return true;
-      case VendorVivado:
+      case VENDOR_VIVADO:
         AppPreferences.VivadoToolPath.set(path);
         return true;
       default:
@@ -156,12 +157,12 @@ public class VendorSoftware {
   private static String[] load(char vendor) {
     ArrayList<String> progs = new ArrayList<>();
     String windowsExtension = ".exe";
-    if (vendor == VendorAltera) {
+    if (vendor == VENDOR_ALTERA) {
       progs.add("quartus_sh");
       progs.add("quartus_pgm");
       progs.add("quartus_map");
       progs.add("quartus_cpf");
-    } else if (vendor == VendorXilinx) {
+    } else if (vendor == VENDOR_XILINX) {
       progs.add("xst");
       progs.add("ngdbuild");
       progs.add("map");
@@ -170,7 +171,7 @@ public class VendorSoftware {
       progs.add("impact");
       progs.add("cpldfit");
       progs.add("hprep6");
-    } else if (vendor == VendorVivado) {
+    } else if (vendor == VENDOR_VIVADO) {
       progs.add("vivado");
       windowsExtension = ".bat";
     }

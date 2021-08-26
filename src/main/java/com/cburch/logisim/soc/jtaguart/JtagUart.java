@@ -59,19 +59,19 @@ public class JtagUart extends SocInstanceFactory {
    */
   public static final String _ID = "SocJtagUart";
 
-  public static final int ClockPin = 0;
-  public static final int ResetPin = 1;
-  public static final int IRQPin = 2;
-  public static final int ReadEnablePin = 3;
-  public static final int ClearKeyboardPin = 4;
-  public static final int AvailablePin = 5;
-  public static final int DataInPin = 6;
-  public static final int DataOutPin = 7;
-  public static final int WritePin = 8;
-  public static final int ClearTtyPin = 9;
+  public static final int CLOCK_PIN = 0;
+  public static final int RESET_PIN = 1;
+  public static final int IRQ_PIN = 2;
+  public static final int READ_ENABLE_PIN = 3;
+  public static final int CLEAR_KEYBOARD_PIN = 4;
+  public static final int AVAILABLE_PIN = 5;
+  public static final int DATA_IN_PIN = 6;
+  public static final int DATA_OUT_PIN = 7;
+  public static final int WRITE_PIN = 8;
+  public static final int CLEAR_TTY_PIN = 9;
 
   public JtagUart() {
-    super(_ID, S.getter("SocJtagUartComponent"), SocSlave);
+    super(_ID, S.getter("SocJtagUartComponent"), SOC_SLAVE);
     setIcon(new ArithmeticIcon("JtagUart", 4));
     setOffsetBounds(Bounds.create(0, 0, 300, 60));
   }
@@ -93,26 +93,26 @@ public class JtagUart extends SocInstanceFactory {
         GraphicsUtil.H_LEFT,
         GraphicsUtil.V_CENTER);
     Port[] ps = new Port[10];
-    ps[ClockPin] = new Port(0, 50, Port.INPUT, 1);
-    ps[ClockPin].setToolTip(S.getter("Rv32imClockInput"));
-    ps[ResetPin] = new Port(0, 30, Port.INPUT, 1);
-    ps[ResetPin].setToolTip(S.getter("Rv32imResetInput"));
-    ps[IRQPin] = new Port(300, 50, Port.OUTPUT, 1);
-    ps[IRQPin].setToolTip(S.getter("SocPioIrqOutput"));
-    ps[ReadEnablePin] = new Port(10, 0, Port.OUTPUT, 1);
-    ps[ReadEnablePin].setToolTip(S.getter("JtagUartKeybReadEnable"));
-    ps[ClearKeyboardPin] = new Port(20, 0, Port.OUTPUT, 1);
-    ps[ClearKeyboardPin].setToolTip(S.getter("JtagUartClearKeyb"));
-    ps[AvailablePin] = new Port(130, 0, Port.INPUT, 1);
-    ps[AvailablePin].setToolTip(S.getter("JtagUartKeybAvailable"));
-    ps[DataInPin] = new Port(140, 0, Port.INPUT, 7);
-    ps[DataInPin].setToolTip(S.getter("JtagUartKeybData"));
-    ps[DataOutPin] = new Port(160, 0, Port.OUTPUT, 7);
-    ps[DataOutPin].setToolTip(S.getter("JtagUartTtyData"));
-    ps[WritePin] = new Port(180, 0, Port.OUTPUT, 1);
-    ps[WritePin].setToolTip(S.getter("JtagUartTtyWrite"));
-    ps[ClearTtyPin] = new Port(190, 0, Port.OUTPUT, 1);
-    ps[ClearTtyPin].setToolTip(S.getter("JtagUartTtyClear"));
+    ps[CLOCK_PIN] = new Port(0, 50, Port.INPUT, 1);
+    ps[CLOCK_PIN].setToolTip(S.getter("Rv32imClockInput"));
+    ps[RESET_PIN] = new Port(0, 30, Port.INPUT, 1);
+    ps[RESET_PIN].setToolTip(S.getter("Rv32imResetInput"));
+    ps[IRQ_PIN] = new Port(300, 50, Port.OUTPUT, 1);
+    ps[IRQ_PIN].setToolTip(S.getter("SocPioIrqOutput"));
+    ps[READ_ENABLE_PIN] = new Port(10, 0, Port.OUTPUT, 1);
+    ps[READ_ENABLE_PIN].setToolTip(S.getter("JtagUartKeybReadEnable"));
+    ps[CLEAR_KEYBOARD_PIN] = new Port(20, 0, Port.OUTPUT, 1);
+    ps[CLEAR_KEYBOARD_PIN].setToolTip(S.getter("JtagUartClearKeyb"));
+    ps[AVAILABLE_PIN] = new Port(130, 0, Port.INPUT, 1);
+    ps[AVAILABLE_PIN].setToolTip(S.getter("JtagUartKeybAvailable"));
+    ps[DATA_IN_PIN] = new Port(140, 0, Port.INPUT, 7);
+    ps[DATA_IN_PIN].setToolTip(S.getter("JtagUartKeybData"));
+    ps[DATA_OUT_PIN] = new Port(160, 0, Port.OUTPUT, 7);
+    ps[DATA_OUT_PIN].setToolTip(S.getter("JtagUartTtyData"));
+    ps[WRITE_PIN] = new Port(180, 0, Port.OUTPUT, 1);
+    ps[WRITE_PIN].setToolTip(S.getter("JtagUartTtyWrite"));
+    ps[CLEAR_TTY_PIN] = new Port(190, 0, Port.OUTPUT, 1);
+    ps[CLEAR_TTY_PIN].setToolTip(S.getter("JtagUartTtyClear"));
     instance.setPorts(ps);
   }
 
@@ -132,10 +132,10 @@ public class JtagUart extends SocInstanceFactory {
     g2.drawLine(loc.getX(), loc.getY() + 20, loc.getX() + 200, loc.getY() + 20);
     g2.drawLine(loc.getX() + 150, loc.getY(), loc.getX() + 150, loc.getY() + 20);
     g2.drawLine(loc.getX() + 200, loc.getY(), loc.getX() + 200, loc.getY() + 20);
-    painter.drawPort(ResetPin, "Reset", Direction.EAST);
-    painter.drawClock(ClockPin, Direction.EAST);
-    painter.drawPort(IRQPin, "IRQ", Direction.WEST);
-    for (int i = ReadEnablePin; i < 10; i++) painter.drawPort(i);
+    painter.drawPort(RESET_PIN, "Reset", Direction.EAST);
+    painter.drawClock(CLOCK_PIN, Direction.EAST);
+    painter.drawPort(IRQ_PIN, "IRQ", Direction.WEST);
+    for (int i = READ_ENABLE_PIN; i < 10; i++) painter.drawPort(i);
     GraphicsUtil.drawCenteredText(g2, "Keyboard", loc.getX() + 75, loc.getY() + 10);
     GraphicsUtil.drawCenteredText(g2, "TTY", loc.getX() + 175, loc.getY() + 10);
     Font f = g2.getFont();

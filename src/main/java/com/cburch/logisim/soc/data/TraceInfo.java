@@ -75,12 +75,12 @@ public class TraceInfo {
   private void paintBox(Graphics2D g, int x, int y, int value, boolean scale, int blockWidth) {
     g.setColor(Color.WHITE);
     Bounds bds;
-    bds = CpuDrawSupport.getBounds(x, y + 1, blockWidth, CpuDrawSupport.TRACEHEIGHT - 2, scale);
+    bds = CpuDrawSupport.getBounds(x, y + 1, blockWidth, CpuDrawSupport.TRACE_HEIGHT - 2, scale);
     g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g.setColor(Color.BLACK);
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g.setColor(error ? Color.RED : Color.DARK_GRAY);
-    bds = CpuDrawSupport.getBounds(x + blockWidth / 2, y + CpuDrawSupport.TRACEHEIGHT / 2, 0, 0, scale);
+    bds = CpuDrawSupport.getBounds(x + blockWidth / 2, y + CpuDrawSupport.TRACE_HEIGHT / 2, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, String.format("0x%08X", value), bds.getX(), bds.getY());
     g.setColor(Color.BLACK);
   }

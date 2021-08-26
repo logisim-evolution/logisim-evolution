@@ -36,8 +36,8 @@ import java.util.LinkedList;
 public class LedArrayDriving {
 
   public static String GetContraintedDriveMode(char id) {
-    if ((id >= LedDefault) && (id <= RgbColumnScanning)) {
-      return Driving_strings[id];
+    if ((id >= LED_DEFAULT) && (id <= RgbColumnScanning)) {
+      return DRIVING_STRINGS[id];
     }
     return "Unknown";
   }
@@ -50,42 +50,42 @@ public class LedArrayDriving {
       if (iter.next().equals(identifier)) return result;
       result++;
     }
-    return Unknown;
+    return UNKNOWN;
   }
 
   public static LinkedList<String> getStrings() {
     var result = new LinkedList<String>();
-    result.add(Driving_strings[0]);
-    result.add(Driving_strings[1]);
-    result.add(Driving_strings[2]);
-    result.add(Driving_strings[3]);
-    result.add(Driving_strings[4]);
-    result.add(Driving_strings[5]);
+    result.add(DRIVING_STRINGS[0]);
+    result.add(DRIVING_STRINGS[1]);
+    result.add(DRIVING_STRINGS[2]);
+    result.add(DRIVING_STRINGS[3]);
+    result.add(DRIVING_STRINGS[4]);
+    result.add(DRIVING_STRINGS[5]);
     return result;
   }
 
   public static LinkedList<String> getDisplayStrings() {
     var result = new LinkedList<String>();
-    result.add(S.get(Driving_strings[0]));
-    result.add(S.get(Driving_strings[1]));
-    result.add(S.get(Driving_strings[2]));
-    result.add(S.get(Driving_strings[3]));
-    result.add(S.get(Driving_strings[4]));
-    result.add(S.get(Driving_strings[5]));
+    result.add(S.get(DRIVING_STRINGS[0]));
+    result.add(S.get(DRIVING_STRINGS[1]));
+    result.add(S.get(DRIVING_STRINGS[2]));
+    result.add(S.get(DRIVING_STRINGS[3]));
+    result.add(S.get(DRIVING_STRINGS[4]));
+    result.add(S.get(DRIVING_STRINGS[5]));
     return result;
   }
 
-  public static final String LedArrayDriveString = "LedArrayDriveMode";
-  public static final char LedDefault = 0;
-  public static final char LedRowScanning = 1;
-  public static final char LedColumnScanning = 2;
+  public static final String LED_ARRAY_DRIVE_STRING = "LedArrayDriveMode";
+  public static final char LED_DEFAULT = 0;
+  public static final char LED_ROW_SCANNING = 1;
+  public static final char LED_COLUMN_SCANNING = 2;
   public static final char RgbDefault = 3;
   public static final char RgbRowScanning = 4;
   public static final char RgbColumnScanning = 5;
 
-  public static final char Unknown = 255;
+  public static final char UNKNOWN = 255;
 
-  public static final String[] Driving_strings = {
+  public static final String[] DRIVING_STRINGS = {
     "LedDefault", "LedRowScanning", "LedColumnScanning", "RgbDefault", "RgbRowScanning", "RgbColScanning"
   };
 }

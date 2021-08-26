@@ -51,7 +51,7 @@ public class FileWriter {
         return false;
       }
       // copy file
-      String destPath = dest + componentName + ArchitectureExtension + ".vhd";
+      String destPath = dest + componentName + ARCHITECTURE_EXTENSION + ".vhd";
       File outFile = new File(destPath);
       InputStream in = new FileInputStream(inFile);
       OutputStream out = new FileOutputStream(outFile);
@@ -98,11 +98,11 @@ public class FileWriter {
       FileName += ComponentName;
       if (IsEntity) {
         if (HDL.isVHDL()) {
-          FileName += EntityExtension;
+          FileName += ENTITY_EXTENSION;
         }
       } else {
         if (HDL.isVHDL()) {
-          FileName += ArchitectureExtension;
+          FileName += ARCHITECTURE_EXTENSION;
         }
       }
       if (HDL.isVHDL()) {
@@ -154,17 +154,17 @@ public class FileWriter {
     final int headWidth;
     final String headOpen;
     final String headClose;
-    
+
     final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
     final var headUrl  = " " + Main.APP_URL;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
-    
+
     if (HDL.isVHDL()) {
       headWidth = 74;
       headOpen = "--==";
       headClose = "==";
-      
+
       Lines.add(headOpen + "=".repeat(headWidth) + headClose);
       Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
       Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
@@ -179,7 +179,7 @@ public class FileWriter {
       headWidth = 74;
       headOpen = " **";
       headClose = "**";
-      
+
       Lines.add("/**" + "*".repeat(headWidth) + headClose);
       Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
       Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
@@ -220,10 +220,10 @@ public class FileWriter {
     }
   }
 
-  public static final String RemarkLine =
+  public static final String REMARK_LINE =
       "--------------------------------------------------------------------------------";
 
-  public static final String EntityExtension = "_entity";
+  public static final String ENTITY_EXTENSION = "_entity";
 
-  public static final String ArchitectureExtension = "_behavior";
+  public static final String ARCHITECTURE_EXTENSION = "_behavior";
 }
