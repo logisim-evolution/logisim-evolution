@@ -37,6 +37,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,9 +106,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return FileWriter.WriteContents(OutFile, Contents);
   }
 
-  public static final int MaxLineLength = 80;
+  public static final int MaxLineLength = 80; // FIXME: SCREAM_CASE
 
   /* Here the common predefined methods are defined */
+  @Override
   public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
@@ -115,66 +117,60 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return true;
   }
 
-  public ArrayList<String> GetArchitecture(
-      Netlist TheNetlist,
-      AttributeSet attrs,
-      String ComponentName) {
-    var Contents = new ArrayList<String>();
-    final var InputsList = GetInputList(TheNetlist, attrs);
-    final var InOutsList = GetInOutList(TheNetlist, attrs);
-    final var OutputsList = GetOutputList(TheNetlist, attrs);
-    final var ParameterList = GetParameterList(attrs);
-    final var WireList = GetWireList(attrs, TheNetlist);
-    final var RegList = GetRegList(attrs);
-    final var MemList = GetMemList(attrs);
-    var OneLine = new StringBuilder();
-    Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
+  @Override
+  public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+    final var Contents = new LineBuffer();
+    final var inputs = GetInputList(theNetlist, attrs);
+    final var inOuts = GetInOutList(theNetlist, attrs);
+    final var outputs = GetOutputList(theNetlist, attrs);
+    final var params = GetParameterList(attrs);
+    final var wires = GetWireList(attrs, theNetlist);
+    final var regs = GetRegList(attrs);
+    final var mems = GetMemList(attrs);
+    final var OneLine = new StringBuilder();
+    Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
-        Contents.addAll(libs);
-        Contents.add("");
+        Contents.add(libs);
+        Contents.empty();
       }
-      Contents.add("ARCHITECTURE PlatformIndependent OF " + ComponentName + " IS ");
+      Contents.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
       Contents.add("");
-      var NrOfTypes = GetNrOfTypes(TheNetlist, attrs);
-      if (NrOfTypes > 0) {
-        Contents.addAll(MakeRemarkBlock("Here all private types are defined", 3));
-        for (var ThisType : GetTypeDefinitions(TheNetlist, attrs)) {
-          Contents.add("   " + ThisType + ";");
+      final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
+      if (nrOfTypes > 0) {
+        Contents.addRemarkBlock("Here all private types are defined");
+        for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
+          Contents.add("   %s;", thisType);
         }
-        Contents.add("");
+        Contents.empty();
       }
-      var Comps = GetComponentDeclarationSection(TheNetlist, attrs);
-      if (!Comps.isEmpty()) {
-        Contents.addAll(MakeRemarkBlock("Here all used components are defined", 3));
-        Contents.addAll(Comps);
-        Contents.add("");
+      final var components = GetComponentDeclarationSection(theNetlist, attrs);
+      if (!components.isEmpty()) {
+        Contents.addRemarkBlock("Here all used components are defined").add(components).add("");
       }
-      Contents.addAll(MakeRemarkBlock("Here all used signals are defined", 3));
-      for (var Wire : WireList.keySet()) {
-        OneLine.append(Wire);
-        while (OneLine.length() < SallignmentSize) {
-          OneLine.append(" ");
-        }
+
+      Contents.addRemarkBlock("Here all used signals are defined");
+      for (final var wire : wires.keySet()) {
+        OneLine.append(wire);
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
         OneLine.append(": std_logic");
-        if (WireList.get(Wire) == 1) {
+        if (wires.get(wire) == 1) {
           OneLine.append(";");
         } else {
           OneLine.append("_vector( ");
-          if (WireList.get(Wire) < 0) {
-            if (!ParameterList.containsKey(WireList.get(Wire))) {
-              Reporter.Report.AddFatalError(
-                  "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+          if (wires.get(wire) < 0) {
+            if (!params.containsKey(wires.get(wire))) {
+              Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               Contents.clear();
-              return Contents;
+              return Contents.get();
             }
-            OneLine.append("(").append(ParameterList.get(WireList.get(Wire))).append("-1)");
+            OneLine.append("(").append(params.get(wires.get(wire))).append("-1)");
           } else {
-            if (WireList.get(Wire) == 0) {
+            if (wires.get(wire) == 0) {
               OneLine.append("0");
             } else {
-              OneLine.append((WireList.get(Wire) - 1));
+              OneLine.append((wires.get(wire) - 1));
             }
           }
           OneLine.append(" DOWNTO 0 );");
@@ -182,29 +178,27 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
-      for (var Reg : RegList.keySet()) {
-        OneLine.append(Reg);
-        while (OneLine.length() < SallignmentSize) {
-          OneLine.append(" ");
-        }
+
+      for (final var reg : regs.keySet()) {
+        OneLine.append(reg);
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
         OneLine.append(": std_logic");
-        if (RegList.get(Reg) == 1) {
+        if (regs.get(reg) == 1) {
           OneLine.append(";");
         } else {
           OneLine.append("_vector( ");
-          if (RegList.get(Reg) < 0) {
-            if (!ParameterList.containsKey(RegList.get(Reg))) {
-              Reporter.Report.AddFatalError(
-                  "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+          if (regs.get(reg) < 0) {
+            if (!params.containsKey(regs.get(reg))) {
+              Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               Contents.clear();
-              return Contents;
+              return Contents.get();
             }
-            OneLine.append("(").append(ParameterList.get(RegList.get(Reg))).append("-1)");
+            OneLine.append("(").append(params.get(regs.get(reg))).append("-1)");
           } else {
-            if (RegList.get(Reg) == 0) {
+            if (regs.get(reg) == 0) {
               OneLine.append("0");
             } else {
-              OneLine.append((RegList.get(Reg) - 1));
+              OneLine.append((regs.get(reg) - 1));
             }
           }
           OneLine.append(" DOWNTO 0 );");
@@ -212,32 +206,29 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
-      for (var Mem : MemList.keySet()) {
+
+      for (final var Mem : mems.keySet()) {
         OneLine.append(Mem);
-        while (OneLine.length() < SallignmentSize) {
-          OneLine.append(" ");
-        }
+        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
         OneLine.append(": ");
-        OneLine.append(GetType(MemList.get(Mem)));
+        OneLine.append(GetType(mems.get(Mem)));
         OneLine.append(";");
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
       Contents.add("");
       Contents.add("BEGIN");
-      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs));
+      Contents.add(GetModuleFunctionality(theNetlist, attrs));
       Contents.add("END PlatformIndependent;");
     } else {
-      final var Preamble = "module " + ComponentName + "( ";
-      var Indenting = new StringBuilder();
-      while (Indenting.length() < Preamble.length()) {
-        Indenting.append(" ");
-      }
-      if (InputsList.isEmpty() && OutputsList.isEmpty() && InOutsList.isEmpty()) {
+      final var Preamble = String.format("module %s( ", componentName);
+      final var Indenting = new StringBuilder();
+      while (Indenting.length() < Preamble.length()) Indenting.append(" ");
+      if (inputs.isEmpty() && outputs.isEmpty() && inOuts.isEmpty()) {
         Contents.add(Preamble + " );");
       } else {
-        var ThisLine = new StringBuilder();
-        for (var inp : InputsList.keySet()) {
+        final var ThisLine = new StringBuilder();
+        for (final var inp : inputs.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(inp);
           } else {
@@ -246,7 +237,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(inp);
           }
         }
-        for (var outp : OutputsList.keySet()) {
+        for (final var outp : outputs.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(outp);
           } else {
@@ -255,7 +246,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(outp);
           }
         }
-        for (var io : InOutsList.keySet()) {
+        for (final var io : inOuts.keySet()) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(io);
           } else {
@@ -270,29 +261,27 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
         }
       }
-      if (!ParameterList.isEmpty()) {
-        Contents.add("");
-        Contents.addAll(MakeRemarkBlock("Here all module parameters are defined with a dummy value", 3));
-        for (var param : ParameterList.keySet()) {
-          Contents.add("   parameter " + ParameterList.get(param) + " = 1;");
+      if (!params.isEmpty()) {
+        Contents.empty();
+        Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
+        for (final var param : params.keySet()) {
+          Contents.add("   parameter %s = 1;", params.get(param));
         }
-        Contents.add("");
+        Contents.empty();
       }
       var firstline = true;
       var nr_of_bits = 0;
-      for (var inp : InputsList.keySet()) {
+      for (final var inp : inputs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   input");
-        nr_of_bits = InputsList.get(inp);
+        nr_of_bits = inputs.get(inp);
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.Report.AddFatalError(
-                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            Contents.clear();
-            return Contents;
+          if (!params.containsKey(nr_of_bits)) {
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            return Contents.clear().get();
           }
-          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
             OneLine.append("[").append(nr_of_bits - 1).append(":0]");
@@ -306,24 +295,23 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (firstline) {
           firstline = false;
           Contents.add("");
-          Contents.addAll(MakeRemarkBlock("Here the inputs are defined", 3));
+          Contents.addRemarkBlock("Here the inputs are defined");
         }
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (var outp : OutputsList.keySet()) {
+      for (final var outp : outputs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   output");
-        nr_of_bits = OutputsList.get(outp);
+        nr_of_bits = outputs.get(outp);
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.Report.AddFatalError(
-                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+          if (!params.containsKey(nr_of_bits)) {
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             Contents.clear();
-            return Contents;
+            return Contents.get();
           }
-          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
             OneLine.append("[").append(nr_of_bits - 1).append(":0]");
@@ -336,25 +324,23 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(" ").append(outp).append(";");
         if (firstline) {
           firstline = false;
-          Contents.add("");
-          Contents.addAll(MakeRemarkBlock("Here the outputs are defined", 3));
+          Contents.empty().addRemarkBlock("Here the outputs are defined");
         }
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (var io : InOutsList.keySet()) {
+      for (final var io : inOuts.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   inout");
-        nr_of_bits = InOutsList.get(io);
+        nr_of_bits = inOuts.get(io);
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!ParameterList.containsKey(nr_of_bits)) {
+          if (!params.containsKey(nr_of_bits)) {
             Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            Contents.clear();
-            return Contents;
+            return Contents.clear().get();
           }
-          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
             OneLine.append("[").append(nr_of_bits - 1).append(":0]");
@@ -367,81 +353,71 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(" ").append(io).append(";");
         if (firstline) {
           firstline = false;
-          Contents.add("");
-          Contents.addAll(MakeRemarkBlock("Here the ios are defined", 3));
+          Contents.empty().addRemarkBlock("Here the ios are defined");
         }
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (var wire : WireList.keySet()) {
+      for (final var wire : wires.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   wire");
-        nr_of_bits = WireList.get(wire);
+        nr_of_bits = wires.get(wire);
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.Report.AddFatalError(
-                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            Contents.clear();
-            return Contents;
+          if (!params.containsKey(nr_of_bits)) {
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            return Contents.clear().get();
           }
-          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
             OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nr_of_bits == 0) {
-              OneLine.append("[0:0]");
-            }
+            if (nr_of_bits == 0) OneLine.append("[0:0]");
           }
         }
         OneLine.append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
-          Contents.add("");
-          Contents.addAll(MakeRemarkBlock("Here the internal wires are defined", 3));
+          Contents.empty();
+          Contents.addRemarkBlock("Here the internal wires are defined");
         }
         Contents.add(OneLine.toString());
       }
-      for (var reg : RegList.keySet()) {
+      for (final var reg : regs.keySet()) {
         OneLine.setLength(0);
         OneLine.append("   reg");
-        nr_of_bits = RegList.get(reg);
+        nr_of_bits = regs.get(reg);
         if (nr_of_bits < 0) {
           /* we have a parameterized array */
-          if (!ParameterList.containsKey(nr_of_bits)) {
-            Reporter.Report.AddFatalError(
-                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            Contents.clear();
-            return Contents;
+          if (!params.containsKey(nr_of_bits)) {
+            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            return Contents.clear().get();
           }
-          OneLine.append("[").append(ParameterList.get(nr_of_bits)).append("-1:0]");
+          OneLine.append("[").append(params.get(nr_of_bits)).append("-1:0]");
         } else {
           if (nr_of_bits > 1) {
             OneLine.append("[").append(nr_of_bits - 1).append(":0]");
           } else {
-            if (nr_of_bits == 0) {
-              OneLine.append("[0:0]");
-            }
+            if (nr_of_bits == 0) OneLine.append("[0:0]");
           }
         }
         OneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
-          Contents.add("");
-          Contents.addAll(MakeRemarkBlock("Here the internal registers are defined", 3));
+          Contents
+              .empty()
+              .addRemarkBlock("Here the internal registers are defined");
         }
         Contents.add(OneLine.toString());
       }
       /* TODO: Add memlist */
       if (!firstline) {
-        Contents.add("");
+        Contents.empty();
       }
-      Contents.addAll(GetModuleFunctionality(TheNetlist, attrs));
-      Contents.add("");
-      Contents.add("endmodule");
+      Contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
     }
-    return Contents;
+    return Contents.get();
   }
 
   public String GetBusEntryName(
@@ -552,12 +528,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new ArrayList<>();
   }
 
+  @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
     var Contents = new ArrayList<String>();
     if (HDL.isVHDL()) Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
     return Contents;
   }
 
+  @Override
   public ArrayList<String> GetComponentMap(
       Netlist Nets,
       Long ComponentId,
@@ -701,6 +679,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents;
   }
 
+  @Override
   public String getComponentStringIdentifier() {
     return "AComponent";
   }
@@ -728,6 +707,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new ArrayList<>();
   }
 
+  @Override
   public ArrayList<String> GetInlinedCode(
       Netlist Nets,
       Long ComponentId,
@@ -1015,6 +995,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
+  @Override
   public String GetRelativeDirectory() {
     var Subdir = GetSubDir();
     if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
@@ -1044,7 +1025,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeSet<>();
   }
 
-  private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs, 
+  private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs,
       String ComponentName, Boolean IsEntity) {
     var Contents = new ArrayList<String>();
     final var InputsList = GetInputList(TheNetlist, attrs);
@@ -1218,19 +1199,24 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
+  @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return false;
   }
 
+  @Override
   public boolean IsOnlyInlined() {
     return false;
   }
 
+  @Override
   public boolean IsOnlyInlined(IOComponentTypes map) {
     return true;
   }
 
-  /* Here all global helper methods are defined */
+  /**
+   * @deprecated Use LineBuffer's addRemarkBlock() instead.
+   */
   protected ArrayList<String> MakeRemarkBlock(String RemarkText, Integer NrOfIndentSpaces) {
     final var maxRemarkLength = MaxLineLength - 2 * HDL.remarkOverhead() - NrOfIndentSpaces;
     var remarkWords = RemarkText.split(" ");

@@ -41,6 +41,7 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -53,18 +54,18 @@ import java.util.ArrayList;
 public class XilinxDownload implements VendorDownload {
 
   private final VendorSoftware xilinxVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+      VendorSoftware.getSoftware(VendorSoftware.VENDOR_XILINX);
   private final String ScriptPath;
   private final String ProjectPath;
   private final String SandboxPath;
   private final String UcfPath;
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private final BoardInformation BoardInfo;
+  private final BoardInformation boardInfo;
   private final ArrayList<String> Entities;
-  private final ArrayList<String> Architectures;
+  private final ArrayList<String> architectures;
   private final String HDLType;
-  private final String BitfileExt;
+  private final String bitfileExt;
   private final boolean IsCPLD;
   private final boolean writeToFlash;
 
@@ -85,13 +86,13 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
-    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCFPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
     this.RootNetList = RootNetList;
-    this.BoardInfo = BoardInfo;
+    this.boardInfo = BoardInfo;
     this.Entities = Entities;
-    this.Architectures = Architectures;
+    this.architectures = Architectures;
     this.HDLType = HDLType;
     this.writeToFlash = WriteToFlash;
     IsCPLD =
@@ -100,7 +101,7 @@ public class XilinxDownload implements VendorDownload {
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XCR3")
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XC9500")
             || BoardInfo.fpga.getPart().toUpperCase().startsWith("XA9500");
-    BitfileExt = (IsCPLD) ? "jed" : "bit";
+    bitfileExt = (IsCPLD) ? "jed" : "bit";
   }
 
   @Override
@@ -146,12 +147,12 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + BitfileExt).exists();
+    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt).exists();
   }
 
   @Override
   public ProcessBuilder DownloadToBoard() {
-    if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
+    if (!boardInfo.fpga.USBTMCDownloadRequired()) {
       var command = new ArrayList<String>();
       command.add(xilinxVendor.getBinaryPath(5));
       command.add("-batch");
@@ -167,7 +168,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
-      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + BitfileExt);
+      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt);
       var bitfile_buffer = new byte[BUFFER_SIZE];
       var bitfile_buffer_size = 0;
       BufferedInputStream bitfile_in;
@@ -198,7 +199,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean CreateDownloadScripts() {
-    final var JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
+    final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
     var ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file);
     var VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file);
     var UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file);
@@ -213,93 +214,74 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    var Contents = new ArrayList<String>();
-    for (var entity : Entities) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
-    }
-    for (var architecture : Architectures) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
-    }
-    if (!FileWriter.WriteContents(VhdlListFile, Contents)) return false;
-    Contents.clear();
-    Contents.add(
-        "run -top "
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
-            + " -ofn logisim.ngc -ofmt NGC -ifn "
-            + ScriptPath.replace(ProjectPath, "../")
-            + vhdl_list_file
-            + " -ifmt mixed -p "
-            + GetFPGADeviceString(BoardInfo));
-    if (!FileWriter.WriteContents(ScriptFile, Contents)) return false;
-    Contents.clear();
-    Contents.add("setmode -bscan");
-    if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
-      if (BoardInfo.fpga.getFlashName() == null) {
-        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", BoardInfo.getBoardName()));
+    var contents = new LineBuffer();
+    for (var entity : Entities) contents.add("%s work \"%s\"", HDLType.toUpperCase(), entity);
+    for (var arch : architectures) contents.add("%s work \"%s\"", HDLType.toUpperCase(), arch);
+    if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;
+
+    contents.clear();
+    contents.add(
+        "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
+        ToplevelHDLGeneratorFactory.FPGAToplevelName,
+        ScriptPath.replace(ProjectPath, "../"),
+        vhdl_list_file,
+        GetFPGADeviceString(boardInfo));
+
+    if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
+
+    contents.clear();
+    contents.add("setmode -bscan");
+    if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
+      if (boardInfo.fpga.getFlashName() == null) {
+        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
-      final var FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
-      var McsFile = ScriptPath + File.separator + mcs_file;
-      Contents.add("setmode -pff");
-      Contents.add("setSubMode -pffserial");
-      Contents.add("addPromDevice -p " + JTAGPos + " -size 0 -name " + BoardInfo.fpga.getFlashName());
-      Contents.add("addDesign -version 0 -name \"0\"");
-      Contents.add("addDeviceChain -index 0");
-      Contents.add("addDevice -p "
-          + JTAGPos
-          + " -file "
-          + ToplevelHDLGeneratorFactory.FPGAToplevelName
-          + "."
-          + BitfileExt);
-      Contents.add("generate -format mcs -fillvalue FF -output " + McsFile);
-      Contents.add("setMode -bs");
-      Contents.add("setCable -port auto");
-      Contents.add("identify");
-      Contents.add("assignFile -p " + FlashPos + " -file " + McsFile);
-      Contents.add("program -p " + FlashPos + " -e -v");
+      final var flashPos = String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition());
+      final var mcsFile = ScriptPath + File.separator + mcs_file;
+      contents
+          .add("setmode -pff")
+          .add("setSubMode -pffserial")
+          .add("addPromDevice -p %s -size 0 -name %s", JTAGPos, boardInfo.fpga.getFlashName())
+          .add("addDesign -version 0 -name \"0\"")
+          .add("addDeviceChain -index 0")
+          .add("addDevice -p %s -file %s.%s", ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+          .add("generate -format mcs -fillvalue FF -output " + mcsFile)
+          .add("setMode -bs")
+          .add("setCable -port auto")
+          .add("identify")
+          .add("assignFile -p %s -file %s", flashPos, mcsFile)
+          .add("program -p %s -e -v", flashPos);
     } else {
-      Contents.add("setcable -p auto");
-      Contents.add("identify");
+      contents.add("setcable -p auto").add("identify");
       if (!IsCPLD) {
-        Contents.add("assignFile -p "
-            + JTAGPos
-            + " -file "
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
-            + "."
-            + BitfileExt);
-        Contents.add("program -p " + JTAGPos + " -onlyFpga");
+        contents
+            .add("assignFile -p %s -file %s.%s", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+            .add("program -p %s -onlyFpga", JTAGPos);
       } else {
-        Contents.add("assignFile -p " + JTAGPos + " -file logisim." + BitfileExt);
-        Contents.add("program -p " + JTAGPos + " -e");
+        contents
+            .add("assignFile -p %s -file logisim.%s", JTAGPos, bitfileExt)
+            .add("program -p %s -e", JTAGPos);
       }
     }
-    Contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, Contents)) return false;
-    Contents.clear();
+    contents.add("quit");
+    if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
+
+    contents.clear();
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      Contents.add("NET \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" "
-          + GetXilinxClockPin(BoardInfo)
-          + " ;");
-      Contents.add("NET \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" TNM_NET = \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" ;");
-      Contents.add("TIMESPEC \"TS_"
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" = PERIOD \""
-          + TickComponentHDLGeneratorFactory.FPGAClock
-          + "\" "
-          + Download.GetClockFrequencyString(BoardInfo)
-          + " HIGH 50 % ;");
-      Contents.add("");
+      contents
+          .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+          .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
+          .addPair("clockPin", GetXilinxClockPin(boardInfo));
+      contents.add(
+          "NET \"{{clock}}\" {{clockPin}} ;",
+          "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
+          "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
+          "");
     }
-    Contents.addAll(GetPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, Contents);
+    contents.add(getPinLocStrings());
+    return FileWriter.WriteContents(UcfFile, contents.get());
   }
 
-  private ArrayList<String> GetPinLocStrings() {
+  private ArrayList<String> getPinLocStrings() {
     var Contents = new ArrayList<String>();
     var Temp = new StringBuilder();
     for (var key : MapInfo.getMappableResources().keySet()) {
@@ -313,19 +295,19 @@ public class XilinxDownload implements VendorDownload {
           Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetPullBehavior() != PullBehaviors.Unknown
-                && info.GetPullBehavior() != PullBehaviors.Float) {
+            if (info.GetPullBehavior() != PullBehaviors.UNKNOWN
+                && info.GetPullBehavior() != PullBehaviors.FLOAT) {
               Temp.append("| ")
                   .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
                   .append(" ");
             }
-            if (info.GetDrive() != DriveStrength.Unknown
-                && info.GetDrive() != DriveStrength.DefaulStength) {
+            if (info.GetDrive() != DriveStrength.UNKNOWN
+                && info.GetDrive() != DriveStrength.DEFAULT_STENGTH) {
               Temp.append("| DRIVE = ")
                   .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
-            if (info.GetIOStandard() != IoStandards.Unknown
-                && info.GetIOStandard() != IoStandards.DefaulStandard) {
+            if (info.GetIOStandard() != IoStandards.UNKNOWN
+                && info.GetIOStandard() != IoStandards.DEFAULT_STANDARD) {
               Temp.append("| IOSTANDARD = ")
                   .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
                   .append(" ");
@@ -336,7 +318,7 @@ public class XilinxDownload implements VendorDownload {
         }
       }
     }
-    final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
+    final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, boardInfo);
     for (var key : LedArrayMap.keySet()) {
       Contents.add("NET \"" + LedArrayMap.get(key) + "\" LOC=\"" + key + "\";");
     }
@@ -403,18 +385,18 @@ public class XilinxDownload implements VendorDownload {
     } else {
       command.add(xilinxVendor.getBinaryPath(6));
       command.add("-p");
-      command.add(BoardInfo.fpga.getPart().toUpperCase()
+      command.add(boardInfo.fpga.getPart().toUpperCase()
           + "-"
-          + BoardInfo.fpga.getSpeedGrade()
+          + boardInfo.fpga.getSpeedGrade()
           + "-"
-          + BoardInfo.fpga.getPackage().toUpperCase());
+          + boardInfo.fpga.getPackage().toUpperCase());
       command.add("-intstyle");
       command.add("ise");
       /* TODO: do correct termination type */
       command.add("-terminate");
-      if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) {
         command.add("pullup");
-      } else if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+      } else if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) {
         command.add("pulldown");
       } else {
         command.add("float");
@@ -435,11 +417,11 @@ public class XilinxDownload implements VendorDownload {
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4));
       command.add("-w");
-      if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) {
         command.add("-g");
         command.add("UnusedPin:PULLUP");
       }
-      if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+      if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) {
         command.add("-g");
         command.add("UnusedPin:PULLDOWN");
       }
@@ -469,14 +451,14 @@ public class XilinxDownload implements VendorDownload {
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
     var result = new StringBuilder();
     result.append("LOC = \"").append(CurrentBoard.fpga.getClockPinLocation()).append("\"");
-    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
+    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PULL_UP) {
       result.append(" | PULLUP");
     }
-    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullDown) {
+    if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PULL_DOWN) {
       result.append(" | PULLDOWN");
     }
-    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DefaulStandard
-        && CurrentBoard.fpga.getClockStandard() != IoStandards.Unknown) {
+    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
+        && CurrentBoard.fpga.getClockStandard() != IoStandards.UNKNOWN) {
       result.append(" | IOSTANDARD = ")
           .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
     }

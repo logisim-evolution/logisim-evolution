@@ -237,7 +237,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         setPreferredSize(
             new Dimension(
                 AppPreferences.getScaled(20 * message.length()),
-                AppPreferences.getScaled(AppPreferences.BoxSize)));
+                AppPreferences.getScaled(AppPreferences.BOX_SIZE)));
       } else {
         final var ctx = g.getFontRenderContext();
         final var msgLayout = new TextLayout(message, headerFont, ctx);

@@ -392,12 +392,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     @Override
     public int getIconHeight() {
-      return AppPreferences.getScaled(AppPreferences.BoxSize);
+      return AppPreferences.getScaled(AppPreferences.BOX_SIZE);
     }
 
     @Override
     public int getIconWidth() {
-      return AppPreferences.getScaled(AppPreferences.BoxSize);
+      return AppPreferences.getScaled(AppPreferences.BOX_SIZE);
     }
 
     @Override
@@ -416,8 +416,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         g.clipRect(
             x,
             y,
-            AppPreferences.getScaled(AppPreferences.BoxSize),
-            AppPreferences.getScaled(AppPreferences.BoxSize));
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE));
         g.setColor(Canvas.HALO_COLOR);
         g.setColor(Color.BLACK);
         g.setClip(s);
@@ -429,38 +429,38 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(
           context,
-          x + AppPreferences.getScaled(AppPreferences.IconBorder),
-          y + AppPreferences.getScaled(AppPreferences.IconBorder));
+          x + AppPreferences.getScaled(AppPreferences.ICON_BORDER),
+          y + AppPreferences.getScaled(AppPreferences.ICON_BORDER));
       gfxIcon.dispose();
 
       // draw magnifying glass if appropriate
       if (viewed) {
-        int tx = x + AppPreferences.getScaled(AppPreferences.BoxSize - 7);
-        int ty = y + AppPreferences.getScaled(AppPreferences.BoxSize - 7);
+        int tx = x + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 7);
+        int ty = y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 7);
         int[] xp = {
           tx - 1,
-          x + AppPreferences.getScaled(AppPreferences.BoxSize - 2),
-          x + AppPreferences.getScaled(AppPreferences.BoxSize),
+          x + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
+          x + AppPreferences.getScaled(AppPreferences.BOX_SIZE),
           tx + 1
         };
         int[] yp = {
           ty + 1,
-          y + AppPreferences.getScaled(AppPreferences.BoxSize),
-          y + AppPreferences.getScaled(AppPreferences.BoxSize - 2),
+          y + AppPreferences.getScaled(AppPreferences.BOX_SIZE),
+          y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
           ty - 1
         };
         g.setColor(MAGNIFYING_INTERIOR);
         g.fillOval(
-            x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
+            x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
         g.setColor(new Color(139, 69, 19));
         g.drawOval(
-            x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
+            x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
         g.fillPolygon(xp, yp, xp.length);
       }
     }

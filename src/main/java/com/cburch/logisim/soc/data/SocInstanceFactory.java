@@ -36,13 +36,13 @@ import com.cburch.logisim.util.StringGetter;
 
 public abstract class SocInstanceFactory extends InstanceFactory {
 
-  public static final int SocUnknown = 0;
-  public static final int SocMaster = 1;
-  public static final int SocSlave = 2;
-  public static final int SocBus = 4;
-  public static final int SocSniffer = 8;
+  public static final int SOC_UNKNOWN = 0;
+  public static final int SOC_MASTER = 1;
+  public static final int SOC_SLAVE = 2;
+  public static final int SOC_BUS = 4;
+  public static final int SOC_SNIFFER = 8;
 
-  private int myType = SocUnknown;
+  private int myType = SOC_UNKNOWN;
 
   public SocInstanceFactory(String name, StringGetter displayName, int type) {
     super(name, displayName);
@@ -69,23 +69,23 @@ public abstract class SocInstanceFactory extends InstanceFactory {
   }
 
   public boolean isSocSlave() {
-    return (myType & SocSlave) != 0;
+    return (myType & SOC_SLAVE) != 0;
   }
 
   public boolean isSocSniffer() {
-    return (myType & SocSniffer) != 0;
+    return (myType & SOC_SNIFFER) != 0;
   }
 
   public boolean isSocBus() {
-    return (myType & SocBus) != 0;
+    return (myType & SOC_BUS) != 0;
   }
 
   public boolean isSocMaster() {
-    return (myType & SocMaster) != 0;
+    return (myType & SOC_MASTER) != 0;
   }
 
   public boolean isSocUnknown() {
-    return myType == SocUnknown;
+    return myType == SOC_UNKNOWN;
   }
 
   public abstract SocBusSlaveInterface getSlaveInterface(AttributeSet attrs);

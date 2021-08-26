@@ -96,7 +96,7 @@ public class FPGACommander
   private final JProgressBar Progress = new JProgressBar();
   private final FPGAReportTabbedPane ReporterGui;
   private Download Downloader;
-  public static final String StopRequested = "stop";
+  public static final String STOP_REQUESTED = "stop";
   private final JPanel BoardSelectionPanel = new JPanel();
   private final FPGAClockPanel FrequencyPanel;
   private final Project MyProject;
@@ -205,7 +205,7 @@ public class FPGACommander
     Progress.setStringPainted(true);
     pan.add(Progress, BorderLayout.CENTER);
     StopButton.setEnabled(false);
-    StopButton.setActionCommand(StopRequested);
+    StopButton.setActionCommand(STOP_REQUESTED);
     StopButton.addActionListener(this);
     ProjectAddIcon bi = new ProjectAddIcon(true);
     bi.setDeselect(true);
@@ -368,7 +368,7 @@ public class FPGACommander
     } else if (e.getActionCommand().equals("ToolPath")) {
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();
-    } else if (e.getActionCommand().equals(StopRequested)) {
+    } else if (e.getActionCommand().equals(STOP_REQUESTED)) {
       if (Downloader != null) Downloader.stop();
       ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
       StopButton.setEnabled(false);
@@ -450,7 +450,7 @@ public class FPGACommander
     if (test.exists()) {
       fc.setSelectedFile(test);
     }
-    fc.setDialogTitle(VendorSoftware.Vendors[vendor] + " " + S.get("FpgaGuiSoftwareSelect"));
+    fc.setDialogTitle(VendorSoftware.VENDORS[vendor] + " " + S.get("FpgaGuiSoftwareSelect"));
     int retval;
     boolean ok = false;
     do {

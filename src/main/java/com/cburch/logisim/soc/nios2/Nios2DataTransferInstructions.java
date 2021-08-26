@@ -86,6 +86,7 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     }
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
@@ -98,19 +99,19 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_STBIO:
       case INSTR_STB:
         toBeStored &= 0xFF;
-        transType = SocBusTransaction.ByteAccess;
+        transType = SocBusTransaction.BYTE_ACCESS;
         // fall through
       case INSTR_STHIO:
       case INSTR_STH:
         toBeStored &= 0xFFFF;
-        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_STWIO:
       case INSTR_STW:
         if (transType < 0) transType = SocBusTransaction.WordAccess;
         SocBusTransaction trans =
             new SocBusTransaction(
-                SocBusTransaction.WRITETransaction,
+                SocBusTransaction.WRITE_TRANSACTION,
                 SocSupport.convUnsignedLong(address),
                 toBeStored,
                 transType,
@@ -121,13 +122,13 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       case INSTR_LDBIO:
       case INSTR_LDBU:
       case INSTR_LDBUIO:
-        transType = SocBusTransaction.ByteAccess;
+        transType = SocBusTransaction.BYTE_ACCESS;
         // fall through
       case INSTR_LDH:
       case INSTR_LDHIO:
       case INSTR_LDHU:
       case INSTR_LDHUIO:
-        if (transType < 0) transType = SocBusTransaction.HalfWordAccess;
+        if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_LDW:
       case INSTR_LDWIO:
@@ -181,6 +182,7 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     return trans.hasError();
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
@@ -191,10 +193,12 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
     if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
@@ -247,6 +251,7 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     return true;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     valid = false;
     int opc = Nios2Support.getOpcode(instr);
@@ -261,22 +266,27 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
 
+  @Override
   public String getErrorMessage() {
     return errorMessage;
   }
 
+  @Override
   public ArrayList<String> getInstructions() {
     return Opcodes;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (Opcodes.contains(instruction.toLowerCase())) return 4;
     return -1;

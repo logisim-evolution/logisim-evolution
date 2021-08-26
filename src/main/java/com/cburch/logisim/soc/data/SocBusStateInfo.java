@@ -68,9 +68,10 @@ public class SocBusStateInfo extends JDialog
     implements ActionListener, LocaleListener, BaseWindowListenerContract {
 
   private static final long serialVersionUID = 1L;
-  public static final int TraceWidth = 630;
-  public static final int TraceHeight = 30;
-  public static final int BlockWidth = 238;
+
+  public static final int TRACE_WIDTH = 630;
+  public static final int TRACE_HEIGHT = 30;
+  public static final int BLOCK_WIDTH = 238;
 
   public interface SocBusStateListener {
     void fireCanged(SocBusState item);
@@ -158,13 +159,13 @@ public class SocBusStateInfo extends JDialog
         GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), b.getCenterX(), b.getCenterY());
         return;
       }
-      long nrOfTraces = b.getHeight() / TraceHeight;
+      long nrOfTraces = b.getHeight() / TRACE_HEIGHT;
       if (nrOfTraces > trace.size())
         nrOfTraces = trace.size();
       int startIndex = trace.size() - 1;
       for (int i = 0; i < nrOfTraces; i++) {
         SocBusTransaction t = trace.get(startIndex - i);
-        t.paint(b.getX() + 1, b.getY() + 1 + i * TraceHeight, g, startTraceIndex + startIndex - i);
+        t.paint(b.getX() + 1, b.getY() + 1 + i * TRACE_HEIGHT, g, startTraceIndex + startIndex - i);
       }
     }
 
@@ -287,10 +288,10 @@ public class SocBusStateInfo extends JDialog
     int nrOfReponders = 0;
     int reponder = -1;
     ArrayList<SocBusSlaveInterface> slaves = memMap.getSlaves();
-    if (slaves.isEmpty()) trans.setError(SocBusTransaction.NoSlavesError);
+    if (slaves.isEmpty()) trans.setError(SocBusTransaction.NO_SLAVES_ERROR);
     else if (trans.isReadTransaction()
         && trans.isWriteTransaction()
-        && !trans.isAtomicTransaction()) trans.setError(SocBusTransaction.NoneAtomicReadWriteError);
+        && !trans.isAtomicTransaction()) trans.setError(SocBusTransaction.NONE_ATOMIC_READ_WRITE_ERROR);
     else {
       for (int i = 0; i < slaves.size(); i++) {
         if (slaves.get(i).canHandleTransaction(trans)) {
@@ -299,9 +300,9 @@ public class SocBusStateInfo extends JDialog
         }
       }
       if (nrOfReponders == 0)
-        trans.setError(SocBusTransaction.NoResponsError);
+        trans.setError(SocBusTransaction.NO_RESPONS_ERROR);
       else if (nrOfReponders != 1)
-        trans.setError(SocBusTransaction.MultipleSlavesError);
+        trans.setError(SocBusTransaction.MULTIPLE_SLAVES_ERROR);
       else
         slaves.get(reponder).handleTransaction(trans);
     }
@@ -324,11 +325,11 @@ public class SocBusStateInfo extends JDialog
     Graphics2D g = (Graphics2D) g2.create();
     g.translate(x + 5, y + 25);
     int nrOfTraces = inst.getAttributeValue(SocBusAttributes.NrOfTracesAttr).getWidth();
-    int height = nrOfTraces * TraceHeight;
+    int height = nrOfTraces * TRACE_HEIGHT;
     g.setColor(Color.YELLOW);
-    g.fillRect(0, 0, TraceWidth, height);
+    g.fillRect(0, 0, TRACE_WIDTH, height);
     g.setColor(Color.BLACK);
-    g.drawRect(0, 0, TraceWidth, height);
+    g.drawRect(0, 0, TRACE_WIDTH, height);
     if (!visible)
       GraphicsUtil.drawCenteredText(g, S.get("SocHiddenForFasterSimulation"), 320, height / 2);
     else {

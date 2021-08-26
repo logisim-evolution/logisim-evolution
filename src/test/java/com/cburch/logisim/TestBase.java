@@ -26,38 +26,42 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.data;
+package com.cburch.logisim;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Random;
 
-public class PinActivity {
-  public static char getId(String identifier) {
-    char result = 0;
-    LinkedList<String> thelist = PinActivity.getStrings();
-    Iterator<String> iter = thelist.iterator();
-    result = 0;
-    while (iter.hasNext()) {
-      if (iter.next().equals(identifier)) return result;
-      result++;
+public class TestBase {
+
+  private static final int DEFAULT_RANDOM_STRING_LENGTH = 16;
+
+  /**
+   * Function to generate a random string of specified length.
+   *
+   * @param length Numbers of characters to be generated.
+   * @return Random string.
+   */
+  protected String getRandomString(int length) {
+    // chose a Character random from this String
+    final var AlphaNumericString =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
+
+    // create StringBuffer size of AlphaNumericString
+    final var sb = new StringBuilder(length);
+
+    for (var i = 0; i < length; i++) {
+      int index = (int) (AlphaNumericString.length() * Math.random());
+      sb.append(AlphaNumericString.charAt(index));
     }
-    return Unknown;
+    return sb.toString();
   }
 
-  public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<>();
-
-    result.add(BEHAVIOR_STRINGS[0]);
-    result.add(BEHAVIOR_STRINGS[1]);
-
-    return result;
+  protected String getRandomString() {
+    return getRandomString(DEFAULT_RANDOM_STRING_LENGTH);
   }
 
-  public static final String ACTIVITY_ATTRIBUTE_STRING = "ActivityLevel";
-  public static final char ACTIVE_LOW = 0;
-  public static final char ACTIVE_HIGH = 1;
+  protected static int getRandomInt(int min, int max) {
+    if (min >= max) throw new IllegalArgumentException("Max must be greater than Min.");
 
-  public static final char Unknown = 255;
-
-  public static final String[] BEHAVIOR_STRINGS = {"Active low", "Active high"};
+    return (new Random()).nextInt((max - min) + 1) + min;
+  }
 }

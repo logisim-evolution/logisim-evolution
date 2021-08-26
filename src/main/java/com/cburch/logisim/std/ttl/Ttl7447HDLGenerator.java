@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -80,43 +81,45 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   Sega  <= segments(0);");
-    contents.add("   Segb  <= segments(1);");
-    contents.add("   Segc  <= segments(2);");
-    contents.add("   Segd  <= segments(3);");
-    contents.add("   Sege  <= segments(4);");
-    contents.add("   Segf  <= segments(5);");
-    contents.add("   Segg  <= segments(6);");
-    contents.add("\n");
-    contents.add("   bcd   <= BCD3&BCD2&BCD1&BCD0;");
-    contents.add("\n");
-    contents.add("   Decode : PROCESS ( bcd , LT , BI , RBI ) IS");
-    contents.add("      BEGIN");
-    contents.add("         CASE bcd IS");
-    contents.add("            WHEN \"0000\" => segments <= \"0111111\";");
-    contents.add("            WHEN \"0001\" => segments <= \"0000110\";");
-    contents.add("            WHEN \"0010\" => segments <= \"1011011\";");
-    contents.add("            WHEN \"0011\" => segments <= \"1001111\";");
-    contents.add("            WHEN \"0100\" => segments <= \"1100110\";");
-    contents.add("            WHEN \"0101\" => segments <= \"1101101\";");
-    contents.add("            WHEN \"0110\" => segments <= \"1111101\";");
-    contents.add("            WHEN \"0111\" => segments <= \"0000111\";");
-    contents.add("            WHEN \"1000\" => segments <= \"1111111\";");
-    contents.add("            WHEN \"1001\" => segments <= \"1100111\";");
-    contents.add("            WHEN \"1010\" => segments <= \"1110111\";");
-    contents.add("            WHEN \"1011\" => segments <= \"1111100\";");
-    contents.add("            WHEN \"1100\" => segments <= \"0111001\";");
-    contents.add("            WHEN \"1101\" => segments <= \"1011110\";");
-    contents.add("            WHEN \"1110\" => segments <= \"1111001\";");
-    contents.add("            WHEN OTHERS => segments <= \"1110001\";");
-    contents.add("         END CASE;");
-    contents.add("         IF (BI = '0') THEN segments <= \"0000000\";");
-    contents.add("         ELSIF (LT = '0') THEN segments <= \"1111111\";");
-    contents.add("         ELSIF ((RBI='0') AND (bcd=\"0000\")) THEN segments <= \"0000000\";");
-    contents.add("         END IF;");
-    contents.add("      END PROCESS Decode;");
-    return contents;
+    final var contents = new LineBuffer();
+    return contents
+        .add(
+            "   Sega  <= segments(0,",
+            "   Segb  <= segments(1,",
+            "   Segc  <= segments(2,",
+            "   Segd  <= segments(3,",
+            "   Sege  <= segments(4,",
+            "   Segf  <= segments(5,",
+            "   Segg  <= segments(6,",
+            "\n",
+            "   bcd   <= BCD3&BCD2&BCD1&BCD0;",
+            "\n",
+            "   Decode : PROCESS ( bcd , LT , BI , RBI ) IS",
+            "      BEGIN",
+            "         CASE bcd IS",
+            "            WHEN \"0000\" => segments <= \"0111111\";",
+            "            WHEN \"0001\" => segments <= \"0000110\";",
+            "            WHEN \"0010\" => segments <= \"1011011\";",
+            "            WHEN \"0011\" => segments <= \"1001111\";",
+            "            WHEN \"0100\" => segments <= \"1100110\";",
+            "            WHEN \"0101\" => segments <= \"1101101\";",
+            "            WHEN \"0110\" => segments <= \"1111101\";",
+            "            WHEN \"0111\" => segments <= \"0000111\";",
+            "            WHEN \"1000\" => segments <= \"1111111\";",
+            "            WHEN \"1001\" => segments <= \"1100111\";",
+            "            WHEN \"1010\" => segments <= \"1110111\";",
+            "            WHEN \"1011\" => segments <= \"1111100\";",
+            "            WHEN \"1100\" => segments <= \"0111001\";",
+            "            WHEN \"1101\" => segments <= \"1011110\";",
+            "            WHEN \"1110\" => segments <= \"1111001\";",
+            "            WHEN OTHERS => segments <= \"1110001\";",
+            "         END CASE;",
+            "         IF (BI = '0') THEN segments <= \"0000000\";",
+            "         ELSIF (LT = '0') THEN segments <= \"1111111\";",
+            "         ELSIF ((RBI='0') AND (bcd=\"0000\")) THEN segments <= \"0000000\";",
+            "         END IF;",
+            "      END PROCESS Decode;")
+        .get();
   }
 
   @Override

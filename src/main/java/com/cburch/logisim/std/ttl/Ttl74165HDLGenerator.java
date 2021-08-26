@@ -35,6 +35,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,23 +86,24 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   Q7  <= CurState(0);\n");
-    contents.add("   Q7n <= NOT(CurState(0));\n");
-    contents.add("\n");
-    contents.add("   Enable  <= NOT(CKIh) AND Tick;");
-    contents.add("   ParData <= P7&P6&P5&P4&P3&P2&P1&P0;");
-    contents.add("\n");
-    contents.add("   NextState <= CurState WHEN Enable = '0' ELSE");
-    contents.add("                ParData WHEN SHnLD = '0' ELSE");
-    contents.add("                SER&CurState(7 DOWNTO 1);");
-    contents.add("\n");
-    contents.add("   dffs : PROCESS( CK ) IS");
-    contents.add("      BEGIN");
-    contents.add("         IF (rising_edge(CK)) THEN CurState <= NextState;");
-    contents.add("         END IF;");
-    contents.add("      END PROCESS dffs;");
-    return contents;
+    final var contents = new LineBuffer();
+    // FIXME: Are these "\n" really needed here?
+    return contents.add(
+        "   Q7  <= CurState(0);\n",
+        "   Q7n <= NOT(CurState(0));\n",
+        "\n",
+        "   Enable  <= NOT(CKIh) AND Tick;",
+        "   ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
+        "\n",
+        "   NextState <= CurState WHEN Enable = '0' ELSE",
+        "                ParData WHEN SHnLD = '0' ELSE",
+        "                SER&CurState(7 DOWNTO 1);",
+        "\n",
+        "   dffs : PROCESS( CK ) IS",
+        "      BEGIN",
+        "         IF (rising_edge(CK)) THEN CurState <= NextState;",
+        "         END IF;",
+        "      END PROCESS dffs;").get();
   }
 
   @Override
