@@ -68,14 +68,14 @@ public class Button extends InstanceFactory {
   public static final String _ID = "Button";
   
   public static final AttributeOption BUTTON_PRESS_ACTIVE =
-    new AttributeOption("active", S.getter("buttonPressActive"));
+      new AttributeOption("active", S.getter("buttonPressActive"));
   public static final AttributeOption BUTTON_PRESS_PASSIVE =
-    new AttributeOption("passive", S.getter("buttonPressPassive"));
+      new AttributeOption("passive", S.getter("buttonPressPassive"));
   public static final Attribute<AttributeOption> ATTR_PRESS =
-    Attributes.forOption(
-      "press",
-      S.getter("buttonPressAttr"),
-      new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
+      Attributes.forOption(
+        "press",
+        S.getter("buttonPressAttr"),
+        new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
 
   public static class Logger extends InstanceLogger {
     @Override
