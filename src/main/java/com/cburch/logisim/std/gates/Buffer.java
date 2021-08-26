@@ -259,7 +259,7 @@ class Buffer extends InstanceFactory {
   public void propagate(InstanceState state) {
     var in = state.getPortValue(1);
     in = Buffer.repair(state, in);
-    state.setPort(0, in, GateAttributes.DELAY);
+    state.setPort(0, in.not().not(), GateAttributes.DELAY);
   }
 
   @Override

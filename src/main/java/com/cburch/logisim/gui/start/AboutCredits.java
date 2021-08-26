@@ -31,6 +31,8 @@ package com.cburch.logisim.gui.start;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -61,7 +63,7 @@ class AboutCredits extends JComponent {
     lines = new Lines();
     lines
         .title(Main.APP_DISPLAY_NAME)
-        .h2("Copyright \u00A9" + Main.COPYRIGHT_YEAR + " " + Main.APP_NAME + " developers")
+        .h2(StringUtil.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, Main.APP_NAME))
         .url(Main.APP_URL)
         .space()
         .h1(S.get("creditsRoleFork"))
@@ -81,7 +83,12 @@ class AboutCredits extends JComponent {
         .text("Carl Burch")
         .text("Hendrix College")
         .url("http://www.cburch.com/logisim/")
-        .img(getClass().getClassLoader().getResource(HENDRIX_LOGO_PATH));
+        .img(getClass().getClassLoader().getResource(HENDRIX_LOGO_PATH))
+        .space()
+        .space()
+        .h1(S.get("creditsBuildInfo"))
+        .text(S.get("creditsCompiled", BuildInfo.dateIso8601))
+        .text(BuildInfo.buildId);
   }
 
   private long startMillis = 0;
