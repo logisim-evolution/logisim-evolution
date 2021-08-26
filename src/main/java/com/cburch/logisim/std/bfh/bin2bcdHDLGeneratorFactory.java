@@ -35,14 +35,15 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STR = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
 
   @Override
   public String getComponentStringIdentifier() {
@@ -51,27 +52,27 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("BinValue", NrOfBitsId);
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put("BinValue", NR_OF_BITS_ID);
+    return inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    for (int i = 1; i <= NrOfPorts; i++) {
-      Outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
+    final var outputs = new TreeMap<String, Integer>();
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    for (var i = 1; i <= nrOfPorts; i++) {
+      outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
     }
-    return Outputs;
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> ParameterList = new TreeMap<>();
-    ParameterList.put(NrOfBitsId, NrOfBitsStr);
-    return ParameterList;
+    final var parameterList = new TreeMap<Integer, String>();
+    parameterList.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
+    return parameterList;
   }
 
   @Override
@@ -86,274 +87,195 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    ParameterMap.put(NrOfBitsStr, BinBits);
-    return ParameterMap;
+    final var parameterMap = new TreeMap<String, Integer>();
+    final var binBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    parameterMap.put(NR_OF_BITS_STR, binBits);
+    return parameterMap;
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
-    PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Nets));
-    for (int i = 1; i <= NrOfPorts; i++)
-      PortMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, ComponentInfo, i, Nets));
-    return PortMap;
+  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+    final var portMap = new TreeMap<String, String>();
+    if (!(mapInfo instanceof NetlistComponent)) return portMap;
+    final var componentInfo = (NetlistComponent) mapInfo;
+    final var binBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfPorts = (int) (Math.log10(1 << binBits) + 1.0);
+    portMap.putAll(GetNetMap("BinValue", true, componentInfo, 0, nets));
+    for (var i = 1; i <= nrOfPorts; i++)
+      portMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, componentInfo, i, nets));
+    return portMap;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    switch (NrOfPorts) {
+    final var wires = new TreeMap<String, Integer>();
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    switch (nrOfPorts) {
       case 2:
-        Wires.put("s_level_0", 7);
-        Wires.put("s_level_1", 7);
-        Wires.put("s_level_2", 7);
-        Wires.put("s_level_3", 7);
+        wires.put("s_level_0", 7);
+        wires.put("s_level_1", 7);
+        wires.put("s_level_2", 7);
+        wires.put("s_level_3", 7);
         break;
       case 3:
-        Wires.put("s_level_0", 11);
-        Wires.put("s_level_1", 11);
-        Wires.put("s_level_2", 11);
-        Wires.put("s_level_3", 11);
-        Wires.put("s_level_4", 11);
-        Wires.put("s_level_5", 11);
-        Wires.put("s_level_6", 11);
+        wires.put("s_level_0", 11);
+        wires.put("s_level_1", 11);
+        wires.put("s_level_2", 11);
+        wires.put("s_level_3", 11);
+        wires.put("s_level_4", 11);
+        wires.put("s_level_5", 11);
+        wires.put("s_level_6", 11);
         break;
       case 4:
-        Wires.put("s_level_0", 16);
-        Wires.put("s_level_1", 16);
-        Wires.put("s_level_2", 16);
-        Wires.put("s_level_3", 16);
-        Wires.put("s_level_4", 16);
-        Wires.put("s_level_5", 16);
-        Wires.put("s_level_6", 16);
-        Wires.put("s_level_7", 16);
-        Wires.put("s_level_8", 16);
-        Wires.put("s_level_9", 16);
-        Wires.put("s_level_10", 16);
+        wires.put("s_level_0", 16);
+        wires.put("s_level_1", 16);
+        wires.put("s_level_2", 16);
+        wires.put("s_level_3", 16);
+        wires.put("s_level_4", 16);
+        wires.put("s_level_5", 16);
+        wires.put("s_level_6", 16);
+        wires.put("s_level_7", 16);
+        wires.put("s_level_8", 16);
+        wires.put("s_level_9", 16);
+        wires.put("s_level_10", 16);
         break;
     }
-    return Wires;
+    return wires;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
+  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+    final var contents = new LineBuffer();
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
     if (HDL.isVHDL()) {
-      switch (NrOfPorts) {
+      switch (nrOfPorts) {
         case 2:
-          Contents.add("   s_level_0(6 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
-          Contents.add("   s_level_0(" + NrOfBitsStr + "-1 DOWNTO 0) <= BinValue;");
-          Contents.add("   s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);");
-          Contents.add("   s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);");
-          Contents.add("   s_level_2(6)          <= s_level_1(6);");
-          Contents.add("   s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);");
-          Contents.add("   s_level_3(0)          <= s_level_2(0);");
-          Contents.add("   ");
-          Contents.add("   BCD1  <= s_level_3( 3 DOWNTO 0);");
-          Contents.add("   BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);");
-          Contents.addAll(GetAdd3Block("s_level_0", 6, "s_level_1", 6, "C1"));
-          Contents.addAll(GetAdd3Block("s_level_1", 5, "s_level_2", 5, "C2"));
-          Contents.addAll(GetAdd3Block("s_level_2", 4, "s_level_3", 4, "C3"));
+          contents
+              .add("   s_level_0(6 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add(
+                  "   s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);",
+                  "   s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);",
+                  "   s_level_2(6)          <= s_level_1(6);",
+                  "   s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);",
+                  "   s_level_3(0)          <= s_level_2(0);",
+                  "   ",
+                  "   BCD1  <= s_level_3( 3 DOWNTO 0);",
+                  "   BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);")
+              .add(getAdd3Block("s_level_0", 6, "s_level_1", 6, "C1"))
+              .add(getAdd3Block("s_level_1", 5, "s_level_2", 5, "C2"))
+              .add(getAdd3Block("s_level_2", 4, "s_level_3", 4, "C3"));
           break;
         case 3:
-          Contents.add("   s_level_0(10 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
-          Contents.add("   s_level_0(" + NrOfBitsStr + "-1 DOWNTO 0) <= BinValue;");
-          Contents.add("   s_level_1(10)          <= s_level_0(10);");
-          Contents.add("   s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);");
-          Contents.add("   s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);");
-          Contents.add("   s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);");
-          Contents.add("   s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);");
-          Contents.add("   s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);");
-          Contents.add("   s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);");
-          Contents.add("   s_level_5(10)          <= s_level_4(10);");
-          Contents.add("   s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);");
-          Contents.add("   s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);");
-          Contents.add("   s_level_6(0)           <= s_level_5(0);");
-          Contents.add("   ");
-          Contents.add("   BCD1   <= s_level_6( 3 DOWNTO 0 );");
-          Contents.add("   BCD10  <= s_level_6( 7 DOWNTO 4 );");
-          Contents.add("   BCD100 <= \"0\"&s_level_6(10 DOWNTO 8);");
-          Contents.addAll(GetAdd3Block("s_level_0", 9, "s_level_1", 9, "C0"));
-          Contents.addAll(GetAdd3Block("s_level_1", 8, "s_level_2", 8, "C1"));
-          Contents.addAll(GetAdd3Block("s_level_2", 7, "s_level_3", 7, "C2"));
-          Contents.addAll(GetAdd3Block("s_level_3", 6, "s_level_4", 6, "C3"));
-          Contents.addAll(GetAdd3Block("s_level_4", 5, "s_level_5", 5, "C4"));
-          Contents.addAll(GetAdd3Block("s_level_5", 4, "s_level_6", 4, "C5"));
-          Contents.addAll(GetAdd3Block("s_level_3", 10, "s_level_4", 10, "C6"));
-          Contents.addAll(GetAdd3Block("s_level_4", 9, "s_level_5", 9, "C7"));
-          Contents.addAll(GetAdd3Block("s_level_5", 8, "s_level_6", 8, "C8"));
+          contents
+              .add("   s_level_0(10 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add(
+                  "   s_level_1(10)          <= s_level_0(10);",
+                  "   s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);",
+                  "   s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);",
+                  "   s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);",
+                  "   s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);",
+                  "   s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);",
+                  "   s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);",
+                  "   s_level_5(10)          <= s_level_4(10);",
+                  "   s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);",
+                  "   s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);",
+                  "   s_level_6(0)           <= s_level_5(0);",
+                  "   ",
+                  "   BCD1   <= s_level_6( 3 DOWNTO 0 );",
+                  "   BCD10  <= s_level_6( 7 DOWNTO 4 );",
+                  "   BCD100 <= \"0\"&s_level_6(10 DOWNTO 8);")
+              .add(getAdd3Block("s_level_0", 9, "s_level_1", 9, "C0"))
+              .add(getAdd3Block("s_level_1", 8, "s_level_2", 8, "C1"))
+              .add(getAdd3Block("s_level_2", 7, "s_level_3", 7, "C2"))
+              .add(getAdd3Block("s_level_3", 6, "s_level_4", 6, "C3"))
+              .add(getAdd3Block("s_level_4", 5, "s_level_5", 5, "C4"))
+              .add(getAdd3Block("s_level_5", 4, "s_level_6", 4, "C5"))
+              .add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C6"))
+              .add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C7"))
+              .add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C8"));
           break;
         case 4:
-          Contents.add("   s_level_0(15 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
-          Contents.add("   s_level_0(" + NrOfBitsStr + "-1 DOWNTO 0) <= BinValue;");
-          Contents.add("   s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);");
-          Contents.add("   s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);");
-          Contents.add("   s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);");
-          Contents.add("   s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);");
-          Contents.add("   s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);");
-          Contents.add("   s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);");
-          Contents.add("   s_level_4(15)            <= s_level_3(15);");
-          Contents.add("   s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);");
-          Contents.add("   s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);");
-          Contents.add("   s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);");
-          Contents.add("   s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);");
-          Contents.add("   s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);");
-          Contents.add("   s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);");
-          Contents.add("   s_level_8(15)            <= s_level_7(15);");
-          Contents.add("   s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);");
-          Contents.add("   s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);");
-          Contents.add("   s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);");
-          Contents.add("   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);");
-          Contents.add("   s_level_10(0)            <= s_level_9(0);");
-          Contents.add("   ");
-          Contents.add("   BCD1    <= s_level_10( 3 DOWNTO  0 );");
-          Contents.add("   BCD10   <= s_level_10( 7 DOWNTO  4 );");
-          Contents.add("   BCD100  <= s_level_10(11 DOWNTO  8);");
-          Contents.add("   BCD1000 <= s_level_10(15 DOWNTO 12);");
-          Contents.addAll(GetAdd3Block("s_level_0", 13, "s_level_1", 13, "C0"));
-          Contents.addAll(GetAdd3Block("s_level_1", 12, "s_level_2", 12, "C1"));
-          Contents.addAll(GetAdd3Block("s_level_2", 11, "s_level_3", 11, "C2"));
-          Contents.addAll(GetAdd3Block("s_level_3", 10, "s_level_4", 10, "C3"));
-          Contents.addAll(GetAdd3Block("s_level_4", 9, "s_level_5", 9, "C4"));
-          Contents.addAll(GetAdd3Block("s_level_5", 8, "s_level_6", 8, "C5"));
-          Contents.addAll(GetAdd3Block("s_level_6", 7, "s_level_7", 7, "C6"));
-          Contents.addAll(GetAdd3Block("s_level_7", 6, "s_level_8", 6, "C7"));
-          Contents.addAll(GetAdd3Block("s_level_8", 5, "s_level_9", 5, "C8"));
-          Contents.addAll(GetAdd3Block("s_level_9", 4, "s_level_10", 4, "C9"));
-          Contents.addAll(GetAdd3Block("s_level_3", 14, "s_level_4", 14, "C10"));
-          Contents.addAll(GetAdd3Block("s_level_4", 13, "s_level_5", 13, "C11"));
-          Contents.addAll(GetAdd3Block("s_level_5", 12, "s_level_6", 12, "C12"));
-          Contents.addAll(GetAdd3Block("s_level_6", 11, "s_level_7", 11, "C13"));
-          Contents.addAll(GetAdd3Block("s_level_7", 10, "s_level_8", 10, "C14"));
-          Contents.addAll(GetAdd3Block("s_level_8", 9, "s_level_9", 9, "C15"));
-          Contents.addAll(GetAdd3Block("s_level_9", 8, "s_level_10", 8, "C16"));
-          Contents.addAll(GetAdd3Block("s_level_6", 15, "s_level_7", 15, "C17"));
-          Contents.addAll(GetAdd3Block("s_level_7", 14, "s_level_8", 14, "C18"));
-          Contents.addAll(GetAdd3Block("s_level_8", 13, "s_level_9", 13, "C19"));
-          Contents.addAll(GetAdd3Block("s_level_9", 12, "s_level_10", 12, "C20"));
+          contents
+              .add("   s_level_0(15 DOWNTO %s) <= (OTHERS => '0');", NR_OF_BITS_STR)
+              .add("   s_level_0(%s-1 DOWNTO 0) <= BinValue;", NR_OF_BITS_STR)
+              .add("   s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);")
+              .add(
+                  "   s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);",
+                  "   s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);",
+                  "   s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);",
+                  "   s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);",
+                  "   s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);",
+                  "   s_level_4(15)            <= s_level_3(15);",
+                  "   s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);",
+                  "   s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);",
+                  "   s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);",
+                  "   s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);",
+                  "   s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);",
+                  "   s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);",
+                  "   s_level_8(15)            <= s_level_7(15);",
+                  "   s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);",
+                  "   s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);",
+                  "   s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);",
+                  "   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);",
+                  "   s_level_10(0)            <= s_level_9(0);",
+                  "   ",
+                  "   BCD1    <= s_level_10( 3 DOWNTO  0 );",
+                  "   BCD10   <= s_level_10( 7 DOWNTO  4 );",
+                  "   BCD100  <= s_level_10(11 DOWNTO  8);",
+                  "   BCD1000 <= s_level_10(15 DOWNTO 12);")
+              .add(getAdd3Block("s_level_0", 13, "s_level_1", 13, "C0"))
+              .add(getAdd3Block("s_level_1", 12, "s_level_2", 12, "C1"))
+              .add(getAdd3Block("s_level_2", 11, "s_level_3", 11, "C2"))
+              .add(getAdd3Block("s_level_3", 10, "s_level_4", 10, "C3"))
+              .add(getAdd3Block("s_level_4", 9, "s_level_5", 9, "C4"))
+              .add(getAdd3Block("s_level_5", 8, "s_level_6", 8, "C5"))
+              .add(getAdd3Block("s_level_6", 7, "s_level_7", 7, "C6"))
+              .add(getAdd3Block("s_level_7", 6, "s_level_8", 6, "C7"))
+              .add(getAdd3Block("s_level_8", 5, "s_level_9", 5, "C8"))
+              .add(getAdd3Block("s_level_9", 4, "s_level_10", 4, "C9"))
+              .add(getAdd3Block("s_level_3", 14, "s_level_4", 14, "C10"))
+              .add(getAdd3Block("s_level_4", 13, "s_level_5", 13, "C11"))
+              .add(getAdd3Block("s_level_5", 12, "s_level_6", 12, "C12"))
+              .add(getAdd3Block("s_level_6", 11, "s_level_7", 11, "C13"))
+              .add(getAdd3Block("s_level_7", 10, "s_level_8", 10, "C14"))
+              .add(getAdd3Block("s_level_8", 9, "s_level_9", 9, "C15"))
+              .add(getAdd3Block("s_level_9", 8, "s_level_10", 8, "C16"))
+              .add(getAdd3Block("s_level_6", 15, "s_level_7", 15, "C17"))
+              .add(getAdd3Block("s_level_7", 14, "s_level_8", 14, "C18"))
+              .add(getAdd3Block("s_level_8", 13, "s_level_9", 13, "C19"))
+              .add(getAdd3Block("s_level_9", 12, "s_level_10", 12, "C20"));
           break;
       }
     } else {
-      Reporter.Report.AddFatalError(
-          "Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
-    return Contents;
+    return contents.get();
   }
 
-  private ArrayList<String> GetAdd3Block(
-      String SourceName, int SourceStartId, String DestName, int DestStartId, String ProcessName) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   ");
-    Contents.add("   ADD3_" + ProcessName + " : PROCESS(" + SourceName + ")");
-    Contents.add("   BEGIN");
-    Contents.add(
-        "      CASE ("
-            + SourceName
-            + "("
-            + SourceStartId
-            + " DOWNTO "
-            + (SourceStartId - 3)
-            + ") ) IS");
-    Contents.add(
-        "         WHEN \"0000\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"0000\";");
-    Contents.add(
-        "         WHEN \"0001\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"0001\";");
-    Contents.add(
-        "         WHEN \"0010\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"0010\";");
-    Contents.add(
-        "         WHEN \"0011\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"0011\";");
-    Contents.add(
-        "         WHEN \"0100\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"0100\";");
-    Contents.add(
-        "         WHEN \"0101\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"1000\";");
-    Contents.add(
-        "         WHEN \"0110\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"1001\";");
-    Contents.add(
-        "         WHEN \"0111\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"1010\";");
-    Contents.add(
-        "         WHEN \"1000\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"1011\";");
-    Contents.add(
-        "         WHEN \"1001\" => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"1100\";");
-    Contents.add(
-        "         WHEN OTHERS => "
-            + DestName
-            + "( "
-            + DestStartId
-            + " DOWNTO "
-            + (DestStartId - 3)
-            + " ) <= \"----\";");
-    Contents.add("      END CASE;");
-    Contents.add("   END PROCESS ADD3_" + ProcessName + ";");
-    return Contents;
+  private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
+    LineBuffer contents = new LineBuffer();
+    contents
+        .add("   ")
+        .add("   ADD3_%s : PROCESS(%s)", processName, srcName)
+        .add("   BEGIN")
+        .add("      CASE (%s( %d DOWNTO %d ) ) IS", srcName, srcStartId, (srcStartId - 3))
+        .add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0001\" => %s( %d DOWNTO %d ) <= \"0001\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0010\" => %s( %d DOWNTO %d ) <= \"0010\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0011\" => %s( %d DOWNTO %d ) <= \"0011\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0100\" => %s( %d DOWNTO %d ) <= \"0100\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0101\" => %s( %d DOWNTO %d ) <= \"1000\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0110\" => %s( %d DOWNTO %d ) <= \"1001\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0111\" => %s( %d DOWNTO %d ) <= \"1010\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"1000\" => %s( %d DOWNTO %d ) <= \"1011\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"1001\" => %s( %d DOWNTO %d ) <= \"1100\";", destName, destStartId, (destStartId - 3))
+        .add("         WHEN \"0000\" => %s( %d DOWNTO %d ) <= \"0000\";", destName, destStartId, (destStartId - 3))
+        .add("      END CASE;")
+        .add("   END PROCESS ADD3_%s;", processName);
+    return contents.get();
   }
 }

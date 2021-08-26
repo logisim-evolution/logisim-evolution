@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,44 +86,48 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new LineBuffer();
     final var NOT = HDL.notOperator();
     final var AND = HDL.andOperator();
+    final var i = "   " + HDL.assignPreamble();
     if (IsExes3) {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents
+          .add(i + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);")
+          .add(i + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);")
+          .add(i + "O5" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O6" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O7" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + "A);")
+          .add(i + "O9" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
     } else if (IsGray) {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents
+          .add(i + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);")
+          .add(i + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O5" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O6" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O7" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + "A);")
+          .add(i + "O8" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
     } else {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
+      contents
+          .add(i + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);")
+          .add(i + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O5" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);")
+          .add(i + "O6" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));")
+          .add(i + "O7" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);")
+          .add(i + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));")
+          .add(i + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

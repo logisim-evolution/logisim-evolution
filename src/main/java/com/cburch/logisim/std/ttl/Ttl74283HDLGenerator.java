@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -82,17 +83,19 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   oppA   <= \"0\"&A4&A3&A2&A1;");
-    contents.add("   oppB   <= \"0\"&B4&B3&B2&B1;");
-    contents.add("   oppC   <= \"0000\"&Cin;");
-    contents.add("   Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));");
-    contents.add("   S1     <= Result(0);");
-    contents.add("   S2     <= Result(1);");
-    contents.add("   S3     <= Result(2);");
-    contents.add("   S4     <= Result(3);");
-    contents.add("   Cout   <= Result(4);");
-    return contents;
+    final var contents = new LineBuffer();
+    return contents
+        .add(
+            "   oppA   <= \"0\"&A4&A3&A2&A1;",
+            "   oppB   <= \"0\"&B4&B3&B2&B1;",
+            "   oppC   <= \"0000\"&Cin;",
+            "   Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));",
+            "   S1     <= Result(0);",
+            "   S2     <= Result(1);",
+            "   S3     <= Result(2);",
+            "   S4     <= Result(3);",
+            "   Cout   <= Result(4);")
+        .get();
   }
 
   @Override

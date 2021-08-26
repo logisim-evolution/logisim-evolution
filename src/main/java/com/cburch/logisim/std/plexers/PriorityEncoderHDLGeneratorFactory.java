@@ -34,16 +34,16 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfSelectBitsStr = "NrOfSelectBits";
+  private static final String NR_OF_SELECT_BITS_STR = "NrOfSelectBits";
   private static final int NrOfSelectBitsId = -1;
-  private static final String NrOfInputBitsStr = "NrOfInputBits";
+  private static final String NR_OF_INPUT_BITS_STR = "NrOfInputBits";
   private static final int NrOfInputBitsId = -2;
 
   @Override
@@ -61,84 +61,63 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      contents.add("   -- Output Signals");
-      contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
-      contents.add("   EnableOut   <= s_in_is_zero AND enable;");
-      contents.add("   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE");
-      contents.add("                  s_address(" + NrOfSelectBitsStr + "-1 DOWNTO 0);");
-      contents.add("");
-      contents.add("   -- Control Signals ");
-      contents.add(
-          "   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,"
-              + NrOfInputBitsStr
-              + ")) ELSE '0';");
-      contents.add("");
-      contents.add("   -- Processes");
-      contents.add(
-          "   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )");
-      contents.add("   BEGIN");
-      contents.add(
-          "      v_select_1_vector(32 DOWNTO " + NrOfInputBitsStr + ")  <= (OTHERS => '0');");
-      contents.add("      v_select_1_vector(" + NrOfInputBitsStr + "-1 DOWNTO 0) <= input_vector;");
-      contents.add(
-          "      IF (v_select_1_vector(31 DOWNTO 16) = X\"0000\") THEN s_address(4)      <= '0';");
-      contents.add(
-          "                                                          v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);");
-      contents.add(
-          "                                                     ELSE s_address(4)      <= '1';");
-      contents.add(
-          "                                                          v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);");
-      contents.add("      END IF;");
-      contents.add(
-          "      IF (v_select_2_vector(15 DOWNTO 8) = X\"00\") THEN s_address(3)      <= '0';");
-      contents.add(
-          "                                                       v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);");
-      contents.add(
-          "                                                  ELSE s_address(3)      <= '1';");
-      contents.add(
-          "                                                       v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);");
-      contents.add("      END IF;");
-      contents.add(
-          "      IF (v_select_3_vector(7 DOWNTO 4) = X\"0\") THEN s_address(2)      <= '0';");
-      contents.add(
-          "                                                     v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);");
-      contents.add(
-          "                                                ELSE s_address(2)      <= '1';");
-      contents.add(
-          "                                                     v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);");
-      contents.add("      END IF;");
-      contents.add("      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';");
-      contents.add(
-          "                                                     s_address(0) <= v_select_4_vector(1);");
-      contents.add("                                                ELSE s_address(1) <= '1';");
-      contents.add(
-          "                                                     s_address(0) <= v_select_4_vector(3);");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_addr;");
+      contents
+          .add("   -- Output Signals")
+          .add("   GroupSelect <= NOT(s_in_is_zero) AND enable;")
+          .add("   EnableOut   <= s_in_is_zero AND enable;")
+          .add("   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE")
+          .add("                  s_address(%s-1 DOWNTO 0);", NR_OF_SELECT_BITS_STR)
+          .add("")
+          .add("   -- Control Signals ")
+          .add("   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,%s)) ELSE '0';", NR_OF_INPUT_BITS_STR)
+          .add("")
+          .add("   -- Processes")
+          .add("   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )")
+          .add("   BEGIN")
+          .add("      v_select_1_vector(32 DOWNTO %s)  <= (OTHERS => '0');", NR_OF_INPUT_BITS_STR)
+          .add("      v_select_1_vector(%s-1 DOWNTO 0) <= input_vector;", NR_OF_INPUT_BITS_STR)
+          .add("      IF (v_select_1_vector(31 DOWNTO 16) = X\"0000\") THEN s_address(4)      <= '0';")
+          .add("                                                          v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);")
+          .add("                                                     ELSE s_address(4)      <= '1';")
+          .add("                                                          v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);")
+          .add("      END IF;")
+          .add("      IF (v_select_2_vector(15 DOWNTO 8) = X\"00\") THEN s_address(3)      <= '0';")
+          .add("                                                       v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);")
+          .add("                                                  ELSE s_address(3)      <= '1';")
+          .add("                                                       v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);")
+          .add("      END IF;")
+          .add("      IF (v_select_3_vector(7 DOWNTO 4) = X\"0\") THEN s_address(2)      <= '0';")
+          .add("                                                     v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);")
+          .add("                                                ELSE s_address(2)      <= '1';")
+          .add("                                                     v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);")
+          .add("      END IF;")
+          .add("      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';")
+          .add("                                                     s_address(0) <= v_select_4_vector(1);")
+          .add("                                                ELSE s_address(1) <= '1';")
+          .add("                                                     s_address(0) <= v_select_4_vector(3);")
+          .add("      END IF;")
+          .add("   END PROCESS make_addr;");
     } else {
-      contents.add("   assign GroupSelect = ~s_in_is_zero&enable;");
-      contents.add("   assign EnableOut = s_in_is_zero&enable;");
-      contents.add("   assign Address = (~enable) ? 0 : s_address[" + NrOfSelectBitsStr + "-1:0];");
-      contents.add("   assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;");
-      contents.add("");
-      contents.add("   assign v_select_1_vector[32:" + NrOfInputBitsStr + "] = 0;");
-      contents.add("   assign v_select_1_vector[" + NrOfInputBitsStr + "-1:0] = input_vector;");
-      contents.add("   assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;");
-      contents.add(
-          "   assign v_select_2_vector = (v_select_1_vector[31:16] == 0) ? v_select_1_vector[15:0] : v_select_1_vector[31:16];");
-      contents.add("   assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;");
-      contents.add(
-          "   assign v_select_3_vector = (v_select_2_vector[15:8] == 0) ? v_select_2_vector[7:0] : v_select_2_vector[15:8];");
-      contents.add("   assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;");
-      contents.add(
-          "   assign v_select_4_vector = (v_select_3_vector[7:4] == 0) ? v_select_3_vector[3:0] : v_select_2_vector[7:4];");
-      contents.add("   assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;");
-      contents.add(
-          "   assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];");
+      contents
+          .add("   assign GroupSelect = ~s_in_is_zero&enable;")
+          .add("   assign EnableOut = s_in_is_zero&enable;")
+          .add("   assign Address = (~enable) ? 0 : s_address[%s-1:0];", NR_OF_SELECT_BITS_STR)
+          .add("   assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;")
+          .add("")
+          .add("   assign v_select_1_vector[32:%s] = 0;", NR_OF_SELECT_BITS_STR)
+          .add("   assign v_select_1_vector[%s-1:0] = input_vector;", NR_OF_SELECT_BITS_STR)
+          .add("   assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;")
+          .add("   assign v_select_2_vector = (v_select_1_vector[31:16] == 0) ? v_select_1_vector[15:0] : v_select_1_vector[31:16];")
+          .add("   assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;")
+          .add("   assign v_select_3_vector = (v_select_2_vector[15:8] == 0) ? v_select_2_vector[7:0] : v_select_2_vector[15:8];")
+          .add("   assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;")
+          .add("   assign v_select_4_vector = (v_select_3_vector[7:4] == 0) ? v_select_3_vector[3:0] : v_select_2_vector[7:4];")
+          .add("   assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;")
+          .add("   assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];");
     }
-    return contents;
+    return contents.get();
   }
 
   @Override
@@ -153,8 +132,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     final var map = new TreeMap<Integer, String>();
-    map.put(NrOfSelectBitsId, NrOfSelectBitsStr);
-    map.put(NrOfInputBitsId, NrOfInputBitsStr);
+    map.put(NrOfSelectBitsId, NR_OF_SELECT_BITS_STR);
+    map.put(NrOfInputBitsId, NR_OF_INPUT_BITS_STR);
     return map;
   }
 
@@ -163,8 +142,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits = componentInfo.NrOfEnds() - 4;
     final var nrOfSelectBits = componentInfo.GetComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
-    map.put(NrOfSelectBitsStr, nrOfSelectBits);
-    map.put(NrOfInputBitsStr, 1 << nrOfSelectBits);
+    map.put(NR_OF_SELECT_BITS_STR, nrOfSelectBits);
+    map.put(NR_OF_INPUT_BITS_STR, 1 << nrOfSelectBits);
     return map;
   }
 
