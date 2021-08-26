@@ -135,7 +135,7 @@ public class AlteraDownload implements VendorDownload {
   public boolean readyForDownload() {
     final var SofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists();
     final var PofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof").exists();
-    return SofFile | PofFile;
+    return SofFile || PofFile;
   }
 
   @Override
@@ -298,12 +298,11 @@ public class AlteraDownload implements VendorDownload {
 
     return (new LineBuffer())
         .addPair("assign", "set_global_assignment -name")
-        .addPair("behavior", behavior)
         .add("{{assign}} FAMILY \"%s\"", currentBoard.fpga.getTechnology())
         .add("{{assign}} DEVICE %s", currentBoard.fpga.getPart())
         .add("{{assign}} DEVICE_FILTER_PACKAGE %s", pkg[0])
         .add("{{assign}} DEVICE_FILTER_PIN_COUNT %s", pkg[1])
-        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{behavior}}\"")
+        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT %s\"", behavior)
         .add("{{assign}} FMAX_REQUIREMENT \"%s\"", Download.GetClockFrequencyString(currentBoard))
         .add("{{assign}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assign}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")

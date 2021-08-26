@@ -137,11 +137,11 @@ public class MapComponent {
       MyIOBubles.put(nrOfPins++, idx);
     }
   }
-  
+
   public ComponentFactory getComponentFactory() {
     return myFactory;
   }
-  
+
   public AttributeSet getAttributeSet() {
     return myAttributes;
   }
@@ -187,7 +187,7 @@ public class MapComponent {
   }
 
   public int getIOBublePinId(int id) {
-    for (var key : MyIOBubles.keySet()) 
+    for (var key : MyIOBubles.keySet())
       if (MyIOBubles.get(key) == id) return key;
     return -1;
   }
@@ -205,7 +205,7 @@ public class MapComponent {
     if (opens.get(pin)) return true;
     return constants.get(pin) >= 0;
   }
-  
+
   public boolean isInternalMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     return isMapped(pin) && maps.get(pin).getIOComp().GetType().equals(IOComponentTypes.LEDArray);
@@ -245,7 +245,7 @@ public class MapComponent {
       final var map1 = maps.get(0);
       final var map2 = maps.get(1);
       final var map3 = maps.get(2);
-      if (map1 != null && map2 != null && map3 != null 
+      if (map1 != null && map2 != null && map3 != null
           && map1.getIOComp().equals(map2.getIOComp()) && (map2.getIOComp().equals(map3.getIOComp()))) {
         if ((maps.get(0).getIOPin() == maps.get(1).getIOPin()) && (maps.get(1).getIOPin() == maps.get(2).getIOPin())) {
           /* we have a tripple map, unmap all */
@@ -389,7 +389,7 @@ public class MapComponent {
       }
     }
   }
-  
+
   public boolean tryCompleteMap(FPGAIOInformationContainer comp, int compPin) {
     var map = new MapClass(comp, compPin);
     if (!comp.tryMap(this, 0, compPin)) return false;
@@ -467,7 +467,7 @@ public class MapComponent {
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
       } else if (MyIOBubles.containsKey(i)) {
-        var ioid = i - (MyInputBubles == null ? 0 : MyInputBubles.size()) 
+        var ioid = i - (MyInputBubles == null ? 0 : MyInputBubles.size())
             - (MyOutputBubles == null ? 0 : MyOutputBubles.size());
         var res = comp.tryIOMap(this, i, ioid);
         success &= res.mapResult;
@@ -604,7 +604,7 @@ public class MapComponent {
     if (pin < 0 || pin >= nrOfPins) return null;
     var s = new StringBuilder();
     /* The first element is the BoardName, so we skip */
-    for (var i = 1; i < myName.size(); i++) 
+    for (var i = 1; i < myName.size(); i++)
       s.append(i == 1 ? "" : "_").append(myName.get(i));
     s.append(s.length() == 0 ? "" : "_").append(pinLabels.get(pin));
     return s.toString();

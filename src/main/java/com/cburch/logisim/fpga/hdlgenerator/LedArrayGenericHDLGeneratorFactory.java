@@ -276,22 +276,13 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static ArrayList<String> getArrayConnections(FPGAIOInformationContainer array, int id) {
     final var connections = new ArrayList<String>();
-    switch (array.getArrayDriveMode()) {
-      case LedArrayDriving.LedDefault :
-      case LedArrayDriving.LedRowScanning :
-      case LedArrayDriving.LedColumnScanning : {
-        connections.addAll(getLedArrayConnections(array, id));
-        connections.add("");
-        break;
-      }
-      case LedArrayDriving.RgbDefault :
-      case LedArrayDriving.RgbRowScanning :
-      case LedArrayDriving.RgbColumnScanning : {
-        connections.addAll(getRGBArrayConnections(array, id));
-        connections.add("");
-        break;
-      }
-    }
+    connections.addAll(
+      switch (array.getArrayDriveMode()) {
+        case LedArrayDriving.LedDefault, LedArrayDriving.LedRowScanning, LedArrayDriving.LedColumnScanning -> getLedArrayConnections(array, id);
+        case LedArrayDriving.RgbDefault, LedArrayDriving.RgbRowScanning, LedArrayDriving.RgbColumnScanning -> getRGBArrayConnections(array, id);
+        default -> throw new IllegalStateException("Unexpected value: " + array.getArrayDriveMode());
+      });
+    connections.add("");
     return connections;
   }
 
@@ -349,14 +340,6 @@ public class LedArrayGenericHDLGeneratorFactory {
           final var bOff = offColor.getBlue();
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
 
-          connections.add(getColorMap("s_{{insR}}{{id}}{{<}}{{pin}}{{>}}"
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              rOn,
-              rOff,
-              pinName));
           connections.add(getColorMap("s_"
               + LedArrayGreenInputs
               + id
@@ -419,10 +402,9 @@ public class LedArrayGenericHDLGeneratorFactory {
   private static String getColorMap(String dest, int onColor, int offColor, String source) {
     final var onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     final var offBit = (offColor > 128) ? HDL.oneBit() : HDL.zeroBit();
-    if (HDL.isVHDL()) {
-      return "   " + dest + HDL.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";";
-    } else {
-      return "   assign " + dest + " = (" + source + " == " + HDL.oneBit() + ") ? " + onBit + " : " + offBit + ";";
-    }
+    return
+      HDL.isVHDL()
+        ?  dest + HDL.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";"
+        : "assign " + dest + " = (" + source + " == " + HDL.oneBit() + ") ? " + onBit + " : " + offBit + ";";
   }
 }

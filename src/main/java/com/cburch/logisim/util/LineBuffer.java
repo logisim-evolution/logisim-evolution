@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.util;
 
-import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,7 +143,7 @@ public class LineBuffer implements RandomAccess {
 
   public LineBuffer addUnique(String fmt, Object... args) {
     var line = String.format(fmt, args);
-    line = applyMap(line, pairs);
+    line = applyPairs(line, pairs);
     return addUnique(line);
   }
 
@@ -162,7 +161,7 @@ public class LineBuffer implements RandomAccess {
 
   public LineBuffer add(String line, boolean applyMap) {
     if (applyMap) {
-      line = applyMap(line, pairs);
+      line = applyPairs(line, pairs);
     }
     contents.add(line);
     return this;
@@ -196,7 +195,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
-    return add(applyMap(format, pairs));
+    return add(applyPairs(format, pairs));
   }
 
   /**
@@ -216,13 +215,17 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
+  public String applyPairs(String format) {
+    return applyPairs(format, pairs);
+  }
+
   /**
    * Applies search-replace var to provided string.
    *
    * @param format String to format, with (optional) `{{placeholders}}`.
    * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
    */
-  protected String applyMap(String format, Pairs pairs) {
+  public String applyPairs(String format, Pairs pairs) {
     if (pairs != null) {
       for (final var set : pairs.entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
