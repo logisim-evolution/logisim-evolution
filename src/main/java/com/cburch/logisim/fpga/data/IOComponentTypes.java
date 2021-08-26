@@ -152,24 +152,21 @@ public enum IOComponentTypes {
 
   public static String getRotationString(IOComponentTypes comp, int rotation) {
     return switch (comp) {
-      case DIPSwitch ->
-        switch (rotation) {
-          case ROTATION_CW_90 -> S.get("DipSwitchCW90");
-          case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
-          default -> S.get("DipSwitchZero");
-        };
-      case SevenSegment ->
-        switch (rotation) {
-          case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
-          case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
-          default -> S.get("SevenSegmentZero");
-        };
-      case LEDArray ->
-        switch (rotation) {
-          case ROTATION_CW_90 -> S.get("LEDArrayCW90");
-          case ROTATION_CCW_90 -> S.get("LEDArrayCCW90");
-          default -> S.get("LEDArrayZero");
-        };
+      case DIPSwitch -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("DipSwitchCW90");
+        case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
+        default -> S.get("DipSwitchZero");
+      };
+      case SevenSegment -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
+        case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
+        default -> S.get("SevenSegmentZero");
+      };
+      case LEDArray -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("LEDArrayCW90");
+        case ROTATION_CCW_90 -> S.get("LEDArrayCCW90");
+        default -> S.get("LEDArrayZero");
+      };
       default -> Integer.toString(rotation);
     };
   }
