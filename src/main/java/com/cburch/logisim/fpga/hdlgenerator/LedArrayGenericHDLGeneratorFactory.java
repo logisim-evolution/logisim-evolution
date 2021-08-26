@@ -78,7 +78,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         return (pinNr < nrColumnAddressBits)
             ? LedArrayColumnAddress + identifier + "[" + pinNr + "]"
             : LedArrayRowOutputs + identifier + "[" + (pinNr - nrColumnAddressBits) + "]";
-      case LedArrayDriving.RgbDefault : {
+      case LedArrayDriving.RgbDefault: {
         final var index = pinNr % 3;
         final var col = pinNr / 3;
         return switch (col) {
@@ -88,7 +88,7 @@ public class LedArrayGenericHDLGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RgbRowScanning : {
+      case LedArrayDriving.RgbRowScanning: {
         final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
         final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
         if (pinNr < nrRowAddressBits)
@@ -100,7 +100,7 @@ public class LedArrayGenericHDLGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RgbColumnScanning: {
         final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
         final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
         if (pinNr < nrColumnAddressBits)
@@ -142,20 +142,20 @@ public class LedArrayGenericHDLGeneratorFactory {
         externals.put(LedArrayRowOutputs + identifier, nrOfRows);
         break;
       }
-      case LedArrayDriving.RgbDefault : {
+      case LedArrayDriving.RgbDefault: {
         externals.put(LedArrayRedOutputs + identifier, nrOfRows * nrOfColumns);
         externals.put(LedArrayGreenOutputs + identifier, nrOfRows * nrOfColumns);
         externals.put(LedArrayBlueOutputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
-      case LedArrayDriving.RgbRowScanning : {
+      case LedArrayDriving.RgbRowScanning: {
         externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
         externals.put(LedArrayColumnRedOutputs + identifier, nrOfColumns);
         externals.put(LedArrayColumnGreenOutputs + identifier, nrOfColumns);
         externals.put(LedArrayColumnBlueOutputs + identifier, nrOfColumns);
         break;
       }
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RgbColumnScanning: {
         externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
         externals.put(LedArrayRowRedOutputs + identifier, nrOfRows);
         externals.put(LedArrayRowGreenOutputs + identifier, nrOfRows);
@@ -180,7 +180,7 @@ public class LedArrayGenericHDLGeneratorFactory {
       }
       case LedArrayDriving.RgbDefault :
       case LedArrayDriving.RgbRowScanning :
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RgbColumnScanning: {
         wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
@@ -228,7 +228,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbDefault : {
+      case LedArrayDriving.RgbDefault: {
         componentMap.add(RGBArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
@@ -236,7 +236,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbRowScanning : {
+      case LedArrayDriving.RgbRowScanning: {
         componentMap.add(RGBArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
@@ -244,7 +244,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RgbColumnScanning: {
         componentMap.add(RGBArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
