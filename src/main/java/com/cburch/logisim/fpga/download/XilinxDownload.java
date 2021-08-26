@@ -387,7 +387,7 @@ public class XilinxDownload implements VendorDownload {
           .add("logisim_par")
           .add("logisim_map.pcf");
     } else {
-      final var pinPullBehavior = switch(boardInfo.fpga.getUnusedPinsBehavior()) {
+      final var pinPullBehavior = switch (boardInfo.fpga.getUnusedPinsBehavior()) {
         case PullBehaviors.PULL_UP -> "pullup";
         case PullBehaviors.PULL_DOWN -> "pulldown";
         default -> "float";

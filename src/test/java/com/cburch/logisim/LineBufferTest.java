@@ -85,7 +85,7 @@ public class LineBufferTest extends TestBase {
           }
         };
 
-    for(final var test: tests) {
+    for (final var test : tests) {
       final var lb = new LineBuffer();
       lb.add(test);
 
@@ -94,9 +94,7 @@ public class LineBufferTest extends TestBase {
     }
   }
 
-  /**
-   * Tests is add(String, Object...) works as expected.
-   */
+  /** Tests is add(String, Object...) works as expected. */
   @Test
   public void testAddVarArgs() {
     final var lb = new LineBuffer();
