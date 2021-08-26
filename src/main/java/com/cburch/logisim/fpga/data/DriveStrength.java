@@ -33,7 +33,7 @@ import java.util.LinkedList;
 
 public class DriveStrength {
   public static String GetContraintedDriveStrength(char id) {
-    if ((id > DEFAUL_STENGTH) && (id <= DRIVE_24)) {
+    if ((id > DEFAULT_STENGTH) && (id <= DRIVE_24)) {
       return BEHAVIOR_STRINGS[id].replace(" mA", " ");
     }
     return "";
@@ -65,7 +65,7 @@ public class DriveStrength {
   }
 
   public static final String DRIVE_ATTRIBUTE_STRING = "FPGAPinDriveStrength";
-  public static final char DEFAUL_STENGTH = 0;
+  public static final char DEFAULT_STENGTH = 0;
   public static char DRIVE_2 = 1;
   public static char DRIVE_4 = 2;
   public static char DRIVE_8 = 3;

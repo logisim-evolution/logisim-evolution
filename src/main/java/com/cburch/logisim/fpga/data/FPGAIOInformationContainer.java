@@ -541,7 +541,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         result.setAttributeNode(Set);
       }
       if (MyDriveStrength != DriveStrength.UNKNOWN
-          && MyDriveStrength != DriveStrength.DEFAUL_STENGTH) {
+          && MyDriveStrength != DriveStrength.DEFAULT_STENGTH) {
         var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
         drive.setValue(DriveStrength.BEHAVIOR_STRINGS[MyDriveStrength]);
         result.setAttributeNode(drive);
@@ -551,7 +551,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[MyPullBehavior]);
         result.setAttributeNode(pull);
       }
-      if (MyIOStandard != IoStandards.UNKNOWN && MyIOStandard != IoStandards.DEFAUL_STANDARD) {
+      if (MyIOStandard != IoStandards.UNKNOWN && MyIOStandard != IoStandards.DEFAULT_STANDARD) {
         var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
         stand.setValue(IoStandards.Behavior_strings[MyIOStandard]);
         result.setAttributeNode(stand);

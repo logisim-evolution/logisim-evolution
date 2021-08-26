@@ -320,12 +320,12 @@ public class XilinxDownload implements VendorDownload {
                   .append(" ");
             }
             if (info.GetDrive() != DriveStrength.UNKNOWN
-                && info.GetDrive() != DriveStrength.DEFAUL_STENGTH) {
+                && info.GetDrive() != DriveStrength.DEFAULT_STENGTH) {
               Temp.append("| DRIVE = ")
                   .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
             }
             if (info.GetIOStandard() != IoStandards.UNKNOWN
-                && info.GetIOStandard() != IoStandards.DEFAUL_STANDARD) {
+                && info.GetIOStandard() != IoStandards.DEFAULT_STANDARD) {
               Temp.append("| IOSTANDARD = ")
                   .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
                   .append(" ");
@@ -475,7 +475,7 @@ public class XilinxDownload implements VendorDownload {
     if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PULL_DOWN) {
       result.append(" | PULLDOWN");
     }
-    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAUL_STANDARD
+    if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
         && CurrentBoard.fpga.getClockStandard() != IoStandards.UNKNOWN) {
       result.append(" | IOSTANDARD = ")
           .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);

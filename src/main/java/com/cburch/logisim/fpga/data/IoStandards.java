@@ -33,7 +33,7 @@ import java.util.LinkedList;
 
 public class IoStandards {
   public static String GetConstraintedIoStandard(char id) {
-    if ((id > DEFAUL_STANDARD) && (id <= LVTTL)) {
+    if ((id > DEFAULT_STANDARD) && (id <= LVTTL)) {
       return Behavior_strings[id];
     }
     return "";
@@ -66,7 +66,7 @@ public class IoStandards {
   }
 
   public static final String IO_ATTRIBUTE_STRING = "FPGAPinIOStandard";
-  public static final char DEFAUL_STANDARD = 0;
+  public static final char DEFAULT_STANDARD = 0;
   public static char LVCMOS12 = 1;
   public static char LVCMOS15 = 2;
   public static char LVCMOS18 = 3;

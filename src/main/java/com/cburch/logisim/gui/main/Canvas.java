@@ -57,7 +57,6 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CanvasPaneContents;
 import com.cburch.logisim.gui.generic.GridPainter;
-import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -122,7 +121,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
-  public static final Color DEFAULTZOOM_BUTTON_COLOR = Color.WHITE;
+  public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
   // public static BufferedImage image;
   private final Project proj;
   private final Selection selection;
@@ -864,7 +863,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
               viewport.getSize(),
               e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
               e.getY() * getZoomFactor() - getVerticalScrollBar())) {
-        viewport.zoomButtonColor = DEFAULTZOOM_BUTTON_COLOR.darker();
+        viewport.zoomButtonColor = DEFAULT_ZOOM_BUTTON_COLOR.darker();
         viewport.repaint();
       } else {
         Canvas.this.requestFocus();
@@ -888,7 +887,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
                   viewport.getSize(),
                   e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
                   e.getY() * getZoomFactor() - getVerticalScrollBar())
-              && viewport.zoomButtonColor != DEFAULTZOOM_BUTTON_COLOR)
+              && viewport.zoomButtonColor != DEFAULT_ZOOM_BUTTON_COLOR)
           || e.getButton() == MouseEvent.BUTTON2 && e.getClickCount() == 2) {
         center();
         setCursor(proj.getTool().getCursor());
@@ -908,7 +907,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       }
       completeAction();
 
-      viewport.zoomButtonColor = DEFAULTZOOM_BUTTON_COLOR;
+      viewport.zoomButtonColor = DEFAULT_ZOOM_BUTTON_COLOR;
     }
 
     @Override
@@ -1162,7 +1161,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     boolean isSoutheast = false;
     boolean isSouthwest = false;
     boolean zoomButtonVisible = false;
-    Color zoomButtonColor = DEFAULTZOOM_BUTTON_COLOR;
+    Color zoomButtonColor = DEFAULT_ZOOM_BUTTON_COLOR;
 
     MyViewport() {
       // dummy
