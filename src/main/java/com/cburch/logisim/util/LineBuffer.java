@@ -76,14 +76,14 @@ public class LineBuffer implements RandomAccess {
     return addPair("assign", HDL.assignPreamble())
         .addPair("=", HDL.assignOperator())
         .addPair("or", HDL.orOperator())
-        .add("and", HDL.andOperator())
-        .add("not", HDL.notOperator())
-        .add("bracketOpen", HDL.BracketOpen())
-        .add("bracketClose", HDL.BracketClose())
-        .add("<", HDL.BracketOpen())
-        .add(">", HDL.BracketClose())
-        .add("0b", HDL.zeroBit())
-        .add("1b", HDL.oneBit());
+        .addPair("and", HDL.andOperator())
+        .addPair("not", HDL.notOperator())
+        .addPair("bracketOpen", HDL.BracketOpen())
+        .addPair("bracketClose", HDL.BracketClose())
+        .addPair("<", HDL.BracketOpen())
+        .addPair(">", HDL.BracketClose())
+        .addPair("0b", HDL.zeroBit())
+        .addPair("1b", HDL.oneBit());
   }
 
   public Pairs withPairs() {
@@ -100,20 +100,38 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  public LineBuffer clearPairs() {
-    pairs.clear();
-    return this;
-  }
-
   /**
    * Clears internal buffer.
    *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer clear() {
+    clearBuffer();
+    clearPairs();
+    return this;
+  }
+
+  /**
+   * Clears pair map.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer clearPairs() {
+    pairs.clear();
+    return this;
+  }
+
+  /**
+   * Clears content buffer.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer clearBuffer() {
     contents.clear();
     return this;
   }
+
+  /* ********************************************************************************************* */
 
   public boolean isEmpty() {
     return contents.isEmpty();
@@ -179,7 +197,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
-    return add(String.format(fmt, args));
+    return add(fmt, pairsFromArgs(args));
   }
 
   /**
@@ -202,7 +220,6 @@ public class LineBuffer implements RandomAccess {
    * Adds all lines from given collection to content buffer.
    *
    * @param lines
-   * @return
    */
   public LineBuffer add(Collection<String> lines) {
     for (final var line : lines) add(line);
@@ -211,6 +228,21 @@ public class LineBuffer implements RandomAccess {
 
   public LineBuffer add(String... lines) {
     return add(Arrays.asList(lines));
+  }
+
+  /**
+   * Constructs Pairs map from positional arguments auto-assigning numerical
+   * placeholders `{{x}}` where `x` is integer starting from `1`.
+   *
+   * @param args Arguments to use to build the map.
+   */
+  private Pairs pairsFromArgs(Object... args) {
+    final var map = new Pairs();
+    var idx = 1;
+    for (final var arg : args) {
+      map.add(String.valueOf(idx++), "" + arg);
+    }
+    return map;
   }
 
   /* ********************************************************************************************* */
