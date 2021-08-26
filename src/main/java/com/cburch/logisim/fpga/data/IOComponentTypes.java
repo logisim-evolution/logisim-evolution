@@ -136,59 +136,39 @@ public enum IOComponentTypes {
   }
 
   public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
-    switch (comp) {
-      case DIPSwitch :
-        return DipSwitch.getInputLabel(id);
-      case LocalBus  :
-        return ReptarLocalBus.getInputLabel(id);
-      default        :
-        return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
-    }
+    return switch (comp) {
+      case DIPSwitch -> DipSwitch.getInputLabel(id);
+      case LocalBus -> ReptarLocalBus.getInputLabel(id);
+      default -> (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
+    };
   }
 
   public static Boolean hasRotationAttribute(IOComponentTypes comp) {
-    switch (comp) {
-      case DIPSwitch :
-      case SevenSegment :
-      case LEDArray :
-        return true;
-      default :
-        return false;
-    }
+    return switch (comp) {
+      case DIPSwitch, SevenSegment, LEDArray -> true;
+      default -> false;
+    };
   }
 
   public static String getRotationString(IOComponentTypes comp, int rotation) {
-    switch (comp) {
-      case DIPSwitch :
-        switch (rotation) {
-          case ROTATION_CW_90:
-            return S.get("DipSwitchCW90");
-          case ROTATION_CCW_90:
-            return S.get("DipSwitchCCW90");
-          default :
-            return S.get("DipSwitchZero");
-        }
-      case SevenSegment :
-        switch (rotation) {
-          case ROTATION_CW_90:
-            return S.get("SevenSegmentCW90");
-          case ROTATION_CCW_90:
-            return S.get("SevenSegmentCCW90");
-          default :
-            return S.get("SevenSegmentZero");
-        }
-      case LEDArray :
-        switch (rotation) {
-          case ROTATION_CW_90:
-            return S.get("LEDArrayCW90");
-          case ROTATION_CCW_90:
-            return S.get("LEDArrayCCW90");
-          default :
-            return S.get("LEDArrayZero");
-        }
-      default :
-        return Integer.toString(rotation);
-    }
+    return switch (comp) {
+      case DIPSwitch -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("DipSwitchCW90");
+        case ROTATION_CCW_90 -> S.get("DipSwitchCCW90");
+        default -> S.get("DipSwitchZero");
+      };
+      case SevenSegment -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("SevenSegmentCW90");
+        case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
+        default -> S.get("SevenSegmentZero");
+      };
+      case LEDArray -> switch (rotation) {
+        case ROTATION_CW_90 -> S.get("LEDArrayCW90");
+        case ROTATION_CCW_90 -> S.get("LEDArrayCCW90");
+        default -> S.get("LEDArrayZero");
+      };
+      default -> Integer.toString(rotation);
+    };
   }
 
   public static String getOutputLabel(int nrPins, int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
@@ -264,7 +244,7 @@ public enum IOComponentTypes {
           case ROTATION_CW_90:
             part = (float) height / (float) nrOfPins;
             break;
-          default :
+          default:
             part = (float) width / (float) nrOfPins;
             break;
         }
@@ -278,7 +258,7 @@ public enum IOComponentTypes {
               case ROTATION_CW_90:
                 pinIndex = (int) (height / part);
                 break;
-              default :
+              default:
                 pinIndex = (int) (widthIndex / part);
                 break;
             }
@@ -292,7 +272,7 @@ public enum IOComponentTypes {
             PartialMap[w][h] = (int) ((float) h / part);
         break;
       case SevenSegment: hasDp = true;
-      case SevenSegmentNoDp :
+      case SevenSegmentNoDp:
         final var indexes = getSevenSegmentDisplayArray(hasDp);
         switch (mapRotation) {
           case ROTATION_CCW_90:
@@ -300,7 +280,7 @@ public enum IOComponentTypes {
             partX = (float) width / (float) 7;
             partY = (float) height / (float) 5;
             break;
-          default :
+          default:
             partX = (float) width / (float) 5;
             partY = (float) height / (float) 7;
             break;
@@ -318,7 +298,7 @@ public enum IOComponentTypes {
                 xIndex = (int) ((float) h / partY);
                 yIndex = (int) ((float) (width - w - 1) / partX);
                 break;
-              default :
+              default:
                 xIndex = (int) ((float) w / partX);
                 yIndex = (int) ((float) h / partY);
                 break;
@@ -333,7 +313,7 @@ public enum IOComponentTypes {
             partX = (float) width / (float) nrOfRows;
             partY = (float) height / (float) nrOfColumns;
             break;
-          default :
+          default:
             partX = (float) width / (float) nrOfColumns;
             partY = (float) height / (float) nrOfRows;
             break;
@@ -351,7 +331,7 @@ public enum IOComponentTypes {
                 realRow = (int) ((float) (width - w - 1) / partX);
                 realColumn = (int) ((float) h / partY);
                 break;
-              default :
+              default:
                 realRow = (int) ((float) h / partY);
                 realColumn = (int) ((float) w / partX);
                 break;
@@ -402,7 +382,7 @@ public enum IOComponentTypes {
             boxHeight = (int) ((float) (yPinNr + 1) * part) - (int) ((float) yPinNr * part);
             break;
           }
-          default : {
+          default: {
             part = (float) width / (float) nrOfPins;
             boxXpos = x + (int) ((float) pinNr * part);
             boxYpos = y;
@@ -413,14 +393,14 @@ public enum IOComponentTypes {
         }
         g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
-      case RGBLED :
+      case RGBLED:
         part = (float) height / (float) 3;
         final var by = y + (int) ((float) pinNr * part);
         final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
         g.fillRect(x, by, width, bh);
         break;
       case SevenSegment: hasDp = true;
-      case SevenSegmentNoDp :
+      case SevenSegmentNoDp:
         final var indexes = getSevenSegmentDisplayArray(hasDp);
         switch (mapRotation) {
           case ROTATION_CCW_90:
@@ -429,7 +409,7 @@ public enum IOComponentTypes {
             partY = (float) height / (float) 5;
             break;
           }
-          default : {
+          default: {
             partX = (float) width / (float) 5;
             partY = (float) height / (float) 7;
             break;
@@ -455,7 +435,7 @@ public enum IOComponentTypes {
                   realYIndex = xIndex;
                   realYIndexPlusOne = xIndex + 1;
                   break;
-                default :
+                default:
                   realXIndex = xIndex;
                   realXIndexPlusOne = xIndex + 1;
                   realYIndex = yIndex;
@@ -482,7 +462,7 @@ public enum IOComponentTypes {
             partY = (float) height / (float) nrOfColumns;
             break;
           }
-          default : {
+          default: {
             partX = (float) width / (float) nrOfColumns;
             partY = (float) height / (float) nrOfRows;
             break;
@@ -507,7 +487,7 @@ public enum IOComponentTypes {
             nextYPosition = (int) ((float) (selectedColumn + 1) * partY);
             break;
           }
-          default : {
+          default: {
             xPosition = (int) ((float) selectedColumn * partX);
             nextXPosition = (int) ((float) (selectedColumn + 1) * partX);
             yPosition = (int) ((float) selectedRow * partY);
