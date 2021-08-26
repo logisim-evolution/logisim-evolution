@@ -11,7 +11,6 @@ import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.std.io.RgbLed;
 
 public class LedArrayGenericHDLGeneratorFactory {
-
   public static String LedArrayOutputs = "externalLeds";
   public static String LedArrayRedOutputs = "externalLeds";
   public static String LedArrayGreenOutputs = "externalLeds";
@@ -31,30 +30,29 @@ public class LedArrayGenericHDLGeneratorFactory {
   public static String LedArrayGreenInputs = "internalGreenLeds";
   public static String LedArrayBlueInputs = "internalBlueLeds";
 
-
   public static AbstractHDLGeneratorFactory getSpecificHDLGenerator(String type) {
     final var typeId = LedArrayDriving.getId(type);
-    switch (typeId) {
-      case LedArrayDriving.LED_DEFAULT: return new LedArrayLedDefaultHDLGeneratorFactory();
-      case LedArrayDriving.LED_ROW_SCANNING: return new LedArrayRowScanningHDLGeneratorFactory();
-      case LedArrayDriving.LED_COLUMN_SCANNING: return new LedArrayColumnScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbDefault : return new RGBArrayLedDefaultHDLGeneratorFactory();
-      case LedArrayDriving.RgbRowScanning : return new RGBArrayRowScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbColumnScanning : return new RGBArrayColumnScanningHDLGeneratorFactory();
-      default : return null;
-    }
+    return switch (typeId) {
+      case LedArrayDriving.LED_DEFAULT -> new LedArrayLedDefaultHDLGeneratorFactory();
+      case LedArrayDriving.LED_ROW_SCANNING -> new LedArrayRowScanningHDLGeneratorFactory();
+      case LedArrayDriving.LED_COLUMN_SCANNING -> new LedArrayColumnScanningHDLGeneratorFactory();
+      case LedArrayDriving.RgbDefault  -> new RGBArrayLedDefaultHDLGeneratorFactory();
+      case LedArrayDriving.RgbRowScanning  -> new RGBArrayRowScanningHDLGeneratorFactory();
+      case LedArrayDriving.RgbColumnScanning  -> new RGBArrayColumnScanningHDLGeneratorFactory();
+      default -> null;
+    };
   }
 
   public static String getSpecificHDLName(char typeId) {
-    switch (typeId) {
-      case LedArrayDriving.LED_DEFAULT: return LedArrayLedDefaultHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.LED_ROW_SCANNING: return LedArrayRowScanningHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.LED_COLUMN_SCANNING: return LedArrayColumnScanningHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.RgbDefault : return RGBArrayLedDefaultHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RgbRowScanning : return RGBArrayRowScanningHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RgbColumnScanning : return RGBArrayColumnScanningHDLGeneratorFactory.RGBArrayName;
-      default : return null;
-    }
+    return switch (typeId) {
+      case LedArrayDriving.LED_DEFAULT -> LedArrayLedDefaultHDLGeneratorFactory.LedArrayName;
+      case LedArrayDriving.LED_ROW_SCANNING -> LedArrayRowScanningHDLGeneratorFactory.LedArrayName;
+      case LedArrayDriving.LED_COLUMN_SCANNING -> LedArrayColumnScanningHDLGeneratorFactory.LedArrayName;
+      case LedArrayDriving.RgbDefault -> RGBArrayLedDefaultHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.RgbRowScanning -> RGBArrayRowScanningHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.RgbColumnScanning -> RGBArrayColumnScanningHDLGeneratorFactory.RGBArrayName;
+      default -> null;
+    };
   }
 
   public static String getSpecificHDLName(String type) {
@@ -72,11 +70,11 @@ public class LedArrayGenericHDLGeneratorFactory {
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT:
         return LedArrayOutputs + identifier + "[" + pinNr + "]";
-        case LedArrayDriving.LED_ROW_SCANNING:
+      case LedArrayDriving.LED_ROW_SCANNING:
         return (pinNr < nrRowAddressBits)
           ? LedArrayRowAddress + identifier + "[" + pinNr + "]"
           : LedArrayColumnOutputs + identifier + "[" + (pinNr - nrRowAddressBits) + "]";
-        case LedArrayDriving.LED_COLUMN_SCANNING:
+      case LedArrayDriving.LED_COLUMN_SCANNING:
         return (pinNr < nrColumnAddressBits)
             ? LedArrayColumnAddress + identifier + "[" + pinNr + "]"
             : LedArrayRowOutputs + identifier + "[" + (pinNr - nrColumnAddressBits) + "]";
@@ -93,30 +91,26 @@ public class LedArrayGenericHDLGeneratorFactory {
       case LedArrayDriving.RgbRowScanning : {
         final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
         final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
-        if (pinNr < nrRowAddressBits) {
+        if (pinNr < nrRowAddressBits)
           return LedArrayRowAddress + identifier + "[" + pinNr + "]";
-        } else {
-          return switch (col) {
-            case 0 -> LedArrayColumnRedOutputs + identifier + "[" + index + "]";
-            case 1 -> LedArrayColumnGreenOutputs + identifier + "[" + index + "]";
-            case 2 -> LedArrayColumnBlueOutputs + identifier + "[" + index + "]";
-            default -> "";
-          };
-        }
+        return switch (col) {
+          case 0 -> LedArrayColumnRedOutputs + identifier + "[" + index + "]";
+          case 1 -> LedArrayColumnGreenOutputs + identifier + "[" + index + "]";
+          case 2 -> LedArrayColumnBlueOutputs + identifier + "[" + index + "]";
+          default -> "";
+        };
       }
       case LedArrayDriving.RgbColumnScanning : {
         final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
         final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
-        if (pinNr < nrColumnAddressBits) {
+        if (pinNr < nrColumnAddressBits)
           return LedArrayColumnAddress + identifier + "[" + pinNr + "]";
-        } else {
-          return switch (col) {
-            case 0 -> LedArrayRowRedOutputs + identifier + "[" + index + "]";
-            case 1 -> LedArrayRowGreenOutputs + identifier + "[" + index + "]";
-            case 2 -> LedArrayRowBlueOutputs + identifier + "[" + index + "]";
-            default -> "";
-          };
-        }
+        return switch (col) {
+          case 0 -> LedArrayRowRedOutputs + identifier + "[" + index + "]";
+          case 1 -> LedArrayRowGreenOutputs + identifier + "[" + index + "]";
+          case 2 -> LedArrayRowBlueOutputs + identifier + "[" + index + "]";
+          default -> "";
+        };
       }
     }
     return "";
@@ -196,75 +190,67 @@ public class LedArrayGenericHDLGeneratorFactory {
     return wires;
   }
 
-  public static ArrayList<String> GetComponentMap(char typeId,
-      int nrOfRows,
-      int nrOfColumns,
-      int identifier,
-      long FpgaClockFrequency,
-      boolean isActiveLow) {
-    final var componentMap = new ArrayList<String>();
-    if (HDL.isVHDL())
-      componentMap.add("   array" + identifier + " : " + getSpecificHDLName(typeId));
-    else
-      componentMap.add("   " + getSpecificHDLName(typeId));
+  public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
+    final var componentMap = new LineBuffer();
+    componentMap.
+            add(HDL.isVHDL()
+      ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
+      : "   " + getSpecificHDLName(typeId));
     switch (typeId) {
       case LedArrayDriving.RgbDefault :
-      case LedArrayDriving.LED_DEFAULT: {
-        componentMap.addAll(LedArrayLedDefaultHDLGeneratorFactory.getGenericMap(
+      case LedArrayDriving.LED_DEFAULT:
+        componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getGenericMap(
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
             isActiveLow));
         break;
-      }
       case LedArrayDriving.RgbColumnScanning :
-      case LedArrayDriving.LED_COLUMN_SCANNING: {
-        componentMap.addAll(LedArrayColumnScanningHDLGeneratorFactory.getGenericMap(
+      case LedArrayDriving.LED_COLUMN_SCANNING:
+        componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
             isActiveLow));
         break;
-      }
       case LedArrayDriving.RgbRowScanning :
-      case LedArrayDriving.LED_ROW_SCANNING: {
-        componentMap.addAll(LedArrayRowScanningHDLGeneratorFactory.getGenericMap(
+      case LedArrayDriving.LED_ROW_SCANNING:
+        componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
             isActiveLow));
         break;
-      }
     }
     if (HDL.isVerilog()) componentMap.add("      array" + identifier);
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT: {
-        componentMap.addAll(LedArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
       case LedArrayDriving.RgbDefault : {
-        componentMap.addAll(RGBArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(RGBArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        componentMap.addAll(LedArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
       case LedArrayDriving.RgbRowScanning : {
-        componentMap.addAll(RGBArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(RGBArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        componentMap.addAll(LedArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
       case LedArrayDriving.RgbColumnScanning : {
-        componentMap.addAll(RGBArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
+        componentMap.add(RGBArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
     }
     componentMap.add("");
-    return componentMap;
+    return componentMap.get();
   }
 
   public static ArrayList<String> getArrayConnections(FPGAIOInformationContainer array, int id) {
