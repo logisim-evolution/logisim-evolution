@@ -136,14 +136,11 @@ public enum IOComponentTypes {
   }
 
   public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
-    switch (comp) {
-      case DIPSwitch :
-        return DipSwitch.getInputLabel(id);
-      case LocalBus  :
-        return ReptarLocalBus.getInputLabel(id);
-      default        :
-        return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
-    }
+    return switch (comp) {
+      case DIPSwitch -> DipSwitch.getInputLabel(id);
+      case LocalBus -> ReptarLocalBus.getInputLabel(id);
+      default -> (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
+    };
   }
 
   public static Boolean hasRotationAttribute(IOComponentTypes comp) {

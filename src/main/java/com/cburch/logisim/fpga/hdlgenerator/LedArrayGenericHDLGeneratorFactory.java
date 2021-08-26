@@ -166,38 +166,32 @@ public class LedArrayGenericHDLGeneratorFactory {
     return externals;
   }
 
-  public static SortedMap<String, Integer> getInternalSignals(char typeId,
-      int nrOfRows,
-      int nrOfColumns,
-      int identifier) {
+  public static SortedMap<String, Integer> getInternalSignals(char typeId, int nrOfRows, int nrOfColumns, int identifier) {
     final var wires = new TreeMap<String, Integer>();
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT:
       case LedArrayDriving.LED_ROW_SCANNING:
-      case LedArrayDriving.LED_COLUMN_SCANNING: {
+      case LedArrayDriving.LED_COLUMN_SCANNING:
         wires.put("s_" + LedArrayInputs + identifier, nrOfRows * nrOfColumns);
         break;
-      }
-      case LedArrayDriving.RgbDefault :
-      case LedArrayDriving.RgbRowScanning :
-      case LedArrayDriving.RgbColumnScanning: {
+      case LedArrayDriving.RgbDefault:
+      case LedArrayDriving.RgbRowScanning:
+      case LedArrayDriving.RgbColumnScanning:
         wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
         break;
-      }
     }
     return wires;
   }
 
   public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
-    final var componentMap = new LineBuffer();
-    componentMap.
-            add(HDL.isVHDL()
-      ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
-      : "   " + getSpecificHDLName(typeId));
+    final var componentMap = (new LineBuffer())
+            .add(HDL.isVHDL()
+                ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
+                : "   " + getSpecificHDLName(typeId));
     switch (typeId) {
-      case LedArrayDriving.RgbDefault :
+      case LedArrayDriving.RgbDefault:
       case LedArrayDriving.LED_DEFAULT:
         componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getGenericMap(
             nrOfRows,
@@ -205,7 +199,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             FpgaClockFrequency,
             isActiveLow));
         break;
-      case LedArrayDriving.RgbColumnScanning :
+      case LedArrayDriving.RgbColumnScanning:
       case LedArrayDriving.LED_COLUMN_SCANNING:
         componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
@@ -213,7 +207,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             FpgaClockFrequency,
             isActiveLow));
         break;
-      case LedArrayDriving.RgbRowScanning :
+      case LedArrayDriving.RgbRowScanning:
       case LedArrayDriving.LED_ROW_SCANNING:
         componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
