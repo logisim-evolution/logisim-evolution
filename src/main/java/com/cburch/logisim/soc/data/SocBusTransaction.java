@@ -113,7 +113,7 @@ public class SocBusTransaction {
         case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupport");
         case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupport");
         default -> S.get("SocTransactionWordAccesNoSupport");
-        };
+      };
       case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessError");
       case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessError");
       case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExist");
@@ -134,7 +134,7 @@ public class SocBusTransaction {
         case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
         case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
         default -> S.get("SocTransactionWordAccesNoSupportShort");
-        };
+      };
       case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessErrorShort");
       case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessErrorShort");
       case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExistShort");

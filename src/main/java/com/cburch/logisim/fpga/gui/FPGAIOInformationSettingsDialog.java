@@ -764,12 +764,12 @@ public class FPGAIOInformationSettingsDialog {
             IOcomps.SetDefaultActivity(ActiveInput.getSelectedIndex());
             info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
           }
-          final var selectedRotation = mapRotation.getSelectedIndex();
-          info.setMapRotation(switch (selectedRotation) {
+          final var rotation = switch (mapRotation.getSelectedIndex()) {
             case 1 -> IOComponentTypes.ROTATION_CW_90;
             case 2 -> IOComponentTypes.ROTATION_CCW_90;
             default -> IOComponentTypes.ROTATION_ZERO;
-          });
+          };
+          info.setMapRotation(rotation);
           abort = true;
         }
       }
