@@ -32,6 +32,8 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -64,6 +66,16 @@ public class Button extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Button";
+  
+  public static final AttributeOption BUTTON_PRESS_ACTIVE =
+    new AttributeOption("active", S.getter("buttonPressActive"));
+  public static final AttributeOption BUTTON_PRESS_PASSIVE =
+    new AttributeOption("passive", S.getter("buttonPressPassive"));
+  public static final Attribute<AttributeOption> ATTR_PRESS =
+    Attributes.forOption(
+      "press",
+      S.getter("buttonPressAttr"),
+      new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
 
   public static class Logger extends InstanceLogger {
     @Override
@@ -118,6 +130,7 @@ public class Button extends InstanceFactory {
         new Attribute[] {
           StdAttr.FACING,
           IoLibrary.ATTR_COLOR,
+          ATTR_PRESS,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
@@ -128,6 +141,7 @@ public class Button extends InstanceFactory {
         new Object[] {
           Direction.EAST,
           Color.WHITE,
+          BUTTON_PRESS_ACTIVE,
           "",
           Direction.WEST,
           StdAttr.DEFAULT_LABEL_FONT,
@@ -168,6 +182,8 @@ public class Button extends InstanceFactory {
       instance.computeLabelTextField(Instance.AVOID_CENTER | Instance.AVOID_LEFT);
     } else if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_CENTER | Instance.AVOID_LEFT);
+    } else if (attr == ATTR_PRESS) {
+      // TODO 
     }
   }
 
@@ -247,6 +263,7 @@ public class Button extends InstanceFactory {
   public void propagate(InstanceState state) {
     final var data = (InstanceDataSingleton) state.getData();
     Value val = data == null ? Value.FALSE : (Value) data.getValue();
+    val = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? val : val == Value.TRUE ? Value.FALSE : Value.TRUE;
     state.setPort(0, val, 1);
   }
 
