@@ -74,14 +74,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .withHdlPairs()
             .addPair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
-            .addRemarkBlock("Here the Output is defined");
-    if (TheNetlist.RequiresGlobalClockConnection()) {
-      Contents.add(HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
-    } else {
-      Contents.add("   {{assign}} FPGATick {{=}} s_tick_reg;");
-    }
-    Contents.add("");
-    Contents.addRemarkBlock("Here the update logic is defined");
+            .addRemarkBlock("Here the Output is defined")
+            .add(
+                TheNetlist.RequiresGlobalClockConnection()
+                    ? "   {{assign}} FPGATick {{=}} '1';"
+                    : "   {{assign}} FPGATick {{=}} s_tick_reg;")
+            .add("")
+            .addRemarkBlock("Here the update logic is defined");
+
     if (HDL.isVHDL()) {
       Contents.add(
           "s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';",

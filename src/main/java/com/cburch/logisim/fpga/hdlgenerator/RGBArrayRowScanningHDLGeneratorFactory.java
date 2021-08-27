@@ -120,7 +120,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
       contents.add(
-          // FIXME: isn't opening empty line missing here? `else` part has one.
+          "",
           "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
           "BEGIN",
           "   s_maxRedLedInputs <= (OTHERS => '0');",
