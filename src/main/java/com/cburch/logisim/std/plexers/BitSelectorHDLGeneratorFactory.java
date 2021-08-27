@@ -95,7 +95,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
             "   case (Sel)");
         for (var i = 15; i > 0; i--) {
           contents.add("      {{1}} : s_selected_slice <= s_select_vector[({{2}}*{{outBits}})-1:{{1}}*{{outBits}}];", i, (i + 1));
-          }
+        }
         contents.add(
             "      default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];",
             "   endcase",

@@ -218,21 +218,21 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
-      contents
-          .add("GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE",
-     "   OneBit : SingleBitShiftReg",
-     "   GENERIC MAP ( {{activeLevel}} => {{activeLevel}},",
-     "                 {{nrOfStages}} => {{nrOfStages}} )",
-     "   PORT MAP ( Reset       => Reset,",
-     "              Tick        => Tick,",
-     "              Clock       => Clock,",
-     "              ShiftEnable => ShiftEnable,",
-     "              ParLoad     => ParLoad,",
-     "              ShiftIn     => ShiftIn(n),",
-     "              D           => D( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})),",
-     "              ShiftOut    => ShiftOut(n),",
-     "              Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})));",
-     "END GENERATE genbits;");
+      contents.add(
+          "GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE",
+          "   OneBit : SingleBitShiftReg",
+          "   GENERIC MAP ( {{activeLevel}} => {{activeLevel}},",
+          "                 {{nrOfStages}} => {{nrOfStages}} )",
+          "   PORT MAP ( Reset       => Reset,",
+          "              Tick        => Tick,",
+          "              Clock       => Clock,",
+          "              ShiftEnable => ShiftEnable,",
+          "              ParLoad     => ParLoad,",
+          "              ShiftIn     => ShiftIn(n),",
+          "              D           => D( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})),",
+          "              ShiftOut    => ShiftOut(n),",
+          "              Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})));",
+          "END GENERATE genbits;");
     } else {
       contents.add(
           "genvar n;",
