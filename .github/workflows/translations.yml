@@ -49,10 +49,13 @@ jobs:
           declare -r base_files=$(find src/main/resources/resources/logisim/* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
 
           # Read currently supported languages from settings.properties
-          declare -r "langs_list=$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
+          declare -r langs_list="$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
 
-          # Remove base language from list and turn it into a comma separated one
-          declare -r langs="${${langs_list//en /}// /,}"
+          # Remove base language from list
+          declare -r langs_list_without_base="${langs_list//en /}"
+
+          # Turn list into comma separated one
+          declare -r langs="${langs_list_without_base// /,}"
 
           # Validate.
           failed=
