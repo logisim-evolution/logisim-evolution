@@ -52,10 +52,7 @@ jobs:
           declare -r langs_list="$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
 
           # Remove base language from list
-          declare -r langs_list_without_base="${langs_list//en /}"
-
-          # Turn list into comma separated one
-          declare -r langs="${langs_list_without_base// /,}"
+          declare -r langs="${langs_list//en&/}"
 
           # Validate.
           failed=
