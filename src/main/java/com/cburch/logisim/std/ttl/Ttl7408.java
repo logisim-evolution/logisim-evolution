@@ -32,6 +32,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class Ttl7408 extends AbstractTtlGate {
@@ -52,11 +53,11 @@ public class Ttl7408 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
-      final var Contents = new ArrayList<String>();
-      Contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-              + "gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B;");
-      Contents.add("");
-      return Contents;
+      return (new LineBuffer())
+          .withHdlPairs()
+          .add("{{assign}} gate_%1$d_O {{=}} gate_%1$d_A {{and}} gate_%1$dB;", index)
+          .add("")
+          .getWithIndent();
     }
   }
 

@@ -54,6 +54,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -71,10 +72,11 @@ class NotGate extends InstanceFactory {
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "Input_1;");
-      Contents.add("");
-      return Contents;
+      return (new LineBuffer())
+          .withHdlPairs()
+          .add("{{assign}} Result {{=}} {{not}}Input_1;")
+          .add("")
+          .getWithIndent();
     }
   }
 

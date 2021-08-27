@@ -72,6 +72,20 @@ public class LineBuffer implements RandomAccess {
 
   protected Pairs pairs = new Pairs();
 
+  public LineBuffer withHdlPairs() {
+    return addPair("assign", HDL.assignPreamble())
+        .addPair("=", HDL.assignOperator())
+        .addPair("or", HDL.orOperator())
+        .add("and", HDL.andOperator())
+        .add("not", HDL.notOperator())
+        .add("bracketOpen", HDL.BracketOpen())
+        .add("bracketClose", HDL.BracketClose())
+        .add("<", HDL.BracketOpen())
+        .add(">", HDL.BracketClose())
+        .add("0b", HDL.zeroBit())
+        .add("1b", HDL.oneBit());
+  }
+
   public Pairs withPairs() {
     return pairs;
   }
@@ -105,6 +119,34 @@ public class LineBuffer implements RandomAccess {
     return contents.isEmpty();
   }
 
+  public boolean contains(Object obj) {
+    return contents.contains(obj);
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Adds line to the buffer only if line is not present already.
+   *
+   * @param line Line to optionally add.
+   */
+  public LineBuffer addUnique(String line) {
+    addUnique(line, true);
+    return this;
+  }
+
+  public LineBuffer addUnique(String line, boolean applyMap) {
+    if (!contains(line)) add(line, applyMap);
+    return this;
+  }
+
+
+  public LineBuffer addUnique(String fmt, Object... args) {
+    var line = String.format(fmt, args);
+    line = applyPairs(line, pairs);
+    return addUnique(line);
+  }
+
   /* ********************************************************************************************* */
 
   /**
@@ -114,7 +156,14 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line) {
-    contents.add(applyMap(line, pairs));
+    return add(line, true);
+  }
+
+  public LineBuffer add(String line, boolean applyMap) {
+    if (applyMap) {
+      line = applyPairs(line, pairs);
+    }
+    contents.add(line);
     return this;
   }
 
@@ -146,10 +195,29 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
-    return add(applyMap(format, pairs));
+    return add(applyPairs(format, pairs));
+  }
+
+  /**
+   * Adds all lines from given collection to content buffer.
+   *
+   * @param lines
+   * @return
+   */
+  public LineBuffer add(Collection<String> lines) {
+    for (final var line : lines) add(line);
+    return this;
+  }
+
+  public LineBuffer add(String... lines) {
+    return add(Arrays.asList(lines));
   }
 
   /* ********************************************************************************************* */
+
+  public String applyPairs(String format) {
+    return applyPairs(format, pairs);
+  }
 
   /**
    * Applies search-replace var to provided string.
@@ -157,7 +225,7 @@ public class LineBuffer implements RandomAccess {
    * @param format String to format, with (optional) `{{placeholders}}`.
    * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
    */
-  protected String applyMap(String format, Pairs pairs) {
+  public String applyPairs(String format, Pairs pairs) {
     if (pairs != null) {
       for (final var set : pairs.entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
@@ -193,19 +261,9 @@ public class LineBuffer implements RandomAccess {
     return repeat(count, "");
   }
 
-  public LineBuffer add(String... lines) {
-    return add(Arrays.asList(lines));
-  }
 
-  /**
-   * Adds all lines from given collection to content buffer.
-   *
-   * @param lines
-   * @return
-   */
-  public LineBuffer add(Collection<String> lines) {
-    for (final var line : lines) add(line);
-    return this;
+  public String get(int index) {
+    return contents.get(index);
   }
 
   /**
@@ -246,7 +304,8 @@ public class LineBuffer implements RandomAccess {
   public ArrayList<String> getWithIndent(String indent) {
     final var result = new ArrayList<String>();
     for (final var line : contents) {
-      result.add(indent + line);
+      // We do not indent empty lines, just ones with content.
+      result.add((line.length() == 0) ? line : indent + line);
     }
     return result;
   }
@@ -366,6 +425,14 @@ public class LineBuffer implements RandomAccess {
   }
 
   /* ********************************************************************************************* */
+
+  public LineBuffer addPairs(Pairs pairs) {
+    for (final var pair : pairs.entrySet()) {
+      addPair(pair.getKey(), pair.getValue());
+    }
+
+    return this;
+  }
 
   public LineBuffer addPair(String key, Object value) {
     pairs.add(key, value);

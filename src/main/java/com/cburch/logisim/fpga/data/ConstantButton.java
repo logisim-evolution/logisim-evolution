@@ -63,14 +63,14 @@ public class ConstantButton extends FPGAIOInformationContainer {
   @Override
   public boolean tryMap(JPanel parent) {
     if (selComp == null) return false;
-    MapComponent map = selComp.getMap();
-    switch (myType) {
-      case CONSTANT_ZERO : return map.tryConstantMap(selComp.getPin(), 0L);
-      case CONSTANT_ONE  : return map.tryConstantMap(selComp.getPin(), -1L);
-      case LEAVE_OPEN    : return map.tryOpenMap(selComp.getPin());
-      case CONSTANT_VALUE: return getConstant(selComp.getPin(), map);
-    }
-    return false;
+    final var map = selComp.getMap();
+    return switch (myType) {
+      case CONSTANT_ZERO -> map.tryConstantMap(selComp.getPin(), 0L);
+      case CONSTANT_ONE  -> map.tryConstantMap(selComp.getPin(), -1L);
+      case LEAVE_OPEN    -> map.tryOpenMap(selComp.getPin());
+      case CONSTANT_VALUE ->  getConstant(selComp.getPin(), map);
+      default -> false;
+    };
   }
 
   private boolean getConstant(int pin, MapComponent map) {
@@ -110,14 +110,12 @@ public class ConstantButton extends FPGAIOInformationContainer {
     int connect = comp.getPin();
     if (connect < 0) {
       if (map.hasInputs()) {
-        switch (myType) {
-          case CONSTANT_ONE:
-          case CONSTANT_ZERO:
-            selectable = true;
-            break;
-          case CONSTANT_VALUE:
-            selectable = map.nrInputs() > 1;
-        }
+        selectable = switch (myType) {
+          case CONSTANT_ONE -> true;
+          case CONSTANT_ZERO -> true;
+          case CONSTANT_VALUE -> map.nrInputs() > 1;
+          default -> throw new IllegalStateException("Unexpected value: " + myType);
+        };
       }
       if (map.hasOutputs() || map.hasIOs()) selectable = myType == LEAVE_OPEN;
     } else {

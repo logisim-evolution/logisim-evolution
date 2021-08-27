@@ -530,9 +530,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    var Contents = new ArrayList<String>();
-    if (HDL.isVHDL()) Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
-    return Contents;
+    var Contents = new LineBuffer();
+    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
+    return Contents.get();
   }
 
   @Override
@@ -542,7 +542,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent ComponentInfo,
       MappableResourcesContainer MapInfo,
       String Name) {
-    var Contents = new ArrayList<String>();
+    final var Contents = new ArrayList<String>();
     final var ParameterMap = GetParameterMap(Nets, ComponentInfo);
     final var PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
     final var CompName = (Name != null && !Name.isEmpty()) ? Name :
@@ -689,13 +689,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist TheNetlist,
       AttributeSet attrs,
       String ComponentName) {
-    var Contents = new ArrayList<String>();
+    var Contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      Contents.addAll(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()));
-      Contents.addAll(FileWriter.getExtendedLibrary());
-      Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
+      Contents.add(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()))
+          .add(FileWriter.getExtendedLibrary())
+          .add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
     }
-    return Contents;
+    return Contents.get();
   }
 
   /* Here all public entries for HDL generation are defined */
@@ -1212,85 +1212,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public boolean IsOnlyInlined(IOComponentTypes map) {
     return true;
-  }
-
-  /**
-   * @deprecated Use LineBuffer's addRemarkBlock() instead.
-   */
-  protected ArrayList<String> MakeRemarkBlock(String RemarkText, Integer NrOfIndentSpaces) {
-    final var maxRemarkLength = MaxLineLength - 2 * HDL.remarkOverhead() - NrOfIndentSpaces;
-    var remarkWords = RemarkText.split(" ");
-    var oneLine = new StringBuilder();
-    var contents = new ArrayList<String>();
-    var maxWordLength = 0;
-    for (var word : remarkWords) {
-      if (word.length() > maxWordLength) {
-        maxWordLength = word.length();
-      }
-    }
-    if (maxRemarkLength < maxWordLength) {
-      return contents;
-    }
-    /* we start with generating the first remark line */
-    while (oneLine.length() < NrOfIndentSpaces) {
-      oneLine.append(" ");
-    }
-    for (var i = 0; i < MaxLineLength - NrOfIndentSpaces; i++) {
-      oneLine.append(HDL.getRemakrChar(i == 0, i == MaxLineLength - NrOfIndentSpaces - 1));
-    }
-    contents.add(oneLine.toString());
-    oneLine.setLength(0);
-    /* Next we put the remark text block in 1 or multiple lines */
-    for (var remarkWord : remarkWords) {
-      if ((oneLine.length() + remarkWord.length() + HDL.remarkOverhead()) > (MaxLineLength - 1)) {
-        /* Next word does not fit, we end this line and create a new one */
-        while (oneLine.length() < (MaxLineLength - HDL.remarkOverhead())) {
-          oneLine.append(" ");
-        }
-        oneLine
-            .append(" ")
-            .append(HDL.getRemakrChar(false, false))
-            .append(HDL.getRemakrChar(false, false));
-        contents.add(oneLine.toString());
-        oneLine.setLength(0);
-      }
-      while (oneLine.length() < NrOfIndentSpaces) {
-        oneLine.append(" ");
-      }
-      if (oneLine.length() == NrOfIndentSpaces) {
-        /* we put the preamble */
-        oneLine.append(HDL.getRemarkStart());
-      }
-      if (remarkWord.endsWith("\\")) {
-        /* Forced new line */
-        oneLine.append(remarkWord, 0, remarkWord.length() - 1);
-        while (oneLine.length() < (MaxLineLength - HDL.remarkOverhead())) {
-          oneLine.append(" ");
-        }
-      } else {
-        oneLine.append(remarkWord).append(" ");
-      }
-    }
-    if (oneLine.length() > (NrOfIndentSpaces + HDL.remarkOverhead())) {
-      /* we have an unfinished remark line */
-      while (oneLine.length() < (MaxLineLength - HDL.remarkOverhead())) {
-        oneLine.append(" ");
-      }
-      oneLine
-          .append(" ")
-          .append(HDL.getRemakrChar(false, false))
-          .append(HDL.getRemakrChar(false, false));
-      contents.add(oneLine.toString());
-      oneLine.setLength(0);
-    }
-    /* we end with generating the last remark line */
-    while (oneLine.length() < NrOfIndentSpaces) {
-      oneLine.append(" ");
-    }
-    for (var i = 0; i < MaxLineLength - NrOfIndentSpaces; i++)
-      oneLine.append(HDL.getRemakrChar(i == MaxLineLength - NrOfIndentSpaces - 1, i == 0));
-    contents.add(oneLine.toString());
-    return contents;
   }
 
   public static ArrayList<String> GetToplevelCode(MapComponent Component) {

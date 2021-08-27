@@ -151,20 +151,20 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbDefault : {
+      case LedArrayDriving.RgbDefault: {
         nrOfPins = nrOfRows * nrOfColumns * 3;
         var preamble = "";
         for (var rgb = 0; rgb < 3; rgb++) {
           switch (rgb) {
-            case 0 : {
+            case 0: {
               preamble = "Red_";
               break;
             }
-            case 1 : {
+            case 1: {
               preamble = "Green_";
               break;
             }
-            default : {
+            default: {
               preamble = "Blue_";
               break;
             }
@@ -176,7 +176,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbRowScanning : {
+      case LedArrayDriving.RgbRowScanning: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
@@ -188,15 +188,15 @@ public class FPGAIOInformationSettingsDialog {
             final var rgb = id / nrOfColumns;
             final var col = id % nrOfColumns;
             switch (rgb) {
-              case 0 : {
+              case 0: {
                 preamble = "Red_";
                 break;
               }
-              case 1 : {
+              case 1: {
                 preamble = "Green_";
                 break;
               }
-              default : {
+              default: {
                 preamble = "Blue_";
                 break;
               }
@@ -206,7 +206,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RgbColumnScanning: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";
@@ -218,15 +218,15 @@ public class FPGAIOInformationSettingsDialog {
             final var rgb = id / nrOfRows;
             final var col = id % nrOfRows;
             switch (rgb) {
-              case 0 : {
+              case 0: {
                 preamble = "Red_";
                 break;
               }
-              case 1 : {
+              case 1: {
                 preamble = "Green_";
                 break;
               }
-              default : {
+              default: {
                 preamble = "Blue_";
                 break;
               }
@@ -236,7 +236,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      default : {
+      default: {
         nrOfPins = 0;
       }
     }
@@ -356,7 +356,7 @@ public class FPGAIOInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "LedArray" : {
+            case "LedArray": {
               info.setNrOfRows(RowSize.getSelectedIndex() + 1);
               info.setNrOfColumns(ColSize.getSelectedIndex() + 1);
               info.setArrayDriveMode((char) Encoding.getSelectedIndex());
@@ -421,7 +421,7 @@ public class FPGAIOInformationSettingsDialog {
           mapRotation.setSelectedIndex(2);
           break;
         }
-        default : {
+        default: {
           mapRotation.setSelectedIndex(0);
           break;
         }
@@ -692,24 +692,15 @@ public class FPGAIOInformationSettingsDialog {
                 values[i] = Integer.parseUnsignedInt(rectLocations.get(i).getText());
               } catch (NumberFormatException e) {
                 correct = false;
-                switch (i) {
-                  case 0 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoXpos"),
-                                  rectLocations.get(i).getText()));
-                           break;
-                  case 1 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoYpos"),
-                                  rectLocations.get(i).getText()));
-                           break;
-                  case 2 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoWidth"),
-                                  rectLocations.get(i).getText()));
-                            break;
-                  default : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoHeight"),
-                                  rectLocations.get(i).getText()));
-                            break;
-                }
+                final var msgKey = switch (i) {
+                  case 0 -> "FpgaIoXpos";
+                  case 1 -> "FpgaIoYpos";
+                  case 2 -> "FpgaIoWidth";
+                  default -> "FpgaIoHeight";
+                };
+                DialogNotification.showDialogNotification(
+                        // FIXME: hardcoded string
+                        IOcomps.getParentFrame(), "Error", S.get("FpgaIoIntError", S.get(msgKey), rectLocations.get(i).getText()));
               }
             }
             if (!correct) continue;
@@ -719,22 +710,27 @@ public class FPGAIOInformationSettingsDialog {
                 || values[3] != MyRectangle.getHeight()) {
               final var update = new Rectangle(values[0], values[1], values[2], values[3]);
               if (IOcomps.hasOverlap(MyRectangle, new BoardRectangle(update))) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectError"));
                 continue;
               } else if (update.getX() + update.getWidth() >= BoardManipulator.IMAGE_WIDTH) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTWide"));
                 continue;
               } else if (update.getY() + update.getHeight() >= BoardManipulator.IMAGE_HEIGHT) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTHeigt"));
                 continue;
               } else if (update.getWidth() < 2) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectWNLE"));
                 continue;
               } else if (update.getHeight() < 2) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectHNLE"));
                 continue;
@@ -768,21 +764,12 @@ public class FPGAIOInformationSettingsDialog {
             IOcomps.SetDefaultActivity(ActiveInput.getSelectedIndex());
             info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
           }
-          final var selectedRotation = mapRotation.getSelectedIndex();
-          switch (selectedRotation) {
-            case 1 : {
-              info.setMapRotation(IOComponentTypes.ROTATION_CW_90);
-              break;
-            }
-            case 2 : {
-              info.setMapRotation(IOComponentTypes.ROTATION_CCW_90);
-              break;
-            }
-            default : {
-              info.setMapRotation(IOComponentTypes.ROTATION_ZERO);
-              break;
-            }
-          }
+          final var rotation = switch (mapRotation.getSelectedIndex()) {
+            case 1 -> IOComponentTypes.ROTATION_CW_90;
+            case 2 -> IOComponentTypes.ROTATION_CCW_90;
+            default -> IOComponentTypes.ROTATION_ZERO;
+          };
+          info.setMapRotation(rotation);
           abort = true;
         }
       }
