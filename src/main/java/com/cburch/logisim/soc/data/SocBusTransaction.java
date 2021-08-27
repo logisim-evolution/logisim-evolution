@@ -101,47 +101,45 @@ public class SocBusTransaction {
   }
 
   public String getErrorMessage() {
-    switch (Error) {
-      case NO_ERROR: return S.get("SocTransactionSuccessfull");
-      case NO_RESPONS_ERROR: return S.get("SocTransactionNoRespons");
-      case NO_SLAVES_ERROR: return S.get("SocTransactionNoSlavesAttached");
-      case MULTIPLE_SLAVES_ERROR: return S.get("SocTransactionMultipleSlaveAnswers");
-      case NONE_ATOMIC_READ_WRITE_ERROR: return S.get("SocTransactionNoneAtomicRW");
-      case NO_SOC_BUS_CONNECTED_ERROR: return S.get("SocTransactionNoBusConnected");
-      case MISALIGNED_ADDRESS_ERROR: return S.get("SocTransactionMisalignedAddress");
-      case ACCESS_TYPE_NOT_SUPPORTED_ERROR:
-        switch (access) {
-          case BYTE_ACCESS: return S.get("SocTransactionByteAccesNoSupport");
-          case HALF_WORD_ACCESS: return S.get("SocTransactionHalfWordAccesNoSupport");
-          default             : return S.get("SocTransactionWordAccesNoSupport");
-        }
-      case READ_ONLY_ACCESS_ERROR: return S.get("SocTransactionReadOnlyAccessError");
-      case WRITE_ONLY_ACCESS_ERROR: return S.get("SocTransactionWriteOnlyAccessError");
-      case REGISTER_DOES_NOT_EXIST_ERROR: return S.get("SocTransactionRegisterDoesNotExist");
-    }
-    return S.get("SocTransactionUnknownError");
+    return switch (Error) {
+      case NO_ERROR -> S.get("SocTransactionSuccessfull");
+      case NO_RESPONS_ERROR -> S.get("SocTransactionNoRespons");
+      case NO_SLAVES_ERROR -> S.get("SocTransactionNoSlavesAttached");
+      case MULTIPLE_SLAVES_ERROR -> S.get("SocTransactionMultipleSlaveAnswers");
+      case NONE_ATOMIC_READ_WRITE_ERROR -> S.get("SocTransactionNoneAtomicRW");
+      case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnected");
+      case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddress");
+      case ACCESS_TYPE_NOT_SUPPORTED_ERROR -> switch (access) {
+        case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupport");
+        case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupport");
+        default -> S.get("SocTransactionWordAccesNoSupport");
+      };
+      case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessError");
+      case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessError");
+      case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExist");
+      default -> S.get("SocTransactionUnknownError");
+    };
   }
 
   public String getShortErrorMessage() {
-    switch (Error) {
-      case NO_ERROR: return S.get("SocTransactionSuccessfullShort");
-      case NO_RESPONS_ERROR: return S.get("SocTransactionNoResponsShort");
-      case NO_SLAVES_ERROR: return S.get("SocTransactionNoSlavesAttachedShort");
-      case MULTIPLE_SLAVES_ERROR: return S.get("SocTransactionMultipleSlaveAnswersShort");
-      case NONE_ATOMIC_READ_WRITE_ERROR: return S.get("SocTransactionNoneAtomicRWShort");
-      case NO_SOC_BUS_CONNECTED_ERROR: return S.get("SocTransactionNoBusConnectedShort");
-      case MISALIGNED_ADDRESS_ERROR: return S.get("SocTransactionMisalignedAddressShort");
-      case ACCESS_TYPE_NOT_SUPPORTED_ERROR:
-        switch (access) {
-          case BYTE_ACCESS: return S.get("SocTransactionByteAccesNoSupportShort");
-          case HALF_WORD_ACCESS: return S.get("SocTransactionHalfWordAccesNoSupportShort");
-          default             : return S.get("SocTransactionWordAccesNoSupportShort");
-        }
-      case READ_ONLY_ACCESS_ERROR: return S.get("SocTransactionReadOnlyAccessErrorShort");
-      case WRITE_ONLY_ACCESS_ERROR: return S.get("SocTransactionWriteOnlyAccessErrorShort");
-      case REGISTER_DOES_NOT_EXIST_ERROR: return S.get("SocTransactionRegisterDoesNotExistShort");
-    }
-    return S.get("SocTransactionUnknownErrorShort");
+    return switch (Error) {
+      case NO_ERROR -> S.get("SocTransactionSuccessfullShort");
+      case NO_RESPONS_ERROR -> S.get("SocTransactionNoResponsShort");
+      case NO_SLAVES_ERROR -> S.get("SocTransactionNoSlavesAttachedShort");
+      case MULTIPLE_SLAVES_ERROR -> S.get("SocTransactionMultipleSlaveAnswersShort");
+      case NONE_ATOMIC_READ_WRITE_ERROR -> S.get("SocTransactionNoneAtomicRWShort");
+      case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnectedShort");
+      case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddressShort");
+      case ACCESS_TYPE_NOT_SUPPORTED_ERROR -> switch (access) {
+        case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
+        case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
+        default -> S.get("SocTransactionWordAccesNoSupportShort");
+      };
+      case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessErrorShort");
+      case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessErrorShort");
+      case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExistShort");
+      default -> S.get("SocTransactionUnknownErrorShort");
+    };
   }
 
   public int getType() {

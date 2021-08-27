@@ -498,7 +498,7 @@ public class FPGAIOInformationContainer implements Cloneable {
             result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
             break;
           }
-          default : break;
+          default: break;
         }
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
