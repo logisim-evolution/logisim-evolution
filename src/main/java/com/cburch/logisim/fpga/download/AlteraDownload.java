@@ -239,15 +239,15 @@ public class AlteraDownload implements VendorDownload {
             "    # Include all entities and gates",
             "");
     for (var entity : entities) {
-      contents.add("    set_global_assignment -name {{fileType}} \"%s\"", entity);
+      contents.add("    set_global_assignment -name {{fileType}} \"{{1}}\"", entity);
     }
     for (var architecture : architectures) {
-      contents.add("    set_global_assignment -name {{fileType}} \"%s\"", architecture);
+      contents.add("    set_global_assignment -name {{fileType}} \"{{1}}\"", architecture);
     }
     contents.add("");
     contents.add("    # Map fpga_clk and ionets to fpga pins");
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
-      contents.add("    set_location_assignment %s -to {{clock}}", boardInfo.fpga.getClockPinLocation());
+      contents.add("    set_location_assignment {{1}} -to {{clock}}", boardInfo.fpga.getClockPinLocation());
     }
     contents
         .add(getPinLocStrings())
@@ -271,18 +271,19 @@ public class AlteraDownload implements VendorDownload {
 
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
-          final var inv = map.isExternalInverted(i) ? "n_" : "";
-          contents.add("set_location_assignment %s -to %s%s", map.getPinLocation(i), inv, map.getHdlString(i));
-          if (map.requiresPullup(i)) {
-            contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to %s%s", inv, map.getHdlString(i));
-          }
+          final var pairs = new LineBuffer.Pairs()
+                  .add("pinLoc", map.getPinLocation(i))
+                  .add("inv", map.isExternalInverted(i) ? "n_" : "")
+                  .add("hdlStr",map.getHdlString(i));
+          contents.add("set_location_assignment {{1}} -to {{2}}{{3}}", pairs);
+          if (map.requiresPullup(i))
+            contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to {{1}}{{2}}", pairs);
         }
       }
     }
     final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, RootNetList, boardInfo);
-    for (final var key : ledArrayMap.keySet()) {
+    for (final var key : ledArrayMap.keySet())
       contents.add("set_location_assignment %s-to %s", ledArrayMap.get(key), key);
-    }
     return contents.getWithIndent(4);
   }
 
@@ -298,12 +299,12 @@ public class AlteraDownload implements VendorDownload {
 
     return (new LineBuffer())
         .addPair("assign", "set_global_assignment -name")
-        .add("{{assign}} FAMILY \"%s\"", currentBoard.fpga.getTechnology())
-        .add("{{assign}} DEVICE %s", currentBoard.fpga.getPart())
-        .add("{{assign}} DEVICE_FILTER_PACKAGE %s", pkg[0])
-        .add("{{assign}} DEVICE_FILTER_PIN_COUNT %s", pkg[1])
-        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT %s\"", behavior)
-        .add("{{assign}} FMAX_REQUIREMENT \"%s\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assign}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
+        .add("{{assign}} DEVICE {{1}}", currentBoard.fpga.getPart())
+        .add("{{assign}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
+        .add("{{assign}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
+        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
+        .add("{{assign}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
         .add("{{assign}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assign}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
@@ -431,7 +432,7 @@ public class AlteraDownload implements VendorDownload {
             .add("-m")
             .add("jtag")
             .add("-o")
-            .add("P;%s", ProgrammerSofFile);
+            .add("P;{{1}}", ProgrammerSofFile);
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {

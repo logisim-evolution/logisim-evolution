@@ -81,8 +81,9 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               : "Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
       Contents.add("BorrowOut <= NOT(s_sum_result(" + ExtendedBitsStr + "-1));");
     } else {
-      Contents.add("assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);");
-      Contents.add("assign   BorrowOut = ~s_carry;");
+      Contents.add(
+          "assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);",
+          "assign   BorrowOut = ~s_carry;");
     }
     return Contents.getWithIndent();
   }

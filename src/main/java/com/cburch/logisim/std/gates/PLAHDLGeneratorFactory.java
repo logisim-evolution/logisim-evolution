@@ -75,10 +75,10 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       var leader = "    Result <= ";
       final var indent = "              ";
       if (tt.rows().isEmpty()) {
-        contents.add("%s%s;", leader, zeros(outSz));
+        contents.add("{{1}}{{2}};", leader, zeros(outSz));
       } else {
         for (PLATable.Row r : tt.rows()) {
-          contents.add("%s%s WHEN std_match(Index, %s) ELSE", leader + bits(r.outBits), bits(r.inBits));
+          contents.add("{{1}}{{2}} WHEN std_match(Index, {{3}}) ELSE", leader, bits(r.outBits), bits(r.inBits));
           leader = indent;
         }
         contents.add("%s%s;", leader, zeros(outSz));

@@ -192,8 +192,8 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
     final var componentMap = new LineBuffer();
-    componentMap.
-            add(HDL.isVHDL()
+    componentMap
+            .add(HDL.isVHDL()
       ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
       : "   " + getSpecificHDLName(typeId));
     switch (typeId) {
@@ -222,7 +222,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             isActiveLow));
         break;
     }
-    if (HDL.isVerilog()) componentMap.add("      array" + identifier);
+    if (HDL.isVerilog()) componentMap.add("      array{{1}}", identifier);
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT: {
         componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
@@ -273,7 +273,7 @@ public class LedArrayGenericHDLGeneratorFactory {
       if (!info.pinIsMapped(pin)) {
         connections.add("{{assign}} s_{{ins}}{{id}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
       } else {
-        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} %s;", info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
+        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};", info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
       }
     }
     return connections.getWithIndent();

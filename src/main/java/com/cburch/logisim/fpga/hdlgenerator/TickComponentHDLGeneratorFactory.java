@@ -71,13 +71,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
+            .withHdlPairs()
             .addPair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
             .addRemarkBlock("Here the Output is defined");
     if (TheNetlist.RequiresGlobalClockConnection()) {
       Contents.add(HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " '1';");
     } else {
-      Contents.add("   " + HDL.assignPreamble() + "FPGATick " + HDL.assignOperator() + " s_tick_reg;");
+      Contents.add("   {{assign}} FPGATick {{=}} s_tick_reg;");
     }
     Contents.add("");
     Contents.addRemarkBlock("Here the update logic is defined");

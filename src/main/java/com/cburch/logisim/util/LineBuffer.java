@@ -143,6 +143,12 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
+  public static String format(String fmt, Object... args) {
+    return applyPairs(fmt, Pairs.fromArgs(args));
+  }
+
+  /* ********************************************************************************************* */
+
   /**
    * Adds line to the buffer only if line is not present already.
    *
@@ -157,7 +163,6 @@ public class LineBuffer implements RandomAccess {
     if (!contains(line)) add(line, applyMap);
     return this;
   }
-
 
   public LineBuffer addUnique(String fmt, Object... args) {
     var line = String.format(fmt, args);
@@ -197,7 +202,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
-    return add(fmt, pairsFromArgs(args));
+    return add(fmt, Pairs.fromArgs(args));
   }
 
   /**
@@ -230,21 +235,6 @@ public class LineBuffer implements RandomAccess {
     return add(Arrays.asList(lines));
   }
 
-  /**
-   * Constructs Pairs map from positional arguments auto-assigning numerical
-   * placeholders `{{x}}` where `x` is integer starting from `1`.
-   *
-   * @param args Arguments to use to build the map.
-   */
-  private Pairs pairsFromArgs(Object... args) {
-    final var map = new Pairs();
-    var idx = 1;
-    for (final var arg : args) {
-      map.add(String.valueOf(idx++), "" + arg);
-    }
-    return map;
-  }
-
   /* ********************************************************************************************* */
 
   public String applyPairs(String format) {
@@ -257,7 +247,7 @@ public class LineBuffer implements RandomAccess {
    * @param format String to format, with (optional) `{{placeholders}}`.
    * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
    */
-  public String applyPairs(String format, Pairs pairs) {
+  public static String applyPairs(String format, Pairs pairs) {
     if (pairs != null) {
       for (final var set : pairs.entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
@@ -477,6 +467,23 @@ public class LineBuffer implements RandomAccess {
     public Pairs() {
       // empty
     }
+
+
+    /**
+     * Constructs Pairs map from positional arguments auto-assigning numerical
+     * placeholders `{{x}}` where `x` is integer starting from `1`.
+     *
+     * @param args Arguments to use to build the map.
+     */
+    public static Pairs fromArgs(Object... args) {
+      final var map = new Pairs();
+      var idx = 1;
+      for (final var arg : args) {
+        map.add(String.valueOf(idx++), "" + arg);
+      }
+      return map;
+    }
+
 
     public Pairs(String key, Object value) {
       add(key, value);
