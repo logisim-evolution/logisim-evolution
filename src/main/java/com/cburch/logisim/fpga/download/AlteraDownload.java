@@ -274,7 +274,7 @@ public class AlteraDownload implements VendorDownload {
           final var pairs = new LineBuffer.Pairs()
                   .add("pinLoc", map.getPinLocation(i))
                   .add("inv", map.isExternalInverted(i) ? "n_" : "")
-                  .add("hdlStr",map.getHdlString(i));
+                  .add("hdlStr", map.getHdlString(i));
           contents.add("set_location_assignment {{pinLoc}} -to {{inv}}{{hdlStr}}", pairs);
           if (map.requiresPullup(i))
             contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to {{inv}}{{hdlStr}}", pairs);
