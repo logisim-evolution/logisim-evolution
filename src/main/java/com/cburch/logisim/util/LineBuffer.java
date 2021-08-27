@@ -340,7 +340,7 @@ public class LineBuffer implements RandomAccess {
    * @param remarkText Remark text.
    */
   public LineBuffer addRemarkBlock(String remarkText) {
-    return addRemarkBlock(remarkText, DEFAULT_INDENT);
+    return addRemarkBlock(remarkText, 0);
   }
 
   /**
