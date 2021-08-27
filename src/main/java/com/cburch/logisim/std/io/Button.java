@@ -58,8 +58,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import java.io.*;
-
 public class Button extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files.
