@@ -135,7 +135,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(libs);
         Contents.empty();
       }
-      Contents.add("ARCHITECTURE PlatformIndependent OF {{`}} IS ", componentName);
+      Contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
       Contents.add("");
       final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
       if (nrOfTypes > 0) {
