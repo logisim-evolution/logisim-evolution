@@ -60,8 +60,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     }
     if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
-      // FIXME: don't we miss closing semicolon here?
-      Contents.add("{{assign}} {{1}} {{=}} {{2}}", GetNetName(ComponentInfo, 0, true, Nets), GetNetName(ComponentInfo, 1, true, Nets));
+      Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetNetName(ComponentInfo, 1, true, Nets));
       Contents.add("");
     } else {
       /*

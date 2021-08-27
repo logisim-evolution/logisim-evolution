@@ -222,7 +222,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           .add("GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE",
      "   OneBit : SingleBitShiftReg",
      "   GENERIC MAP ( {{activeLevel}} => {{activeLevel}},",
-     "                 {{nrOfStages}} => {{nrOfStages}} )", // FIXME: shouldn't there be trailing semicolon after a bracket in HDL?
+     "                 {{nrOfStages}} => {{nrOfStages}} )",
      "   PORT MAP ( Reset       => Reset,",
      "              Tick        => Tick,",
      "              Clock       => Clock,",

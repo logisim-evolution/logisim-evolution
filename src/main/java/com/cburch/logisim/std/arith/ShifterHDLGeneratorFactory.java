@@ -213,8 +213,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer())
-            .addPair("shiftMode", shiftModeStr);
+    final var contents = (new LineBuffer()).addPair("shiftMode", shiftModeStr);
 
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
