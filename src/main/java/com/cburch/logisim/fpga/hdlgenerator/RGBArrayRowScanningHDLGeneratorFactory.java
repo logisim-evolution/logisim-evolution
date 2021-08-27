@@ -39,39 +39,42 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
   public static String RGBArrayName = "RGBArrayRowScanning";
 
+  static final LineBuffer.Pairs sharedPairs =
+      new LineBuffer.Pairs()
+          .add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+          .add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+          .add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+          .add("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
+          .add("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
+          .add("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
+
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
-            .addPair("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
-            .addPair("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
-            .addPair("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .addPair("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
-            .addPair("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
-            .addPair("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs)
-            .addPair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+        (new LineBuffer(sharedPairs))
+            .addPair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
       contents.add(
-          "PORT MAP ( {{rowAddress}} => {{rowAddress}}{{id}}",
+          "PORT MAP ( {{address}} => {{address}}{{id}}",
           "           {{clock     }} => {{clock}},",
-          "           {{redOuts   }} => {{redOuts}}{{id}},",
-          "           {{greenOuts }} => {{greenOuts}}{{id}},",
-          "           {{blueOuts  }} => {{blueOuts}}{{id}},",
-          "           {{redIns    }} => s_{{redIns}}{{id}},",
-          "           {{greenIns  }} => s_{{greenIns}}{{id}},",
-          "           {{blueIns   }} => s_{{blueIns}}{{id}});");
+          "           {{outsR     }} => {{outsR}}{{id}},",
+          "           {{outsG     }} => {{outsG}}{{id}},",
+          "           {{outsB     }} => {{outsB}}{{id}},",
+          "           {{insR      }} => s_{{insR}}{{id}},",
+          "           {{insG      }} => s_{{insG}}{{id}},",
+          "           {{insB      }} => s_{{insB}}{{id}});");
     } else {
       contents.add(
-          "(.{{rowAddress}}({{rowAddress}}{{id}}),",
-          " .{{clock     }}({{clock}}),",
-          " .{{redOuts   }}({{redOuts}}{{id}}),",
-          " .{{greenOuts }}({{greenOuts}}{{id}}),",
-          " .{{blueOuts  }}({{blueOuts}}{{id}}),",
-          " .{{redIns    }}(s_{{redIns}}{{id}}),",
-          " .{{greenIns  }}(s_{{greenIns}}{{id}}),",
-          " .{{blueIns   }}(s_{{blueIns}}{{id}})); ");
+          "( .{{address}}({{address}}{{id}}),",
+          "  .{{clock     }}({{clock}}),",
+          "  .{{outsR   }}({{outsR}}{{id}}),",
+          "  .{{outsG }}({{outsG}}{{id}}),",
+          "  .{{outsB  }}({{outsB}}{{id}}),",
+          "  .{{insR    }}(s_{{insR}}{{id}}),",
+          "  .{{insG  }}(s_{{insG}}{{id}}),",
+          "  .{{insB   }}(s_{{insB}}{{id}}) ); ");
     }
     return contents.getWithIndent(6);
   }
@@ -109,13 +112,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
-            .addPair("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
-            .addPair("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
-            .addPair("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .addPair("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
-            .addPair("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
-            .addPair("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs)
+        (new LineBuffer(sharedPairs))
             .addPair("activeLow", activeLowString)
             .addPair("nrOfLeds", nrOfLedsString)
             .addPair("nrOfColumns", nrOfColumnsString);
@@ -123,26 +120,27 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
       contents.add(
+          "",
           "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
           "BEGIN",
           "   s_maxRedLedInputs <= (OTHERS => '0');",
           "   s_maxGreenLedInputs <= (OTHERS => '0');",
           "   s_maxBlueLedInputs <= (OTHERS => '0');",
           "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{redIns}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{greenIns}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{blueIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insR}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insB}};",
           "   ELSE",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{redIns}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{greenIns}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{blueIns}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insR}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insB}};",
           "   END IF;",
           "END PROCESS makeVirtualInputs;",
           "",
           "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
-          "   {{redOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "   {{greenOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "   {{blueOuts}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{outsR}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{outsG}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
+          "   {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
           "END GENERATE GenOutputs;");
     } else {
       contents.add(
@@ -150,19 +148,19 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           "genvar i;",
           "generate",
           "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
-          "      assign {{redOuts}}[i] = (activeLow == 1)",
-          "         ? ~{{redIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         : {{redIns}}[nrOfColumns * s_rowCounterReg + i];",
-          "      assign {{greenOuts}}[i] = (activeLow == 1)",
-          "         ? ~{{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "          : {{greenIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
-          "      assign {{blueOuts}}[i] = (activeLow == 1)",
-          "          ? ~{{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         : {{blueIns}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "      assign {{outsR}}[i] = (activeLow == 1)",
+          "         ? ~{{insR}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{insR}}[nrOfColumns * s_rowCounterReg + i];",
+          "      assign {{outsG}}[i] = (activeLow == 1)",
+          "         ? ~{{insG}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "          : {{insG}}[{{nrOfColumns}} * s_rowCounterReg + i];",
+          "      assign {{outsB}}[i] = (activeLow == 1)",
+          "          ? ~{{insB}}[{{nrOfColumns}} * s_rowCounterReg + i]",
+          "         : {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];",
           "   end",
           "endgenerate");
     }
-    return contents.getWithIndent(3);
+    return contents.getWithIndent();
   }
 
   @Override

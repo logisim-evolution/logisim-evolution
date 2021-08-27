@@ -284,9 +284,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               OneLine.append(" ");
             }
 
-            Contents.addUnique("   {{assign}} %s {{=}} %s%d{{bracketOpen}}%s{{bracketClose}};",
-                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()),
-                Source.GetParentNetBitIndex());
+            Contents.addUnique("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
+                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()), Source.GetParentNetBitIndex());
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
@@ -307,7 +306,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            Contents.addUnique("   %s%s;", HDL.assignPreamble(), OneLine);
+            Contents.addUnique("   {{1}}{{2}};", HDL.assignPreamble(), OneLine);
           }
         }
       }
@@ -408,9 +407,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         temp.append(" ");
       }
       if (!theNetlist.RequiresGlobalClockConnection()) {
-        contents.add("   {{assign}}%s {{=}} %s{{bracketOpen}}%s{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DerivedClockIndex);
+        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{bracketOpen}}{{3}}{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DerivedClockIndex);
       } else {
-        contents.add("   {{assign}} %s {{=}} %s;", temp, TickComponentHDLGeneratorFactory.FPGAClock);
+        contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHDLGeneratorFactory.FPGAClock);
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */

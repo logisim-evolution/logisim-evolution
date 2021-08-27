@@ -101,9 +101,14 @@ public class LineBufferTest extends TestBase {
     final var foo = getRandomString();
     final var bar = getRandomInt(0, 100);
 
-    lb.add("%s%d", foo, bar);
+    lb.add("{{1}}{{2}}", foo, bar);
     assertEquals(1, lb.size());
     assertEquals(foo + bar, lb.get(0));
+    lb.clear();
+
+    lb.add("{{2}}{{1}}", foo, bar);
+    assertEquals(1, lb.size());
+    assertEquals(bar + foo, lb.get(0));
   }
 
   @Test

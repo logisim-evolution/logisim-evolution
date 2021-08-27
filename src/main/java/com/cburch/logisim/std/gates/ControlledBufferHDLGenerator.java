@@ -71,9 +71,9 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
               ? HDL.notOperator()
               : "";
       if (HDL.isVHDL()) {
-        contents.add("   %s<= %s%s WHEN %s = '1' ELSE %s;", outpName, invert, inpName, triName, triState);
+        contents.add("   {{1}}<= {{2}}{{3}} WHEN {{4}} = '1' ELSE {{5}};", outpName, invert, inpName, triName, triState);
       } else {
-        contents.add("   assign %s = (%s) ? %s%s : %s;", outpName, triName, invert, inpName, triState);
+        contents.add("   assign {{1}} = ({{2}}) ? {{3}}{{4}} : {{5}};", outpName, triName, invert, inpName, triState);
       }
     }
     return contents.get();

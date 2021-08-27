@@ -251,13 +251,13 @@ public class VivadoDownload implements VendorDownload {
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
-          contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", map.getPinLocation(i), netName);
+          // Note {{2}} is wrapped in additional {}!
+          contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", map.getPinLocation(i), netName);
           final var info = map.getFpgaInfo(i);
           if (info != null) {
             final var ioStandard = info.GetIOStandard();
-            if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD) {
+            if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
               contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
-            }
           }
         }
       }

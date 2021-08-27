@@ -59,72 +59,73 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer())
+            .addPair("shiftMode", shiftModeStr);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       contents
           .add(
-              "   -----------------------------------------------------------------------------",
-              "   --- ShifterMode represents when:                                          ---",
-              "   --- 0 : Logical Shift Left                                                ---",
-              "   --- 1 : Rotate Left                                                       ---",
-              "   --- 2 : Logical Shift Right                                               ---",
-              "   --- 3 : Arithmetic Shift Right                                            ---",
-              "   --- 4 : Rotate Right                                                      ---",
-              "   -----------------------------------------------------------------------------")
+              "-----------------------------------------------------------------------------",
+              "--- ShifterMode represents when:                                          ---",
+              "--- 0 : Logical Shift Left                                                ---",
+              "--- 1 : Rotate Left                                                       ---",
+              "--- 2 : Logical Shift Right                                               ---",
+              "--- 3 : Arithmetic Shift Right                                            ---",
+              "--- 4 : Rotate Right                                                      ---",
+              "-----------------------------------------------------------------------------")
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents
-            .add("   Result <= DataA WHEN %s = 1 OR", shiftModeStr)
-            .add("                        %s = 3 OR", shiftModeStr)
-            .add("                        %s = 4 ELSE DataA AND NOT(ShiftAmount);", shiftModeStr);
+        contents.add(
+            "Result <= DataA WHEN {{shiftMode}} = 1 OR",
+            "                     {{shiftMode}} = 3 OR",
+            "                     {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);");
       } else {
         for (var stage = 0; stage < getNrofShiftBits(attrs); stage++) {
           contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
         }
         contents
             .add(
-                "   -----------------------------------------------------------------------------",
-                "   --- Here we assign the result                                             ---",
-                "   -----------------------------------------------------------------------------")
-            .empty()
-            .add("   Result <= s_stage_" + (getNrofShiftBits(attrs) - 1) + "_result;")
-            .empty();
+                "-----------------------------------------------------------------------------",
+                "--- Here we assign the result                                             ---",
+                "-----------------------------------------------------------------------------",
+                "")
+            .add("Result <= s_stage_{{1}}_result;", (getNrofShiftBits(attrs) - 1))
+            .add("");
       }
     } else {
       contents
           .add(
-              "   /***************************************************************************",
-              "    ** ShifterMode represents when:                                          **",
-              "    ** 0 : Logical Shift Left                                                **",
-              "    ** 1 : Rotate Left                                                       **",
-              "    ** 2 : Logical Shift Right                                               **",
-              "    ** 3 : Arithmetic Shift Right                                            **",
-              "    ** 4 : Rotate Right                                                      **",
-              "    ***************************************************************************/")
+              "/***************************************************************************",
+              " ** ShifterMode represents when:                                          **",
+              " ** 0 : Logical Shift Left                                                **",
+              " ** 1 : Rotate Left                                                       **",
+              " ** 2 : Logical Shift Right                                               **",
+              " ** 3 : Arithmetic Shift Right                                            **",
+              " ** 4 : Rotate Right                                                      **",
+              " ***************************************************************************/")
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents
-            .add("   assign Result = ((%s == 1)||", shiftModeStr)
-            .add("                    (%s == 3)||", shiftModeStr)
-            .add("                    (%s == 4)) ? DataA : DataA&(~ShiftAmount);", shiftModeStr);
+        contents.add(
+            "assign Result = ( ({{shiftMode}} == 1) ||",
+            "                  ({{shiftMode}} == 3) ||",
+            "                  ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);");
       } else {
         for (var stage = 0; stage < getNrofShiftBits(attrs); stage++) {
           contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
         }
         contents
             .add(
-                "   /***************************************************************************",
-                "    ** Here we assign the result                                             **",
-                "    ***************************************************************************/")
+                "/***************************************************************************",
+                " ** Here we assign the result                                             **",
+                " ***************************************************************************/")
             .empty()
-            .add("   assign Result = s_stage_%d_result;", (getNrofShiftBits(attrs) - 1))
+            .add("assign Result = s_stage_{{1}}_result;", (getNrofShiftBits(attrs) - 1))
             .empty();
       }
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   private int getNrofShiftBits(AttributeSet attrs) {
@@ -173,80 +174,82 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer())
+            .addPair("shiftMode", shiftModeStr);
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
-        .add("   /***************************************************************************")
-        .add("    ** Here stage %s of the binary shift tree is defined                     **", stageNumber)
-        .add("    ***************************************************************************/")
+        .add("/***************************************************************************")
+        .add(" ** Here stage {{1}} of the binary shift tree is defined", stageNumber)
+        .add(" ***************************************************************************/")
         .empty();
     if (stageNumber == 0) {
       contents
-          .add("   assign s_stage_0_shiftin = ((%s == 1) || (%s == 3))", shiftModeStr, shiftModeStr)
-          .add("        ? DataA[%s] : (%s == 4) ? DataA[0] : 0;", (nrOfBits - 1), shiftModeStr)
-          .empty()
-          .add("   assign s_stage_0_result  = (ShiftAmount == 0)")
-          .add("        ? DataA")
-          .add("        : ((%s == 0) || (%s == 1))", shiftModeStr, shiftModeStr)
-          .add("           ? {DataA[%d:0],s_stage_0_shiftin}", (nrOfBits - 2))
-          .add("           : {s_stage_0_shiftin,DataA[%d:1]};", (nrOfBits - 1))
-          .empty();
+          .add("assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))")
+          .add("     ? DataA[{{shiftMode}}] : ({{1}} == 4) ? DataA[0] : 0;", (nrOfBits - 1))
+          .add("")
+          .add("assign s_stage_0_result  = (ShiftAmount == 0)")
+          .add("     ? DataA")
+          .add("     : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))")
+          .add("        ? {DataA[{{1}}:0],s_stage_0_shiftin}", (nrOfBits - 2))
+          .add("        : {s_stage_0_shiftin,DataA[{{1}}:1]};", (nrOfBits - 1))
+          .add("");
     } else {
       contents
-          .add("   assign s_stage_%s_shiftin = (%s == 1) ?", stageNumber, shiftModeStr)
-          .add("                               s_stage_%d_result[%d:%d] : ", (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift))
-          .add("                               (%s == 3) ?", shiftModeStr)
-          .add("                               { %s{s_stage_%d_result[%d]} } :", nrOfBitsToShift, (stageNumber - 1), (nrOfBits - 1))
-          .add("                               (%s == 4) ?", shiftModeStr)
-          .add("                               s_stage_%d_result[%d:0] : 0;", (stageNumber - 1), (nrOfBitsToShift - 1))
-          .empty()
-          .add("   assign s_stage_%d_result  = (ShiftAmount[%d]==0) ?", stageNumber, stageNumber)
-          .add("                              s_stage_%d_result : ", (stageNumber - 1))
-          .add("                              ((%s == 0)||(%s == 1)) ?", shiftModeStr, shiftModeStr)
-          .add("                              {s_stage_%d_result[%d:0],s_stage_%d_shiftin} :", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
-          .add("                              {s_stage_%d_shiftin,s_stage_%d_result[%d:%d]};", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift)
-          .empty();
+          .add("assign s_stage_{{1}}_shiftin = ({{shiftMode}} == 1) ?", stageNumber)
+          .add("                            s_stage_{{1}}_result[{{2}}:{{3}}] : ", (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift))
+          .add("                            ({{shiftMode}} == 3) ?")
+          .add("                            { {{1}}{s_stage_{{2}}_result[{{3}}]} } :", nrOfBitsToShift, (stageNumber - 1), (nrOfBits - 1))
+          .add("                            ({{shiftMode}} == 4) ?")
+          .add("                            s_stage_{{1}}_result[{{2}}:0] : 0;", (stageNumber - 1), (nrOfBitsToShift - 1))
+          .add("")
+          .add("assign s_stage_{{1}}_result  = (ShiftAmount[{{1}}]==0) ?", stageNumber)
+          .add("                           s_stage_{{1}}_result : ", (stageNumber - 1))
+          .add("                           (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?")
+          .add("                           {s_stage_{{1}}_result[{{2}}:0],s_stage_{{3}}_shiftin} :", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
+          .add("                           {s_stage_{{1}}_shiftin,s_stage_{{2}}_result[{{3}}:{{4}}]};", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift)
+          .add("");
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer()).addPair("shiftMode", shiftModeStr);
+
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
-        .add("   -----------------------------------------------------------------------------")
-        .add("   --- Here stage %s of the binary shift tree is defined                     ---", stageNumber)
-        .add("   -----------------------------------------------------------------------------")
+        .add("-----------------------------------------------------------------------------")
+        .add("--- Here stage {{1}} of the binary shift tree is defined", stageNumber)
+        .add("-----------------------------------------------------------------------------")
         .empty();
 
     if (stageNumber == 0) {
       contents
-          .add("   s_stage_0_shiftin <= DataA(%d) WHEN %s = 1 OR %s = 3 ELSE",
-              (nrOfBits - 1), shiftModeStr, shiftModeStr)
-          .add("                        DataA(0) WHEN %s = 4 ELSE '0';", shiftModeStr)
+          .add("s_stage_0_shiftin <= DataA({{1}}) WHEN {{shiftMode}} = 1 OR {{shiftMode}} = 3 ELSE", (nrOfBits - 1))
+          .add("                     DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';")
           .empty()
-          .add("   s_stage_0_result  <= DataA")
-          .add((nrOfBits == 2)
-                  ? "                           WHEN ShiftAmount = '0' ELSE"
-                  : "                           WHEN ShiftAmount(0) = '0' ELSE")
-          .add("                        DataA(%d DOWNTO 0)&s_stage_0_shiftin", (nrOfBits - 2))
-          .add("                           WHEN %s = 0 OR %s = 1 ELSE", shiftModeStr, shiftModeStr)
-          .add("                        s_stage_0_shiftin&DataA(%d DOWNTO 1);", (nrOfBits - 1));
+          .add("s_stage_0_result  <= DataA")
+          .add(
+              (nrOfBits == 2)
+                  ? "                        WHEN ShiftAmount = '0' ELSE"
+                  : "                        WHEN ShiftAmount(0) = '0' ELSE")
+          .add("                     DataA({{1}} DOWNTO 0)&s_stage_0_shiftin", (nrOfBits - 2))
+          .add("                        WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE")
+          .add("                     s_stage_0_shiftin&DataA( {{1}} DOWNTO 1 );", (nrOfBits - 1));
     } else {
       contents
-          .add("   s_stage_%d_shiftin <= s_stage_%d_result(%d DOWNTO %d ) WHEN %s = 1 ELSE", stageNumber, (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift), shiftModeStr)
-          .add("                        (OTHERS => s_stage_%d_result(%d)) WHEN %s = 3 ELSE", (stageNumber - 1), (nrOfBits - 1),  shiftModeStr)
-          .add("                        s_stage_%d_result(%d DOWNTO 0 ) WHEN %s = 4 ELSE", (stageNumber - 1), (nrOfBitsToShift - 1), shiftModeStr)
-          .add("                        (OTHERS => '0');")
+          .add("s_stage_{{1}}_shiftin <= s_stage_{{2}}_result( {{3}} DOWNTO {{4}} ) WHEN {{shiftMode}} = 1 ELSE", stageNumber, (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift))
+          .add("                     (OTHERS => s_stage_{{1}}_result({{2}})) WHEN {{shiftMode}} = 3 ELSE", (stageNumber - 1), (nrOfBits - 1))
+          .add("                     s_stage_{{1}}_result( {{2}} DOWNTO 0 ) WHEN {{shiftMode}} = 4 ELSE", (stageNumber - 1), (nrOfBitsToShift - 1))
+          .add("                     (OTHERS => '0');")
           .empty()
-          .add("   s_stage_%d_result  <= s_stage_%d_result", stageNumber, (stageNumber - 1))
-          .add("                           WHEN ShiftAmount(%d) = '0' ELSE", stageNumber)
-          .add("                        s_stage_%d_result(%d DOWNTO 0 )&s_stage_%d_shiftin", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
-          .add("                           WHEN %s = 0 OR %s = 1 ELSE", shiftModeStr, shiftModeStr)
-          .add("                        s_stage_%d_shiftin&s_stage_%d_result(%d DOWNTO %d);", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift);
+          .add("s_stage_{{1}}_result  <= s_stage_{{2}}_result", stageNumber, (stageNumber - 1))
+          .add("                        WHEN ShiftAmount({{1}}) = '0' ELSE", stageNumber)
+          .add("                     s_stage_{{1}}_result( {{2}} DOWNTO 0 )&s_stage_{{3}}_shiftin", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
+          .add("                        WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE")
+          .add("                     s_stage_{{1}}_shiftin&s_stage_{{2}}_result( {{3}} DOWNTO {{4}} );", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift);
     }
     contents.empty();
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

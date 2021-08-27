@@ -87,26 +87,26 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
     final var contents = new LineBuffer();
     return contents
         .add(
-            "   NextState <= CurState WHEN tick = '0' ELSE",
-            "                D4&D3&D2&D1;",
-            " ",
-            "   dffs : PROCESS( CLK , nCLR ) IS",
-            "      BEGIN",
-            "         IF (nCLR = '0') THEN CurState <= \"0000\";",
-            "         ELSIF (rising_edge(CLK)) THEN",
-            "            CurState <= NextState;",
-            "         END IF;",
-            "      END PROCESS dffs;",
-            " ",
-            "   nQ1 <= NOT(CurState(0));",
-            "   Q1  <= CurState(0);",
-            "   nQ2 <= NOT(CurState(1));",
-            "   Q2  <= CurState(1);",
-            "   nQ3 <= NOT(CurState(2));",
-            "   Q3  <= CurState(2);",
-            "   nQ4 <= NOT(CurState(3));",
-            "   Q4  <= CurState(3);")
-        .get();
+            "NextState <= CurState WHEN tick = '0' ELSE",
+            "             D4&D3&D2&D1;",
+            "",
+            "dffs : PROCESS( CLK , nCLR ) IS",
+            "   BEGIN",
+            "      IF (nCLR = '0') THEN CurState <= \"0000\";",
+            "      ELSIF (rising_edge(CLK)) THEN",
+            "         CurState <= NextState;",
+            "      END IF;",
+            "   END PROCESS dffs;",
+            "",
+            "nQ1 <= NOT(CurState(0));",
+            "Q1  <= CurState(0);",
+            "nQ2 <= NOT(CurState(1));",
+            "Q2  <= CurState(1);",
+            "nQ3 <= NOT(CurState(2));",
+            "Q3  <= CurState(2);",
+            "nQ4 <= NOT(CurState(3));",
+            "Q4  <= CurState(3);")
+        .getWithIndent();
   }
 
   @Override
