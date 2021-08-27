@@ -58,6 +58,8 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import java.io.*;
+
 public class Button extends InstanceFactory {
   /**
    * Unique identifier of the tool, used as reference in project files.
@@ -91,7 +93,8 @@ public class Button extends InstanceFactory {
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      return data == null ? Value.FALSE : (Value) data.getValue();
+      final var defaultButtonState = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
+      return data == null ? defaultButtonState : (Value) data.getValue();
     }
 
     @Override
@@ -103,12 +106,12 @@ public class Button extends InstanceFactory {
   public static class Poker extends InstancePoker {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      setValue(state, Value.TRUE);
+      setValue(state, state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.FALSE : Value.TRUE);
     }
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      setValue(state, Value.FALSE);
+      setValue(state, state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE);
     }
 
     private void setValue(InstanceState state, Value val) {
@@ -183,12 +186,25 @@ public class Button extends InstanceFactory {
     } else if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_CENTER | Instance.AVOID_LEFT);
     } else if (attr == ATTR_PRESS) {
-      // TODO 
+      final var instanceImplementation = instance.getComponent().getInstanceStateImpl();
+      if (instanceImplementation == null) return;
+      final var circuitState = instanceImplementation.getCircuitState();
+      if (circuitState == null) return;
+      final var state = circuitState.getInstanceState(instance.getComponent());
+      if (state == null) return;
+      final var data = (InstanceDataSingleton) state.getData();
+      if (data == null) {
+        state.setData(new InstanceDataSingleton(state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE));
+      } else {
+        data.setValue(data.getValue() == Value.TRUE ? Value.FALSE : Value.TRUE);
+      }
+      state.getInstance().fireInvalidated();
     }
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
+    final var defaultButtonState = painter.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
     final var bds = painter.getBounds();
     var x = bds.getX();
     var y = bds.getY();
@@ -198,9 +214,9 @@ public class Button extends InstanceFactory {
     Value val;
     if (painter.getShowState()) {
       final var data = (InstanceDataSingleton) painter.getData();
-      val = data == null ? Value.FALSE : (Value) data.getValue();
+      val = data == null ? defaultButtonState : (Value) data.getValue();
     } else {
-      val = Value.FALSE;
+      val = defaultButtonState;
     }
 
     var color = painter.getAttributeValue(IoLibrary.ATTR_COLOR);
@@ -211,7 +227,7 @@ public class Button extends InstanceFactory {
 
     final var g = painter.getGraphics();
     int depress;
-    if (val == Value.TRUE) {
+    if (val != defaultButtonState) {
       x += DEPTH;
       y += DEPTH;
       Object labelLoc = painter.getAttributeValue(StdAttr.LABEL_LOC);
@@ -262,8 +278,8 @@ public class Button extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     final var data = (InstanceDataSingleton) state.getData();
-    Value val = data == null ? Value.FALSE : (Value) data.getValue();
-    val = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? val : val == Value.TRUE ? Value.FALSE : Value.TRUE;
+    final var defaultButtonState = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
+    final var val = data == null ? defaultButtonState : (Value) data.getValue();
     state.setPort(0, val, 1);
   }
 
