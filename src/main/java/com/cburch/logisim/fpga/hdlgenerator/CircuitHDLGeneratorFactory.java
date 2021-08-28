@@ -50,7 +50,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import javax.sound.sampled.Line;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 

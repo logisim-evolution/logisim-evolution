@@ -81,7 +81,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add("{{1}}{{2}} WHEN std_match(Index, {{3}}) ELSE", leader, bits(r.outBits), bits(r.inBits));
           leader = indent;
         }
-        contents.add("%s%s;", leader, zeros(outSz));
+        contents.add("{{1}}{{2}};", leader, zeros(outSz));
       }
     } else {
       // TODO

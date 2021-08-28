@@ -257,14 +257,14 @@ public class VivadoDownload implements VendorDownload {
           if (info != null) {
             final var ioStandard = info.GetIOStandard();
             if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
-              contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
+              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
           }
         }
       }
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
     for (final var key : LedArrayMap.keySet()) {
-      contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", key, LedArrayMap.get(key));
+      contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", key, LedArrayMap.get(key));
     }
     return contents.get();
   }

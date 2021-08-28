@@ -70,7 +70,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       for (var i = 0; i < (1 << nrOfSelectBits); i++) {
         contents.add("                    MuxIn_{{1}},", i);
       }
-      contents.add(
+      contents.addLines(
           "                    Sel )",
           "BEGIN",
           "   IF (Enable = '0') THEN",
@@ -86,7 +86,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                    "      END CASE;", "   END IF;",
                    "END PROCESS make_mux;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign MuxOut = s_selected_vector;",
           "",
           "always @(*)",

@@ -26,7 +26,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "PORT MAP ( {{addr}} => {{addr}}{{id}},",
           "           {{clock}} => {{clock}},",
           "           {{outsR}} => {{outsR}}{{id}},",
@@ -36,7 +36,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           "           {{insG}} => s_{{insG}}{{id}},",
           "           {{insB}} => s_{{insB}}{{id}} );");
     } else {
-      contents.add(
+      contents.addLines(
           "( .{{addr}}({{addr}}{{id}}),",
           "  .{{clock}({{clock}}),",
           "  .{{outsR}}({{outsR}}{{id}}),",
@@ -103,7 +103,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
           "BEGIN",
           "   s_maxRedLedInputs <= (OTHERS => '0');",
@@ -126,7 +126,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           "   {{insB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
           "END GENERATE GenOutputs;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "genvar i;",
           "generate",

@@ -221,7 +221,7 @@ public class XilinxDownload implements VendorDownload {
 
     contents.clear();
     contents.add(
-        "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
+        "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
         ToplevelHDLGeneratorFactory.FPGAToplevelName,
         ScriptPath.replace(ProjectPath, "../"),
         vhdl_list_file,
@@ -270,12 +270,12 @@ public class XilinxDownload implements VendorDownload {
       contents
           .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
           .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
-          .addPair("clockPin", GetXilinxClockPin(boardInfo));
-      contents.add(
-          "NET \"{{clock}}\" {{clockPin}} ;",
-          "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
-          "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
-          "");
+          .addPair("clockPin", GetXilinxClockPin(boardInfo))
+          .addLines(
+            "NET \"{{clock}}\" {{clockPin}} ;",
+            "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
+            "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
+            "");
     }
     contents.add(getPinLocStrings());
     return FileWriter.WriteContents(UcfFile, contents.get());

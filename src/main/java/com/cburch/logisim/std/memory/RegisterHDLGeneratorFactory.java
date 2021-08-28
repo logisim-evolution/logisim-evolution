@@ -69,14 +69,14 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = (new LineBuffer())
             .addPair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "Q <= s_state_reg;",
           "",
           "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
           "BEGIN",
           "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
       if (Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+        contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock'event AND (Clock = '1')) THEN",
             "         IF (ClockEnable = '1' AND Tick = '1') THEN",
@@ -90,7 +90,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "      END IF;",
             "   END IF;");
       } else {
-        contents.add(
+        contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock = '1') THEN",
             "         IF (ClockEnable = '1' AND Tick = '1') THEN",
@@ -104,11 +104,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "         END IF;",
             "      END IF;");
       }
-      contents.add("   END IF;",
-                   "END PROCESS make_memory;");
+      contents.addLines("   END IF;",
+                        "END PROCESS make_memory;");
     } else {
       if (!Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+        contents.addLines(
             "assign Q = s_state_reg;",
             "",
             "always @(*)",
@@ -117,7 +117,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "   else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;",
             "end");
       } else {
-        contents.add(
+        contents.addLines(
             "assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;",
             "",
             "always @(posedge Clock or posedge Reset)",

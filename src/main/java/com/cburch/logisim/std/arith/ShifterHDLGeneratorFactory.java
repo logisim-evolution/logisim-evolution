@@ -64,7 +64,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       contents
-          .add(
+          .addLines(
               "-----------------------------------------------------------------------------",
               "--- ShifterMode represents when:                                          ---",
               "--- 0 : Logical Shift Left                                                ---",
@@ -76,7 +76,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents.add(
+        contents.addLines(
             "Result <= DataA WHEN {{shiftMode}} = 1 OR",
             "                     {{shiftMode}} = 3 OR",
             "                     {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);");
@@ -85,7 +85,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
         }
         contents
-            .add(
+            .addLines(
                 "-----------------------------------------------------------------------------",
                 "--- Here we assign the result                                             ---",
                 "-----------------------------------------------------------------------------",
@@ -95,7 +95,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else {
       contents
-          .add(
+          .addLines(
               "/***************************************************************************",
               " ** ShifterMode represents when:                                          **",
               " ** 0 : Logical Shift Left                                                **",
@@ -107,7 +107,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents.add(
+        contents.addLines(
             "assign Result = ( ({{shiftMode}} == 1) ||",
             "                  ({{shiftMode}} == 3) ||",
             "                  ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);");
@@ -116,7 +116,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
         }
         contents
-            .add(
+            .addLines(
                 "/***************************************************************************",
                 " ** Here we assign the result                                             **",
                 " ***************************************************************************/")

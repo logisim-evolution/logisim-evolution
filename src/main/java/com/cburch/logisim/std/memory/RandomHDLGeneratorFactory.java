@@ -73,7 +73,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .empty();
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "Q            <= s_output_reg;",
           "s_InitSeed   <= X\"0005DEECE66D\" WHEN {{seed}} = 0 ELSE",
           "                X\"0000\"&std_logic_vector(to_unsigned({{seed}}, 32))",
@@ -157,7 +157,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "      END IF;",
           "   END PROCESS make_output;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign Q = s_output_reg;",
           "assign s_InitSeed = ({{seed}}) ? {{seed}}} : 48'h5DEECE66D;",
           "assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;",

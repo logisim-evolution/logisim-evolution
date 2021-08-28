@@ -35,7 +35,6 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import javax.sound.sampled.Line;
 
 public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -83,7 +82,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},",
           "              {{nrOfRows}} => {{nrOfRowsVal}},",
           "              {{nrOfColumns}} => {{nrOfColumnsVal}},",
@@ -93,7 +92,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           "              {{maxNrLeds}} => {{maxNrLedsVal}},",
           "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      contents.add(
+      contents.addLines(
           "#( .{{nrOfLeds}}({{nrOfLedsVal}}),",
           "   .{{nrOfRows}}({{nrOfRowsVal}}),",
           "   .{{nrOfColumns}}({{nrOfColumns}}),",
@@ -115,13 +114,13 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .addPair("id", id);
     if (HDL.isVHDL()) {
-      map.add(
+      map.addLines(
           "PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},",
           "           {{outs}} => {{outs}}{{id}},",
           "           {{clock}} => {{clock}},",
           "           {{ins}} => => s_{{ins}}{{id}} );");
     } else {
-      map.add(
+      map.addLines(
           "( .{{rowAddr}}({{rowAddr}}{{id}}),",
           "  .{{outs}}({{outs}}{{id}}),",
           "  .{{clock}}({{clock}}),",
@@ -187,7 +186,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("value", scanningCounterValueString)
             .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "",
           "{{rowAddress}} <= s_rowCounterReg;",
           "",
@@ -214,7 +213,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           "");
     } else {
       contents
-          .add(
+          .addLines(
               "",
               "assign rowAddress = s_rowCounterReg;",
               "",
@@ -224,7 +223,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
               "                          (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
               "")
           .addRemarkBlock("Here the simulation only initial is defined")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_rowCounterReg      = 0;",
@@ -254,7 +253,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .add(getRowCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "makeVirtualInputs : PROCESS ( internalLeds ) IS",
           "BEGIN",
           "   s_maxLedInputs <= (OTHERS => '0');",
@@ -269,7 +268,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           "   {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
           "END GENERATE GenOutputs;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "genvar i;",
           "generate",

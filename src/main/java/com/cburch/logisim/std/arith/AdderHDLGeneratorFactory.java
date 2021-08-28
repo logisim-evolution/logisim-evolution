@@ -66,7 +66,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var Contents = new LineBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_extended_dataA <= \"0\"&DataA;",
           "s_extended_dataB <= \"0\"&DataB;",
           "s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+",

@@ -66,7 +66,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var Contents = new LineBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_inverted_dataB <= NOT(DataB);",
           "s_extended_dataA <= \"0\"&DataA;",
           "s_extended_dataB <= \"0\"&s_inverted_dataB;",
@@ -81,7 +81,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               : "Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
       Contents.add("BorrowOut <= NOT(s_sum_result(" + ExtendedBitsStr + "-1));");
     } else {
-      Contents.add(
+      Contents.addLines(
           "assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);",
           "assign   BorrowOut = ~s_carry;");
     }

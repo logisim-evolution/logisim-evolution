@@ -84,9 +84,8 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    return contents
-        .add(
+    return (new LineBuffer())
+        .addLines(
             "NextState <= CurState WHEN tick = '0' ELSE",
             "             D4&D3&D2&D1;",
             "",

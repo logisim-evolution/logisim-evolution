@@ -83,19 +83,19 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .addRemarkBlock("Here the update logic is defined");
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';",
           "s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!",
           "                 std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE",
           "                 std_logic_vector(unsigned(s_count_reg)-1);",
           "");
     } else {
-      Contents.add(
+      Contents.addLines(
               "assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;",
               "assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;",
               "")
           .addRemarkBlock("Here the simulation only initial is defined")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_count_reg = 0;",
@@ -105,7 +105,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     }
     Contents.addRemarkBlock("Here the flipflops are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "make_tick : PROCESS( FPGAClock , s_tick_next )",
           "BEGIN",
           "   IF (FPGAClock'event AND (FPGAClock = '1')) THEN",
@@ -120,7 +120,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           "   END IF;",
           "END PROCESS make_counter;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "always @(posedge FPGAClock)",
           "begin",
           "    s_count_reg <= s_count_next;",

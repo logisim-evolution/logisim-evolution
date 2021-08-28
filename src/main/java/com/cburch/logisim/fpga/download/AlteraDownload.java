@@ -209,7 +209,7 @@ public class AlteraDownload implements VendorDownload {
         .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
 
     contents
-        .add(
+        .addLines(
             "# Load Quartus II Tcl Project package",
             "package require ::quartus::project",
             "",
@@ -234,7 +234,7 @@ public class AlteraDownload implements VendorDownload {
             "# Make assignments",
             "if {$make_assignments} {")
         .add(getAlteraAssignments(boardInfo))
-        .add(
+        .addLines(
             "",
             "    # Include all entities and gates",
             "");
@@ -251,7 +251,7 @@ public class AlteraDownload implements VendorDownload {
     }
     contents
         .add(getPinLocStrings())
-        .add(
+        .addLines(
             "    # Commit assignments",
             "    export_assignments",
             "",
@@ -283,7 +283,7 @@ public class AlteraDownload implements VendorDownload {
     }
     final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, RootNetList, boardInfo);
     for (final var key : ledArrayMap.keySet())
-      contents.add("set_location_assignment %s-to %s", ledArrayMap.get(key), key);
+      contents.add("set_location_assignment {{1}}-to {{2}}", ledArrayMap.get(key), key);
     return contents.getWithIndent(4);
   }
 
@@ -298,15 +298,15 @@ public class AlteraDownload implements VendorDownload {
     };
 
     return (new LineBuffer())
-        .addPair("assign", "set_global_assignment -name")
-        .add("{{assign}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
-        .add("{{assign}} DEVICE {{1}}", currentBoard.fpga.getPart())
-        .add("{{assign}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
-        .add("{{assign}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
-        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assign}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
-        .add("{{assign}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
-        .add("{{assign}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .addPair("assignName", "set_global_assignment -name")
+        .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
+        .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
+        .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
+        .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
+        .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
   }
 
@@ -389,7 +389,7 @@ public class AlteraDownload implements VendorDownload {
         .add("-m")
         .add("jtag")
         .add("-o")
-        .add("P;%s", jicFile);
+        .add("P;{{1}}", jicFile);
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {

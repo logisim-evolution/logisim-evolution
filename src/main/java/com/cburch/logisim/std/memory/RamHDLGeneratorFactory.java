@@ -120,14 +120,14 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("s_we_{{1}}          <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(0) AND s_WEReg;", i);
         }
       } else {
-        contents.add(
+        contents.addLines(
             "s_oe <= s_TickDelayLine(2) AND s_OEReg;",
             "s_we <= s_TickDelayLine(0) AND s_WEReg;");
       }
       contents
           .empty()
           .addRemarkBlock("Here the input registers are defined")
-          .add(
+          .addLines(
               "InputRegs : PROCESS (Clock, Tick, Address, DataIn, WE, OE)",
               "BEGIN",
               "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -141,12 +141,12 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add("         s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
       }
       contents
-          .add(
+          .addLines(
               "      END IF;",
               "   END IF;",
               "END PROCESS InputRegs;")
           .empty()
-          .add(
+          .addLines(
               "TickPipeReg : PROCESS(Clock)",
               "BEGIN",
               "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -184,7 +184,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
       } else {
         contents
-            .add(
+            .addLines(
                 "Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)",
                 "BEGIN",
                 "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -218,7 +218,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
       } else {
         contents
-            .add(
+            .addLines(
                 "Res : PROCESS( Clock , s_oe, s_ram_data_out)",
                 "BEGIN",
                 "   IF (Clock'event AND (Clock = '1')) THEN",

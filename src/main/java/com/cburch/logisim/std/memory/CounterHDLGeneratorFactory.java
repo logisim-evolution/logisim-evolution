@@ -77,7 +77,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "CompareOut   <= s_carry;",
           "CountValue   <= s_counter_value;",
           "",
@@ -146,7 +146,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS make_flops;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "assign CompareOut = s_carry;",
           "assign CountValue = ({{activeEdge}}) ? s_counter_value : s_counter_value_neg_edge;",

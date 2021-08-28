@@ -56,7 +56,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "PORT MAP ( {{address}} => {{address}}{{id}}",
           "           {{clock     }} => {{clock}},",
           "           {{outsR     }} => {{outsR}}{{id}},",
@@ -66,7 +66,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           "           {{insG      }} => s_{{insG}}{{id}},",
           "           {{insB      }} => s_{{insB}}{{id}});");
     } else {
-      contents.add(
+      contents.addLines(
           "( .{{address}}({{address}}{{id}}),",
           "  .{{clock     }}({{clock}}),",
           "  .{{outsR   }}({{outsR}}{{id}}),",
@@ -119,7 +119,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "",
           "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
           "BEGIN",
@@ -143,7 +143,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           "   {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
           "END GENERATE GenOutputs;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "genvar i;",
           "generate",

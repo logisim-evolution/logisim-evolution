@@ -86,23 +86,24 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    return contents.add(
-        "Q7  <= CurState(0);",
-        "Q7n <= NOT(CurState(0));",
-        "",
-        "Enable  <= NOT(CKIh) AND Tick;",
-        "ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
-        "",
-        "NextState <= CurState WHEN Enable = '0' ELSE",
-        "             ParData WHEN SHnLD = '0' ELSE",
-        "             SER&CurState(7 DOWNTO 1);",
-        "",
-        "dffs : PROCESS( CK ) IS",
-        "   BEGIN",
-        "      IF (rising_edge(CK)) THEN CurState <= NextState;",
-        "      END IF;",
-        "   END PROCESS dffs;").getWithIndent();
+    return (new LineBuffer())
+        .addLines(
+            "Q7  <= CurState(0);",
+            "Q7n <= NOT(CurState(0));",
+            "",
+            "Enable  <= NOT(CKIh) AND Tick;",
+            "ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
+            "",
+            "NextState <= CurState WHEN Enable = '0' ELSE",
+            "             ParData WHEN SHnLD = '0' ELSE",
+            "             SER&CurState(7 DOWNTO 1);",
+            "",
+            "dffs : PROCESS( CK ) IS",
+            "   BEGIN",
+            "      IF (rising_edge(CK)) THEN CurState <= NextState;",
+            "      END IF;",
+            "   END PROCESS dffs;")
+        .getWithIndent();
   }
 
   @Override

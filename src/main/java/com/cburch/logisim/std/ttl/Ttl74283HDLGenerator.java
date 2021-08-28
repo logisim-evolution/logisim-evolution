@@ -83,9 +83,8 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    return contents
-        .add(
+    return (new LineBuffer())
+        .addLines(
             "oppA   <= \"0\"&A4&A3&A2&A1;",
             "oppB   <= \"0\"&B4&B3&B2&B1;",
             "oppC   <= \"0000\"&Cin;",
