@@ -367,7 +367,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public boolean CheckForGatedClocks(NetlistComponent comp) {
-    return Netlist.IsFlipFlop(comp.getComponent().getAttributeSet());
+    return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override

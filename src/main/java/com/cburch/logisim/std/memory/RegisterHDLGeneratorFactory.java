@@ -75,7 +75,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
           "BEGIN",
           "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-      if (Netlist.IsFlipFlop(attrs)) {
+      if (Netlist.isFlipFlop(attrs)) {
         contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock'event AND (Clock = '1')) THEN",
@@ -107,7 +107,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.addLines("   END IF;",
                         "END PROCESS make_memory;");
     } else {
-      if (!Netlist.IsFlipFlop(attrs)) {
+      if (!Netlist.isFlipFlop(attrs)) {
         contents.addLines(
             "assign Q = s_state_reg;",
             "",
@@ -161,7 +161,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
-      if (Netlist.IsFlipFlop(attrs))
+      if (Netlist.isFlipFlop(attrs))
         Reporter.Report.AddWarning(
             "Found a gated clock for component \"Register\" in circuit \""
                 + nets.getCircuitName()
@@ -205,7 +205,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(
         GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
       if (Nets.requiresGlobalClockConnection()) {
         map.put("Tick", HDL.oneBit());
       } else {
@@ -271,7 +271,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
     regs.put("s_state_reg", NrOfBitsId);
-    if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
+    if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
   }
