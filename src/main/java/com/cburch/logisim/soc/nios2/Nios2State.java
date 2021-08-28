@@ -217,7 +217,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         case 3:
           ienable = value;
           break;
-        // FIXME: what to do by default? throw Exception?
+        default:
+          // FIXME: what to do by default? throw Exception?
+          break;
       }
     }
 
