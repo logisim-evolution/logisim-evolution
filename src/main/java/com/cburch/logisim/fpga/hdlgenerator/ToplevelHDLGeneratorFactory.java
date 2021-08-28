@@ -74,7 +74,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           comp.setArrayId(ledArrays.indexOf(comp));
           hasLedArray = true;
           if (!(comp.getArrayDriveMode() == LedArrayDriving.LED_DEFAULT)
-              && !(comp.getArrayDriveMode() == LedArrayDriving.RgbDefault))
+              && !(comp.getArrayDriveMode() == LedArrayDriving.RGB_DEFAULT))
             hasScanningLedArray = true;
         }
       }
