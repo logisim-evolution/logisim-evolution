@@ -49,7 +49,7 @@ jobs:
           declare -r base_files=$(find src/main/resources/resources/logisim/* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
 
           # Read currently supported languages from settings.properties
-          declare -r langs="$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-)"
+          declare -r langs="$(cut -d  ' ' -f3- < src/main/resources/resources/logisim/settings.properties)"
 
           # Validate.
           failed=
@@ -61,6 +61,22 @@ jobs:
           if [[ "${failed}" == "YES" ]]; then
             echo ""
             echo "Project *.properties files have some problems or are out of sync."
+logisim-evolution/.github/workflows/
+in
+logisim-evolution/.github/workflows/
+in
+patch-1
+
+patch-1
+
+logisim-evolution/.github/workflows/
+in
+patch-1
+
+logisim-evolution/.github/workflows/
+in
+patch-1
+
             echo "Please see 'Update existing translations' in trans-tool's docs:"
             echo "  https://github.com/MarcinOrlowski/trans-tool"
             echo "for more info on how to address these issues."
