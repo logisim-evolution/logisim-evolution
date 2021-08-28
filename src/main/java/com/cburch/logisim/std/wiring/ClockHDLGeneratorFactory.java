@@ -90,7 +90,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "ClockBus <= GlobalClock&s_output_regs;",
           "makeOutputs : PROCESS( GlobalClock )",
           "BEGIN",
@@ -104,7 +104,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS makeOutputs;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "assign ClockBus = {GlobalClock,s_output_regs};",
           "always @(posedge GlobalClock)",
           "begin",
@@ -118,7 +118,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     Contents.add("").addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
           "s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
           "                       WHEN s_counter_is_zero = '0' ELSE",
@@ -127,7 +127,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBitsStr}}));"
       );
     } else {
-      Contents.add(
+      Contents.addLines(
               "assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;",
               "assign s_counter_next = (s_counter_is_zero == 1'b0)",
               "                           ? s_counter_reg - 1",
@@ -136,7 +136,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "                              : {{highTick}} - 1;",
               "")
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_output_regs = 0;",
@@ -146,7 +146,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     Contents.add("").addRemarkBlock("Here the state registers are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,",
           "                            s_derived_clock_reg)",
           "BEGIN",
@@ -174,7 +174,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS makeCounter;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "integer n;",
           "always @(posedge GlobalClock)",
           "begin",

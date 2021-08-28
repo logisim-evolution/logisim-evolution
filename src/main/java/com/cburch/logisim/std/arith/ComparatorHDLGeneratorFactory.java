@@ -68,12 +68,12 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       if (nrOfBits == 1) {
-        Contents.add(
+        Contents.addLines(
             "A_EQ_B <= DataA XNOR DataB;",
             "A_LT_B <= DataA AND NOT(DataB) WHEN {{twosComplement}} = 1 ELSE NOT(DataA) AND DataB;",
             "A_GT_B <= NOT(DataA) AND DataB WHEN {{twosComplement}} = 1 ELSE DataA AND NOT(DataB);");
       } else {
-        Contents.add(
+        Contents.addLines(
             "s_signed_less <= '1' WHEN signed(DataA) < signed(DataB) ELSE '0';",
             "s_unsigned_less <= '1' WHEN unsigned(DataA) < unsigned(DataB) ELSE '0';",
             "s_signed_greater <= '1' WHEN signed(DataA) > signed(DataB) ELSE '0';",
@@ -85,12 +85,12 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else {
       if (nrOfBits == 1) {
-        Contents.add(
+        Contents.addLines(
             "assign A_EQ_B = (DataA == DataB);",
             "assign A_LT_B = (DataA < DataB);",
             "assign A_GT_B = (DataA > DataB);");
       } else {
-        Contents.add(
+        Contents.addLines(
             "assign s_signed_less = ($signed(DataA) < $signed(DataB));",
             "assign s_unsigned_less = (DataA < DataB);",
             "assign s_signed_greater = ($signed(DataA) > $signed(DataB));",

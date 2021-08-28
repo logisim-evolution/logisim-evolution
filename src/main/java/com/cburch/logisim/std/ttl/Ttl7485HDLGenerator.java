@@ -88,7 +88,7 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .add(
+        .addLines(
             "oppA   <= A3&A2&A1&A0;",
             "oppB   <= B3&B2&B1&B0;",
             "gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';",

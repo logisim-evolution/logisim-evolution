@@ -69,7 +69,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;",
           "s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;",
           "s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))",

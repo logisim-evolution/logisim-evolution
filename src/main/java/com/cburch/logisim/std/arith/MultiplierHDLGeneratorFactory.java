@@ -70,7 +70,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))",
           "                    WHEN {{unsigned}}= 1 ELSE",
           "                 std_logic_vector(signed(INP_A)*signed(INP_B));",
@@ -82,7 +82,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});",
           "Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);");
     } else {
-      Contents.add(
+      Contents.addLines(
           "reg[{{calcBits}}-1:0] s_Cin;",
           "reg[{{calcBits}}-1:0] s_mult_unsigned;",
           "reg[{{calcBits}}-1:0] s_interm_result;",

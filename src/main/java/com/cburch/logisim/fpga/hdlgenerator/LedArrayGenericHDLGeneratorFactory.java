@@ -285,7 +285,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       connections.addPair("pin", pin);
       if (!array.pinIsMapped(pin)) {
-        connections.add(
+        connections.addLines(
             "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
             "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
             "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
@@ -296,7 +296,7 @@ public class LedArrayGenericHDLGeneratorFactory {
               .addPair("mapR", map.getHdlSignalName(RgbLed.RED))
               .addPair("mapG", map.getHdlSignalName(RgbLed.GREEN))
               .addPair("mapB", map.getHdlSignalName(RgbLed.BLUE))
-              .add(
+              .addLines(
                   "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};",
                   "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};",
                   "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapB}};");
@@ -313,68 +313,16 @@ public class LedArrayGenericHDLGeneratorFactory {
           final var bOff = offColor.getBlue();
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
 
-          connections.add(getColorMap("s_"
-              + LedArrayRedInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              rOn,
-              rOff,
-              pinName));
-          connections.add(getColorMap("s_"
-              + LedArrayGreenInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              gOn,
-              gOff,
-              pinName));
-          connections.add(getColorMap("s_"
-              + LedArrayBlueInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              bOn,
-              bOff,
-              pinName));
+          final var idPin = id + HDL.BracketOpen() + pin + HDL.BracketClose();
+          connections.add(getColorMap("s_" + LedArrayRedInputs + idPin, rOn, rOff, pinName));
+          connections.add(getColorMap("s_" + LedArrayGreenInputs + idPin, gOn, gOff, pinName));
+          connections.add(getColorMap("s_" + LedArrayBlueInputs + idPin, bOn, bOff, pinName));
         } else {
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayRedInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayGreenInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayBlueInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
+          final var idPinName = id + HDL.BracketOpen() + pin + HDL.BracketClose() + HDL.assignOperator() + pinName + ";";
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayRedInputs + idPinName);
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayGreenInputs + idPinName);
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayBlueInputs + idPinName);
         }
       }
     }

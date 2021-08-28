@@ -75,7 +75,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .add(
+        .addLines(
             "Segment_a <= s_output_value(0);",
             "Segment_b <= s_output_value(1);",
             "Segment_c <= s_output_value(2);",

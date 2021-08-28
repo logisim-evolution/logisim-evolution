@@ -65,7 +65,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .addPair("space", space)
               .addPair("i", i);
       if (HDL.isVHDL()) {
-        contents.add(
+        contents.addLines(
             "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
             "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
             "{{space}}                             Enable = '1' ELSE '0';");

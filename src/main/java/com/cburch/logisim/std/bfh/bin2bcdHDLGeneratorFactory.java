@@ -29,7 +29,6 @@
 package com.cburch.logisim.std.bfh;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -154,7 +153,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       switch (nrOfPorts) {
         case 2:
           contents
-              .add(
+              .addLines(
                   "s_level_0(6 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
                   "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
                   "s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);",
@@ -171,7 +170,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
         case 3:
           contents
-              .add(
+              .addLines(
                   "s_level_0(10 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
                   "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
                   "s_level_1(10)          <= s_level_0(10);",
@@ -201,7 +200,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
         case 4:
           contents
-              .add(
+              .addLines(
                   "s_level_0(15 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
                   "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
                   "s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);",
@@ -266,7 +265,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addPair("destStartId", destStartId)
         .addPair("destDownTo", (destStartId - 3))
         .addPair("proc", processName)
-        .add(
+        .addLines(
             "",
             "ADD3_{{proc}} : PROCESS({{srcName}})",
             "BEGIN",

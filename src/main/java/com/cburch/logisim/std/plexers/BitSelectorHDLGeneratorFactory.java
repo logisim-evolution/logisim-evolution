@@ -68,22 +68,23 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         (new LineBuffer())
             .addPair("extBits", EXTENDED_BITS_STR)
             .addPair("inBits", INPUT_BITS_STR)
-            .add("outBits", OUTPUTS_BITS_STR);
+            .addPair("outBits", OUTPUTS_BITS_STR);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
-      contents.add(
-          "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
-          "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;");
-      if (outputBits > 1)
-        contents.add(
-            "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});");
-      else contents.add("DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+      contents
+          .addLines(
+              "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
+              "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;")
+          .add(
+              outputBits > 1
+                  ? "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});"
+                  : "DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
     } else {
-      contents.add(
+      contents.addLines(
           "assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;",
           "assign s_extended_vector[{{inBits}}-1:0] = DataIn;");
       if (outputBits > 1) {
-        contents.add(
+        contents.addLines(
             "wire[513:0] s_select_vector;",
             "reg[{{outBits}}-1:0] s_selected_slice;",
             "assign s_select_vector[513:{{extBits}}] = 0;",
@@ -96,7 +97,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         for (var i = 15; i > 0; i--) {
           contents.add("      {{1}} : s_selected_slice <= s_select_vector[({{2}}*{{outBits}})-1:{{1}}*{{outBits}}];", i, (i + 1));
         }
-        contents.add(
+        contents.addLines(
             "      default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];",
             "   endcase",
             "end");

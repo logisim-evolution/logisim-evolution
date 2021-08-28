@@ -68,7 +68,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
     if (HDL.isVHDL()) {
       contents
-          .add(
+          .addLines(
               "ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS",
               "",
               "   SIGNAL s_state_reg  : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );",
@@ -95,7 +95,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           .empty(3);
     } else {
       contents
-          .add(
+          .addLines(
               "module SingleBitShiftReg ( Reset,",
               "                           Tick,",
               "                           Clock,",
@@ -151,7 +151,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return (new LineBuffer(sharedPairs))
-        .add(
+        .addLines(
             "COMPONENT SingleBitShiftReg",
             "   GENERIC ( {{activeLevel}} : INTEGER;",
             "             {{nrOfStages}}  : INTEGER );",
@@ -181,7 +181,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add(
+          .addLines(
               "ENTITY SingleBitShiftReg IS",
               "   GENERIC ( {{activeLevel}} : INTEGER;",
               "             {{nrOfStages}}  : INTEGER);",
@@ -218,7 +218,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE",
           "   OneBit : SingleBitShiftReg",
           "   GENERIC MAP ( {{activeLevel}} => {{activeLevel}},",
@@ -234,7 +234,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           "              Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})));",
           "END GENERATE genbits;");
     } else {
-      contents.add(
+      contents.addLines(
           "genvar n;",
           "generate",
           "   for (n = 0 ; n < {{nrOfBits}}; n=n+1)",

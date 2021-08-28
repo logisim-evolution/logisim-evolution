@@ -87,7 +87,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .add(
+        .addLines(
             "Q1  <= state1;",
             "nQ1 <= NOT(state1,",
             "Q2  <= state1;",

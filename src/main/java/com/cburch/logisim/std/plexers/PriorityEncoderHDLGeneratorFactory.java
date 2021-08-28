@@ -65,7 +65,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             .addPair("selBits", NR_OF_SELECT_BITS_STR)
             .addPair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "   -- Output Signals",
           "   GroupSelect <= NOT(s_in_is_zero) AND enable;",
           "   EnableOut   <= s_in_is_zero AND enable;",
@@ -102,7 +102,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
           "      END IF;",
           "   END PROCESS make_addr;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign GroupSelect = ~s_in_is_zero&enable;",
           "assign EnableOut = s_in_is_zero&enable;",
           "assign Address = (~enable) ? 0 : s_address[{{selBits}}-1:0];",

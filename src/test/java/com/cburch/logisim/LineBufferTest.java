@@ -34,10 +34,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import com.cburch.logisim.std.memory.Random;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,6 +107,21 @@ public class LineBufferTest extends TestBase {
     lb.add("{{2}}{{1}}", foo, bar);
     assertEquals(1, lb.size());
     assertEquals(bar + foo, lb.get(0));
+  }
+
+  @Test
+  public void testAddWordsAndWithPair() {
+    final var pair = getRandomString();
+    final var foo = getRandomString();
+    final var bar = getRandomInt(0, 100);
+
+    final var lb = (new LineBuffer())
+            .addPair("pair", pair)
+            .add("{{pair}}-{{1}}-{{2}}", foo, bar);
+    System.out.println(lb.toString());
+    assertEquals(1, lb.size());
+    final var expected = String.format("%s-%s-%d", pair, foo, bar);
+    assertEquals(expected, lb.get(0));
   }
 
   @Test

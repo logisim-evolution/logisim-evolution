@@ -58,7 +58,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (componentInfo.EndIsConnected(HexDigit.HEX)) {
         contents
             .add("WITH ({{busName}}) SELECT {{bubbleBusName}}( {{1}} DOWNTO {{startId}} ) <= ", (startId + 6))
-            .add(
+            .addLines(
                 "   \"0111111\" WHEN \"0000\",",
                 "   \"0000110\" WHEN \"0001\",",
                 "   \"1011011\" WHEN \"0010\",",
@@ -84,7 +84,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       if (componentInfo.EndIsConnected(HexDigit.HEX)) {
         contents
-            .add(
+            .addLines(
                 "",
                 "reg[6:0] {{regName}};",
                 "always @(*)",

@@ -231,7 +231,7 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  public LineBuffer add(String... lines) {
+  public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
   }
 

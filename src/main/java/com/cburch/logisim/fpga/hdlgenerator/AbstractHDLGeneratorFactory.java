@@ -258,7 +258,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.empty();
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : params.keySet()) {
-          Contents.add("   parameter %s = 1;", params.get(param));
+          Contents.add("   parameter {{1}} = 1;", params.get(param));
         }
         Contents.empty();
       }
