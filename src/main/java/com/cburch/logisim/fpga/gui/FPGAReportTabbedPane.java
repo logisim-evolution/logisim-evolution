@@ -31,8 +31,7 @@ package com.cburch.logisim.fpga.gui;
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FPGACommanderListModel;
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
-import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
 import java.awt.Component;
@@ -88,7 +87,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
   private final ArrayList<String> ConsoleMessages;
 
   private boolean DRCTraceActive = false;
-  private SimpleDRCContainer ActiveDRCContainer;
+  private simpleDRCContainer ActiveDRCContainer;
 
   private final Project MyProject;
 
@@ -355,7 +354,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       }
   }
 
-  private void GenerateDRCTrace(SimpleDRCContainer dc) {
+  private void GenerateDRCTrace(simpleDRCContainer dc) {
     DRCTraceActive = true;
     ActiveDRCContainer = dc;
     if (dc.HasCircuit())
@@ -428,8 +427,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (e.getSource().equals(Errors)) idx = Errors.getSelectedIndex();
       else if (SourceIsErrorsWindow) idx = ErrorsWindow.getListObject().getSelectedIndex();
       if (idx >= 0) {
-        if (ErrorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
-          GenerateDRCTrace((SimpleDRCContainer) ErrorsList.getElementAt(idx));
+        if (ErrorsList.getElementAt(idx) instanceof simpleDRCContainer) {
+          GenerateDRCTrace((simpleDRCContainer) ErrorsList.getElementAt(idx));
         }
       }
     } else if (e.getSource().equals(Warnings) || SourceIsWarningsWindow) {
@@ -438,8 +437,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (e.getSource().equals(Warnings)) idx = Warnings.getSelectedIndex();
       else if (SourceIsWarningsWindow) idx = WarningsWindow.getListObject().getSelectedIndex();
       if (idx >= 0)
-        if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
-          GenerateDRCTrace((SimpleDRCContainer) WarningsList.getElementAt(idx));
+        if (WarningsList.getElementAt(idx) instanceof simpleDRCContainer)
+          GenerateDRCTrace((simpleDRCContainer) WarningsList.getElementAt(idx));
     }
   }
 

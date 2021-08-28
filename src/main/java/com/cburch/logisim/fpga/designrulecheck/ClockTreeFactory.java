@@ -43,7 +43,7 @@ public class ClockTreeFactory {
   public void AddClockNet(ArrayList<String> HierarchyNames, int clocksourceid,
                            ConnectionPoint connection, boolean isPinClock) {
     ClockTreeContainer destination = null;
-    for (ClockTreeContainer search : sourcetrees) {
+    for (final var search : sourcetrees) {
       if (search.equals(HierarchyNames, clocksourceid)) {
         destination = search;
       }
@@ -55,10 +55,9 @@ public class ClockTreeFactory {
     destination.addNet(connection);
   }
 
-  public void AddClockSource(
-      ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
+  public void AddClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
     ClockTreeContainer destination = null;
-    for (ClockTreeContainer search : sourcetrees) {
+    for (final var search : sourcetrees) {
       if (search.equals(HierarchyNames, clocksourceid)) {
         destination = search;
       }
@@ -71,24 +70,23 @@ public class ClockTreeFactory {
   }
 
   public void clean() {
-    for (ClockTreeContainer tree : sourcetrees) {
+    for (final var tree : sourcetrees) {
       tree.clear();
     }
     sourcetrees.clear();
     if (sources != null) sources.clear();
   }
 
-  public int GetClockSourceId(
-      ArrayList<String> Hierarchy, Net SelectedNet, byte SelectedNetBitIndex) {
-    for (int i = 0; i < sources.getNrofSources(); i++) {
-      for (ClockTreeContainer ThisClockNet : sourcetrees) {
+  public int GetClockSourceId(ArrayList<String> Hierarchy, Net SelectedNet, byte SelectedNetBitIndex) {
+    for (var i = 0; i < sources.getNrofSources(); i++) {
+      for (final var ThisClockNet : sourcetrees) {
         if (ThisClockNet.equals(Hierarchy, i)) {
           /*
            * we found a clock net corresponding the Hierarchy and
            * clock source id
            */
-          for (Byte ClockEntry : ThisClockNet.GetClockEntries(SelectedNet)) {
-            if (ClockEntry == SelectedNetBitIndex) return i;
+          for (final var clockEntry : ThisClockNet.GetClockEntries(SelectedNet)) {
+            if (clockEntry == SelectedNetBitIndex) return i;
           }
         }
       }

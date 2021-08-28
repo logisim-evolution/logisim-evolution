@@ -87,7 +87,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .add(
+        .addLines(
             "Q1  <= state1;",
             "nQ1 <= NOT(state1,",
             "Q2  <= state1;",
@@ -123,7 +123,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
       var gatedClock = false;
       var hasClock = true;
       int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
-      if (!componentinfo.EndIsConnected(clockPinIndex)) {
+      if (!componentinfo.isEndConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()

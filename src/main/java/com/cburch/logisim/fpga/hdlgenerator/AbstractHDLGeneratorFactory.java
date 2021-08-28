@@ -258,7 +258,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.empty();
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : params.keySet()) {
-          Contents.add("   parameter %s = 1;", params.get(param));
+          Contents.add("   parameter {{1}} = 1;", params.get(param));
         }
         Contents.empty();
       }
@@ -421,7 +421,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNets) {
 
     var contents = new StringBuilder();
-    if ((endIndex >= 0) && (endIndex < comp.NrOfEnds())) {
+    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.IsOutputEnd();
       final var nrOfBits = thisEnd.NrOfBits();
@@ -453,7 +453,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public static String GetBusNameContinues(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       return "";
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
@@ -476,7 +476,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public static String GetBusName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       return "";
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
@@ -496,7 +496,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var Contents = new StringBuilder();
     if ((TheNets.GetCurrentHierarchyLevel() != null)
         && (EndIndex >= 0)
-        && (EndIndex < comp.NrOfEnds())) {
+        && (EndIndex < comp.nrOfEnds())) {
       final var EndData = comp.getEnd(EndIndex);
       if (EndData.NrOfBits() == 1) {
         final var ConnectedNet = EndData.GetConnection((byte) 0).GetParentNet();
@@ -763,7 +763,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       int EndIndex,
       Netlist TheNets) {
     var NetMap = new HashMap<String, String>();
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       Reporter.Report.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return NetMap;
     }
@@ -897,7 +897,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist MyNetlist) {
     var Contents = new StringBuilder();
     final var FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
-    if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
+    if ((EndIndex >= 0) && (EndIndex < comp.nrOfEnds())) {
       final var ThisEnd = comp.getEnd(EndIndex);
       final var IsOutput = ThisEnd.IsOutputEnd();
       if (ThisEnd.NrOfBits() == 1) {

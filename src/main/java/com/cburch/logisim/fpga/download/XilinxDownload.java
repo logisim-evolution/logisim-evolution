@@ -221,7 +221,7 @@ public class XilinxDownload implements VendorDownload {
 
     contents.clear();
     contents.add(
-        "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
+        "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
         ToplevelHDLGeneratorFactory.FPGAToplevelName,
         ScriptPath.replace(ProjectPath, "../"),
         VHDL_LIST_FILE,
@@ -243,7 +243,7 @@ public class XilinxDownload implements VendorDownload {
           .add("addPromDevice -p {{1}} -size 0 -name {{2}}", JTAGPos, boardInfo.fpga.getFlashName())
           .add("addDesign -version 0 -name \"0\"")
           .add("addDeviceChain -index 0")
-          .add("addDevice -p %s -file {{1}}.{{2}}", ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+          .add("addDevice -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
           .add("generate -format mcs -fillvalue FF -output {{1}}", mcsFile)
           .add("setMode -bs")
           .add("setCable -port auto")
@@ -270,12 +270,12 @@ public class XilinxDownload implements VendorDownload {
       contents
           .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
           .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
-          .addPair("clockPin", GetXilinxClockPin(boardInfo));
-      contents.add(
-          "NET \"{{clock}}\" {{clockPin}} ;",
-          "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
-          "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
-          "");
+          .addPair("clockPin", GetXilinxClockPin(boardInfo))
+          .addLines(
+            "NET \"{{clock}}\" {{clockPin}} ;",
+            "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
+            "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
+            "");
     }
     contents.add(getPinLocStrings());
     return FileWriter.WriteContents(UcfFile, contents.get());

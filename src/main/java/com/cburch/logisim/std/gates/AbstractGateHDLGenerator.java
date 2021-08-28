@@ -107,7 +107,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
               .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
         }
       } else {
-        contents.add("   assign s_signal_invert_mask = %s;", BUBBLES_MASK);
+        contents.add("   assign s_signal_invert_mask = {{1}};", BUBBLES_MASK);
         for (var i = 0; i < nrOfInputs; i++) {
           contents.add(
               "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",

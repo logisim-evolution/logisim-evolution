@@ -160,12 +160,12 @@ public class AutoLabel {
   }
 
   public static boolean labelEndsWithNumber(String label) {
-    return CorrectLabel.Numbers.contains(label.substring(label.length() - 1));
+    return CorrectLabel.NUMBERS.contains(label.substring(label.length() - 1));
   }
 
   private int getLabelBaseEndIndex(String label) {
     var index = label.length();
-    while ((index > 1) && CorrectLabel.Numbers.contains(label.substring(index - 1, index))) index--;
+    while ((index > 1) && CorrectLabel.NUMBERS.contains(label.substring(index - 1, index))) index--;
     return (index - 1);
   }
 
@@ -214,7 +214,7 @@ public class AutoLabel {
       if (newLabel != null) {
         if (Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
-            && !CorrectLabel.IsKeyword(newLabel, true)) {
+            && !CorrectLabel.isKeyword(newLabel, true)) {
           if (createAction) act.set(comp, StdAttr.LABEL, newLabel);
           else setLabel(newLabel, circ, compFactory);
           correct = true;

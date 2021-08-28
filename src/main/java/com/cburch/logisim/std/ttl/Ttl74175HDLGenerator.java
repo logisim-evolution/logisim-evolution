@@ -84,9 +84,8 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    return contents
-        .add(
+    return (new LineBuffer())
+        .addLines(
             "NextState <= CurState WHEN tick = '0' ELSE",
             "             D4&D3&D2&D1;",
             "",
@@ -117,7 +116,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     int clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(clockPinIndex)) {
+    if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning("Component \"TTL74165\" in circuit \"" + nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;

@@ -36,9 +36,9 @@ public class LedArrayGenericHDLGeneratorFactory {
       case LedArrayDriving.LED_DEFAULT -> new LedArrayLedDefaultHDLGeneratorFactory();
       case LedArrayDriving.LED_ROW_SCANNING -> new LedArrayRowScanningHDLGeneratorFactory();
       case LedArrayDriving.LED_COLUMN_SCANNING -> new LedArrayColumnScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbDefault -> new RGBArrayLedDefaultHDLGeneratorFactory();
-      case LedArrayDriving.RgbRowScanning -> new RGBArrayRowScanningHDLGeneratorFactory();
-      case LedArrayDriving.RgbColumnScanning -> new RGBArrayColumnScanningHDLGeneratorFactory();
+      case LedArrayDriving.RGB_DEFAULT -> new RGBArrayLedDefaultHDLGeneratorFactory();
+      case LedArrayDriving.RGB_ROW_SCANNING -> new RGBArrayRowScanningHDLGeneratorFactory();
+      case LedArrayDriving.RGB_COLUMN_SCANNING -> new RGBArrayColumnScanningHDLGeneratorFactory();
       default -> null;
     };
   }
@@ -48,9 +48,9 @@ public class LedArrayGenericHDLGeneratorFactory {
       case LedArrayDriving.LED_DEFAULT -> LedArrayLedDefaultHDLGeneratorFactory.LedArrayName;
       case LedArrayDriving.LED_ROW_SCANNING -> LedArrayRowScanningHDLGeneratorFactory.LedArrayName;
       case LedArrayDriving.LED_COLUMN_SCANNING -> LedArrayColumnScanningHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.RgbDefault -> RGBArrayLedDefaultHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RgbRowScanning -> RGBArrayRowScanningHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RgbColumnScanning -> RGBArrayColumnScanningHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.RGB_DEFAULT -> RGBArrayLedDefaultHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.RGB_ROW_SCANNING -> RGBArrayRowScanningHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.RGB_COLUMN_SCANNING -> RGBArrayColumnScanningHDLGeneratorFactory.RGBArrayName;
       default -> null;
     };
   }
@@ -78,7 +78,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         return (pinNr < nrColumnAddressBits)
             ? LedArrayColumnAddress + identifier + "[" + pinNr + "]"
             : LedArrayRowOutputs + identifier + "[" + (pinNr - nrColumnAddressBits) + "]";
-      case LedArrayDriving.RgbDefault: {
+      case LedArrayDriving.RGB_DEFAULT: {
         final var index = pinNr % 3;
         final var col = pinNr / 3;
         return switch (col) {
@@ -88,7 +88,7 @@ public class LedArrayGenericHDLGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RgbRowScanning: {
+      case LedArrayDriving.RGB_ROW_SCANNING: {
         final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
         final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
         if (pinNr < nrRowAddressBits)
@@ -100,7 +100,7 @@ public class LedArrayGenericHDLGeneratorFactory {
           default -> "";
         };
       }
-      case LedArrayDriving.RgbColumnScanning: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING: {
         final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
         final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
         if (pinNr < nrColumnAddressBits)
@@ -117,7 +117,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static boolean requiresClock(char typeId) {
-    return (typeId != LedArrayDriving.LED_DEFAULT) && (typeId != LedArrayDriving.RgbDefault);
+    return (typeId != LedArrayDriving.LED_DEFAULT) && (typeId != LedArrayDriving.RGB_DEFAULT);
   }
 
   public static SortedMap<String, Integer> getExternalSignals(char typeId,
@@ -142,20 +142,20 @@ public class LedArrayGenericHDLGeneratorFactory {
         externals.put(LedArrayRowOutputs + identifier, nrOfRows);
         break;
       }
-      case LedArrayDriving.RgbDefault: {
+      case LedArrayDriving.RGB_DEFAULT: {
         externals.put(LedArrayRedOutputs + identifier, nrOfRows * nrOfColumns);
         externals.put(LedArrayGreenOutputs + identifier, nrOfRows * nrOfColumns);
         externals.put(LedArrayBlueOutputs + identifier, nrOfRows * nrOfColumns);
         break;
       }
-      case LedArrayDriving.RgbRowScanning: {
+      case LedArrayDriving.RGB_ROW_SCANNING: {
         externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
         externals.put(LedArrayColumnRedOutputs + identifier, nrOfColumns);
         externals.put(LedArrayColumnGreenOutputs + identifier, nrOfColumns);
         externals.put(LedArrayColumnBlueOutputs + identifier, nrOfColumns);
         break;
       }
-      case LedArrayDriving.RgbColumnScanning: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING: {
         externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
         externals.put(LedArrayRowRedOutputs + identifier, nrOfRows);
         externals.put(LedArrayRowGreenOutputs + identifier, nrOfRows);
@@ -174,9 +174,9 @@ public class LedArrayGenericHDLGeneratorFactory {
       case LedArrayDriving.LED_COLUMN_SCANNING:
         wires.put("s_" + LedArrayInputs + identifier, nrOfRows * nrOfColumns);
         break;
-      case LedArrayDriving.RgbDefault:
-      case LedArrayDriving.RgbRowScanning:
-      case LedArrayDriving.RgbColumnScanning:
+      case LedArrayDriving.RGB_DEFAULT:
+      case LedArrayDriving.RGB_ROW_SCANNING:
+      case LedArrayDriving.RGB_COLUMN_SCANNING:
         wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
         wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
@@ -191,7 +191,7 @@ public class LedArrayGenericHDLGeneratorFactory {
                 ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
                 : "   " + getSpecificHDLName(typeId));
     switch (typeId) {
-      case LedArrayDriving.RgbDefault:
+      case LedArrayDriving.RGB_DEFAULT:
       case LedArrayDriving.LED_DEFAULT:
         componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getGenericMap(
             nrOfRows,
@@ -199,7 +199,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             FpgaClockFrequency,
             isActiveLow));
         break;
-      case LedArrayDriving.RgbColumnScanning:
+      case LedArrayDriving.RGB_COLUMN_SCANNING:
       case LedArrayDriving.LED_COLUMN_SCANNING:
         componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
@@ -207,7 +207,7 @@ public class LedArrayGenericHDLGeneratorFactory {
             FpgaClockFrequency,
             isActiveLow));
         break;
-      case LedArrayDriving.RgbRowScanning:
+      case LedArrayDriving.RGB_ROW_SCANNING:
       case LedArrayDriving.LED_ROW_SCANNING:
         componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getGenericMap(
             nrOfRows,
@@ -222,7 +222,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbDefault: {
+      case LedArrayDriving.RGB_DEFAULT: {
         componentMap.add(RGBArrayLedDefaultHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
@@ -230,7 +230,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbRowScanning: {
+      case LedArrayDriving.RGB_ROW_SCANNING: {
         componentMap.add(RGBArrayRowScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
@@ -238,7 +238,7 @@ public class LedArrayGenericHDLGeneratorFactory {
         componentMap.add(LedArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
-      case LedArrayDriving.RgbColumnScanning: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING: {
         componentMap.add(RGBArrayColumnScanningHDLGeneratorFactory.getPortMap(identifier));
         break;
       }
@@ -252,7 +252,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     connections.addAll(
         switch (array.getArrayDriveMode()) {
           case LedArrayDriving.LED_DEFAULT, LedArrayDriving.LED_ROW_SCANNING, LedArrayDriving.LED_COLUMN_SCANNING -> getLedArrayConnections(array, id);
-          case LedArrayDriving.RgbDefault, LedArrayDriving.RgbRowScanning, LedArrayDriving.RgbColumnScanning -> getRGBArrayConnections(array, id);
+          case LedArrayDriving.RGB_DEFAULT, LedArrayDriving.RGB_ROW_SCANNING, LedArrayDriving.RGB_COLUMN_SCANNING -> getRGBArrayConnections(array, id);
           default -> throw new IllegalStateException("Unexpected value: " + array.getArrayDriveMode());
         });
     connections.add("");
@@ -285,7 +285,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       connections.addPair("pin", pin);
       if (!array.pinIsMapped(pin)) {
-        connections.add(
+        connections.addLines(
             "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
             "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
             "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
@@ -296,7 +296,7 @@ public class LedArrayGenericHDLGeneratorFactory {
               .addPair("mapR", map.getHdlSignalName(RgbLed.RED))
               .addPair("mapG", map.getHdlSignalName(RgbLed.GREEN))
               .addPair("mapB", map.getHdlSignalName(RgbLed.BLUE))
-              .add(
+              .addLines(
                   "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};",
                   "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};",
                   "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapB}};");
@@ -313,68 +313,16 @@ public class LedArrayGenericHDLGeneratorFactory {
           final var bOff = offColor.getBlue();
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
 
-          connections.add(getColorMap("s_"
-              + LedArrayRedInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              rOn,
-              rOff,
-              pinName));
-          connections.add(getColorMap("s_"
-              + LedArrayGreenInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              gOn,
-              gOff,
-              pinName));
-          connections.add(getColorMap("s_"
-              + LedArrayBlueInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose(),
-              bOn,
-              bOff,
-              pinName));
+          final var idPin = id + HDL.BracketOpen() + pin + HDL.BracketClose();
+          connections.add(getColorMap("s_" + LedArrayRedInputs + idPin, rOn, rOff, pinName));
+          connections.add(getColorMap("s_" + LedArrayGreenInputs + idPin, gOn, gOff, pinName));
+          connections.add(getColorMap("s_" + LedArrayBlueInputs + idPin, bOn, bOff, pinName));
         } else {
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayRedInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayGreenInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
-          connections.add("   "
-              + HDL.assignPreamble()
-              + "s_"
-              + LedArrayBlueInputs
-              + id
-              + HDL.BracketOpen()
-              + pin
-              + HDL.BracketClose()
-              + HDL.assignOperator()
-              + pinName
-              + ";");
+          final var idPinName = id + HDL.BracketOpen() + pin + HDL.BracketClose() + HDL.assignOperator() + pinName + ";";
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayRedInputs + idPinName);
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayGreenInputs + idPinName);
+          connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayBlueInputs + idPinName);
         }
       }
     }

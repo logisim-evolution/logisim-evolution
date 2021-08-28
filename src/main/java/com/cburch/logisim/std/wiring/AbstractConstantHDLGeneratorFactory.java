@@ -64,16 +64,16 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       String CircuitName) {
     final var Contents = (new LineBuffer()).withHdlPairs();
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-    if (ComponentInfo.EndIsConnected(0)) {
+    if (ComponentInfo.isEndConnected(0)) {
       long ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
       if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        Contents.add("{{assign}} %s {{=}} %s;", GetNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
+        Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
             .add("");
       } else {
         if (Nets.IsContinuesBus(ComponentInfo, 0)) {
           /* easy case */
-          Contents.add("{{assign}} %s {{=}} %s;", GetBusNameContinues(ComponentInfo, 0, Nets), GetConvertOperator(ConstantValue, NrOfBits));
+          Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusNameContinues(ComponentInfo, 0, Nets), GetConvertOperator(ConstantValue, NrOfBits));
           Contents.add("");
         } else {
           /* we have to enumerate all bits */
@@ -83,7 +83,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
             if ((mask & ConstantValue) != 0) ConstValue = HDL.oneBit();
             else ConstValue = HDL.zeroBit();
             mask <<= 1;
-            Contents.add("{{assign}} %s {{=}} %s;", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), ConstValue);
+            Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), ConstValue);
           }
           Contents.add("");
         }

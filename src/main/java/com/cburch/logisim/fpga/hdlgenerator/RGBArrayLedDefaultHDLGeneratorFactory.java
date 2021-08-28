@@ -58,7 +58,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     contents.add("id", id);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "PORT MAP ( {{outsR}} => {{outsR}}{{id}},",
           "           {{outsG}} => {{outsG}}{{id}},",
           "           {{outsB}} => {{outsB}}{{id}},",
@@ -66,7 +66,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           "           {{insG }} => s_{{insG}}{{id}},",
           "           {{insB }} => s_{{insB}}{{id}} );");
     } else {
-      contents.add(
+      contents.addLines(
           "( .{{outsR}}({{outsR}}{{id}}),",
           "  .{{outsG}}({{outsG}}{{id}}),",
           "  .{{outsB}}({{outsB}}{{id}}),",
@@ -100,14 +100,14 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     final var contents = new LineBuffer(sharedPairs);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
           "   {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);",
           "   {{outsG}}(n) <= NOT({{insG}}(n)) WHEN activeLow = 1 ELSE {{insG}}(n);",
           "   {{outsB}}(n) <= NOT({{insB}}(n)) WHEN activeLow = 1 ELSE {{insB}}(n);",
           "END GENERATE;");
     } else {
-      contents.add(
+      contents.addLines(
           "genvar i;",
           "generate",
           "   for (i = 0; i < nrOfLeds; i = i + 1) begin",

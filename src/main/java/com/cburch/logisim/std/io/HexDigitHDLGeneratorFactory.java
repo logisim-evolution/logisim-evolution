@@ -42,7 +42,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var startId = componentInfo.GetLocalBubbleOutputStartId();
+    final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
     final var contents =
         (new LineBuffer())
@@ -55,10 +55,10 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     if (HDL.isVHDL()) {
       contents.add("");
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
             .add("WITH ({{busName}}) SELECT {{bubbleBusName}}( {{1}} DOWNTO {{startId}} ) <= ", (startId + 6))
-            .add(
+            .addLines(
                 "   \"0111111\" WHEN \"0000\",",
                 "   \"0000110\" WHEN \"0001\",",
                 "   \"1011011\" WHEN \"0010\",",
@@ -82,9 +82,9 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
       }
     } else {
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
-            .add(
+            .addLines(
                 "",
                 "reg[6:0] {{regName}};",
                 "always @(*)",
@@ -112,7 +112,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add("assign {{sigName}} = {{busName}};");
       }
       if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.GetLocalBubbleOutputStartId() + 7));
+        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.getLocalBubbleOutputStartId() + 7));
       }
     }
     return contents.getWithIndent();

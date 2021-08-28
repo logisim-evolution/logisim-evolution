@@ -65,7 +65,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             .addPair("selBits", NR_OF_SELECT_BITS_STR)
             .addPair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "   -- Output Signals",
           "   GroupSelect <= NOT(s_in_is_zero) AND enable;",
           "   EnableOut   <= s_in_is_zero AND enable;",
@@ -102,7 +102,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
           "      END IF;",
           "   END PROCESS make_addr;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign GroupSelect = ~s_in_is_zero&enable;",
           "assign EnableOut = s_in_is_zero&enable;",
           "assign Address = (~enable) ? 0 : s_address[{{selBits}}-1:0];",
@@ -142,7 +142,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = componentInfo.NrOfEnds() - 4;
+    final var nrOfBits = componentInfo.nrOfEnds() - 4;
     final var nrOfSelectBits = componentInfo.GetComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
     map.put(NR_OF_SELECT_BITS_STR, nrOfSelectBits);
     map.put(NR_OF_INPUT_BITS_STR, 1 << nrOfSelectBits);
@@ -154,7 +154,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var nrOfBits = comp.NrOfEnds() - 4;
+    final var nrOfBits = comp.nrOfEnds() - 4;
     map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {

@@ -81,8 +81,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
         .addRemarkBlock("Here the output signals are defined")
-        .add("   %sQ    %ss_current_state_reg%s;", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
-        .add("   %sQ_bar%s%s(s_current_state_reg%s);", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
+        .add("   {{1}}Q    {{2}}s_current_state_reg{{3}};", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
+        .add("   {{1}}Q_bar{{2}}{{3}}(s_current_state_reg{{4}});", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
         .add("")
         .add("Here the update logic is defined")
         .add(GetUpdateLogic())
@@ -103,7 +103,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
           .add("   VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
           .add("BEGIN")
-          .add("   temp := std_logic_vector(to_unsigned(%s,1));", ACTIVITY_LEVEL_STR)
+          .add("   temp := std_logic_vector(to_unsigned({{1}}, 1));", ACTIVITY_LEVEL_STR)
           .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
           .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
       if (Netlist.IsFlipFlop(attrs)) {
@@ -119,7 +119,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("END PROCESS make_memory;");
     } else {
       if (Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+        contents.addLines(
             "always @(posedge Reset or posedge Preset or negedge Clock)",
             "begin",
             "   if (Reset) s_current_state_reg[0] <= 1'b0;",
@@ -136,7 +136,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
       } else {
         contents
             .addPair("activityLevel", ACTIVITY_LEVEL_STR)
-            .add(
+            .addLines(
                 "always @(*)",
                 "begin",
                 "   if (Reset) s_current_state_reg <= 2'b0;",
@@ -171,7 +171,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var activeLow = false;
     final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -198,9 +198,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var nrOfPins = comp.NrOfEnds();
+    final var nrOfPins = comp.nrOfEnds();
     final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(comp.NrOfEnds() - 5)) {
+    if (!comp.isEndConnected(comp.nrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
@@ -209,7 +209,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, comp.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(comp, comp.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -274,7 +274,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.NrOfEnds() - 5, true, Nets));
+        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));

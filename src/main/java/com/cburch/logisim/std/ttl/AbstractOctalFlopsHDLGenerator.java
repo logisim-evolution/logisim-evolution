@@ -86,7 +86,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .add(
+        .addLines(
             "enable <= tick and NOT(nCLKen);",
             "nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;",
             "Q0     <= state(0);",
@@ -115,7 +115,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     var gatedClock = false;
     var hasClock = true;
     final var clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(clockPinIndex)) {
+    if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + getComponentStringIdentifier()

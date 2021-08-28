@@ -83,7 +83,7 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .add(
+        .addLines(
             "Sega  <= segments(0,",
             "Segb  <= segments(1,",
             "Segc  <= segments(2,",

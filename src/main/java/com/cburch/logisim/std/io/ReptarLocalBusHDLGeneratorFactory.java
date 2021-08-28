@@ -48,7 +48,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
       contents
           .addPair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-          .add(
+          .addLines(
               "",
               "ARCHITECTURE PlatformIndependent OF {{compName}} IS ",
               "",
@@ -85,23 +85,23 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
     return (new LineBuffer())
-        .add(
-            "   COMPONENT LocalBus",
-            "      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;",
-            "             IRQ_i              : IN  std_logic;",
-            "             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );",
-            "             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );",
-            "             SP6_LB_RE_nOE_o    : OUT std_logic;",
-            "             SP6_LB_nADV_ALE_o  : OUT std_logic;",
-            "             SP6_LB_nCS3_o      : OUT std_logic;",
-            "             SP6_LB_nWE_o       : OUT std_logic;",
-            "             FPGA_in            : IN std_logic_vector(12 downto 0);",
-            "             FPGA_out           : OUT std_logic_vector(1 downto 0);",
-            "            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
-            "            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
-            "            Addr_Data_LB_tris_i : IN std_logic);",
-            "   END COMPONENT;")
-        .get();
+        .addLines(
+            "COMPONENT LocalBus",
+            "   PORT ( SP6_LB_WAIT3_i     : IN  std_logic;",
+            "          IRQ_i              : IN  std_logic;",
+            "          Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );",
+            "          Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );",
+            "          SP6_LB_RE_nOE_o    : OUT std_logic;",
+            "          SP6_LB_nADV_ALE_o  : OUT std_logic;",
+            "          SP6_LB_nCS3_o      : OUT std_logic;",
+            "          SP6_LB_nWE_o       : OUT std_logic;",
+            "          FPGA_in            : IN std_logic_vector(12 downto 0);",
+            "          FPGA_out           : OUT std_logic_vector(1 downto 0);",
+            "         Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
+            "         Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
+            "         Addr_Data_LB_tris_i : IN std_logic);",
+            "END COMPONENT;")
+        .getWithIndent();
   }
 
   @Override
@@ -115,7 +115,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         .addPair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
-        .add(
+        .addLines(
             "Library UNISIM;",
             "use UNISIM.vcomponents.all;",
             "",
@@ -186,22 +186,22 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInOutBubbleBusname,
-            ComponentInfo.GetLocalBubbleInOutEndId(),
-            ComponentInfo.GetLocalBubbleInOutStartId()));
+            ComponentInfo.getLocalBubbleInOutEndId(),
+            ComponentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInputBubbleBusname,
-            ComponentInfo.GetLocalBubbleInputEndId(),
-            ComponentInfo.GetLocalBubbleInputStartId()));
+            ComponentInfo.getLocalBubbleInputEndId(),
+            ComponentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalOutputBubbleBusname
-                + ComponentInfo.GetLocalBubbleOutputEndId()
-                + ComponentInfo.GetLocalBubbleOutputStartId()));
+                + ComponentInfo.getLocalBubbleOutputEndId()
+                + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
         GetNetMap(
             "SP6_LB_nCS3_o",

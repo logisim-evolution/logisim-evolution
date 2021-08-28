@@ -32,32 +32,32 @@ import java.util.ArrayList;
 
 public class ClockTreeContainer {
 
-  private final ArrayList<ConnectionPoint> ClockSources;
-  private final ArrayList<ConnectionPoint> ClockNets;
-  private final int ClockSourceId;
-  private final ArrayList<String> HierarchyId;
+  private final ArrayList<ConnectionPoint> clockSources;
+  private final ArrayList<ConnectionPoint> clockNets;
+  private final int clockSourceId;
+  private final ArrayList<String> hierarchyId;
   private boolean isPinClockSource;
 
-  public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId, boolean pinClockSource) {
-    ClockSources = new ArrayList<>();
-    ClockNets = new ArrayList<>();
-    ClockSourceId = sourceId;
-    HierarchyId = new ArrayList<>();
-    HierarchyId.addAll(Hierarchy);
+  public ClockTreeContainer(ArrayList<String> hierarchy, int sourceId, boolean pinClockSource) {
+    clockSources = new ArrayList<>();
+    clockNets = new ArrayList<>();
+    clockSourceId = sourceId;
+    hierarchyId = new ArrayList<>();
+    hierarchyId.addAll(hierarchy);
     isPinClockSource = pinClockSource;
   }
 
   public void addNet(ConnectionPoint NetInfo) {
-    ClockNets.add(NetInfo);
+    clockNets.add(NetInfo);
   }
 
   public void addSource(ConnectionPoint NetInfo) {
-    ClockSources.add(NetInfo);
+    clockSources.add(NetInfo);
   }
 
   public void clear() {
-    ClockSources.clear();
-    ClockNets.clear();
+    clockSources.clear();
+    clockNets.clear();
   }
 
   public void setPinClock() {
@@ -69,16 +69,16 @@ public class ClockTreeContainer {
   }
 
   public boolean equals(ArrayList<String> Hierarchy, int sourceId) {
-    return ((sourceId == ClockSourceId) && HierarchyId.equals(Hierarchy));
+    return ((sourceId == clockSourceId) && hierarchyId.equals(Hierarchy));
   }
 
   public ArrayList<Byte> GetClockEntries(Net NetInfo) {
-    ArrayList<Byte> result = new ArrayList<>();
-    for (ConnectionPoint SolderPoint : ClockSources) {
+    final var result = new ArrayList<Byte>();
+    for (final var SolderPoint : clockSources) {
       if (SolderPoint.GetParentNet().equals(NetInfo))
         result.add(SolderPoint.GetParentNetBitIndex());
     }
-    for (ConnectionPoint SolderPoint : ClockNets) {
+    for (final var SolderPoint : clockNets) {
       if (SolderPoint.GetParentNet().equals(NetInfo))
         result.add(SolderPoint.GetParentNetBitIndex());
     }
@@ -86,23 +86,19 @@ public class ClockTreeContainer {
   }
 
   public boolean NetContainsClockConnection(Net NetInfo) {
-    for (ConnectionPoint SolderPoint : ClockSources) {
+    for (final var SolderPoint : clockSources) {
       if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
-    for (ConnectionPoint SolderPoint : ClockNets) {
+    for (final var SolderPoint : clockNets) {
       if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
     return false;
   }
 
   public boolean NetContainsClockSource(Net NetInfo) {
-    for (ConnectionPoint SolderPoint : ClockSources) {
+    for (final var SolderPoint : clockSources) {
       if (SolderPoint.GetParentNet().equals(NetInfo)) return true;
     }
     return false;
-  }
-
-  public int NrOfSources() {
-    return ClockSources.size();
   }
 }
