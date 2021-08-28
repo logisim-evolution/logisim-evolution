@@ -1395,7 +1395,7 @@ public class Netlist implements CircuitListener {
         myIterator.remove();
       }
     }
-    for (Wire matched : matchedWires) getNet(matched, thisNet);
+    for (final var matched : matchedWires) getNet(matched, thisNet);
     matchedWires.clear();
   }
 
@@ -1428,9 +1428,8 @@ public class Netlist implements CircuitListener {
         for (var i = 0; i < search.nrOfEnds(); i++) {
           final var thisEnd = search.getEnd(i);
           if (!thisEnd.isOutputEnd() && (bitIndex < thisEnd.getNrOfBits())) {
-            if (thisEnd.get(bitIndex).getChildsPortIndex() == portIndex) {
+            if (thisEnd.get(bitIndex).getChildsPortIndex() == portIndex)
               return thisEnd.get(bitIndex);
-            }
           }
         }
       }
@@ -1443,10 +1442,7 @@ public class Netlist implements CircuitListener {
   }
 
   public NetlistComponent getOutputPin(int index) {
-    if ((index < 0) || (index >= myOutputPorts.size())) {
-      return null;
-    }
-    return myOutputPorts.get(index);
+    return ((index < 0) || (index >= myOutputPorts.size())) ? null : myOutputPorts.get(index);
   }
 
   public int getPortInfo(String label) {
@@ -1467,16 +1463,10 @@ public class Netlist implements CircuitListener {
   }
 
   private Net getRootNet(Net child) {
-    if (child == null) {
-      return null;
-    }
-    if (child.isRootNet()) {
-      return child;
-    }
+    if (child == null) return null;
+    if (child.isRootNet()) return child;
     var rootNet = child.getParent();
-    while (!rootNet.isRootNet()) {
-      rootNet = rootNet.getParent();
-    }
+    while (!rootNet.isRootNet()) rootNet = rootNet.getParent();
     return rootNet;
   }
 
@@ -1496,9 +1486,7 @@ public class Netlist implements CircuitListener {
     /* This may be cause bugs due to dual splitter on same location situations */
     final var splitters = new HashSet<Splitter>();
     for (final var comp : myCircuit.getNonWires()) {
-      if (comp.getFactory() instanceof SplitterFactory) {
-        splitters.add((Splitter) comp);
-      }
+      if (comp.getFactory() instanceof SplitterFactory) splitters.add((Splitter) comp);
     }
     return splitters;
   }
@@ -1636,8 +1624,7 @@ public class Netlist implements CircuitListener {
             for (final var thisnet : myNets) {
               if (thisnet.contains(ends.get(splitterEnd).getLocation())) slaveNet = thisnet;
             }
-            if (slaveNet != null
-                && hasHiddenSource(null, (byte) 0, slaveNet, netIndex, splitterList, handledNets, currentSplitter))
+            if (slaveNet != null && hasHiddenSource(null, (byte) 0, slaveNet, netIndex, splitterList, handledNets, currentSplitter))
               return true;
           } else {
             final var rootIndices = new ArrayList<Byte>();
@@ -1648,10 +1635,9 @@ public class Netlist implements CircuitListener {
             for (final var thisnet : myNets) {
               if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) rootNet = thisnet;
             }
-            if (rootNet != null) {
-              if (hasHiddenSource(null, (byte) 0, rootNet, rootIndices.get(combinedBitIndex), splitterList, handledNets, currentSplitter)) {
-                return true;
-              }
+            if (rootNet != null
+                && hasHiddenSource(null, (byte) 0, rootNet, rootIndices.get(combinedBitIndex), splitterList, handledNets, currentSplitter)) {
+              return true;
             }
           }
         }
@@ -1667,15 +1653,12 @@ public class Netlist implements CircuitListener {
 
     final var connInfo = comp.getEnd(endIndex);
     final var nrOfBits = connInfo.getNrOfBits();
-    if (nrOfBits == 1) {
-      return true;
-    }
+    if (nrOfBits == 1) return true;
     final var connectedNet = connInfo.get((byte) 0).getParentNet();
     var connectedNetIndex = connInfo.get((byte) 0).getParentNetBitIndex();
     for (var i = 1; (i < nrOfBits) && continuesBus; i++) {
       if (connectedNet != connInfo.get((byte) i).getParentNet()) {
-        /* This bit is connected to another bus */
-        continuesBus = false;
+        continuesBus = false; // This bit is connected to another bus
       }
       if ((connectedNetIndex + 1) != connInfo.get((byte) i).getParentNetBitIndex()) {
         /* Connected to a none incremental position of the bus */
@@ -1783,11 +1766,8 @@ public class Netlist implements CircuitListener {
             final byte bitIndex = sourceNet.getParentNetBitIndex();
             if (hasHiddenSource(net, (byte) 0, connectedNet, bitIndex, mySplitters, new HashSet<>(), null)) {
               final var source = getHiddenSource(net, (byte) 0, connectedNet, bitIndex, mySplitters, new HashSet<>(), segments, null);
-              if (source == null) {
-                /* this should never happen */
-                return true;
-              }
-              Component comp = source.getSource().getComp();
+              if (source == null) return true; // this should never happen
+              final var comp = source.getSource().getComp();
               for (final var seg : segments) error.addMarkComponent(seg);
               error.addMarkComponent(comp);
               final var index = source.getIndex();
@@ -1811,9 +1791,7 @@ public class Netlist implements CircuitListener {
     /* First pass: we make a set with all sinks */
     final var mySinks = new HashSet<ConnectionPoint>();
     for (final var thisNet : myNets) {
-      if (thisNet.isRootNet()) {
-        mySinks.addAll(thisNet.getSinks());
-      }
+      if (thisNet.isRootNet()) mySinks.addAll(thisNet.getSinks());
     }
     /* Second pass: we iterate along all the sources */
     for (final var thisNet : myNets) {
@@ -1875,9 +1853,7 @@ public class Netlist implements CircuitListener {
 
   public int numberOfInOutPortBits() {
     var count = 0;
-    for (final var inp : myInOutPorts) {
-      count += inp.getEnd(0).getNrOfBits();
-    }
+    for (final var inp : myInOutPorts) count += inp.getEnd(0).getNrOfBits();
     return count;
   }
 
@@ -1891,9 +1867,7 @@ public class Netlist implements CircuitListener {
 
   public int getNumberOfInputPortBits() {
     var count = 0;
-    for (final var inPort : myInputPorts) {
-      count += inPort.getEnd(0).getNrOfBits();
-    }
+    for (final var inPort : myInputPorts) count += inPort.getEnd(0).getNrOfBits();
     return count;
   }
 
@@ -1904,9 +1878,7 @@ public class Netlist implements CircuitListener {
   public int numberOfNets() {
     var nrOfNets = 0;
     for (final var thisNet : myNets) {
-      if (thisNet.isRootNet() && !thisNet.isBus()) {
-        nrOfNets++;
-      }
+      if (thisNet.isRootNet() && !thisNet.isBus()) nrOfNets++;
     }
     return nrOfNets;
   }
@@ -1917,9 +1889,7 @@ public class Netlist implements CircuitListener {
 
   public int numberOfOutputPortBits() {
     var count = 0;
-    for (final var outPort : myOutputPorts) {
-      count += outPort.getEnd(0).getNrOfBits();
-    }
+    for (final var outPort : myOutputPorts) count += outPort.getEnd(0).getNrOfBits();
     return count;
   }
 
@@ -1947,6 +1917,7 @@ public class Netlist implements CircuitListener {
           final var rootNetBitIndex = getRootNetIndex(connection, (byte)bitid);
           if (rootNetBitIndex < 0) {
             Reporter.Report.addFatalErrorFmt(
+                // FIXME: Some "BUG:" have 2 spaces, other just 1. Is this intentional or all can have 1 (multiple places)?
                 "BUG:  Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
                 this.getClass().getName().replaceAll("\\.", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2085,7 +2056,9 @@ public class Netlist implements CircuitListener {
     if (subClockNet.getParentNet() != null) {
       /* we have a connected pin */
       final var newHierarchyNames = new ArrayList<>(hierarchyNames);
-      final var label = CorrectLabel.getCorrectLabel(subCirc.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      final var label =
+          CorrectLabel.getCorrectLabel(
+              subCirc.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       newHierarchyNames.add(label);
       final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
       newHierarchyNetlists.add(sub.getSubcircuit().getNetList());
@@ -2166,16 +2139,16 @@ public class Netlist implements CircuitListener {
   }
 
   private NetlistComponent getSubCirc(Component comp) {
-    for (final var current : mySubCircuits)
-      if (current.getComponent().equals(comp))
-        return current;
+    for (final var current : mySubCircuits) {
+      if (current.getComponent().equals(comp)) return current;
+    }
     return null;
   }
 
   private NetlistComponent getOutPort(Component comp) {
-    for (final var current : myOutputPorts)
-      if (current.getComponent().equals(comp))
-        return current;
+    for (final var current : myOutputPorts) {
+      if (current.getComponent().equals(comp)) return current;
+    }
     return null;
   }
 
