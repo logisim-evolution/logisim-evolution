@@ -243,7 +243,7 @@ public class XilinxDownload implements VendorDownload {
           .add("addPromDevice -p {{1}} -size 0 -name {{2}}", JTAGPos, boardInfo.fpga.getFlashName())
           .add("addDesign -version 0 -name \"0\"")
           .add("addDeviceChain -index 0")
-          .add("addDevice -p %s -file {{1}}.{{2}}", ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+          .add("addDevice -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
           .add("generate -format mcs -fillvalue FF -output {{1}}", mcsFile)
           .add("setMode -bs")
           .add("setCable -port auto")
