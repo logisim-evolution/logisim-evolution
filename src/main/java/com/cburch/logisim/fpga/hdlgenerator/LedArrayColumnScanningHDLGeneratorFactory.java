@@ -188,58 +188,60 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .addPair("counterValue", scanningCounterValueString);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "",
-          "{{columnAddress}} <= s_columnCounterReg;",
-          "",
-          "s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE '0';",
-          "",
-          "s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                         std_logic_vector(to_unsigned({{counterValue}}-1, {{counterBits}}))",
-          "                            WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE ",
-          "                         std_logic_vector(unsigned(s_scanningCounterReg)-1);",
-          "",
-          "s_columnCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                       s_columnCounterReg WHEN s_tickReg = '0' ELSE",
-          "                       std_logic_vector(to_unsigned(nrOfColumns-1,nrOfcolumnAddressBits))",
-          "                          WHEN s_columnCounterReg = std_logic_vector(to_unsigned(0,nrOfColumnAddressBits)) ELSE",
-          "                       std_logic_vector(unsigned(s_columnCounterReg)-1);",
-          "",
-          "makeFlops : PROCESS ({{clock}}) IS",
-          "BEGIN",
-          "   IF (rising_edge({{clock}})) THEN",
-          "      s_columnCounterReg   <= s_columnCounterNext;",
-          "      s_scanningCounterReg <= s_scanningCounterNext;",
-          "      s_tickReg            <= s_tickNext;",
-          "   END IF;",
-          "END PROCESS makeFlops;",
-          "");
+      contents.add(
+          """
+          
+          {{columnAddress}} <= s_columnCounterReg;
+          
+          s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE '0';
+          
+          s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                                   std_logic_vector(to_unsigned({{counterValue}}-1, {{counterBits}}))
+                                      WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE 
+                                   std_logic_vector(unsigned(s_scanningCounterReg)-1);
+          
+          s_columnCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                                 s_columnCounterReg WHEN s_tickReg = '0' ELSE
+                                 std_logic_vector(to_unsigned(nrOfColumns-1,nrOfcolumnAddressBits))
+                                    WHEN s_columnCounterReg = std_logic_vector(to_unsigned(0,nrOfColumnAddressBits)) ELSE
+                                 std_logic_vector(unsigned(s_columnCounterReg)-1);
+          
+          makeFlops : PROCESS ({{clock}}) IS
+          BEGIN
+             IF (rising_edge({{clock}})) THEN
+                s_columnCounterReg   <= s_columnCounterNext;
+                s_scanningCounterReg <= s_scanningCounterNext;
+                s_tickReg            <= s_tickNext;
+             END IF;
+          END PROCESS makeFlops;
+          """);
     } else {
       contents
-          .addLines(
-              "",
-              "assign columnAddress = s_columnCounterReg;",
-              "",
-              "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
-              "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;",
-              "assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg : ",
-              "                             (s_rowCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;",
-              "")
+          .add("""
+                  
+              assign columnAddress = s_columnCounterReg;
+              
+              assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
+              assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;
+              assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg : 
+                                           (s_rowCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;
+              """)
           .addRemarkBlock("Here the simulation only initial is defined")
-          .addLines(
-              "initial",
-              "begin",
-              "   s_columnCounterReg   = 0;",
-              "   s_scanningCounterReg = 0;",
-              "   s_tickReg            = 1'b0;",
-              "end",
-              "",
-              "always @(posedge {{clock}})",
-              "begin",
-              "    s_columnCounterReg   = s_columnCounterNext;",
-              "    s_scanningCounterReg = s_scanningCounterNext;",
-              "    s_tickReg            = s_tickNext;",
-              "end");
+          .add("""
+              initial
+              begin
+                 s_columnCounterReg   = 0;
+                 s_scanningCounterReg = 0;
+                 s_tickReg            = 1'b0;
+              end
+
+              always @(posedge {{clock}})
+              begin
+                  s_columnCounterReg   = s_columnCounterNext;
+                  s_scanningCounterReg = s_scanningCounterNext;
+                  s_tickReg            = s_tickNext;
+              end
+              """);
     }
     return contents.getWithIndent();
   }
@@ -256,31 +258,33 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .add(getColumnCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "makeVirtualInputs : PROCESS ( internalLeds ) IS",
-          "BEGIN",
-          "   s_maxLedInputs <= (OTHERS => '0');",
-          "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};",
-          "   ELSE",
-          "      s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};",
-          "   END IF;",
-          "END PROCESS makeVirtualInputs;",
-          "",
-          "GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE",
-          "   {{outs}}(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "END GENERATE GenOutputs;");
+      contents.addLines("""
+          makeVirtualInputs : PROCESS ( internalLeds ) IS
+          BEGIN
+             s_maxLedInputs <= (OTHERS => '0');
+             IF ({{activeLow}} = 1) THEN
+                s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};
+             ELSE
+                s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
+             END IF;
+          END PROCESS makeVirtualInputs;
+          
+          GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
+             {{outs}}(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
+          END GENERATE GenOutputs;
+          """);
     } else {
-      contents.addLines(
-          "",
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
-          "      assign {{outs}}[i] = (activeLow == 1)",
-          "          ? ~{{ins}}[i*nrOfColumns+s_columnCounterReg]",
-          "          : {{ins}}[i*nrOfColumns+s_columnCounterReg];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+          
+          genvar i;
+          generate
+             for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
+                assign {{outs}}[i] = (activeLow == 1)
+                    ? ~{{ins}}[i*nrOfColumns+s_columnCounterReg]
+                    : {{ins}}[i*nrOfColumns+s_columnCounterReg];
+             end
+          endgenerate
+          """);
     }
     return contents.getWithIndent();
   }

@@ -49,6 +49,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
             .addPair("bubbleBusName", bubbleBusName)
             .addPair("startId", startId)
+            .addPair("startId6", startId + 6)
             .addPair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)))
             .addPair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
             .addPair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
@@ -57,26 +58,27 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.add("");
       if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
-            .add("WITH ({{busName}}) SELECT {{bubbleBusName}}( {{1}} DOWNTO {{startId}} ) <= ", (startId + 6))
-            .addLines(
-                "   \"0111111\" WHEN \"0000\",",
-                "   \"0000110\" WHEN \"0001\",",
-                "   \"1011011\" WHEN \"0010\",",
-                "   \"1001111\" WHEN \"0011\",",
-                "   \"1100110\" WHEN \"0100\",",
-                "   \"1101101\" WHEN \"0101\",",
-                "   \"1111101\" WHEN \"0110\",",
-                "   \"0000111\" WHEN \"0111\",",
-                "   \"1111111\" WHEN \"1000\",",
-                "   \"1100111\" WHEN \"1001\",",
-                "   \"1110111\" WHEN \"1010\",",
-                "   \"1111100\" WHEN \"1011\",",
-                "   \"0111001\" WHEN \"1100\",",
-                "   \"1011110\" WHEN \"1101\",",
-                "   \"1111001\" WHEN \"1110\",",
-                "   \"1110001\" WHEN OTHERS;");
+            .add("""
+                 WITH ({{busName}}) SELECT {{bubbleBusName}}({{startId6}} DOWNTO {{startId}}) <= 
+                    0111111" WHEN "0000"
+                    0000110" WHEN "0001"
+                    1011011" WHEN "0010"
+                    1001111" WHEN "0011"
+                    1100110" WHEN "0100"
+                    1101101" WHEN "0101"
+                    1111101" WHEN "0110"
+                    0000111" WHEN "0111"
+                    1111111" WHEN "1000"
+                    1100111" WHEN "1001"
+                    1110111" WHEN "1010"
+                    1111100" WHEN "1011"
+                    0111001" WHEN "1100"
+                    1011110" WHEN "1101"
+                    1111001" WHEN "1110"
+                    1110001" WHEN OTHERS;
+                 """);
       } else {
-        contents.add("{{bubbleBusName}}({{1}} DOWNTO {{startId}}) <= {{busName}};", (startId + 6));
+        contents.add("{{bubbleBusName}}({{startId6}} DOWNTO {{startId}}) <= {{busName}};");
       }
       if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
         contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
@@ -84,30 +86,31 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
-            .addLines(
-                "",
-                "reg[6:0] {{regName}};",
-                "always @(*)",
-                "   case ({{busName}})",
-                "      4'b0000 : {{regName}} = 7'b0111111;",
-                "      4'b0001 : {{regName}} = 7'b0000110;",
-                "      4'b0010 : {{regName}} = 7'b1011011;",
-                "      4'b0011 : {{regName}} = 7'b1001111;",
-                "      4'b0100 : {{regName}} = 7'b1100110;",
-                "      4'b0101 : {{regName}} = 7'b1101101;",
-                "      4'b0110 : {{regName}} = 7'b1111101;",
-                "      4'b0111 : {{regName}} = 7'b0000111;",
-                "      4'b1000 : {{regName}} = 7'b1111111;",
-                "      4'b1001 : {{regName}} = 7'b1100111;",
-                "      4'b1010 : {{regName}} = 7'b1110111;",
-                "      4'b1011 : {{regName}} = 7'b1111100;",
-                "      4'b1100 : {{regName}} = 7'b0111001;",
-                "      4'b1101 : {{regName}} = 7'b1011110;",
-                "      4'b1110 : {{regName}} = 7'b1111001;",
-                "      default : {{regName}} = 7'b1110001;",
-                "   endcase",
-                "",
-                "assign {{sigName}} = {{regName}};");
+            .add("""
+
+                reg[6:0] {{regName}};
+                always @(*)
+                   case ({{busName}})
+                      4'b0000 : {{regName}} = 7'b0111111;
+                      4'b0001 : {{regName}} = 7'b0000110;
+                      4'b0010 : {{regName}} = 7'b1011011;
+                      4'b0011 : {{regName}} = 7'b1001111;
+                      4'b0100 : {{regName}} = 7'b1100110;
+                      4'b0101 : {{regName}} = 7'b1101101;
+                      4'b0110 : {{regName}} = 7'b1111101;
+                      4'b0111 : {{regName}} = 7'b0000111;
+                      4'b1000 : {{regName}} = 7'b1111111;
+                      4'b1001 : {{regName}} = 7'b1100111;
+                      4'b1010 : {{regName}} = 7'b1110111;
+                      4'b1011 : {{regName}} = 7'b1111100;
+                      4'b1100 : {{regName}} = 7'b0111001;
+                      4'b1101 : {{regName}} = 7'b1011110;
+                      4'b1110 : {{regName}} = 7'b1111001;
+                      default : {{regName}} = 7'b1110001;
+                   endcase
+
+                assign {{sigName}} = {{regName}};
+                """);
       } else {
         contents.add("assign {{sigName}} = {{busName}};");
       }

@@ -186,57 +186,57 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("value", scanningCounterValueString)
             .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "",
-          "{{rowAddress}} <= s_rowCounterReg;",
-          "",
-          "s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';",
-          "",
-          "s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                         std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE ",
-          "                         std_logic_vector(unsigned(s_scanningCounterReg)-1);",
-          "",
-          "s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                    s_rowCounterReg WHEN s_tickReg = '0' ELSE",
-          "                    std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))",
-          "                       WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE",
-          "                    std_logic_vector(unsigned(s_rowCounterReg)-1);",
-          "",
-          "makeFlops : PROCESS ({{clock}}) IS",
-          "BEGIN",
-          "   IF (rising_edge({{clock}})) THEN",
-          "      s_rowCounterReg      <= s_rowCounterNext;",
-          "      s_scanningCounterReg <= s_scanningCounterNext;",
-          "      s_tickReg            <= s_tickNext;",
-          "   END IF;",
-          "END PROCESS makeFlops;",
-          "");
+      contents.add("""
+          
+          {{rowAddress}} <= s_rowCounterReg;
+          
+          s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';
+          
+          s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                                   std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE 
+                                   std_logic_vector(unsigned(s_scanningCounterReg)-1);
+          
+          s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                              s_rowCounterReg WHEN s_tickReg = '0' ELSE
+                              std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))
+                                 WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE
+                              std_logic_vector(unsigned(s_rowCounterReg)-1);
+          
+          makeFlops : PROCESS ({{clock}}) IS
+          BEGIN
+             IF (rising_edge({{clock}})) THEN
+                s_rowCounterReg      <= s_rowCounterNext;
+                s_scanningCounterReg <= s_scanningCounterNext;
+                s_tickReg            <= s_tickNext;
+             END IF;
+          END PROCESS makeFlops;
+          """);
     } else {
-      contents
-          .addLines(
-              "",
-              "assign rowAddress = s_rowCounterReg;",
-              "",
-              "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
-              "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;",
-              "assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ",
-              "                          (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
-              "")
-          .addRemarkBlock("Here the simulation only initial is defined")
-          .addLines(
-              "initial",
-              "begin",
-              "   s_rowCounterReg      = 0;",
-              "   s_scanningCounterReg = 0;",
-              "   s_tickReg            = 1'b0;",
-              "end",
-              "",
-              "always @(posedge {{clock}})",
-              "begin",
-              "    s_rowCounterReg      = s_rowCounterNext;",
-              "    s_scanningCounterReg = s_scanningCounterNext;",
-              "    s_tickReg            = s_tickNext;",
-              "end");
+      contents.add("""
+          
+          assign rowAddress = s_rowCounterReg;
+          
+          assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
+          assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;
+          assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : 
+                                    (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;
+          """)
+         .addRemarkBlock("Here the simulation only initial is defined")
+         .add("""
+          initial
+          begin
+             s_rowCounterReg      = 0;
+             s_scanningCounterReg = 0;
+             s_tickReg            = 1'b0;
+          end
+
+          always @(posedge {{clock}})
+          begin
+              s_rowCounterReg      = s_rowCounterNext;
+              s_scanningCounterReg = s_scanningCounterNext;
+              s_tickReg            = s_tickNext;
+          end
+          """);
     }
     return contents.getWithIndent();
   }
@@ -253,31 +253,33 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .add(getRowCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "makeVirtualInputs : PROCESS ( internalLeds ) IS",
-          "BEGIN",
-          "   s_maxLedInputs <= (OTHERS => '0');",
-          "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};",
-          "   ELSE",
-          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};",
-          "   END IF;",
-          "END PROCESS makeVirtualInputs;",
-          "",
-          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
-          "   {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "END GENERATE GenOutputs;");
+      contents.addLines("""
+          makeVirtualInputs : PROCESS ( internalLeds ) IS
+          BEGIN
+             s_maxLedInputs <= (OTHERS => '0');
+             IF ({{activeLow}} = 1) THEN
+                s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};
+             ELSE
+                s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
+             END IF;
+          END PROCESS makeVirtualInputs;
+          
+          GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
+             {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
+          END GENERATE GenOutputs;
+          """);
     } else {
-      contents.addLines(
-          "",
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
-          "      assign {{outs}}[i] = (activeLow == 1)",
-          "         ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];",
-          "   end",
-          "endgenerate");
+      contents.addLines("""
+          
+          genvar i;
+          generate
+             for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin
+                assign {{outs}}[i] = (activeLow == 1)
+                   ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                   :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];
+             end
+          endgenerate" +
+          """);
     }
     return contents.getWithIndent();
   }

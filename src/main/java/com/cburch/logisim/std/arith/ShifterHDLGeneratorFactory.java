@@ -63,66 +63,69 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("shiftMode", shiftModeStr);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      contents
-          .addLines(
-              "-----------------------------------------------------------------------------",
-              "--- ShifterMode represents when:                                          ---",
-              "--- 0 : Logical Shift Left                                                ---",
-              "--- 1 : Rotate Left                                                       ---",
-              "--- 2 : Logical Shift Right                                               ---",
-              "--- 3 : Arithmetic Shift Right                                            ---",
-              "--- 4 : Rotate Right                                                      ---",
-              "-----------------------------------------------------------------------------")
+      contents.add("""
+            -----------------------------------------------------------------------------
+            --- ShifterMode represents when:                                          ---
+            --- 0 : Logical Shift Left                                                ---
+            --- 1 : Rotate Left                                                       ---
+            -----------------------------------------------------------------------------
+            --- 2 : Logical Shift Right                                               ---
+            --- 3 : Arithmetic Shift Right                                            ---
+            --- 4 : Rotate Right                                                      ---
+            -----------------------------------------------------------------------------
+            """)
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents.addLines(
-            "Result <= DataA WHEN {{shiftMode}} = 1 OR",
-            "                     {{shiftMode}} = 3 OR",
-            "                     {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);");
+        contents.add("""
+            Result <= DataA WHEN {{shiftMode}} = 1 OR
+                                 {{shiftMode}} = 3 OR
+                                 {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);
+            """);
       } else {
-        for (var stage = 0; stage < getNrofShiftBits(attrs); stage++) {
+        for (var stage = 0; stage < getNrofShiftBits(attrs); stage++)
           contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
-        }
         contents
-            .addLines(
-                "-----------------------------------------------------------------------------",
-                "--- Here we assign the result                                             ---",
-                "-----------------------------------------------------------------------------",
-                "")
+            .add("""
+                -----------------------------------------------------------------------------
+                --- Here we assign the result                                             ---
+                -----------------------------------------------------------------------------
+                """)
             .add("Result <= s_stage_{{1}}_result;", (getNrofShiftBits(attrs) - 1))
             .add("");
       }
     } else {
-      contents
-          .addLines(
-              "/***************************************************************************",
-              " ** ShifterMode represents when:                                          **",
-              " ** 0 : Logical Shift Left                                                **",
-              " ** 1 : Rotate Left                                                       **",
-              " ** 2 : Logical Shift Right                                               **",
-              " ** 3 : Arithmetic Shift Right                                            **",
-              " ** 4 : Rotate Right                                                      **",
-              " ***************************************************************************/")
-          .empty(2);
+      contents.add("""
+            /***************************************************************************
+             ** ShifterMode represents when:                                          **
+             ** 0 : Logical Shift Left                                                **
+             ** 1 : Rotate Left                                                       **
+             ** 2 : Logical Shift Right                                               **
+             ** 3 : Arithmetic Shift Right                                            **
+             ** 4 : Rotate Right                                                      **
+             ***************************************************************************/
+             
+             
+            """);
 
       if (nrOfBits == 1) {
-        contents.addLines(
-            "assign Result = ( ({{shiftMode}} == 1) ||",
-            "                  ({{shiftMode}} == 3) ||",
-            "                  ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);");
+        contents.add("""
+            assign Result = ( ({{shiftMode}} == 1) ||
+                              ({{shiftMode}} == 3) ||
+                              ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);
+            """);
       } else {
         for (var stage = 0; stage < getNrofShiftBits(attrs); stage++) {
           contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
         }
-        contents
-            .addLines(
-                "/***************************************************************************",
-                " ** Here we assign the result                                             **",
-                " ***************************************************************************/")
-            .empty()
-            .add("assign Result = s_stage_{{1}}_result;", (getNrofShiftBits(attrs) - 1))
-            .empty();
+        contents.add("""
+            /***************************************************************************
+             ** Here we assign the result                                             **
+             ***************************************************************************/
+             
+            .add("assign Result = s_stage_{{nrShiftBits}}_result;
+            
+            """, new LineBuffer.Pairs("nrShiftBits", (getNrofShiftBits(attrs) - 1)));
       }
     }
     return contents.getWithIndent();
@@ -177,37 +180,49 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = (new LineBuffer())
             .addPair("shiftMode", shiftModeStr);
     final var nrOfBitsToShift = (1 << stageNumber);
-    contents
-        .add("/***************************************************************************")
-        .add(" ** Here stage {{1}} of the binary shift tree is defined", stageNumber)
-        .add(" ***************************************************************************/")
-        .empty();
+    contents.add("""
+         "/***************************************************************************
+         ** Here stage {{stageNumber}} of the binary shift tree is defined
+         ***************************************************************************/
+         
+         """, new LineBuffer.Pairs("stageNumber", stageNumber));
     if (stageNumber == 0) {
-      contents
-          .add("assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))")
-          .add("     ? DataA[{{shiftMode}}] : ({{1}} == 4) ? DataA[0] : 0;", (nrOfBits - 1))
-          .add("")
-          .add("assign s_stage_0_result  = (ShiftAmount == 0)")
-          .add("     ? DataA")
-          .add("     : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))")
-          .add("        ? {DataA[{{1}}:0],s_stage_0_shiftin}", (nrOfBits - 2))
-          .add("        : {s_stage_0_shiftin,DataA[{{1}}:1]};", (nrOfBits - 1))
-          .add("");
+      contents.add("""
+          assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
+               ? DataA[{{shiftMode}}] : ({{nrOfBitsA}} == 4) ? DataA[0] : 0;
+          
+          assign s_stage_0_result  = (ShiftAmount == 0)
+               ? DataA
+               : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))
+                  ? {DataA[{{nrOfBitsB}}:0],s_stage_0_shiftin}
+                  : {s_stage_0_shiftin,DataA[{{nrOfBitsA}}:1]};
+          
+          """, (new LineBuffer.Pairs().add("nrOfBitsA", nrOfBits -1).add("nrOfBitsB", (nrOfBits - 2))));
     } else {
-      contents
-          .add("assign s_stage_{{1}}_shiftin = ({{shiftMode}} == 1) ?", stageNumber)
-          .add("                            s_stage_{{1}}_result[{{2}}:{{3}}] : ", (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift))
-          .add("                            ({{shiftMode}} == 3) ?")
-          .add("                            { {{1}}{s_stage_{{2}}_result[{{3}}]} } :", nrOfBitsToShift, (stageNumber - 1), (nrOfBits - 1))
-          .add("                            ({{shiftMode}} == 4) ?")
-          .add("                            s_stage_{{1}}_result[{{2}}:0] : 0;", (stageNumber - 1), (nrOfBitsToShift - 1))
-          .add("")
-          .add("assign s_stage_{{1}}_result  = (ShiftAmount[{{1}}]==0) ?", stageNumber)
-          .add("                           s_stage_{{1}}_result : ", (stageNumber - 1))
-          .add("                           (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?")
-          .add("                           {s_stage_{{1}}_result[{{2}}:0],s_stage_{{3}}_shiftin} :", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
-          .add("                           {s_stage_{{1}}_shiftin,s_stage_{{2}}_result[{{3}}:{{4}}]};", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift)
-          .add("");
+      final var pairs =
+          (new LineBuffer.Pairs())
+              .add("stageNumber", stageNumber)
+              .add("stageNumber1", stageNumber-1)
+              .add("nrOfBitsToShift", nrOfBitsToShift)
+              .add("nrOfBits1", nrOfBits-1)
+              .add("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
+              .add("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1));
+
+      contents.add("""
+          assign s_stage_{{stageNumber}}_shiftin = ({{shiftMode}} == 1) ?
+                                      s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{bitsShiftDiff}}] :
+                                      ({{shiftMode}} == 3) ?
+                                      { {{nrOfBitsToShift}}{s_stage_{{stageNumber1}}_result[{{nrOfBits1}}]} } :
+                                      ({{shiftMode}} == 4) ?
+                                      s_stage_{{stageNumber1}}_result[{{2}}:0] : 0;      , (nrOfBitsToShift - 1))
+
+          assign s_stage_{{1}}_result  = (ShiftAmount[{{stageNumber}}]==0) ?
+                                     s_stage_{{1}}_result : ", (stageNumber - 1))
+                                     (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?
+                                     {s_stage_{{stageNumber1}}_result[{{bitsShiftDiff1}}:0],s_stage_{{stageNumber}}_shiftin} :
+                                     {s_stage_{{stageNumber}}_shiftin,s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{nrOfBitsToShift}}]};
+          
+          """, pairs);
     }
     return contents.getWithIndent();
   }
@@ -216,11 +231,12 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = (new LineBuffer()).addPair("shiftMode", shiftModeStr);
 
     final var nrOfBitsToShift = (1 << stageNumber);
-    contents
-        .add("-----------------------------------------------------------------------------")
-        .add("--- Here stage {{1}} of the binary shift tree is defined", stageNumber)
-        .add("-----------------------------------------------------------------------------")
-        .empty();
+    contents.add("""
+        -----------------------------------------------------------------------------
+        --- Here stage {{1}} of the binary shift tree is defined
+        -----------------------------------------------------------------------------
+          
+       """, new LineBuffer.Pairs("stageNumber", stageNumber));
 
     if (stageNumber == 0) {
       contents

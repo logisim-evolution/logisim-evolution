@@ -26,25 +26,27 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "PORT MAP ( {{addr}} => {{addr}}{{id}},",
-          "           {{clock}} => {{clock}},",
-          "           {{outsR}} => {{outsR}}{{id}},",
-          "           {{outsG}} => {{outsG}}{{id}},",
-          "           {{outsB}} => {{outsB}}{{id}},",
-          "           {{insR}} => s_{{insR}}{{id}},",
-          "           {{insG}} => s_{{insG}}{{id}},",
-          "           {{insB}} => s_{{insB}}{{id}} );");
+      contents.add("""
+          PORT MAP ( {{addr}} => {{addr}}{{id}},
+                     {{clock}} => {{clock}},
+                     {{outsR}} => {{outsR}}{{id}},
+                     {{outsG}} => {{outsG}}{{id}},
+                     {{outsB}} => {{outsB}}{{id}},
+                     {{insR}} => s_{{insR}}{{id}},
+                     {{insG}} => s_{{insG}}{{id}},
+                     {{insB}} => s_{{insB}}{{id}} );
+          """);
     } else {
-      contents.addLines(
-          "( .{{addr}}({{addr}}{{id}}),",
-          "  .{{clock}({{clock}}),",
-          "  .{{outsR}}({{outsR}}{{id}}),",
-          "  .{{outsG}}({{outsG}}{{id}}),",
-          "  .{{outsB}}({{outsB}}{{id}}),",
-          "  .{{insR}}(s_{{insR}}{{id}}),",
-          "  .{{insG}}(s_{{insG}}{{id}}),",
-          "  .{{insB}}(s_{{insB}}{{id}}) );");
+      contents.add("""
+          ( .{{addr}}({{addr}}{{id}}),
+            .{{clock}({{clock}}),
+            .{{outsR}}({{outsR}}{{id}}),
+            .{{outsG}}({{outsG}}{{id}}),
+            .{{outsB}}({{outsB}}{{id}}),
+            .{{insR}}(s_{{insR}}{{id}}),
+            .{{insG}}(s_{{insG}}{{id}}),
+            .{{insB}}(s_{{insB}}{{id}}) );
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -95,45 +97,47 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
-          "BEGIN",
-          "   s_maxRedLedInputs <= (OTHERS => '0');",
-          "   s_maxGreenLedInputs <= (OTHERS => '0');",
-          "   s_maxBlueLedInputs <= (OTHERS => '0');",
-          "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= NOT {{insR}};",
-          "      s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};",
-          "      s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= NOT {{insB}};",
-          "   ELSE",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= {{insR}};",
-          "      s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};",
-          "      s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};",
-          "   END IF;",
-          "END PROCESS makeVirtualInputs;",
-          "",
-          "GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE",
-          "   {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "   {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "   {{outsB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "END GENERATE GenOutputs;");
+      contents.add("""
+          makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
+          BEGIN
+             s_maxRedLedInputs <= (OTHERS => '0');
+             s_maxGreenLedInputs <= (OTHERS => '0');
+             s_maxBlueLedInputs <= (OTHERS => '0');
+             IF ({{activeLow}} = 1) THEN
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= NOT {{insR}};
+                s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};
+                s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= NOT {{insB}};
+             ELSE
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= {{insR}};
+                s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};
+                s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};
+             END IF;
+          END PROCESS makeVirtualInputs;
+          
+          GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
+             {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
+             {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
+             {{outsB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
+          END GENERATE GenOutputs;
+          """);
     } else {
-      contents.addLines(
-          "",
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
-          "      assign {{outsR}}[i] = (activeLow == 1)",
-          "         ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]",
-          "         :  {{insR}}[i*nrOfColumns+s_columnCounterReg];",
-          "      assign {{outsG}}[i] = (activeLow == 1)",
-          "         ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]",
-          "         :  {{insG}[i*nrOfColumns+s_columnCounterReg];",
-          "      assign {{outsB}}[i] = (activeLow == 1)",
-          "         ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]",
-          "         :  [{insB}}[i*nrOfColumns+s_columnCounterReg];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+
+          genvar i;
+          generate
+             for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
+                assign {{outsR}}[i] = (activeLow == 1)
+                   ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]
+                   :  {{insR}}[i*nrOfColumns+s_columnCounterReg];
+                assign {{outsG}}[i] = (activeLow == 1)
+                   ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]
+                   :  {{insG}[i*nrOfColumns+s_columnCounterReg];
+                assign {{outsB}}[i] = (activeLow == 1)
+                   ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]
+                   :  [{insB}}[i*nrOfColumns+s_columnCounterReg];
+             end
+          endgenerate" +
+          """);
     }
     return contents.getWithIndent();
   }

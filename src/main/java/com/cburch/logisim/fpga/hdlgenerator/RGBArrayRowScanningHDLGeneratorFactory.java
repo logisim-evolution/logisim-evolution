@@ -119,46 +119,48 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "",
-          "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
-          "BEGIN",
-          "   s_maxRedLedInputs <= (OTHERS => '0');",
-          "   s_maxGreenLedInputs <= (OTHERS => '0');",
-          "   s_maxBlueLedInputs <= (OTHERS => '0');",
-          "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insR}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insB}};",
-          "   ELSE",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insR}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};",
-          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insB}};",
-          "   END IF;",
-          "END PROCESS makeVirtualInputs;",
-          "",
-          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
-          "   {{outsR}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "   {{outsG}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "   {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "END GENERATE GenOutputs;");
+      contents.add("""
+          
+          makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
+          BEGIN
+             s_maxRedLedInputs <= (OTHERS => '0');
+             s_maxGreenLedInputs <= (OTHERS => '0');
+             s_maxBlueLedInputs <= (OTHERS => '0');
+             IF ({{activeLow}} = 1) THEN
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insR}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insB}};
+             ELSE
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insR}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insB}};
+             END IF;
+          END PROCESS makeVirtualInputs;
+          
+          GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
+             {{outsR}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
+             {{outsG}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
+             {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
+          END GENERATE GenOutputs;
+          """);
     } else {
-      contents.addLines(
-          "",
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
-          "      assign {{outsR}}[i] = (activeLow == 1)",
-          "         ? ~{{insR}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         : {{insR}}[nrOfColumns * s_rowCounterReg + i];",
-          "      assign {{outsG}}[i] = (activeLow == 1)",
-          "         ? ~{{insG}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "          : {{insG}}[{{nrOfColumns}} * s_rowCounterReg + i];",
-          "      assign {{outsB}}[i] = (activeLow == 1)",
-          "          ? ~{{insB}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         : {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+          
+          genvar i;
+          generate
+             for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin
+                assign {{outsR}}[i] = (activeLow == 1)
+                   ? ~{{insR}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                   : {{insR}}[nrOfColumns * s_rowCounterReg + i];
+                assign {{outsG}}[i] = (activeLow == 1)
+                   ? ~{{insG}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                    : {{insG}}[{{nrOfColumns}} * s_rowCounterReg + i];
+                assign {{outsB}}[i] = (activeLow == 1)
+                    ? ~{{insB}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                   : {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];
+             end
+          endgenerate" +
+          """);
     }
     return contents.getWithIndent();
   }
