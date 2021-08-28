@@ -41,13 +41,13 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    for (var i = 0; i < componentInfo.NrOfEnds(); i++) {
+    for (var i = 0; i < componentInfo.nrOfEnds(); i++) {
       contents.add(
           "   "
               + HDL.assignPreamble()
               + HDLGeneratorFactory.LocalOutputBubbleBusname
               + HDL.BracketOpen()
-              + (componentInfo.GetLocalBubbleOutputStartId() + i)
+              + (componentInfo.getLocalBubbleOutputStartId() + i)
               + HDL.BracketClose()
               + HDL.assignOperator()
               + GetNetName(componentInfo, i, true, nets)

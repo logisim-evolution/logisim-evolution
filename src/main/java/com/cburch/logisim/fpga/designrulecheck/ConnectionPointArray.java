@@ -32,25 +32,25 @@ import java.util.ArrayList;
 
 class ConnectionPointArray {
 
-  private final ArrayList<ConnectionPoint> MyConnections;
+  private final ArrayList<ConnectionPoint> myConnections;
 
   public ConnectionPointArray() {
-    MyConnections = new ArrayList<>();
+    myConnections = new ArrayList<>();
   }
 
-  public void AddConnection(ConnectionPoint Connection) {
-    MyConnections.add(Connection);
+  public void AddConnection(ConnectionPoint connection) {
+    myConnections.add(connection);
   }
 
   public void ClearConnections() {
-    MyConnections.clear();
+    myConnections.clear();
   }
 
   public ArrayList<ConnectionPoint> GetConnections() {
-    return MyConnections;
+    return myConnections;
   }
 
   public int NrOfConnections() {
-    return MyConnections.size();
+    return myConnections.size();
   }
 }

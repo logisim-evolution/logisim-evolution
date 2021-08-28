@@ -66,7 +66,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       outpName = GetNetName(componentInfo, 0, true, nets);
       triState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
-    if (componentInfo.EndIsConnected(2) && componentInfo.EndIsConnected(0)) {
+    if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
       final var invert = ((ControlledBuffer) componentInfo.GetComponent().getFactory()).isInverter()
               ? HDL.notOperator()
               : "";

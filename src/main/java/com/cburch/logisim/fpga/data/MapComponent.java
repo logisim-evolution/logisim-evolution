@@ -107,16 +107,16 @@ public class MapComponent {
     myFactory = comp.GetComponent().getFactory();
     myAttributes = comp.GetComponent().getAttributeSet();
     myName = name;
-    var mapInfo = comp.GetMapInformationContainer();
+    var mapInfo = comp.getMapInformationContainer();
     var bName = new ArrayList<String>();
     for (var i = 1; i < name.size(); i++) bName.add(name.get(i));
-    var BubbleInfo = comp.GetGlobalBubbleId(bName);
+    var BubbleInfo = comp.getGlobalBubbleId(bName);
     nrOfPins = 0;
     for (var i = 0; i < mapInfo.GetNrOfInports(); i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetInputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInputStartIndex() + i;
       pinLabels.add(mapInfo.GetInportLabel(i));
       MyInputBubles.put(nrOfPins++, idx);
     }
@@ -124,7 +124,7 @@ public class MapComponent {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetOutputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getOutputStartIndex() + i;
       pinLabels.add(mapInfo.GetOutportLabel(i));
       MyOutputBubles.put(nrOfPins++, idx);
     }
@@ -132,7 +132,7 @@ public class MapComponent {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetInOutStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInOutStartIndex() + i;
       pinLabels.add(mapInfo.GetInOutportLabel(i));
       MyIOBubles.put(nrOfPins++, idx);
     }

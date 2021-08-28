@@ -123,7 +123,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
       var gatedClock = false;
       var hasClock = true;
       int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
-      if (!componentinfo.EndIsConnected(clockPinIndex)) {
+      if (!componentinfo.isEndConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()

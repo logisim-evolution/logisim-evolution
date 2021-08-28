@@ -62,7 +62,7 @@ public class ClockSourceContainer {
     if (!(comp.getFactory() instanceof Clock)) {
       return -1;
     }
-    for (Component clock : sources) {
+    for (final var clock : sources) {
       if (equals(comp, clock)) {
         return sources.indexOf(clock);
       }

@@ -35,7 +35,7 @@ import com.cburch.logisim.instance.InstanceComponent;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleDRCContainer {
+public class simpleDRCContainer {
 
   public static final int LEVEL_NORMAL = 1;
   public static final int LEVEL_SEVERE = 2;
@@ -49,59 +49,58 @@ public class SimpleDRCContainer {
   private final int SeverityLevel;
   private Set<Object> DRCComponents;
   private Circuit MyCircuit;
-  private final int MarkType;
-  private int ListNumber;
-  private final boolean SuppressCount;
+  private final int markType;
+  private int listNumber;
+  private final boolean suppressCount;
 
-  public SimpleDRCContainer(String Message, int level) {
+  public simpleDRCContainer(String Message, int level) {
     this.Message = Message;
     this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    SuppressCount = false;
+    markType = MARK_NONE;
+    listNumber = 0;
+    suppressCount = false;
   }
 
-  public SimpleDRCContainer(String Message, int level, boolean SupressCount) {
-    this.Message = Message;
+  public simpleDRCContainer(String message, int level, boolean supressCount) {
+    this.Message = message;
     this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+    markType = MARK_NONE;
+    listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
-  public SimpleDRCContainer(Object Message, int level) {
-    this.Message = Message.toString();
+  public simpleDRCContainer(Object message, int level) {
+    this.Message = message.toString();
     this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    SuppressCount = false;
+    markType = MARK_NONE;
+    listNumber = 0;
+    suppressCount = false;
   }
 
-  public SimpleDRCContainer(Object Message, int level, boolean SupressCount) {
-    this.Message = Message.toString();
+  public simpleDRCContainer(Object message, int level, boolean supressCount) {
+    this.Message = message.toString();
     this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+    markType = MARK_NONE;
+    listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
-  public SimpleDRCContainer(Circuit circ, Object Message, int level, int MarkMask) {
-    this.Message = Message.toString();
-    this.SeverityLevel = level;
-    MyCircuit = circ;
-    MarkType = MarkMask;
-    ListNumber = 0;
-    SuppressCount = false;
-  }
-
-  public SimpleDRCContainer(
-      Circuit circ, Object Message, int level, int MarkMask, boolean SupressCount) {
-    this.Message = Message.toString();
+  public simpleDRCContainer(Circuit circ, Object message, int level, int markMask) {
+    this.Message = message.toString();
     this.SeverityLevel = level;
     MyCircuit = circ;
-    MarkType = MarkMask;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+    markType = markMask;
+    listNumber = 0;
+    suppressCount = false;
+  }
+
+  public simpleDRCContainer(Circuit circ, Object message, int level, int markMask, boolean supressCount) {
+    this.Message = message.toString();
+    this.SeverityLevel = level;
+    MyCircuit = circ;
+    markType = markMask;
+    listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
   @Override
@@ -137,15 +136,15 @@ public class SimpleDRCContainer {
   }
 
   public void SetListNumber(int number) {
-    ListNumber = number;
+    listNumber = number;
   }
 
   public boolean SupressCount() {
-    return this.SuppressCount;
+    return this.suppressCount;
   }
 
   public int GetListNumber() {
-    return ListNumber;
+    return listNumber;
   }
 
   public void MarkComponents() {
@@ -153,18 +152,18 @@ public class SimpleDRCContainer {
     for (Object obj : DRCComponents) {
       if (obj instanceof Wire) {
         Wire wire = (Wire) obj;
-        if ((MarkType & MARK_WIRE) != 0) {
+        if ((markType & MARK_WIRE) != 0) {
           wire.SetDRCHighlight(true);
         }
       } else if (obj instanceof Splitter) {
         Splitter split = (Splitter) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) {
+        if ((markType & MARK_INSTANCE) != 0) {
           split.SetMarked(true);
         }
       } else if (obj instanceof InstanceComponent) {
         InstanceComponent comp = (InstanceComponent) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) comp.markInstance();
-        if ((MarkType & MARK_LABEL) != 0) comp.markLabel();
+        if ((markType & MARK_INSTANCE) != 0) comp.markInstance();
+        if ((markType & MARK_LABEL) != 0) comp.markLabel();
       } else {
       }
     }
@@ -175,12 +174,12 @@ public class SimpleDRCContainer {
     for (Object obj : DRCComponents) {
       if (obj instanceof Wire) {
         Wire wire = (Wire) obj;
-        if ((MarkType & MARK_WIRE) != 0) {
+        if ((markType & MARK_WIRE) != 0) {
           wire.SetDRCHighlight(false);
         }
       } else if (obj instanceof Splitter) {
         Splitter split = (Splitter) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) {
+        if ((markType & MARK_INSTANCE) != 0) {
           split.SetMarked(false);
         }
       } else if (obj instanceof InstanceComponent) {

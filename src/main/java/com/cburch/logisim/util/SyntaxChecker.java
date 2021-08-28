@@ -43,7 +43,7 @@ public class SyntaxChecker {
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
-      final var hdl = CorrectLabel.HDLCorrectLabel(val);
+      final var hdl = CorrectLabel.hdlCorrectLabel(val);
       var message = "";
       if (!variableMatcher.matches()) {
         message = message.concat(S.get("variableInvalidCharacters"));

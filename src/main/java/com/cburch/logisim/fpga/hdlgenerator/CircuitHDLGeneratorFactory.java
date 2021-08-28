@@ -143,7 +143,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CorrectLabel.getCorrectLabel(
               ThisCircuit.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       if (!Worker.GenerateAllHDLDescriptions(
-          HandledComponents, WorkingDir, Hierarchy, ThisCircuit.IsGatedInstance())) {
+          HandledComponents, WorkingDir, Hierarchy, ThisCircuit.isGatedInstance())) {
         return false;
       }
       Hierarchy.remove(Hierarchy.size() - 1);
@@ -186,21 +186,21 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     switch (type) {
       case 0:
         return HDL.BracketOpen()
-            + comp.GetLocalBubbleInputEndId()
+            + comp.getLocalBubbleInputEndId()
             + HDL.vectorLoopId()
-            + comp.GetLocalBubbleInputStartId()
+            + comp.getLocalBubbleInputStartId()
             + HDL.BracketClose();
       case 1:
         return HDL.BracketOpen()
-            + comp.GetLocalBubbleOutputEndId()
+            + comp.getLocalBubbleOutputEndId()
             + HDL.vectorLoopId()
-            + comp.GetLocalBubbleOutputStartId()
+            + comp.getLocalBubbleOutputStartId()
             + HDL.BracketClose();
       case 2:
         return HDL.BracketOpen()
-            + comp.GetLocalBubbleInOutEndId()
+            + comp.getLocalBubbleInOutEndId()
             + HDL.vectorLoopId()
-            + comp.GetLocalBubbleInOutStartId()
+            + comp.getLocalBubbleInOutStartId()
             + HDL.BracketClose();
     }
     return "";
@@ -234,7 +234,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (NetlistComponent Gate : TheNetlist.GetSubCircuits()) {
       String CompName =
           Gate.GetComponent().getFactory().getHDLName(Gate.GetComponent().getAttributeSet());
-      if (Gate.IsGatedInstance()) CompName = CompName.concat("_gated");
+      if (Gate.isGatedInstance()) CompName = CompName.concat("_gated");
       if (!InstantiatedComponents.contains(CompName)) {
         InstantiatedComponents.add(CompName);
         HDLGeneratorFactory Worker =
@@ -264,11 +264,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.GetAllNets()) {
-      if (ThisNet.IsForcedRootNet()) {
+      if (ThisNet.isForcedRootNet()) {
         /* now we cycle through all the bits */
         for (int bit = 0; bit < ThisNet.BitWidth(); bit++) {
           /* First we perform all source connections */
-          for (ConnectionPoint Source : ThisNet.GetSourceNets(bit)) {
+          for (ConnectionPoint Source : ThisNet.getSourceNets(bit)) {
             OneLine.setLength(0);
             if (ThisNet.isBus()) {
               OneLine.append(BusName)
@@ -287,7 +287,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()), Source.GetParentNetBitIndex());
           }
           /* Next we perform all sink connections */
-          for (ConnectionPoint Source : ThisNet.GetSinkNets(bit)) {
+          for (ConnectionPoint Source : ThisNet.getSinkNets(bit)) {
             OneLine.setLength(0);
             OneLine.append(BusName)
                 .append(TheNets.GetNetId(Source.GetParentNet()))
@@ -382,7 +382,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.addRemarkBlock("Here all clock generator connections are defined");
         isFirstLine = false;
       }
-      if (!clockSource.EndIsConnected(0)) {
+      if (!clockSource.isEndConnected(0)) {
         // FIXME: hardcoded string
         final var msg = String.format("Clock component found with no connection, skipping: '%s'",
                 clockSource.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
@@ -496,7 +496,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       final var worker = comp.GetComponent().getFactory().getHDLGenerator(comp.GetComponent().getAttributeSet());
       if (worker != null) {
         var compName = comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
-        if (comp.IsGatedInstance())  compName = compName.concat("_gated");
+        if (comp.isGatedInstance())  compName = compName.concat("_gated");
         final var CompId = worker.getComponentStringIdentifier();
         var id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
         final var compMap = worker.GetComponentMap(theNetlist, id++, comp, null, compName);
@@ -694,7 +694,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var source = new StringBuilder();
     final var destination = new StringBuilder();
     final var tab = new StringBuilder();
-    if ((endIndex < 0) || (endIndex >= comp.NrOfEnds())) {
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
       // FIXME: hardcoded string
       Reporter.Report.AddFatalError(
           String.format(
@@ -709,18 +709,18 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (nrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
       if (isOutput) {
-        if (!comp.EndIsConnected(endIndex)) return " ";
+        if (!comp.isEndConnected(endIndex)) return " ";
         source.append(portName);
         destination.append(GetNetName(comp, endIndex, true, TheNets));
       } else {
-        if (!comp.EndIsConnected(endIndex)) {
+        if (!comp.isEndConnected(endIndex)) {
           // FIXME: hardcoded string
           Reporter.Report.AddSevereWarning(
               "Found an unconnected output pin, tied the pin to ground!");
         }
         source.append(GetNetName(comp, endIndex, true, TheNets));
         destination.append(portName);
-        if (!comp.EndIsConnected(endIndex)) return contents.toString();
+        if (!comp.isEndConnected(endIndex)) return contents.toString();
       }
       while (destination.length() < SallignmentSize) destination.append(" ");
       contents
@@ -861,13 +861,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     /* First we define the nets */
     for (final var thisNet : nets.GetAllNets()) {
-      if (!thisNet.isBus() && thisNet.IsRootNet()) {
+      if (!thisNet.isBus() && thisNet.isRootNet()) {
         signalMap.put(NetName + nets.GetNetId(thisNet), 1);
       }
     }
     /* now we define the busses */
     for (final var thisNet : nets.GetAllNets()) {
-      if (thisNet.isBus() && thisNet.IsRootNet()) {
+      if (thisNet.isBus() && thisNet.isRootNet()) {
         final var nrOfBits = thisNet.BitWidth();
         signalMap.put(BusName + nets.GetNetId(thisNet), nrOfBits);
       }

@@ -264,7 +264,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("WE", true, comp, RamAppearance.getWEIndex(0, attrs), nets));
     map.putAll(GetNetMap("OE", true, comp, RamAppearance.getOEIndex(0, attrs), nets));
     if (!asynch) {
-      if (!comp.EndIsConnected(RamAppearance.getClkIndex(0, attrs))) {
+      if (!comp.isEndConnected(RamAppearance.getClkIndex(0, attrs))) {
         Reporter.Report.AddError(
             "Component \"RAM\" in circuit \""
                 + nets.getCircuitName()
