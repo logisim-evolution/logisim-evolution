@@ -56,50 +56,50 @@ public class Ttl7464 extends AbstractTtlGate {
     super.paintBase(painter, false, false);
     final var isIEC = AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR);
     final var AndOffset = isIEC ? 10 : 0;
-    final var g = painter.getGraphics();
-    Drawgates.paintOr(g, x + 125, y + 35, 10, isIEC ? 40 : 10, true, false);
-    Drawgates.paintAnd(g, x + 105 + AndOffset, y + 20, 10, 10, false);
-    Drawgates.paintAnd(g, x + 105 + AndOffset, y + 30, 10, 10, false);
-    Drawgates.paintAnd(g, x + 105 + AndOffset, y + 40, 10, 10, false);
-    Drawgates.paintAnd(g, x + 105 + AndOffset, y + 50, 10, 10, false);
-    g.drawLine(x + 129, y + 35, x + 130, y + 35);
-    g.drawLine(x + 130, y + 35, x + 130, y + AbstractTtlGate.PIN_HEIGHT);
-    int[] xpos, ypos;
+    final var gfx = painter.getGraphics();
+    Drawgates.paintOr(gfx, x + 125, y + 35, 10, isIEC ? 40 : 10, true, false);
+    Drawgates.paintAnd(gfx, x + 105 + AndOffset, y + 20, 10, 10, false);
+    Drawgates.paintAnd(gfx, x + 105 + AndOffset, y + 30, 10, 10, false);
+    Drawgates.paintAnd(gfx, x + 105 + AndOffset, y + 40, 10, 10, false);
+    Drawgates.paintAnd(gfx, x + 105 + AndOffset, y + 50, 10, 10, false);
+    gfx.drawLine(x + 129, y + 35, x + 130, y + 35);
+    gfx.drawLine(x + 130, y + 35, x + 130, y + AbstractTtlGate.PIN_HEIGHT);
+    int[] posX, posY;
     for (var i = 0; i < 4; i++) {
       if (!isIEC) {
         int tmpOff = (i == 0) | (i == 3) ? 2 : 0;
-        xpos = new int[] {x + 105, x + 107 + tmpOff, x + 107 + tmpOff, x + 111};
-        ypos = new int[] {y + 20 + i * 10, y + 20 + i * 10, y + 32 + i * 2, y + 32 + i * 2};
-        g.drawPolyline(xpos, ypos, 4);
+        posX = new int[] {x + 105, x + 107 + tmpOff, x + 107 + tmpOff, x + 111};
+        posY = new int[] {y + 20 + i * 10, y + 20 + i * 10, y + 32 + i * 2, y + 32 + i * 2};
+        gfx.drawPolyline(posX, posY, 4);
       }
-      xpos = new int[] {x + 10 + i * 20, x + 10 + i * 20, x + 95 + AndOffset};
-      ypos =
+      posX = new int[] {x + 10 + i * 20, x + 10 + i * 20, x + 95 + AndOffset};
+      posY =
           new int[] {
-                  i == 0 ? y + height - AbstractTtlGate.PIN_HEIGHT : y + AbstractTtlGate.PIN_HEIGHT,
+            i == 0 ? y + height - AbstractTtlGate.PIN_HEIGHT : y + AbstractTtlGate.PIN_HEIGHT,
             y + 33 - i * 2,
             y + 33 - i * 2
           };
-      g.drawPolyline(xpos, ypos, 3);
+      gfx.drawPolyline(posX, posY, 3);
       if (i < 2) {
-        xpos = new int[] {x + 30 + i * 20, x + 30 + i * 20, x + 95 + AndOffset};
-        ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 38 + i * 5, y + 38 + i * 5};
-        g.drawPolyline(xpos, ypos, 3);
-        xpos = new int[] {x + 70 + i * 20, x + 70 + i * 20, x + 95 + AndOffset};
-        ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 47 + i * 3, y + 47 + i * 3};
-        g.drawPolyline(xpos, ypos, 3);
+        posX = new int[] {x + 30 + i * 20, x + 30 + i * 20, x + 95 + AndOffset};
+        posY = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 38 + i * 5, y + 38 + i * 5};
+        gfx.drawPolyline(posX, posY, 3);
+        posX = new int[] {x + 70 + i * 20, x + 70 + i * 20, x + 95 + AndOffset};
+        posY = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 47 + i * 3, y + 47 + i * 3};
+        gfx.drawPolyline(posX, posY, 3);
       }
     }
-    xpos = new int[] {x + 90, x + 90, x + 95 + AndOffset};
-    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 23, y + 23};
-    g.drawPolyline(xpos, ypos, 3);
-    xpos = new int[] {x + 110, x + 110, x + 93 + AndOffset, x + 93 + AndOffset, x + 95 + AndOffset};
-    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 12, y + 12, y + 18, y + 18};
-    g.drawPolyline(xpos, ypos, 5);
-    ypos =
+    posX = new int[] {x + 90, x + 90, x + 95 + AndOffset};
+    posY = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 23, y + 23};
+    gfx.drawPolyline(posX, posY, 3);
+    posX = new int[] {x + 110, x + 110, x + 93 + AndOffset, x + 93 + AndOffset, x + 95 + AndOffset};
+    posY = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 12, y + 12, y + 18, y + 18};
+    gfx.drawPolyline(posX, posY, 5);
+    posY =
         new int[] {
                 y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 12, y + height - 12, y + 53, y + 53
         };
-    g.drawPolyline(xpos, ypos, 5);
+    gfx.drawPolyline(posX, posY, 5);
   }
 
   @Override

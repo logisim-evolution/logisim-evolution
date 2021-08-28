@@ -109,11 +109,8 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       visible = false;
       entryPoint = null;
       programLoaded = false;
-      AbstractTokenMakerFactory atmf =
-          (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-      atmf.putMapping(
-          ASSEMBLER.getHighlightStringIdentifier(),
-          "com.cburch.logisim.soc.nios2.Nios2SyntaxHighlighter");
+      AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+      atmf.putMapping(ASSEMBLER.getHighlightStringIdentifier(), "com.cburch.logisim.soc.nios2.Nios2SyntaxHighlighter");
       bPanel = new BreakpointPanel(ASSEMBLER.getHighlightStringIdentifier());
       reset();
     }
@@ -131,16 +128,14 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       return myInstance;
     }
 
-    public void reset(
-        CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
+    public void reset(CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
         bPanel.loadProgram(state, getProcessorInterface(), progInfo, sectInfo, ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
-      for (int i = 0; i < 31; i++)
-        registers_valid[i] = false;
+      for (var i = 0; i < 31; i++) registers_valid[i] = false;
       lastRegisterWritten = -1;
       status = STATUS_RSIE;
       estatus = 0;
@@ -180,9 +175,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     }
 
     public void setIenable(int value) {
-      if (ienable == value) return;
-      ienable = value;
-      repaint();
+      if (ienable != value) {
+        ienable = value;
+        repaint();
+      }
     }
 
     public int getIpending() {
@@ -190,38 +186,34 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     }
 
     public void setIpending(int value) {
-      if (ipending == value) return;
-      ipending = value;
-      repaint();
+      if (ipending != value) {
+        ipending = value;
+        repaint();
+      }
     }
 
     public int getControlRegister(int index) {
-      switch (index) {
-        case 0 : return status;
-        case 1 : return estatus;
-        case 2 : return bstatus;
-        case 3 : return ienable;
-        case 4 : return ipending;
-        default: return 0;
-      }
+      return switch (index) {
+        case 0 -> status;
+        case 1 -> estatus;
+        case 2 -> bstatus;
+        case 3 -> ienable;
+        case 4 -> ipending;
+        default -> 0;
+      };
     }
 
     public void setControlRegister(int index, int value) {
       switch (index) {
-        case 0 : setStatus(value);
-                 break;
-        case 1 : estatus = value;
-                 break;
-        case 2 : bstatus = value;
-                 break;
-        case 3 : ienable = value;
-                 break;
+        case 0: setStatus(value); break;
+        case 1: estatus = value; break;
+        case 2: bstatus = value; break;
+        case 3: ienable = value; break;
       }
     }
 
     public void setClock(Value clock, CircuitState cState) {
-      if (lastClock == Value.FALSE && clock == Value.TRUE)
-        execute(cState);
+      if (lastClock == Value.FALSE && clock == Value.TRUE) execute(cState);
       lastClock = clock;
     }
 
@@ -253,26 +245,22 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     @Override
     public String getRegisterValueHex(int index) {
-      if (RegisterIsValid(index))
-        return String.format("0x%08X", getRegisterValue(index));
-      return "??????????";
+      return RegisterIsValid(index) ? String.format("0x%08X", getRegisterValue(index)) : "??????????";
     }
 
     public Boolean RegisterIsValid(int index) {
-      if (index == 0)
-        return true;
-      if (index > 31)
-        return false;
+      if (index == 0) return true;
+      if (index > 31) return false;
       return registers_valid[index - 1];
     }
 
     public void writeRegister(int index, int value) {
       lastRegisterWritten = -1;
-      if (index == 0 || index > 31)
-        return;
-      registers_valid[index - 1] = true;
-      registers[index - 1] = value;
-      lastRegisterWritten = index;
+      if (!(index == 0 || index > 31)) {
+        registers_valid[index - 1] = true;
+        registers[index - 1] = value;
+        lastRegisterWritten = index;
+      }
     }
 
     public void interrupt() {
@@ -291,7 +279,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     public void breakReq() {
       bstatus = status;
       status &= (~STATUS_PIE);
-      long nextPc = SocSupport.convUnsignedInt(pc) + 4L;
+      final var nextPc = SocSupport.convUnsignedInt(pc) + 4L;
       writeRegister(30, SocSupport.convUnsignedLong(nextPc));
       pc = breakVector;
       repaint();
@@ -309,11 +297,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     public void execute(CircuitState cState) {
       /* check the simulation state */
-      if (!simState.canExecute())
-        return;
+      if (!simState.canExecute()) return;
       /* here we handle the custom instructions */
-      if (ASSEMBLER.getExeUnit() != null
-          && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions) {
+      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions) {
         Nios2CustomInstructions cust = (Nios2CustomInstructions) ASSEMBLER.getExeUnit();
         if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
       }
@@ -340,12 +326,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       }
       /* fetch an instruction */
       SocBusTransaction trans =
-          new SocBusTransaction(
-              SocBusTransaction.READ_TRANSACTION,
-              pc,
-              0,
-              SocBusTransaction.WORD_ACCESS,
-              attachedBus.getComponent());
+          new SocBusTransaction(SocBusTransaction.READ_TRANSACTION, pc, 0, SocBusTransaction.WORD_ACCESS, attachedBus.getComponent());
       attachedBus
           .getSocSimulationManager()
           .initializeTransaction(trans, attachedBus.getBusId(), cState);
@@ -359,10 +340,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         return;
       }
       /* decode instruction */
-      int instruction = trans.getReadData();
+      final var instruction = trans.getReadData();
       ASSEMBLER.decode(instruction);
       /* execute instruction */
-      AssemblerExecutionInterface exe = ASSEMBLER.getExeUnit();
+      final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
       while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
         instrTrace.removeLast();
@@ -378,9 +359,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         if (visible) repaint();
         return;
       }
-      TraceInfo trace = new TraceInfo(pc, instruction, exe.getAsmInstruction(), false);
+      final var trace = new TraceInfo(pc, instruction, exe.getAsmInstruction(), false);
       if (!exe.execute(this, cState)) {
-        StringBuilder s = new StringBuilder();
+        final var s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
           s.append("\n").append(exe.getErrorMessage());
@@ -527,9 +508,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       "gp", "sp", "fp", "ea", "sstat", "ra"};
 
   public static int getRegisterIndex(String name) {
-    String regName = name.toLowerCase();
-    for (int i = 0; i < registerABINames.length; i++)
+    final var regName = name.toLowerCase();
+    for (var i = 0; i < registerABINames.length; i++) {
       if (registerABINames[i].equals(regName)) return i;
+    }
     if (regName.startsWith("r") && regName.length() < 4) {
       int index;
       try {
@@ -559,7 +541,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   public static boolean isCustomRegister(String name) {
-    String regName = name.toLowerCase();
+    final var regName = name.toLowerCase();
     return regName.startsWith("c") && regName.length() < 4 && !regName.startsWith("ctl");
   }
 
@@ -587,15 +569,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   public String getName() {
-    String name = label;
+    var name = label;
     if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
-      name =
-          attachedBus.getComponent().getFactory().getDisplayName()
-              + "@"
-              + loc.getX()
-              + ","
-              + loc.getY();
+      final var loc = attachedBus.getComponent().getLocation();
+      name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
     return name;
   }
@@ -664,25 +641,24 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     return new ProcessorState(inst);
   }
 
-  public void paint(
-      int x, int y, Graphics2D g2, Instance inst, boolean visible, InstanceData pstate) {
-    Graphics2D g = (Graphics2D) g2.create();
-    g.translate(x + CpuDrawSupport.upStateBounds.getX(), y + CpuDrawSupport.upStateBounds.getY());
-    ProcessorState state = (ProcessorState) pstate;
+  public void paint(int x, int y, Graphics2D g2, Instance inst, boolean visible, InstanceData pstate) {
+    final var gfx = (Graphics2D) g2.create();
+    gfx.translate(x + CpuDrawSupport.upStateBounds.getX(), y + CpuDrawSupport.upStateBounds.getY());
+    final var state = (ProcessorState) pstate;
     if (visible && state != null) {
-      state.draw(g, false);
+      state.draw(gfx, false);
     } else {
-      g.setColor(Color.LIGHT_GRAY);
-      g.fillRect(
+      gfx.setColor(Color.LIGHT_GRAY);
+      gfx.fillRect(
           0, 0, CpuDrawSupport.upStateBounds.getWidth(), CpuDrawSupport.upStateBounds.getHeight());
-      g.setColor(Color.BLACK);
+      gfx.setColor(Color.BLACK);
       GraphicsUtil.drawCenteredText(
-          g,
+          gfx,
           S.get("SocHiddenForFasterSimulation"),
           CpuDrawSupport.upStateBounds.getWidth() / 2,
           CpuDrawSupport.upStateBounds.getHeight() / 2);
     }
-    g.dispose();
+    gfx.dispose();
     if (state != null) state.simState.paint(g2, x, y, CpuDrawSupport.simStateBounds);
   }
 
@@ -696,9 +672,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
     int entry = (int) entryPoint;
     if (attachedBus != null && attachedBus.getComponent() != null) {
-      InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
+      final var comp = (InstanceComponent) attachedBus.getComponent();
       if (comp.getInstance() != null) {
-        ProcessorState pstate = (ProcessorState) comp.getInstance().getData(state);
+        final var pstate = (ProcessorState) comp.getInstance().getData(state);
         if (pstate != null) pstate.reset(state, entry, progInfo, sectInfo);
         comp.getInstance().fireInvalidated();
       }
@@ -709,9 +685,9 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState) {
     if (hidden) trans.setAsHiddenTransaction();
     if (cState == null) {
-      InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
+      final var comp = (InstanceComponent) attachedBus.getComponent();
       if (comp == null) return;
-      InstanceStateImpl state = comp.getInstanceStateImpl();
+      final var state = comp.getInstanceStateImpl();
       if (state == null) return;
       cState = state.getProject().getCircuitState();
     }
@@ -723,7 +699,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   @Override
   public int getEntryPoint(CircuitState cState) {
     if (cState != null) {
-      InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
+      final var comp = (InstanceComponent) attachedBus.getComponent();
       if (comp != null) {
         return ((ProcessorState) cState.getData(comp)).getEntryPoint();
       }
