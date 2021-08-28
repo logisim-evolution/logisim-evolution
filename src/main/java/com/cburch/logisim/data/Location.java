@@ -86,6 +86,7 @@ public class Location implements Comparable<Location> {
     this.y = y;
   }
 
+  @Override
   public int compareTo(Location other) {
     return (this.x != other.x) ? this.x - other.x : this.y - other.y;
   }
@@ -140,7 +141,7 @@ public class Location implements Comparable<Location> {
 
   @Override
   public String toString() {
-    return "(" + x + "," + y + ")";
+    return String.format("(%d,%d)", x, y);
   }
 
   public Location translate(Direction dir, int dist) {

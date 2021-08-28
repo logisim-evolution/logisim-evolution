@@ -150,25 +150,26 @@ public class Drawgates {
   }
 
   static void paintOutputgate(Graphics g, int xpin, int y, int xoutput, int youtput, boolean up, int height) {
-    int[] yPoints;
     final var xPoints = new int[] {xoutput, xpin, xpin};
-    if (!up) yPoints = new int[] {youtput, youtput, y + height - AbstractTtlGate.PIN_HEIGHT};
-    else yPoints = new int[] {youtput, youtput, y + AbstractTtlGate.PIN_HEIGHT};
+    final var yPoints =
+        !up
+            ? new int[] {youtput, youtput, y + height - AbstractTtlGate.PIN_HEIGHT}
+            : new int[] {youtput, youtput, y + AbstractTtlGate.PIN_HEIGHT};
     g.drawPolyline(xPoints, yPoints, 3);
   }
 
-  static void paintPortNames(InstancePainter painter, int x, int y, int height, String[] portnames) {
-    final var g = painter.getGraphics();
-    g.drawRect(
+  static void paintPortNames(InstancePainter painter, int x, int y, int height, String[] portNames) {
+    final var gfx = painter.getGraphics();
+    gfx.drawRect(
         x + 10,
         y + AbstractTtlGate.PIN_HEIGHT + 10,
-        portnames.length * 10,
+        portNames.length * 10,
         height - 2 * AbstractTtlGate.PIN_HEIGHT - 20);
     for (var i = 0; i < 2; i++) {
-      for (var j = 0; j < portnames.length / 2; j++) {
+      for (var j = 0; j < portNames.length / 2; j++) {
         GraphicsUtil.drawCenteredText(
-            g,
-            portnames[j + (i * 7)],
+            gfx,
+            portNames[j + (i * 7)],
             i == 0 ? x + 10 + j * 20 : x + 160 - j * 20 - 10,
             y
                 + height
@@ -180,10 +181,11 @@ public class Drawgates {
   }
 
   static void paintSingleInputgate(Graphics g, int xpin, int y, int xinput, int youtput, boolean up, int height) {
-    int[] yPoints;
     final var xPoints = new int[] {xpin, xpin, xinput};
-    if (!up) yPoints = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
-    else yPoints = new int[] {y + AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
+    final var yPoints =
+        !up
+            ? new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, youtput, youtput}
+            : new int[] {y + AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
     g.drawPolyline(xPoints, yPoints, 3);
   }
 
