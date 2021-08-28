@@ -205,10 +205,19 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     public void setControlRegister(int index, int value) {
       switch (index) {
-        case 0: setStatus(value); break;
-        case 1: estatus = value; break;
-        case 2: bstatus = value; break;
-        case 3: ienable = value; break;
+        case 0:
+          setStatus(value);
+          break;
+        case 1:
+          estatus = value;
+          break;
+        case 2:
+          bstatus = value;
+          break;
+        case 3:
+          ienable = value;
+          break;
+        // FIXME: what to do by default? throw Exception?
       }
     }
 
