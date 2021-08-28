@@ -71,7 +71,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
         Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
             .add("");
       } else {
-        if (Nets.IsContinuesBus(ComponentInfo, 0)) {
+        if (Nets.isContinuesBus(ComponentInfo, 0)) {
           /* easy case */
           Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusNameContinues(ComponentInfo, 0, Nets), GetConvertOperator(ConstantValue, NrOfBits));
           Contents.add("");

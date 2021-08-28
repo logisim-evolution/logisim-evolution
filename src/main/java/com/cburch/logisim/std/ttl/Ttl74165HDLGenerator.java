@@ -132,7 +132,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'1'");
       map.put("CK", GetNetName(comp, ClockPinIndex, true, nets));
     } else {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
       } else {
         map.put(

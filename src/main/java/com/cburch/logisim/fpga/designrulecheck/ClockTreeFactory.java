@@ -54,7 +54,7 @@ public class ClockTreeFactory {
     destination.addNet(connection);
   }
 
-  public void AddClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
+  public void addClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
     ClockTreeContainer destination = null;
     for (final var search : sourceTrees) {
       if (search.equals(HierarchyNames, clocksourceid)) {

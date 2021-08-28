@@ -270,7 +270,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
-      if (Nets.RequiresGlobalClockConnection()) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "ClockEnable",
             clockNetName

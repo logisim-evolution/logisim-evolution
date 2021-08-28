@@ -272,7 +272,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.put("ClockEnable", HDL.oneBit());
       } else {
         var clockBusIndex = ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
-        if (nets.RequiresGlobalClockConnection()) {
+        if (nets.requiresGlobalClockConnection()) {
           clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
         } else {
           if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_LOW)

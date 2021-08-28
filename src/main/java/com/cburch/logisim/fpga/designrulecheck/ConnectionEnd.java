@@ -55,7 +55,7 @@ public class ConnectionEnd {
     return isOutput;
   }
 
-  public int nrOfBits() {
+  public int getNrOfBits() {
     return nrOfBits;
   }
 

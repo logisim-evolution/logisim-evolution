@@ -246,7 +246,7 @@ public class AlteraDownload implements VendorDownload {
     }
     contents.add("");
     contents.add("    # Map fpga_clk and ionets to fpga pins");
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents.add("    set_location_assignment {{1}} -to {{clock}}", boardInfo.fpga.getClockPinLocation());
     }
     contents

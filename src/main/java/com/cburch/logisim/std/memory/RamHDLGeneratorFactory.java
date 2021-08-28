@@ -278,7 +278,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           map.put("Tick", HDL.oneBit());
         } else {
           int clockBusIndex;
-          if (nets.RequiresGlobalClockConnection()) {
+          if (nets.requiresGlobalClockConnection()) {
             clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
           } else {
             clockBusIndex =

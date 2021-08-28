@@ -107,7 +107,7 @@ public class NetlistComponent {
     }
     var isConnected = false;
     final var ThisEnd = endEnds.get(index);
-    for (var i = 0; i < ThisEnd.nrOfBits(); i++) {
+    for (var i = 0; i < ThisEnd.getNrOfBits(); i++) {
       isConnected |= (ThisEnd.get((byte) i).getParentNet() != null);
     }
     return isConnected;
@@ -126,7 +126,7 @@ public class NetlistComponent {
 
   public byte getConnectionBitIndex(Net rootNet, byte bitIndex) {
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
         final var connection = search.get(bit);
         if (connection.getParentNet() == rootNet && connection.getParentNetBitIndex() == bitIndex) {
           return bit;
@@ -139,7 +139,7 @@ public class NetlistComponent {
   public ArrayList<ConnectionPoint> getConnections(Net rootNet, byte bitIndex, boolean isOutput) {
     final var connections = new ArrayList<ConnectionPoint>();
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
         final var connection = search.get(bit);
         if (connection.getParentNet() == rootNet
             && connection.getParentNetBitIndex() == bitIndex
@@ -192,7 +192,7 @@ public class NetlistComponent {
 
   public boolean hasConnection(Net RootNet, byte BitIndex) {
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
         final var connection = search.get(bit);
         if (connection.getParentNet() == RootNet && connection.getParentNetBitIndex() == BitIndex) {
           return true;

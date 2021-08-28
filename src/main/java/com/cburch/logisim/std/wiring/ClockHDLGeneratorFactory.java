@@ -59,7 +59,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
     StringBuilder Contents = new StringBuilder();
-    int ClockNetId = TheNets.GetClockSourceId(comp);
+    int ClockNetId = TheNets.getClockSourceId(comp);
     if (ClockNetId >= 0) {
       Contents.append(ClockTreeName).append(ClockNetId);
     }

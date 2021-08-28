@@ -322,7 +322,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     map.putAll(GetNetMap("Reset", true, comp, ShiftRegister.CLR, nets));
     if (hasClock && !gatedClock) {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put(
             "Tick",
             clockNetName

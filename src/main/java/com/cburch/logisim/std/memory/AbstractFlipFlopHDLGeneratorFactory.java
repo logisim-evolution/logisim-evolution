@@ -224,7 +224,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     map.putAll(GetNetMap("Reset", true, comp, nrOfPins - 2, Nets));
     map.putAll(GetNetMap("Preset", true, comp, nrOfPins - 1, Nets));
     if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "Tick",
             clockNetName

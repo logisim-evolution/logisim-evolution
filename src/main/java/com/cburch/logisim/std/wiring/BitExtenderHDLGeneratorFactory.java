@@ -77,7 +77,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       if (type.equals("zero")) Replacement.append(HDL.zeroBit());
       if (type.equals("one")) Replacement.append(HDL.oneBit());
       if (type.equals("sign")) {
-        if (ComponentInfo.getEnd(1).nrOfBits() > 1) {
+        if (ComponentInfo.getEnd(1).getNrOfBits() > 1) {
           Replacement.append(
               GetBusEntryName(
                   ComponentInfo,
@@ -93,7 +93,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         Replacement.append(GetNetName(ComponentInfo, 2, true, Nets));
       for (int bit = 0; bit < ComponentInfo.getComponent().getEnd(0).getWidth().getWidth(); bit++) {
         if (bit < ComponentInfo.getComponent().getEnd(1).getWidth().getWidth()) {
-          if (ComponentInfo.getEnd(1).nrOfBits() > 1) {
+          if (ComponentInfo.getEnd(1).getNrOfBits() > 1) {
             Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), GetBusEntryName(ComponentInfo, 1, true, bit, Nets));
           } else {
             Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets) + GetNetName(ComponentInfo, 1, true, Nets));

@@ -135,7 +135,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
       map.put("tick", "'1'");
       map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
     } else {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put("tick", "'1'");
       } else {
         map.put(

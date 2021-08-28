@@ -206,7 +206,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
     if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put("Tick", HDL.oneBit());
       } else {
         if (activeLow)

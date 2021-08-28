@@ -182,7 +182,7 @@ public abstract class DownloadBase {
       return false;
     }
     /* Here we generate the top-level shell */
-    if (rootSheet.getNetList().NumberOfClockTrees() > 0) {
+    if (rootSheet.getNetList().numberOfClockTrees() > 0) {
       final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
           projectDir + ticker.GetRelativeDirectory(),
@@ -197,11 +197,11 @@ public abstract class DownloadBase {
       }
 
       final var clockGen = rootSheet.getNetList()
-          .GetAllClockSources()
+          .getAllClockSources()
           .get(0)
           .getFactory()
-          .getHDLGenerator(rootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
-      final var compName = rootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
+          .getHDLGenerator(rootSheet.getNetList().getAllClockSources().get(0).getAttributeSet());
+      final var compName = rootSheet.getNetList().getAllClockSources().get(0).getFactory().getHDLName(null);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
           projectDir + clockGen.GetRelativeDirectory(),
           clockGen.GetEntity(rootSheet.getNetList(), null, compName),
@@ -327,7 +327,7 @@ public abstract class DownloadBase {
         }
       }
     }
-    if (hasMappedClockedArray && (nets.NumberOfClockTrees() == 0) && !nets.RequiresGlobalClockConnection()) {
+    if (hasMappedClockedArray && (nets.numberOfClockTrees() == 0) && !nets.requiresGlobalClockConnection()) {
       ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
     }
     return ledArrayMaps;

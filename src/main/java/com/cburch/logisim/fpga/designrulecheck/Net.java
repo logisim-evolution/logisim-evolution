@@ -106,7 +106,7 @@ public class Net {
     tunnelNames.add(tunnelName);
   }
 
-  public int bitWidth() {
+  public int getBitWidth() {
     return nrOfBits;
   }
 
@@ -250,7 +250,7 @@ public class Net {
   }
 
   public boolean merge(Net theNet) {
-    if (theNet.bitWidth() == nrOfBits) {
+    if (theNet.getBitWidth() == nrOfBits) {
       myPoints.addAll(theNet.getPoints());
       segments.addAll(theNet.getWires());
       tunnelNames.addAll(theNet.getTunnelNames());

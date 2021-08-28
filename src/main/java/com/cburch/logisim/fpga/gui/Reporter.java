@@ -69,6 +69,10 @@ public class Reporter {
     }
   }
 
+  public void addFatalErrorFmt(String fmt, Object... args) {
+    addFatalErrorFmt(String.format(fmt, args));
+  }
+
   public void AddFatalError(String Message) {
     if (myCommander == null)
       logger.error(Message);
