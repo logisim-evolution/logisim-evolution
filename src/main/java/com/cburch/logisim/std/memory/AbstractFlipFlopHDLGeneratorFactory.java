@@ -170,7 +170,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var activityLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
+    final var attrs = ComponentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
@@ -199,7 +199,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var hasClock = true;
     var activeLow = false;
     final var nrOfPins = comp.nrOfEnds();
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     if (!comp.isEndConnected(comp.nrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""

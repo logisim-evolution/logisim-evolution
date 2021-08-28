@@ -35,16 +35,16 @@ import java.util.ArrayList;
 public class ClockSourceContainer {
 
   final ArrayList<Component> sources;
-  boolean RequiresFPGAGlobalClock;
+  boolean requiresFpgaGlobalClock;
 
   public ClockSourceContainer() {
     sources = new ArrayList<>();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   public void clear() {
     sources.clear();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   private boolean equals(Component comp1, Component comp2) {
@@ -79,11 +79,11 @@ public class ClockSourceContainer {
     return sources;
   }
 
-  public boolean RequiresFPGAGlobalClock() {
-    return RequiresFPGAGlobalClock;
+  public boolean getRequiresFpgaGlobalClock() {
+    return requiresFpgaGlobalClock;
   }
 
-  public void SetGloblaClockRequirement() {
-    RequiresFPGAGlobalClock = true;
+  public void setRequiresFpgaGlobalClock() {
+    requiresFpgaGlobalClock = true;
   }
 }

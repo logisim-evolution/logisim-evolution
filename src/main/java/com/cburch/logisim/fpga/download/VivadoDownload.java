@@ -70,9 +70,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.xdcPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;

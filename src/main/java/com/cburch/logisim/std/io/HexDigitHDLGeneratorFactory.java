@@ -49,7 +49,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
             .addPair("bubbleBusName", bubbleBusName)
             .addPair("startId", startId)
-            .addPair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)))
+            .addPair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
             .addPair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
             .addPair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
 
@@ -78,7 +78,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         contents.add("{{bubbleBusName}}({{1}} DOWNTO {{startId}}) <= {{busName}};", (startId + 6));
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
         contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
       }
     } else {
@@ -111,7 +111,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         contents.add("assign {{sigName}} = {{busName}};");
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
         contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.getLocalBubbleOutputStartId() + 7));
       }
     }

@@ -80,25 +80,25 @@ public class Net {
 
   public boolean addSink(int bitIndex, ConnectionPoint sink) {
     if ((bitIndex < 0) || (bitIndex >= sinkList.size())) return false;
-    sinkList.get(bitIndex).AddConnection(sink);
+    sinkList.get(bitIndex).add(sink);
     return true;
   }
 
   public boolean addSinkNet(int bitIndex, ConnectionPoint sinkNet) {
     if ((bitIndex < 0) || (bitIndex >= sinkNetsList.size())) return false;
-    sinkNetsList.get(bitIndex).AddConnection(sinkNet);
+    sinkNetsList.get(bitIndex).add(sinkNet);
     return true;
   }
 
   public boolean addSource(int bitIndex, ConnectionPoint source) {
     if ((bitIndex < 0) || (bitIndex >= sourceList.size())) return false;
-    sourceList.get(bitIndex).AddConnection(source);
+    sourceList.get(bitIndex).add(source);
     return true;
   }
 
   public boolean addSourceNet(int bitIndex, ConnectionPoint sourceNet) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return false;
-    sourceNetsList.get(bitIndex).AddConnection(sourceNet);
+    sourceNetsList.get(bitIndex).add(sourceNet);
     return true;
   }
 
@@ -106,7 +106,7 @@ public class Net {
     tunnelNames.add(tunnelName);
   }
 
-  public int BitWidth() {
+  public int bitWidth() {
     return nrOfBits;
   }
 
@@ -152,76 +152,71 @@ public class Net {
   }
 
   public ArrayList<ConnectionPoint> getSinkNets(int bitIndex) {
-    if ((bitIndex < 0) || (bitIndex >= sinkNetsList.size()))
-      return new ArrayList<>();
-    return sinkNetsList.get(bitIndex).GetConnections();
+    if ((bitIndex < 0) || (bitIndex >= sinkNetsList.size())) return new ArrayList<>();
+    return sinkNetsList.get(bitIndex).getAll();
   }
 
   public ArrayList<ConnectionPoint> getSourceNets(int bitIndex) {
-    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
-      return new ArrayList<>();
-    return sourceNetsList.get(bitIndex).GetConnections();
+    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return new ArrayList<>();
+    return sourceNetsList.get(bitIndex).getAll();
   }
 
   public void cleanupSourceNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return;
-    ArrayList<ConnectionPoint> oldconns = sourceNetsList.get(bitIndex).GetConnections();
+    final var oldconns = sourceNetsList.get(bitIndex).getAll();
     if (oldconns.size() > 1) {
-      ConnectionPoint point = oldconns.get(0);
-      sourceNetsList.get(bitIndex).ClearConnections();
-      sourceNetsList.get(bitIndex).AddConnection(point);
+      final var point = oldconns.get(0);
+      sourceNetsList.get(bitIndex).clear();
+      sourceNetsList.get(bitIndex).add(point);
     }
-    return;
   }
 
   public boolean hasBitSinks(int bitid) {
     if (bitid < 0 || bitid >= sinkList.size()) return false;
-    return sinkList.get(bitid).NrOfConnections() > 0;
+    return sinkList.get(bitid).size() > 0;
   }
 
   public ArrayList<ConnectionPoint> getBitSinks(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
       return new ArrayList<>();
-    return new ArrayList<>(sinkList.get(bitIndex).GetConnections());
+    return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 
   public ArrayList<ConnectionPoint> GetBitSources(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return null;
-    return sourceList.get(bitIndex).GetConnections();
+    return sourceList.get(bitIndex).getAll();
   }
 
   public boolean hasBitSource(int bitid) {
     if (bitid < 0 || bitid >= sourceList.size()) return false;
-    return sourceList.get(bitid).NrOfConnections() > 0;
+    return sourceList.get(bitid).size() > 0;
   }
 
   public boolean hasShortCircuit() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).NrOfConnections() > 1;
+    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).size() > 1;
     return ret;
   }
 
   public boolean hasSinks() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sinkList.get(i).NrOfConnections() > 0;
+    for (var i = 0; i < nrOfBits; i++) ret |= sinkList.get(i).size() > 0;
     return ret;
   }
 
-  public Set<ConnectionPoint> GetSinks() {
+  public Set<ConnectionPoint> getSinks() {
     final var sinks = new HashSet<ConnectionPoint>();
-    for (var i = 0; i < nrOfBits; i++) {
-      sinks.addAll(sinkList.get(i).GetConnections());
-    }
+    for (var i = 0; i < nrOfBits; i++) sinks.addAll(sinkList.get(i).getAll());
     return sinks;
   }
 
   public boolean hasSource() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).NrOfConnections() > 0;
+    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).size() > 0;
     return ret;
   }
 
-  public boolean HasTunnel() {
+  public boolean hasTunnel() {
     return tunnelNames.size() != 0;
   }
 
@@ -254,27 +249,27 @@ public class Net {
     return (myParent == null) || requiresToBeRoot;
   }
 
-  public boolean merge(Net TheNet) {
-    if (TheNet.BitWidth() == nrOfBits) {
-      myPoints.addAll(TheNet.getPoints());
-      segments.addAll(TheNet.getWires());
-      tunnelNames.addAll(TheNet.getTunnelNames());
+  public boolean merge(Net theNet) {
+    if (theNet.bitWidth() == nrOfBits) {
+      myPoints.addAll(theNet.getPoints());
+      segments.addAll(theNet.getWires());
+      tunnelNames.addAll(theNet.getTunnelNames());
       return true;
     }
     return false;
   }
 
-  public boolean setWidth(int Width) {
-    if ((nrOfBits > 0) && (Width != nrOfBits)) return false;
-    nrOfBits = Width;
+  public boolean setWidth(int width) {
+    if ((nrOfBits > 0) && (width != nrOfBits)) return false;
+    nrOfBits = width;
     return true;
   }
 
-  public boolean setParent(Net Parent) {
+  public boolean setParent(Net parent) {
     if (requiresToBeRoot) return false;
-    if (Parent == null) return false;
+    if (parent == null) return false;
     if (myParent != null) return false;
-    myParent = Parent;
+    myParent = parent;
     return true;
   }
 

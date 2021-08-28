@@ -50,10 +50,10 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    final var colBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
-    final var rowBased = componentInfo.GetComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
-    final var rows = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
-    final var cols = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+    final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
+    final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
+    final var rows = componentInfo.getComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
+    final var cols = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
 
     contents.add("  ");
     if (colBased) {

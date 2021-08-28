@@ -107,8 +107,8 @@ public class NetlistComponent {
     }
     var isConnected = false;
     final var ThisEnd = endEnds.get(index);
-    for (var i = 0; i < ThisEnd.NrOfBits(); i++) {
-      isConnected |= (ThisEnd.GetConnection((byte) i).GetParentNet() != null);
+    for (var i = 0; i < ThisEnd.nrOfBits(); i++) {
+      isConnected |= (ThisEnd.get((byte) i).getParentNet() != null);
     }
     return isConnected;
   }
@@ -120,15 +120,15 @@ public class NetlistComponent {
     return compReference.getEnd(index).isInput();
   }
 
-  public Component GetComponent() {
+  public Component getComponent() {
     return compReference;
   }
 
   public byte getConnectionBitIndex(Net rootNet, byte bitIndex) {
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        final var connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == rootNet && connection.GetParentNetBitIndex() == bitIndex) {
+      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == rootNet && connection.getParentNetBitIndex() == bitIndex) {
           return bit;
         }
       }
@@ -139,11 +139,11 @@ public class NetlistComponent {
   public ArrayList<ConnectionPoint> getConnections(Net rootNet, byte bitIndex, boolean isOutput) {
     final var connections = new ArrayList<ConnectionPoint>();
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        final var connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == rootNet
-            && connection.GetParentNetBitIndex() == bitIndex
-            && search.IsOutputEnd() == isOutput) {
+      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == rootNet
+            && connection.getParentNetBitIndex() == bitIndex
+            && search.isOutputEnd() == isOutput) {
           connections.add(connection);
         }
       }
@@ -192,9 +192,9 @@ public class NetlistComponent {
 
   public boolean hasConnection(Net RootNet, byte BitIndex) {
     for (final var search : endEnds) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        final var connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == RootNet && connection.GetParentNetBitIndex() == BitIndex) {
+      for (byte bit = 0; bit < search.nrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == RootNet && connection.getParentNetBitIndex() == BitIndex) {
           return true;
         }
       }

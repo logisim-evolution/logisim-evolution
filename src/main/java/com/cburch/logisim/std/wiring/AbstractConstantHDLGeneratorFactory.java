@@ -63,10 +63,10 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       NetlistComponent ComponentInfo,
       String CircuitName) {
     final var Contents = (new LineBuffer()).withHdlPairs();
-    int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int NrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     if (ComponentInfo.isEndConnected(0)) {
-      long ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
-      if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
+      long ConstantValue = GetConstant(ComponentInfo.getComponent().getAttributeSet());
+      if (ComponentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
         Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
             .add("");

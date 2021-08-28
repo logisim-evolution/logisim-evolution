@@ -219,9 +219,9 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int HighTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
-    int LowTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
-    int Phase = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
+    int HighTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
+    int LowTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
+    int Phase = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
     Phase = Phase % (HighTicks + LowTicks);
     int MaxValue = Math.max(HighTicks, LowTicks);
     int nr_of_bits = 0;
@@ -243,7 +243,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.GetComponent(), Nets));
+    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
     return map;
   }
 

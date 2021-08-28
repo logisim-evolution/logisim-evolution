@@ -233,7 +233,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     var mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
       if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
@@ -257,7 +257,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     if (!componentInfo.isEndConnected(Counter.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
@@ -294,7 +294,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     var input = "LoadData";
     if (HDL.isVHDL()
-        & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       input += "(0)";
     map.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
     map.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
@@ -303,7 +303,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
     var output = "CountValue";
     if (HDL.isVHDL()
-        & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
     map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));

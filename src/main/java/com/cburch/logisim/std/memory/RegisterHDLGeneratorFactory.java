@@ -157,7 +157,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var activeLevel = 1;
     var gatedclock = false;
     var activeLow = false;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
@@ -175,7 +175,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(
-        NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
+        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;
   }
 
@@ -187,7 +187,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     if (!comp.isEndConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
@@ -257,7 +257,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var input = "D";
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       input += "(0)";
       output += "(0)";

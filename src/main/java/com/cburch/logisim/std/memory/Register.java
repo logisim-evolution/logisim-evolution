@@ -38,7 +38,6 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -368,7 +367,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public boolean CheckForGatedClocks(NetlistComponent comp) {
-    return Netlist.IsFlipFlop(comp.GetComponent().getAttributeSet());
+    return Netlist.IsFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
@@ -387,6 +386,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     }
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new RegisterShape(x, y, path);
   }

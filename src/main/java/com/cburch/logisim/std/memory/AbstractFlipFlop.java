@@ -430,7 +430,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   @Override
   public boolean CheckForGatedClocks(NetlistComponent comp) {
-    return Netlist.IsFlipFlop(comp.GetComponent().getAttributeSet());
+    return Netlist.IsFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override

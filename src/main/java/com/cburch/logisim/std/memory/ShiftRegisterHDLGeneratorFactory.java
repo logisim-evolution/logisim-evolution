@@ -277,7 +277,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     var activeLevel = 1;
     var gatedClock = false;
     var activeLow = false;
@@ -306,7 +306,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
     if (!comp.isEndConnected(ShiftRegister.CK)) {

@@ -222,11 +222,11 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    var seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
+    var seed = ComponentInfo.getComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
     map.put(
             NR_OF_BITS_STR,
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
+        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
     map.put(SEED_STR, seed);
     return map;
   }
@@ -255,9 +255,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\"");
       Reporter.Report.AddError("This RNG will not work!");
     }
-    if (comp.GetComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
+    if (comp.getComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
       activeLow =
-          comp.GetComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
+          comp.getComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
               == StdAttr.TRIG_FALLING;
     }
     if (!hasClock || gatedClock) {
@@ -298,7 +298,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("enable", false, comp, Random.NXT, Nets));
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, comp, Random.OUT, Nets));
     return map;

@@ -109,7 +109,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    int nrOfBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int nrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     parameterMap.put(ExtendedBitsStr, nrOfBits + 1);
     if (nrOfBits > 1) parameterMap.put(NrOfBitsStr, nrOfBits);
     return parameterMap;

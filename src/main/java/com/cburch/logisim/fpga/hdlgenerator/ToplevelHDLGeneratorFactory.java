@@ -200,7 +200,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var thisClock = new NetlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
-                .getHDLGenerator(thisClock.GetComponent().getAttributeSet())
+                .getHDLGenerator(thisClock.getComponent().getAttributeSet())
                 .GetComponentMap(theNetlist, index++, thisClock, null, ""));
       }
     }
@@ -278,10 +278,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         String sName = "s_"
             + CorrectLabel.getCorrectLabel(
                 nets.GetInputPin(input)
-                    .GetComponent()
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetInputPin(input).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.GetInputPin(input).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }
@@ -290,10 +290,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
                 nets.GetInOutPin(inout)
-                    .GetComponent()
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetInOutPin(inout).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.GetInOutPin(inout).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }
@@ -302,10 +302,10 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
                 nets.GetOutputPin(output)
-                    .GetComponent()
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetOutputPin(output).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.GetOutputPin(output).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }

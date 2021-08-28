@@ -86,9 +86,9 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.UcfPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.Entities = Entities;

@@ -58,7 +58,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         return Contents.get();
       }
     }
-    if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
+    if (ComponentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
       Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetNetName(ComponentInfo, 1, true, Nets));
       Contents.add("");
@@ -70,20 +70,20 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       StringBuilder Replacement = new StringBuilder();
       String type =
           (String)
-              ComponentInfo.GetComponent()
+              ComponentInfo.getComponent()
                   .getAttributeSet()
                   .getValue(BitExtender.ATTR_TYPE)
                   .getValue();
       if (type.equals("zero")) Replacement.append(HDL.zeroBit());
       if (type.equals("one")) Replacement.append(HDL.oneBit());
       if (type.equals("sign")) {
-        if (ComponentInfo.getEnd(1).NrOfBits() > 1) {
+        if (ComponentInfo.getEnd(1).nrOfBits() > 1) {
           Replacement.append(
               GetBusEntryName(
                   ComponentInfo,
                   1,
                   true,
-                  ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth() - 1,
+                  ComponentInfo.getComponent().getEnd(1).getWidth().getWidth() - 1,
                   Nets));
         } else {
           Replacement.append(GetNetName(ComponentInfo, 1, true, Nets));
@@ -91,9 +91,9 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       }
       if (type.equals("input"))
         Replacement.append(GetNetName(ComponentInfo, 2, true, Nets));
-      for (int bit = 0; bit < ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth(); bit++) {
-        if (bit < ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth()) {
-          if (ComponentInfo.getEnd(1).NrOfBits() > 1) {
+      for (int bit = 0; bit < ComponentInfo.getComponent().getEnd(0).getWidth().getWidth(); bit++) {
+        if (bit < ComponentInfo.getComponent().getEnd(1).getWidth().getWidth()) {
+          if (ComponentInfo.getEnd(1).nrOfBits() > 1) {
             Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), GetBusEntryName(ComponentInfo, 1, true, bit, Nets));
           } else {
             Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets) + GetNetName(ComponentInfo, 1, true, Nets));
