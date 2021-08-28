@@ -138,7 +138,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "          s_OEReg            <= OE;");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
-          contents.add("         s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
+          contents.add("         s_ByteEnableReg({{1}}) <= ByteEnable{{1}}};", i);
       }
       contents
           .addLines(
@@ -161,7 +161,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("Mem%1$d : PROCESS(Clock, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
+              .add("Mem{{1}} : PROCESS(Clock, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
               .add("BEGIN")
               .add("   IF (Clock'event AND (Clock = '1')) THEN")
               .add("      IF (s_we_{{1}} = '1') THEN", i);
@@ -203,7 +203,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("Res{{1}} : PROCESS(Clock, s_byte_enable_{{1}}, s_ram_data_out)", i)
               .add("BEGIN")
               .add("   IF (Clock'event AND (Clock = '1')) THEN")
-              .add("      IF (s_byte_enable_%s = '1') THEN", i);
+              .add("      IF (s_byte_enable_{{1}} = '1') THEN", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -213,7 +213,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("         DataOut({{1}} DOWNTO {{2}}) <= s_ram_data_out({{1}} DOWNTO {{2}});", endIndex, startIndex)
               .add("      END IF;")
               .add("   END IF;")
-              .add("END PROCESS Res%d;", i)
+              .add("END PROCESS Res{{1}};", i)
               .empty();
         }
       } else {
