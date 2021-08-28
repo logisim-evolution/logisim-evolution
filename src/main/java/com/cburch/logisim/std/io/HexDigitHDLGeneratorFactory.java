@@ -46,12 +46,12 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
     final var contents =
         (new LineBuffer())
-            .addPair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
-            .addPair("bubbleBusName", bubbleBusName)
-            .addPair("startId", startId)
-            .addPair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)))
-            .addPair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
-            .addPair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
+            .pair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
+            .pair("bubbleBusName", bubbleBusName)
+            .pair("startId", startId)
+            .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)))
+            .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
+            .pair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
 
     if (HDL.isVHDL()) {
       contents.add("");

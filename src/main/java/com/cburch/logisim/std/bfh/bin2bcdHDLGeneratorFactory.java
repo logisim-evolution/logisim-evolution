@@ -146,7 +146,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .addPair("nrOfBits", NR_OF_BITS_STR);
+            .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
     if (HDL.isVHDL()) {
@@ -258,13 +258,13 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
     return (new LineBuffer())
-        .addPair("srcName", srcName)
-        .addPair("srcStartId", srcStartId)
-        .addPair("srcDownTo", (srcStartId - 3))
-        .addPair("destName", destName)
-        .addPair("destStartId", destStartId)
-        .addPair("destDownTo", (destStartId - 3))
-        .addPair("proc", processName)
+        .pair("srcName", srcName)
+        .pair("srcStartId", srcStartId)
+        .pair("srcDownTo", (srcStartId - 3))
+        .pair("destName", destName)
+        .pair("destStartId", destStartId)
+        .pair("destDownTo", (destStartId - 3))
+        .pair("proc", processName)
         .addLines(
             "",
             "ADD3_{{proc}} : PROCESS({{srcName}})",

@@ -135,7 +135,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             "end");
       } else {
         contents
-            .addPair("activityLevel", ACTIVITY_LEVEL_STR)
+            .pair("activityLevel", ACTIVITY_LEVEL_STR)
             .addLines(
                 "always @(*)",
                 "begin",

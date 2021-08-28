@@ -116,7 +116,7 @@ public class LineBufferTest extends TestBase {
     final var bar = getRandomInt(0, 100);
 
     final var lb = (new LineBuffer())
-            .addPair("pair", pair)
+            .pair("pair", pair)
             .add("{{pair}}-{{1}}-{{2}}", foo, bar);
     System.out.println(lb.toString());
     assertEquals(1, lb.size());
@@ -173,7 +173,7 @@ public class LineBufferTest extends TestBase {
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer(pairs);
       lb.add(test.getKey());
-      final var expected = new LineBuffer(test.getValue(), pairs);
+      final var expected = (new LineBuffer()).add(test.getValue(), pairs);
       assertEquals(expected, lb);
     }
   }

@@ -61,9 +61,9 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
       if (i == 7) space = "";
-      contents.addPair("bin", IntToBin(i, nrOfSelectBits))
-              .addPair("space", space)
-              .addPair("i", i);
+      contents.pair("bin", IntToBin(i, nrOfSelectBits))
+              .pair("space", space)
+              .pair("i", i);
       if (HDL.isVHDL()) {
         contents.addLines(
             "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",

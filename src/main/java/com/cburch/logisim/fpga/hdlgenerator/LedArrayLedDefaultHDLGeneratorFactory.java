@@ -47,12 +47,12 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
         (new LineBuffer())
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("ledsCount", nrOfRows * nrOfColumns)
-            .addPair("rows", nrOfRows)
-            .addPair("cols", nrOfColumns)
-            .addPair("activeLow", activeLow)
-            .addPair("activeLowVal", activeLow ? "1" : "0");
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("ledsCount", nrOfRows * nrOfColumns)
+            .pair("rows", nrOfRows)
+            .pair("cols", nrOfColumns)
+            .pair("activeLow", activeLow)
+            .pair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -69,8 +69,8 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getPortMap(int id) {
     final var map =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
       map.addLines(
           "PORT MAP ( {{outs}} => {{outs}}{{id}},",
@@ -109,8 +109,8 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
     if (HDL.isVHDL()) {
       contents.addLines(

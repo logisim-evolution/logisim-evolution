@@ -48,55 +48,73 @@ public class LineBuffer implements RandomAccess {
 
   private ArrayList<String> contents = new java.util.ArrayList<String>();
 
-  public LineBuffer(String line) {
-    add(line);
-  }
+  /* ********************************************************************************************* */
 
-  public LineBuffer(String line, Pairs pairs) {
-    withPairs(pairs);
-    add(line);
-  }
-
+  /**
+   * Default constructor.
+   */
   public LineBuffer() {
     super();
   }
 
-  public LineBuffer(Pairs pairs) {
-    super();
-    withPairs(pairs);
+  /**
+   * Construct LineBuffer with line added to the container.
+   * @param line text line to be added to buffer
+   */
+  public LineBuffer(String line) {
+    add(line);
   }
 
+  /**
+   * Constructs LineBuffer instance, then sets placeholder pairs and adds given text line to the
+   * container. Note, that because placeholder pairs are set first, you can instantly use these
+   * placeholders in your line. Also note that
+   *
+   * @param line Text line to be added.
+   * @param pairs Placeholder pairs to be used.
+   */
+//  public LineBuffer(String line, Pairs pairs) {
+//    withPairs(pairs);
+//    add(line);
+//  }
+
+
+  /**
+   * Constructs LineBuffer instance, then adds provided placeholders pairs to be used with the instance.
+   *
+   * @param pairs Placeholder pairs to be used.
+   */
+  public LineBuffer(Pairs pairs) {
+    super();
+    addPairs(pairs);
+  }
+
+  /**
+   * Returns number of unique pairs stored already.
+   * @return number of pairs.
+   */
   public int size() {
     return contents.size();
   }
 
   protected Pairs pairs = new Pairs();
 
-  public LineBuffer withHdlPairs() {
-    return addPair("assign", HDL.assignPreamble())
-        .addPair("=", HDL.assignOperator())
-        .addPair("or", HDL.orOperator())
-        .addPair("and", HDL.andOperator())
-        .addPair("not", HDL.notOperator())
-        .addPair("bracketOpen", HDL.BracketOpen())
-        .addPair("bracketClose", HDL.BracketClose())
-        .addPair("<", HDL.BracketOpen())
-        .addPair(">", HDL.BracketClose())
-        .addPair("0b", HDL.zeroBit())
-        .addPair("1b", HDL.oneBit());
+  public LineBuffer addHdlPairs() {
+    return pair("assign", HDL.assignPreamble())
+        .pair("=", HDL.assignOperator())
+        .pair("or", HDL.orOperator())
+        .pair("and", HDL.andOperator())
+        .pair("not", HDL.notOperator())
+        .pair("bracketOpen", HDL.BracketOpen())
+        .pair("bracketClose", HDL.BracketClose())
+        .pair("<", HDL.BracketOpen())
+        .pair(">", HDL.BracketClose())
+        .pair("0b", HDL.zeroBit())
+        .pair("1b", HDL.oneBit());
   }
 
-  public Pairs withPairs() {
-    return pairs;
-  }
-
-  public LineBuffer withPairs(Pairs pairs) {
+  public LineBuffer addPairs(Pairs pairs) {
     this.pairs = pairs;
-    return this;
-  }
-
-  public LineBuffer withPair(String key, Object value) {
-    final var map = new Pairs(key, value);
     return this;
   }
 
@@ -176,6 +194,7 @@ public class LineBuffer implements RandomAccess {
    * Adds single line to the content buffer.
    *
    * @param line String to be added to the content buffer.
+   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line) {
@@ -199,6 +218,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @param fmt Formatting string as accepted by String.format()
    * @param args Optional arguments
+   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
@@ -215,6 +235,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @param format Formatting string. Wrap keys in `{{` and `}}`.
    * @param pairs Search-Replace map.
+   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
@@ -231,6 +252,18 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
+  /**
+   *
+   * Adds each argument to be added as separate line to the buffer.
+   *
+   * Note: I had to use different name than add() for this particular method,
+   * as its signature takes over the `add(String fmt, Obj... args)` which in turn
+   * ends up placeholders keys being left unhandled.
+   *
+   * @param lines lines to be added to the buffer.
+   *
+   * @return Instance of self for easy chaining.
+   */
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
   }
@@ -284,27 +317,44 @@ public class LineBuffer implements RandomAccess {
   }
 
 
+  /**
+   * Returns specified line of the content buffer present at index position.
+   *
+   * @return elment
+   *
+   * @throws IndexOutOfBoundsException
+   */
   public String get(int index) {
     return contents.get(index);
   }
 
   /**
-   * Returns content buffer as ArrayList()
+   * Returns whole content buffer as ArrayList(). Content is returned as-is, no additional
+   * processing happens.
    *
-   * @return
+   * @return unindented content of the buffer.
    */
   public ArrayList<String> get() {
     return contents;
   }
 
+  /**
+   * Returns content buffer as ArrayList(), with each line indented by `DEFAULT_INDENT` using
+   * `DEFAULT_INDENT_STR` as a indentation character.
+   *
+   * @return indented content of the buffer.
+   */
   public ArrayList<String> getWithIndent() {
     return getWithIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
   }
 
   /**
-   * Returns content buffer as ArrayList() with every single entry prefixed by `howMany` spaces.
+   * Returns content buffer as ArrayList() with every single entry prefixed by `howMany` characters
+   * of `DEFAULT_INDENT_STR`.
    *
    * @param howMany Number of spaces to prefix each line with.
+   *
+   * @return indented content of the buffer.
    */
   public ArrayList<String> getWithIndent(int howMany) {
     return getWithIndent(howMany, DEFAULT_INDENT_STR);
@@ -317,7 +367,8 @@ public class LineBuffer implements RandomAccess {
    * @param howMany Number of times `indent` string should be repeated to form the final indent
    *     string.
    * @param indent Indent string.
-   * @return
+   *
+   * @return indented content of the buffer.
    */
   public ArrayList<String> getWithIndent(int howMany, String indent) {
     return getWithIndent(indent.repeat(howMany));
@@ -448,15 +499,7 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  public LineBuffer addPairs(Pairs pairs) {
-    for (final var pair : pairs.entrySet()) {
-      addPair(pair.getKey(), pair.getValue());
-    }
-
-    return this;
-  }
-
-  public LineBuffer addPair(String key, Object value) {
+  public LineBuffer pair(String key, Object value) {
     pairs.add(key, value);
     return this;
   }
