@@ -44,21 +44,22 @@ jobs:
 
           sudo pip install trans-tool
           trans-tool --version
+          
+          # Declare constants
+          declare -r resources_path="src/main/resources/resources/logisim/"
+          declare -r base_language="en"
 
           # Get all Logisim's localization base (EN) files
-          declare -r base_files=$(find src/main/resources/resources/logisim/* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
+          declare -r base_files=$(find ${resources_path}* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
 
           # Read currently supported languages from settings.properties
-          declare -r langs_list="$(cat src/main/resources/resources/logisim/settings.properties | cut -d  ' ' -f3-) "
-
-          # Remove base language from list
-          declare -r langs="${langs_list//en /}"
+          declare -r langs="$(cut -d  ' ' -f3- < "${resources_path}settings.properties")"
 
           # Validate.
           failed=
           for file in ${base_files}; do
             # Keep validating even if previous run failed, so we can have complete report.
-            trans-tool -l ${langs} -b "${file}" >> /tmp/report.txt || failed="YES"
+            trans-tool -l "${langs}" -ls "${base_language}" -b "${file}" >> /tmp/report.txt || failed="YES"
           done
 
           if [[ "${failed}" == "YES" ]]; then
