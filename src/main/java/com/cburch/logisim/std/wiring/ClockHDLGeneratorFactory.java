@@ -119,12 +119,12 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Contents.add("").addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
       Contents.addLines(
-          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
+          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';",
           "s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
           "                       WHEN s_counter_is_zero = '0' ELSE",
-          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBitsStr}}))",
+          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBits}}))",
           "                       WHEN s_derived_clock_reg(0) = '1' ELSE",
-          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBitsStr}}));"
+          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBits}}));"
       );
     } else {
       Contents.addLines(
