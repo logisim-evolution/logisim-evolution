@@ -47,9 +47,9 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       NetlistComponent ComponentInfo,
       String CircuitName) {
     final var Contents = new LineBuffer();
-    int NrOfPins = ComponentInfo.NrOfEnds();
+    int NrOfPins = ComponentInfo.nrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
-      if (!ComponentInfo.EndIsConnected(i)) {
+      if (!ComponentInfo.isEndConnected(i)) {
         Reporter.Report.AddError(
             "Bit Extender component has floating input connection in circuit \""
                 + CircuitName

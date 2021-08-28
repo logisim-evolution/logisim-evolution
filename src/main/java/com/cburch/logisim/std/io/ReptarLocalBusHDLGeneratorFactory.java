@@ -186,22 +186,22 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInOutBubbleBusname,
-            ComponentInfo.GetLocalBubbleInOutEndId(),
-            ComponentInfo.GetLocalBubbleInOutStartId()));
+            ComponentInfo.getLocalBubbleInOutEndId(),
+            ComponentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInputBubbleBusname,
-            ComponentInfo.GetLocalBubbleInputEndId(),
-            ComponentInfo.GetLocalBubbleInputStartId()));
+            ComponentInfo.getLocalBubbleInputEndId(),
+            ComponentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalOutputBubbleBusname
-                + ComponentInfo.GetLocalBubbleOutputEndId()
-                + ComponentInfo.GetLocalBubbleOutputStartId()));
+                + ComponentInfo.getLocalBubbleOutputEndId()
+                + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
         GetNetMap(
             "SP6_LB_nCS3_o",

@@ -122,6 +122,7 @@ public class VhdlContent extends HdlContent {
     ports = new ArrayList<>();
   }
 
+  @Override
   public VhdlContent clone() {
     try {
       VhdlContent ret = (VhdlContent) super.clone();
@@ -225,7 +226,7 @@ public class VhdlContent extends HdlContent {
   public static boolean labelVHDLInvalid(String label) {
     if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
-    return CorrectLabel.VHDLKeywords.contains(label.toLowerCase());
+    return CorrectLabel.VHDL_KEYWORDS.contains(label.toLowerCase());
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
@@ -234,7 +235,7 @@ public class VhdlContent extends HdlContent {
         || label.endsWith("_")
         || label.matches(".*__.*")) {
       err = S.get("vhdlInvalidNameError");
-    } else if (CorrectLabel.VHDLKeywords.contains(label.toLowerCase())) {
+    } else if (CorrectLabel.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       err = S.get("vhdlKeywordNameError");
     } else if (file != null && file.containsFactory(label)) {
       err = S.get("vhdlDuplicateNameError");

@@ -113,7 +113,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     final var ClockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(ClockPinIndex)) {
+    if (!comp.isEndConnected(ClockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \"TTL74165\" in circuit \""
               + nets.getCircuitName()

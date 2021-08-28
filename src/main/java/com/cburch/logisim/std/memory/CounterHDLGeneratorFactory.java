@@ -258,7 +258,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var componentInfo = (NetlistComponent) mapInfo;
     final var attrs = componentInfo.GetComponent().getAttributeSet();
-    if (!componentInfo.EndIsConnected(Counter.CK)) {
+    if (!componentInfo.isEndConnected(Counter.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
               + nets.getCircuitName()

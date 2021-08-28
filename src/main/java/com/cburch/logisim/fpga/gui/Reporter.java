@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class Reporter {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddError(Object Message) {
@@ -64,7 +64,7 @@ public class Reporter {
       if (Message instanceof String) logger.error((String) Message);
     } else {
       if (Message instanceof String)
-        myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
+        myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL));
       else myCommander.AddErrors(Message);
     }
   }
@@ -73,14 +73,14 @@ public class Reporter {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
+      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_FATAL));
   }
 
   public void AddSevereError(String Message) {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddInfo(String Message) {
@@ -94,7 +94,7 @@ public class Reporter {
     if (myCommander == null)
       logger.warn(Message);
     else
-      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.AddWarning(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddWarningIncrement(String Message) {
@@ -102,7 +102,7 @@ public class Reporter {
       logger.warn(Message);
     else
       myCommander.AddWarning(
-          new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+          new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddWarning(Object Message) {
@@ -110,7 +110,7 @@ public class Reporter {
       if (Message instanceof String) logger.warn((String) Message);
     } else {
       if (Message instanceof String)
-        myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
+        myCommander.AddWarning(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL));
       else myCommander.AddWarning(Message);
     }
   }

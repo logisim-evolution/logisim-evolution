@@ -258,7 +258,7 @@ public class Netlist implements CircuitListener {
       int subInputBubbles = sub.getSubcircuit().getNetList().NumberOfInputBubbles();
       int subInOutBubbles = sub.getSubcircuit().getNetList().NumberOfInOutBubbles();
       int subOutputBubbles = sub.getSubcircuit().getNetList().NumberOfOutputBubbles();
-      comp.SetLocalBubbleID(
+      comp.setLocalBubbleID(
           LocalNrOfInportBubles,
           subInputBubbles,
           LocalNrOfOutportBubles,
@@ -268,7 +268,7 @@ public class Netlist implements CircuitListener {
       LocalNrOfInportBubles += subInputBubbles;
       LocalNrOfInOutBubles += subInOutBubbles;
       LocalNrOfOutportBubles += subOutputBubbles;
-      comp.AddGlobalBubbleID(
+      comp.addGlobalBubbleId(
           MyHierarchyName,
           GlobalInputID,
           subInputBubbles,
@@ -291,15 +291,15 @@ public class Netlist implements CircuitListener {
      * we have to process the IO components
      */
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
+      if (comp.getMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
-        comp.SetLocalBubbleID(
+        int subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
+        int subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
+        int subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        comp.setLocalBubbleID(
             LocalNrOfInportBubles,
             subInputBubbles,
             LocalNrOfOutportBubles,
@@ -309,7 +309,7 @@ public class Netlist implements CircuitListener {
         LocalNrOfInportBubles += subInputBubbles;
         LocalNrOfInOutBubles += subInOutBubbles;
         LocalNrOfOutportBubles += subOutputBubbles;
-        comp.AddGlobalBubbleID(
+        comp.addGlobalBubbleId(
             MyHierarchyName,
             GlobalInputID,
             subInputBubbles,
@@ -327,7 +327,7 @@ public class Netlist implements CircuitListener {
   public int DesignRuleCheckResult(boolean IsTopLevel, ArrayList<String> Sheetnames) {
     ArrayList<String> CompName = new ArrayList<>();
     Map<String, Component> Labels = new HashMap<>();
-    ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
+    ArrayList<simpleDRCContainer> drc = new ArrayList<>();
     int CommonDRCStatus = DRC_PASSED;
     /* First we go down the tree and get the DRC status of all sub-circuits */
     for (Circuit circ : MySubCircuitMap.keySet()) {
@@ -372,41 +372,41 @@ public class Netlist implements CircuitListener {
       }
     }
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_noLabel"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_noLabel"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_CompNameIsLabel"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_CompNameIsLabel"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_LabelInvalid"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_LabelInvalid"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_DuplicatedLabels"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_DuplicatedLabels"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_Tristate"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_Tristate"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("HDL_unsupported"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("HDL_unsupported"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE));
     for (Component comp : MyCircuit.getNonWires()) {
       /*
        * Here we check if the components are supported for the HDL
@@ -433,7 +433,7 @@ public class Netlist implements CircuitListener {
             drc.get(1).AddMarkComponent(comp);
             DRCStatus |= DRC_ERROR;
           }
-          if (!CorrectLabel.IsCorrectLabel(Label)) {
+          if (!CorrectLabel.isCorrectLabel(Label)) {
             /* this should not happen anymore */
             drc.get(2).AddMarkComponent(comp);
             DRCStatus |= DRC_ERROR;
@@ -452,7 +452,7 @@ public class Netlist implements CircuitListener {
             drc.get(1).AddMarkComponent(comp);
             DRCStatus |= DRC_ERROR;
           }
-          if (!CorrectLabel.IsCorrectLabel(
+          if (!CorrectLabel.isCorrectLabel(
               comp.getFactory().getName(),
               S.get("FoundBadComponent", comp.getFactory().getName(), MyCircuit.getName()))) {
             DRCStatus |= DRC_ERROR;
@@ -472,7 +472,7 @@ public class Netlist implements CircuitListener {
         DRCStatus |= DRC_ERROR;
       }
     }
-    for (SimpleDRCContainer simpleDRCContainer : drc)
+    for (com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer simpleDRCContainer : drc)
       if (simpleDRCContainer.DRCInfoPresent())
         Reporter.Report.AddError(simpleDRCContainer);
     drc.clear();
@@ -504,16 +504,16 @@ public class Netlist implements CircuitListener {
     /* Check for unconnected input pins on components and generate warnings */
     for (NetlistComponent comp : MyComponents) {
       boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
+      for (int j = 0; j < comp.nrOfEnds(); j++) {
+        if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInputs"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_UnconnectedInputs"),
+                    simpleDRCContainer.LEVEL_NORMAL,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(comp.GetComponent());
         Reporter.Report.AddWarning(warn);
       }
@@ -521,16 +521,16 @@ public class Netlist implements CircuitListener {
     /* Check for unconnected input pins on subcircuits and generate warnings */
     for (NetlistComponent comp : MySubCircuits) {
       boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
+      for (int j = 0; j < comp.nrOfEnds(); j++) {
+        if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInputs"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_UnconnectedInputs"),
+                    simpleDRCContainer.LEVEL_SEVERE,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(comp.GetComponent());
         Reporter.Report.AddWarning(warn);
       }
@@ -538,16 +538,16 @@ public class Netlist implements CircuitListener {
     /* Check for unconnected input pins in my circuit and generate warnings */
     for (NetlistComponent comp : MyInputPorts) {
       boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (!comp.EndIsConnected(j)) openInputs = true;
+      for (int j = 0; j < comp.nrOfEnds(); j++) {
+        if (!comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInput"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_UnconnectedInput"),
+                    simpleDRCContainer.LEVEL_NORMAL,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(comp.GetComponent());
         Reporter.Report.AddWarning(warn);
       }
@@ -555,16 +555,16 @@ public class Netlist implements CircuitListener {
     /* Check for unconnected output pins in my circuit and generate warnings */
     for (NetlistComponent comp : MyOutputPorts) {
       boolean openOutputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (!comp.EndIsConnected(j)) openOutputs = true;
+      for (int j = 0; j < comp.nrOfEnds(); j++) {
+        if (!comp.isEndConnected(j)) openOutputs = true;
       }
       if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedOutput"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_UnconnectedOutput"),
+                    simpleDRCContainer.LEVEL_NORMAL,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(comp.GetComponent());
         Reporter.Report.AddWarning(warn);
       }
@@ -627,24 +627,24 @@ public class Netlist implements CircuitListener {
           .getNetList()
           .EnumerateGlobalBubbleTree(
               MyHierarchyName,
-              StartInputID + comp.GetLocalBubbleInputStartId(),
-              StartOutputID + comp.GetLocalBubbleOutputStartId(),
-              StartInOutID + comp.GetLocalBubbleInOutStartId());
+              StartInputID + comp.getLocalBubbleInputStartId(),
+              StartOutputID + comp.getLocalBubbleOutputStartId(),
+              StartInOutID + comp.getLocalBubbleInOutStartId());
     }
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
+      if (comp.getMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
-        comp.AddGlobalBubbleID(
+        int subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
+        int subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
+        int subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        comp.addGlobalBubbleId(
             MyHierarchyName,
-            StartInputID + comp.GetLocalBubbleInputStartId(),
+            StartInputID + comp.getLocalBubbleInputStartId(),
             subInputBubbles,
-            StartOutputID + comp.GetLocalBubbleOutputStartId(),
+            StartOutputID + comp.getLocalBubbleOutputStartId(),
             subOutputBubbles,
             StartInOutID,
             subInOutBubbles);
@@ -662,7 +662,7 @@ public class Netlist implements CircuitListener {
   }
 
   private boolean GenerateNetlist() {
-    ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
+    ArrayList<simpleDRCContainer> drc = new ArrayList<>();
     boolean errors = false;
     CircuitName = MyCircuit.getName();
     JProgressBar progress = Reporter.Report.getProgressBar();
@@ -702,17 +702,17 @@ public class Netlist implements CircuitListener {
     Set<Component> TunnelList = new HashSet<>();
     MyComplexSplitters.clear();
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_IOError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_IOError"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_BitwidthError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_BitwidthError"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_WIRE));
     for (Component com : components) {
       /*
        * We do not process the splitter and tunnel, they are processed
@@ -769,7 +769,7 @@ public class Netlist implements CircuitListener {
         }
       }
     }
-    for (SimpleDRCContainer simpleDRCContainer : drc) {
+    for (com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer simpleDRCContainer : drc) {
       if (simpleDRCContainer.DRCInfoPresent()) {
         errors = true;
         Reporter.Report.AddError(simpleDRCContainer);
@@ -787,11 +787,11 @@ public class Netlist implements CircuitListener {
      * a Splitter if it is connected to either of them
      */
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetAdd_ComponentWidthMismatch"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetAdd_ComponentWidthMismatch"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_INSTANCE));
     Map<Location, Integer> Points = new HashMap<>();
     for (Component comp : components) {
       for (EndData end : comp.getEnds()) {
@@ -840,11 +840,11 @@ public class Netlist implements CircuitListener {
     }
     drc.clear();
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetMerge_BitWidthError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetMerge_BitWidthError"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_WIRE));
     if (TunnelsPresent) {
       Iterator<Net> NetIterator = MyNets.listIterator();
       while (NetIterator.hasNext()) {
@@ -854,7 +854,7 @@ public class Netlist implements CircuitListener {
           Iterator<Net> SearchIterator = MyNets.listIterator(MyNets.indexOf(ThisNet) + 1);
           while (SearchIterator.hasNext() && !merged) {
             Net SearchNet = SearchIterator.next();
-            for (String name : ThisNet.TunnelNames()) {
+            for (String name : ThisNet.getTunnelNames()) {
               if (SearchNet.ContainsTunnel(name) && !merged) {
                 merged = true;
                 if (!SearchNet.merge(ThisNet)) {
@@ -904,12 +904,12 @@ public class Netlist implements CircuitListener {
           }
         }
         if (FoundDuplicate) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_duplicatedSplitter"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_duplicatedSplitter"),
+                      simpleDRCContainer.LEVEL_SEVERE,
+                      simpleDRCContainer.MARK_INSTANCE);
           warn.AddMarkComponent(ThisSplitter);
           Reporter.Report.AddWarning(warn);
           MySplitIterator.remove();
@@ -922,11 +922,11 @@ public class Netlist implements CircuitListener {
     drc.clear();
     Iterator<Net> NetIterator = MyNets.listIterator();
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_emptynets"),
-            SimpleDRCContainer.LEVEL_NORMAL,
-            SimpleDRCContainer.MARK_WIRE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_emptynets"),
+                simpleDRCContainer.LEVEL_NORMAL,
+                simpleDRCContainer.MARK_WIRE));
     while (NetIterator.hasNext()) {
       Net wire = NetIterator.next();
       if (wire.BitWidth() == 0) {
@@ -942,11 +942,11 @@ public class Netlist implements CircuitListener {
     // mark those who are not correctly connected and remove both versions from the set.
     drc.clear();
     drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_ShortCircuit"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
+        new simpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_ShortCircuit"),
+                simpleDRCContainer.LEVEL_FATAL,
+                simpleDRCContainer.MARK_WIRE));
     errors = false;
     while (MySplitIterator.hasNext()) {
       Component mySplitter = MySplitIterator.next();
@@ -1018,12 +1018,12 @@ public class Netlist implements CircuitListener {
           issueWarning = true;
         }
         if (issueWarning) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_NoSplitterConnection"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_NoSplitterConnection"),
+                      simpleDRCContainer.LEVEL_SEVERE,
+                      simpleDRCContainer.MARK_INSTANCE);
           warn.AddMarkComponent(mySplitter);
           Reporter.Report.AddWarning(warn);
         }
@@ -1107,22 +1107,22 @@ public class Netlist implements CircuitListener {
         }
       }
       if (unconnectedEnds) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_NoSplitterEndConnections"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_NoSplitterEndConnections"),
+                    simpleDRCContainer.LEVEL_NORMAL,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(com);
         Reporter.Report.AddWarning(warn);
       }
       if (connectedUnknownEnds) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_NoEndSplitterConnections"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_NoEndSplitterConnections"),
+                    simpleDRCContainer.LEVEL_SEVERE,
+                    simpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(com);
         Reporter.Report.AddWarning(warn);
       }
@@ -1138,7 +1138,7 @@ public class Netlist implements CircuitListener {
      * sources and sinks at the root nets/buses
      */
     for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
+      if (ThisNet.isRootNet()) {
         ThisNet.InitializeSourceSinks();
       }
     }
@@ -1176,7 +1176,7 @@ public class Netlist implements CircuitListener {
      * cycle trough all these nets
      */
     for (Net thisnet : MyNets) {
-      if (thisnet.IsForcedRootNet()) {
+      if (thisnet.isForcedRootNet()) {
         /* Cycle through all the bits of this net */
         for (int bit = 0; bit < thisnet.BitWidth(); bit++) {
           for (Component comp : MyComplexSplitters) {
@@ -1237,7 +1237,7 @@ public class Netlist implements CircuitListener {
                 byte ConnectedBusIndex = IndexBits.get(bit);
                 /* Figure out the rootbusid and rootbusindex */
                 Net Rootbus = MyNets.get(ConnectedBus);
-                while (!Rootbus.IsRootNet()) {
+                while (!Rootbus.isRootNet()) {
                   ConnectedBusIndex = Rootbus.getBit(ConnectedBusIndex);
                   Rootbus = Rootbus.getParent();
                 }
@@ -1311,7 +1311,7 @@ public class Netlist implements CircuitListener {
   public int GetEndIndex(NetlistComponent comp, String PinLabel, boolean IsOutputPort) {
     String label = CorrectLabel.getCorrectLabel(PinLabel);
     SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-    for (int end = 0; end < comp.NrOfEnds(); end++) {
+    for (int end = 0; end < comp.nrOfEnds(); end++) {
       if (comp.getEnd(end).IsOutputEnd() == IsOutputPort) {
         if (comp.getEnd(end).GetConnection((byte) 0).getChildsPortIndex()
             == sub.getSubcircuit().getNetList().GetPortInfo(label)) {
@@ -1339,8 +1339,8 @@ public class Netlist implements CircuitListener {
     } else {
       HandledNets.add(NetId);
     }
-    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.IsRootNet()) {
-      result.addAll(thisNet.GetBitSinks(bitIndex));
+    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.isRootNet()) {
+      result.addAll(thisNet.getBitSinks(bitIndex));
     }
     /* Check if we have a connection to another splitter */
     for (Component currentSplitter : SplitterList) {
@@ -1444,7 +1444,7 @@ public class Netlist implements CircuitListener {
     }
     /* Now we search for all local IO components */
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
+      if (comp.getMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
@@ -1511,7 +1511,7 @@ public class Netlist implements CircuitListener {
               search.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (CircuitLabel.equals(Label)) {
         /* Found the component, let's search the ends */
-        for (int i = 0; i < search.NrOfEnds(); i++) {
+        for (int i = 0; i < search.nrOfEnds(); i++) {
           ConnectionEnd ThisEnd = search.getEnd(i);
           if (ThisEnd.IsOutputEnd() && (bitindex < ThisEnd.NrOfBits())) {
             if (ThisEnd.GetConnection(bitindex).getChildsPortIndex() == PortIndex) {
@@ -1532,7 +1532,7 @@ public class Netlist implements CircuitListener {
               search.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (CircuitLabel.equals(Label)) {
         /* Found the component, let's search the ends */
-        for (int i = 0; i < search.NrOfEnds(); i++) {
+        for (int i = 0; i < search.nrOfEnds(); i++) {
           ConnectionEnd ThisEnd = search.getEnd(i);
           if (!ThisEnd.IsOutputEnd() && (bitindex < ThisEnd.NrOfBits())) {
             if (ThisEnd.GetConnection(bitindex).getChildsPortIndex() == PortIndex) {
@@ -1589,11 +1589,11 @@ public class Netlist implements CircuitListener {
     if (Child == null) {
       return null;
     }
-    if (Child.IsRootNet()) {
+    if (Child.isRootNet()) {
       return Child;
     }
     Net RootNet = Child.getParent();
-    while (!RootNet.IsRootNet()) {
+    while (!RootNet.isRootNet()) {
       RootNet = RootNet.getParent();
     }
     return RootNet;
@@ -1606,12 +1606,12 @@ public class Netlist implements CircuitListener {
     if ((BitIndex < 0) || (BitIndex > Child.BitWidth())) {
       return -1;
     }
-    if (Child.IsRootNet()) {
+    if (Child.isRootNet()) {
       return BitIndex;
     }
     Net RootNet = Child.getParent();
     byte RootIndex = Child.getBit(BitIndex);
-    while (!RootNet.IsRootNet()) {
+    while (!RootNet.isRootNet()) {
       RootIndex = RootNet.getBit(RootIndex);
       RootNet = RootNet.getParent();
     }
@@ -1834,7 +1834,7 @@ public class Netlist implements CircuitListener {
 
   public boolean IsContinuesBus(NetlistComponent comp, int EndIndex) {
     boolean ContinuesBus = true;
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       return true;
     }
     ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
@@ -1899,7 +1899,7 @@ public class Netlist implements CircuitListener {
     }
     /* Second pass: We mark all clock sources */
     for (NetlistComponent ClockSource : MyClockGenerators) {
-      if (ClockSource.NrOfEnds() != 1) {
+      if (ClockSource.nrOfEnds() != 1) {
         Reporter.Report.AddFatalError(
             "BUG: Found a clock source with more than 1 connection\n ==> "
                 + this.getClass().getName().replaceAll("\\.", "/")
@@ -1943,33 +1943,33 @@ public class Netlist implements CircuitListener {
   public boolean NetlistHasShortCircuits() {
     boolean ret = false;
     for (Net net : MyNets) {
-      if (net.IsRootNet()) {
+      if (net.isRootNet()) {
         if (net.hasShortCircuit()) {
-          SimpleDRCContainer error =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_ShortCircuit"),
-                  SimpleDRCContainer.LEVEL_FATAL,
-                  SimpleDRCContainer.MARK_WIRE);
+          simpleDRCContainer error =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_ShortCircuit"),
+                      simpleDRCContainer.LEVEL_FATAL,
+                      simpleDRCContainer.MARK_WIRE);
           error.AddMarkComponents(net.getWires());
           Reporter.Report.AddError(error);
           ret = true;
-        } else if (net.BitWidth() == 1 && net.GetSourceNets(0).size() > 1) {
+        } else if (net.BitWidth() == 1 && net.getSourceNets(0).size() > 1) {
           /* We have to check if the net is connected to multiple drivers */
-          ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
+          ArrayList<ConnectionPoint> sourceNets = net.getSourceNets(0);
           HashMap<Component, Integer> sourceConnections = new HashMap<>();
           HashSet<Wire> segments = new HashSet<>(net.getWires());
           boolean foundShortCrcuit = false;
-          SimpleDRCContainer error =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_ShortCircuit"),
-                  SimpleDRCContainer.LEVEL_FATAL,
-                  SimpleDRCContainer.MARK_WIRE | SimpleDRCContainer.MARK_INSTANCE);
+          simpleDRCContainer error =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_ShortCircuit"),
+                      simpleDRCContainer.LEVEL_FATAL,
+                      simpleDRCContainer.MARK_WIRE | simpleDRCContainer.MARK_INSTANCE);
           for (ConnectionPoint sourceNet : sourceNets) {
             Net connectedNet = sourceNet.GetParentNet();
             byte bitIndex = sourceNet.GetParentNetBitIndex();
-            if (HasHiddenSource(net, (byte) 0, connectedNet, bitIndex, MyComplexSplitters, 
+            if (HasHiddenSource(net, (byte) 0, connectedNet, bitIndex, MyComplexSplitters,
                 new HashSet<>(), null)) {
               SourceInfo source = GetHiddenSource(net, (byte) 0, connectedNet, bitIndex,
                   MyComplexSplitters, new HashSet<>(), segments, null);
@@ -1991,7 +1991,7 @@ public class Netlist implements CircuitListener {
           if (foundShortCrcuit) {
             ret = true;
             Reporter.Report.AddError(error);
-          } else net.CleanupSourceNets(0);
+          } else net.cleanupSourceNets(0);
         }
       }
     }
@@ -2002,17 +2002,17 @@ public class Netlist implements CircuitListener {
     /* First pass: we make a set with all sinks */
     Set<ConnectionPoint> MySinks = new HashSet<>();
     for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
+      if (ThisNet.isRootNet()) {
         MySinks.addAll(ThisNet.GetSinks());
       }
     }
     /* Second pass: we iterate along all the sources */
     for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
+      if (ThisNet.isRootNet()) {
         for (int i = 0; i < ThisNet.BitWidth(); i++) {
           if (ThisNet.hasBitSource(i)) {
             boolean HasSink = false;
-            ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
+            ArrayList<ConnectionPoint> Sinks = ThisNet.getBitSinks(i);
             HasSink |= !Sinks.isEmpty();
             Sinks.forEach(MySinks::remove);
             ArrayList<ConnectionPoint> HiddenSinkNets =
@@ -2021,12 +2021,12 @@ public class Netlist implements CircuitListener {
             HasSink |= !HiddenSinkNets.isEmpty();
             HiddenSinkNets.forEach(MySinks::remove);
             if (!HasSink) {
-              SimpleDRCContainer warn =
-                  new SimpleDRCContainer(
-                      MyCircuit,
-                      S.get("NetList_SourceWithoutSink"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE);
+              simpleDRCContainer warn =
+                  new simpleDRCContainer(
+                          MyCircuit,
+                          S.get("NetList_SourceWithoutSink"),
+                          simpleDRCContainer.LEVEL_NORMAL,
+                          simpleDRCContainer.MARK_WIRE);
               warn.AddMarkComponents(ThisNet.getWires());
               Reporter.Report.AddWarning(warn);
             }
@@ -2036,12 +2036,12 @@ public class Netlist implements CircuitListener {
     }
     if (MySinks.size() != 0) {
       for (ConnectionPoint Sink : MySinks) {
-        SimpleDRCContainer warn =
-            new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnsourcedSink"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
+        simpleDRCContainer warn =
+            new simpleDRCContainer(
+                    MyCircuit,
+                    S.get("NetList_UnsourcedSink"),
+                    simpleDRCContainer.LEVEL_SEVERE,
+                    simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_WIRE);
         warn.AddMarkComponents(Sink.GetParentNet().getWires());
         if (Sink.GetComp() != null) {
           warn.AddMarkComponent(Sink.GetComp());
@@ -2055,7 +2055,7 @@ public class Netlist implements CircuitListener {
   public int NumberOfBusses() {
     int nr_of_busses = 0;
     for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet() && ThisNet.isBus()) {
+      if (ThisNet.isRootNet() && ThisNet.isBus()) {
         nr_of_busses++;
       }
     }
@@ -2101,7 +2101,7 @@ public class Netlist implements CircuitListener {
   public int NumberOfNets() {
     int nr_of_nets = 0;
     for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet() && !ThisNet.isBus()) {
+      if (ThisNet.isRootNet() && !ThisNet.isBus()) {
         nr_of_nets++;
       }
     }
@@ -2291,7 +2291,7 @@ public class Netlist implements CircuitListener {
               + "\n");
       return false;
     }
-    byte BitIndex = subCirc.GetConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
+    byte BitIndex = subCirc.getConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
     if (BitIndex < 0) {
       Reporter.Report.AddFatalError(
           "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> "
@@ -2353,7 +2353,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
         byte bitindex =
-            OutputPort.GetConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
+            OutputPort.getConnectionBitIndex(p.GetParentNet(), p.GetParentNetBitIndex());
         ConnectionPoint SubClockNet =
             HierarchyNetlists.get(HierarchyNetlists.size() - 2)
                 .GetNetlistConnectionForSubCircuit(
@@ -2427,26 +2427,26 @@ public class Netlist implements CircuitListener {
         Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
         Map<NetlistComponent, Circuit> instances = NotGatedSet.get(key);
         for (NetlistComponent comp : instances.keySet()) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  instances.get(comp),
-                  S.get("NetList_CircuitNotGated"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      instances.get(comp),
+                      S.get("NetList_CircuitNotGated"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_INSTANCE,
+                      true);
           warn.AddMarkComponent(comp.GetComponent());
           Reporter.Report.AddWarning(warn);
         }
         instances = GatedSet.get(key);
         for (NetlistComponent comp : instances.keySet()) {
-          comp.SetIsGatedInstance();
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  instances.get(comp),
-                  S.get("NetList_CircuitGated"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE,
-                  true);
+          comp.setIsGatedInstance();
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      instances.get(comp),
+                      S.get("NetList_CircuitGated"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_INSTANCE,
+                      true);
           warn.AddMarkComponent(comp.GetComponent());
           Reporter.Report.AddWarning(warn);
         }
@@ -2533,13 +2533,13 @@ public class Netlist implements CircuitListener {
         for (int i = 0; i < PinSources.size(); i++) {
           Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_GatedClockSink"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_GatedClockSink"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(PinWires.get(i));
           for (NetlistComponent comp : PinGatedComponents.get(i))
             warn.AddMarkComponent(comp.GetComponent());
@@ -2650,12 +2650,12 @@ public class Netlist implements CircuitListener {
       } else {
         /* Add severe warning, we found a sequential element with an unconnected clock input */
         if (!WarnedComponents.contains(comp)) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_NoClockConnection"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_NoClockConnection"),
+                      simpleDRCContainer.LEVEL_SEVERE,
+                      simpleDRCContainer.MARK_INSTANCE);
           warn.AddMarkComponent(comp.GetComponent());
           Reporter.Report.AddWarning(warn);
           WarnedComponents.add(comp);
@@ -2742,13 +2742,13 @@ public class Netlist implements CircuitListener {
         }
         ComponentFactory sfac = source.getSource().GetComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockInt"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      SubNetList.getCircuit(),
+                      S.get("NetList_GatedClockInt"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(Segments);
           Reporter.Report.AddWarning(warn);
           SubNetList.WarningTraceForGatedClock(
@@ -2757,13 +2757,13 @@ public class Netlist implements CircuitListener {
               NewHierarchyNetlists,
               NewHierarchyNames);
         } else {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockSource"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      SubNetList.getCircuit(),
+                      S.get("NetList_GatedClockSource"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(Segments);
           Reporter.Report.AddWarning(warn);
         }
@@ -2806,7 +2806,7 @@ public class Netlist implements CircuitListener {
                 + "\n");
         return;
       }
-      byte BitIndex = SubCirc.GetConnectionBitIndex(ConnectedNet, (byte) index);
+      byte BitIndex = SubCirc.getConnectionBitIndex(ConnectedNet, (byte) index);
       if (BitIndex < 0) {
         Reporter.Report.AddFatalError(
             "BUG: Unable to find the bit index of a Subcircuit output port!\n ==> "
@@ -2850,13 +2850,13 @@ public class Netlist implements CircuitListener {
         }
         ComponentFactory sfac = source.getSource().GetComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockInt"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      SubNetList.getCircuit(),
+                      S.get("NetList_GatedClockInt"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(Segments);
           Reporter.Report.AddWarning(warn);
           SubNetList.WarningTraceForGatedClock(
@@ -2865,13 +2865,13 @@ public class Netlist implements CircuitListener {
               NewHierarchyNetlists,
               NewHierarchyNames);
         } else {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockSource"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      SubNetList.getCircuit(),
+                      S.get("NetList_GatedClockSource"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(Segments);
           Reporter.Report.AddWarning(warn);
         }
@@ -2895,13 +2895,13 @@ public class Netlist implements CircuitListener {
         if (Sources.get(i).getSource().GetComp().getFactory() instanceof SubcircuitFactory) {
           Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_GatedClockSink"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
-                  true);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      S.get("NetList_GatedClockSink"),
+                      simpleDRCContainer.LEVEL_NORMAL,
+                      simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_WIRE,
+                      true);
           warn.AddMarkComponents(Wires.get(i));
           for (NetlistComponent comp : Components.get(i))
             warn.AddMarkComponent(comp.GetComponent());
@@ -2913,12 +2913,12 @@ public class Netlist implements CircuitListener {
               CurrentHierarchyLevel);
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
         } else {
-          SimpleDRCContainer warn =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  Warning,
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
+          simpleDRCContainer warn =
+              new simpleDRCContainer(
+                      MyCircuit,
+                      Warning,
+                      simpleDRCContainer.LEVEL_SEVERE,
+                      simpleDRCContainer.MARK_INSTANCE | simpleDRCContainer.MARK_WIRE);
           for (NetlistComponent comp : Components.get(i))
             warn.AddMarkComponent(comp.GetComponent());
           warn.AddMarkComponents(Wires.get(i));

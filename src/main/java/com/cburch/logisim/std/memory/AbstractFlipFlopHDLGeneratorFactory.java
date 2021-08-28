@@ -171,7 +171,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var activeLow = false;
     final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -198,9 +198,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var nrOfPins = comp.NrOfEnds();
+    final var nrOfPins = comp.nrOfEnds();
     final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(comp.NrOfEnds() - 5)) {
+    if (!comp.isEndConnected(comp.nrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
@@ -209,7 +209,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, comp.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(comp, comp.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -274,7 +274,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DerivedClockIndex
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.NrOfEnds() - 5, true, Nets));
+        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));

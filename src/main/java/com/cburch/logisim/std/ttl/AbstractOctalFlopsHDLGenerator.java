@@ -115,7 +115,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     var gatedClock = false;
     var hasClock = true;
     final var clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(clockPinIndex)) {
+    if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + getComponentStringIdentifier()

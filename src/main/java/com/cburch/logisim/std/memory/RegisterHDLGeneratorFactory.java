@@ -188,7 +188,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var hasClock = true;
     var activeLow = false;
     final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(Register.CK)) {
+    if (!comp.isEndConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
               + Nets.getCircuitName()

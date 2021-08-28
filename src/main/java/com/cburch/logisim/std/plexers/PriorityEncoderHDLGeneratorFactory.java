@@ -142,7 +142,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = componentInfo.NrOfEnds() - 4;
+    final var nrOfBits = componentInfo.nrOfEnds() - 4;
     final var nrOfSelectBits = componentInfo.GetComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
     map.put(NR_OF_SELECT_BITS_STR, nrOfSelectBits);
     map.put(NR_OF_INPUT_BITS_STR, 1 << nrOfSelectBits);
@@ -154,7 +154,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var nrOfBits = comp.NrOfEnds() - 4;
+    final var nrOfBits = comp.nrOfEnds() - 4;
     map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {

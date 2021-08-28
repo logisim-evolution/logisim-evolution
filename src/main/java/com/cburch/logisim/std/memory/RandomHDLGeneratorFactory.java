@@ -239,7 +239,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    if (!comp.EndIsConnected(Random.CK)) {
+    if (!comp.isEndConnected(Random.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()

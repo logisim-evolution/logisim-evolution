@@ -309,7 +309,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     final var attrs = comp.GetComponent().getAttributeSet();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    if (!comp.EndIsConnected(ShiftRegister.CK)) {
+    if (!comp.isEndConnected(ShiftRegister.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Shift Register\" in circuit \""
               + nets.getCircuitName()
