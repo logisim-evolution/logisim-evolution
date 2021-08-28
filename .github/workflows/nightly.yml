@@ -103,7 +103,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 14
+          java-version: 16
           distribution: 'adopt'
 
       # ###########################################################################################
@@ -122,7 +122,7 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
-          name: ${{ needs.git_check.outputs.base_name }}-all_jdk14.jar
+          name: ${{ needs.git_check.outputs.base_name }}-all_jdk15.jar
 
       # ###########################################################################################
 
@@ -200,7 +200,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 14
+          java-version: 16
           distribution: 'adopt'
 
       - name: "Build DMG"
@@ -209,7 +209,7 @@ jobs:
           set -euo pipefail
 
           chmod +x gradlew
-          set JAVA_HOME="${JAVA_HOME_14_X64}"
+          set JAVA_HOME="${JAVA_HOME_16_X64}"
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'
@@ -238,7 +238,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 14
+          java-version: 16
           distribution: 'adopt'
 
       - name: "Build MSI"

@@ -61,7 +61,7 @@ jobs:
 
     strategy:
       matrix:
-        jdk: [ 14 ]
+        jdk: [ 16 ]
 
     steps:
     - name: "Checkout sources"
