@@ -221,8 +221,8 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : 
                                     (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;
           """)
-         .addRemarkBlock("Here the simulation only initial is defined")
-         .add("""
+          .addRemarkBlock("Here the simulation only initial is defined")
+          .add("""
           initial
           begin
              s_rowCounterReg      = 0;

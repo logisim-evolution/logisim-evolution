@@ -181,11 +181,11 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addPair("shiftMode", shiftModeStr);
     final var nrOfBitsToShift = (1 << stageNumber);
     contents.add("""
-         "/***************************************************************************
-         ** Here stage {{stageNumber}} of the binary shift tree is defined
-         ***************************************************************************/
-         
-         """, new LineBuffer.Pairs("stageNumber", stageNumber));
+          "/***************************************************************************
+          ** Here stage {{stageNumber}} of the binary shift tree is defined
+          ***************************************************************************/
+          
+          """, new LineBuffer.Pairs("stageNumber", stageNumber));
     if (stageNumber == 0) {
       contents.add("""
           assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
@@ -197,24 +197,24 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   ? {DataA[{{nrOfBitsB}}:0],s_stage_0_shiftin}
                   : {s_stage_0_shiftin,DataA[{{nrOfBitsA}}:1]};
           
-          """, (new LineBuffer.Pairs().add("nrOfBitsA", nrOfBits -1).add("nrOfBitsB", (nrOfBits - 2))));
+          """, (new LineBuffer.Pairs().add("nrOfBitsA", nrOfBits - 1).add("nrOfBitsB", (nrOfBits - 2))));
     } else {
       final var pairs =
           (new LineBuffer.Pairs())
               .add("stageNumber", stageNumber)
-              .add("stageNumber1", stageNumber-1)
+              .add("stageNumber1", stageNumber - 1)
               .add("nrOfBitsToShift", nrOfBitsToShift)
-              .add("nrOfBits1", nrOfBits-1)
+              .add("nrOfBits1", nrOfBits - 1)
               .add("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
               .add("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1));
 
       contents.add("""
           assign s_stage_{{stageNumber}}_shiftin = ({{shiftMode}} == 1) ?
-                                      s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{bitsShiftDiff}}] :
-                                      ({{shiftMode}} == 3) ?
-                                      { {{nrOfBitsToShift}}{s_stage_{{stageNumber1}}_result[{{nrOfBits1}}]} } :
-                                      ({{shiftMode}} == 4) ?
-                                      s_stage_{{stageNumber1}}_result[{{2}}:0] : 0;      , (nrOfBitsToShift - 1))
+                                     s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{bitsShiftDiff}}] :
+                                     ({{shiftMode}} == 3) ?
+                                     { {{nrOfBitsToShift}}{s_stage_{{stageNumber1}}_result[{{nrOfBits1}}]} } :
+                                     ({{shiftMode}} == 4) ?
+                                     s_stage_{{stageNumber1}}_result[{{nrOfBitsToShift1}}:0] : 0;
 
           assign s_stage_{{1}}_result  = (ShiftAmount[{{stageNumber}}]==0) ?
                                      s_stage_{{1}}_result : ", (stageNumber - 1))
