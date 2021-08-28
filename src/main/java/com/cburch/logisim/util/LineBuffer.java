@@ -173,19 +173,8 @@ public class LineBuffer implements RandomAccess {
    * @param line Line to optionally add.
    */
   public LineBuffer addUnique(String line) {
-    addUnique(line, true);
+    add(line, true);
     return this;
-  }
-
-  public LineBuffer addUnique(String line, boolean applyMap) {
-    if (!contains(line)) add(line, applyMap);
-    return this;
-  }
-
-  public LineBuffer addUnique(String fmt, Object... args) {
-    var line = String.format(fmt, args);
-    line = applyPairs(line, pairs);
-    return addUnique(line);
   }
 
   /* ********************************************************************************************* */
@@ -201,6 +190,16 @@ public class LineBuffer implements RandomAccess {
     return add(line, true);
   }
 
+  /**
+   * Adds single line to the content buffer. If applyMap is `true`, it will try to format line with
+   * known pairs (this is default behavior).
+   *
+   * @param line line to be added
+   * @param applyMap `true` if line shall be processed for placeholders (default), `false` if you
+   *     want it to be added "raw".
+   *
+   * @return Instance of self for easy chaining.
+   */
   public LineBuffer add(String line, boolean applyMap) {
     if (applyMap) {
       line = applyPairs(line, pairs);
@@ -214,11 +213,11 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Formats string using @String.format() and adds to the buffer.
+   * Formats string using @String.format() and adds to the buffer via standard pipeline (so
+   * placeholders will be handled too).
    *
    * @param fmt Formatting string as accepted by String.format()
    * @param args Optional arguments
-   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
@@ -235,7 +234,6 @@ public class LineBuffer implements RandomAccess {
    *
    * @param format Formatting string. Wrap keys in `{{` and `}}`.
    * @param pairs Search-Replace map.
-   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
@@ -243,7 +241,8 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Adds all lines from given collection to content buffer.
+   * Adds all lines from given collection to content buffer using defult pipeline, so placeholders
+   * are processed too.
    *
    * @param lines
    */
@@ -302,6 +301,8 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
+  /* ********************************************************************************************* */
+
   /** Appends single empty line to the content buffer. */
   public LineBuffer empty() {
     return repeat(1, "");
@@ -316,6 +317,7 @@ public class LineBuffer implements RandomAccess {
     return repeat(count, "");
   }
 
+  /* ********************************************************************************************* */
 
   /**
    * Returns specified line of the content buffer present at index position.

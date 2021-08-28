@@ -283,8 +283,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               OneLine.append(" ");
             }
 
-            Contents.addUnique("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
-                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()), Source.GetParentNetBitIndex());
+            Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
+                OneLine, BusName, TheNets.GetNetId(Source.GetParentNet()), Source.GetParentNetBitIndex()));
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.getSinkNets(bit)) {
@@ -305,7 +305,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.GetNetId(ThisNet));
             }
-            Contents.addUnique("   {{1}}{{2}};", HDL.assignPreamble(), OneLine);
+            Contents.addUnique(LineBuffer.format("   {{1}}{{2}};", HDL.assignPreamble(), OneLine));
           }
         }
       }
