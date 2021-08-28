@@ -35,13 +35,11 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusTransaction;
@@ -57,7 +55,6 @@ import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.gui.BreakpointPanel;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
-import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -218,8 +215,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
           ienable = value;
           break;
         default:
-          // FIXME: what to do by default? throw Exception?
-          break;
+          throw new IllegalStateException("Unsupported index value: " + index);
       }
     }
 
