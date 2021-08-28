@@ -144,7 +144,7 @@ public class BusTransactionInsertionGui extends JFrame
     } catch (NumberFormatException e) {
       data = 0;
     }
-    int action = SocBusTransaction.WordAccess;
+    int action = SocBusTransaction.WORD_ACCESS;
     String format = "%08X";
     if (halfTrans.isSelected()) {
       action = SocBusTransaction.HALF_WORD_ACCESS;
@@ -158,7 +158,7 @@ public class BusTransactionInsertionGui extends JFrame
     }
     inputDataValue.setText(String.format(format, data));
     int type = 0;
-    if (readAction.isSelected()) type |= SocBusTransaction.READTransaction;
+    if (readAction.isSelected()) type |= SocBusTransaction.READ_TRANSACTION;
     if (writeAction.isSelected()) type |= SocBusTransaction.WRITE_TRANSACTION;
     if (atomicAction.isSelected()) type |= SocBusTransaction.ATOMIC_TRANSACTION;
     SocBusTransaction trans =

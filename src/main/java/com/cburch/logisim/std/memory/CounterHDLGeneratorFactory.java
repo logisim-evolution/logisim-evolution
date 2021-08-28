@@ -271,22 +271,22 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
         map.put("ClockEnable", HDL.oneBit());
       } else {
-        var clockBusIndex = ClockHDLGeneratorFactory.DerivedClockIndex;
+        var clockBusIndex = ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
         if (nets.RequiresGlobalClockConnection()) {
-          clockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
+          clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
         } else {
           if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_LOW)
-            clockBusIndex = ClockHDLGeneratorFactory.InvertedDerivedClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
           else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_RISING)
-            clockBusIndex = ClockHDLGeneratorFactory.PositiveEdgeTickIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
           else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
-            clockBusIndex = ClockHDLGeneratorFactory.InvertedDerivedClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
         }
         map.put(
             "GlobalClock",
             clockNetName
                 + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                 + HDL.BracketClose());
         map.put(
             "ClockEnable", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());

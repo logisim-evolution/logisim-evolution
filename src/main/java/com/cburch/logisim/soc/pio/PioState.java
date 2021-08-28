@@ -410,7 +410,7 @@ public class PioState implements SocBusSlaveInterface {
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
     int index = (int) (addr - start);
-    if (trans.getAccessType() != SocBusTransaction.WordAccess) {
+    if (trans.getAccessType() != SocBusTransaction.WORD_ACCESS) {
       trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
     }

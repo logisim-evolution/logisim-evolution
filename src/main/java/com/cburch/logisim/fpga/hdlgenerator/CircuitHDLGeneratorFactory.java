@@ -50,7 +50,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import javax.sound.sampled.Line;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -335,7 +334,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Inputs.put(ClockTreeName + i, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (MyNetList.RequiresGlobalClockConnection()) {
-      Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+      Inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     }
     int InputBubbles = MyNetList.NumberOfInputBubbles();
     if (InputBubbles > 0) {
@@ -407,9 +406,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         temp.append(" ");
       }
       if (!theNetlist.RequiresGlobalClockConnection()) {
-        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{bracketOpen}}{{3}}{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DerivedClockIndex);
+        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{bracketOpen}}{{3}}{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
       } else {
-        contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHDLGeneratorFactory.FPGAClock);
+        contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHDLGeneratorFactory.FPGA_CLOCK);
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */
@@ -551,7 +550,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       PortMap.put(ClockTreeName + i, Preamble + ClockTreeName + i);
     }
     if (myNetList.RequiresGlobalClockConnection()) {
-      PortMap.put(TickComponentHDLGeneratorFactory.FPGAClock, TickComponentHDLGeneratorFactory.FPGAClock);
+      PortMap.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     }
     if (myNetList.NumberOfInputBubbles() > 0) {
       PortMap.put(

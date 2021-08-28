@@ -106,7 +106,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return FileWriter.WriteContents(OutFile, Contents);
   }
 
-  public static final int MaxLineLength = 80; // FIXME: SCREAM_CASE
+  public static final int MAX_LINE_LENGTH = 80;
 
   /* Here the common predefined methods are defined */
   @Override

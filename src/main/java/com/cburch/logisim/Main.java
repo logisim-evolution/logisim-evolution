@@ -99,7 +99,7 @@ public class Main {
 
   public static boolean ANALYZE = true;
   public static boolean headless = false;
-  public static final boolean MacOS = MacCompatibility.isRunningOnMac();
+  public static final boolean RUNNING_ON_MAC = MacCompatibility.isRunningOnMac();
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
   public static final String DIRTY_MARKER = "\ud83d\udcbe";

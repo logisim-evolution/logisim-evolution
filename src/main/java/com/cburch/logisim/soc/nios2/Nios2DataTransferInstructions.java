@@ -108,7 +108,7 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
         // fall through
       case INSTR_STWIO:
       case INSTR_STW:
-        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        if (transType < 0) transType = SocBusTransaction.WORD_ACCESS;
         SocBusTransaction trans =
             new SocBusTransaction(
                 SocBusTransaction.WRITE_TRANSACTION,
@@ -132,10 +132,10 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
         // fall through
       case INSTR_LDW:
       case INSTR_LDWIO:
-        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        if (transType < 0) transType = SocBusTransaction.WORD_ACCESS;
         trans =
             new SocBusTransaction(
-                SocBusTransaction.READTransaction,
+                SocBusTransaction.READ_TRANSACTION,
                 SocSupport.convUnsignedLong(address),
                 0,
                 transType,

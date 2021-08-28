@@ -1000,9 +1000,9 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
     }
     if (fact instanceof RgbLed) {
-      if (Driving == LedArrayDriving.RgbColumnScanning
-          || Driving == LedArrayDriving.RgbDefault
-          || Driving == LedArrayDriving.RgbRowScanning) {
+      if (Driving == LedArrayDriving.RGB_COLUMN_SCANNING
+          || Driving == LedArrayDriving.RGB_DEFAULT
+          || Driving == LedArrayDriving.RGB_ROW_SCANNING) {
         /* only if we have an RGB-array we are going to do something special */
         map.unmap(); /* remove all previous maps */
         return map.tryCompleteMap(this, selectedPin);

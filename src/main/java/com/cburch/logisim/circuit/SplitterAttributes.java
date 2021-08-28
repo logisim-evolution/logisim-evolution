@@ -88,7 +88,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
     @Override
     public Integer parse(String value) {
-      if (value.equals(unchosen_val)) {
+      if (value.equals(UNCHOSEN_VAL)) {
         return 0;
       } else {
         return 1 + Integer.parseInt(value);
@@ -104,7 +104,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
     public String toStandardString(Integer value) {
       final var index = value;
       if (index == 0) {
-        return unchosen_val;
+        return UNCHOSEN_VAL;
       } else {
         return "" + (index - 1);
       }
@@ -209,7 +209,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays.asList(StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING);
 
-  private static final String unchosen_val = "none";
+  private static final String UNCHOSEN_VAL = "none";
   private ArrayList<Attribute<?>> attrs = new ArrayList<>(INIT_ATTRIBUTES);
   private SplitterParameters parameters;
   AttributeOption appear = APPEAR_LEFT;

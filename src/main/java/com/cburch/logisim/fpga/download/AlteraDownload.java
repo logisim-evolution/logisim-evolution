@@ -206,7 +206,7 @@ public class AlteraDownload implements VendorDownload {
     contents
         .addPair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
         .addPair("fileType", fileType)
-        .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+        .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
 
     contents
         .add(

@@ -83,7 +83,7 @@ public class Ttl7410 extends AbstractTtlGate {
     }
     final var offset = inverted ? 0 : -4;
     var xpos = new int[] {x + 49 + offset, x + 50, x + 50};
-    var ypos = new int[] {y + 20, y + 20, y + AbstractTtlGate.pinheight};
+    var ypos = new int[] {y + 20, y + 20, y + AbstractTtlGate.PIN_HEIGHT};
     g.drawPolyline(xpos, ypos, 3);
     xpos[0] = x + 129 + offset;
     xpos[1] = xpos[2] = x + 130;
@@ -91,24 +91,24 @@ public class Ttl7410 extends AbstractTtlGate {
     xpos[0] = x + 109 + offset;
     xpos[1] = xpos[2] = x + 110;
     ypos[0] = ypos[1] = y + 40;
-    ypos[2] = y + height - AbstractTtlGate.pinheight;
+    ypos[2] = y + height - AbstractTtlGate.PIN_HEIGHT;
     g.drawPolyline(xpos, ypos, 3);
     xpos = new int[] {x + 30, x + 30, x + 35 + LineOffset};
-    ypos = new int[] {y + AbstractTtlGate.pinheight, y + 17, y + 17};
+    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 17, y + 17};
     g.drawPolyline(xpos, ypos, 3);
     xpos = new int[] {x + 10, x + 10, x + 35 + LineOffset};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 20, y + 20};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 20, y + 20};
     g.drawPolyline(xpos, ypos, 3);
     xpos = new int[] {x + 30, x + 30, x + 35 + LineOffset};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 23, y + 23};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 23, y + 23};
     g.drawPolyline(xpos, ypos, 3);
 
     for (var i = 0; i < 3; i++) {
       xpos = new int[] {x + 70 + i * 20, x + 70 + i * 20, x + 115 + LineOffset};
-      ypos = new int[] {y + AbstractTtlGate.pinheight, y + 23 - i * 3, y + 23 - i * 3};
+      ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 23 - i * 3, y + 23 - i * 3};
       g.drawPolyline(xpos, ypos, 3);
       xpos = new int[] {x + 50 + i * 20, x + 50 + i * 20, x + 95 + LineOffset};
-      ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 37 + i * 3, y + 37 + i * 3};
+      ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 37 + i * 3, y + 37 + i * 3};
       g.drawPolyline(xpos, ypos, 3);
     }
   }

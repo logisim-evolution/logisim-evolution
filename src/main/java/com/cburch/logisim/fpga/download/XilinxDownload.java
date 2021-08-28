@@ -69,11 +69,11 @@ public class XilinxDownload implements VendorDownload {
   private final boolean IsCPLD;
   private final boolean writeToFlash;
 
-  private static final String vhdl_list_file = "XilinxVHDLList.prj";
-  private static final String script_file = "XilinxScript.cmd";
-  private static final String ucf_file = "XilinxConstraints.ucf";
-  private static final String download_file = "XilinxDownload";
-  private static final String mcs_file = "XilinxProm.mcs";
+  private static final String VHDL_LIST_FILE = "XilinxVHDLList.prj";
+  private static final String SCRIPT_FILE = "XilinxScript.cmd";
+  private static final String UCF_FILE = "XilinxConstraints.ucf";
+  private static final String DOWNLOAD_FILE = "XilinxDownload";
+  private static final String MCS_FILE = "XilinxProm.mcs";
 
   private static final Integer BUFFER_SIZE = 16 * 1024;
 
@@ -156,7 +156,7 @@ public class XilinxDownload implements VendorDownload {
       var command = new ArrayList<String>();
       command.add(xilinxVendor.getBinaryPath(5));
       command.add("-batch");
-      command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + download_file);
+      command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + DOWNLOAD_FILE);
       final var Xilinx = new ProcessBuilder(command);
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
@@ -200,15 +200,15 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
-    var ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file);
-    var VhdlListFile = FileWriter.GetFilePointer(ScriptPath, vhdl_list_file);
-    var UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file);
-    var DownloadFile = FileWriter.GetFilePointer(ScriptPath, download_file);
+    var ScriptFile = FileWriter.GetFilePointer(ScriptPath, SCRIPT_FILE);
+    var VhdlListFile = FileWriter.GetFilePointer(ScriptPath, VHDL_LIST_FILE);
+    var UcfFile = FileWriter.GetFilePointer(UcfPath, UCF_FILE);
+    var DownloadFile = FileWriter.GetFilePointer(ScriptPath, DOWNLOAD_FILE);
     if (ScriptFile == null || VhdlListFile == null || UcfFile == null || DownloadFile == null) {
-      ScriptFile = new File(ScriptPath + script_file);
-      VhdlListFile = new File(ScriptPath + vhdl_list_file);
-      UcfFile = new File(UcfPath + ucf_file);
-      DownloadFile = new File(ScriptPath + download_file);
+      ScriptFile = new File(ScriptPath + SCRIPT_FILE);
+      VhdlListFile = new File(ScriptPath + VHDL_LIST_FILE);
+      UcfFile = new File(UcfPath + UCF_FILE);
+      DownloadFile = new File(ScriptPath + DOWNLOAD_FILE);
       return ScriptFile.exists()
           && VhdlListFile.exists()
           && UcfFile.exists()
@@ -224,7 +224,7 @@ public class XilinxDownload implements VendorDownload {
         "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
         ToplevelHDLGeneratorFactory.FPGAToplevelName,
         ScriptPath.replace(ProjectPath, "../"),
-        vhdl_list_file,
+        VHDL_LIST_FILE,
         GetFPGADeviceString(boardInfo));
 
     if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
@@ -236,7 +236,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
       final var flashPos = String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition());
-      final var mcsFile = ScriptPath + File.separator + mcs_file;
+      final var mcsFile = ScriptPath + File.separator + MCS_FILE;
       contents
           .add("setmode -pff")
           .add("setSubMode -pffserial")
@@ -268,7 +268,7 @@ public class XilinxDownload implements VendorDownload {
     contents.clear();
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
       contents
-          .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+          .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
           .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
           .addPair("clockPin", GetXilinxClockPin(boardInfo));
       contents.add(
@@ -335,7 +335,7 @@ public class XilinxDownload implements VendorDownload {
     command
         .add(xilinxVendor.getBinaryPath(0))
         .add("-ifn")
-        .add(ScriptPath.replace(ProjectPath, "../") + File.separator + script_file)
+        .add(ScriptPath.replace(ProjectPath, "../") + File.separator + SCRIPT_FILE)
         .add("-ofn")
         .add("logisim.log");
     final var stage0 = new ProcessBuilder(command.get());
@@ -350,7 +350,7 @@ public class XilinxDownload implements VendorDownload {
         .add("-intstyle")
         .add("ise")
         .add("-uc")
-        .add(UcfPath.replace(ProjectPath, "../") + File.separator + ucf_file)
+        .add(UcfPath.replace(ProjectPath, "../") + File.separator + UCF_FILE)
         .add("logisim.ngc")
         .add("logisim.ngd");
     final var stage1 = new ProcessBuilder(command.get());

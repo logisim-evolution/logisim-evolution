@@ -49,7 +49,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
           add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
           add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-          add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+          add("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
         }
       };
 

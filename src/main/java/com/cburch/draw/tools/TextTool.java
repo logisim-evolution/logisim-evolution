@@ -52,7 +52,7 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 public class TextTool extends AbstractTool {
-  private static final TextIcon icon = new TextIcon();
+  private static final TextIcon ICON = new TextIcon();
   private final DrawingAttributeSet attrs;
   private final EditableLabelField field;
   private final FieldListener fieldListener;
@@ -127,7 +127,7 @@ public class TextTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    return icon;
+    return ICON;
   }
 
   @Override

@@ -142,12 +142,12 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
             "tick",
             ClockNetName
                 + "("
-                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                 + ")");
       }
       map.put(
           "CLK",
-          ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+          ClockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
     map.putAll(GetNetMap("D0", true, comp, 2, nets));
     map.putAll(GetNetMap("D1", true, comp, 3, nets));
