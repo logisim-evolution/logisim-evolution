@@ -83,12 +83,14 @@ public class SelectTool extends Tool {
       this.dy = dy;
     }
 
+    @Override
     public String toString() {
       return S.get("moveWorkingMsg");
     }
   }
 
   private class Listener implements Selection.Listener {
+    @Override
     public void selectionChanged(Event event) {
       keyHandlers = null;
     }
@@ -101,6 +103,7 @@ public class SelectTool extends Tool {
       this.canvas = canvas;
     }
 
+    @Override
     public void requestSatisfied(MoveGesture gesture, int dx, int dy) {
       clearCanvasMessage(canvas, dx, dy);
     }
@@ -138,7 +141,7 @@ public class SelectTool extends Tool {
   private boolean drawConnections;
   private MoveGesture moveGesture;
   private HashMap<Component, KeyConfigurator> keyHandlers;
-  private static final SelectIcon icon = new SelectIcon();
+  private static final SelectIcon ICON = new SelectIcon();
 
   private final HashSet<Selection> selectionsAdded;
   private final AutoLabel AutoLabler = new AutoLabel();
@@ -562,7 +565,7 @@ public class SelectTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    icon.paintIcon(null, c.getGraphics(), x, y);
+    ICON.paintIcon(null, c.getGraphics(), x, y);
   }
 
   private void processKeyEvent(Canvas canvas, KeyEvent e, int type) {

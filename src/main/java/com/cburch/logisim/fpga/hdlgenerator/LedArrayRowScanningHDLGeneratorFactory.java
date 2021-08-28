@@ -35,7 +35,6 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import javax.sound.sampled.Line;
 
 public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -111,7 +110,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
         (new LineBuffer())
             .addPair("rowAddr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .addPair("colOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .addPair("id", id);
     if (HDL.isVHDL()) {
@@ -141,7 +140,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
     return inputs;
   }
@@ -185,7 +184,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .addPair("bits", scanningCounterBitsString)
             .addPair("value", scanningCounterValueString)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock);
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     if (HDL.isVHDL()) {
       contents.add(
           "",

@@ -76,14 +76,14 @@ public class LineBuffer implements RandomAccess {
     return addPair("assign", HDL.assignPreamble())
         .addPair("=", HDL.assignOperator())
         .addPair("or", HDL.orOperator())
-        .add("and", HDL.andOperator())
-        .add("not", HDL.notOperator())
-        .add("bracketOpen", HDL.BracketOpen())
-        .add("bracketClose", HDL.BracketClose())
-        .add("<", HDL.BracketOpen())
-        .add(">", HDL.BracketClose())
-        .add("0b", HDL.zeroBit())
-        .add("1b", HDL.oneBit());
+        .addPair("and", HDL.andOperator())
+        .addPair("not", HDL.notOperator())
+        .addPair("bracketOpen", HDL.BracketOpen())
+        .addPair("bracketClose", HDL.BracketClose())
+        .addPair("<", HDL.BracketOpen())
+        .addPair(">", HDL.BracketClose())
+        .addPair("0b", HDL.zeroBit())
+        .addPair("1b", HDL.oneBit());
   }
 
   public Pairs withPairs() {
@@ -100,20 +100,38 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  public LineBuffer clearPairs() {
-    pairs.clear();
-    return this;
-  }
-
   /**
    * Clears internal buffer.
    *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer clear() {
+    clearBuffer();
+    clearPairs();
+    return this;
+  }
+
+  /**
+   * Clears pair map.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer clearPairs() {
+    pairs.clear();
+    return this;
+  }
+
+  /**
+   * Clears content buffer.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer clearBuffer() {
     contents.clear();
     return this;
   }
+
+  /* ********************************************************************************************* */
 
   public boolean isEmpty() {
     return contents.isEmpty();
@@ -121,6 +139,12 @@ public class LineBuffer implements RandomAccess {
 
   public boolean contains(Object obj) {
     return contents.contains(obj);
+  }
+
+  /* ********************************************************************************************* */
+
+  public static String format(String fmt, Object... args) {
+    return applyPairs(fmt, Pairs.fromArgs(args));
   }
 
   /* ********************************************************************************************* */
@@ -139,7 +163,6 @@ public class LineBuffer implements RandomAccess {
     if (!contains(line)) add(line, applyMap);
     return this;
   }
-
 
   public LineBuffer addUnique(String fmt, Object... args) {
     var line = String.format(fmt, args);
@@ -179,7 +202,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
-    return add(String.format(fmt, args));
+    return add(fmt, Pairs.fromArgs(args));
   }
 
   /**
@@ -202,7 +225,6 @@ public class LineBuffer implements RandomAccess {
    * Adds all lines from given collection to content buffer.
    *
    * @param lines
-   * @return
    */
   public LineBuffer add(Collection<String> lines) {
     for (final var line : lines) add(line);
@@ -225,7 +247,7 @@ public class LineBuffer implements RandomAccess {
    * @param format String to format, with (optional) `{{placeholders}}`.
    * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
    */
-  public String applyPairs(String format, Pairs pairs) {
+  public static String applyPairs(String format, Pairs pairs) {
     if (pairs != null) {
       for (final var set : pairs.entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
@@ -318,7 +340,7 @@ public class LineBuffer implements RandomAccess {
    * @param remarkText Remark text.
    */
   public LineBuffer addRemarkBlock(String remarkText) {
-    return addRemarkBlock(remarkText, DEFAULT_INDENT);
+    return addRemarkBlock(remarkText, 0);
   }
 
   /**
@@ -445,6 +467,23 @@ public class LineBuffer implements RandomAccess {
     public Pairs() {
       // empty
     }
+
+
+    /**
+     * Constructs Pairs map from positional arguments auto-assigning numerical
+     * placeholders `{{x}}` where `x` is integer starting from `1`.
+     *
+     * @param args Arguments to use to build the map.
+     */
+    public static Pairs fromArgs(Object... args) {
+      final var map = new Pairs();
+      var idx = 1;
+      for (final var arg : args) {
+        map.add(String.valueOf(idx++), "" + arg);
+      }
+      return map;
+    }
+
 
     public Pairs(String key, Object value) {
       add(key, value);

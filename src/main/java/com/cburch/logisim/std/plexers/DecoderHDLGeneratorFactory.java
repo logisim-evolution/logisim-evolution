@@ -60,18 +60,20 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var numOutputs = (1 << nrOfSelectBits);
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
-      final var binValue = IntToBin(i, nrOfSelectBits);
-      if (i == 10) space = "";
+      if (i == 7) space = "";
+      contents.addPair("bin", IntToBin(i, nrOfSelectBits))
+              .addPair("space", space)
+              .addPair("i", i);
       if (HDL.isVHDL()) {
-        contents
-            .add("   DecoderOut_%d%s<= '1' WHEN sel = %s AND", i, space, binValue)
-            .add("   DecoderOut_%d%s<= '1' WHEN sel = %s AND", i, space, binValue)
-            .add("%s                             Enable = '1' ELSE '0';", space);
+        contents.add(
+            "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
+            "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
+            "{{space}}                             Enable = '1' ELSE '0';");
       } else {
-        contents.add("   assign DecoderOut_%d%s = (Enable&(sel == %s)) ? 1'b1 : 1'b0;", i, space, binValue);
+        contents.add("assign DecoderOut_{{i}}{{space}} = (Enable&(sel == {{bin}})) ? 1'b1 : 1'b0;");
       }
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

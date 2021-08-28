@@ -66,81 +66,74 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer())
+            .addPair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
       contents.add(
-          "   Q <= s_state_reg;",
+          "Q <= s_state_reg;",
           "",
-          "   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
-          "   BEGIN",
-          "      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
+          "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
+          "BEGIN",
+          "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
       if (Netlist.IsFlipFlop(attrs)) {
-        contents
-            .add("      ELSIF (%s = 1) THEN", ACTIVE_LEVEL_STR)
-            .add("         IF (Clock'event AND (Clock = '1')) THEN")
-            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
-            .add("               s_state_reg <= D;")
-            .add("            END IF;")
-            .add("         END IF;")
-            .add("      ELSIF (%s = 0) THEN", ACTIVE_LEVEL_STR)
-            .add("         IF (Clock'event AND (Clock = '0')) THEN")
-            .add("         IF (ClockEnable = '1' AND Tick = '1') THEN")
-            .add("            s_state_reg <= D;")
-            .add("         END IF;")
-            .add("      END IF;");
-
-        /////
-        // Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-        //           + ActiveLevelStr + ",1)) )) THEN");
+        contents.add(
+            "   ELSIF ({{activeLevel}} = 1) THEN",
+            "      IF (Clock'event AND (Clock = '1')) THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;",
+            "   ELSIF ({{activeLevel}} = 0) THEN",
+            "      IF (Clock'event AND (Clock = '0')) THEN",
+            "      IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "         s_state_reg <= D;",
+            "      END IF;",
+            "   END IF;");
       } else {
-        contents
-            .add("      ELSIF (%s = 1) THEN", ACTIVE_LEVEL_STR)
-            .add("         IF (Clock = '1') THEN")
-            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
-            .add("               s_state_reg <= D;")
-            .add("            END IF;")
-            .add("         END IF;")
-            .add("      ELSIF (%s = 0) THEN", ACTIVE_LEVEL_STR)
-            .add("         IF (Clock = '0') THEN")
-            .add("            IF (ClockEnable = '1' AND Tick = '1') THEN")
-            .add("               s_state_reg <= D;")
-            .add("            END IF;")
-            .add("         END IF;");
-        // .add("      ELSIF (Clock = std_logic_vector(to_unsigned(%s,1)) ) THEN", ACTIVE_LEVEL_STR);
+        contents.add(
+            "   ELSIF ({{activeLevel}} = 1) THEN",
+            "      IF (Clock = '1') THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;",
+            "  ELSIF ({{activeLevel}} = 0) THEN",
+            "      IF (Clock = '0') THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;");
       }
-      // Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
-      // Contents.add("            s_state_reg <= D;");
-      // Contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_memory;");
+      contents.add("   END IF;",
+                   "END PROCESS make_memory;");
     } else {
       if (!Netlist.IsFlipFlop(attrs)) {
-        contents
-            .add("   assign Q = s_state_reg;")
-            .add("")
-            .add("   always @(*)")
-            .add("   begin")
-            .add("      if (Reset) s_state_reg <= 0;")
-            .add("      else if ((Clock==%s)&ClockEnable&Tick) s_state_reg <= D;", ACTIVE_LEVEL_STR)
-            .add("   end");
+        contents.add(
+            "assign Q = s_state_reg;",
+            "",
+            "always @(*)",
+            "begin",
+            "   if (Reset) s_state_reg <= 0;",
+            "   else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;",
+            "end");
       } else {
-        contents
-            .add("   assign Q = (%s) ? s_state_reg : s_state_reg_neg_edge;", ACTIVE_LEVEL_STR)
-            .add("")
-            .add("   always @(posedge Clock or posedge Reset)")
-            .add("   begin")
-            .add("      if (Reset) s_state_reg <= 0;")
-            .add("      else if (ClockEnable&Tick) s_state_reg <= D;")
-            .add("   end")
-            .add("")
-            .add("   always @(negedge Clock or posedge Reset)")
-            .add("   begin")
-            .add("      if (Reset) s_state_reg_neg_edge <= 0;")
-            .add("      else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;")
-            .add("   end");
+        contents.add(
+            "assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;",
+            "",
+            "always @(posedge Clock or posedge Reset)",
+            "begin",
+            "   if (Reset) s_state_reg <= 0;",
+            "   else if (ClockEnable&Tick) s_state_reg <= D;",
+            "end",
+            "",
+            "always @(negedge Clock or posedge Reset)",
+            "begin",
+            "   if (Reset) s_state_reg_neg_edge <= 0;",
+            "   else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;",
+            "end");
       }
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override
@@ -221,21 +214,21 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
+                  + ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
       }
       map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
-              + ClockHDLGeneratorFactory.GlobalClockIndex
+              + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
     } else if (!hasClock) {
       map.put("Tick", HDL.zeroBit());
@@ -248,14 +241,14 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
+                  + ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.DerivedClockIndex
+                  + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
         map.put("Clock", GetNetName(comp, Register.CK, true, Nets));

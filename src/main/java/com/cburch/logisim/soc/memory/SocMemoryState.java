@@ -297,7 +297,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     int value = (data == null) ? rand.nextInt() : data.getWord((address >> 2) << 2);
     int adbit1 = (address >> 1) & 1;
     switch (type) {
-      case SocBusTransaction.WordAccess : return value;
+      case SocBusTransaction.WORD_ACCESS: return value;
       case SocBusTransaction.HALF_WORD_ACCESS:
         if (adbit1 == 1)
           return (value >> 16) & 0xFFFF;
@@ -315,8 +315,8 @@ public class SocMemoryState implements SocBusSlaveInterface {
 
   private void performWriteAction(int address, int data, int type) {
     int wdata = data;
-    if (type != SocBusTransaction.WordAccess) {
-      int oldData = performReadAction(address, SocBusTransaction.WordAccess);
+    if (type != SocBusTransaction.WORD_ACCESS) {
+      int oldData = performReadAction(address, SocBusTransaction.WORD_ACCESS);
       if (type == SocBusTransaction.HALF_WORD_ACCESS) {
         int bit1 = (address >> 1) & 1;
         int mdata = data & 0xFFFF;

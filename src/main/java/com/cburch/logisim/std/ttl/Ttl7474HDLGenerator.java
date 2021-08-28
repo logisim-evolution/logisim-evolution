@@ -88,30 +88,30 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     final var contents = new LineBuffer();
     return contents
         .add(
-            "   Q1  <= state1;",
-            "   nQ1 <= NOT(state1,",
-            "   Q2  <= state1;",
-            "   nQ2 <= NOT(state1,",
-            " ",
-            "   next1 <= D1 WHEN tick1='1' ELSE state1;",
-            "   next2 <= D2 WHEN tick2='1' ELSE state2;",
-            " ",
-            "   ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS",
-            "      BEGIN",
-            "         IF (nCLR1 = '0') THEN state1 <= '0';",
-            "         ELSIF (nPRE1 = '1') THEN state1 <= '1';",
-            "         ELSIF (rising_edge(CLK1)) THEN state1 <= next1;",
-            "         END IF;",
-            "      END PROCESS ff1;",
-            " ",
-            "   ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS",
-            "      BEGIN",
-            "         IF (nCLR2 = '0') THEN state2 <= '0';",
-            "         ELSIF (nPRE2 = '1') THEN state2 <= '1';",
-            "         ELSIF (rising_edge(CLK2)) THEN state2 <= next2;",
-            "         END IF;",
-            "      END PROCESS ff2;")
-        .get();
+            "Q1  <= state1;",
+            "nQ1 <= NOT(state1,",
+            "Q2  <= state1;",
+            "nQ2 <= NOT(state1,",
+            "",
+            "next1 <= D1 WHEN tick1='1' ELSE state1;",
+            "next2 <= D2 WHEN tick2='1' ELSE state2;",
+            "",
+            "ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS",
+            "   BEGIN",
+            "      IF (nCLR1 = '0') THEN state1 <= '0';",
+            "      ELSIF (nPRE1 = '1') THEN state1 <= '1';",
+            "      ELSIF (rising_edge(CLK1)) THEN state1 <= next1;",
+            "      END IF;",
+            "   END PROCESS ff1;",
+            "",
+            "ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS",
+            "   BEGIN",
+            "      IF (nCLR2 = '0') THEN state2 <= '0';",
+            "      ELSIF (nPRE2 = '1') THEN state2 <= '1';",
+            "      ELSIF (rising_edge(CLK2)) THEN state2 <= next2;",
+            "      END IF;",
+            "   END PROCESS ff2;")
+        .getWithIndent();
   }
 
   @Override
@@ -151,12 +151,12 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
               "tick" + (i + 1),
               clockNetName
                   + "("
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + ")");
         }
         map.put(
             "CLK" + (i + 1),
-            clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+            clockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
       }
     }
     map.putAll(GetNetMap("nCLR1", false, componentinfo, 0, Nets));

@@ -76,13 +76,12 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (nrOfBits == 1) {
         Contents.add("Result <= s_sum_result(0);");
       } else {
-        Contents.add("Result <= s_sum_result( (%s-1) DOWNTO 0 )", NrOfBitsStr);
+        Contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NrOfBitsStr);
       }
-      Contents.add("CarryOut <= s_sum_result(%s-1);", ExtendedBitsStr);
+      Contents.add("CarryOut <= s_sum_result({{1}}-1);", ExtendedBitsStr);
     } else {
       Contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
     }
-    // FIXME: really should be 4? All other indentations are based on 3.
     return Contents.getWithIndent();
   }
 

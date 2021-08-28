@@ -46,59 +46,61 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
     final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
+          .addPair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-          .add("")
-          .add("ARCHITECTURE PlatformIndependent OF " + componentName + " IS ")
-          .add("")
-          .add("BEGIN")
-          .add("")
-          .add("FPGA_out(0) <= NOT SP6_LB_WAIT3_i;")
-          .add("FPGA_out(1) <= NOT IRQ_i;")
-          .add("SP6_LB_nCS3_o       <= FPGA_in(0);")
-          .add("SP6_LB_nADV_ALE_o   <= FPGA_in(1);")
-          .add("SP6_LB_RE_nOE_o     <= FPGA_in(2);")
-          .add("SP6_LB_nWE_o        <= FPGA_in(3);")
-          .add("Addr_LB_o           <= FPGA_in(11 DOWNTO 4);")
-          .add("")
-          .add("IOBUF_Addresses_Datas : for i in 0 to Addr_Data_LB_io'length-1 generate")
-          .add("  IOBUF_Addresse_Data : IOBUF")
-          .add("  generic map (")
-          .add("    DRIVE => 12,")
-          .add(" IOSTANDARD => \"LVCMOS18\",")
-          .add("    SLEW => \"FAST\"")
-          .add("  )")
-          .add("  port map (")
-          .add("    O => Addr_Data_LB_o(i), -- Buffer output")
-          .add("    IO => Addr_Data_LB_io(i), -- Buffer inout port (connect directly to top-level port)")
-          .add("    I => Addr_Data_LB_i(i), -- Buffer input")
-          .add("    T => Addr_Data_LB_tris_i -- 3-state enable input, high=input, low=output")
-          .add("  );")
-          .add("end generate;")
-          .add("")
-          .add("END PlatformIndependent;");
+          .add(
+              "",
+              "ARCHITECTURE PlatformIndependent OF {{compName}} IS ",
+              "",
+              "BEGIN",
+              "",
+              "FPGA_out(0) <= NOT SP6_LB_WAIT3_i;",
+              "FPGA_out(1) <= NOT IRQ_i;",
+              "SP6_LB_nCS3_o       <= FPGA_in(0);",
+              "SP6_LB_nADV_ALE_o   <= FPGA_in(1);",
+              "SP6_LB_RE_nOE_o     <= FPGA_in(2);",
+              "SP6_LB_nWE_o        <= FPGA_in(3);",
+              "Addr_LB_o           <= FPGA_in(11 DOWNTO 4);",
+              "",
+              "IOBUF_Addresses_Datas : for i in 0 to Addr_Data_LB_io'length-1 generate",
+              "  IOBUF_Addresse_Data : IOBUF",
+              "  generic map (",
+              "    DRIVE => 12,",
+              "    IOSTANDARD => \"LVCMOS18\",",
+              "    SLEW => \"FAST\"",
+              "  )",
+              "  port map (",
+              "    O => Addr_Data_LB_o(i), -- Buffer output",
+              "    IO => Addr_Data_LB_io(i), -- Buffer inout port (connect directly to top-level port)",
+              "    I => Addr_Data_LB_i(i), -- Buffer input",
+              "    T => Addr_Data_LB_tris_i -- 3-state enable input, high=input, low=output",
+              "  );",
+              "end generate;",
+              "",
+              "END PlatformIndependent;");
     }
     return contents.get();
   }
 
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
-    final var contents = new LineBuffer();
-    return contents
-        .add("   COMPONENT LocalBus")
-        .add("      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;")
-        .add("             IRQ_i              : IN  std_logic;")
-        .add("             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );")
-        .add("             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );")
-        .add("             SP6_LB_RE_nOE_o    : OUT std_logic;")
-        .add("             SP6_LB_nADV_ALE_o  : OUT std_logic;")
-        .add("             SP6_LB_nCS3_o      : OUT std_logic;")
-        .add("             SP6_LB_nWE_o       : OUT std_logic;")
-        .add("             FPGA_in            : IN std_logic_vector(12 downto 0);")
-        .add("             FPGA_out           : OUT std_logic_vector(1 downto 0);")
-        .add("            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);")
-        .add("            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);")
-        .add("            Addr_Data_LB_tris_i : IN std_logic);")
-        .add("   END COMPONENT;")
+    return (new LineBuffer())
+        .add(
+            "   COMPONENT LocalBus",
+            "      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;",
+            "             IRQ_i              : IN  std_logic;",
+            "             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );",
+            "             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );",
+            "             SP6_LB_RE_nOE_o    : OUT std_logic;",
+            "             SP6_LB_nADV_ALE_o  : OUT std_logic;",
+            "             SP6_LB_nCS3_o      : OUT std_logic;",
+            "             SP6_LB_nWE_o       : OUT std_logic;",
+            "             FPGA_in            : IN std_logic_vector(12 downto 0);",
+            "             FPGA_out           : OUT std_logic_vector(1 downto 0);",
+            "            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
+            "            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
+            "            Addr_Data_LB_tris_i : IN std_logic);",
+            "   END COMPONENT;")
         .get();
   }
 
@@ -109,28 +111,29 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new LineBuffer();
-    return contents
+    return (new LineBuffer())
+        .addPair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
-        .add("Library UNISIM;")
-        .add("use UNISIM.vcomponents.all;")
-        .add("")
-        .add("ENTITY %s IS", componentName)
-        .add("   PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);")
-        .add("          SP6_LB_nCS3_o       : OUT std_logic;")
-        .add("          SP6_LB_nADV_ALE_o   : OUT std_logic;")
-        .add("          SP6_LB_RE_nOE_o     : OUT std_logic;")
-        .add("          SP6_LB_nWE_o        : OUT std_logic;")
-        .add("          SP6_LB_WAIT3_i      : IN std_logic;")
-        .add("          IRQ_i               : IN std_logic;")
-        .add("          FPGA_in             : IN std_logic_vector(12 downto 0);")
-        .add("          FPGA_out            : OUT std_logic_vector(1 downto 0);")
-        .add("          Addr_LB_o           : OUT std_logic_vector(8 downto 0);")
-        .add("          Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);")
-        .add("          Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);")
-        .add("          Addr_Data_LB_tris_i : IN std_logic);")
-        .add("END %s;", componentName)
+        .add(
+            "Library UNISIM;",
+            "use UNISIM.vcomponents.all;",
+            "",
+            "ENTITY {{compName}} IS",
+            "   PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);",
+            "          SP6_LB_nCS3_o       : OUT std_logic;",
+            "          SP6_LB_nADV_ALE_o   : OUT std_logic;",
+            "          SP6_LB_RE_nOE_o     : OUT std_logic;",
+            "          SP6_LB_nWE_o        : OUT std_logic;",
+            "          SP6_LB_WAIT3_i      : IN std_logic;",
+            "          IRQ_i               : IN std_logic;",
+            "          FPGA_in             : IN std_logic_vector(12 downto 0);",
+            "          FPGA_out            : OUT std_logic_vector(1 downto 0);",
+            "          Addr_LB_o           : OUT std_logic_vector(8 downto 0);",
+            "          Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
+            "          Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
+            "          Addr_Data_LB_tris_i : IN std_logic);",
+            "END {{compName}};")
         .get();
   }
 

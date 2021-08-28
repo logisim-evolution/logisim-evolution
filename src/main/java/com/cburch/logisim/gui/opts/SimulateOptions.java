@@ -128,7 +128,7 @@ class SimulateOptions extends OptionsPanel {
         }
       } else if (source == simRandomness) {
         final var attrs = getOptions().getAttributeSet();
-        Object val = simRandomness.isSelected() ? Options.sim_rand_dflt : Integer.valueOf(0);
+        Object val = simRandomness.isSelected() ? Options.SIM_RAND_DFLT : Integer.valueOf(0);
         getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_SIM_RAND, val));
       } else if (source == gateUndefined) {
         final var opt = (ComboOption) gateUndefined.getSelectedItem();

@@ -75,40 +75,40 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDL.isVHDL()) {
       contents.add(
-              "   MakeRom : PROCESS( Address )",
-              "      BEGIN",
-              "         CASE (Address) IS");
+              "MakeRom : PROCESS( Address )",
+              "   BEGIN",
+              "      CASE (Address) IS");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          contents.add("            WHEN %s => Data <= %s;",
+          contents.add("         WHEN %s => Data <= %s;",
               getBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth()),
               getBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth()));
         }
       }
       if (attrs.getValue(Mem.DATA_ATTR).getWidth() == 1)
-        contents.add("            WHEN OTHERS => Data <= '0';");
+        contents.add("         WHEN OTHERS => Data <= '0';");
       else
-        contents.add("            WHEN OTHERS => Data <= (OTHERS => '0');");
-      contents.add("         END CASE;");
-      contents.add("      END PROCESS MakeRom;");
+        contents.add("         WHEN OTHERS => Data <= (OTHERS => '0');");
+      contents.add("      END CASE;");
+      contents.add("   END PROCESS MakeRom;");
     } else {
       contents
-          .add("   reg[%d:0] Data;", attrs.getValue(Mem.DATA_ATTR).getWidth() - 1)
+          .add("reg[%d:0] Data;", attrs.getValue(Mem.DATA_ATTR).getWidth() - 1)
           .add("")
-          .add("   always @ (Address)")
-          .add("   begin")
-          .add("      case(Address)");
+          .add("always @ (Address)")
+          .add("begin")
+          .add("   case(Address)");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          contents.add("         " + addr + " : Data = " + rom.get(addr) + ";");
+          contents.add("      {{1}} : Data = {{2}};", addr, rom.get(addr));
         }
       }
       contents.add(
-          "         default : Data = 0;",
-          "      endcase",
-          "   end");
+          "      default : Data = 0;",
+          "   endcase",
+          "end");
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

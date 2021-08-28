@@ -341,10 +341,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       /* fetch an instruction */
       SocBusTransaction trans =
           new SocBusTransaction(
-              SocBusTransaction.READTransaction,
+              SocBusTransaction.READ_TRANSACTION,
               pc,
               0,
-              SocBusTransaction.WordAccess,
+              SocBusTransaction.WORD_ACCESS,
               attachedBus.getComponent());
       attachedBus
           .getSocSimulationManager()
@@ -364,7 +364,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       /* execute instruction */
       AssemblerExecutionInterface exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
-      while (instrTrace.size() >= CpuDrawSupport.NrOfTraces)
+      while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
         instrTrace.removeLast();
       if (exe == null) {
         OptionPane.showMessageDialog(

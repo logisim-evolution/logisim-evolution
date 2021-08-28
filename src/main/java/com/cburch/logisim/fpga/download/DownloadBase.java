@@ -354,7 +354,7 @@ public abstract class DownloadBase {
       }
     }
     if (hasMappedClockedArray && (nets.NumberOfClockTrees() == 0) && !nets.RequiresGlobalClockConnection()) {
-      ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGAClock, board.fpga.getClockPinLocation());
+      ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
     }
     return ledArrayMaps;
   }

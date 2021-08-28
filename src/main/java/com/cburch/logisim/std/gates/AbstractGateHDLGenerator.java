@@ -90,7 +90,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         if (nrOfInputs < 10) allignmentSpaces = " ";
         else if (nrOfInputs < 100) allignmentSpaces = "  ";
         else allignmentSpaces = "   ";
-        contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned(%s,%d));", BUBBLES_MASK, nrOfInputs);
+        contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned({{1}},{{2}}));", BUBBLES_MASK, nrOfInputs);
         final var whenLineBegin = new StringBuilder();
         whenLineBegin.append(" ".repeat(21 + allignmentSpaces.length()));
         for (var i = 0; i < nrOfInputs; i++) {
@@ -102,15 +102,16 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
           else if (i < 1000)
             localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
           contents
-              .add("   s_real_input_%d%s <= NOT( Input_%d )", (i + 1), localSpaces, (i + 1))
-              .add("%s   WHEN s_signal_invert_mask(%d) = '1' ELSE", whenLineBegin, i)
-              .add(whenLineBegin + "Input_" + (i + 1) + ";");
+              .add("   s_real_input_{{1}}{{2}} <= NOT( Input_{{3}} )", (i + 1), localSpaces, (i + 1))
+              .add("{{1}}   WHEN s_signal_invert_mask({{2}}) = '1' ELSE", whenLineBegin, i)
+              .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
         }
       } else {
         contents.add("   assign s_signal_invert_mask = %s;", BUBBLES_MASK);
         for (var i = 0; i < nrOfInputs; i++) {
           contents.add(
-              "   assign s_real_input_%d = (s_signal_invert_mask[%d]) ? ~Input_%d: Input_%d;", (i + 1), i, (i + 1), (i + 1));
+              "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",
+              (i + 1), i, (i + 1), (i + 1));
         }
       }
     }

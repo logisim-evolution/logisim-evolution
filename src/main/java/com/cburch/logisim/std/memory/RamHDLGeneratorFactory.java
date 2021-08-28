@@ -116,44 +116,44 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("   s_byte_enable_%1$d <= s_ByteEnableReg(%1$d) AND s_TickDelayLine(2) AND s_OEReg;", i)
-              .add("   s_we_%1$d          <= s_ByteEnableReg(%1$d) AND s_TickDelayLine(0) AND s_WEReg;", i);
+              .add("s_byte_enable_{{1}} <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(2) AND s_OEReg;", i)
+              .add("s_we_{{1}}          <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(0) AND s_WEReg;", i);
         }
       } else {
-        contents
-            .add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;")
-            .add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
+        contents.add(
+            "s_oe <= s_TickDelayLine(2) AND s_OEReg;",
+            "s_we <= s_TickDelayLine(0) AND s_WEReg;");
       }
       contents
           .empty()
           .addRemarkBlock("Here the input registers are defined")
           .add(
-              "   InputRegs : PROCESS (Clock , Tick , Address , DataIn , WE , OE )",
-              "   BEGIN",
-              "      IF (Clock'event AND (Clock = '1')) THEN",
-              "         IF (Tick = '1') THEN",
-              "             s_DataInReg        <= DataIn;",
-              "             s_Address_reg      <= Address;",
-              "             s_WEReg            <= WE;",
-              "             s_OEReg            <= OE;");
+              "InputRegs : PROCESS (Clock, Tick, Address, DataIn, WE, OE)",
+              "BEGIN",
+              "   IF (Clock'event AND (Clock = '1')) THEN",
+              "      IF (Tick = '1') THEN",
+              "          s_DataInReg        <= DataIn;",
+              "          s_Address_reg      <= Address;",
+              "          s_WEReg            <= WE;",
+              "          s_OEReg            <= OE;");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
-          contents.add("             s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
+          contents.add("         s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
       }
       contents
           .add(
-              "         END IF;",
               "      END IF;",
-              "   END PROCESS InputRegs;")
+              "   END IF;",
+              "END PROCESS InputRegs;")
           .empty()
           .add(
-              "   TickPipeReg : PROCESS(Clock)",
-              "   BEGIN",
-              "      IF (Clock'event AND (Clock = '1')) THEN",
-              "          s_TickDelayLine(0)          <= Tick;",
-              "          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);",
-              "      END IF;",
-              "   END PROCESS TickPipeReg;")
+              "TickPipeReg : PROCESS(Clock)",
+              "BEGIN",
+              "   IF (Clock'event AND (Clock = '1')) THEN",
+              "       s_TickDelayLine(0)          <= Tick;",
+              "       s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);",
+              "   END IF;",
+              "END PROCESS TickPipeReg;")
           .empty()
           .addRemarkBlock("Here the actual memorie(s) is(are) defined");
 
@@ -161,10 +161,10 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("   Mem%1$d : PROCESS( Clock , s_we_%1$d, s_DataInReg, s_Address_reg)", i)
-              .add("   BEGIN")
-              .add("      IF (Clock'event AND (Clock = '1')) THEN")
-              .add("         IF (s_we_" + i + " = '1') THEN");
+              .add("Mem%1$d : PROCESS(Clock, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
+              .add("BEGIN")
+              .add("   IF (Clock'event AND (Clock = '1')) THEN")
+              .add("      IF (s_we_{{1}} = '1') THEN", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -175,62 +175,62 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   ? "s_trunc_mem_contents"
                   : String.format("s_byte_mem_%d_contents", i);
           contents
-              .add("            %s(to_integer(unsigned(s_Address_reg))) <= s_DataInReg(%d DOWNTO %d);", memName, endIndex, startIndex)
-              .add("         END IF;")
-              .add("         s_ram_data_out(%d DOWNTO %d) <= %s(to_integer(unsigned(s_Address_reg)));", endIndex, startIndex, memName)
+              .add("         {{1}}(to_integer(unsigned(s_Address_reg))) <= s_DataInReg({{2}} DOWNTO {{3}});", memName, endIndex, startIndex)
               .add("      END IF;")
-              .add("   END PROCESS Mem" + i + ";")
+              .add("      s_ram_data_out({{1}} DOWNTO {{2}}) <= {{3}}(to_integer(unsigned(s_Address_reg)));", endIndex, startIndex, memName)
+              .add("   END IF;")
+              .add("END PROCESS Mem{{1}};", i)
               .add("");
         }
       } else {
         contents
             .add(
-                "   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)",
-                "   BEGIN",
-                "      IF (Clock'event AND (Clock = '1')) THEN",
-                "         IF (s_we = '1') THEN",
-                "            s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;",
-                "         END IF;",
-                "         s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));",
+                "Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)",
+                "BEGIN",
+                "   IF (Clock'event AND (Clock = '1')) THEN",
+                "      IF (s_we = '1') THEN",
+                "         s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;",
                 "      END IF;",
-                "   END PROCESS Mem;")
+                "      s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));",
+                "   END IF;",
+                "END PROCESS Mem;")
             .empty();
       }
       contents.addRemarkBlock("Here the output register is defined");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("   Res%1$d : PROCESS( Clock , s_byte_enable_%1$d, s_ram_data_out)", i)
-              .add("   BEGIN")
-              .add("      IF (Clock'event AND (Clock = '1')) THEN")
-              .add("         IF (s_byte_enable_%s = '1') THEN", i);
+              .add("Res{{1}} : PROCESS(Clock, s_byte_enable_{{1}}, s_ram_data_out)", i)
+              .add("BEGIN")
+              .add("   IF (Clock'event AND (Clock = '1')) THEN")
+              .add("      IF (s_byte_enable_%s = '1') THEN", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
           contents
-              .add("           DataOut(%1$d DOWNTO %2$d) <= s_ram_data_out(%1$d DOWNTO %2$d);", endIndex, startIndex)
-              .add("         END IF;")
+              .add("         DataOut({{1}} DOWNTO {{2}}) <= s_ram_data_out({{1}} DOWNTO {{2}});", endIndex, startIndex)
               .add("      END IF;")
-              .add("   END PROCESS Res%d;", i)
+              .add("   END IF;")
+              .add("END PROCESS Res%d;", i)
               .empty();
         }
       } else {
         contents
             .add(
-                "   Res : PROCESS( Clock , s_oe, s_ram_data_out)",
-                "   BEGIN",
-                "      IF (Clock'event AND (Clock = '1')) THEN",
-                "         IF (s_oe = '1') THEN",
-                "           DataOut <= s_ram_data_out;",
-                "         END IF;",
+                "Res : PROCESS( Clock , s_oe, s_ram_data_out)",
+                "BEGIN",
+                "   IF (Clock'event AND (Clock = '1')) THEN",
+                "      IF (s_oe = '1') THEN",
+                "        DataOut <= s_ram_data_out;",
                 "      END IF;",
-                "   END PROCESS Res;")
+                "   END IF;",
+                "END PROCESS Res;")
             .empty();
       }
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override
@@ -279,19 +279,19 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         } else {
           int clockBusIndex;
           if (nets.RequiresGlobalClockConnection()) {
-            clockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
           } else {
             clockBusIndex =
                 (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)
-                    ? ClockHDLGeneratorFactory.PositiveEdgeTickIndex
-                    : ClockHDLGeneratorFactory.NegativeEdgeTickIndex;
+                    ? ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
+                    : ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX;
           }
 
           map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.GlobalClockIndex
+                  + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                   + HDL.BracketClose());
           map.put("Tick", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
         }

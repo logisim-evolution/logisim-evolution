@@ -87,23 +87,22 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
-    // FIXME: Are these "\n" really needed here?
     return contents.add(
-        "   Q7  <= CurState(0);\n",
-        "   Q7n <= NOT(CurState(0));\n",
-        "\n",
-        "   Enable  <= NOT(CKIh) AND Tick;",
-        "   ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
-        "\n",
-        "   NextState <= CurState WHEN Enable = '0' ELSE",
-        "                ParData WHEN SHnLD = '0' ELSE",
-        "                SER&CurState(7 DOWNTO 1);",
-        "\n",
-        "   dffs : PROCESS( CK ) IS",
-        "      BEGIN",
-        "         IF (rising_edge(CK)) THEN CurState <= NextState;",
-        "         END IF;",
-        "      END PROCESS dffs;").get();
+        "Q7  <= CurState(0);",
+        "Q7n <= NOT(CurState(0));",
+        "",
+        "Enable  <= NOT(CKIh) AND Tick;",
+        "ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
+        "",
+        "NextState <= CurState WHEN Enable = '0' ELSE",
+        "             ParData WHEN SHnLD = '0' ELSE",
+        "             SER&CurState(7 DOWNTO 1);",
+        "",
+        "dffs : PROCESS( CK ) IS",
+        "   BEGIN",
+        "      IF (rising_edge(CK)) THEN CurState <= NextState;",
+        "      END IF;",
+        "   END PROCESS dffs;").getWithIndent();
   }
 
   @Override
@@ -139,12 +138,12 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
             "Tick",
             clockNetName
                 + "("
-                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                 + ")");
       }
       map.put(
           "CK",
-          clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+          clockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
     map.putAll(GetNetMap("SHnLD", true, comp, 0, nets));
     map.putAll(GetNetMap("CKIh", true, comp, 13, nets));

@@ -66,6 +66,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     acceptedParameterTypes.add(type);
   }
 
+  @Override
   public HashSet<Integer> getAcceptedParameterTypes() {
     return acceptedParameterTypes;
   }
@@ -74,11 +75,13 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     exeUnits.add(exe);
   }
 
+  @Override
   public void decode(int instruction) {
     for (AssemblerExecutionInterface exe : exeUnits)
       exe.setBinInstruction(instruction);
   }
 
+  @Override
   public AssemblerExecutionInterface getExeUnit() {
     for (AssemblerExecutionInterface exe : exeUnits)
       if (exe.isValid())
@@ -86,6 +89,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return null;
   }
 
+  @Override
   public ArrayList<String> getOpcodes() {
     ArrayList<String> opcodes = new ArrayList<>();
     for (AssemblerExecutionInterface exe : exeUnits)
@@ -93,6 +97,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return opcodes;
   }
 
+  @Override
   public int getInstructionSize(String opcode) {
     for (AssemblerExecutionInterface exe : exeUnits) {
       int size = exe.getInstructionSizeInBytes(opcode);
@@ -101,6 +106,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return 1; /* to make sure that instructions are not overwritten */
   }
 
+  @Override
   public boolean assemble(AssemblerAsmInstruction instruction) {
     boolean found = false;
     for (AssemblerExecutionInterface exe : exeUnits) {
@@ -269,9 +275,10 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return completedLine ? lineNum + 1 : lineNum;
   }
 
+  @Override
   public String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface,
-          ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
-          HashMap<Integer, Integer> validDebugLines) {
+                           ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
+                           HashMap<Integer, Integer> validDebugLines) {
 
     StringBuffer lines = new StringBuffer();
     int lineNum = 1;
@@ -323,9 +330,9 @@ public abstract class AbstractAssembler implements AssemblerInterface {
                 : (int) (size >> 2);
         Integer[] contents = new Integer[toBeRead];
         for (int i = 0; i < toBeRead; i++) {
-          SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                  SocSupport.convUnsignedLong(startAddress + ((long) i << 2)),
-                  0, SocBusTransaction.WordAccess, "assembler");
+          SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READ_TRANSACTION,
+                                                          SocSupport.convUnsignedLong(startAddress + ((long) i << 2)),
+                                                          0, SocBusTransaction.WORD_ACCESS, "assembler");
           processorInterface.insertTransaction(trans, true, circuitState);
           contents[i] = trans.getReadData();
         }
@@ -425,8 +432,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           lineNum = addLine(lines, String.format(".org 0x%08X\n", start), lineNum, true);
           for (long pc = 0; pc < size; pc += 4) {
             long addr = start + pc;
-            SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                    SocSupport.convUnsignedLong(addr), 0, SocBusTransaction.WordAccess,
+            SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READ_TRANSACTION,
+                    SocSupport.convUnsignedLong(addr), 0, SocBusTransaction.WORD_ACCESS,
                     "assembler");
             processorInterface.insertTransaction(trans, true, circuitState);
             if (!trans.hasError()) {

@@ -13,39 +13,40 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public static String RGBArrayName = "RGBArrayColumnScanning";
 
   public static ArrayList<String> getPortMap(int id) {
-    final var clock = TickComponentHDLGeneratorFactory.FPGAClock;
-    final var columnAddress = LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress;
-    final var redOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs;
-    final var greenOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs;
-    final var blueOuts = LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs;
-    final var redIns = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIns = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIns = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-    final var contents = new LineBuffer();
+    final var contents =
+        (new LineBuffer())
+            .addPair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .addPair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .addPair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .addPair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
+            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
+            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
+            .addPair("id", id);
+
     if (HDL.isVHDL()) {
-      contents
-          .add("      PORT MAP ( %1$s => %1$s%2$d,", columnAddress, id)
-          .add("                 %1$s => %1$s,", clock)
-          .add("                 %1$s => %1$s%2$d,", redOuts, id)
-          .add("                 %1$s => %1$s%2$d,", greenOuts, id)
-          .add("                 %1$s => %1$s%2$d,", blueOuts, id)
-          .add("                 %1$s => s_%1$s%2$d,", redIns, id)
-          .add("                 %1$s => s_%1$s%2$d,", greenIns, id)
-          .add("                 %1$s => s_%1$s%2$d);", blueIns, id);
+      contents.add(
+          "PORT MAP ( {{addr}} => {{addr}}{{id}},",
+          "           {{clock}} => {{clock}},",
+          "           {{outsR}} => {{outsR}}{{id}},",
+          "           {{outsG}} => {{outsG}}{{id}},",
+          "           {{outsB}} => {{outsB}}{{id}},",
+          "           {{insR}} => s_{{insR}}{{id}},",
+          "           {{insG}} => s_{{insG}}{{id}},",
+          "           {{insB}} => s_{{insB}}{{id}} );");
     } else {
-      contents
-          .add("      (.%1$s(%1$s%2$d),", columnAddress, id)
-          .add("       .%1$s(%1$s),", clock)
-          .add("       .%1$s(%1$s%2$d),", redOuts, id)
-          .add("       .%1$s(%1$s%2$d),", greenOuts, id)
-          .add("       .%1$s(%1$s%2$d),", blueOuts, id)
-          .add("       .%1$s(%1$s%2$d),", redOuts, id)
-          .add("       .%1$s(%1$s%2$d),", greenOuts, id)
-          .add("       .%1$s(s_%1$s%2$d),", redIns, id)
-          .add("       .%1$s(s_%1$s%2$d),", greenIns, id)
-          .add("       .%1$s(s_%1$s%2$d));", blueIns, id);
+      contents.add(
+          "( .{{addr}}({{addr}}{{id}}),",
+          "  .{{clock}({{clock}}),",
+          "  .{{outsR}}({{outsR}}{{id}}),",
+          "  .{{outsG}}({{outsG}}{{id}}),",
+          "  .{{outsB}}({{outsB}}{{id}}),",
+          "  .{{insR}}(s_{{insR}}{{id}}),",
+          "  .{{insG}}(s_{{insG}}{{id}}),",
+          "  .{{insB}}(s_{{insB}}{{id}}) );");
     }
-    return contents.get();
+    return contents.getWithIndent(6);
   }
 
   @Override
@@ -61,7 +62,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
@@ -78,7 +79,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     return wires;
   }
 
-
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var redIn = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
@@ -89,51 +89,61 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     final var greenOut = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
     final var blueOut = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
 
-    final var contents = new LineBuffer();
+    final var contents =
+        (new LineBuffer())
+            .addPair("nrOfLeds", nrOfLedsString)
+            .addPair("nrOfRows", nrOfRowsString)
+            .addPair("activeLow", activeLowString)
+            .addPair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .addPair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .addPair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
+            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
+            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
-      contents
-          .add(
-              "   makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS")
-          .add("   BEGIN")
-          .add("      s_maxRedLedInputs <= (OTHERS => '0');")
-          .add("      s_maxGreenLedInputs <= (OTHERS => '0');")
-          .add("      s_maxBlueLedInputs <= (OTHERS => '0');")
-          .add("      IF (%s = 1) THEN", activeLowString)
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0)   <= NOT %s;", nrOfLedsString, redIn)
-          .add("         s_maxGreenLedInputs(%s-1 DOWNTO 0) <= NOT %s;", nrOfLedsString, greenIn)
-          .add("         s_maxBlueLedInputs(%s-1 DOWNTO 0)  <= NOT %s;", nrOfLedsString, blueIn)
-          .add("      ELSE")
-          .add("         s_maxRedLedInputs(%s-1 DOWNTO 0)   <= %s;", nrOfLedsString, redIn)
-          .add("         s_maxGreenLedInputs(%s-1 DOWNTO 0) <= %s;", nrOfLedsString, greenIn)
-          .add("         s_maxBlueLedInputs(%s-1 DOWNTO 0)  <= %s;", nrOfLedsString, blueIn)
-          .add("      END IF;")
-          .add("   END PROCESS makeVirtualInputs;")
-          .add("")
-          .add("   GenOutputs : FOR n IN %s-1 DOWNTO 0 GENERATE", nrOfRowsString)
-          .add("      %s(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);", redIn)
-          .add("      %s(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);", greenIn)
-          .add("      %s(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);", blueIn)
-          .add("   END GENERATE GenOutputs;");
+      contents.add(
+          "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
+          "BEGIN",
+          "   s_maxRedLedInputs <= (OTHERS => '0');",
+          "   s_maxGreenLedInputs <= (OTHERS => '0');",
+          "   s_maxBlueLedInputs <= (OTHERS => '0');",
+          "   IF ({{activeLow}} = 1) THEN",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= NOT {{insR}};",
+          "      s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};",
+          "      s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= NOT {{insB}};",
+          "   ELSE",
+          "      s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0)   <= {{insR}};",
+          "      s_maxGreenLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};",
+          "      s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};",
+          "   END IF;",
+          "END PROCESS makeVirtualInputs;",
+          "",
+          "GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE",
+          "   {{insR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "   {{insG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "   {{insB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "END GENERATE GenOutputs;");
     } else {
-      contents
-          .add("")
-          .add("   genvar i;")
-          .add("   generate")
-          .add("      for (i = 0; i < %s; i = i + 1) begin", nrOfRowsString)
-          .add("         assign %s[i] = (activeLow == 1)", redOut)
-          .add("            ? ~%s[i*nrOfColumns+s_columnCounterReg]", redIn)
-          .add("            : %s[i*nrOfColumns+s_columnCounterReg];", redIn)
-          .add("         assign %s[i] = (activeLow == 1)", greenOut)
-          .add("            ? ~%s[i*nrOfColumns+s_columnCounterReg]", greenIn)
-          .add("            : %s[i*nrOfColumns+s_columnCounterReg];", greenIn)
-          .add("         assign %s[i] = (activeLow == 1)", blueOut)
-          .add("            ? ~%s[i*nrOfColumns+s_columnCounterReg]", blueIn)
-          .add("            : %s[i*nrOfColumns+s_columnCounterReg];", blueIn)
-          .add("      end")
-          .add("   endgenerate");
+      contents.add(
+          "",
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
+          "      assign {{outsR}}[i] = (activeLow == 1)",
+          "         ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]",
+          "         :  {{insR}}[i*nrOfColumns+s_columnCounterReg];",
+          "      assign {{outsR}}[i] = (activeLow == 1)",
+          "         ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]",
+          "         :  {{insG}[i*nrOfColumns+s_columnCounterReg];",
+          "      assign {{outsB}}[i] = (activeLow == 1)",
+          "         ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]",
+          "         :  [{insB}}[i*nrOfColumns+s_columnCounterReg];",
+          "   end",
+          "endgenerate");
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

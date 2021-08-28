@@ -66,46 +66,45 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     final var contents = new LineBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
-      contents.add("   make_mux : PROCESS( Enable,");
-      for (var i = 0; i < (1 << nrOfSelectBits); i++)
-        contents.add("                       MuxIn_%d,", i);
-      contents
-          .add("                       Sel )")
-          .add("   BEGIN")
-          .add("      IF (Enable = '0') THEN");
-      if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
-        contents.add("         MuxOut <= (OTHERS => '0');");
-      else
-        contents.add("         MuxOut <= '0';");
-      contents.add("                        ELSE");
-      contents.add("         CASE (Sel) IS");
-      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("            WHEN %s => MuxOut <= MuxIn_%d;", IntToBin(i, nrOfSelectBits), i);
-      contents
-          .add("            WHEN OTHERS  => MuxOut <= MuxIn_%d;", (1 << nrOfSelectBits) - 1)
-          .add("         END CASE;")
-          .add("      END IF;")
-          .add("   END PROCESS make_mux;");
+      contents.add("make_mux : PROCESS( Enable,");
+      for (var i = 0; i < (1 << nrOfSelectBits); i++) {
+        contents.add("                    MuxIn_{{1}},", i);
+      }
+      contents.add(
+          "                    Sel )",
+          "BEGIN",
+          "   IF (Enable = '0') THEN",
+          (attrs.getValue(StdAttr.WIDTH).getWidth() > 1
+              ? "      MuxOut <= (OTHERS => '0');"
+              : "      MuxOut <= '0';"),
+          "                     ELSE",
+          "      CASE (Sel) IS");
+      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
+        contents.add("          WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
+      }
+      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1,
+                   "      END CASE;", "   END IF;",
+                   "END PROCESS make_mux;");
     } else {
-      contents
-          .add("   assign MuxOut = s_selected_vector;")
-          .add("")
-          .add("   always @(*)")
-          .add("   begin")
-          .add("      if (~Enable) s_selected_vector <= 0;")
-          .add("      else case (Sel)");
+      contents.add(
+          "assign MuxOut = s_selected_vector;",
+          "",
+          "always @(*)",
+          "begin",
+          "   if (~Enable) s_selected_vector <= 0;",
+          "   else case (Sel)");
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
-            .add("         %s:", IntToBin(i, nrOfSelectBits))
-            .add("            s_selected_vector <= MuxIn_%d;", i);
+            .add("      {{1}}:", IntToBin(i, nrOfSelectBits))
+            .add("         s_selected_vector <= MuxIn_{{1}};", i);
       }
       contents
-          .add("         default:")
-          .add("            s_selected_vector <= MuxIn_%d;", (1 << nrOfSelectBits) - 1)
-          .add("      endcase")
-          .add("   end");
+          .add("     default:")
+          .add("        s_selected_vector <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
+          .add("   endcase")
+          .add("end");
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

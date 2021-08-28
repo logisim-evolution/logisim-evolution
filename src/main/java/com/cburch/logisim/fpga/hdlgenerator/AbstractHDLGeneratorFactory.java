@@ -106,7 +106,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return FileWriter.WriteContents(OutFile, Contents);
   }
 
-  public static final int MaxLineLength = 80; // FIXME: SCREAM_CASE
+  public static final int MAX_LINE_LENGTH = 80;
 
   /* Here the common predefined methods are defined */
   @Override
@@ -135,13 +135,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(libs);
         Contents.empty();
       }
-      Contents.add("ARCHITECTURE PlatformIndependent OF %s IS ", componentName);
+      Contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
       Contents.add("");
       final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
       if (nrOfTypes > 0) {
         Contents.addRemarkBlock("Here all private types are defined");
         for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
-          Contents.add("   %s;", thisType);
+          Contents.add("   {{1}};", thisType);
         }
         Contents.empty();
       }
@@ -162,20 +162,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (wires.get(wire) < 0) {
             if (!params.containsKey(wires.get(wire))) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              Contents.clear();
-              return Contents.get();
+              return Contents.clear().get();
             }
             OneLine.append("(").append(params.get(wires.get(wire))).append("-1)");
           } else {
-            if (wires.get(wire) == 0) {
-              OneLine.append("0");
-            } else {
-              OneLine.append((wires.get(wire) - 1));
-            }
+            OneLine.append((wires.get(wire) == 0) ? "0" : (wires.get(wire) - 1));
           }
           OneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL " + OneLine);
+        Contents.add("   SIGNAL {{1}}", OneLine);
         OneLine.setLength(0);
       }
 
@@ -203,23 +198,21 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           OneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL " + OneLine);
+        Contents.add("   SIGNAL {{1}}", OneLine);
         OneLine.setLength(0);
       }
 
       for (final var Mem : mems.keySet()) {
         OneLine.append(Mem);
         while (OneLine.length() < SallignmentSize) OneLine.append(" ");
-        OneLine.append(": ");
-        OneLine.append(GetType(mems.get(Mem)));
-        OneLine.append(";");
+        OneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
       }
-      Contents.add("");
-      Contents.add("BEGIN");
-      Contents.add(GetModuleFunctionality(theNetlist, attrs));
-      Contents.add("END PlatformIndependent;");
+      Contents.add("")
+          .add("BEGIN")
+          .add(GetModuleFunctionality(theNetlist, attrs))
+          .add("END PlatformIndependent;");
     } else {
       final var Preamble = String.format("module %s( ", componentName);
       final var Indenting = new StringBuilder();

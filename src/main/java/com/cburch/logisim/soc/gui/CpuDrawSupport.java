@@ -46,7 +46,7 @@ import java.awt.event.MouseEvent;
 
 public class CpuDrawSupport {
 
-  public static final int NrOfTraces = 21;    // FIXME: SCREAM_CASE
+  public static final int NR_OF_TRACES = 21;
   public static final int TRACE_HEIGHT = 20;
 
   public static final Bounds busConBounds = Bounds.create(50, 600, 280, 20);

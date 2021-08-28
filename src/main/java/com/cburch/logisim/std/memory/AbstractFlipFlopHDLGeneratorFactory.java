@@ -100,51 +100,53 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     contents.addRemarkBlock("Here the actual state register is defined");
     if (HDL.isVHDL()) {
       contents
-          .add("   make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
-          .add("      VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
-          .add("   BEGIN")
-          .add("      temp := std_logic_vector(to_unsigned(%s,1));", ACTIVITY_LEVEL_STR)
-          .add("      IF (Reset = '1') THEN s_current_state_reg <= '0';")
-          .add("      ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
+          .add("make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
+          .add("   VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
+          .add("BEGIN")
+          .add("   temp := std_logic_vector(to_unsigned(%s,1));", ACTIVITY_LEVEL_STR)
+          .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
+          .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
       if (Netlist.IsFlipFlop(attrs)) {
-        contents.add("      ELSIF (Clock'event AND (Clock = temp(0))) THEN");
+        contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
-        contents.add("      ELSIF (Clock = temp(0)) THEN");
+        contents.add("   ELSIF (Clock = temp(0)) THEN");
       }
       contents
-          .add("         IF (Tick = '1') THEN")
-          .add("            s_current_state_reg <= s_next_state;")
-          .add("         END IF;")
+          .add("       IF (Tick = '1') THEN")
+          .add("         s_current_state_reg <= s_next_state;")
           .add("      END IF;")
-          .add("   END PROCESS make_memory;");
+          .add("   END IF;")
+          .add("END PROCESS make_memory;");
     } else {
       if (Netlist.IsFlipFlop(attrs)) {
-        contents
-            .add("   always @(posedge Reset or posedge Preset or negedge Clock)")
-            .add("   begin")
-            .add("      if (Reset) s_current_state_reg[0] <= 1'b0;")
-            .add("      else if (Preset) s_current_state_reg[0] <= 1'b1;")
-            .add("      else if (Tick) s_current_state_reg[0] <= s_next_state;")
-            .add("   end")
-            .add("")
-            .add("   always @(posedge Reset or posedge Preset or posedge Clock)")
-            .add("   begin")
-            .add("      if (Reset) s_current_state_reg[1] <= 1'b0;")
-            .add("      else if (Preset) s_current_state_reg[1] <= 1'b1;")
-            .add("      else if (Tick) s_current_state_reg[1] <= s_next_state;")
-            .add("   end");
+        contents.add(
+            "always @(posedge Reset or posedge Preset or negedge Clock)",
+            "begin",
+            "   if (Reset) s_current_state_reg[0] <= 1'b0;",
+            "   else if (Preset) s_current_state_reg[0] <= 1'b1;",
+            "   else if (Tick) s_current_state_reg[0] <= s_next_state;",
+            "end",
+            "",
+            "always @(posedge Reset or posedge Preset or posedge Clock)",
+            "begin",
+            "   if (Reset) s_current_state_reg[1] <= 1'b0;",
+            "   else if (Preset) s_current_state_reg[1] <= 1'b1;",
+            "   else if (Tick) s_current_state_reg[1] <= s_next_state;",
+            "end");
       } else {
         contents
-            .add("   always @(*)")
-            .add("   begin")
-            .add("      if (Reset) s_current_state_reg <= 2'b0;")
-            .add("      else if (Preset) s_current_state_reg <= 2'b1;")
-            .add("      else if (Tick & (Clock == %s)) s_current_state_reg <= {s_next_state,s_next_state};", ACTIVITY_LEVEL_STR)
-            .add("   end");
+            .addPair("activityLevel", ACTIVITY_LEVEL_STR)
+            .add(
+                "always @(*)",
+                "begin",
+                "   if (Reset) s_current_state_reg <= 2'b0;",
+                "   else if (Preset) s_current_state_reg <= 2'b1;",
+                "   else if (Tick & (Clock == {{activityLevel}})) s_current_state_reg <= {s_next_state,s_next_state};",
+                "end");
       }
     }
-    contents.add("");
-    return contents.get();
+    contents.empty();
+    return contents.getWithIndent();
   }
 
   @Override
@@ -227,7 +229,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             "Tick",
             clockNetName
                 + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                 + HDL.BracketClose());
       } else {
         if (activeLow)
@@ -235,21 +237,21 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
+                  + ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
       }
       map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
-              + ClockHDLGeneratorFactory.GlobalClockIndex
+              + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
     } else if (!hasClock) {
       map.put("Tick", HDL.zeroBit());
@@ -262,14 +264,14 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
+                  + ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.DerivedClockIndex
+                  + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
         map.put("Clock", GetNetName(comp, comp.NrOfEnds() - 5, true, Nets));

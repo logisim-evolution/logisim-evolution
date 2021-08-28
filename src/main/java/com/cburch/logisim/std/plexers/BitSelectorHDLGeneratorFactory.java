@@ -64,41 +64,47 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents =
+        (new LineBuffer())
+            .addPair("extBits", EXTENDED_BITS_STR)
+            .addPair("inBits", INPUT_BITS_STR)
+            .add("outBits", OUTPUTS_BITS_STR);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
-      contents.add("   s_extended_vector((%s-1) DOWNTO %s) <= (OTHERS => '0');", EXTENDED_BITS_STR, INPUT_BITS_STR);
-      contents.add("   s_extended_vector((%s-1) DOWNTO 0) <= DataIn;", INPUT_BITS_STR);
+      contents.add(
+          "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
+          "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;");
       if (outputBits > 1)
-        contents.add("   DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1)*%1$s)-1 DOWNTO to_integer(unsigned(Sel))*%1$s);", OUTPUTS_BITS_STR);
-      else
-        contents.add("   DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+        contents.add(
+            "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});");
+      else contents.add("DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
     } else {
-      contents.add("   assign s_extended_vector[%s-1:%s] = 0;", EXTENDED_BITS_STR, INPUT_BITS_STR);
-      contents.add("   assign s_extended_vector[%s-1:0] = DataIn;", INPUT_BITS_STR);
+      contents.add(
+          "assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;",
+          "assign s_extended_vector[{{inBits}}-1:0] = DataIn;");
       if (outputBits > 1) {
-        contents
-            .add("   wire[513:0] s_select_vector;")
-            .add("   reg[%s-1:0] s_selected_slice;", OUTPUTS_BITS_STR)
-            .add("   assign s_select_vector[513:%s] = 0;", EXTENDED_BITS_STR)
-            .add("   assign s_select_vector[%s-1:0] = s_extended_vector;", EXTENDED_BITS_STR)
-            .add("   assign DataOut = s_selected_slice;")
-            .add("")
-            .add("   always @(*)")
-            .add("   begin")
-            .add("      case (Sel)");
+        contents.add(
+            "wire[513:0] s_select_vector;",
+            "reg[{{outBits}}-1:0] s_selected_slice;",
+            "assign s_select_vector[513:{{extBits}}] = 0;",
+            "assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;",
+            "assign DataOut = s_selected_slice;",
+            "",
+            "always @(*)",
+            "begin",
+            "   case (Sel)");
         for (var i = 15; i > 0; i--) {
-          contents.add("         %1$d : s_selected_slice <= s_select_vector[(%2$d*%3$s)-1:%1$d*%3$s];", i, (i + 1), OUTPUTS_BITS_STR);
+          contents.add("      {{1}} : s_selected_slice <= s_select_vector[({{2}}*{{outBits}})-1:{{1}}*{{outBits}}];", i, (i + 1));
         }
-        contents
-            .add("         default : s_selected_slice <= s_select_vector[%s-1:0];", OUTPUTS_BITS_STR)
-            .add("      endcase")
-            .add("   end");
+        contents.add(
+            "      default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];",
+            "   endcase",
+            "end");
       } else {
-        contents.add("   assign DataOut = s_extended_vector[Sel];");
+        contents.add("assign DataOut = s_extended_vector[Sel];");
       }
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override

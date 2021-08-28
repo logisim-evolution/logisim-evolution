@@ -43,19 +43,19 @@ import java.util.TreeMap;
 public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public static final int NR_OF_CLOCK_BITS = 5;
-  public static final int DerivedClockIndex = 0;    // FIXME: SCREAM_CASE
-  public static final int InvertedDerivedClockIndex = 1;    // FIXME: SCREAM_CASE
-  public static final int PositiveEdgeTickIndex = 2;    // FIXME: SCREAM_CASE
-  public static final int NegativeEdgeTickIndex = 3;    // FIXME: SCREAM_CASE
-  public static final int GlobalClockIndex = 4;   // FIXME: SCREAM_CASE
-  private static final String HighTickStr = "HighTicks";
-  private static final int HighTickId = -1;
-  private static final String LowTickStr = "LowTicks";
-  private static final int LowTickId = -2;
-  private static final String PhaseStr = "Phase";
-  private static final int PhaseId = -3;
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -4;
+  public static final int DERIVED_CLOCK_INDEX = 0;
+  public static final int INVERTED_DERIVED_CLOCK_INDEX = 1;
+  public static final int POSITIVE_EDGE_TICK_INDEX = 2;
+  public static final int NEGATIVE_EDGE_TICK_INDEX = 3;
+  public static final int GLOBAL_CLOCK_INDEX = 4;
+  private static final String HIGH_TICK_STR = "HighTicks";
+  private static final int HIGH_TICK_ID = -1;
+  private static final String LOW_TICK_STR = "LowTicks";
+  private static final int LOW_TICK_ID = -2;
+  private static final String PHASE_STR = "Phase";
+  private static final int PHASE_ID = -3;
+  private static final String NR_OF_BITS_STR = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -4;
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
     StringBuilder Contents = new StringBuilder();
@@ -83,10 +83,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .addPair("phase", PhaseStr)
-            .addPair("nrOfBits", NrOfBitsStr)
-            .addPair("lowTick", LowTickStr)
-            .addPair("highTick", HighTickStr)
+            .addPair("phase", PHASE_STR)
+            .addPair("nrOfBits", NR_OF_BITS_STR)
+            .addPair("lowTick", LOW_TICK_STR)
+            .addPair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
     if (HDL.isVHDL()) {
@@ -209,10 +209,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     final var map = new TreeMap<Integer, String>();
-    map.put(HighTickId, HighTickStr);
-    map.put(LowTickId, LowTickStr);
-    map.put(PhaseId, PhaseStr);
-    map.put(NrOfBitsId, NrOfBitsStr);
+    map.put(HIGH_TICK_ID, HIGH_TICK_STR);
+    map.put(LOW_TICK_ID, LOW_TICK_STR);
+    map.put(PHASE_ID, PHASE_STR);
+    map.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
     return map;
   }
 
@@ -229,10 +229,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       nr_of_bits++;
       MaxValue /= 2;
     }
-    map.put(HighTickStr, HighTicks);
-    map.put(LowTickStr, LowTicks);
-    map.put(PhaseStr, (HighTicks + LowTicks) - Phase);
-    map.put(NrOfBitsStr, nr_of_bits);
+    map.put(HIGH_TICK_STR, HighTicks);
+    map.put(LOW_TICK_STR, LowTicks);
+    map.put(PHASE_STR, (HighTicks + LowTicks) - Phase);
+    map.put(NR_OF_BITS_STR, nr_of_bits);
     return map;
   }
 
@@ -241,8 +241,8 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(MapInfo instanceof NetlistComponent)) return map;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGAClock);
-    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGATick);
+    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
     map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.GetComponent(), Nets));
     return map;
   }
@@ -252,8 +252,8 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, Integer>();
     map.put("s_output_regs", NR_OF_CLOCK_BITS - 1);
     map.put("s_buf_regs", 2);
-    map.put("s_counter_reg", NrOfBitsId);
-    map.put("s_derived_clock_reg", PhaseId);
+    map.put("s_counter_reg", NR_OF_BITS_ID);
+    map.put("s_derived_clock_reg", PHASE_ID);
     return map;
   }
 
@@ -269,7 +269,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
-    map.put("s_counter_next", NrOfBitsId);
+    map.put("s_counter_next", NR_OF_BITS_ID);
     map.put("s_counter_is_zero", 1);
     return map;
   }

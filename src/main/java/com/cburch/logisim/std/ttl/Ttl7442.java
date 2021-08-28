@@ -71,36 +71,36 @@ public class Ttl7442 extends AbstractTtlGate {
           x + 24 + i * 8,
           y + 32,
           x + 24 + i * 8,
-          y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+          y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
       g.drawString(Integer.toString(i), x + 22 + i * 8, y + 26);
       if (i < 4) {
         g.drawString(Integer.toString(mask), x + 27 + i * 20, y + 16);
         mask <<= 1;
-        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.pinheight, x + 30 + i * 20, y + 10);
+        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.PIN_HEIGHT, x + 30 + i * 20, y + 10);
       }
       if (i < 7) {
         g.drawLine(
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight,
+            y + height - AbstractTtlGate.PIN_HEIGHT,
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
         g.drawLine(
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2,
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2,
             x + 24 + i * 8,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
       } else {
         int j = i == 7 ? 9 : i == 9 ? 7 : 8;
         g.drawLine(
             x + i * 20 - 30,
-            y + AbstractTtlGate.pinheight,
+            y + AbstractTtlGate.PIN_HEIGHT,
             x + i * 20 - 30,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2);
         g.drawLine(
             x + i * 20 - 30,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2,
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2,
             x + 24 + j * 8,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2);
       }
     }
   }

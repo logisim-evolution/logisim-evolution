@@ -29,10 +29,8 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl7413 extends AbstractTtlGate {
   /**
@@ -71,18 +69,18 @@ public class Ttl7413 extends AbstractTtlGate {
     Drawgates.paintAnd(g, x + 105, y + 40, 10, 10, inverted);
     final var offset = inverted ? 0 : -4;
     g.drawLine(x + 129 + offset, y + 20, x + 130, y + 20);
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 20);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 20);
     g.drawLine(x + 109 + offset, y + 40, x + 110, y + 40);
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 40);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 40);
     for (var i = 0; i < 5; i++) {
       if (i != 2) {
         g.drawLine(
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight,
+            y + height - AbstractTtlGate.PIN_HEIGHT,
             x + 10 + i * 20,
             y + 36 + i * 2);
         g.drawLine(x + 10 + i * 20, y + 36 + i * 2, x + 95, y + 36 + i * 2);
-        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.pinheight, x + 30 + i * 20, y + 24 - i * 2);
+        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.PIN_HEIGHT, x + 30 + i * 20, y + 24 - i * 2);
         g.drawLine(x + 30 + i * 20, y + 24 - i * 2, x + 115, y + 24 - i * 2);
       }
     }

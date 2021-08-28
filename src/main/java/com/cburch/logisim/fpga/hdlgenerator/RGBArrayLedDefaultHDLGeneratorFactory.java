@@ -43,13 +43,13 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
-          add("clock", TickComponentHDLGeneratorFactory.FPGAClock);
-          add("redOuts", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
-          add("greenOuts", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
-          add("blueOuts", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
-          add("redIns", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
-          add("greenIns", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
-          add("blueIns", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+          add("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
+          add("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
+          add("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+          add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+          add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+          add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+          add("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
         }
       };
 
@@ -59,20 +59,20 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
     if (HDL.isVHDL()) {
       contents.add(
-          "PORT MAP ( {{redOuts   }} => {{redOuts}}{{id}},",
-          "            {{greenOuts}} => {{greenOuts}}{{id}},",
-          "            {{blueOuts }} => {{blueOuts}}{{id}},",
-          "            {{redIns   }} => s_{{redIns}}{{id}},",
-          "            {{greenIns }} => s_{{greenIns}}{{id}},",
-          "            {{blueIns  }} => s_{{blueIns}}{{id}} );");
+          "PORT MAP ( {{outsR}} => {{outsR}}{{id}},",
+          "           {{outsG}} => {{outsG}}{{id}},",
+          "           {{outsB}} => {{outsB}}{{id}},",
+          "           {{insR }} => s_{{insR}}{{id}},",
+          "           {{insG }} => s_{{insG}}{{id}},",
+          "           {{insB }} => s_{{insB}}{{id}} );");
     } else {
       contents.add(
-          "(.{{redOuts  }}({{redOuts}}{{id}}),",
-          " .{{greenOuts}}({{greenOuts}}{{id}}),",
-          " .{{blueOuts }}({{blueOuts}}{{id}}),",
-          " .{{redIns   }}(s_{{redIns}}{{id}}),",
-          " .{{greenIns }}(s_{{greenIns}}{{id}}),",
-          " .{{blueIns  }}(s_{{blueIns}}{{id}}));");
+          "( .{{outsR}}({{outsR}}{{id}}),",
+          "  .{{outsG}}({{outsG}}{{id}}),",
+          "  .{{outsB}}({{outsB}}{{id}}),",
+          "  .{{insR}}(s_{{insR}}{{id}}),",
+          "  .{{insG}}(s_{{insG}}{{id}}),",
+          "  .{{insB}}(s_{{insB}}{{id}}) );");
     }
     return contents.getWithIndent(6);
   }
@@ -102,18 +102,18 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     if (HDL.isVHDL()) {
       contents.add(
           "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
-          "   {{redOuts  }}(n) <= NOT({{redIns  }}(n)) WHEN activeLow = 1 ELSE {{redIns  }}(n);",
-          "   {{greenOuts}}(n) <= NOT({{greenIns}}(n)) WHEN activeLow = 1 ELSE {{greenIns}}(n);",
-          "   {{blueOuts }}(n) <= NOT({{blueIns }}(n)) WHEN activeLow = 1 ELSE {{blueIns }}(n);",
+          "   {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);",
+          "   {{outsG}}(n) <= NOT({{insG}}(n)) WHEN activeLow = 1 ELSE {{insG}}(n);",
+          "   {{outsB}}(n) <= NOT({{insB}}(n)) WHEN activeLow = 1 ELSE {{insB}}(n);",
           "END GENERATE;");
     } else {
       contents.add(
           "genvar i;",
           "generate",
           "   for (i = 0; i < nrOfLeds; i = i + 1) begin",
-          "      assign {{redOuts  }}[i] = (activeLow == 1) ? ~{{redIns}}[n] : {{redIns}}[n];",
-          "      assign {{greenOuts}}[i] = (activeLow == 1) ? ~{{greenIns}}[n] : {{greenIns}}[n];",
-          "      assign {{blueOuts }}[i] = (activeLow == 1) ? ~{{blueIns}}[n] : {{blueIns}}[n];",
+          "      assign {{outsR}}[i] = (activeLow == 1) ? ~{{insR}}[n] : {{insR}}[n];",
+          "      assign {{outsG}}[i] = (activeLow == 1) ? ~{{insG}}[n] : {{insG}}[n];",
+          "      assign {{outsB}}[i] = (activeLow == 1) ? ~{{insB}}[n] : {{insB}}[n];",
           "   end",
           "endgenerate");
     }

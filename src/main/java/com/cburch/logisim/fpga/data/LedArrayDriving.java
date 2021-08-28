@@ -36,7 +36,7 @@ import java.util.LinkedList;
 public class LedArrayDriving {
 
   public static String GetContraintedDriveMode(char id) {
-    if ((id >= LED_DEFAULT) && (id <= RgbColumnScanning)) {
+    if ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) {
       return DRIVING_STRINGS[id];
     }
     return "Unknown";
@@ -79,9 +79,9 @@ public class LedArrayDriving {
   public static final char LED_DEFAULT = 0;
   public static final char LED_ROW_SCANNING = 1;
   public static final char LED_COLUMN_SCANNING = 2;
-  public static final char RgbDefault = 3;
-  public static final char RgbRowScanning = 4;
-  public static final char RgbColumnScanning = 5;
+  public static final char RGB_DEFAULT = 3;
+  public static final char RGB_ROW_SCANNING = 4;
+  public static final char RGB_COLUMN_SCANNING = 5;
 
   public static final char UNKNOWN = 255;
 

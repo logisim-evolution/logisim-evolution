@@ -151,7 +151,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbDefault: {
+      case LedArrayDriving.RGB_DEFAULT: {
         nrOfPins = nrOfRows * nrOfColumns * 3;
         var preamble = "";
         for (var rgb = 0; rgb < 3; rgb++) {
@@ -176,7 +176,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbRowScanning: {
+      case LedArrayDriving.RGB_ROW_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
@@ -206,7 +206,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbColumnScanning: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";

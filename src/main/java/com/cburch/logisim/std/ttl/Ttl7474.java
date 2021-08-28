@@ -177,59 +177,59 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   private void drawCon1(Graphics g, int x, int y, int height) {
-    g.drawLine(x + 70, y + height - AbstractTtlGate.pinheight, x + 70, y + 16);
+    g.drawLine(x + 70, y + height - AbstractTtlGate.PIN_HEIGHT, x + 70, y + 16);
     g.drawLine(x + 35, y + 16, x + 70, y + 16);
     g.drawLine(x + 35, y + 16, x + 35, y + 17);
 
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 46);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 46);
     g.drawLine(x + 10, y + 46, x + 35, y + 46);
     g.drawLine(x + 35, y + 45, x + 35, y + 46);
 
-    g.drawLine(x + 30, y + height - AbstractTtlGate.pinheight, x + 30, y + 50);
+    g.drawLine(x + 30, y + height - AbstractTtlGate.PIN_HEIGHT, x + 30, y + 50);
     g.drawLine(x + 20, y + 50, x + 30, y + 50);
     g.drawLine(x + 20, y + 26, x + 20, y + 50);
     g.drawLine(x + 20, y + 26, x + 27, y + 26);
 
-    g.drawLine(x + 50, y + height - AbstractTtlGate.pinheight, x + 50, y + 48);
+    g.drawLine(x + 50, y + height - AbstractTtlGate.PIN_HEIGHT, x + 50, y + 48);
     g.drawLine(x + 22, y + 48, x + 50, y + 48);
     g.drawLine(x + 22, y + 36, x + 22, y + 48);
     g.drawLine(x + 22, y + 36, x + 27, y + 36);
 
-    g.drawLine(x + 90, y + height - AbstractTtlGate.pinheight, x + 90, y + 48);
+    g.drawLine(x + 90, y + height - AbstractTtlGate.PIN_HEIGHT, x + 90, y + 48);
     g.drawLine(x + 68, y + 48, x + 90, y + 48);
     g.drawLine(x + 68, y + 26, x + 68, y + 48);
     g.drawLine(x + 43, y + 26, x + 68, y + 26);
 
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 50);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 50);
     g.drawLine(x + 66, y + 50, x + 110, y + 50);
     g.drawLine(x + 66, y + 36, x + 66, y + 50);
     g.drawLine(x + 47, y + 36, x + 66, y + 36);
   }
 
   private void drawCon2(Graphics g, int x, int y) {
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 33);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 33);
     g.drawLine(x + 117, y + 33, x + 130, y + 33);
 
-    g.drawLine(x + 110, y + AbstractTtlGate.pinheight, x + 110, y + 10);
+    g.drawLine(x + 110, y + AbstractTtlGate.PIN_HEIGHT, x + 110, y + 10);
     g.drawLine(x + 110, y + 10, x + 120, y + 10);
     g.drawLine(x + 120, y + 10, x + 120, y + 23);
     g.drawLine(x + 113, y + 23, x + 120, y + 23);
 
-    g.drawLine(x + 90, y + AbstractTtlGate.pinheight, x + 90, y + 10);
+    g.drawLine(x + 90, y + AbstractTtlGate.PIN_HEIGHT, x + 90, y + 10);
     g.drawLine(x + 90, y + 10, x + 105, y + 10);
     g.drawLine(x + 105, y + 10, x + 105, y + 14);
 
-    g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 10);
+    g.drawLine(x + 70, y + AbstractTtlGate.PIN_HEIGHT, x + 70, y + 10);
     g.drawLine(x + 70, y + 10, x + 88, y + 10);
     g.drawLine(x + 88, y + 10, x + 88, y + 33);
     g.drawLine(x + 88, y + 33, x + 97, y + 33);
 
-    g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 12);
+    g.drawLine(x + 50, y + AbstractTtlGate.PIN_HEIGHT, x + 50, y + 12);
     g.drawLine(x + 50, y + 12, x + 86, y + 12);
     g.drawLine(x + 86, y + 12, x + 86, y + 23);
     g.drawLine(x + 86, y + 23, x + 97, y + 23);
 
-    g.drawLine(x + 30, y + AbstractTtlGate.pinheight, x + 30, y + 14);
+    g.drawLine(x + 30, y + AbstractTtlGate.PIN_HEIGHT, x + 30, y + 14);
     g.drawLine(x + 30, y + 14, x + 84, y + 14);
     g.drawLine(x + 84, y + 14, x + 84, y + 44);
     g.drawLine(x + 84, y + 44, x + 105, y + 44);

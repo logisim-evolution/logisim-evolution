@@ -61,63 +61,65 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = (new LineBuffer())
+            .addPair("selBits", NR_OF_SELECT_BITS_STR)
+            .addPair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
-      contents
-          .add("   -- Output Signals")
-          .add("   GroupSelect <= NOT(s_in_is_zero) AND enable;")
-          .add("   EnableOut   <= s_in_is_zero AND enable;")
-          .add("   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE")
-          .add("                  s_address(%s-1 DOWNTO 0);", NR_OF_SELECT_BITS_STR)
-          .add("")
-          .add("   -- Control Signals ")
-          .add("   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,%s)) ELSE '0';", NR_OF_INPUT_BITS_STR)
-          .add("")
-          .add("   -- Processes")
-          .add("   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )")
-          .add("   BEGIN")
-          .add("      v_select_1_vector(32 DOWNTO %s)  <= (OTHERS => '0');", NR_OF_INPUT_BITS_STR)
-          .add("      v_select_1_vector(%s-1 DOWNTO 0) <= input_vector;", NR_OF_INPUT_BITS_STR)
-          .add("      IF (v_select_1_vector(31 DOWNTO 16) = X\"0000\") THEN s_address(4)      <= '0';")
-          .add("                                                          v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);")
-          .add("                                                     ELSE s_address(4)      <= '1';")
-          .add("                                                          v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);")
-          .add("      END IF;")
-          .add("      IF (v_select_2_vector(15 DOWNTO 8) = X\"00\") THEN s_address(3)      <= '0';")
-          .add("                                                       v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);")
-          .add("                                                  ELSE s_address(3)      <= '1';")
-          .add("                                                       v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);")
-          .add("      END IF;")
-          .add("      IF (v_select_3_vector(7 DOWNTO 4) = X\"0\") THEN s_address(2)      <= '0';")
-          .add("                                                     v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);")
-          .add("                                                ELSE s_address(2)      <= '1';")
-          .add("                                                     v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);")
-          .add("      END IF;")
-          .add("      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';")
-          .add("                                                     s_address(0) <= v_select_4_vector(1);")
-          .add("                                                ELSE s_address(1) <= '1';")
-          .add("                                                     s_address(0) <= v_select_4_vector(3);")
-          .add("      END IF;")
-          .add("   END PROCESS make_addr;");
+      contents.add(
+          "   -- Output Signals",
+          "   GroupSelect <= NOT(s_in_is_zero) AND enable;",
+          "   EnableOut   <= s_in_is_zero AND enable;",
+          "   Address     <= (OTHERS => '0') WHEN enable = '0' ELSE",
+          "                  s_address({{selBits}}-1 DOWNTO 0);",
+          "",
+          "   -- Control Signals ",
+          "   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,{{inBits}})) ELSE '0';",
+          "",
+          "   -- Processes",
+          "   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )",
+          "   BEGIN",
+          "      v_select_1_vector(32 DOWNTO {{inBits}})  <= (OTHERS => '0');",
+          "      v_select_1_vector({{inBits}}-1 DOWNTO 0) <= input_vector;",
+          "      IF (v_select_1_vector(31 DOWNTO 16) = X\"0000\") THEN s_address(4)      <= '0';",
+          "                                                          v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);",
+          "                                                     ELSE s_address(4)      <= '1';",
+          "                                                          v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);",
+          "      END IF;",
+          "      IF (v_select_2_vector(15 DOWNTO 8) = X\"00\") THEN s_address(3)      <= '0';",
+          "                                                       v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);",
+          "                                                  ELSE s_address(3)      <= '1';",
+          "                                                       v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);",
+          "      END IF;",
+          "      IF (v_select_3_vector(7 DOWNTO 4) = X\"0\") THEN s_address(2)      <= '0';",
+          "                                                     v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);",
+          "                                                ELSE s_address(2)      <= '1';",
+          "                                                     v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);",
+          "      END IF;",
+          "      IF (v_select_4_vector(3 DOWNTO 2) = \"00\") THEN s_address(1) <= '0';",
+          "                                                     s_address(0) <= v_select_4_vector(1);",
+          "                                                ELSE s_address(1) <= '1';",
+          "                                                     s_address(0) <= v_select_4_vector(3);",
+          "      END IF;",
+          "   END PROCESS make_addr;");
     } else {
-      contents
-          .add("   assign GroupSelect = ~s_in_is_zero&enable;")
-          .add("   assign EnableOut = s_in_is_zero&enable;")
-          .add("   assign Address = (~enable) ? 0 : s_address[%s-1:0];", NR_OF_SELECT_BITS_STR)
-          .add("   assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;")
-          .add("")
-          .add("   assign v_select_1_vector[32:%s] = 0;", NR_OF_SELECT_BITS_STR)
-          .add("   assign v_select_1_vector[%s-1:0] = input_vector;", NR_OF_SELECT_BITS_STR)
-          .add("   assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;")
-          .add("   assign v_select_2_vector = (v_select_1_vector[31:16] == 0) ? v_select_1_vector[15:0] : v_select_1_vector[31:16];")
-          .add("   assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;")
-          .add("   assign v_select_3_vector = (v_select_2_vector[15:8] == 0) ? v_select_2_vector[7:0] : v_select_2_vector[15:8];")
-          .add("   assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;")
-          .add("   assign v_select_4_vector = (v_select_3_vector[7:4] == 0) ? v_select_3_vector[3:0] : v_select_2_vector[7:4];")
-          .add("   assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;")
-          .add("   assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];");
+      contents.add(
+          "assign GroupSelect = ~s_in_is_zero&enable;",
+          "assign EnableOut = s_in_is_zero&enable;",
+          "assign Address = (~enable) ? 0 : s_address[{{selBits}}-1:0];",
+          "assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;",
+          "",
+          "assign v_select_1_vector[32:{{selBits}}] = 0;",
+          "assign v_select_1_vector[{{selBits}}-1:0] = input_vector;",
+          "assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;",
+          "assign v_select_2_vector = (v_select_1_vector[31:16] == 0) ? v_select_1_vector[15:0] : v_select_1_vector[31:16];",
+          "assign s_address[3] = (v_select_2_vector[15:8] == 0) ? 1'b0 : 1'b1;",
+          "assign v_select_3_vector = (v_select_2_vector[15:8] == 0) ? v_select_2_vector[7:0] : v_select_2_vector[15:8];",
+          "assign s_address[2] = (v_select_3_vector[7:4] == 0) ? 1'b0 : 1'b1;",
+          "assign v_select_4_vector = (v_select_3_vector[7:4] == 0) ? v_select_3_vector[3:0] : v_select_2_vector[7:4];",
+          "assign s_address[1] = (v_select_4_vector[3:2] == 0) ? 1'b0 : 1'b1;",
+          "assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];");
     }
-    return contents.get();
+    return contents.getWithIndent();
   }
 
   @Override
