@@ -31,7 +31,6 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.util.StringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -74,7 +73,7 @@ class LibraryManager {
 
     @Override
     String toDescriptor(Loader loader) {
-      return "jar#" + toRelative(loader, file) + desc_sep + className;
+      return "jar#" + toRelative(loader, file) + DESC_SEP + className;
     }
   }
 
@@ -150,7 +149,7 @@ class LibraryManager {
 
   public static final LibraryManager instance = new LibraryManager();
 
-  private static final char desc_sep = '#';
+  private static final char DESC_SEP = '#';
   private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
 
   private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
@@ -211,7 +210,7 @@ class LibraryManager {
 
   public String getDescriptor(Loader loader, Library lib) {
     if (loader.getBuiltin().getLibraries().contains(lib)) {
-      return desc_sep + lib.getName();
+      return DESC_SEP + lib.getName();
     } else {
       final var desc = invMap.get(lib);
       if (desc != null) {
@@ -253,7 +252,7 @@ class LibraryManager {
   public Library loadLibrary(Loader loader, String desc) {
     // It may already be loaded.
     // Otherwise we'll have to decode it.
-    int sep = desc.indexOf(desc_sep);
+    int sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;
@@ -274,7 +273,7 @@ class LibraryManager {
         return loadLogisimLibrary(loader, toRead);
       }
       case "jar": {
-        final var sepLoc = name.lastIndexOf(desc_sep);
+        final var sepLoc = name.lastIndexOf(DESC_SEP);
         final var fileName = name.substring(0, sepLoc);
         final var className = name.substring(sepLoc + 1);
         final var toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);

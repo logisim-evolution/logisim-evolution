@@ -190,7 +190,7 @@ public class VivadoDownload implements VendorDownload {
     // fill the xdc file
     if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
-      final var clockSignal = TickComponentHDLGeneratorFactory.FPGAClock;
+      final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 

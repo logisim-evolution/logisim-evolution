@@ -279,19 +279,19 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         } else {
           int clockBusIndex;
           if (nets.RequiresGlobalClockConnection()) {
-            clockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
           } else {
             clockBusIndex =
                 (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)
-                    ? ClockHDLGeneratorFactory.PositiveEdgeTickIndex
-                    : ClockHDLGeneratorFactory.NegativeEdgeTickIndex;
+                    ? ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
+                    : ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX;
           }
 
           map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.GlobalClockIndex
+                  + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                   + HDL.BracketClose());
           map.put("Tick", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
         }

@@ -52,7 +52,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     final var contents =
         (new LineBuffer(sharedPairs))
             .addPair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
@@ -92,7 +92,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);

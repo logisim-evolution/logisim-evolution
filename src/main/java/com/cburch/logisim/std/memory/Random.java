@@ -91,9 +91,9 @@ public class Random extends InstanceFactory {
   }
 
   private static class StateData extends ClockState implements InstanceData {
-    private static final long multiplier = 0x5DEECE66DL;
-    private static final long addend = 0xBL;
-    private static final long mask = (1L << 48) - 1;
+    private static final long MULTIPLIER = 0x5DEECE66DL;
+    private static final long ADDEND = 0xBL;
+    private static final long MASK = (1L << 48) - 1;
 
     private long initSeed;
     private long curSeed;
@@ -126,9 +126,9 @@ public class Random extends InstanceFactory {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
         // would be intended was starting a new sequence entirely...
-        retValue = (System.currentTimeMillis() ^ multiplier) & mask;
+        retValue = (System.currentTimeMillis() ^ MULTIPLIER) & MASK;
         if (retValue == initSeed) {
-          retValue = (retValue + multiplier) & mask;
+          retValue = (retValue + MULTIPLIER) & MASK;
         }
       }
       return retValue;
@@ -136,7 +136,7 @@ public class Random extends InstanceFactory {
 
     void step() {
       long v = curSeed;
-      v = (v * multiplier + addend) & mask;
+      v = (v * MULTIPLIER + ADDEND) & MASK;
       curSeed = v;
       value = (int) (v >> 12);
     }

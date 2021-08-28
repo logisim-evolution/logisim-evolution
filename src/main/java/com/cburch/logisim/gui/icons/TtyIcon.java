@@ -36,10 +36,10 @@ import java.awt.font.TextLayout;
 
 public class TtyIcon extends BaseIcon {
 
-  private static final String display = "Hello World!";
-
   @Override
   protected void paintIcon(Graphics2D g2) {
+    final var display = "Hello World!";
+
     g2.setColor(Color.BLUE);
     g2.fillRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
     g2.setColor(Color.BLACK);

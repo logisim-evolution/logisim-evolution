@@ -110,7 +110,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
         (new LineBuffer())
             .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .addPair("id", id);
 
@@ -141,7 +141,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
     return inputs;
   }
@@ -183,7 +183,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     final var contents =
         (new LineBuffer())
             .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGAClock)
+            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .addPair("counterBits", scanningCounterBitsString)
             .addPair("counterValue", scanningCounterValueString);
 

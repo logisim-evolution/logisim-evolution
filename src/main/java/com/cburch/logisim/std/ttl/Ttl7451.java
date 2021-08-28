@@ -29,11 +29,9 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
-import java.awt.Graphics;
 
 public class Ttl7451 extends AbstractTtlGate {
   /**
@@ -82,34 +80,34 @@ public class Ttl7451 extends AbstractTtlGate {
     }
     g.drawPolyline(xpos, ypos, 4);
     xpos = new int[] {x + 10, x + 10, x + 40};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 39, y + 39};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 39, y + 39};
     g.drawPolyline(xpos, ypos, 3);
     xpos = new int[] {x + 30, x + 30, x + 40};
-    ypos = new int[] {y + AbstractTtlGate.pinheight, y + 33, y + 33};
+    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 33, y + 33};
     g.drawPolyline(xpos, ypos, 3);
     xpos = new int[] {x + 90, x + 90, x + 33, x + 33, x + 40};
-    ypos = new int[] {y + AbstractTtlGate.pinheight, y + 10, y + 10, y + 27, y + 27};
+    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 10, y + 10, y + 27, y + 27};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 110, x + 110, x + 36, x + 36, x + 40};
-    ypos = new int[] {y + AbstractTtlGate.pinheight, y + 13, y + 13, y + 21, y + 21};
+    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 13, y + 13, y + 21, y + 21};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 130, x + 130, x + 75, x + 75, x + 74};
-    ypos = new int[] {y + AbstractTtlGate.pinheight, y + 16, y + 16, y + 30, y + 30};
+    ypos = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 16, y + 16, y + 30, y + 30};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 30, x + 30, x + 78, x + 78, x + 90};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 44, y + 44, y + 21, y + 21};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 44, y + 44, y + 21, y + 21};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 50, x + 50, x + 81, x + 81, x + 90};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 47, y + 47, y + 27, y + 27};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 47, y + 47, y + 27, y + 27};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 70, x + 70, x + 84, x + 84, x + 90};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 50, y + 50, y + 33, y + 33};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 50, y + 50, y + 33, y + 33};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 90, x + 90, x + 87, x + 87, x + 90};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 50, y + 50, y + 39, y + 39};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 50, y + 50, y + 39, y + 39};
     g.drawPolyline(xpos, ypos, 5);
     xpos = new int[] {x + 110, x + 110, x + 126, x + 126, x + 124};
-    ypos = new int[] {y + height - AbstractTtlGate.pinheight, y + 40, y + 40, y + 30, y + 30};
+    ypos = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + 40, y + 40, y + 30, y + 30};
     g.drawPolyline(xpos, ypos, 5);
   }
 

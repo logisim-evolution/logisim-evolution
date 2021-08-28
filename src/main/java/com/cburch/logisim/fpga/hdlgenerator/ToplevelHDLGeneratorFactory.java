@@ -172,7 +172,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
     /* First we instantiate the Clock tree busses when present */
     if (nrOfClockTrees > 0 || theNetlist.RequiresGlobalClockConnection() || requiresFPGAClock) {
-      inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
+      inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     }
     for (var in : myIOComponents.GetMappedInputPinNames()) {
       inputs.put(in, 1);
@@ -252,7 +252,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfInOutPorts = nets.NumberOfInOutPorts();
     final var nrOfOutputPorts = nets.NumberOfOutputPorts();
     if (nrOfClockTrees > 0) {
-      wires.put(TickComponentHDLGeneratorFactory.FPGATick, 1);
+      wires.put(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
         wires.put(
             "s_" + ClockTreeName + clockBus,

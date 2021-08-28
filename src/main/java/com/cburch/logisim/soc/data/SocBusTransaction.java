@@ -45,7 +45,7 @@ public class SocBusTransaction {
   public static final int BLOCK_MARKER = 14;
   public static final int BLOCK_HEX = 78;
 
-  public static final int READTransaction = 1;  // FIXME: SCREAM_CASE
+  public static final int READ_TRANSACTION = 1;
   public static final int WRITE_TRANSACTION = 2;
   public static final int ATOMIC_TRANSACTION = 4;
 
@@ -64,7 +64,7 @@ public class SocBusTransaction {
 
   public static final int BYTE_ACCESS = 1;
   public static final int HALF_WORD_ACCESS = 2;
-  public static final int WordAccess = 3;
+  public static final int WORD_ACCESS = 3;
 
   private final int address;
   private final int writeData;
@@ -155,7 +155,7 @@ public class SocBusTransaction {
   }
 
   public boolean isReadTransaction() {
-    return (type & READTransaction) != 0;
+    return (type & READ_TRANSACTION) != 0;
   }
 
   public boolean isWriteTransaction() {

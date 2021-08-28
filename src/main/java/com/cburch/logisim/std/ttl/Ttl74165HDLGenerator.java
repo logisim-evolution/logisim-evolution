@@ -138,12 +138,12 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
             "Tick",
             clockNetName
                 + "("
-                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                 + ")");
       }
       map.put(
           "CK",
-          clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+          clockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
     map.putAll(GetNetMap("SHnLD", true, comp, 0, nets));
     map.putAll(GetNetMap("CKIh", true, comp, 13, nets));

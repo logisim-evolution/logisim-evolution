@@ -95,7 +95,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
         if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_SW:
-        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        if (transType < 0) transType = SocBusTransaction.WORD_ACCESS;
         SocBusTransaction trans =
             new SocBusTransaction(
                 SocBusTransaction.WRITE_TRANSACTION,
@@ -114,10 +114,10 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
         if (transType < 0) transType = SocBusTransaction.HALF_WORD_ACCESS;
         // fall through
       case INSTR_LW:
-        if (transType < 0) transType = SocBusTransaction.WordAccess;
+        if (transType < 0) transType = SocBusTransaction.WORD_ACCESS;
         trans =
             new SocBusTransaction(
-                SocBusTransaction.READTransaction,
+                SocBusTransaction.READ_TRANSACTION,
                 ElfHeader.getIntValue(address),
                 0,
                 transType,

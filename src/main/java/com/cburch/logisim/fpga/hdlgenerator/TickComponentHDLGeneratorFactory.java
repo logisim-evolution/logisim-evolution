@@ -45,8 +45,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final String NrOfCounterBitsStr = "NrOfBits";
   private static final Integer NrOfCounterBitsId = -2;
 
-  public static final String FPGAClock = "FPGA_GlobalClock";  // FIXME: SCREAM_CASE
-  public static final String FPGATick = "s_FPGA_Tick";  // FIXME: SCREAM_CASE
+  public static final String FPGA_CLOCK = "FPGA_GlobalClock";
+  public static final String FPGA_TICK = "s_FPGA_Tick";
 
   public TickComponentHDLGeneratorFactory(
       long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
@@ -164,8 +164,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     SortedMap<String, String> PortMap = new TreeMap<>();
-    PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGAClock);
-    PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGATick);
+    PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+    PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGA_TICK);
     return PortMap;
   }
 

@@ -121,12 +121,12 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
     g.drawLine(x + 78, y + 55, x + 80, y + 50);
     g.drawLine(x + 82, y + 55, x + 80, y + 50);
-    g.drawLine(x + 190, y + AbstractTtlGate.pinheight, x + 190, y + 60);
+    g.drawLine(x + 190, y + AbstractTtlGate.PIN_HEIGHT, x + 190, y + 60);
     g.drawLine(x + 180, y + 60, x + 190, y + 60);
     g.drawLine(x + 180, y + 60, x + 180, y + 70);
     g.drawLine(x + 80, y + 70, x + 180, y + 70);
     g.drawLine(x + 80, y + 55, x + 80, y + 70);
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 60);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 60);
     g.drawLine(x + 10, y + 60, x + 70, y + 60);
     g.drawLine(x + 70, y + 59, x + 70, y + 60);
 
@@ -154,16 +154,16 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     var qpos1 = 30;
     var qpos2 = 170;
     for (var i = 0; i < 4; i++) {
-      g.drawLine(x + dpos1, y + height - AbstractTtlGate.pinheight, x + dpos1, y + 66);
+      g.drawLine(x + dpos1, y + height - AbstractTtlGate.PIN_HEIGHT, x + dpos1, y + 66);
       g.drawLine(x + dpos1, y + 66, x + dpos1 + 3, y + 63);
       dpos1 += dincr[i];
-      g.drawLine(x + dpos2, y + AbstractTtlGate.pinheight, x + dpos2, y + 10);
+      g.drawLine(x + dpos2, y + AbstractTtlGate.PIN_HEIGHT, x + dpos2, y + 10);
       g.drawLine(x + dpos2, y + 10, x + dpos2 + 3, y + 13);
       dpos2 -= dincr[i];
-      g.drawLine(x + qpos1, y + height - AbstractTtlGate.pinheight, x + qpos1, y + 70);
+      g.drawLine(x + qpos1, y + height - AbstractTtlGate.PIN_HEIGHT, x + qpos1, y + 70);
       g.drawLine(x + qpos1, y + 70, x + qpos1 + 3, y + 67);
       qpos1 += qincr[i];
-      g.drawLine(x + qpos2, y + AbstractTtlGate.pinheight, x + qpos2, y + 14);
+      g.drawLine(x + qpos2, y + AbstractTtlGate.PIN_HEIGHT, x + qpos2, y + 14);
       g.drawLine(x + qpos2, y + 14, x + qpos2 + 3, y + 17);
       qpos2 -= qincr[i];
     }
