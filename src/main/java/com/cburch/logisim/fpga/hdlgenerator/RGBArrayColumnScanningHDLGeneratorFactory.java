@@ -81,14 +81,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
-    final var redIn = LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs;
-    final var greenIn = LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs;
-    final var blueIn = LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs;
-
-    final var redOut = LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs;
-    final var greenOut = LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs;
-    final var blueOut = LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs;
-
     final var contents =
         (new LineBuffer())
             .addPair("nrOfLeds", nrOfLedsString)
@@ -97,9 +89,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .addPair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .addPair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .addPair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
-            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
-            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
+            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
+            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
@@ -121,9 +113,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           "END PROCESS makeVirtualInputs;",
           "",
           "GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE",
-          "   {{insR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "   {{insG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
-          "   {{insB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "   {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "   {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
+          "   {{outsB}}(n) <= s_maxBlueLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
           "END GENERATE GenOutputs;");
     } else {
       contents.addLines(
@@ -134,7 +126,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           "      assign {{outsR}}[i] = (activeLow == 1)",
           "         ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]",
           "         :  {{insR}}[i*nrOfColumns+s_columnCounterReg];",
-          "      assign {{outsR}}[i] = (activeLow == 1)",
+          "      assign {{outsG}}[i] = (activeLow == 1)",
           "         ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]",
           "         :  {{insG}[i*nrOfColumns+s_columnCounterReg];",
           "      assign {{outsB}}[i] = (activeLow == 1)",
