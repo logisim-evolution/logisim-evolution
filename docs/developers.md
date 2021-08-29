@@ -38,6 +38,21 @@ How to import a Gradle project:
 * [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
   from a Gradle model").
 
+**Note for Eclipse Users:**
+
+Eclipse needs to have Gradle build the generated source files before it can build the project.
+You can do this by running task `genBuildInfo` before importing the project.
+See [Building from sources](#building-from-sources) for how to run Gradle.
+
+To run the task within Eclipse after importing the logisim-evolution project:
+
+* Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the Menu `Window/Show View/Other...`
+  and selecting `Gradle Tasks` under Gradle.
+* In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genBuildInfo`.
+  Check the `Console View` to see when it finishes.
+* Right click on the logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
+* You may then need to Right click on the logisim-evolution project and select `Refresh`
+
 ## Building from sources ##
 
 To build and run the `Logisim-evolution` application, invoke the `Gradle` build system and pass a task name as an argument.
