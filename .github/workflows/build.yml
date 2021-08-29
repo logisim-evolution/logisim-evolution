@@ -11,6 +11,9 @@ on:
   pull_request:
     branches: [ master, develop ]
 
+env:
+  JDK_VERSION: 16
+
 jobs:
   analyze_sources:
     name: "Do we need to build the application?"
@@ -59,10 +62,6 @@ jobs:
     needs: analyze_sources
     if: needs.analyze_sources.outputs.run_build == 'true'
 
-    strategy:
-      matrix:
-        jdk: [ 16 ]
-
     steps:
     - name: "Checkout sources"
       uses: actions/checkout@v2
@@ -70,7 +69,7 @@ jobs:
     - name: "Set up JDK"
       uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.jdk }}
+        java-version: ${{ env.JDK_VERSION }}
         distribution: 'adopt'
 
     - name: "Build with Gradle"

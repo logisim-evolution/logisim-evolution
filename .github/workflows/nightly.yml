@@ -24,6 +24,9 @@ on:
     # every day at midnight
     - cron: "0 0 * * *"
 
+env:
+  JDK_VERSION: 16
+
 jobs:
   git_check:
     name: "Any changes since last run?"
@@ -103,7 +106,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 16
+          java-version: ${{ env.JDK_VERSION }}
           distribution: 'adopt'
 
       # ###########################################################################################
@@ -122,7 +125,7 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
-          name: ${{ needs.git_check.outputs.base_name }}-all_jdk15.jar
+          name: ${{ needs.git_check.outputs.base_name }}-all-jdk$${{ env.JDK_VERSION }}.jar
 
       # ###########################################################################################
 
@@ -189,6 +192,7 @@ jobs:
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
 
+
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
@@ -200,7 +204,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 16
+          java-version: ${{ env.JDK_VERSION }}
           distribution: 'adopt'
 
       - name: "Build DMG"
@@ -209,7 +213,7 @@ jobs:
           set -euo pipefail
 
           chmod +x gradlew
-          set JAVA_HOME="${JAVA_HOME_16_X64}"
+          set JAVA_HOME="${JAVA_HOME_${{ env.JDK_VERSION }}_X64}"
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'
@@ -238,7 +242,7 @@ jobs:
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
-          java-version: 16
+          java-version: ${{ env.JDK_VERSION }}
           distribution: 'adopt'
 
       - name: "Build MSI"
