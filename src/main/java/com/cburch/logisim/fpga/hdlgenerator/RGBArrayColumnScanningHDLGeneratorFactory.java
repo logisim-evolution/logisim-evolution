@@ -38,7 +38,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     } else {
       contents.addLines(
           "( .{{addr}}({{addr}}{{id}}),",
-          "  .{{clock}({{clock}}),",
+          "  .{{clock}}({{clock}}),",
           "  .{{outsR}}({{outsR}}{{id}}),",
           "  .{{outsG}}({{outsG}}{{id}}),",
           "  .{{outsB}}({{outsB}}{{id}}),",
