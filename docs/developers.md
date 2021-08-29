@@ -90,7 +90,6 @@ for example:
 java -jar logisim-evolution-3.6.0-all-jdk16.jar
 ```
 
-
 You can also generate a platform-specific installer, which gets saved in `build/dist`.
 Packages can be built by running the `jpackage` task:
 
