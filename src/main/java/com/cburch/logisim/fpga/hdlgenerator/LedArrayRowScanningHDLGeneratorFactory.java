@@ -227,20 +227,20 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           """)
           .addRemarkBlock("Here the simulation only initial is defined")
           .add("""
-          initial
-          begin
-             s_rowCounterReg      = 0;
-             s_scanningCounterReg = 0;
-             s_tickReg            = 1'b0;
-          end
-
-          always @(posedge {{clock}})
-          begin
-              s_rowCounterReg      = s_rowCounterNext;
-              s_scanningCounterReg = s_scanningCounterNext;
-              s_tickReg            = s_tickNext;
-          end
-          """);
+               initial
+               begin
+                  s_rowCounterReg      = 0;
+                  s_scanningCounterReg = 0;
+                  s_tickReg            = 1'b0;
+               end
+     
+               always @(posedge {{clock}})
+               begin
+                   s_rowCounterReg      = s_rowCounterNext;
+                   s_scanningCounterReg = s_scanningCounterNext;
+                   s_tickReg            = s_tickNext;
+               end
+               """);
     }
     return contents.getWithIndent();
   }
