@@ -216,24 +216,20 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var parameterMap = new TreeMap<String, Integer>();
     final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
     final var myAttrs = componentInfo.getComponent().getAttributeSet();
-    int nrOfInputs =
+    var nrOfInputs =
         myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    int bubleMask, mask;
-    if (isBus) {
-      parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
-    }
+    if (isBus) parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
     if (nrOfInputs > 1) {
-      bubleMask = 0;
-      mask = 1;
+      var bubbleMask = 0;
+      var mask = 1;
       for (var i = 0; i < nrOfInputs; i++) {
-        final var inputIsInverted =
-            componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (inputIsInverted) bubleMask |= mask;
+        final var inputIsInverted = componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
+        if (inputIsInverted) bubbleMask |= mask;
         mask <<= 1;
       }
-      parameterMap.put(BUBBLES_MASK, bubleMask);
+      parameterMap.put(BUBBLES_MASK, bubbleMask);
     }
 
     return parameterMap;

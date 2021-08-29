@@ -40,7 +40,6 @@ import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.gui.Reporter;
@@ -160,9 +159,9 @@ public class Netlist implements CircuitListener {
   private final ArrayList<NetlistComponent> myInputPorts = new ArrayList<>();
   private final ArrayList<NetlistComponent> myOutputPorts = new ArrayList<>();
   private final ArrayList<Component> mySplitters = new ArrayList<>();
-  private Integer localNrOfInportBubles;
-  private Integer localNrOfOutportBubles;
-  private Integer localNrOfInOutBubles;
+  private Integer localNrOfInportBubbles;
+  private Integer localNrOfOutportBubbles;
+  private Integer localNrOfInOutBubbles;
   private final ClockTreeFactory myClockInformation = new ClockTreeFactory();
   private final Circuit myCircuit;
   private int drcStatus;
@@ -207,9 +206,9 @@ public class Netlist implements CircuitListener {
     myInOutPorts.clear();
     myOutputPorts.clear();
     mySplitters.clear();
-    localNrOfInportBubles = 0;
-    localNrOfOutportBubles = 0;
-    localNrOfInOutBubles = 0;
+    localNrOfInportBubbles = 0;
+    localNrOfOutportBubbles = 0;
+    localNrOfInOutBubbles = 0;
     if (currentHierarchyLevel == null) {
       currentHierarchyLevel = new ArrayList<>();
     } else {
@@ -239,9 +238,9 @@ public class Netlist implements CircuitListener {
      * sub-circuits to construct the local bubble information and form the
      * Mappable components tree
      */
-    localNrOfInportBubles = 0;
-    localNrOfOutportBubles = 0;
-    localNrOfInOutBubles = 0;
+    localNrOfInportBubbles = 0;
+    localNrOfOutportBubbles = 0;
+    localNrOfInOutBubbles = 0;
     for (final var comp : mySubCircuits) {
       final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
       final var names = new ArrayList<String>(name);
@@ -258,10 +257,10 @@ public class Netlist implements CircuitListener {
       final var subInputBubbles = subFactory.getSubcircuit().getNetList().getNumberOfInputBubbles();
       final var subInOutBubbles = subFactory.getSubcircuit().getNetList().numberOfInOutBubbles();
       final var subOutputBubbles = subFactory.getSubcircuit().getNetList().numberOfOutputBubbles();
-      comp.setLocalBubbleID(localNrOfInportBubles, subInputBubbles, localNrOfOutportBubles, subOutputBubbles, localNrOfInOutBubles, subInOutBubbles);
-      localNrOfInportBubles += subInputBubbles;
-      localNrOfInOutBubles += subInOutBubbles;
-      localNrOfOutportBubles += subOutputBubbles;
+      comp.setLocalBubbleID(localNrOfInportBubbles, subInputBubbles, localNrOfOutportBubbles, subOutputBubbles, localNrOfInOutBubbles, subInOutBubbles);
+      localNrOfInportBubbles += subInputBubbles;
+      localNrOfInOutBubbles += subInOutBubbles;
+      localNrOfOutportBubbles += subOutputBubbles;
       comp.addGlobalBubbleId(names, gInputId, subInputBubbles, gOutputId, subOutputBubbles, gInOutId, subInOutBubbles);
       if (!firstTime) {
         subFactory.getSubcircuit()
@@ -285,10 +284,10 @@ public class Netlist implements CircuitListener {
         final var subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
         final var subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
         final var subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
-        comp.setLocalBubbleID(localNrOfInportBubles, subInputBubbles, localNrOfOutportBubles, subOutputBubbles, localNrOfInOutBubles, subInOutBubbles);
-        localNrOfInportBubles += subInputBubbles;
-        localNrOfInOutBubles += subInOutBubbles;
-        localNrOfOutportBubles += subOutputBubbles;
+        comp.setLocalBubbleID(localNrOfInportBubbles, subInputBubbles, localNrOfOutportBubbles, subOutputBubbles, localNrOfInOutBubbles, subInOutBubbles);
+        localNrOfInportBubbles += subInputBubbles;
+        localNrOfInOutBubbles += subInOutBubbles;
+        localNrOfOutportBubbles += subOutputBubbles;
         comp.addGlobalBubbleId(myHierarchyName, gInputId, subInputBubbles, gOutputId, subOutputBubbles, gInOutId, subInOutBubbles);
         gInputId += subInputBubbles;
         gInOutId += subInOutBubbles;
@@ -414,9 +413,9 @@ public class Netlist implements CircuitListener {
             drcStatus |= DRC_ERROR;
           }
           final var sub = (SubcircuitFactory) comp.getFactory();
-          localNrOfInportBubles += sub.getSubcircuit().getNetList().getNumberOfInputBubbles();
-          localNrOfOutportBubles += sub.getSubcircuit().getNetList().numberOfOutputBubbles();
-          localNrOfInOutBubles += sub.getSubcircuit().getNetList().numberOfInOutBubbles();
+          localNrOfInportBubbles += sub.getSubcircuit().getNetList().getNumberOfInputBubbles();
+          localNrOfOutportBubbles += sub.getSubcircuit().getNetList().numberOfOutputBubbles();
+          localNrOfInOutBubbles += sub.getSubcircuit().getNetList().numberOfInOutBubbles();
         }
       }
       /* Now we check that no tri-state are present */
@@ -534,9 +533,9 @@ public class Netlist implements CircuitListener {
       var ports =
           getNumberOfInputPorts()
               + numberOfOutputPorts()
-              + localNrOfInportBubles
-              + localNrOfOutportBubles
-              + localNrOfInOutBubles;
+              + localNrOfInportBubbles
+              + localNrOfOutportBubbles
+              + localNrOfInOutBubbles;
       if (ports == 0) {
         Reporter.Report.AddFatalError(S.get("TopLevelNoIO", myCircuit.getName()));
         drcStatus = DRC_ERROR;
@@ -1768,7 +1767,7 @@ public class Netlist implements CircuitListener {
   }
 
   public int numberOfInOutBubbles() {
-    return localNrOfInOutBubles;
+    return localNrOfInOutBubbles;
   }
 
   public int numberOfInOutPortBits() {
@@ -1782,7 +1781,7 @@ public class Netlist implements CircuitListener {
   }
 
   public int getNumberOfInputBubbles() {
-    return localNrOfInportBubles;
+    return localNrOfInportBubbles;
   }
 
   public int getNumberOfInputPortBits() {
@@ -1804,7 +1803,7 @@ public class Netlist implements CircuitListener {
   }
 
   public int numberOfOutputBubbles() {
-    return localNrOfOutportBubles;
+    return localNrOfOutportBubbles;
   }
 
   public int numberOfOutputPortBits() {
