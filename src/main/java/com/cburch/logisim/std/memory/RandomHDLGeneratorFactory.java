@@ -239,14 +239,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    if (!comp.isEndConnected(Random.CK)) {
+    if (!comp.isEndConnected(Random.CLK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Random.CK, Nets);
+    final var clockNetName = GetClockNetName(comp, Random.CLK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
       Reporter.Report.AddError(

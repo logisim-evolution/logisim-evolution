@@ -41,7 +41,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.gui.icons.RandomIcon;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceLogger;
 import com.cburch.logisim.instance.InstancePainter;
@@ -64,6 +63,7 @@ public class Random extends InstanceFactory {
   public static final String _ID = "Random";
 
   public static class Logger extends InstanceLogger {
+    
     @Override
     public String getLogName(InstanceState state, Object option) {
       final var ret = state.getAttributeValue(StdAttr.LABEL);
@@ -79,9 +79,9 @@ public class Random extends InstanceFactory {
     public Value getLogValue(InstanceState state, Object option) {
       var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
       if (dataWidth == null) dataWidth = BitWidth.create(0);
-      final var data = (StateData) state.getData();
+      final var data = (RandomState) state.getData();
       if (data == null) return Value.createKnown(dataWidth, 0);
-      return Value.createKnown(dataWidth, data.value);
+      return Value.createKnown(dataWidth, data.getValue());
     }
 
     @Override
@@ -90,65 +90,10 @@ public class Random extends InstanceFactory {
     }
   }
 
-  private static class StateData extends ClockState implements InstanceData {
-    private static final long MULTIPLIER = 0x5DEECE66DL;
-    private static final long ADDEND = 0xBL;
-    private static final long MASK = (1L << 48) - 1;
-
-    private long initSeed;
-    private long curSeed;
-    private int value;
-    private long resetValue;
-    private Value oldReset;
-
-    public StateData(Object seed) {
-      resetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
-      this.value = (int) this.initSeed;
-      oldReset = Value.UNKNOWN;
-    }
-
-    private void propagateReset(Value reset, Object seed) {
-      if (oldReset == Value.FALSE && reset == Value.TRUE) {
-        resetValue = getRandomSeed(seed);
-      }
-      oldReset = reset;
-    }
-
-    public void reset(Object seed) {
-      this.initSeed = resetValue;
-      this.curSeed = resetValue;
-      this.value = (int) resetValue;
-    }
-
-    private long getRandomSeed(Object seed) {
-      long retValue = seed instanceof Integer ? (Integer) seed : 0;
-      if (retValue == 0) {
-        // Prior to 2.7.0, this would reset to the seed at the time of
-        // the StateData's creation. It seems more likely that what
-        // would be intended was starting a new sequence entirely...
-        retValue = (System.currentTimeMillis() ^ MULTIPLIER) & MASK;
-        if (retValue == initSeed) {
-          retValue = (retValue + MULTIPLIER) & MASK;
-        }
-      }
-      return retValue;
-    }
-
-    void step() {
-      long v = curSeed;
-      v = (v * MULTIPLIER + ADDEND) & MASK;
-      curSeed = v;
-      value = (int) (v >> 12);
-    }
-  }
-
-  static final Attribute<Integer> ATTR_SEED =
-      Attributes.forInteger("seed", S.getter("randomSeedAttr"));
+  static final Attribute<Integer> ATTR_SEED = Attributes.forInteger("seed", S.getter("randomSeedAttr"));
   static final int OUT = 0;
-  public static final int CK = 1;
-
+  static final int CLK = 1;
   static final int NXT = 2;
-
   static final int RST = 3;
 
   public Random() {
@@ -213,17 +158,17 @@ public class Random extends InstanceFactory {
     final var ps = new Port[4];
     if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       ps[OUT] = new Port(40, 20, Port.OUTPUT, StdAttr.WIDTH);
-      ps[CK] = new Port(10, 40, Port.INPUT, 1);
+      ps[CLK] = new Port(10, 40, Port.INPUT, 1);
       ps[NXT] = new Port(0, 30, Port.INPUT, 1);
       ps[RST] = new Port(30, 40, Port.INPUT, 1);
     } else {
       ps[OUT] = new Port(80, 80, Port.OUTPUT, StdAttr.WIDTH);
-      ps[CK] = new Port(0, 50, Port.INPUT, 1);
+      ps[CLK] = new Port(0, 50, Port.INPUT, 1);
       ps[NXT] = new Port(0, 40, Port.INPUT, 1);
       ps[RST] = new Port(0, 30, Port.INPUT, 1);
     }
     ps[OUT].setToolTip(S.getter("randomQTip"));
-    ps[CK].setToolTip(S.getter("randomClockTip"));
+    ps[CLK].setToolTip(S.getter("randomClockTip"));
     ps[NXT].setToolTip(S.getter("randomNextTip"));
     ps[RST].setToolTip(S.getter("randomResetTip"));
     instance.setPorts(ps);
@@ -262,7 +207,7 @@ public class Random extends InstanceFactory {
     } else {
       g.drawLine(xpos, ypos + 50, xpos + 10, ypos + 50);
     }
-    painter.drawPort(CK);
+    painter.drawPort(CLK);
     GraphicsUtil.switchToWidth(g, 1);
   }
 
@@ -281,7 +226,7 @@ public class Random extends InstanceFactory {
   private void paintInstanceClassic(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
-    final var state = (StateData) painter.getData();
+    final var state = (RandomState) painter.getData();
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
 
@@ -289,7 +234,7 @@ public class Random extends InstanceFactory {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      int val = state == null ? 0 : state.value;
+      int val = state == null ? 0 : state.getValue();
       final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
@@ -317,7 +262,7 @@ public class Random extends InstanceFactory {
     painter.drawPort(RST, "0", Direction.SOUTH);
     painter.drawPort(NXT, S.get("memEnableLabel"), Direction.EAST);
     g.setColor(Color.BLACK);
-    painter.drawClock(CK, Direction.NORTH);
+    painter.drawClock(CLK, Direction.NORTH);
 
     // draw contents
     if (b == null) {
@@ -332,8 +277,8 @@ public class Random extends InstanceFactory {
     final var bds = painter.getBounds();
     final var x = bds.getX();
     final var y = bds.getY();
-    final var state = (StateData) painter.getData();
-    final var val = state == null ? 0 : state.value;
+    final var state = (RandomState) painter.getData();
+    final var val = state == null ? 0 : state.getValue();
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
 
@@ -362,15 +307,15 @@ public class Random extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    var data = (StateData) state.getData();
+    var data = (RandomState) state.getData();
     if (data == null) {
-      data = new StateData(state.getAttributeValue(ATTR_SEED));
+      data = new RandomState(state.getAttributeValue(ATTR_SEED));
       state.setData(data);
     }
 
     final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    final var triggered = data.updateClock(state.getPortValue(CK), triggerType);
+    final var triggered = data.updateClock(state.getPortValue(CLK), triggerType);
 
     data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED));
     if (state.getPortValue(RST) == Value.TRUE) {
@@ -379,7 +324,7 @@ public class Random extends InstanceFactory {
       data.step();
     }
 
-    state.setPort(OUT, Value.createKnown(dataWidth, data.value), 4);
+    state.setPort(OUT, Value.createKnown(dataWidth, data.getValue()), 4);
   }
 
   @Override
@@ -389,6 +334,6 @@ public class Random extends InstanceFactory {
 
   @Override
   public int[] ClockPinIndex(NetlistComponent comp) {
-    return new int[] {CK};
+    return new int[] {CLK};
   }
 }
