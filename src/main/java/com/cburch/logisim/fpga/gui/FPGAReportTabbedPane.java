@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.gui;
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FPGACommanderListModel;
-import com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
 import java.awt.Component;
@@ -87,7 +87,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
   private final ArrayList<String> ConsoleMessages;
 
   private boolean DRCTraceActive = false;
-  private simpleDRCContainer ActiveDRCContainer;
+  private SimpleDRCContainer ActiveDRCContainer;
 
   private final Project MyProject;
 
@@ -295,7 +295,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
 
   public void clearDRCTrace() {
     if (DRCTraceActive) {
-      ActiveDRCContainer.ClearMarks();
+      ActiveDRCContainer.clearMarks();
       DRCTraceActive = false;
       if (MyProject != null) MyProject.repaintCanvas();
     }
@@ -354,13 +354,13 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       }
   }
 
-  private void GenerateDRCTrace(simpleDRCContainer dc) {
+  private void GenerateDRCTrace(SimpleDRCContainer dc) {
     DRCTraceActive = true;
     ActiveDRCContainer = dc;
-    if (dc.HasCircuit())
-      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
-        MyProject.setCurrentCircuit(dc.GetCircuit());
-    dc.MarkComponents();
+    if (dc.hasCircuit())
+      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.getCircuit()))
+        MyProject.setCurrentCircuit(dc.getCircuit());
+    dc.markComponents();
     if (MyProject != null) MyProject.repaintCanvas();
   }
 
@@ -427,8 +427,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (e.getSource().equals(Errors)) idx = Errors.getSelectedIndex();
       else if (SourceIsErrorsWindow) idx = ErrorsWindow.getListObject().getSelectedIndex();
       if (idx >= 0) {
-        if (ErrorsList.getElementAt(idx) instanceof simpleDRCContainer) {
-          GenerateDRCTrace((simpleDRCContainer) ErrorsList.getElementAt(idx));
+        if (ErrorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
+          GenerateDRCTrace((SimpleDRCContainer) ErrorsList.getElementAt(idx));
         }
       }
     } else if (e.getSource().equals(Warnings) || SourceIsWarningsWindow) {
@@ -437,8 +437,8 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (e.getSource().equals(Warnings)) idx = Warnings.getSelectedIndex();
       else if (SourceIsWarningsWindow) idx = WarningsWindow.getListObject().getSelectedIndex();
       if (idx >= 0)
-        if (WarningsList.getElementAt(idx) instanceof simpleDRCContainer)
-          GenerateDRCTrace((simpleDRCContainer) WarningsList.getElementAt(idx));
+        if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
+          GenerateDRCTrace((SimpleDRCContainer) WarningsList.getElementAt(idx));
     }
   }
 

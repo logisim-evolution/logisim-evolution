@@ -153,7 +153,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    Object shift = ComponentInfo.GetComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
+    Object shift = ComponentInfo.getComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
     if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(shiftModeStr, 0);
     else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(shiftModeStr, 1);
     else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(shiftModeStr, 2);

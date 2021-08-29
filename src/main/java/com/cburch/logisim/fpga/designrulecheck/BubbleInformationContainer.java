@@ -67,45 +67,45 @@ public class BubbleInformationContainer {
     return myOutBubblesStartIndex;
   }
 
-  public boolean HasInOutBubbles() {
+  public boolean hasInOutBubbles() {
     return ((myInOutBubblesStartIndex >= 0) && (myInOutBubblesEndIndex >= 0));
   }
 
-  public boolean HasInputBubbles() {
+  public boolean hasInputBubbles() {
     return ((myInBubblesStartIndex >= 0) && (myInBubblesEndIndex >= 0));
   }
 
-  public boolean HasOutputBubbles() {
+  public boolean hasOutputBubbles() {
     return ((myOutBubblesStartIndex >= 0) && (myOutBubblesEndIndex >= 0));
   }
 
-  public int NrOfInOutBubbles() {
+  public int nrOfInOutBubbles() {
     if ((myInOutBubblesStartIndex < 0) || (myInOutBubblesEndIndex < 0)) return 0;
     return (myInOutBubblesEndIndex - myInOutBubblesStartIndex) + 1;
   }
 
-  public int NrOfInputBubbles() {
+  public int nrOfInputBubbles() {
     if ((myInBubblesStartIndex < 0) || (myInBubblesEndIndex < 0)) return 0;
     return (myInBubblesEndIndex - myInBubblesStartIndex) + 1;
   }
 
-  public int NrOfOutputBubbles() {
+  public int nrOfOutputBubbles() {
     if ((myOutBubblesStartIndex < 0) || (myOutBubblesEndIndex < 0)) return 0;
     return (myOutBubblesEndIndex - myOutBubblesStartIndex) + 1;
   }
 
-  public void setInOutBubblesInformation(int StartIndex, int EndIndex) {
-    myInOutBubblesStartIndex = StartIndex;
-    myInOutBubblesEndIndex = EndIndex;
+  public void setInOutBubblesInformation(int startIndex, int endIndex) {
+    myInOutBubblesStartIndex = startIndex;
+    myInOutBubblesEndIndex = endIndex;
   }
 
-  public void setInputBubblesInformation(int StartIndex, int EndIndex) {
-    myInBubblesStartIndex = StartIndex;
-    myInBubblesEndIndex = EndIndex;
+  public void setInputBubblesInformation(int startIndex, int endIndex) {
+    myInBubblesStartIndex = startIndex;
+    myInBubblesEndIndex = endIndex;
   }
 
-  public void setOutputBubblesInformation(int StartIndex, int EndIndex) {
-    myOutBubblesStartIndex = StartIndex;
+  public void setOutputBubblesInformation(int startIndex, int EndIndex) {
+    myOutBubblesStartIndex = startIndex;
     myOutBubblesEndIndex = EndIndex;
   }
 }

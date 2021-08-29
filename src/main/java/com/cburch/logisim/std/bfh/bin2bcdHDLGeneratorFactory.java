@@ -87,7 +87,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var binBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var binBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     parameterMap.put(NR_OF_BITS_STR, binBits);
     return parameterMap;
   }
@@ -97,7 +97,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var binBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var binBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     final var nrOfPorts = (int) (Math.log10(1 << binBits) + 1.0);
     portMap.putAll(GetNetMap("BinValue", true, componentInfo, 0, nets));
     for (var i = 1; i <= nrOfPorts; i++)

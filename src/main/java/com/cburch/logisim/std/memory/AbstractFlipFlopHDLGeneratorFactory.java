@@ -106,7 +106,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("   temp := std_logic_vector(to_unsigned({{1}}, 1));", ACTIVITY_LEVEL_STR)
           .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
           .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
-      if (Netlist.IsFlipFlop(attrs)) {
+      if (Netlist.isFlipFlop(attrs)) {
         contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
         contents.add("   ELSIF (Clock = temp(0)) THEN");
@@ -118,7 +118,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("   END IF;")
           .add("END PROCESS make_memory;");
     } else {
-      if (Netlist.IsFlipFlop(attrs)) {
+      if (Netlist.isFlipFlop(attrs)) {
         contents.addLines(
             "always @(posedge Reset or posedge Preset or negedge Clock)",
             "begin",
@@ -170,7 +170,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var activityLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
+    final var attrs = ComponentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
@@ -199,7 +199,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var hasClock = true;
     var activeLow = false;
     final var nrOfPins = comp.nrOfEnds();
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     if (!comp.isEndConnected(comp.nrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
@@ -223,8 +223,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     }
     map.putAll(GetNetMap("Reset", true, comp, nrOfPins - 2, Nets));
     map.putAll(GetNetMap("Preset", true, comp, nrOfPins - 1, Nets));
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "Tick",
             clockNetName

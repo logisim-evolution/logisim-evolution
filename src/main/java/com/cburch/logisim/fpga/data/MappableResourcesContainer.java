@@ -120,7 +120,7 @@ public class MappableResourcesContainer {
       cur.addAll(myMappableResources.keySet());
     var BoardId = new ArrayList<String>();
     BoardId.add(currentUsedBoard.getBoardName());
-    var newMappableResources = myCircuit.getNetList().GetMappableResources(BoardId, true);
+    var newMappableResources = myCircuit.getNetList().getMappableResources(BoardId, true);
     for (var key : newMappableResources.keySet()) {
       if (cur.contains(key)) {
         var comp = myMappableResources.get(key);

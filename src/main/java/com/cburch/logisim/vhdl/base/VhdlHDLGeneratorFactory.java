@@ -60,7 +60,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     for (Attribute<Integer> a : content.getGenericAttributes()) {
@@ -118,7 +118,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
 
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
 
     int i = 0;

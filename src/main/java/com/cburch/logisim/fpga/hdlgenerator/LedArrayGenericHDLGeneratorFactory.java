@@ -12,9 +12,9 @@ import com.cburch.logisim.std.io.RgbLed;
 
 public class LedArrayGenericHDLGeneratorFactory {
   public static String LedArrayOutputs = "externalLeds";
-  public static String LedArrayRedOutputs = "externalLeds";
-  public static String LedArrayGreenOutputs = "externalLeds";
-  public static String LedArrayBlueOutputs = "externalLeds";
+  public static String LedArrayRedOutputs = "externalRedLeds";
+  public static String LedArrayGreenOutputs = "externalGreenLeds";
+  public static String LedArrayBlueOutputs = "externalBlueLeds";
   public static String LedArrayRowOutputs = "rowLeds";
   public static String LedArrayRowRedOutputs = "rowRedLeds";
   public static String LedArrayRowGreenOutputs = "rowGreenLeds";

@@ -130,9 +130,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int selBits = componentInfo.GetComponent().getEnd(2).getWidth().getWidth();
-    int inputBits = componentInfo.GetComponent().getEnd(1).getWidth().getWidth();
-    int outputBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int selBits = componentInfo.getComponent().getEnd(2).getWidth().getWidth();
+    int inputBits = componentInfo.getComponent().getEnd(1).getWidth().getWidth();
+    int outputBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     map.put(INPUT_BITS_STR, inputBits);
     map.put(SelectBitsStr, selBits);
     if (outputBits > 1) map.put(OUTPUTS_BITS_STR, outputBits);

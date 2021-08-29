@@ -124,7 +124,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     map.putAll(GetNetMap("Address", true, comp, RamAppearance.getAddrIndex(0, attrs), nets));
     map.putAll(GetNetMap("Data", true, comp, RamAppearance.getDataOutIndex(0, attrs), nets));
     return map;

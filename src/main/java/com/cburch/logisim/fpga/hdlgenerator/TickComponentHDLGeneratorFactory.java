@@ -76,7 +76,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add("")
             .addRemarkBlock("Here the Output is defined")
             .add(
-                TheNetlist.RequiresGlobalClockConnection()
+                TheNetlist.requiresGlobalClockConnection()
                     ? "   {{assign}} FPGATick {{=}} '1';"
                     : "   {{assign}} FPGATick {{=}} s_tick_reg;")
             .add("")

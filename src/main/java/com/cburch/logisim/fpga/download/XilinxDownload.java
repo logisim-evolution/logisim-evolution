@@ -86,9 +86,9 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.UcfPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.Entities = Entities;
@@ -266,7 +266,7 @@ public class XilinxDownload implements VendorDownload {
     if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
 
     contents.clear();
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
           .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
           .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))

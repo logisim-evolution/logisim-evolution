@@ -253,7 +253,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     final var asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
@@ -278,7 +278,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           map.put("Tick", HDL.oneBit());
         } else {
           int clockBusIndex;
-          if (nets.RequiresGlobalClockConnection()) {
+          if (nets.requiresGlobalClockConnection()) {
             clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
           } else {
             clockBusIndex =
@@ -298,8 +298,8 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     if (byteEnables) {
-      final var nrOfByteEnables = RamAppearance.getNrBEPorts(comp.GetComponent().getAttributeSet());
-      final var byteEnableOffset = RamAppearance.getBEIndex(0, comp.GetComponent().getAttributeSet());
+      final var nrOfByteEnables = RamAppearance.getNrBEPorts(comp.getComponent().getAttributeSet());
+      final var byteEnableOffset = RamAppearance.getBEIndex(0, comp.getComponent().getAttributeSet());
       for (var i = 0; i < nrOfByteEnables; i++) {
         map.putAll(
             GetNetMap(

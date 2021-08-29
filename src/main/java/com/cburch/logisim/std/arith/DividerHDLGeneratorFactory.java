@@ -105,8 +105,8 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    final var isUnsigned = ComponentInfo.GetComponent()
+        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    final var isUnsigned = ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);
