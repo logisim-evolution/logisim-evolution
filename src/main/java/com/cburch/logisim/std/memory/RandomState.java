@@ -39,29 +39,27 @@ public class RandomState extends ClockState implements InstanceData {
   private long initialSeed;
   private long currentSeed;
   private int currentValue;
-  private long resetValue;
   private Value oldResetValue;
 
   public RandomState(Object seed) {
-    resetValue = initialSeed = currentSeed = getRandomSeed(seed);
-    currentValue = (int) resetValue;
+    initialSeed = currentSeed = getRandomSeed(seed);
+    currentValue = (int) initialSeed;
     oldResetValue = Value.UNKNOWN;
   }
 
-  public void propagateReset(Value reset, Object seed) {
-    if (oldResetValue == Value.FALSE && reset == Value.TRUE) {
-      resetValue = getRandomSeed(seed);
-    }
+  public boolean isResetCondition(Value reset) {
+    final var isResetCondition = oldResetValue == Value.FALSE && reset == Value.TRUE; 
     oldResetValue = reset;
+    return isResetCondition;
   }
 
   public void reset(Object seed) {
-    initialSeed = resetValue;
+    final var resetValue = getRandomSeed(seed);
     currentSeed = resetValue;
     currentValue = (int) resetValue;
   }
   
-  public int getValue() {
+  public long getValue() {
     return currentValue;
   }
 

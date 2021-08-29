@@ -79,7 +79,7 @@ public class Random extends InstanceFactory {
     public Value getLogValue(InstanceState state, Object option) {
       var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
       if (dataWidth == null) dataWidth = BitWidth.create(0);
-      final var data = (RandomState) state.getData();
+      final var data = (RandomTinyMt) state.getData();
       if (data == null) return Value.createKnown(dataWidth, 0);
       return Value.createKnown(dataWidth, data.getValue());
     }
@@ -211,7 +211,7 @@ public class Random extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, int value) {
+  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, long value) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(xpos, ypos, 80, 20);
@@ -226,7 +226,7 @@ public class Random extends InstanceFactory {
   private void paintInstanceClassic(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
-    final var state = (RandomState) painter.getData();
+    final var state = (RandomTinyMt) painter.getData();
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
 
@@ -234,7 +234,7 @@ public class Random extends InstanceFactory {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      int val = state == null ? 0 : state.getValue();
+      final var val = state == null ? 0 : state.getValue();
       final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
@@ -277,7 +277,7 @@ public class Random extends InstanceFactory {
     final var bds = painter.getBounds();
     final var x = bds.getX();
     final var y = bds.getY();
-    final var state = (RandomState) painter.getData();
+    final var state = (RandomTinyMt) painter.getData();
     final var val = state == null ? 0 : state.getValue();
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
@@ -307,24 +307,28 @@ public class Random extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    var data = (RandomState) state.getData();
+    var data = (RandomTinyMt) state.getData();
+    var valueChanged = false;
     if (data == null) {
-      data = new RandomState(state.getAttributeValue(ATTR_SEED));
+      data = new RandomTinyMt(state.getAttributeValue(ATTR_SEED));
       state.setData(data);
+      valueChanged = true;
     }
 
     final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    final var triggered = data.updateClock(state.getPortValue(CLK), triggerType);
+    final var triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
+    final var resetPinActive = state.getPortValue(RST) == Value.TRUE;
+    final var triggered = data.updateClock(state.getPortValue(CLK), triggerType) && !resetPinActive;
 
-    data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED));
-    if (state.getPortValue(RST) == Value.TRUE) {
+    if (data.isResetCondition(state.getPortValue(RST))) {
       data.reset(state.getAttributeValue(ATTR_SEED));
+      valueChanged = true;
     } else if (triggered && state.getPortValue(NXT) != Value.FALSE) {
       data.step();
+      valueChanged = true;
     }
 
-    state.setPort(OUT, Value.createKnown(dataWidth, data.getValue()), 4);
+    if (valueChanged) state.setPort(OUT, Value.createKnown(dataWidth, data.getValue()), 4);
   }
 
   @Override
