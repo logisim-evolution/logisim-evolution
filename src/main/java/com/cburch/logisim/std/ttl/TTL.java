@@ -68,13 +68,17 @@ public class TTL extends Library {
     new FactoryDescription("7485", S.getter("TTL7485"), "ttl.gif", "Ttl7485"),
     new FactoryDescription("7486", S.getter("TTL7486"), "ttl.gif", "Ttl7486"),
     new FactoryDescription("74125",S.getter("TTL74125"),"ttl.gif", "Ttl74125"),
+    new FactoryDescription("74151",S.getter("TTL74151"),"ttl.gif", "Ttl74151"),
     new FactoryDescription("74175", S.getter("TTL74175"), "ttl.gif", "Ttl74175"),
     new FactoryDescription("74161", S.getter("TTL74161"), "ttl.gif", "Ttl74161"),
     new FactoryDescription("74165", S.getter("TTL74165"), "ttl.gif", "Ttl74165"),
     new FactoryDescription("74266", S.getter("TTL74266"), "ttl.gif", "Ttl74266"),
     new FactoryDescription("74273", S.getter("TTL74273"), "ttl.gif", "Ttl74273"),
+    new FactoryDescription("74279", S.getter("TTL74279"), "ttl.gif", "Ttl74279"),
     new FactoryDescription("74283", S.getter("TTL74283"), "ttl.gif", "Ttl74283"),
     new FactoryDescription("74377", S.getter("TTL74377"), "ttl.gif", "Ttl74377"),
+    new FactoryDescription("74682", S.getter("TTL74682"), "ttl.gif", "Ttl74682"),
+    new FactoryDescription("74688", S.getter("TTL74688"), "ttl.gif", "Ttl74688"),
   };
 
   static final Attribute<Boolean> VCC_GND =
