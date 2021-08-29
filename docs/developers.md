@@ -45,6 +45,7 @@ You can do this by running task `genBuildInfo` before importing the project.
 See [Building from sources](#building-from-sources) for how to run Gradle.
 
 To run the task within Eclipse after importing the logisim-evolution project:
+
 * Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the Menu `Window/Show View/Other...`
   and selecting `Gradle Tasks` under Gradle.
 * In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genBuildInfo`.
