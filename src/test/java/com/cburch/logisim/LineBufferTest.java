@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.cburch.logisim.util.LineBuffer;
@@ -214,6 +215,28 @@ public class LineBufferTest extends TestBase {
       final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
     }
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Checks if providing less arguments than positional placeholders would be detected.
+   */
+  @Test
+  public void testAddTooLittlePosArgs() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.add("This is {{1}} bar {{   2}} test", 666);
+    });
+  }
+
+  @Test
+  public void testGetUsedPlaceholders() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.validateLine("""
+                This is {{foo}} bar {{   2}} test
+                line number {{2}} {{foo    }}
+                """);
+    });
   }
 
   /* ********************************************************************************************* */

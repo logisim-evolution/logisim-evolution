@@ -84,8 +84,8 @@ val TARGET_FILE_PATH_BASE = "targetFilePathBase"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_14
-  targetCompatibility = JavaVersion.VERSION_14
+  sourceCompatibility = JavaVersion.VERSION_16
+  targetCompatibility = JavaVersion.VERSION_16
 }
 
 java {

@@ -33,7 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.RandomAccess;
+import java.util.regex.Pattern;
 
 /**
  * This class is intended to simplify building any HDL content, which usually contains of fixed text
@@ -73,11 +75,10 @@ public class LineBuffer implements RandomAccess {
    * @param line Text line to be added.
    * @param pairs Placeholder pairs to be used.
    */
-//  public LineBuffer(String line, Pairs pairs) {
-//    withPairs(pairs);
-//    add(line);
-//  }
-
+  public LineBuffer(String line, Pairs pairs) {
+    addPairs(pairs);
+    add(line);
+  }
 
   /**
    * Constructs LineBuffer instance, then adds provided placeholders pairs to be used with the instance.
@@ -245,6 +246,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
+    validateLine(format, pairs);
     return add(applyPairs(format, pairs));
   }
 
@@ -483,6 +485,104 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
+  private void warn(String fmt, Object... args) {
+    System.out.println(format("WARNING: " + fmt, args));
+  }
+
+  private void abort(String fmt) {
+    throw new RuntimeException(fmt);
+  }
+  private void abort(String fmt, Object... args) {
+    abort(format(fmt, args));
+  }
+
+  public void validateLine(String fmt) {
+    final var empty = new Object[] {};
+    validateLine(fmt, empty);
+  }
+  protected void validateLine(String fmt, Object... args) {
+
+
+  }
+
+  protected void validateLine(String fmt, Pairs pairs) {
+    final var placeholders = getUsedPlaceholders(fmt);
+    final var positionals = new ArrayList<String>();
+    final var mappedPlaceholders = new ArrayList<String>();
+
+    // Separate positionals and other placeholders
+    final var pattern = Pattern.compile("^\\d+$");
+    for (final var phKey : placeholders) {
+      final var matcher = pattern.matcher(phKey);
+      if (matcher.find()) {
+        positionals.add(phKey);
+      } else {
+        mappedPlaceholders.add(phKey);
+      }
+    }
+
+    // Validate number of arguments vs positional placeholders
+    final var positionalsCnt = positionals.size();
+    if (pairs.size() > positionalsCnt) {
+      // We had too many positional args given compared to positional placeholders. But that
+      // difference can be OK, so just warn.
+      abort("#E001: Expected {{2}} positional arguments, but {{3}} provided while processing '{{1}}'.",
+          fmt, positionalsCnt, pairs.size());
+    }
+    if (positionalsCnt > pairs.size()) {
+      // Too little arguments provided vs. awaiting placeholders. That's life threatening condition.
+      abort("#E002: Expected {{2}} positional arguments, but {{3}} provided while processing '{{1}}'.",
+          fmt, positionalsCnt, pairs.size());
+    }
+
+    // count matches, let's see if contents too.
+    var errorCnt = 0;
+    for (final var posKey : positionals) {
+      if (Integer.valueOf(posKey) > positionalsCnt) {
+        // Reference to non-existing position found.
+        warn("#E003: Non-existing positional placeholder '{{2}}' found, but there's {{3}} args total while processing '{{1}}'.",
+            fmt, posKey, positionalsCnt);
+        errorCnt++;
+      }
+    }
+    if (errorCnt > 0) abort("Reference to non-existing positional arguments found.");
+
+    // Warn if we have positional arguments given, but no positional placeholders used.
+    if (pairs.size() > 0 && positionalsCnt == 0) {
+        warn("#E004: No positional placeholders used but {{2}} positional arguments provided while processing '{{1}}'.",
+            fmt, positionalsCnt);
+    }
+
+    // check if we use any non mapped placeholder
+    errorCnt = 0;
+    for (final var key : mappedPlaceholders) {
+      if (!placeholders.contains(key)) {
+        warn("#E005: Placeholder '{{2}}' has no mapping while processing '{{1}}'.", fmt, key);
+        errorCnt++;
+      }
+    }
+    if (errorCnt > 0) abort("Unmapped placeholders detected.");
+  }
+
+  public ArrayList<String> getUsedPlaceholders(String fmt) {
+    final var keys = new ArrayList<String>();
+
+    final var regex = "(\\{\\{.+?\\}\\})+";
+    final var pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    final var matcher = pattern.matcher(fmt);
+    while (matcher.find()) {
+      // Extract key from between the brackets:
+      final var bracketsCharCount = 2;
+      var keyStr = matcher.group();
+      keyStr = keyStr.substring(bracketsCharCount, keyStr.length() - bracketsCharCount).strip();
+      if (!keys.contains(keyStr)) keys.add(keyStr);
+    }
+
+    return keys;
+  }
+
+  /* ********************************************************************************************* */
+
   /**
    * Both objects are equal if their content (and its order) is exatcly the same.
    *
@@ -490,9 +590,7 @@ public class LineBuffer implements RandomAccess {
    */
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof LineBuffer && size() == ((LineBuffer) other).size())) {
-      return false;
-    }
+    if (!(other instanceof LineBuffer && size() == ((LineBuffer) other).size())) return false;
     for (var i = 0; i < size(); i++) {
       final var thisLine = get().get(i);
       final var otherLine = ((LineBuffer) other).get().get(i);
