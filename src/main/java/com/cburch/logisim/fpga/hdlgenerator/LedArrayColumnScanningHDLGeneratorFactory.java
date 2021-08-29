@@ -223,7 +223,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
               "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
               "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;",
               "assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg : ",
-              "                             (s_rowCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;",
+              "                             (s_columnCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;",
               "")
           .addRemarkBlock("Here the simulation only initial is defined")
           .addLines(
@@ -275,7 +275,8 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "",
           "genvar i;",
           "generate",
-          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
+          "   for (i = 0; i < {{nrOfRows}}; i = i + 1)",
+          "   begin: outputs",
           "      assign {{outs}}[i] = (activeLow == 1)",
           "          ? ~{{ins}}[i*nrOfColumns+s_columnCounterReg]",
           "          : {{ins}}[i*nrOfColumns+s_columnCounterReg];",
