@@ -194,22 +194,22 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     if (HDL.isVHDL()) {
       contents.add(
           """
-          
+
           {{columnAddress}} <= s_columnCounterReg;
-          
+
           s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE '0';
-          
+
           s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
                                    std_logic_vector(to_unsigned({{counterValue}}-1, {{counterBits}}))
-                                      WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE 
+                                      WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE
                                    std_logic_vector(unsigned(s_scanningCounterReg)-1);
-          
+
           s_columnCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
                                  s_columnCounterReg WHEN s_tickReg = '0' ELSE
                                  std_logic_vector(to_unsigned(nrOfColumns-1,nrOfcolumnAddressBits))
                                     WHEN s_columnCounterReg = std_logic_vector(to_unsigned(0,nrOfColumnAddressBits)) ELSE
                                  std_logic_vector(unsigned(s_columnCounterReg)-1);
-          
+
           makeFlops : PROCESS ({{clock}}) IS
           BEGIN
              IF (rising_edge({{clock}})) THEN
@@ -222,12 +222,12 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     } else {
       contents
           .add("""
-                  
+
               assign columnAddress = s_columnCounterReg;
-              
+
               assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
               assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;
-              assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg : 
+              assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg :
                                            (s_rowCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;
               """)
           .addRemarkBlock("Here the simulation only initial is defined")
@@ -272,14 +272,14 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
                 s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
              END IF;
           END PROCESS makeVirtualInputs;
-          
+
           GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
              {{outs}}(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
           END GENERATE GenOutputs;
           """);
     } else {
       contents.add("""
-          
+
           genvar i;
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
@@ -300,7 +300,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public String GetSubDir() {
-     // This method returns the module directory where the HDL code needs to be placed
+    // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 

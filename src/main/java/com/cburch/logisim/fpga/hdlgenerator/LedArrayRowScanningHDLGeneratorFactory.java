@@ -295,7 +295,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
 
   @Override
   public String GetSubDir() {
-     // This method returns the module directory where the HDL code needs to be placed
+    // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 

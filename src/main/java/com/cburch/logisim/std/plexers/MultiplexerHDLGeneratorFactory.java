@@ -74,13 +74,13 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           BEGIN
              IF (Enable = '0') THEN
           """)
-      .add(attrs.getValue(StdAttr.WIDTH).getWidth() > 1
+          .add(attrs.getValue(StdAttr.WIDTH).getWidth() > 1
               ? "{{2u}}MuxOut <= (OTHERS => '0');"
               : "{{2u}}MuxOut <= '0';")
-      .add("""
-                               ELSE
-                CASE (Sel) IS
-          """);
+          .add("""
+                                     ELSE
+                      CASE (Sel) IS
+                """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
         contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}} ", IntToBin(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)

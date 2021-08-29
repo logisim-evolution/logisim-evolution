@@ -66,42 +66,42 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             .addPair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
       contents.add("""
-             -- Output Signals
-             GroupSelect <= NOT(s_in_is_zero) AND enable;
-             EnableOut   <= s_in_is_zero AND enable;
-             Address     <= (OTHERS => '0') WHEN enable = '0' ELSE
-                            s_address({{selBits}}-1 DOWNTO 0);
-          
-             -- Control Signals 
-             s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,{{inBits}})) ELSE '0';
-          
-             -- Processes
-             make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )
-             BEGIN
-                v_select_1_vector(32 DOWNTO {{inBits}})  <= (OTHERS => '0');
-                v_select_1_vector({{inBits}}-1 DOWNTO 0) <= input_vector;
-                IF (v_select_1_vector(31 DOWNTO 16) = X"0000") THEN s_address(4)      <= '0';
-                                                                    v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);
-                                                               ELSE s_address(4)      <= '1';
-                                                                    v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);
-                END IF;
-                IF (v_select_2_vector(15 DOWNTO 8) = X"00") THEN s_address(3)      <= '0';
-                                                                 v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);
-                                                            ELSE s_address(3)      <= '1';
-                                                                 v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);
-                END IF;
-                IF (v_select_3_vector(7 DOWNTO 4) = X"0") THEN s_address(2)      <= '0';
-                                                               v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);
-                                                          ELSE s_address(2)      <= '1';
-                                                               v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);
-                END IF;
-                IF (v_select_4_vector(3 DOWNTO 2) = "00") THEN s_address(1) <= '0';
-                                                               s_address(0) <= v_select_4_vector(1);
-                                                          ELSE s_address(1) <= '1';
-                                                               s_address(0) <= v_select_4_vector(3);
-                END IF;
-             END PROCESS make_addr;
-         """);
+          -- Output Signals
+          GroupSelect <= NOT(s_in_is_zero) AND enable;
+          EnableOut   <= s_in_is_zero AND enable;
+          Address     <= (OTHERS => '0') WHEN enable = '0' ELSE
+                         s_address({{selBits}}-1 DOWNTO 0);
+       
+          -- Control Signals 
+          s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,{{inBits}})) ELSE '0';
+       
+          -- Processes
+          make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )
+          BEGIN
+             v_select_1_vector(32 DOWNTO {{inBits}})  <= (OTHERS => '0');
+             v_select_1_vector({{inBits}}-1 DOWNTO 0) <= input_vector;
+             IF (v_select_1_vector(31 DOWNTO 16) = X"0000") THEN s_address(4)      <= '0';
+                                                                 v_select_2_vector <= v_select_1_vector(15 DOWNTO 0);
+                                                            ELSE s_address(4)      <= '1';
+                                                                 v_select_2_vector <= v_select_1_vector(31 DOWNTO 16);
+             END IF;
+             IF (v_select_2_vector(15 DOWNTO 8) = X"00") THEN s_address(3)      <= '0';
+                                                              v_select_3_vector <= v_select_2_vector(7 DOWNTO 0);
+                                                         ELSE s_address(3)      <= '1';
+                                                              v_select_3_vector <= v_select_2_vector(15 DOWNTO 8);
+             END IF;
+             IF (v_select_3_vector(7 DOWNTO 4) = X"0") THEN s_address(2)      <= '0';
+                                                            v_select_4_vector <= v_select_3_vector(3 DOWNTO 0);
+                                                       ELSE s_address(2)      <= '1';
+                                                            v_select_4_vector <= v_select_3_vector(7 DOWNTO 4);
+             END IF;
+             IF (v_select_4_vector(3 DOWNTO 2) = "00") THEN s_address(1) <= '0';
+                                                            s_address(0) <= v_select_4_vector(1);
+                                                       ELSE s_address(1) <= '1';
+                                                            s_address(0) <= v_select_4_vector(3);
+             END IF;
+          END PROCESS make_addr;
+          """);
     } else {
       contents.add("""
           assign GroupSelect = ~s_in_is_zero&enable;

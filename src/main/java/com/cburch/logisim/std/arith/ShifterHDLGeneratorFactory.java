@@ -236,7 +236,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         --- Here stage {{1}} of the binary shift tree is defined
         -----------------------------------------------------------------------------
           
-       """, new LineBuffer.Pairs("stageNumber", stageNumber));
+        """, new LineBuffer.Pairs("stageNumber", stageNumber));
 
     if (stageNumber == 0) {
       contents
