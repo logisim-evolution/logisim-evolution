@@ -66,24 +66,26 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var Contents = new LineBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_inverted_dataB <= NOT(DataB);",
-          "s_extended_dataA <= \"0\"&DataA;",
-          "s_extended_dataB <= \"0\"&s_inverted_dataB;",
-          "s_carry          <= NOT(BorrowIn);",
-          "s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+",
-          "                    unsigned(s_extended_dataB)+",
-          "                    (\"\"&s_carry));",
-          "");
+      Contents.add("""
+          s_inverted_dataB <= NOT(DataB);
+          s_extended_dataA <= "0"&DataA;
+          s_extended_dataB <= "0"&s_inverted_dataB;
+          s_carry          <= NOT(BorrowIn);
+          s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
+                              unsigned(s_extended_dataB)+
+                              (""&s_carry));
+          
+          """);
       Contents.add(
           (nrOfBits == 1)
               ? "Result <= s_sum_result(0);"
               : "Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
       Contents.add("BorrowOut <= NOT(s_sum_result(" + ExtendedBitsStr + "-1));");
     } else {
-      Contents.addLines(
-          "assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);",
-          "assign   BorrowOut = ~s_carry;");
+      Contents.add("""
+          assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);
+          assign   BorrowOut = ~s_carry;
+          """);
     }
     return Contents.getWithIndent();
   }

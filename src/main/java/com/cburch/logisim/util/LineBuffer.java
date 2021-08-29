@@ -43,8 +43,8 @@ import java.util.RandomAccess;
  */
 public class LineBuffer implements RandomAccess {
   public static final int MAX_LINE_LENGTH = 80;
-  public static final int DEFAULT_INDENT = 3;
-  public static final String DEFAULT_INDENT_STR = " ";
+  public static final int DEFAULT_INDENT = 1;
+  public static final String DEFAULT_INDENT_STR = "   ";
 
   private ArrayList<String> contents = new java.util.ArrayList<String>();
 
@@ -59,10 +59,11 @@ public class LineBuffer implements RandomAccess {
 
   public LineBuffer() {
     super();
+    addDefaultPairs();
   }
 
   public LineBuffer(Pairs pairs) {
-    super();
+    this();
     withPairs(pairs);
   }
 
@@ -71,6 +72,12 @@ public class LineBuffer implements RandomAccess {
   }
 
   protected Pairs pairs = new Pairs();
+
+  public LineBuffer addDefaultPairs() {
+    return addPair("1u", getDefaultIndent())
+        .addPair("2u", getIndent(2))
+        .addPair("3u", getIndent(3));
+  }
 
   public LineBuffer withHdlPairs() {
     return addPair("assign", HDL.assignPreamble())
@@ -298,7 +305,7 @@ public class LineBuffer implements RandomAccess {
   }
 
   public ArrayList<String> getWithIndent() {
-    return getWithIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
+    return getWithIndent(getDefaultIndent());
   }
 
   /**
@@ -307,7 +314,7 @@ public class LineBuffer implements RandomAccess {
    * @param howMany Number of spaces to prefix each line with.
    */
   public ArrayList<String> getWithIndent(int howMany) {
-    return getWithIndent(howMany, DEFAULT_INDENT_STR);
+    return getWithIndent(getIndent(howMany));
   }
 
   /**
@@ -330,6 +337,20 @@ public class LineBuffer implements RandomAccess {
       result.add((line.length() == 0) ? line : indent + line);
     }
     return result;
+  }
+
+  /* ********************************************************************************************* */
+
+  public static String getDefaultIndent() {
+    return getIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
+  }
+
+  public static String getIndent(int indentUnits) {
+    return getIndent(indentUnits, DEFAULT_INDENT_STR);
+  }
+
+  public static String getIndent(int indentUnits, String indentString) {
+    return indentString.repeat(indentUnits);
   }
 
   /* ********************************************************************************************* */

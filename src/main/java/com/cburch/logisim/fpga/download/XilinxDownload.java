@@ -214,52 +214,64 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    var contents = new LineBuffer();
-    for (var entity : Entities) contents.add("{{1}} work \"{{2}}\"", HDLType.toUpperCase(), entity);
-    for (var arch : architectures) contents.add("{{1}} work \"{{2}}\"", HDLType.toUpperCase(), arch);
+    final var contents = (new LineBuffer())
+            .addPair("JTAGPos", JTAGPos)
+            .addPair("fileExt", bitfileExt)
+            .addPair("fileBaseName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+            .addPair("mcsFile", ScriptPath + File.separator + MCS_FILE)
+            .addPair("hdlType", HDLType.toUpperCase().toUpperCase());
+
+    for (var entity : Entities) contents.add("{{hdlType}} work \"{{1}}\"", entity);
+    for (var arch : architectures) contents.add("{{hdlType}} work \"{{1}}\"", arch);
     if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;
 
-    contents.clear();
-    contents.add(
-        "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
-        ToplevelHDLGeneratorFactory.FPGAToplevelName,
-        ScriptPath.replace(ProjectPath, "../"),
-        VHDL_LIST_FILE,
-        GetFPGADeviceString(boardInfo));
+    contents
+          .clear()
+          .add(
+              "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
+              ToplevelHDLGeneratorFactory.FPGAToplevelName,
+              ScriptPath.replace(ProjectPath, "../"),
+              VHDL_LIST_FILE,
+              GetFPGADeviceString(boardInfo));
 
     if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
 
     contents.clear();
     contents.add("setmode -bscan");
+
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
       if (boardInfo.fpga.getFlashName() == null) {
         Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
-      final var flashPos = String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition());
-      final var mcsFile = ScriptPath + File.separator + MCS_FILE;
-      contents
-          .add("setmode -pff")
-          .add("setSubMode -pffserial")
-          .add("addPromDevice -p {{1}} -size 0 -name {{2}}", JTAGPos, boardInfo.fpga.getFlashName())
-          .add("addDesign -version 0 -name \"0\"")
-          .add("addDeviceChain -index 0")
-          .add("addDevice -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
-          .add("generate -format mcs -fillvalue FF -output {{1}}", mcsFile)
-          .add("setMode -bs")
-          .add("setCable -port auto")
-          .add("identify")
-          .add("assignFile -p {{1}} -file {{2}}", flashPos, mcsFile)
-          .add("program -p {{1}} -e -v", flashPos);
+
+      contents.addPair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
+              .addPair("flashName", boardInfo.fpga.getFlashName())
+              .add("""
+                setmode -pff
+                setSubMode -pffserial
+                addPromDevice -p {{JTAGPos}} -size 0 -name {{flashName}}
+                addDesign -version 0 -name "0"
+                addDeviceChain -index 0
+                addDevice -p {{JTAGPos}} -file {{fileBaseName}}.{{fileExt}}
+                generate -format mcs -fillvalue FF -output {{mcsFile}}
+                setMode -bs
+                setCable -port auto
+                identify
+                assignFile -p {{flashPos}} -file {{mcsFile}}
+                program -p {{flashPos}} -e -v
+                """);
     } else {
       contents.add("setcable -p auto").add("identify");
       if (!IsCPLD) {
-        contents
-            .add("assignFile -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
-            .add("program -p {{1}} -onlyFpga", JTAGPos);
+        contents.add("""
+            assignFile -p {{JTAGPos}} -file {{fileBaseName}}.{{fileExt}}
+            program -p {{JTAGPos}} -onlyFpga
+            """);
       } else {
-        contents
-            .add("assignFile -p {{1}} -file logisim.{{2}}", JTAGPos, bitfileExt)
-            .add("program -p {{1}} -e", JTAGPos);
+        contents.add("""
+            assignFile -p {{JTAGPos}} -file logisim.{{fileExt}}
+            program -p {{JTAGPos}} -e
+            """);
       }
     }
     contents.add("quit");
@@ -271,11 +283,11 @@ public class XilinxDownload implements VendorDownload {
           .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
           .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
           .addPair("clockPin", GetXilinxClockPin(boardInfo))
-          .addLines(
-            "NET \"{{clock}}\" {{clockPin}} ;",
-            "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
-            "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
-            "");
+          .add("""
+            NET "{{clock}}" {{clockPin}} ;
+            NET "{{clock}}" TNM_NET = "{{clock}}" ;
+            TIMESPEC "TS_{{clock}}" = PERIOD "{{clock}}" {{clockFreq}} HIGH 50 % ;
+            """);
     }
     contents.add(getPinLocStrings());
     return FileWriter.WriteContents(UcfFile, contents.get());
@@ -428,12 +440,9 @@ public class XilinxDownload implements VendorDownload {
     return stage4;
   }
 
-  private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
-    return CurrentBoard.fpga.getPart()
-        + "-"
-        + CurrentBoard.fpga.getPackage()
-        + "-"
-        + CurrentBoard.fpga.getSpeedGrade();
+  private static String GetFPGADeviceString(BoardInformation currentBoard) {
+    final var fpga = currentBoard.fpga;
+    return String.format("%s-%s-%s", fpga.getPart(), fpga.getPackage(), fpga.getSpeedGrade());
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
@@ -455,8 +464,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean BoardConnected() {
-    // TODO Detect if a board is connected, and in case of multiple boards select the one that
-    // should be used
+    // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used
     return true;
   }
 

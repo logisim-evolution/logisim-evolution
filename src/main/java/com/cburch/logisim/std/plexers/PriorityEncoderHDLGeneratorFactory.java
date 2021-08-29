@@ -65,7 +65,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
             .addPair("selBits", NR_OF_SELECT_BITS_STR)
             .addPair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
-      contents.addLines("""
+      contents.add("""
              -- Output Signals
              GroupSelect <= NOT(s_in_is_zero) AND enable;
              EnableOut   <= s_in_is_zero AND enable;

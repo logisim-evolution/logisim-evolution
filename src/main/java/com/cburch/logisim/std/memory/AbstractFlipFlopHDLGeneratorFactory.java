@@ -90,59 +90,65 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     if (HDL.isVerilog()) {
       contents
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
-          .add("   initial")
-          .add("   begin")
-          .add("      s_current_state_reg = 0;")
-          .add("   end")
-          .add("");
+          .add("""
+                   initial
+                   begin
+                      s_current_state_reg = 0;
+                   end
+                
+                """);
     }
 
     contents.addRemarkBlock("Here the actual state register is defined");
     if (HDL.isVHDL()) {
-      contents
-          .add("make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
-          .add("   VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
-          .add("BEGIN")
-          .add("   temp := std_logic_vector(to_unsigned({{1}}, 1));", ACTIVITY_LEVEL_STR)
-          .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
-          .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
+      contents.add("""
+          make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )
+             VARIABLE temp : std_logic_vector(0 DOWNTO 0);
+          BEGIN
+             temp := std_logic_vector(to_unsigned({{activityLevel}}, 1));
+             IF (Reset = '1') THEN s_current_state_reg <= '0';
+             ELSIF (Preset = '1') THEN s_current_state_reg <= '1';
+          """, new LineBuffer.Pairs("activityLevel", ACTIVITY_LEVEL_STR));
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
         contents.add("   ELSIF (Clock = temp(0)) THEN");
       }
-      contents
-          .add("       IF (Tick = '1') THEN")
-          .add("         s_current_state_reg <= s_next_state;")
-          .add("      END IF;")
-          .add("   END IF;")
-          .add("END PROCESS make_memory;");
+      contents.add("""
+                 IF (Tick = '1') THEN
+                   s_current_state_reg <= s_next_state;
+                END IF;
+             END IF;
+          END PROCESS make_memory;"
+          """);
     } else {
       if (Netlist.isFlipFlop(attrs)) {
-        contents.addLines(
-            "always @(posedge Reset or posedge Preset or negedge Clock)",
-            "begin",
-            "   if (Reset) s_current_state_reg[0] <= 1'b0;",
-            "   else if (Preset) s_current_state_reg[0] <= 1'b1;",
-            "   else if (Tick) s_current_state_reg[0] <= s_next_state;",
-            "end",
-            "",
-            "always @(posedge Reset or posedge Preset or posedge Clock)",
-            "begin",
-            "   if (Reset) s_current_state_reg[1] <= 1'b0;",
-            "   else if (Preset) s_current_state_reg[1] <= 1'b1;",
-            "   else if (Tick) s_current_state_reg[1] <= s_next_state;",
-            "end");
+        contents.add("""
+            always @(posedge Reset or posedge Preset or negedge Clock)
+            begin
+               if (Reset) s_current_state_reg[0] <= 1'b0;
+               else if (Preset) s_current_state_reg[0] <= 1'b1;
+               else if (Tick) s_current_state_reg[0] <= s_next_state;
+            end
+            
+            always @(posedge Reset or posedge Preset or posedge Clock)
+            begin
+               if (Reset) s_current_state_reg[1] <= 1'b0;
+               else if (Preset) s_current_state_reg[1] <= 1'b1;
+               else if (Tick) s_current_state_reg[1] <= s_next_state;
+            end
+            """);
       } else {
         contents
             .addPair("activityLevel", ACTIVITY_LEVEL_STR)
-            .addLines(
-                "always @(*)",
-                "begin",
-                "   if (Reset) s_current_state_reg <= 2'b0;",
-                "   else if (Preset) s_current_state_reg <= 2'b1;",
-                "   else if (Tick & (Clock == {{activityLevel}})) s_current_state_reg <= {s_next_state,s_next_state};",
-                "end");
+            .add("""
+                always @(*)
+                begin
+                   if (Reset) s_current_state_reg <= 2'b0;
+                   else if (Preset) s_current_state_reg <= 2'b1;
+                   else if (Tick & (Clock == {{activityLevel}})) s_current_state_reg <= {s_next_state,s_next_state};
+                end
+                """);
       }
     }
     contents.empty();

@@ -139,7 +139,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               
               """)
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
-          .addLines("""
+          .add("""
               initial
               begin
                  s_output_regs = 0;

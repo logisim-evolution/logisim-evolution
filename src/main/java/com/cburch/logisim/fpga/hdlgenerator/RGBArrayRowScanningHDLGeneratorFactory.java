@@ -56,25 +56,27 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "PORT MAP ( {{address}} => {{address}}{{id}}",
-          "           {{clock     }} => {{clock}},",
-          "           {{outsR     }} => {{outsR}}{{id}},",
-          "           {{outsG     }} => {{outsG}}{{id}},",
-          "           {{outsB     }} => {{outsB}}{{id}},",
-          "           {{insR      }} => s_{{insR}}{{id}},",
-          "           {{insG      }} => s_{{insG}}{{id}},",
-          "           {{insB      }} => s_{{insB}}{{id}});");
+      contents.add("""
+          PORT MAP ( {{address}} => {{address}}{{id}}
+                     {{clock}} => {{clock}},
+                     {{outsR}} => {{outsR}}{{id}},
+                     {{outsG}} => {{outsG}}{{id}},
+                     {{outsB}} => {{outsB}}{{id}},
+                     {{insR}} => s_{{insR}}{{id}},
+                     {{insG}} => s_{{insG}}{{id}},
+                     {{insB}} => s_{{insB}}{{id}});
+          """);
     } else {
-      contents.addLines(
-          "( .{{address}}({{address}}{{id}}),",
-          "  .{{clock     }}({{clock}}),",
-          "  .{{outsR   }}({{outsR}}{{id}}),",
-          "  .{{outsG }}({{outsG}}{{id}}),",
-          "  .{{outsB  }}({{outsB}}{{id}}),",
-          "  .{{insR    }}(s_{{insR}}{{id}}),",
-          "  .{{insG  }}(s_{{insG}}{{id}}),",
-          "  .{{insB   }}(s_{{insB}}{{id}}) ); ");
+      contents.add("""
+          ( .{{address}}({{address}}{{id}}),
+            .{{clock}}({{clock}}),
+            .{{outsR}}({{outsR}}{{id}}),
+            .{{outsG}}({{outsG}}{{id}}),
+            .{{outsB}}({{outsB}}{{id}}),
+            .{{insR}}(s_{{insR}}{{id}}),
+            .{{insG}}(s_{{insG}}{{id}}),
+            .{{insB}}(s_{{insB}}{{id}}) );
+          """);
     }
     return contents.getWithIndent(6);
   }

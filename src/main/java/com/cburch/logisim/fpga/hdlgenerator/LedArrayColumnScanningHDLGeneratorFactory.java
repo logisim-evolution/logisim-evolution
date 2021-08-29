@@ -82,25 +82,27 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .addPair("scanningValue", (scanningReload - 1));
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
-          "              {{nrOfRows}} => {{nrOfRowsCount}},",
-          "              {{nrOfColumns}} => {{nrOfColumnsCount}},",
-          "              {{nrColAddrBits}} => {{nrColAddrBitsCount}},",
-          "              {{scanningCounterBits}} => {{nrOfScanningBitsCount}},",
-          "              {{scanningCounter}} => {{scanningValue}},",
-          "              {{maxNrLeds}} => {{maxNrLedsCount}},",
-          "              {{activeLow}} => {{activeLowValue}} )");
+      contents.add("""
+          GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
+                        {{nrOfRows}} => {{nrOfRowsCount}},
+                        {{nrOfColumns}} => {{nrOfColumnsCount}},
+                        {{nrColAddrBits}} => {{nrColAddrBitsCount}},
+                        {{scanningCounterBits}} => {{nrOfScanningBitsCount}},
+                        {{scanningCounter}} => {{scanningValue}},
+                        {{maxNrLeds}} => {{maxNrLedsCount}},
+                        {{activeLow}} => {{activeLowValue}} )
+          """);
     } else {
-      contents.addLines(
-          "#( .{{nrOfLeds}}({{ledsCount}}),",
-          "   .{{nrOfRows}}({{nrOfRowsCount}}),",
-          "   .{{nrOfColumns}}({{nrOfColumnsCount}}),",
-          "   .{{nrColAddrBits}}({{nrColAddrBitsCount}}),",
-          "   .{{scanningCounterBits}}({{nrOfScanningBitsCount}}),",
-          "   .{{scanningCounter}}({{scanningValue}}),",
-          "   .{{maxNrLeds}}({{maxNrLedsCount}}),",
-          "   .{{activeLow}}({{activeLowValue}}) )");
+      contents.add("""
+          #( .{{nrOfLeds}}({{ledsCount}}),
+             .{{nrOfRows}}({{nrOfRowsCount}}),
+             .{{nrOfColumns}}({{nrOfColumnsCount}}),
+             .{{nrColAddrBits}}({{nrColAddrBitsCount}}),
+             .{{scanningCounterBits}}({{nrOfScanningBitsCount}}),
+             .{{scanningCounter}}({{scanningValue}}),
+             .{{maxNrLeds}}({{maxNrLedsCount}}),
+             .{{activeLow}}({{activeLowValue}}) )
+             """);
     }
     return contents.getWithIndent(6);
   }
@@ -115,17 +117,19 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .addPair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},",
-          "           {{outs}} => {{outs}}{{id}},",
-          "           {{clock}} => {{clock}},",
-          "           {{ins}} => s_{{ins}}{{id}} );");
+      contents.add("""
+          PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},
+                     {{outs}} => {{outs}}{{id}},
+                     {{clock}} => {{clock}},
+                     {{ins}} => s_{{ins}}{{id}} );
+          """);
     } else {
-      contents.addLines(
-          "( .{{columnAddress}}({{columnAddress}}{{id}}),",
-          "  .{{outs}}({{outs}}{{id}}),",
-          "  .{{clock}}({{clock}}),",
-          "  .{{ins}}({{s_{{ins}}{{id}}) );");
+      contents.add("""
+          ( .{{columnAddress}}({{columnAddress}}{{id}}),
+            .{{outs}}({{outs}}{{id}}),
+            .{{clock}}({{clock}}),
+            .{{ins}}({{s_{{ins}}{{id}}) );
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -258,7 +262,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .add(getColumnCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.addLines("""
+      contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN
              s_maxLedInputs <= (OTHERS => '0');
@@ -296,10 +300,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   @Override
   public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
+     // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 

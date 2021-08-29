@@ -82,25 +82,27 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},",
-          "              {{nrOfRows}} => {{nrOfRowsVal}},",
-          "              {{nrOfColumns}} => {{nrOfColumnsVal}},",
-          "              {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},",
-          "              {{scanningCounterBits}} => {{scanningCounterBitsVal}},",
-          "              {{scanningCounterValue}} => {{scanningCounterValueVal}},",
-          "              {{maxNrLeds}} => {{maxNrLedsVal}},",
-          "              {{activeLow}} => {{activeLowVal}} )");
+      contents.add("""
+          GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},
+                        {{nrOfRows}} => {{nrOfRowsVal}},
+                        {{nrOfColumns}} => {{nrOfColumnsVal}},
+                        {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},
+                        {{scanningCounterBits}} => {{scanningCounterBitsVal}},
+                        {{scanningCounterValue}} => {{scanningCounterValueVal}},
+                        {{maxNrLeds}} => {{maxNrLedsVal}},
+                        {{activeLow}} => {{activeLowVal}} )
+          """);
     } else {
-      contents.addLines(
-          "#( .{{nrOfLeds}}({{nrOfLedsVal}}),",
-          "   .{{nrOfRows}}({{nrOfRowsVal}}),",
-          "   .{{nrOfColumns}}({{nrOfColumns}}),",
-          "   .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),",
-          "   .{{scanningCounterBits}}({{scanningCounterBitsVal}}),",
-          "   .{{scanningCounterValue}}({{scanningCounterValueVal}}),",
-          "   .{{maxNrLeds}}({{maxNrLedsVal}}),",
-          "   .{{activeLow}}({{activeLowVal}}) )");
+      contents.add("""
+          #( .{{nrOfLeds}}({{nrOfLedsVal}}),
+             .{{nrOfRows}}({{nrOfRowsVal}}),
+             .{{nrOfColumns}}({{nrOfColumns}}),
+             .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),
+             .{{scanningCounterBits}}({{scanningCounterBitsVal}}),
+             .{{scanningCounterValue}}({{scanningCounterValueVal}}),
+             .{{maxNrLeds}}({{maxNrLedsVal}}),
+             .{{activeLow}}({{activeLowVal}}) )
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -114,17 +116,19 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .addPair("id", id);
     if (HDL.isVHDL()) {
-      map.addLines(
-          "PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},",
-          "           {{outs}} => {{outs}}{{id}},",
-          "           {{clock}} => {{clock}},",
-          "           {{ins}} => => s_{{ins}}{{id}} );");
+      map.add("""
+          PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},
+                     {{outs}} => {{outs}}{{id}},
+                     {{clock}} => {{clock}},
+                     {{ins}} => => s_{{ins}}{{id}} );
+          """);
     } else {
-      map.addLines(
-          "( .{{rowAddr}}({{rowAddr}}{{id}}),",
-          "  .{{outs}}({{outs}}{{id}}),",
-          "  .{{clock}}({{clock}}),",
-          "  .{{ins}}(s_{{ins}}{{id}}) );");
+      map.add("""
+          ( .{{rowAddr}}({{rowAddr}}{{id}}),
+            .{{outs}}({{outs}}{{id}}),
+            .{{clock}}({{clock}}),
+            .{{ins}}(s_{{ins}}{{id}}) );
+          """);
     }
     return map.getWithIndent(6);
   }
@@ -253,7 +257,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .add(getRowCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.addLines("""
+      contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN
              s_maxLedInputs <= (OTHERS => '0');
@@ -269,7 +273,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           END GENERATE GenOutputs;
           """);
     } else {
-      contents.addLines("""
+      contents.add("""
           
           genvar i;
           generate
@@ -291,10 +295,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
 
   @Override
   public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
+     // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 

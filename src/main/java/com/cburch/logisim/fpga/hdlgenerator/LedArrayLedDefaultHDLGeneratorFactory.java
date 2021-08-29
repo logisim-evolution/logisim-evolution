@@ -55,13 +55,15 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .addPair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
-          "              {{activeLow}} => {{activeLowVal}} )");
+      contents.add("""
+          GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
+                        {{activeLow}} => {{activeLowVal}} )
+          """);
     } else {
-      contents.addLines(
-          "#( .{{nrOfLeds}}({{ledsCount}}),",
-          "   .{{activeLow}}({{activeLowVal}}) )");
+      contents.add("""
+          #( .{{nrOfLeds}}({{ledsCount}}),
+             .{{activeLow}}({{activeLowVal}}) )
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -72,13 +74,15 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
-      map.addLines(
-          "PORT MAP ( {{outs}} => {{outs}}{{id}},",
-          "           {{ins }} => s_{{ins}}{{id}} );");
+      map.add("""
+          PORT MAP ( {{outs}} => {{outs}}{{id}},
+                     {{ins }} => s_{{ins}}{{id}} );
+          """);
     } else {
-      map.addLines(
-          "( .{{outs}}({{outs}}{{id}}),",
-          "  .{{ins}}(s_{{ins}}{{id}}) );");
+      map.add("""
+          ( .{{outs}}({{outs}}{{id}}),
+            .{{ins}}(s_{{ins}}{{id}}) );
+          """);
     }
     return map.getWithIndent(6);
   }
@@ -113,18 +117,20 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
-          "   {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);",
-          "END GENERATE;");
+      contents.add("""
+          genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
+             {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);
+          END GENERATE;
+          """);
     } else {
-      contents.addLines(
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < nrOfLeds; i = i + 1) begin",
-          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[n] : {{ins}}[n];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+          genvar i;
+          generate
+             for (i = 0; i < nrOfLeds; i = i + 1) begin
+                assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[n] : {{ins}}[n];
+             end
+          endgenerate
+          """);
     }
     return contents.getWithIndent();
   }
@@ -136,10 +142,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
+     // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 

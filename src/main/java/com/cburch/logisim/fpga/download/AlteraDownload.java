@@ -209,35 +209,37 @@ public class AlteraDownload implements VendorDownload {
         .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
 
     contents
-        .addLines(
-            "# Load Quartus II Tcl Project package",
-            "package require ::quartus::project",
-            "",
-            "set need_to_close_project 0",
-            "set make_assignments 1",
-            "",
-            "# Check that the right project is open",
-            "if {[is_project_open]} {",
-            "    if {[string compare $quartus(project) \"{{topLevelName}}\"]} {",
-            "        puts \"Project {{topLevelName}} is not open\"",
-            "        set make_assignments 0",
-            "    }",
-            "} else {",
-            "    # Only open if not already open",
-            "    if {[project_exists {{topLevelName}}]} {",
-            "        project_open -revision {{topLevelName}} {{topLevelName}}",
-            "    } else {",
-            "        project_new -revision {{topLevelName}} {{topLevelName}}",
-            "    }",
-            "    set need_to_close_project 1",
-            "}",
-            "# Make assignments",
-            "if {$make_assignments} {")
+        .add("""
+            # Load Quartus II Tcl Project package
+            package require ::quartus::project
+            
+            set need_to_close_project 0
+            set make_assignments 1
+            
+            # Check that the right project is open
+            if {[is_project_open]} {
+                if {[string compare $quartus(project) \"{{topLevelName}}\"]} {
+                    puts \"Project {{topLevelName}} is not open\"
+                    set make_assignments 0
+                }
+            } else {
+                # Only open if not already open
+                if {[project_exists {{topLevelName}}]} {
+                    project_open -revision {{topLevelName}} {{topLevelName}}
+                } else {
+                    project_new -revision {{topLevelName}} {{topLevelName}}
+                }
+                set need_to_close_project 1
+            }
+            # Make assignments
+            if {$make_assignments} {
+            """)
         .add(getAlteraAssignments(boardInfo))
-        .addLines(
-            "",
-            "    # Include all entities and gates",
-            "");
+        .add("""
+
+                # Include all entities and gates
+
+            """);
     for (var entity : entities) {
       contents.add("    set_global_assignment -name {{fileType}} \"{{1}}\"", entity);
     }
@@ -251,15 +253,16 @@ public class AlteraDownload implements VendorDownload {
     }
     contents
         .add(getPinLocStrings())
-        .addLines(
-            "    # Commit assignments",
-            "    export_assignments",
-            "",
-            "    # Close project",
-            "    if {$need_to_close_project} {",
-            "        project_close",
-            "    }",
-            "}");
+        .add("""
+                # Commit assignments
+                export_assignments
+            
+                # Close project
+                if {$need_to_close_project} {
+                    project_close
+                }
+            }
+            """);
     return FileWriter.WriteContents(scriptFile, contents.get());
   }
 

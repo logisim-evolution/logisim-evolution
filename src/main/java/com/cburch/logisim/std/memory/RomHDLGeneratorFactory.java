@@ -74,14 +74,14 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     long addr;
     final var rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDL.isVHDL()) {
-      contents.addLines(
-              "MakeRom : PROCESS( Address )",
-              "   BEGIN",
-              "      CASE (Address) IS");
+      contents.add("""
+              MakeRom : PROCESS( Address )
+                 BEGIN
+                    CASE (Address) IS
+              """);
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          contents.add(
-              "         WHEN {{1}} => Data <= {{2}};",
+          contents.add("         WHEN {{1}} => Data <= {{2}};",
               getBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth()),
               getBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth()));
         }
@@ -104,10 +104,11 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add("      {{1}} : Data = {{2}};", addr, rom.get(addr));
         }
       }
-      contents.addLines(
-          "      default : Data = 0;",
-          "   endcase",
-          "end");
+      contents.add("""
+                default : Data = 0;
+             endcase
+          end
+          """);
     }
     return contents.getWithIndent();
   }

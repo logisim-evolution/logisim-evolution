@@ -69,68 +69,75 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = (new LineBuffer())
             .addPair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "Q <= s_state_reg;",
-          "",
-          "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
-          "BEGIN",
-          "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
+      contents.add("""
+          Q <= s_state_reg;
+          
+          make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )
+          BEGIN
+             IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');"
+          """);
       if (Netlist.isFlipFlop(attrs)) {
-        contents.addLines(
-            "   ELSIF ({{activeLevel}} = 1) THEN",
-            "      IF (Clock'event AND (Clock = '1')) THEN",
-            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
-            "            s_state_reg <= D;",
-            "         END IF;",
-            "      END IF;",
-            "   ELSIF ({{activeLevel}} = 0) THEN",
-            "      IF (Clock'event AND (Clock = '0')) THEN",
-            "      IF (ClockEnable = '1' AND Tick = '1') THEN",
-            "         s_state_reg <= D;",
-            "      END IF;",
-            "   END IF;");
+        contents.add("""
+               ELSIF ({{activeLevel}} = 1) THEN
+                  IF (Clock'event AND (Clock = '1')) THEN
+                     IF (ClockEnable = '1' AND Tick = '1') THEN
+                        s_state_reg <= D;
+                     END IF;
+                  END IF;
+               ELSIF ({{activeLevel}} = 0) THEN
+                  IF (Clock'event AND (Clock = '0')) THEN
+                  IF (ClockEnable = '1' AND Tick = '1') THEN
+                     s_state_reg <= D;
+                  END IF;
+               END IF;
+               """);
       } else {
-        contents.addLines(
-            "   ELSIF ({{activeLevel}} = 1) THEN",
-            "      IF (Clock = '1') THEN",
-            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
-            "            s_state_reg <= D;",
-            "         END IF;",
-            "      END IF;",
-            "  ELSIF ({{activeLevel}} = 0) THEN",
-            "      IF (Clock = '0') THEN",
-            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
-            "            s_state_reg <= D;",
-            "         END IF;",
-            "      END IF;");
+        contents.add("""
+              ELSIF ({{activeLevel}} = 1) THEN
+                  IF (Clock = '1') THEN
+                     IF (ClockEnable = '1' AND Tick = '1') THEN
+                        s_state_reg <= D;
+                     END IF;
+                  END IF;
+              ELSIF ({{activeLevel}} = 0) THEN
+                  IF (Clock = '0') THEN
+                     IF (ClockEnable = '1' AND Tick = '1') THEN
+                        s_state_reg <= D;
+                     END IF;
+                  END IF;
+              """);
       }
-      contents.addLines("   END IF;",
-                        "END PROCESS make_memory;");
+      contents.add("""
+                 END IF;
+              END PROCESS make_memory;
+              """);
     } else {
       if (!Netlist.isFlipFlop(attrs)) {
-        contents.addLines(
-            "assign Q = s_state_reg;",
-            "",
-            "always @(*)",
-            "begin",
-            "   if (Reset) s_state_reg <= 0;",
-            "   else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;",
-            "end");
+        contents.add("""
+            assign Q = s_state_reg;
+            
+            always @(*)
+            begin
+               if (Reset) s_state_reg <= 0;
+               else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;
+            end
+            """);
       } else {
-        contents.addLines(
-            "assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;",
-            "",
-            "always @(posedge Clock or posedge Reset)",
-            "begin",
-            "   if (Reset) s_state_reg <= 0;",
-            "   else if (ClockEnable&Tick) s_state_reg <= D;",
-            "end",
-            "",
-            "always @(negedge Clock or posedge Reset)",
-            "begin",
-            "   if (Reset) s_state_reg_neg_edge <= 0;",
-            "   else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;",
-            "end");
+        contents.add("""
+            assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;
+            
+            always @(posedge Clock or posedge Reset)
+            begin
+               if (Reset) s_state_reg <= 0;
+               else if (ClockEnable&Tick) s_state_reg <= D;
+            end
+            
+            always @(negedge Clock or posedge Reset)
+            begin
+               if (Reset) s_state_reg_neg_edge <= 0;
+               else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;
+            end
+            """);
       }
     }
     return contents.getWithIndent();
