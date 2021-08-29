@@ -578,7 +578,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           for (final var key : mapInfo.getMappableResources().keySet()) {
             final var comp = mapInfo.getMappableResources().get(key);
             if (comp.hasIOs()) {
-              final var id = comp.getIOBublePinId(i);
+              final var id = comp.getIoBubblePinId(i);
               if (id >= 0) {
                 compPin = id;
                 map = comp;
