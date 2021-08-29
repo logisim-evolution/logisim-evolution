@@ -104,8 +104,8 @@ public class MapComponent {
   private int nrOfPins;
 
   public MapComponent(ArrayList<String> name, NetlistComponent comp) {
-    myFactory = comp.GetComponent().getFactory();
-    myAttributes = comp.GetComponent().getAttributeSet();
+    myFactory = comp.getComponent().getFactory();
+    myAttributes = comp.getComponent().getAttributeSet();
     myName = name;
     var mapInfo = comp.getMapInformationContainer();
     var bName = new ArrayList<String>();
@@ -235,7 +235,7 @@ public class MapComponent {
   }
 
   public boolean equalsType(NetlistComponent comp) {
-    return myFactory.equals(comp.GetComponent().getFactory());
+    return myFactory.equals(comp.getComponent().getFactory());
   }
 
   public void unmap(int pin) {

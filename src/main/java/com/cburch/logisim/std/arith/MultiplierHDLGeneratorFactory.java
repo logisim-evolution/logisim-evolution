@@ -133,9 +133,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
-        ComponentInfo.GetComponent()
+        ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);

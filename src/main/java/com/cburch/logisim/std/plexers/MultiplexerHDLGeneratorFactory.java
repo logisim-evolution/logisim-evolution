@@ -127,7 +127,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
-        componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
   }
@@ -137,7 +137,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var nrOfSelectBits = comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all inputs of multiplexer
     for (var i = 0; i < selectInputIndex; i++)
@@ -145,7 +145,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     // now select..
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (comp.GetComponent()
+    if (comp.getComponent()
         .getAttributeSet()
         .getValue(PlexersLibrary.ATTR_ENABLE)) {
       map.putAll(

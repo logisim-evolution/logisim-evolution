@@ -106,7 +106,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
-        componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
   }
@@ -117,7 +117,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+        comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all outputs of demultiplexer
     for (var i = 0; i < selectInputIndex; i++)
@@ -125,7 +125,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     // now select..
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE)) {
+    if (comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE)) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

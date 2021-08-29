@@ -214,8 +214,8 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var isBus = is_bus(componentInfo.GetComponent().getAttributeSet());
-    final var myAttrs = componentInfo.GetComponent().getAttributeSet();
+    final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
+    final var myAttrs = componentInfo.getComponent().getAttributeSet();
     int nrOfInputs =
         myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
@@ -229,7 +229,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       mask = 1;
       for (var i = 0; i < nrOfInputs; i++) {
         final var inputIsInverted =
-            componentInfo.GetComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
+            componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
         if (inputIsInverted) bubleMask |= mask;
         mask <<= 1;
       }
@@ -291,7 +291,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)

@@ -37,29 +37,29 @@ public class ConnectionEnd {
   private final Byte nrOfBits;
   private final ArrayList<ConnectionPoint> myConnections;
 
-  public ConnectionEnd(boolean outputEnd, Byte nrOfBits, Component comp) {
-    isOutput = outputEnd;
+  public ConnectionEnd(boolean isOutputEnd, Byte nrOfBits, Component comp) {
+    this.isOutput = isOutputEnd;
     this.nrOfBits = nrOfBits;
-    myConnections = new ArrayList<>();
+    this.myConnections = new ArrayList<>();
     for (byte i = 0; i < nrOfBits; i++) {
       myConnections.add(new ConnectionPoint(comp));
     }
   }
 
-  public ConnectionPoint GetConnection(Byte bitIndex) {
+  public ConnectionPoint get(Byte bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return null;
     return myConnections.get(bitIndex);
   }
 
-  public boolean IsOutputEnd() {
+  public boolean isOutputEnd() {
     return isOutput;
   }
 
-  public int NrOfBits() {
+  public int getNrOfBits() {
     return nrOfBits;
   }
 
-  public boolean SetChildPortIndex(Net connectedNet, Byte bitIndex, int portIndex) {
+  public boolean setChildPortIndex(Net connectedNet, Byte bitIndex, int portIndex) {
     if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return false;
     final var Connection = myConnections.get(bitIndex);
     if (Connection == null) return false;
@@ -67,7 +67,7 @@ public class ConnectionEnd {
     return true;
   }
 
-  public boolean SetConnection(ConnectionPoint Connection, Byte BitIndex) {
+  public boolean setConnection(ConnectionPoint Connection, Byte BitIndex) {
     if ((BitIndex < 0) || (BitIndex >= nrOfBits)) return false;
     myConnections.set(BitIndex, Connection);
     return true;

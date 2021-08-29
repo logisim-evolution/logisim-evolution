@@ -48,8 +48,8 @@ public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    final var isSingleBus = componentInfo.GetComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
-    final var nrOfSegments = componentInfo.GetComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+    final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
+    final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
     for (var pin = 0; pin < nrOfSegments; pin++) {
       final var destPin = HDLGeneratorFactory.LocalOutputBubbleBusname
           + HDL.BracketOpen()

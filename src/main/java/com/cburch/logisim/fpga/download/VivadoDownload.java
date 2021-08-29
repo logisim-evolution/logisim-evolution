@@ -70,9 +70,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.xdcPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -188,7 +188,7 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // fill the xdc file
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
       final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";

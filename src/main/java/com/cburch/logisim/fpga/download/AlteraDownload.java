@@ -82,8 +82,8 @@ public class AlteraDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.entities = Entities;
@@ -246,7 +246,7 @@ public class AlteraDownload implements VendorDownload {
     }
     contents.add("");
     contents.add("    # Map fpga_clk and ionets to fpga pins");
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents.add("    set_location_assignment {{1}} -to {{clock}}", boardInfo.fpga.getClockPinLocation());
     }
     contents

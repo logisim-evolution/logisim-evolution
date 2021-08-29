@@ -89,7 +89,7 @@ public class CorrectLabel {
 
   public static String firstInvalidCharacter(String label) {
     if (label.isEmpty()) return "";
-    for (int i = 0; i < label.length(); i++) {
+    for (var i = 0; i < label.length(); i++) {
       final var str = label.substring(i, i + 1);
       final var low = str.toLowerCase();
       if (!CHARS.contains(low) && !NUMBERS.contains(str)) {
@@ -101,7 +101,7 @@ public class CorrectLabel {
 
   public static boolean isCorrectLabel(String Label) {
     if (Label.isEmpty()) return true;
-    for (int i = 0; i < Label.length(); i++) {
+    for (var i = 0; i < Label.length(); i++) {
       if (!CHARS.contains(Label.toLowerCase().substring(i, i + 1)) && !NUMBERS.contains(Label.substring(i, i + 1))) {
         return false;
       }

@@ -38,19 +38,19 @@ class ConnectionPointArray {
     myConnections = new ArrayList<>();
   }
 
-  public void AddConnection(ConnectionPoint connection) {
+  public void add(ConnectionPoint connection) {
     myConnections.add(connection);
   }
 
-  public void ClearConnections() {
+  public void clear() {
     myConnections.clear();
   }
 
-  public ArrayList<ConnectionPoint> GetConnections() {
+  public ArrayList<ConnectionPoint> getAll() {
     return myConnections;
   }
 
-  public int NrOfConnections() {
+  public int size() {
     return myConnections.size();
   }
 }

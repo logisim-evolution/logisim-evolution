@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class Reporter {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddError(Object Message) {
@@ -64,23 +64,27 @@ public class Reporter {
       if (Message instanceof String) logger.error((String) Message);
     } else {
       if (Message instanceof String)
-        myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL));
+        myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
       else myCommander.AddErrors(Message);
     }
+  }
+
+  public void addFatalErrorFmt(String fmt, Object... args) {
+    addFatalErrorFmt(String.format(fmt, args));
   }
 
   public void AddFatalError(String Message) {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_FATAL));
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
   }
 
   public void AddSevereError(String Message) {
     if (myCommander == null)
       logger.error(Message);
     else
-      myCommander.AddErrors(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_SEVERE));
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddInfo(String Message) {
@@ -94,7 +98,7 @@ public class Reporter {
     if (myCommander == null)
       logger.warn(Message);
     else
-      myCommander.AddWarning(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_SEVERE));
+      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddWarningIncrement(String Message) {
@@ -102,7 +106,7 @@ public class Reporter {
       logger.warn(Message);
     else
       myCommander.AddWarning(
-          new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL, true));
+          new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddWarning(Object Message) {
@@ -110,7 +114,7 @@ public class Reporter {
       if (Message instanceof String) logger.warn((String) Message);
     } else {
       if (Message instanceof String)
-        myCommander.AddWarning(new simpleDRCContainer(Message, simpleDRCContainer.LEVEL_NORMAL));
+        myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
       else myCommander.AddWarning(Message);
     }
   }
