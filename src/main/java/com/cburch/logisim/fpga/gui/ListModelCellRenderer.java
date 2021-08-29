@@ -30,7 +30,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.designrulecheck.simpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.gui.icons.DrcIcon;
 import java.awt.Color;
 import java.awt.Component;
@@ -60,20 +60,20 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   @Override
   public Component getListCellRendererComponent(
       JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    simpleDRCContainer msg = null;
+    SimpleDRCContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
     StringBuilder Line = new StringBuilder();
-    if (value instanceof simpleDRCContainer) {
-      msg = (simpleDRCContainer) value;
+    if (value instanceof SimpleDRCContainer) {
+      msg = (SimpleDRCContainer) value;
     }
-    setIcon((msg != null && msg.DRCInfoPresent()) ? DRCError : NoDRC);
+    setIcon((msg != null && msg.isDrcInfoPresent()) ? DRCError : NoDRC);
     if (msg != null) {
-      switch (msg.Severity()) {
-        case simpleDRCContainer.LEVEL_SEVERE:
+      switch (msg.getSeverity()) {
+        case SimpleDRCContainer.LEVEL_SEVERE:
           setForeground(SEVERE);
           break;
-        case simpleDRCContainer.LEVEL_FATAL:
+        case SimpleDRCContainer.LEVEL_FATAL:
           setBackground(FATAL);
           setForeground(list.getBackground());
           break;
@@ -87,11 +87,11 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     }
     if (CountLines) {
       if (msg != null) {
-        if (msg.SupressCount()) {
+        if (msg.getSupressCount()) {
           setForeground(ADDENDUM);
           Line.append("       ");
         } else {
-          int line = msg.GetListNumber();
+          int line = msg.getListNumber();
           if (line < 10) {
             Line.append("    ");
           } else if (line < 100) {
@@ -117,16 +117,16 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
       }
     }
     if (msg != null) {
-      switch (msg.Severity()) {
-        case simpleDRCContainer.LEVEL_SEVERE:
+      switch (msg.getSeverity()) {
+        case SimpleDRCContainer.LEVEL_SEVERE:
           Line.append(S.get("SEVERE_MSG")).append(" ");
           break;
-        case simpleDRCContainer.LEVEL_FATAL:
+        case SimpleDRCContainer.LEVEL_FATAL:
           Line.append(S.get("FATAL_MSG")).append(" ");
           break;
       }
-      if (msg.HasCircuit()) {
-        Line.append(msg.GetCircuit().getName()).append(": ");
+      if (msg.hasCircuit()) {
+        Line.append(msg.getCircuit().getName()).append(": ");
       }
     }
     Line.append(value);

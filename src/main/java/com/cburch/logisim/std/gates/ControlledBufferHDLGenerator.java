@@ -56,7 +56,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
     var inpName = "";
     var outpName = "";
     var triState = "";
-    final var nrBits = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    final var nrBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
       inpName = GetBusName(componentInfo, 1, nets);
       outpName = GetBusName(componentInfo, 0, nets);
@@ -67,7 +67,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       triState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
     if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
-      final var invert = ((ControlledBuffer) componentInfo.GetComponent().getFactory()).isInverter()
+      final var invert = ((ControlledBuffer) componentInfo.getComponent().getFactory()).isInverter()
               ? HDL.notOperator()
               : "";
       if (HDL.isVHDL()) {

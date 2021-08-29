@@ -127,9 +127,9 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     var isSigned = 0;
-    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
     if (attrs.containsAttribute(Comparator.MODE_ATTRIBUTE)) {
       if (attrs.getValue(Comparator.MODE_ATTRIBUTE).equals(Comparator.SIGNED_OPTION))
         isSigned = 1;

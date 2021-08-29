@@ -44,7 +44,7 @@ public class ConnectionPoint {
     myComp = comp;
   }
 
-  public Component GetComp() {
+  public Component getComp() {
     return myComp;
   }
 
@@ -52,11 +52,11 @@ public class ConnectionPoint {
     return myChildsPortIndex;
   }
 
-  public Net GetParentNet() {
+  public Net getParentNet() {
     return myOwnNet;
   }
 
-  public Byte GetParentNetBitIndex() {
+  public Byte getParentNetBitIndex() {
     return myOwnNetBitIndex;
   }
 
@@ -64,7 +64,7 @@ public class ConnectionPoint {
     myChildsPortIndex = index;
   }
 
-  public void SetParentNet(Net connectedNet, Byte bitIndex) {
+  public void setParentNet(Net connectedNet, Byte bitIndex) {
     myOwnNet = connectedNet;
     myOwnNetBitIndex = bitIndex;
   }

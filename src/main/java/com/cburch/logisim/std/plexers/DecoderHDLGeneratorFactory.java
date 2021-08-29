@@ -91,7 +91,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+        comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
     for (var i = 0; i < selectInputIndex; i++)
@@ -100,7 +100,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
+    if (comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

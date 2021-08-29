@@ -43,7 +43,7 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = new ArrayList<String>();
     for (int i = 0; i < componentInfo.nrOfEnds(); i++) {
       if (componentInfo.isEndConnected(i)) {
-        final var pressPassive = componentInfo.GetComponent().getAttributeSet().getValue(Button.ATTR_PRESS) ==  Button.BUTTON_PRESS_PASSIVE;
+        final var pressPassive = componentInfo.getComponent().getAttributeSet().getValue(Button.ATTR_PRESS) ==  Button.BUTTON_PRESS_PASSIVE;
         contents.add(
             "   "
                 + HDL.assignPreamble()

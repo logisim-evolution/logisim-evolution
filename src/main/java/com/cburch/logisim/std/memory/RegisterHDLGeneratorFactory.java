@@ -75,7 +75,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
           "BEGIN",
           "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-      if (Netlist.IsFlipFlop(attrs)) {
+      if (Netlist.isFlipFlop(attrs)) {
         contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock'event AND (Clock = '1')) THEN",
@@ -107,7 +107,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.addLines("   END IF;",
                         "END PROCESS make_memory;");
     } else {
-      if (!Netlist.IsFlipFlop(attrs)) {
+      if (!Netlist.isFlipFlop(attrs)) {
         contents.addLines(
             "assign Q = s_state_reg;",
             "",
@@ -157,11 +157,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var activeLevel = 1;
     var gatedclock = false;
     var activeLow = false;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
-      if (Netlist.IsFlipFlop(attrs))
+      if (Netlist.isFlipFlop(attrs))
         Reporter.Report.AddWarning(
             "Found a gated clock for component \"Register\" in circuit \""
                 + nets.getCircuitName()
@@ -175,7 +175,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(
-        NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
+        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;
   }
 
@@ -187,7 +187,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     if (!comp.isEndConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
@@ -205,8 +205,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(
         GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put("Tick", HDL.oneBit());
       } else {
         if (activeLow)
@@ -257,7 +257,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var input = "D";
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       input += "(0)";
       output += "(0)";
@@ -271,7 +271,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
     regs.put("s_state_reg", NrOfBitsId);
-    if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
+    if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
   }

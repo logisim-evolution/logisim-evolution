@@ -122,7 +122,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     for (var i = 0; i < 2; i++) {
       var gatedClock = false;
       var hasClock = true;
-      int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
+      int clockPinIndex = componentinfo.getComponent().getFactory().ClockPinIndex(null)[i];
       if (!componentinfo.isEndConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
@@ -144,7 +144,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
             "CLK" + (i + 1),
             GetNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
-        if (Nets.RequiresGlobalClockConnection()) {
+        if (Nets.requiresGlobalClockConnection()) {
           map.put("tick" + (i + 1), "'1'");
         } else {
           map.put(

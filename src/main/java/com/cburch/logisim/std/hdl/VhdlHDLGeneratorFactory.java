@@ -89,7 +89,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(MapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) MapInfo;
 
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var content = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
 
     final var inputs = content.getInputs();

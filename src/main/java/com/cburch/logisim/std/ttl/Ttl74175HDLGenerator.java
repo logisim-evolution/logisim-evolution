@@ -115,7 +115,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
     final var comp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
-    int clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
+    int clockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
     if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning("Component \"TTL74165\" in circuit \"" + nets.getCircuitName()
               + "\" has no clock connection");
@@ -132,7 +132,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'1'");
       map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
     } else {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
       } else {
         map.put(

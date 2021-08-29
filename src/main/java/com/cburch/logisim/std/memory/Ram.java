@@ -429,6 +429,6 @@ public class Ram extends Mem {
 
   @Override
   public int[] ClockPinIndex(NetlistComponent comp) {
-    return new int[] {RamAppearance.getClkIndex(0, comp.GetComponent().getAttributeSet())};
+    return new int[] {RamAppearance.getClkIndex(0, comp.getComponent().getAttributeSet())};
   }
 }

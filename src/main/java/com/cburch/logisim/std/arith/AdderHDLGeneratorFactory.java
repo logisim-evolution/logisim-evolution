@@ -106,7 +106,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     map.put(ExtendedBitsStr, nrOfBits + 1);
     if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
