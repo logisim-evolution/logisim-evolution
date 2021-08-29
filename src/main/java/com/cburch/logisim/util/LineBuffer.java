@@ -558,7 +558,7 @@ public class LineBuffer implements RandomAccess {
     if (errorCnt > 0) abort("Reference to non-existing positional arguments found.");
 
     // Warn if we have positional arguments given, but no positional placeholders used.
-    if (pairs.size() > 0 && positionalsCnt == 0) {
+    if ((pairs.size() > 0) && (positionalsCnt == 0)) {
         warn("#E004: No positional placeholders used but {{2}} positional arguments provided while processing '{{1}}'.",
             fmt, positionalsCnt);
     }
@@ -574,6 +574,13 @@ public class LineBuffer implements RandomAccess {
     if (errorCnt > 0) abort("Unmapped placeholders detected.");
   }
 
+  /**
+   * Extract names of valid placeholders found in provided string.
+   *
+   * @param fmt String to analyze.
+   *
+   * @return Returns list of found placeholders. If no placeholder is found, returnes empty list.
+   */
   public ArrayList<String> getUsedPlaceholders(String fmt) {
     final var keys = new ArrayList<String>();
 
