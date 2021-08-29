@@ -61,6 +61,7 @@ public class LineBuffer implements RandomAccess {
 
   /**
    * Construct LineBuffer with line added to the container.
+   *
    * @param line text line to be added to buffer
    */
   public LineBuffer(String line) {
@@ -92,6 +93,7 @@ public class LineBuffer implements RandomAccess {
 
   /**
    * Returns number of unique pairs stored already.
+   *
    * @return number of pairs.
    */
   public int size() {
@@ -243,6 +245,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @param format Formatting string. Wrap keys in `{{` and `}}`.
    * @param pairs Search-Replace map.
+   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String format, Pairs pairs) {
@@ -304,7 +307,8 @@ public class LineBuffer implements RandomAccess {
    *
    * @param count Number of times line should be added.
    * @param line String to be added to the buffer.
-   * @return
+   *
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer repeat(int count, String line) {
     for (var i = 0; i < count; i++) add(line);
@@ -313,7 +317,11 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  /** Appends single empty line to the content buffer. */
+  /**
+   * Appends single empty line to the content buffer.
+   *
+   * @return Instance of self for easy chaining.
+   */
   public LineBuffer empty() {
     return repeat(1, "");
   }
@@ -322,6 +330,8 @@ public class LineBuffer implements RandomAccess {
    * Appends `count` number for empty lines to the content buffer.
    *
    * @param count number of empty lines to be addeed.
+   *
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer empty(int count) {
     return repeat(count, "");
@@ -332,7 +342,7 @@ public class LineBuffer implements RandomAccess {
   /**
    * Returns specified line of the content buffer present at index position.
    *
-   * @return elment
+   * @return elment at given position or exception for invalid index.
    *
    * @throws IndexOutOfBoundsException
    */
