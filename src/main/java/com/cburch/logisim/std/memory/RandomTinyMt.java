@@ -116,7 +116,7 @@ public class RandomTinyMt extends ClockState implements InstanceData {
   public void reset(int seed) {
     state[0] = seed;
     state[1] = state[2] = state[3] = 0;
-    for (var currentLoop = 0 ; currentLoop < NR_OF_LOOPS; currentLoop++) {
+    for (var currentLoop = 0; currentLoop < NR_OF_LOOPS; currentLoop++) {
       var poliValue = 1812433253L + currentLoop;
       final var selectedStateValue = state[(currentLoop - 1) & 3]; 
       poliValue *= (selectedStateValue ^ (selectedStateValue >> 30));
@@ -124,6 +124,6 @@ public class RandomTinyMt extends ClockState implements InstanceData {
       state[currentLoop & 3] ^= poliValue;
     }
     periodCertification();
-    for (var currentLoop = 0 ; currentLoop < NR_OF_LOOPS; currentLoop++) step();
+    for (var currentLoop = 0; currentLoop < NR_OF_LOOPS; currentLoop++) step();
   }
 }
