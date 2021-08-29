@@ -208,8 +208,15 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  public LineBuffer add(StringBuilder sb) {
-    return add(sb.toString());
+  /**
+   * Adds content of provided StringBuilder to the buffer.
+   *
+   * @param stringBuilder StringBuilder which contents is to be added.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer add(StringBuilder stringBuilder) {
+    return add(stringBuilder.toString());
   }
 
   /**
@@ -218,6 +225,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @param fmt Formatting string as accepted by String.format()
    * @param args Optional arguments
+   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String fmt, Object... args) {
@@ -416,11 +424,13 @@ public class LineBuffer implements RandomAccess {
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
     final var maxRemarkLength = MAX_LINE_LENGTH - 2 * HDL.remarkOverhead() - nrOfIndentSpaces;
-    var remarkWords = remarkText.split(" ");
-    var oneLine = new StringBuilder();
-    var contents = new ArrayList<String>();
+    final var remarkWords = remarkText.split(" ");
+    final var oneLine = new StringBuilder();
+    final var contents = new ArrayList<String>();
     var maxWordLength = 0;
-    for (var word : remarkWords) if (word.length() > maxWordLength) maxWordLength = word.length();
+    for (final var word : remarkWords) {
+      if (word.length() > maxWordLength) maxWordLength = word.length();
+    }
     if (maxRemarkLength < maxWordLength) return contents;
     /* we start with generating the first remark line */
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
@@ -430,12 +440,10 @@ public class LineBuffer implements RandomAccess {
     contents.add(oneLine.toString());
     oneLine.setLength(0);
     /* Next we put the remark text block in 1 or multiple lines */
-    for (var remarkWord : remarkWords) {
+    for (final var remarkWord : remarkWords) {
       if ((oneLine.length() + remarkWord.length() + HDL.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
         /* Next word does not fit, we end this line and create a new one */
-        while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) {
-          oneLine.append(" ");
-        }
+        while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
         oneLine
             .append(" ")
             .append(HDL.getRemakrChar(false, false))
@@ -444,12 +452,10 @@ public class LineBuffer implements RandomAccess {
         oneLine.setLength(0);
       }
       while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-      if (oneLine.length() == nrOfIndentSpaces) {
-        /* we put the preamble */
-        oneLine.append(HDL.getRemarkStart());
-      }
+      if (oneLine.length() == nrOfIndentSpaces)
+        oneLine.append(HDL.getRemarkStart()); // we put the preamble
       if (remarkWord.endsWith("\\")) {
-        /* Forced new line */
+        // Forced new line
         oneLine.append(remarkWord, 0, remarkWord.length() - 1);
         while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
       } else {
@@ -457,7 +463,7 @@ public class LineBuffer implements RandomAccess {
       }
     }
     if (oneLine.length() > (nrOfIndentSpaces + HDL.remarkOverhead())) {
-      /* we have an unfinished remark line */
+      // We have an unfinished remark line
       while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
       oneLine
           .append(" ")
@@ -466,11 +472,12 @@ public class LineBuffer implements RandomAccess {
       contents.add(oneLine.toString());
       oneLine.setLength(0);
     }
-    /* we end with generating the last remark line */
+    // We end with generating the last remark line.
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++)
       oneLine.append(HDL.getRemakrChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
     contents.add(oneLine.toString());
+
     return contents;
   }
 
