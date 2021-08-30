@@ -66,9 +66,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("extBits", EXTENDED_BITS_STR)
-            .addPair("inBits", INPUT_BITS_STR)
-            .addPair("outBits", OUTPUTS_BITS_STR);
+            .pair("extBits", EXTENDED_BITS_STR)
+            .pair("inBits", INPUT_BITS_STR)
+            .pair("outBits", OUTPUTS_BITS_STR);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
       contents

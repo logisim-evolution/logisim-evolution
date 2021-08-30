@@ -64,22 +64,22 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
     final var contents =
         (new LineBuffer())
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("ledsCount", nrOfRows * nrOfColumns)
-            .addPair("maxNrLeds", maxNrLedsString)
-            .addPair("maxNrLedsCount", maxNrLeds)
-            .addPair("nrOfRows", nrOfRowsString)
-            .addPair("nrOfRowsCount", nrOfRows)
-            .addPair("nrOfColumns", nrOfColumnsString)
-            .addPair("nrOfColumnsCount", nrOfColumns)
-            .addPair("activeLow", activeLowString)
-            .addPair("activeLowValue", activeLow ? "1" : "0")
-            .addPair("nrColAddrBits", nrOfColumnAddressBitsString)
-            .addPair("nrColAddrBitsCount", nrColAddrBits)
-            .addPair("scanningCounterBits", scanningCounterBitsString)
-            .addPair("nrOfScanningBitsCount", nrOfScanningBitsCount)
-            .addPair("scanningCounter", scanningCounterValueString)
-            .addPair("scanningValue", (scanningReload - 1));
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("ledsCount", nrOfRows * nrOfColumns)
+            .pair("maxNrLeds", maxNrLedsString)
+            .pair("maxNrLedsCount", maxNrLeds)
+            .pair("nrOfRows", nrOfRowsString)
+            .pair("nrOfRowsCount", nrOfRows)
+            .pair("nrOfColumns", nrOfColumnsString)
+            .pair("nrOfColumnsCount", nrOfColumns)
+            .pair("activeLow", activeLowString)
+            .pair("activeLowValue", activeLow ? "1" : "0")
+            .pair("nrColAddrBits", nrOfColumnAddressBitsString)
+            .pair("nrColAddrBitsCount", nrColAddrBits)
+            .pair("scanningCounterBits", scanningCounterBitsString)
+            .pair("nrOfScanningBitsCount", nrOfScanningBitsCount)
+            .pair("scanningCounter", scanningCounterValueString)
+            .pair("scanningValue", (scanningReload - 1));
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -108,11 +108,11 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer())
-            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("id", id);
+            .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("id", id);
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -182,10 +182,10 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public ArrayList<String> getColumnCounterCode() {
     final var contents =
         (new LineBuffer())
-            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("counterBits", scanningCounterBitsString)
-            .addPair("counterValue", scanningCounterValueString);
+            .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("counterBits", scanningCounterBitsString)
+            .pair("counterValue", scanningCounterValueString);
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -248,11 +248,11 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("nrOfRows", nrOfRowsString)
-            .addPair("activeLow", activeLowString)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfRows", nrOfRowsString)
+            .pair("activeLow", activeLowString)
             .add(getColumnCounterCode());
 
     if (HDL.isVHDL()) {

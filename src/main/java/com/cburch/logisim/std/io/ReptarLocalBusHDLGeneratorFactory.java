@@ -46,7 +46,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
     final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
-          .addPair("compName", componentName)
+          .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .addLines(
               "",
@@ -112,7 +112,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
-        .addPair("compName", componentName)
+        .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
         .addLines(
