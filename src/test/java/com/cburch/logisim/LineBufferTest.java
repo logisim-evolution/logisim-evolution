@@ -232,10 +232,7 @@ public class LineBufferTest extends TestBase {
   @Test
   public void testGetUsedPlaceholders() {
     assertThrows(RuntimeException.class, () -> {
-      this.lb.validateLineNoPositionals("""
-                This is {{foo}} bar {{   2}} test
-                line number {{2}} {{foo    }}
-                """);
+      this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test");
     });
   }
 
