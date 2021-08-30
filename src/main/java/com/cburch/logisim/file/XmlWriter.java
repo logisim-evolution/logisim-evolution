@@ -106,17 +106,11 @@ class XmlWriter {
   
   private static final Comparator<Node> nodeComparator =
       (a, b) -> {
-        final var nodeNameA = a.getNodeName();
-        final var nodeNameB = b.getNodeName();
-        var compareResult = stringCompare(nodeNameA, nodeNameB);
+        var compareResult = stringCompare(a.getNodeName(), b.getNodeName());
         if (compareResult != 0) return compareResult;
-        final var attributesA = attrsToString(a.getAttributes());
-        final var attributesB = attrsToString(b.getAttributes());
-        compareResult = stringCompare(attributesA, attributesB);
+        compareResult = stringCompare(attrsToString(a.getAttributes()), attrsToString(b.getAttributes()));
         if (compareResult != 0) return compareResult;
-        final var nodeValueA = a.getNodeValue();
-        final var nodeValueB = b.getNodeValue();
-        return stringCompare(nodeValueA, nodeValueB);
+        return stringCompare(a.getNodeValue(), b.getNodeValue());
       };
 
   static void sort(Node top) {
