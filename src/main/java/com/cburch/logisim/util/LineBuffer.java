@@ -180,28 +180,48 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   /**
-   * Adds line to the buffer only if line is not present already. Please note `addUnique()`
-   * does not do any string formatting. You musts pass final form of the string (pass thru
-   * `format()` if needed).
+   * Adds line to the buffer only if line is not present already, formatting it first.
+   *
+   * @param line Line to add if not present in buffer.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer addUnique(String fmt, Object... args) {
+    // Resolve positional arguments then apply paired ones.     WE need to do this first (instead of
+    // letting add() do that) otherwise `contains` would be looking for non-final version of the
+    // string.
+    final var line = applyPairs(format(fmt, args));
+    if (!contents.contains(line))
+      add(line, true);
+    return this;
+  }
+
+  /**
+   * Adds line to the buffer only if line is not present already. Please note this implementation
+   * of `addUnique()` does not resolve positional arguments. If you use them, you musts pass final
+   * form of the string (pass thru `format()` if needed) or use other implementations.
    *
    * @param line Line to add if not present in buffer.
    *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addUnique(String line) {
-    if (!contents.contains(line)) {
+    // Resolve positional arguments then apply paired ones.     WE need to do this first (instead of
+    // letting add() do that) otherwise `contains` would be looking for non-final version of the
+    // string.
+    line = applyPairs(line);
+    if (!contents.contains(line))
       add(line, true);
-    }
     return this;
   }
 
   /* ********************************************************************************************* */
 
   /**
-   * Adds single line to the content buffer.
+   * Adds single line to the content buffer. Will resolve paried placeholders first (but not
+   * positionals).
    *
    * @param line String to be added to the content buffer.
-   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line) {
@@ -209,13 +229,12 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Adds single line to the content buffer. If applyMap is `true`, it will try to format line with
-   * known pairs (this is default behavior).
+   * Adds single line to the content buffer. Will resolve paried placeholders first, if applyMap is `true`,
+   * but won't resolve positionals).
    *
    * @param line line to be added
    * @param applyMap `true` if line shall be processed for placeholders (default), `false` if you
    *     want it to be added "raw".
-   *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer add(String line, boolean applyMap) {
