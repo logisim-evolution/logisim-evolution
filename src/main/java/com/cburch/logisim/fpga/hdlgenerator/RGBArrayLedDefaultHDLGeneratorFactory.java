@@ -110,7 +110,8 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
       contents.addLines(
           "genvar i;",
           "generate",
-          "   for (i = 0; i < nrOfLeds; i = i + 1) begin",
+          "   for (i = 0; i < nrOfLeds; i = i + 1)",
+          "   begin:outputs",
           "      assign {{outsR}}[i] = (activeLow == 1) ? ~{{insR}}[n] : {{insR}}[n];",
           "      assign {{outsG}}[i] = (activeLow == 1) ? ~{{insG}}[n] : {{insG}}[n];",
           "      assign {{outsB}}[i] = (activeLow == 1) ? ~{{insB}}[n] : {{insB}}[n];",

@@ -114,6 +114,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
           case CONSTANT_ONE -> true;
           case CONSTANT_ZERO -> true;
           case CONSTANT_VALUE -> map.nrInputs() > 1;
+          case LEAVE_OPEN -> false;
           default -> throw new IllegalStateException("Unexpected value: " + myType);
         };
       }
