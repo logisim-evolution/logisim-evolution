@@ -180,14 +180,18 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   /**
-   * Adds line to the buffer only if line is not present already.
+   * Adds line to the buffer only if line is not present already. Please note `addUnique()`
+   * does not do any string formatting. You musts pass final form of the string (pass thru
+   * `format()` if needed).
    *
-   * @param line Line to optionally add.
+   * @param line Line to add if not present in buffer.
    *
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addUnique(String line) {
-    add(line, true);
+    if (!contents.contains(line)) {
+      add(line, true);
+    }
     return this;
   }
 
