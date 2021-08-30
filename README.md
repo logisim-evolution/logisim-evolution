@@ -75,10 +75,10 @@ is also available and can be run on any system with a supported Java runtime ins
 
 **Note for macOS users**:
 The Logisim-evolution.app is not code-signed.
-The first time you launch it, you should do so by ctrl- or right-clicking the app and selecting `Open`,
- which will give you a panel that allows you to open it.
-Depending on your security settings, you may also get a panel asking if you wish to allow it to accept network connections.
-You can click `Deny`.
+The first time you launch it, you should do so by holding <kbd>CTRL</kbd> while clicking or clicking by right mouse button
+the app and selecting `Open`, which will give you a panel that allows you to open it. Depending on your security settings,
+you may also get a panel asking if you wish to allow it to accept network connections. You can click `Deny` as we do
+not need network access currently nor we do request any.
 
 ### Nightly builds ###
 
