@@ -38,7 +38,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     } else {
       contents.addLines(
           "( .{{addr}}({{addr}}{{id}}),",
-          "  .{{clock}({{clock}}),",
+          "  .{{clock}}({{clock}}),",
           "  .{{outsR}}({{outsR}}{{id}}),",
           "  .{{outsG}}({{outsG}}{{id}}),",
           "  .{{outsB}}({{outsB}}{{id}}),",
@@ -89,9 +89,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
-            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
-            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
+            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
+            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
@@ -122,16 +122,17 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           "",
           "genvar i;",
           "generate",
-          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
+          "   for (i = 0; i < {{nrOfRows}}; i = i + 1)",
+          "   begin:outputs",
           "      assign {{outsR}}[i] = (activeLow == 1)",
           "         ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]",
           "         :  {{insR}}[i*nrOfColumns+s_columnCounterReg];",
           "      assign {{outsG}}[i] = (activeLow == 1)",
           "         ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]",
-          "         :  {{insG}[i*nrOfColumns+s_columnCounterReg];",
+          "         :  {{insG}}[i*nrOfColumns+s_columnCounterReg];",
           "      assign {{outsB}}[i] = (activeLow == 1)",
           "         ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]",
-          "         :  [{insB}}[i*nrOfColumns+s_columnCounterReg];",
+          "         :  {{insB}}[i*nrOfColumns+s_columnCounterReg];",
           "   end",
           "endgenerate");
     }
