@@ -51,7 +51,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .addPair("ledsCount", nrOfRows * nrOfColumns)
             .addPair("rows", nrOfRows)
             .addPair("cols", nrOfColumns)
-            .addPair("activeLow", activeLow)
+            .addPair("activeLow", activeLowString)
             .addPair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
@@ -69,6 +69,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getPortMap(int id) {
     final var map =
         (new LineBuffer())
+            .addPair("id", id)
             .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
@@ -123,7 +124,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
           "generate",
           "   for (i = 0; i < nrOfLeds; i = i + 1)",
           "   begin:outputs",
-          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[n] : {{ins}}[n];",
+          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[i] : {{ins}}[i];",
           "   end",
           "endgenerate");
     }
