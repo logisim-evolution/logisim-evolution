@@ -51,9 +51,9 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .addPair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("id", id);
+            .pair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("id", id);
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -113,9 +113,9 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .addPair("activeLow", activeLowString)
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("nrOfColumns", nrOfColumnsString);
+            .pair("activeLow", activeLowString)
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfColumns", nrOfColumnsString);
 
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {

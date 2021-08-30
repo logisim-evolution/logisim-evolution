@@ -260,10 +260,10 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static ArrayList<String> getLedArrayConnections(FPGAIOInformationContainer info, int id) {
-    final var connections = (new LineBuffer()).withHdlPairs();
-    connections.addPair("id", id).addPair("ins", LedArrayInputs);
+    final var connections = (new LineBuffer()).addHdlPairs();
+    connections.pair("id", id).pair("ins", LedArrayInputs);
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
-      connections.addPair("pin", pin);
+      connections.pair("pin", pin);
       if (!info.pinIsMapped(pin)) {
         connections.add("{{assign}} s_{{ins}}{{id}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
       } else {
@@ -276,14 +276,14 @@ public class LedArrayGenericHDLGeneratorFactory {
   public static ArrayList<String> getRGBArrayConnections(FPGAIOInformationContainer array, int id) {
     final var connections =
         (new LineBuffer())
-            .withHdlPairs()
-            .addPair("id", id)
-            .addPair("insR", LedArrayRedInputs)
-            .addPair("insG", LedArrayGreenInputs)
-            .addPair("insB", LedArrayBlueInputs);
+            .addHdlPairs()
+            .pair("id", id)
+            .pair("insR", LedArrayRedInputs)
+            .pair("insG", LedArrayGreenInputs)
+            .pair("insB", LedArrayBlueInputs);
 
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
-      connections.addPair("pin", pin);
+      connections.pair("pin", pin);
       if (!array.pinIsMapped(pin)) {
         connections.addLines(
             "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
@@ -293,9 +293,9 @@ public class LedArrayGenericHDLGeneratorFactory {
         final var map = array.getPinMap(pin);
         if (map.getComponentFactory() instanceof RgbLed) {
           connections
-              .addPair("mapR", map.getHdlSignalName(RgbLed.RED))
-              .addPair("mapG", map.getHdlSignalName(RgbLed.GREEN))
-              .addPair("mapB", map.getHdlSignalName(RgbLed.BLUE))
+              .pair("mapR", map.getHdlSignalName(RgbLed.RED))
+              .pair("mapG", map.getHdlSignalName(RgbLed.GREEN))
+              .pair("mapB", map.getHdlSignalName(RgbLed.BLUE))
               .addLines(
                   "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};",
                   "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};",

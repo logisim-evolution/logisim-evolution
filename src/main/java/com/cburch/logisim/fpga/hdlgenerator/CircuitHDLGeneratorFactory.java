@@ -260,7 +260,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    final var Contents = (new LineBuffer()).withHdlPairs();
+    final var Contents = (new LineBuffer()).addHdlPairs();
     final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.getAllNets()) {
@@ -279,12 +279,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.getNetId(ThisNet));
             }
-            while (OneLine.length() < SallignmentSize) {
-              OneLine.append(" ");
-            }
+            while (OneLine.length() < SallignmentSize) OneLine.append(" ");
 
-            Contents.add("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
-                OneLine, BusName, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex());
+            Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
+                OneLine, BusName, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.getSinkNets(bit)) {
@@ -305,7 +303,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(NetName).append(TheNets.getNetId(ThisNet));
             }
-            Contents.add("   {{1}}{{2}};", HDL.assignPreamble(), OneLine);
+            Contents.addUnique(LineBuffer.format("   {{1}}{{2}};", HDL.assignPreamble(), OneLine));
           }
         }
       }
@@ -371,7 +369,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).withHdlPairs();
+    final var contents = (new LineBuffer()).addHdlPairs();
     var isFirstLine = true;
     final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();

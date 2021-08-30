@@ -15,15 +15,15 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer())
-            .addPair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
-            .addPair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
-            .addPair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
-            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
-            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
-            .addPair("id", id);
+            .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
+            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
+            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
+            .pair("id", id);
 
     if (HDL.isVHDL()) {
       contents.addLines(
@@ -83,15 +83,15 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("nrOfRows", nrOfRowsString)
-            .addPair("activeLow", activeLowString)
-            .addPair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
-            .addPair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
-            .addPair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .addPair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
-            .addPair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
-            .addPair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfRows", nrOfRowsString)
+            .pair("activeLow", activeLowString)
+            .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+            .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+            .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
+            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
+            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {

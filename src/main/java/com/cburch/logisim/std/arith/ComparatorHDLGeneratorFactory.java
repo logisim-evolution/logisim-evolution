@@ -63,7 +63,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = new LineBuffer();
-    Contents.addPair("twosComplement", TwosComplementStr);
+    Contents.pair("twosComplement", TwosComplementStr);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {

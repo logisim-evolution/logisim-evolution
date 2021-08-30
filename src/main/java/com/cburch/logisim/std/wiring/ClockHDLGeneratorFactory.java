@@ -83,10 +83,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .addPair("phase", PHASE_STR)
-            .addPair("nrOfBits", NR_OF_BITS_STR)
-            .addPair("lowTick", LOW_TICK_STR)
-            .addPair("highTick", HIGH_TICK_STR)
+            .pair("phase", PHASE_STR)
+            .pair("nrOfBits", NR_OF_BITS_STR)
+            .pair("lowTick", LOW_TICK_STR)
+            .pair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
     if (HDL.isVHDL()) {
