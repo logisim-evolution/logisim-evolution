@@ -89,9 +89,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs)
-            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs)
-            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+            .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs)
+            .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs)
+            .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
     if (HDL.isVHDL()) {
