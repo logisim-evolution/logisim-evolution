@@ -98,19 +98,19 @@ class XmlWriter {
     return String.join(" ", lst);
   }
 
-  private static final int stringCompare(String string1, String string2) {
-    if (string1 == null) return -1;
-    if (string2 == null) return 1;
-    return string1.compareTo(string2);
+  private static final int stringCompare(String stringA, String stringB) {
+    if (stringA == null) return -1;
+    if (stringB == null) return 1;
+    return stringA.compareTo(stringB);
   }
   
   private static final Comparator<Node> nodeComparator =
-      (a, b) -> {
-        var compareResult = stringCompare(a.getNodeName(), b.getNodeName());
+      (nodeA, nodeB) -> {
+        var compareResult = stringCompare(nodeA.getNodeName(), nodeB.getNodeName());
         if (compareResult != 0) return compareResult;
-        compareResult = stringCompare(attrsToString(a.getAttributes()), attrsToString(b.getAttributes()));
+        compareResult = stringCompare(attrsToString(nodeA.getAttributes()), attrsToString(nodeB.getAttributes()));
         if (compareResult != 0) return compareResult;
-        return stringCompare(a.getNodeValue(), b.getNodeValue());
+        return stringCompare(nodeA.getNodeValue(), nodeB.getNodeValue());
       };
 
   static void sort(Node top) {
