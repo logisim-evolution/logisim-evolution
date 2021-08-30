@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.RandomAccess;
 import java.util.regex.Pattern;
 
@@ -49,6 +48,9 @@ public class LineBuffer implements RandomAccess {
   public static final String DEFAULT_INDENT_STR = " ";
 
   private ArrayList<String> contents = new java.util.ArrayList<String>();
+
+  // Paired placeholders
+  protected Pairs pairs = new Pairs();
 
   /* ********************************************************************************************* */
 
@@ -91,17 +93,32 @@ public class LineBuffer implements RandomAccess {
     addPairs(pairs);
   }
 
+  /* ********************************************************************************************* */
+
   /**
-   * Returns number of unique pairs stored already.
+   * Returns number of content entries stored in buffer.
    *
-   * @return number of pairs.
+   * @return number of entries.
    */
   public int size() {
     return contents.size();
   }
 
-  protected Pairs pairs = new Pairs();
+  public boolean isEmpty() {
+    return contents.isEmpty();
+  }
 
+  public boolean contains(Object obj) {
+    return contents.contains(obj);
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Injects commonly used HDL pairs making them enabled for placeholders.
+   *
+   * @return Instance of self for easy chaining.
+   */
   public LineBuffer addHdlPairs() {
     return pair("assign", HDL.assignPreamble())
         .pair("=", HDL.assignOperator())
@@ -116,13 +133,21 @@ public class LineBuffer implements RandomAccess {
         .pair("1b", HDL.oneBit());
   }
 
+  /**
+   * Adds paired placeholders to internal map.
+   *
+   * @param pairs
+   *
+   * @return Instance of self for easy chaining.
+   */
   public LineBuffer addPairs(Pairs pairs) {
+    // FIXME we appedn placeholders, not replace existing map! Also shall detect positionals
     this.pairs = pairs;
     return this;
   }
 
   /**
-   * Clears internal buffer.
+   * Clears content buffer and pairs.
    *
    * @return Instance of self for easy chaining.
    */
@@ -154,26 +179,12 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  public boolean isEmpty() {
-    return contents.isEmpty();
-  }
-
-  public boolean contains(Object obj) {
-    return contents.contains(obj);
-  }
-
-  /* ********************************************************************************************* */
-
-  public static String format(String fmt, Object... args) {
-    return applyPairs(fmt, Pairs.fromArgs(args));
-  }
-
-  /* ********************************************************************************************* */
-
   /**
    * Adds line to the buffer only if line is not present already.
    *
    * @param line Line to optionally add.
+   *
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer addUnique(String line) {
     add(line, true);
@@ -207,6 +218,10 @@ public class LineBuffer implements RandomAccess {
     if (applyMap) {
       line = applyPairs(line, pairs);
     }
+
+    // Ensure no placeholders left unprocessed.
+    validateLineNoPositionals(line);
+
     contents.add(line);
     return this;
   }
@@ -223,11 +238,11 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Formats string using @String.format() and adds to the buffer via standard pipeline (so
+   * Formats string using `format()` method and adds to the buffer via standard pipeline (so
    * placeholders will be handled too).
    *
    * @param fmt Formatting string as accepted by String.format()
-   * @param args Optional arguments
+   * @param args Optional values for positional placeholders.
    *
    * @return Instance of self for easy chaining.
    */
@@ -243,14 +258,18 @@ public class LineBuffer implements RandomAccess {
    * trailing spaces are ignored, which lets i.e. aligning placeholders. All these `{{foo}}`, `{{
    * foo}}` and `{{foo }}` are equivalent. Processed string is then added to content buffer.
    *
-   * @param format Formatting string. Wrap keys in `{{` and `}}`.
+   * @param fmt Formatting string. Wrap keys in `{{` and `}}`.
    * @param pairs Search-Replace map.
    *
    * @return Instance of self for easy chaining.
    */
-  public LineBuffer add(String format, Pairs pairs) {
-    validateLine(format, pairs);
-    return add(applyPairs(format, pairs));
+  public LineBuffer add(String fmt, Pairs pairs) {
+    fmt = applyPairs(fmt, pairs);
+
+    // Ensure no placeholders left unprocessed.
+    validateLineNoPositionals(fmt);
+
+    return add(fmt);
   }
 
   /**
@@ -265,25 +284,34 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   *
    * Adds each argument to be added as separate line to the buffer.
    *
-   * Note: I had to use different name than add() for this particular method,
-   * as its signature takes over the `add(String fmt, Obj... args)` which in turn
-   * ends up placeholders keys being left unhandled.
+   * <p>Note: I had to use different name than add() for this particular method, as its signature
+   * takes over the `add(String fmt, Obj... args)` which in turn ends up placeholders keys being
+   * left unhandled.
    *
    * @param lines lines to be added to the buffer.
    *
    * @return Instance of self for easy chaining.
+   *
+   * @deprecated Use Java's text blocks instread.
    */
+  @Deprecated
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
   }
 
   /* ********************************************************************************************* */
 
-  public String applyPairs(String format) {
-    return applyPairs(format, pairs);
+  /**
+   * Formats provided fmt string using global pairs.
+   *
+   * @param fnt Formatting string.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public String applyPairs(String fnt) {
+    return applyPairs(fnt, pairs);
   }
 
   /**
@@ -291,6 +319,8 @@ public class LineBuffer implements RandomAccess {
    *
    * @param format String to format, with (optional) `{{placeholders}}`.
    * @param pairs Instance of `Pairs` holdinhg replacements for placeholders.
+   *
+   * @return Formatted string.
    */
   public static String applyPairs(String format, Pairs pairs) {
     if (pairs != null) {
@@ -386,8 +416,7 @@ public class LineBuffer implements RandomAccess {
    * Returns content buffer as ArrayList() with every single entry prefixed by `indent` string
    * `howMany` times.
    *
-   * @param howMany Number of times `indent` string should be repeated to form the final indent
-   *     string.
+   * @param howMany Number of times `indent` string should be repeated to form the final indent string.
    * @param indent Indent string.
    *
    * @return indented content of the buffer.
@@ -396,6 +425,13 @@ public class LineBuffer implements RandomAccess {
     return getWithIndent(indent.repeat(howMany));
   }
 
+  /**
+   * Returns content buffer as ArrayList() with every single entry prefixed by `indent` string.
+   *
+   * @param indent Indent string.
+   *
+   * @return indented content of the buffer.
+   */
   public ArrayList<String> getWithIndent(String indent) {
     final var result = new ArrayList<String>();
     for (final var line : contents) {
@@ -411,6 +447,8 @@ public class LineBuffer implements RandomAccess {
    * Builds and adds remark block to the contents buffer.
    *
    * @param remarkText Remark text.
+   *
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer addRemarkBlock(String remarkText) {
     return addRemarkBlock(remarkText, 0);
@@ -421,7 +459,8 @@ public class LineBuffer implements RandomAccess {
    *
    * @param remarkText Remark text.
    * @param nrOfIndentSpaces Number of extra indentation spaces.
-   * @return
+   *
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer addRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
     add(buildRemarkBlock(remarkText, nrOfIndentSpaces));
@@ -433,6 +472,8 @@ public class LineBuffer implements RandomAccess {
    *
    * @param remarkText Remark text.
    * @param nrOfIndentSpaces Number of extra indentation spaces.
+   *
+   * @return Constructed lines of remark block.
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
     final var maxRemarkLength = MAX_LINE_LENGTH - 2 * HDL.remarkOverhead() - nrOfIndentSpaces;
@@ -495,84 +536,166 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  private void warn(String fmt, Object... args) {
-    System.out.println(format("WARNING: " + fmt, args));
+  /**
+   * Formats provided fmt string using provided arguments for positional placeholders.
+   *
+   * @param fmt Formattting string.
+   * @param args Positional placeholders.
+   *
+   * @return Formatted string.
+   */
+  public static String format(String fmt, Object... args) {
+    return applyPairs(fmt, Pairs.fromArgs(args));
   }
 
-  private void abort(String fmt) {
-    throw new RuntimeException(fmt);
+  /* ********************************************************************************************* */
+
+  /**
+   * Emits warning string to stdout.
+   *
+   * @param fmt Formatting string.
+   * @param args Positional arguments.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  private LineBuffer warn(String fmt, Object... args) {
+    System.out.println(format("WARNING: " + fmt, args));
+    return this;
   }
+
+  /**
+   * Throws error as RuntimeException
+   *
+   * @param msg Exception message.
+   */
+  private void abort(String msg) {
+    throw new RuntimeException(msg);
+  }
+
+  /**
+   * Formats error message and then throws abort()
+   *
+   * @param fmt Exception message formatting string.
+   * @param args Positional placeholders.
+   */
   private void abort(String fmt, Object... args) {
     abort(format(fmt, args));
   }
 
-  public void validateLine(String fmt) {
-    final var empty = new Object[] {};
-    validateLine(fmt, empty);
-  }
-  protected void validateLine(String fmt, Object... args) {
+  /* ********************************************************************************************* */
 
+  private ArrayList<String> placeholders = new ArrayList<>();
+  private ArrayList<String> positionalPlaceholders = new ArrayList<>();
+  private ArrayList<String> pairedPlaceholders = new ArrayList<>();
 
-  }
+  // check if we have positional args and/or paired
+  // if positional: check if we have args given, then check all the rest
+  // for paired check mapping vs global map and one-time pairs
 
-  protected void validateLine(String fmt, Pairs pairs) {
-    final var placeholders = getUsedPlaceholders(fmt);
-    final var positionals = new ArrayList<String>();
-    final var mappedPlaceholders = new ArrayList<String>();
+  /**
+   * Parses formatting string looking for positional placeholders and then
+   * nitializes internal validator data.
+   *
+   * @param fmt Formatting string to analize.
+   *
+   * @return Instance of self for easy chaining.
+   */
+  protected LineBuffer initValidator(String fmt) {
+    placeholders = extractPlaceholders(fmt);
+    positionalPlaceholders.clear();
+    pairedPlaceholders.clear();
 
     // Separate positionals and other placeholders
     final var pattern = Pattern.compile("^\\d+$");
     for (final var phKey : placeholders) {
-      final var matcher = pattern.matcher(phKey);
-      if (matcher.find()) {
-        positionals.add(phKey);
-      } else {
-        mappedPlaceholders.add(phKey);
+      if (pattern.matcher(phKey).find()) positionalPlaceholders.add(phKey);
+      else pairedPlaceholders.add(phKey);
+    }
+
+    return this;
+  }
+
+  public void validateLineNoPositionals(String fmt) {
+    final var empty = new Object[] {};
+    validateLine(fmt, null);
+  }
+
+  protected void validateLineWithPositionalArgs(String fmt, Object... args) {
+    initValidator(fmt);
+
+    final var positionalsCnt = positionalPlaceholders.size();
+
+    // Do we have positional placeholders in fmt?
+    if (positionalPlaceholders.isEmpty()) {
+      // Warn if we have no positional placeholders used, but still receive positional arguments.
+      if (args.length > 0)
+        warn("#E004: Useless positional arguments. Expected nothing, but received {{2}} for '{{1}}'.",
+                fmt, positionalsCnt);
+    } else {
+      if (positionalsCnt < args.length)
+        // We had too many positional args given compared to positional placeholders. But that
+        // difference can be OK, so just warn.
+        abort("#E001: Too many positional arguments, Expected {{2}}, but received {{3}} for '{{1}}'.",
+                fmt, positionalsCnt, args.length);
+
+      if (positionalsCnt > args.length)
+        // Too little arguments provided vs. awaiting placeholders. That's life threatening condition.
+        abort("#E002: Insufficient positional arguments. Expected {{2}}, but received {{3}} for '{{1}}'.",
+                fmt, positionalsCnt, args.length);
+
+      // count matches, let's see if contents too.
+      var errorCnt = 0;
+      for (final var posKey : positionalPlaceholders) {
+        if (Integer.valueOf(posKey) > positionalsCnt) {
+          // Reference to non-existing position found. Warn about all detected issues. We fail later.
+          warn("#E003: Invalid positional argument. '{{1}}' used, but max value is {{2}}.", posKey, positionalsCnt);
+          errorCnt++;
+        }
       }
+      if (errorCnt > 0)
+        abort("#E003: Non-existing positional arguments found in '{{1}}'. See console output for details.", fmt);
     }
+  }
 
-    // Validate number of arguments vs positional placeholders
-    final var positionalsCnt = positionals.size();
-    if (pairs.size() > positionalsCnt) {
-      // We had too many positional args given compared to positional placeholders. But that
-      // difference can be OK, so just warn.
-      abort("#E001: Expected {{2}} positional arguments, but {{3}} provided while processing '{{1}}'.",
-          fmt, positionalsCnt, pairs.size());
-    }
-    if (positionalsCnt > pairs.size()) {
-      // Too little arguments provided vs. awaiting placeholders. That's life threatening condition.
-      abort("#E002: Expected {{2}} positional arguments, but {{3}} provided while processing '{{1}}'.",
-          fmt, positionalsCnt, pairs.size());
-    }
-
-    // count matches, let's see if contents too.
-    var errorCnt = 0;
-    for (final var posKey : positionals) {
-      if (Integer.valueOf(posKey) > positionalsCnt) {
-        // Reference to non-existing position found.
-        warn("#E003: Non-existing positional placeholder '{{2}}' found, but there's {{3}} args total while processing '{{1}}'.",
-            fmt, posKey, positionalsCnt);
-        errorCnt++;
-      }
-    }
-    if (errorCnt > 0) abort("Reference to non-existing positional arguments found.");
-
-    // Warn if we have positional arguments given, but no positional placeholders used.
-    if ((pairs.size() > 0) && (positionalsCnt == 0)) {
-        warn("#E004: No positional placeholders used but {{2}} positional arguments provided while processing '{{1}}'.",
-            fmt, positionalsCnt);
-    }
+  protected void validateLineWithPairedPlaceholders(String fmt) {
+    initValidator(fmt);
 
     // check if we use any non mapped placeholder
-    errorCnt = 0;
-    for (final var key : mappedPlaceholders) {
+    var errorCnt = 0;
+    for (final var key : pairedPlaceholders) {
       if (!placeholders.contains(key)) {
         warn("#E005: Placeholder '{{2}}' has no mapping while processing '{{1}}'.", fmt, key);
         errorCnt++;
       }
     }
-    if (errorCnt > 0) abort("Unmapped placeholders detected.");
+    if (errorCnt > 0) abort("#E005: Unmapped placeholders detected. See console output for details.");
   }
+
+  protected void validateLine(String fmt, Pairs argPairs) {
+    initValidator(fmt);
+
+    if (argPairs != null) {
+      validateLineWithPositionalArgs(fmt, argPairs);
+    } else {
+      if (positionalPlaceholders.size() > 0)
+        abort(
+            "#E004: No positional arguments, but expected {{2}} for '{{1}}'.",
+            fmt, positionalPlaceholders.size());
+    }
+
+    // Check if paired placeholders used in formatting string are known at this point.
+    var errorCount = 0;
+    for (final var key : pairedPlaceholders) {
+      if (!(pairs.containsKey(key) || (argPairs != null && argPairs.containsKey(key)))) {
+        warn("#E006: No mapping for placeholder: '{{1}}'", key);
+        errorCount++;
+      }
+    }
+    if (errorCount > 0)
+      abort("#E006: {{1}} unmapped placeholders detected in '{{2}}'. See console output for details.", errorCount, fmt);
+  }
+
+  /* ********************************************************************************************* */
 
   /**
    * Extract names of valid placeholders found in provided string.
@@ -581,7 +704,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @return Returns list of found placeholders. If no placeholder is found, returnes empty list.
    */
-  public ArrayList<String> getUsedPlaceholders(String fmt) {
+  public ArrayList<String> extractPlaceholders(String fmt) {
     final var keys = new ArrayList<String>();
 
     final var regex = "(\\{\\{.+?\\}\\})+";
@@ -634,7 +757,6 @@ public class LineBuffer implements RandomAccess {
     public Pairs() {
       // empty
     }
-
 
     /**
      * Constructs Pairs map from positional arguments auto-assigning numerical

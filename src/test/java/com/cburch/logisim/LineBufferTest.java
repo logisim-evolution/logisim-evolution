@@ -191,7 +191,7 @@ public class LineBufferTest extends TestBase {
             " {{   bar}} ", " BAR ",
             " {{bang}} ", " BANG ");
 
-    final var pairs =
+    final var globalPairs =
         new LineBuffer.Pairs() {
           {
             add("foo", "FOO");
@@ -200,7 +200,7 @@ public class LineBufferTest extends TestBase {
         };
 
     for (final var test : tests.entrySet()) {
-      final var lb = new LineBuffer(pairs);
+      final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey(), new LineBuffer.Pairs("bang", "BANG"));
 
       final var expPairs =
@@ -232,7 +232,7 @@ public class LineBufferTest extends TestBase {
   @Test
   public void testGetUsedPlaceholders() {
     assertThrows(RuntimeException.class, () -> {
-      this.lb.validateLine("""
+      this.lb.validateLineNoPositionals("""
                 This is {{foo}} bar {{   2}} test
                 line number {{2}} {{foo    }}
                 """);
