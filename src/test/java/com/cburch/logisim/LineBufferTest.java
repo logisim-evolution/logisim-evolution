@@ -35,6 +35,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.Map;
@@ -206,6 +207,31 @@ public class LineBufferTest extends TestBase {
       final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
     }
+  }
+
+  @Test
+  public void testMultiplePlaceholdersInLine() {
+    final var arg1 = "ARG_1";
+    final var line = "{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};";
+
+    final var buffer = new LineBuffer();
+    // lb.addHdlPairs();  // FIXME: mock isVHDL()
+    buffer
+        .pair("assign", "assign")
+        .pair("=", "=")
+        .pair("<", "<")
+        .pair(">", ">");
+
+    buffer
+        .pair("id", "ID")
+        .pair("pin", "PIN")
+        .pair("ins", "INS");
+
+    buffer.add(line, arg1);
+
+    final var exp = "assign s_INSID<PIN> = " + arg1 + ";";
+    assertEquals(1, buffer.size());
+    assertEquals(exp, buffer.get(0));
   }
 
   /* ********************************************************************************************* */
