@@ -316,10 +316,7 @@ public class LineBuffer implements RandomAccess {
    * @param lines lines to be added to the buffer.
    *
    * @return Instance of self for easy chaining.
-   *
-   * @deprecated Use Java's text blocks instread.
    */
-  @Deprecated
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
   }
@@ -736,9 +733,13 @@ public class LineBuffer implements RandomAccess {
     while (matcher.find()) {
       // Extract key from between the brackets:
       final var bracketsCharCount = 2;
-      var keyStr = matcher.group();
-      keyStr = keyStr.substring(bracketsCharCount, keyStr.length() - bracketsCharCount).strip();
-      if (!keys.contains(keyStr)) keys.add(keyStr);
+      for (var i = 1; i <= matcher.groupCount(); i++) {
+        var keyStr = matcher.group(i);
+        keyStr = keyStr.substring(bracketsCharCount, keyStr.length() - bracketsCharCount).strip();
+
+        // FIXME: we shall overwrite old ph or fail?
+        if (!keys.contains(keyStr)) keys.add(keyStr);
+      }
     }
 
     return keys;
