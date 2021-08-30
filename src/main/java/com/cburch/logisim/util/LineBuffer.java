@@ -182,7 +182,7 @@ public class LineBuffer implements RandomAccess {
   /**
    * Adds line to the buffer only if line is not present already, formatting it first.
    *
-   * @param line Line to add if not present in buffer.
+   * @param fmt Line to add if not present in buffer.
    *
    * @return Instance of self for easy chaining.
    */
