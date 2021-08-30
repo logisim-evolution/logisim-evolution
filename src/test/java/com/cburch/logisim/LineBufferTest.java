@@ -76,21 +76,12 @@ public class LineBufferTest extends TestBase {
   /** Tests is plain add(String) works as expected. */
   @Test
   public void testAdd() {
-    final var tests =
-        new ArrayList<String>() {
-          {
-            add(getRandomString());
-            add(" {{placeholders}} should not be processed");
-          }
-        };
+    final var lb = new LineBuffer();
+    final var test = getRandomString();
+    lb.add(test);
 
-    for (final var test : tests) {
-      final var lb = new LineBuffer();
-      lb.add(test);
-
-      assertEquals(1, lb.size());
-      assertEquals(test, lb.get(0));
-    }
+    assertEquals(1, lb.size());
+    assertEquals(test, lb.get(0));
   }
 
   /** Tests is add(String, Object...) works as expected. */
