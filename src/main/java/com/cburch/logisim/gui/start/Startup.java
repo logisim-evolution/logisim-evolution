@@ -288,8 +288,8 @@ public class Startup implements AWTEventListener {
    */
   public static Startup parseArgs(String[] args) {
     final var opts = new Options();
-    opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
-    opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
+    addOption(opts, "argHelpOption", CMD_HELP, CMD_HELP_LONG);
+    addOption(opts, "argVersionOption", CMD_VERSION, CMD_VERSION_LONG);
 
     // Set up supported arguments for the arg parser to look for.
     addOption(opts, "argTtyOption", CMD_TTY, CMD_TTY_LONG, 1);
@@ -385,9 +385,10 @@ public class Startup implements AWTEventListener {
       if (optHandlerRc == RC.QUIT) return null;
     }
 
-    // FIXME: not implemented yet
     // positional argument being files to load
-    // ret.filesToOpen.add(new File(arg));
+    for (final var arg : cmd.getArgs()) {
+      ret.filesToOpen.add(new File(arg));
+    }
 
     if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
       printHelp(opts);
