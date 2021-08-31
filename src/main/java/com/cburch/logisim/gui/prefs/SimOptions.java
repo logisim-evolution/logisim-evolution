@@ -225,6 +225,7 @@ public class SimOptions extends OptionsPanel {
     c.gridwidth = 4;
     add(kmapColorsTitle, c);
 
+    // FIXME: refactor this code
     c.gridy++;
     c.gridwidth = 1;
     add(kmap1ColorTitle, c);
