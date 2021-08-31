@@ -42,7 +42,8 @@
     * `-geom` is now `--geometry`,
     * `-nosplash` is now `--no-splash` or `-ns,
     * `-sub` is now `--substitute` or `-s`,
-    * `-testvector` is now `--test-vector` or `-tv`.
+    * `-testvector` is now `--test-vector` or `-tv`,
+    * `-test-fpga-implementation` is now `--test-fpga` or `-f`
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.

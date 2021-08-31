@@ -35,6 +35,7 @@ import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -159,9 +160,9 @@ public class Startup implements AWTEventListener {
 
   public static final String CMD_TTY = "t";
   public static final String CMD_TTY_LONG = "tty";
-  public static final String CMD_TEST_FGPA_IMPL = "tfi";
-  public static final String CMD_TEST_FGPA_IMPL_LONG = "test-fpga-implementation";
-  public static final String CMD_CLEAR_PREFS = "cp";
+  public static final String CMD_TEST_FGPA_IMPL = "f";
+  public static final String CMD_TEST_FGPA_IMPL_LONG = "test-fpga";
+  public static final String CMD_CLEAR_PREFS = "r";
   public static final String CMD_CLEAR_PREFS_LONG = "clear-prefs";
   public static final String CMD_SUBSTITUTE = "s";
   public static final String CMD_SUBSTITUTE_LONG = "substitute";
@@ -177,11 +178,11 @@ public class Startup implements AWTEventListener {
   public static final String CMD_GEOMETRY_LONG = "geometry";
   public static final String CMD_LOCALE = "o";
   public static final String CMD_LOCALE_LONG = "locale";
-  public static final String CMD_ACCENTS = "ac";
+  public static final String CMD_ACCENTS = "x";
   public static final String CMD_ACCENTS_LONG = "accents";
   public static final String CMD_TEMPLATE = "z";
   public static final String CMD_TEMPLATE_LONG = "template";
-  public static final String CMD_NO_SPLASH = "ns";
+  public static final String CMD_NO_SPLASH = "n";
   public static final String CMD_NO_SPLASH_LONG = "no-splash";
   public static final String CMD_TEST_VECTOR = "tv";
   public static final String CMD_TEST_VECTOR_LONG = "test-vector";
@@ -221,14 +222,18 @@ public class Startup implements AWTEventListener {
    */
   protected static RC printHelp(Options opts) {
     final var header = Main.APP_DISPLAY_NAME;
-    final var footer = Main.APP_URL;
-    (new HelpFormatter()).printHelp(Main.APP_NAME, header, opts, footer, true);
-    return RC.OK;
+    printVersion();
+    final var fmt = new HelpFormatter();
+    fmt.printHelp(Main.APP_NAME, null, opts, null, true);
+    return RC.QUIT;
   }
 
   protected static RC printVersion() {
-    System.out.println(Main.APP_DISPLAY_NAME);
-    return RC.OK;
+    System.out.println(S.get(Main.APP_DISPLAY_NAME));
+    System.out.println(S.get("appVersionBuildDate", BuildInfo.dateIso8601));
+    System.out.println(S.get("appVersionBuildId", BuildInfo.buildId));
+    System.out.println(S.get("appVersionUrl", Main.APP_URL));
+    return RC.QUIT;
   }
 
   /**
@@ -243,7 +248,7 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
     opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
 
-    opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TEST_FGPA_IMPL_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
+    opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TTY_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
     opts.addOption(Option.builder(CMD_TEST_FGPA_IMPL).longOpt(CMD_TEST_FGPA_IMPL_LONG).hasArgs().desc(S.get("argTestImplement")).build());
     opts.addOption(Option.builder(CMD_CLEAR_PREFS).longOpt(CMD_CLEAR_PREFS_LONG).desc(S.get("argClearOption")).build());
     opts.addOption(Option.builder(CMD_SUBSTITUTE).longOpt(CMD_SUBSTITUTE_LONG).numberOfArgs(2).desc(S.get("argSubOption")).build());
@@ -252,20 +257,19 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_PLAIN).longOpt(CMD_PLAIN_LONG).desc(S.get("argPlainOption")).build());
     opts.addOption(Option.builder(CMD_GATES).longOpt(CMD_GATES_LONG).numberOfArgs(1).desc(S.get("argGatesOption")).build());
     opts.addOption(Option.builder(CMD_GEOMETRY).longOpt(CMD_GEOMETRY_LONG).numberOfArgs(1).desc(S.get("argGeometryOption")).build());
-    opts.addOption(Option.builder(CMD_LOCALE).longOpt(CMD_LOCALE_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
+    opts.addOption(Option.builder(CMD_LOCALE).longOpt(CMD_LOCALE_LONG).numberOfArgs(1).desc(S.get("argLocaleOption")).build());
     opts.addOption(Option.builder(CMD_ACCENTS).longOpt(CMD_ACCENTS_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
     opts.addOption(Option.builder(CMD_TEMPLATE).longOpt(CMD_TEMPLATE).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
     opts.addOption(Option.builder(CMD_NO_SPLASH).longOpt(CMD_NO_SPLASH_LONG).desc(S.get("argNoSplashOption")).build());
     opts.addOption(Option.builder(CMD_TEST_VECTOR).longOpt(CMD_TEST_VECTOR_LONG).desc(S.get("argTestVectorOption")).build());   // FIXME: NO LANG STR FOR IT!
-    opts.addOption(Option.builder(CMD_TEST_CIRCUIT).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
+    opts.addOption(Option.builder(CMD_TEST_CIRCUIT).longOpt(CMD_TEST_CIRCUIT_LONG).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
     opts.addOption(Option.builder(CMD_TEST_CIRC_GEN).longOpt(CMD_TEST_CIRC_GEN_LONG).numberOfArgs(2).desc(S.get("argTestCircGen")).build());  // FIXME add "Option" suffix to key name
     opts.addOption(Option.builder(CMD_ANALYZE).longOpt(CMD_ANALYZE_LONG).numberOfArgs(1).desc(S.get("argAnalyzeOption")).build());
     opts.addOption(Option.builder(CMD_QUESTA).longOpt(CMD_QUESTA_LONG).numberOfArgs(1).desc(S.get("argQuestaOption")).build());
 
     CommandLine cmd;
     try {
-      final var parser = new DefaultParser();
-      cmd = parser.parse(opts, args);
+      cmd = (new DefaultParser()).parse(opts, args);
     } catch (ParseException ex) {
       // FIXME: hardcoded string
       logger.error("Failed processing command line arguments.");
@@ -305,7 +309,9 @@ public class Startup implements AWTEventListener {
     // for each detected argument.
     final var optionIter = cmd.iterator();
     while (optionIter.hasNext()) {
+
       final var opt = optionIter.next();
+      System.out.println(opt.getLongOpt());
       final var optHandlerRc = switch (opt.getOpt()) {
         case CMD_HELP -> printHelp(opts);
         case CMD_VERSION -> printVersion();
