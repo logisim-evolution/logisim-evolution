@@ -215,18 +215,14 @@ public class Startup implements AWTEventListener {
    */
   protected static boolean parseBool(String option) throws IllegalArgumentException {
     final var flag = option.toLowerCase();
-    if (flag.equals("yes")) {
-      return true;
-    } else if (flag.equals("no")) {
-      return false;
-    }
-
-    throw new IllegalArgumentException("Invalid boolean flag. Use 'yes' or 'no'.");
+    if (flag.equals("yes") || flag.equals("1") || flag.equals("true")) return true;
+    if (flag.equals("no") || flag.equals("0") || flag.equals("false")) return false;
+    throw new IllegalArgumentException("Invalid boolean flag. Use 'yes'/'true'/'1' or 'no'/'false'/'0'.");
   }
-
 
   /**
    * Prints available command line options.
+   *
    * @param opts Configured CLI options.
    */
   protected static void printHelp(Options opts) {
@@ -243,9 +239,13 @@ public class Startup implements AWTEventListener {
    * @return Instance of Startup class.
    */
   public static Startup parseArgs(String[] args) {
-    final var opts = (new Options()).addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).build());
+    final var opts = new Options();
+    opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).build());
+
     opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TEST_FGPA_IMPL_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
-    opts.addOption(Option.builder(CMD_TEST_FGPA_IMPL).hasArgs().desc(S.get("argTestImplement")).build());
+    opts.addOption(Option.builder(CMD_TEST_FGPA_IMPL).longOpt(CMD_TEST_FGPA_IMPL_LONG).hasArgs().desc(S.get("argTestImplement")).build());
+
+
     opts.addOption(Option.builder(CMD_CLEAR_PREFS).longOpt(CMD_CLEAR_PREFS_LONG).desc(S.get("argClearOption")).build());
     opts.addOption(Option.builder(CMD_CLEAR_PROPS).longOpt(Startup.CMD_CLEAR_PROPS_LONG).desc(S.get("argClearProps")).build());  // FIXME: NO LANG STR FOR IT!
     opts.addOption(Option.builder(CMD_SUB).numberOfArgs(2).desc(S.get("argSubOption")).build());
@@ -264,7 +264,6 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_TEST_CIRCUIT).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
 
     opts.addOption(Option.builder(CMD_TEST_CIRC_GEN).longOpt(CMD_TEST_CIRC_GEN_LONG).numberOfArgs(2).desc(S.get("argTestCircGen")).build());  // FIXME add "Option" suffix to key name
-    opts.addOption(Option.builder(CMD_TEST_CIRCUIT).longOpt(CMD_TEST_CIRCUIT_LONG).numberOfArgs(1).desc(S.get("argCircuitOption")).build());
     opts.addOption(Option.builder(CMD_ANALYZE).numberOfArgs(1).desc(S.get("argAnalyzeOption")).build());
     opts.addOption(Option.builder(CMD_QUESTA).numberOfArgs(1).desc(S.get("argQuestaOption")).build());
 
@@ -549,7 +548,9 @@ public class Startup implements AWTEventListener {
     } // End of CMD_CIRCUIT
 
     // CMD_ANALYZE
-    Main.ANALYZE = cmd.hasOption(CMD_ANALYZE);
+    if (cmd.hasOption(CMD_ANALYZE)) {
+      Main.ANALYZE = true;
+    } // End of CMD_ANALYZE
 
     // CMD_QUESTA
     if (cmd.hasOption(CMD_QUESTA)) {
