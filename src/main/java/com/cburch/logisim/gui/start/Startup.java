@@ -93,6 +93,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.drjekyll.fontchooser.FontChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +260,7 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_GEOMETRY).longOpt(CMD_GEOMETRY_LONG).numberOfArgs(1).desc(S.get("argGeometryOption")).build());
     opts.addOption(Option.builder(CMD_LOCALE).longOpt(CMD_LOCALE_LONG).numberOfArgs(1).desc(S.get("argLocaleOption")).build());
     opts.addOption(Option.builder(CMD_ACCENTS).longOpt(CMD_ACCENTS_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
-    opts.addOption(Option.builder(CMD_TEMPLATE).longOpt(CMD_TEMPLATE).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
+    opts.addOption(Option.builder(CMD_TEMPLATE).longOpt(CMD_TEMPLATE_LONG).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
     opts.addOption(Option.builder(CMD_NO_SPLASH).longOpt(CMD_NO_SPLASH_LONG).desc(S.get("argNoSplashOption")).build());
     opts.addOption(Option.builder(CMD_TEST_VECTOR).longOpt(CMD_TEST_VECTOR_LONG).desc(S.get("argTestVectorOption")).build());   // FIXME: NO LANG STR FOR IT!
     opts.addOption(Option.builder(CMD_TEST_CIRCUIT).longOpt(CMD_TEST_CIRCUIT_LONG).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
@@ -270,6 +271,11 @@ public class Startup implements AWTEventListener {
     CommandLine cmd;
     try {
       cmd = (new DefaultParser()).parse(opts, args);
+    } catch (UnrecognizedOptionException ex) {
+      // FIXME: hardcoded string
+      logger.error("Unrecognized option: '" + ex + ".);");
+      logger.error("Use --help for more info.");
+      return null;
     } catch (ParseException ex) {
       // FIXME: hardcoded string
       logger.error("Failed processing command line arguments.");
