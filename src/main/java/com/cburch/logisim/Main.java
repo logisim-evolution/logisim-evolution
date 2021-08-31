@@ -97,7 +97,6 @@ public class Main {
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
 
-  public static boolean ANALYZE = true;
   public static boolean headless = false;
   public static final boolean RUNNING_ON_MAC = MacCompatibility.isRunningOnMac();
 
