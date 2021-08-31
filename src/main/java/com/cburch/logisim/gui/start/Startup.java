@@ -517,14 +517,14 @@ public class Startup implements AWTEventListener {
     }
     AppPreferences.WINDOW_WIDTH.set(w);
     AppPreferences.WINDOW_HEIGHT.set(h);
-    if (loc != null) AppPreferences.WINDOW_LOCATION.set(x + "," + y);
-
+    if (loc != null) {
+      AppPreferences.WINDOW_LOCATION.set(x + "," + y);
+    }
     return RC.OK;
   }
 
   private static RC cmdLocale(Startup ret, Option opt) {
-    final var locale = opt.getValue();
-    setLocale(locale);
+    setLocale(opt.getValue());
     return RC.OK;
   }
 
@@ -548,13 +548,9 @@ public class Startup implements AWTEventListener {
     ret.templFile = new File(file);
     String errMsg = null;
     if (!ret.templFile.exists()) errMsg = S.get("templateMissingError", file);
-    if (!ret.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
-
-    if (errMsg == null) {
-      return RC.OK;
-    }
-    // FIXME: shouldn't we quit in such case?
-    return RC.WARN;
+    if (errMsg == null && !ret.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
+    if (errMsg != null) return RC.WARN;  // FIXME: shouldn't we quit in such case?
+    return RC.OK;
   }
 
   private static RC cmdNoSplash(Startup ret, Option opt) {
