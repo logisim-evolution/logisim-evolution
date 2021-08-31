@@ -221,6 +221,8 @@ public class Startup implements AWTEventListener {
    * Prints available command line options.
    *
    * @param opts Configured CLI options.
+   *
+   * @return Handler return code enum (RC.xxx)
    */
   protected static RC printHelp(Options opts) {
     final var header = Main.APP_DISPLAY_NAME;
@@ -230,6 +232,11 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
+  /**
+   * Prints program version, build Id, compilation date and more.
+   *
+   * @return Handler return code enum (RC.xxx)
+   */
   protected static RC printVersion() {
     System.out.println(S.get(Main.APP_DISPLAY_NAME));
     System.out.println(S.get("appVersionBuildDate", BuildInfo.dateIso8601));
@@ -239,17 +246,37 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-  public static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
-    return addOption(opts, stringBaseKey, shortKey, longKey, 0);
-  }
-  public static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int args) {
+
+  /**
+   * Helper class that simplifies setup of parser argument option.
+   * Note: it assumes that if option have arguments, then there's
+   * localization string named after option string base key with "ArgName"
+   * suffix (i.e. for "fooBar" expecting arguments there must be "fooBarArgName"
+   * string describing (short as possible, best in single word) type
+   * of arguments (used to print CLI help page).
+   *
+   * @param opts Instance of {@link Options}.
+   * @param stringBaseKey String localization base key.
+   * @param shortKey Argument short key (i.e. "c" for "-c").
+   * @param longKey Argument ling key (i.e. "foo" for "--foo").
+   * @param expectedArgsCount Number of required option arguments
+   * @return
+   */
+  protected static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
-    if (args > 0) {
+    if (expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
       builder.argName(S.get(argNameKey));
-      builder.numberOfArgs(args);
+      builder.numberOfArgs(expectedArgsCount);
     }
     return opts.addOption(builder.build());
+  }
+
+  /**
+   * Add argument less Option to CLI parser options. See {@link addOption()} for argument description.
+   */
+  protected static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
+    return addOption(opts, stringBaseKey, shortKey, longKey, 0);
   }
 
   /**
@@ -264,6 +291,7 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
     opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
 
+    // Set up supported arguments for the arg parser to look for.
     addOption(opts, "argTtyOption", CMD_TTY, CMD_TTY_LONG, 1);
     addOption(opts, "argTestImplement", CMD_TEST_FGPA_IMPL, CMD_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
     addOption(opts, "argClearOption", CMD_CLEAR_PREFS, CMD_CLEAR_PREFS_LONG);
