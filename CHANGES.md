@@ -33,7 +33,16 @@
   * Added LED-array support for FPGA-boards
   * Improved partial placement on FPGA-boards for multi-pin components
   * Fixed several small bugs
-  * Completely rewritten command line argument parser.
+  * Completely rewritten command line argument parser:
+    * All options have both short and long version now, 
+    * All long arguments require `--` prefix i.e. `--version`,
+    * All long arguments require single `-` as prefix i.e. `-v`,
+    * `-clearprefs` is now `--clear-prefs` or `-cp`,
+    * `-clearprops` option is remove (use `--clear-prefs` instead),
+    * `-geom` is now `--geometry`,
+    * `-nosplash` is now `--no-splash` or `-ns,
+    * `-sub` is now `--substitute` or `-s`,
+    * `-testvector` is now `--test-vector` or `-tv`.
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.

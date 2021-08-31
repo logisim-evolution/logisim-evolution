@@ -134,6 +134,7 @@ public class Startup implements AWTEventListener {
   /* Testing Xml (circ file) Variable */
   private String testCircPathInput = null;
   private String testCircPathOutput = null;
+
   private Startup(boolean isTty) {
     this.isTty = isTty;
     this.showSplash = !isTty;
@@ -151,56 +152,49 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  private static int parseTtyFormat(String fmt) {
-    return switch (fmt) {
-      case "table" -> TtyInterface.FORMAT_TABLE;
-      case "speed" -> TtyInterface.FORMAT_SPEED;
-      case "tty" -> TtyInterface.FORMAT_TTY;
-      case "halt" -> TtyInterface.FORMAT_HALT;
-      case "stats" -> TtyInterface.FORMAT_STATISTICS;
-      case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
-      case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
-      case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
-      case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
-      default -> 0;
-    };
-  }
-
   public static final String CMD_HELP = "h";
   public static final String CMD_HELP_LONG = "help";
-  public static final String CMD_TTY = "tty";
+  public static final String CMD_VERSION = "v";
+  public static final String CMD_VERSION_LONG = "version";
+
+  public static final String CMD_TTY = "t";
+  public static final String CMD_TTY_LONG = "tty";
   public static final String CMD_TEST_FGPA_IMPL = "tfi";
   public static final String CMD_TEST_FGPA_IMPL_LONG = "test-fpga-implementation";
-  // NOTE: changed from clearprefs
-  public static final String CMD_CLEAR_PREFS = "cprefs";
+  public static final String CMD_CLEAR_PREFS = "cp";
   public static final String CMD_CLEAR_PREFS_LONG = "clear-prefs";
-  // NOTE: changed from clearprops
-  public static final String CMD_CLEAR_PROPS = "cprops";
-  public static final String CMD_CLEAR_PROPS_LONG = "clear-props";
-  public static final String CMD_SUB = "sub";
-  public static final String CMD_LOAD = "load";
-  public static final String CMD_EMPTY = "empty";
-  public static final String CMD_PLAIN = "plain";
-  public static final String CMD_VERSION = "version";
-  public static final String CMD_GATES = "gates";
-  // FIXME: change to "geometry"
-  public static final String CMD_GEOMETRY = "geom";
-  public static final String CMD_LOCALE = "locale";
-  public static final String CMD_ACCENTS = "accents";
-  public static final String CMD_TEMPLATE = "template";
-  // NOTE: changed from no-splash
+  public static final String CMD_SUBSTITUTE = "s";
+  public static final String CMD_SUBSTITUTE_LONG = "substitute";
+  public static final String CMD_LOAD = "l";
+  public static final String CMD_LOAD_LONG = "load";
+  public static final String CMD_EMPTY = "e";
+  public static final String CMD_EMPTY_LONG = "empty";
+  public static final String CMD_PLAIN = "p";
+  public static final String CMD_PLAIN_LONG = "plain";
+  public static final String CMD_GATES = "g";
+  public static final String CMD_GATES_LONG = "gates";
+  public static final String CMD_GEOMETRY = "m";
+  public static final String CMD_GEOMETRY_LONG = "geometry";
+  public static final String CMD_LOCALE = "o";
+  public static final String CMD_LOCALE_LONG = "locale";
+  public static final String CMD_ACCENTS = "ac";
+  public static final String CMD_ACCENTS_LONG = "accents";
+  public static final String CMD_TEMPLATE = "z";
+  public static final String CMD_TEMPLATE_LONG = "template";
   public static final String CMD_NO_SPLASH = "ns";
   public static final String CMD_NO_SPLASH_LONG = "no-splash";
-  // NOTE: changed from testvector
   public static final String CMD_TEST_VECTOR = "tv";
   public static final String CMD_TEST_VECTOR_LONG = "test-vector";
   public static final String CMD_TEST_CIRCUIT = "tc";
   public static final String CMD_TEST_CIRCUIT_LONG = "test-circuit";
-  public static final String CMD_TEST_CIRC_GEN = "tcgen";
+  public static final String CMD_TEST_CIRC_GEN = "tg";
   public static final String CMD_TEST_CIRC_GEN_LONG = "test-circ-gen";
-  public static final String CMD_CIRCUIT = "circuit";
-  public static final String CMD_ANALYZE = "analyze";
-  public static final String CMD_QUESTA = "questa";
+  public static final String CMD_CIRCUIT = "c";
+  public static final String CMD_CIRCUIT_LONG = "circuit";
+  public static final String CMD_ANALYZE = "a";
+  public static final String CMD_ANALYZE_LONG = "analyze";
+  public static final String CMD_QUESTA = "q";
+  public static final String CMD_QUESTA_LONG = "questa";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -225,10 +219,16 @@ public class Startup implements AWTEventListener {
    *
    * @param opts Configured CLI options.
    */
-  protected static void printHelp(Options opts) {
+  protected static RC printHelp(Options opts) {
     final var header = Main.APP_DISPLAY_NAME;
     final var footer = Main.APP_URL;
     (new HelpFormatter()).printHelp(Main.APP_NAME, header, opts, footer, true);
+    return RC.OK;
+  }
+
+  protected static RC printVersion() {
+    System.out.println(Main.APP_DISPLAY_NAME);
+    return RC.OK;
   }
 
   /**
@@ -240,32 +240,27 @@ public class Startup implements AWTEventListener {
    */
   public static Startup parseArgs(String[] args) {
     final var opts = new Options();
-    opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).build());
+    opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
+    opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
 
     opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TEST_FGPA_IMPL_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
     opts.addOption(Option.builder(CMD_TEST_FGPA_IMPL).longOpt(CMD_TEST_FGPA_IMPL_LONG).hasArgs().desc(S.get("argTestImplement")).build());
-
-
     opts.addOption(Option.builder(CMD_CLEAR_PREFS).longOpt(CMD_CLEAR_PREFS_LONG).desc(S.get("argClearOption")).build());
-    opts.addOption(Option.builder(CMD_CLEAR_PROPS).longOpt(Startup.CMD_CLEAR_PROPS_LONG).desc(S.get("argClearProps")).build());  // FIXME: NO LANG STR FOR IT!
-    opts.addOption(Option.builder(CMD_SUB).numberOfArgs(2).desc(S.get("argSubOption")).build());
-    opts.addOption(Option.builder(CMD_LOAD).numberOfArgs(1).desc(S.get("argLoadOption")).build());
-    opts.addOption(Option.builder(CMD_EMPTY).desc(S.get("argEmptyOption")).build());
-    opts.addOption(Option.builder(CMD_PLAIN).desc(S.get("argPlainOption")).build());
-    opts.addOption(Option.builder(CMD_VERSION).desc(S.get("argVersionOption")).build());
-    opts.addOption(Option.builder(CMD_GATES).numberOfArgs(1).desc(S.get("argGatesOption")).build());
-    opts.addOption(Option.builder(CMD_GEOMETRY).numberOfArgs(1).desc(S.get("argGeometryOption")).build());
-    opts.addOption(Option.builder(CMD_ACCENTS).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
-    opts.addOption(Option.builder(CMD_TEMPLATE).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
+    opts.addOption(Option.builder(CMD_SUBSTITUTE).longOpt(CMD_SUBSTITUTE_LONG).numberOfArgs(2).desc(S.get("argSubOption")).build());
+    opts.addOption(Option.builder(CMD_LOAD).longOpt(CMD_LOAD_LONG).numberOfArgs(1).desc(S.get("argLoadOption")).build());
+    opts.addOption(Option.builder(CMD_EMPTY).longOpt(CMD_EMPTY_LONG).desc(S.get("argEmptyOption")).build());
+    opts.addOption(Option.builder(CMD_PLAIN).longOpt(CMD_PLAIN_LONG).desc(S.get("argPlainOption")).build());
+    opts.addOption(Option.builder(CMD_GATES).longOpt(CMD_GATES_LONG).numberOfArgs(1).desc(S.get("argGatesOption")).build());
+    opts.addOption(Option.builder(CMD_GEOMETRY).longOpt(CMD_GEOMETRY_LONG).numberOfArgs(1).desc(S.get("argGeometryOption")).build());
+    opts.addOption(Option.builder(CMD_LOCALE).longOpt(CMD_LOCALE_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
+    opts.addOption(Option.builder(CMD_ACCENTS).longOpt(CMD_ACCENTS_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
+    opts.addOption(Option.builder(CMD_TEMPLATE).longOpt(CMD_TEMPLATE).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
     opts.addOption(Option.builder(CMD_NO_SPLASH).longOpt(CMD_NO_SPLASH_LONG).desc(S.get("argNoSplashOption")).build());
     opts.addOption(Option.builder(CMD_TEST_VECTOR).longOpt(CMD_TEST_VECTOR_LONG).desc(S.get("argTestVectorOption")).build());   // FIXME: NO LANG STR FOR IT!
-
-    // FIXME definition for multiple args is wrong here!
     opts.addOption(Option.builder(CMD_TEST_CIRCUIT).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
-
     opts.addOption(Option.builder(CMD_TEST_CIRC_GEN).longOpt(CMD_TEST_CIRC_GEN_LONG).numberOfArgs(2).desc(S.get("argTestCircGen")).build());  // FIXME add "Option" suffix to key name
-    opts.addOption(Option.builder(CMD_ANALYZE).numberOfArgs(1).desc(S.get("argAnalyzeOption")).build());
-    opts.addOption(Option.builder(CMD_QUESTA).numberOfArgs(1).desc(S.get("argQuestaOption")).build());
+    opts.addOption(Option.builder(CMD_ANALYZE).longOpt(CMD_ANALYZE_LONG).numberOfArgs(1).desc(S.get("argAnalyzeOption")).build());
+    opts.addOption(Option.builder(CMD_QUESTA).longOpt(CMD_QUESTA_LONG).numberOfArgs(1).desc(S.get("argQuestaOption")).build());
 
     CommandLine cmd;
     try {
@@ -284,8 +279,7 @@ public class Startup implements AWTEventListener {
       isTty = true;
       Main.headless = true;
     } else {
-      // FIXME why we have two switches for the same? Gonna remove one. Which?
-      shallClearPreferences = (cmd.hasOption(CMD_CLEAR_PREFS) || cmd.hasOption(CMD_CLEAR_PROPS));
+      shallClearPreferences = cmd.hasOption(CMD_CLEAR_PREFS);
     }
 
     if (!isTty) {
@@ -307,269 +301,42 @@ public class Startup implements AWTEventListener {
       AppPreferences.clear();
     }
 
-    // CMD_HELP
-    if (cmd.hasOption(CMD_HELP)) {
-      printHelp(opts);
-      return null;
-    } // End of CMD_HELP
-
-    // VERSION
-    if (cmd.hasOption(CMD_VERSION)) {
-      System.out.println(Main.APP_DISPLAY_NAME);
-      return null;
-    }  // End of VERSION
-
-    // TTY format parsing
-    if (cmd.hasOption(CMD_TTY)) {
-      final var ttyVal = cmd.getOptionValue(CMD_TTY);
-
-      final var fmts = ttyVal.split(",");
-      if (fmts.length > 0) {
-        for (final var singleFmt : fmts) {
-          final var val = parseTtyFormat(singleFmt.trim());
-          if (val == 0) {
-            logger.error(S.get("ttyFormatError"));
-            // FIXME: Shouldn't we exit here -> return null;
-            continue;
-          }
-          ret.ttyFormat |= val;
-        }
-      } else {
-        logger.error(S.get("ttyFormatError"));
-        // FIXME: Shouldn't we exit here -> return null;
-      }
-    } // end of TTY format parsing
-
-    // SUB command args parsing
-    if (cmd.hasOption(CMD_SUB)) {
-      final var fileA = cmd.getOptionValues(CMD_SUB)[0];
-      final var fileB = cmd.getOptionValues(CMD_SUB)[1];
-      final var a = new File(fileA);
-      final var b = new File(fileB);
-      if (ret.substitutions.containsKey(a)) {
-        logger.error(S.get("argDuplicateSubstitutionError"));
-        return null;
-      } else {
-        ret.substitutions.put(a, b);
-      }
-      // in case less than 2 args are given? but that's handled by cli
-//      logger.error(S.get("argTwoSubstitutionError"));
-//      return null;
-    } // End of SUB command args parsing
-
-    // LOAD file
-    if (cmd.hasOption(CMD_LOAD)) {
-      final var fileName = cmd.getOptionValue(CMD_LOAD);
-      if (ret.loadFile != null) {
-        logger.error(S.get("loadMultipleError"));
-        // FIXME: shouldn't we quit here? -> return null;
-      }
-      ret.loadFile = new File(fileName);
-
-      // TODO: remove this string as it should not be handled by us any more?
-//      logger.error(S.get("loadNeedsFileError"));
-//      return null;
-
-    } // End of LOAD file
-
-    // EMPTY
-    if (cmd.hasOption(CMD_EMPTY)) {
-      if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        logger.error(S.get("argOneTemplateError"));
-        return null;
-      }
-      ret.templEmpty = true;
-    } // End of EMPTY
-
-    // PLAIN
-    if (cmd.hasOption(CMD_PLAIN)) {
-      if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        logger.error(S.get("argOneTemplateError"));
-        return null;
-      }
-      ret.templPlain = true;
-    } // End of PLAIN
-
-    // GATES
-    if (cmd.hasOption(CMD_GATES)) {
-      final var gateShape = cmd.getOptionValue(CMD_GATES);
-      if (gateShape.equals("shaped")) {
-        AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
-      } else if (gateShape.equals("rectangular")) {
-        AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
-      } else {
-        logger.error(S.get("argGatesOptionError"));
-        return null;
-      }
-    } // End of GATES
-
-    // GEOMETRY
-    if (cmd.hasOption(CMD_GEOMETRY)) {
-      final var geometry = cmd.getOptionValue(CMD_GEOMETRY);
-      final var wxh = geometry.split("[xX]");
-      if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
-        logger.error(S.get("argGeometryError"));
-        return null;
-      }
-      final var p = wxh[1].indexOf('+', 1);
-      String loc = null;
-      var x = 0;
-      var y = 0;
-      if (p >= 0) {
-        loc = wxh[1].substring(p + 1);
-        wxh[1] = wxh[1].substring(0, p);
-        final var xy = loc.split("\\+");
-        if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
-          logger.error(S.get("argGeometryError"));
-          return null;
-        }
-        try {
-          x = Integer.parseInt(xy[0]);
-          y = Integer.parseInt(xy[1]);
-        } catch (NumberFormatException e) {
-          logger.error(S.get("argGeometryError"));
-          return null;
-        }
-      }
-      var w = 0;
-      var h = 0;
-      try {
-        w = Integer.parseInt(wxh[0]);
-        h = Integer.parseInt(wxh[1]);
-      } catch (NumberFormatException e) {
-        logger.error(S.get("argGeometryError"));
-        return null;
-      }
-      if (w <= 0 || h <= 0) {
-        logger.error(S.get("argGeometryError"));
-        return null;
-      }
-      AppPreferences.WINDOW_WIDTH.set(w);
-      AppPreferences.WINDOW_HEIGHT.set(h);
-      if (loc != null) AppPreferences.WINDOW_LOCATION.set(x + "," + y);
-    } // End of GEOMETRY
-
-    // LOCALE
-    if (cmd.hasOption(CMD_LOCALE)) {
-      final var locale = cmd.getOptionValue(CMD_LOCALE);
-      setLocale(locale);
-    } // End of LOCALE
-
-    // ACCENTS
-    if (cmd.hasOption(CMD_ACCENTS)) {
-      final var flag = cmd.getOptionValue(CMD_ACCENTS).toLowerCase();
-      try {
-        AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
-      } catch (IllegalArgumentException ex) {
-        logger.error(S.get("argAccentsOptionError"));
-        return null;
-      }
-    } // End of ACCENTS
-
-    // TEMPLATE
-    if (cmd.hasOption(CMD_TEMPLATE)) {
-      if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        logger.error(S.get("argOneTemplateError"));
-        return null;
-      }
-      final var file = cmd.getOptionValue(CMD_TEMPLATE);
-      ret.templFile = new File(file);
-      if (!ret.templFile.exists()) {
-        logger.error(S.get("templateMissingError", file));
-      } else if (!ret.templFile.canRead()) {
-        logger.error(S.get("templateCannotReadError", file));
-      }
-    } // End of TEMPLATE
-
-    // NO_SPLASH
-    if (cmd.hasOption(CMD_NO_SPLASH)) {
-      ret.showSplash = false;
-    } // End of NO_SPLASH
-
-    // TEST_VECTOR
-    if (cmd.hasOption(CMD_TEST_VECTOR)) {
-      ret.circuitToTest = cmd.getOptionValues(CMD_TEST_VECTOR)[0];
-      ret.testVector = cmd.getOptionValues(CMD_TEST_VECTOR)[1];
-      ret.showSplash = false;
-      ret.exitAfterStartup = true;
-      // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
-    } // End of TEST_VECTOR
-
-    // TEST_FPGA_IMPL
-    if (cmd.hasOption(CMD_TEST_FGPA_IMPL)) {
-      final var optArgs = cmd.getOptionValues(CMD_TEST_FGPA_IMPL);
-
-      // already handled above
-      ret.testCircuitImpPath = optArgs[0];
-      ret.testCircuitImpMapFile = optArgs[1];
-      ret.testCircuitImpName = optArgs[2];
-      ret.testCircuitImpBoard = optArgs[3];
-
-      if (optArgs.length > 4) {
-        try {
-          ret.testTickFrequency = Integer.parseUnsignedInt(optArgs[4]);
-        } catch (NumberFormatException ignored) {
-          // FIXME: do nothing, but that's not the best error handlong
-        }
-        if (optArgs.length > 5) {
-          ret.testCircuitHdlOnly = optArgs[5].equalsIgnoreCase("HDLONLY");
-        }
-      }
-
-      ret.doFpgaDownload = true;
-      ret.showSplash = false;
-      ret.filesToOpen.add(new File(ret.testCircuitImpPath));
-    } // End of TEST_FPGA_IMPL
-
-    // TEST_CIRCUIT
-    if (cmd.hasOption(CMD_TEST_CIRCUIT)) {
-      ret.testCircuitPathInput = cmd.getOptionValue(CMD_TEST_CIRCUIT);
-      ret.filesToOpen.add(new File(ret.testCircuitPathInput));
-      ret.showSplash = false;
-      ret.exitAfterStartup = true;
-    } // End of TEST_CIRCUIT
-
-    // TEST_CIRC_GEN
-    if (cmd.hasOption(CMD_TEST_CIRC_GEN)) {
-      final var optArgs = cmd.getOptionValues(CMD_TEST_CIRC_GEN);
-      // This is to test the XML consistency over different version of the Logisim
-      // This is the input path of the file to open
-      ret.testCircPathInput = optArgs[0];
-      // This is the output file's path. The comparaison shall be done between the  testCircPathInput and the testCircPathOutput
-      ret.testCircPathOutput = optArgs[1];
-      ret.filesToOpen.add(new File(ret.testCircPathInput));
-      ret.showSplash = false;
-      ret.exitAfterStartup = true;
-    } // End of TEST_CIRC_GEN
-
-    // CMD_CIRCUIT
-    if (cmd.hasOption(CMD_CIRCUIT)) {
-      ret.circuitToTest = cmd.getOptionValue(CMD_CIRCUIT);
-    } // End of CMD_CIRCUIT
-
-    // CMD_ANALYZE
-    if (cmd.hasOption(CMD_ANALYZE)) {
-      Main.ANALYZE = true;
-    } // End of CMD_ANALYZE
-
-    // CMD_QUESTA
-    if (cmd.hasOption(CMD_QUESTA)) {
-      try {
-        final var flag = cmd.getOptionValue(CMD_QUESTA).toLowerCase();
-        AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
-      } catch (IllegalArgumentException ex) {
-        logger.error(S.get("argQuestaOptionError"));
-        return null;
-      }
-    } // End of CMD_QUESTA
+    // Iterate over parsed arguments and invoke option handler
+    // for each detected argument.
+    final var optionIter = cmd.iterator();
+    while (optionIter.hasNext()) {
+      final var opt = optionIter.next();
+      final var optHandlerRc = switch (opt.getOpt()) {
+        case CMD_HELP -> printHelp(opts);
+        case CMD_VERSION -> printVersion();
+        case CMD_TTY -> cmdTty(ret, opt);
+        case CMD_SUBSTITUTE -> cmdSubstitute(ret, opt);
+        case CMD_LOAD -> cmdLoad(ret, opt);
+        case CMD_EMPTY -> cmdEmpty(ret, opt);
+        case CMD_PLAIN -> cmdPlain(ret, opt);
+        case CMD_GATES -> cmdGates(ret, opt);
+        case CMD_GEOMETRY -> cmdGeometry(ret, opt);
+        case CMD_LOCALE -> cmdLocale(ret, opt);
+        case CMD_ACCENTS -> cmdAccents(ret, opt);
+        case CMD_TEMPLATE -> cmdTemplate(ret, opt);
+        case CMD_NO_SPLASH -> cmdNoSplash(ret, opt);
+        case CMD_TEST_VECTOR -> cmdTestVector(ret, opt);
+        case CMD_TEST_FGPA_IMPL -> cmdTestFpgaImpl(ret, opt);
+        case CMD_TEST_CIRCUIT -> cmdTestCircuit(ret, opt);
+        case CMD_TEST_CIRC_GEN -> cmdTestCircGen(ret, opt);
+        case CMD_CIRCUIT -> cmdCircuit(ret, opt);
+        case CMD_ANALYZE -> cmdAnalyze(ret, opt);
+        case CMD_QUESTA -> cmdQuesta(ret, opt);
+        default -> RC.OK; // should not really happen IRL.
+      };
+      if (optHandlerRc == RC.QUIT) return null;
+    }
 
     // FIXME: not implemented yet
     // positional argument being files to load
     // ret.filesToOpen.add(new File(arg));
 
-
     if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
-      // FIXME: use CLI's method
       printHelp(opts);
       return null;
     }
@@ -584,6 +351,285 @@ public class Startup implements AWTEventListener {
 
     return ret;
   }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Supported return codes from command handlers;
+   */
+  public static enum RC {
+    /**
+     * Handler completed succesfuly.
+     */
+    OK,
+    /**
+     * Handler had some minor propblems, but it is recoverable, so parsing should keep going.
+     */
+    WARN,
+    /**
+     * Unrecoverable error occured while handling option. No fall back, must quit.
+     */
+    QUIT
+  }
+
+  private static RC cmdTty(Startup startup, Option opt) {
+    // TTY format parsing
+    final var ttyVal = opt.getValue();
+    final var fmts = ttyVal.split(",");
+    if (fmts.length > 0) {
+      // FIXME: why we support multiple TTY typesw?
+      for (final var singleFmt : fmts) {
+        final var val = switch(singleFmt.trim()) {
+          case "table" -> TtyInterface.FORMAT_TABLE;
+          case "speed" -> TtyInterface.FORMAT_SPEED;
+          case "tty" -> TtyInterface.FORMAT_TTY;
+          case "halt" -> TtyInterface.FORMAT_HALT;
+          case "stats" -> TtyInterface.FORMAT_STATISTICS;
+          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
+          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
+          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
+          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
+          default -> 0;
+        };
+
+        if (val == 0) {
+          logger.error(S.get("ttyFormatError"));
+          // FIXME: Shouldn't we exit here -> RC.QUIT;
+          continue;
+        }
+        startup.ttyFormat |= val;
+        return RC.OK;
+      }
+    }
+    logger.error(S.get("ttyFormatError"));
+    // FIXME: Shouldn't we exit here; -> RC.QUIT
+    return RC.WARN;
+  }
+
+  private static RC cmdSubstitute(Startup startup, Option opt) {
+    final var fileA = new File(opt.getValues()[0]);
+    final var fileB = new File(opt.getValues()[1]);
+    if (!startup.substitutions.containsKey(fileA)) {
+      startup.substitutions.put(fileA, fileB);
+      return RC.OK;
+    }
+
+    // FIXME: warning should be sufficient here maybe?
+    logger.error(S.get("argDuplicateSubstitutionError"));
+    return RC.QUIT;
+  }
+
+  private static RC cmdLoad(Startup startup, Option opt) {
+    if (startup.loadFile != null) {
+      logger.error(S.get("loadMultipleError"));
+      // FIXME: shouldn't we quit here? -> RC.QUIT;
+      return RC.WARN;
+    }
+    final var fileName = opt.getValue();
+    startup.loadFile = new File(fileName);
+    return RC.OK;
+  }
+
+  private static RC cmdEmpty(Startup startup, Option opt) {
+    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
+      logger.error(S.get("argOneTemplateError"));
+      return RC.QUIT;
+    }
+    startup.templEmpty = true;
+    return RC.OK;
+  }
+
+  private static RC cmdPlain(Startup ret, Option opt) {
+    if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
+      logger.error(S.get("argOneTemplateError"));
+      return RC.QUIT;
+    }
+    ret.templPlain = true;
+    return RC.OK;
+  }
+
+  private static RC cmdGates(Startup ret, Option opt) {
+    final var gateShape = opt.getValue();
+    if (gateShape.equals("shaped")) {
+      AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
+    } else if (gateShape.equals("rectangular")) {
+      AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
+    } else {
+      logger.error(S.get("argGatesOptionError"));
+      return RC.QUIT;
+    }
+    return RC.OK;
+  }
+
+  private static RC cmdGeometry(Startup ret, Option opt) {
+    final var geometry = opt.getValue();
+    final var wxh = geometry.split("[xX]");
+
+    if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
+      logger.error(S.get("argGeometryError"));
+      return RC.QUIT;
+    }
+
+    final var p = wxh[1].indexOf('+', 1);
+    String loc = null;
+    var x = 0;
+    var y = 0;
+    if (p >= 0) {
+      loc = wxh[1].substring(p + 1);
+      wxh[1] = wxh[1].substring(0, p);
+      final var xy = loc.split("\\+");
+      if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
+        logger.error(S.get("argGeometryError"));
+        return RC.QUIT;
+      }
+      try {
+        x = Integer.parseInt(xy[0]);
+        y = Integer.parseInt(xy[1]);
+      } catch (NumberFormatException e) {
+        logger.error(S.get("argGeometryError"));
+        return RC.QUIT;
+      }
+    }
+
+    var w = 0;
+    var h = 0;
+    try {
+      w = Integer.parseInt(wxh[0]);
+      h = Integer.parseInt(wxh[1]);
+    } catch (NumberFormatException e) {
+      logger.error(S.get("argGeometryError"));
+      return RC.QUIT;
+    }
+    if (w <= 0 || h <= 0) {
+      logger.error(S.get("argGeometryError"));
+      return RC.QUIT;
+    }
+    AppPreferences.WINDOW_WIDTH.set(w);
+    AppPreferences.WINDOW_HEIGHT.set(h);
+    if (loc != null) AppPreferences.WINDOW_LOCATION.set(x + "," + y);
+
+    return RC.OK;
+  }
+
+  private static RC cmdLocale(Startup ret, Option opt) {
+    final var locale = opt.getValue();
+    setLocale(locale);
+    return RC.OK;
+  }
+
+  private static RC cmdAccents(Startup ret, Option opt) {
+    final var flag = opt.getValue().toLowerCase();
+    try {
+      AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
+    } catch (IllegalArgumentException ex) {
+      logger.error(S.get("argAccentsOptionError"));
+      return RC.QUIT;
+    }
+    return RC.OK;
+  }
+
+  private static RC cmdTemplate(Startup ret, Option opt) {
+    if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
+      logger.error(S.get("argOneTemplateError"));
+      return RC.QUIT;
+    }
+    final var file = opt.getValue();
+    ret.templFile = new File(file);
+    String errMsg = null;
+    if (!ret.templFile.exists()) errMsg = S.get("templateMissingError", file);
+    if (!ret.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
+
+    if (errMsg == null) {
+      return RC.OK;
+    }
+    // FIXME: shouldn't we quit in such case?
+    return RC.WARN;
+  }
+
+  private static RC cmdNoSplash(Startup ret, Option opt) {
+    ret.showSplash = false;
+    return RC.OK;
+  }
+
+  private static RC cmdTestVector(Startup ret, Option opt) {
+    ret.circuitToTest = opt.getValues()[0];
+    ret.testVector = opt.getValues()[1];
+    ret.showSplash = false;
+    ret.exitAfterStartup = true;
+    // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    return RC.OK;
+  }
+
+  private static RC cmdTestFpgaImpl(Startup ret, Option opt) {
+    final var optArgs = opt.getValues();
+
+    // already handled above
+    ret.testCircuitImpPath = optArgs[0];
+    ret.testCircuitImpMapFile = optArgs[1];
+    ret.testCircuitImpName = optArgs[2];
+    ret.testCircuitImpBoard = optArgs[3];
+
+    if (optArgs.length > 4) {
+      try {
+        ret.testTickFrequency = Integer.parseUnsignedInt(optArgs[4]);
+      } catch (NumberFormatException ignored) {
+        // FIXME: do nothing, but that's not the best error handlong
+      }
+      if (optArgs.length > 5) {
+        ret.testCircuitHdlOnly = optArgs[5].equalsIgnoreCase("HDLONLY");
+      }
+    }
+
+    ret.doFpgaDownload = true;
+    ret.showSplash = false;
+    ret.filesToOpen.add(new File(ret.testCircuitImpPath));
+    return RC.OK;
+  }
+
+  private static RC cmdTestCircuit(Startup ret, Option opt) {
+    final var fileName = opt.getValue();
+    ret.testCircuitPathInput = fileName;
+    ret.filesToOpen.add(new File(fileName));
+    ret.showSplash = false;
+    ret.exitAfterStartup = true;
+    return RC.OK;
+  }
+
+  private static RC cmdTestCircGen(Startup ret, Option opt) {
+    final var optArgs = opt.getValues();
+    // This is to test the XML consistency over different version of the Logisim
+    // This is the input path of the file to open
+    ret.testCircPathInput = optArgs[0];
+    ret.filesToOpen.add(new File(ret.testCircPathInput));
+    // This is the output file's path. The comparaison shall be done between the  testCircPathInput and the testCircPathOutput
+    ret.testCircPathOutput = optArgs[1];
+    ret.showSplash = false;
+    ret.exitAfterStartup = true;
+    return RC.OK;
+  }
+
+  private static RC cmdCircuit(Startup ret, Option opt) {
+    ret.circuitToTest = opt.getValue();
+    return RC.OK;
+  }
+
+  private static RC cmdAnalyze(Startup ret, Option opt) {
+    Main.ANALYZE = true;
+    return RC.OK;
+  }
+
+  private static RC cmdQuesta(Startup ret, Option opt) {
+    try {
+      final var flag = opt.getValue().toLowerCase();
+      AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
+      return RC.OK;
+    } catch (IllegalArgumentException ex) {
+      logger.error(S.get("argQuestaOptionError"));
+    }
+    return RC.QUIT;
+  }
+
+  /* ********************************************************************************************* */
 
   private static void setLocale(String lang) {
     final var opts = S.getLocaleOptions();
@@ -880,4 +926,5 @@ public class Startup implements AWTEventListener {
       }
     }
   }
-}
+
+} // Startup
