@@ -33,6 +33,7 @@
   * Added LED-array support for FPGA-boards
   * Improved partial placement on FPGA-boards for multi-pin components
   * Fixed several small bugs
+  * Completely rewritten command line argument parser.
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
