@@ -265,18 +265,33 @@ public class Startup implements AWTEventListener {
 
     // see whether we'll be using any graphics
     var isTty = false;
-    var isClearPreferences = false;
-    for (final var value : args) {
-      if (cmd.hasOption(CMD_TTY) || value.equals(CMD_TEST_FGPA_IMPL)) {
-        isTty = true;
-        Main.headless = true;
-      } else if (cmd.hasOption(CMD_CLEAR_PREFS) || cmd.hasOption(CMD_CLEAR_PROPS)) {
-        isClearPreferences = true;
-      }
+    var shallClearPreferences = false;
+    if (cmd.hasOption(CMD_TTY) || cmd.hasOption(CMD_TEST_FGPA_IMPL)) {
+      isTty = true;
+      Main.headless = true;
+    } else {
+      // FIXME why we have two switches for the same? Gonna remove one. Which?
+      shallClearPreferences = (cmd.hasOption(CMD_CLEAR_PREFS) || cmd.hasOption(CMD_CLEAR_PROPS));
+    }
+
+    if (!isTty) {
+      // we're using the GUI: Set up the Look&Feel to match the platform
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+      LocaleManager.setReplaceAccents(false);
+      // Initialize graphics acceleration if appropriate
+      AppPreferences.handleGraphicsAcceleration();
     }
 
     // Initialize startup object.
     final var ret = new Startup(isTty);
+    startupTemp = ret;
+    if (!isTty) {
+      registerHandler();
+    }
+
+    if (shallClearPreferences) {
+      AppPreferences.clear();
+    }
 
     // CMD_HELP
     if (cmd.hasOption(CMD_HELP)) {
@@ -567,365 +582,6 @@ public class Startup implements AWTEventListener {
     }
     if (ret.loadFile != null && !ret.isTty) {
       // TODO: I think we can safely remove `"{}"` argument?
-      logger.error("{}", S.get("loadNeedsTtyError"));
-      return null;
-    }
-
-    return ret;
-  }
-
-  public static Startup parseArgsOLD(String[] args) {
-    // see whether we'll be using any graphics
-    var isTty = false;
-    var isClearPreferences = false;
-    for (final var value : args) {
-      if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
-        isTty = true;
-        Main.headless = true;
-      } else if (value.equals("-clearprefs") || value.equals("-clearprops")) {
-        isClearPreferences = true;
-      }
-    }
-
-    if (!isTty) {
-      // we're using the GUI: Set up the Look&Feel to match the platform
-      System.setProperty("apple.laf.useScreenMenuBar", "true");
-
-      LocaleManager.setReplaceAccents(false);
-
-      // Initialize graphics acceleration if appropriate
-      AppPreferences.handleGraphicsAcceleration();
-    }
-
-    final var ret = new Startup(isTty);
-    startupTemp = ret;
-    if (!isTty) {
-      registerHandler();
-    }
-
-    if (isClearPreferences) {
-      AppPreferences.clear();
-    }
-
-//     parse arguments
-//    for (var i = 0; i < args.length; i++) {
-//      final var arg = args[i];
-//      if (arg.equals("-tty")) {
-//        // -tty
-//        if (i + 1 < args.length) {
-//          i++;
-//          final var fmts = args[i].split(",");
-//          if (fmts.length == 0) {
-//            logger.error("{}", S.get("ttyFormatError"));
-//          }
-//          for (final var s : fmts) {
-//            final var fmt = s.trim();
-//            final var val = parseTtyFormat(fmt);
-//            if (val == 0)
-//              logger.error("{}", S.get("ttyFormatError"));
-//            else
-//              ret.ttyFormat |= val;
-//          }
-//        } else {
-//          logger.error("{}", S.get("ttyFormatError"));
-//          return null;
-//        }
-//      } else
-//        if (arg.equals("-sub")) {
-//        if (i + 2 < args.length) {
-//          final var a = new File(args[i + 1]);
-//          final var b = new File(args[i + 2]);
-//          if (ret.substitutions.containsKey(a)) {
-//            logger.error("{}", S.get("argDuplicateSubstitutionError"));
-//            return null;
-//          } else {
-//            ret.substitutions.put(a, b);
-//            i += 2;
-//          }
-//        } else {
-//          logger.error("{}", S.get("argTwoSubstitutionError"));
-//          return null;
-//        }
-//      } else
-//        if (arg.equals("-load")) {
-//        if (i + 1 < args.length) {
-//          i++;
-//          if (ret.loadFile != null) {
-//            logger.error("{}", S.get("loadMultipleError"));
-//          }
-//          ret.loadFile = new File(args[i]);
-//        } else {
-//          logger.error("{}", S.get("loadNeedsFileError"));
-//          return null;
-//        }
-//      } else
-//        if (arg.equals("-empty")) {
-//        if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-//          logger.error("{}", S.get("argOneTemplateError"));
-//          return null;
-//        }
-//        ret.templEmpty = true;
-//      } else
-//        if (arg.equals("-plain")) {
-//        if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-//          logger.error("{}", S.get("argOneTemplateError"));
-//          return null;
-//        }
-//        ret.templPlain = true;
-//      } else
-//        if (arg.equals("-version")) {
-//        System.out.println(Main.VERSION);
-//        return null;
-//      } else
-//        if (arg.equals("-gates")) {
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        final var a = args[i];
-//        if (a.equals("shaped")) {
-//          AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
-//        } else if (a.equals("rectangular")) {
-//          AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
-//        } else {
-//          logger.error("{}", S.get("argGatesOptionError"));
-//          System.exit(-1);
-//        }
-//      } else
-//        if (arg.equals("-geom")) {
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        final var wxh = args[i].split("[xX]");
-//        if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
-//          logger.error("{}", S.get("argGeometryError"));
-//          System.exit(1);
-//        }
-//        final var p = wxh[1].indexOf('+', 1);
-//        String loc = null;
-//        var x = 0;
-//        var y = 0;
-//        if (p >= 0) {
-//          loc = wxh[1].substring(p + 1);
-//          wxh[1] = wxh[1].substring(0, p);
-//          final var xy = loc.split("\\+");
-//          if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
-//            logger.error("{}", S.get("argGeometryError"));
-//            System.exit(1);
-//          }
-//          try {
-//            x = Integer.parseInt(xy[0]);
-//            y = Integer.parseInt(xy[1]);
-//          } catch (NumberFormatException e) {
-//            logger.error("{}", S.get("argGeometryError"));
-//            System.exit(1);
-//          }
-//        }
-//        var w = 0;
-//        var h = 0;
-//        try {
-//          w = Integer.parseInt(wxh[0]);
-//          h = Integer.parseInt(wxh[1]);
-//        } catch (NumberFormatException e) {
-//          logger.error("{}", S.get("argGeometryError"));
-//          System.exit(1);
-//        }
-//        if (w <= 0 || h <= 0) {
-//          logger.error("{}", S.get("argGeometryError"));
-//          System.exit(1);
-//        }
-//        AppPreferences.WINDOW_WIDTH.set(w);
-//        AppPreferences.WINDOW_HEIGHT.set(h);
-//        if (loc != null) AppPreferences.WINDOW_LOCATION.set(x + "," + y);
-//      } else
-//        if (arg.equals("-locale")) {
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        setLocale(args[i]);
-//      } else
-//        if (arg.equals("-accents")) {
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        final var a = args[i];
-//        if (a.equals("yes")) {
-//          AppPreferences.ACCENTS_REPLACE.setBoolean(false);
-//        } else if (a.equals("no")) {
-//          AppPreferences.ACCENTS_REPLACE.setBoolean(true);
-//        } else {
-//          logger.error("{}", S.get("argAccentsOptionError"));
-//          System.exit(-1);
-//        }
-//      } else
-//        if (arg.equals("-template")) {
-//        if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-//          logger.error("{}", S.get("argOneTemplateError"));
-//          return null;
-//        }
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        ret.templFile = new File(args[i]);
-//        if (!ret.templFile.exists()) {
-//          logger.error("{}", S.get("templateMissingError", args[i]));
-//        } else if (!ret.templFile.canRead()) {
-//          logger.error("{}", S.get("templateCannotReadError", args[i]));
-//        }
-//      } else
-//        if (arg.equals("-nosplash")) {
-//        ret.showSplash = false;
-//      } else
-//        if (arg.equals("-testvector")) {
-//        i++;
-//
-//        if (i >= args.length) printUsage();
-//
-//        ret.circuitToTest = args[i];
-//        i++;
-//
-//        if (i >= args.length) printUsage();
-//
-//        ret.testVector = args[i];
-//        ret.showSplash = false;
-//        ret.exitAfterStartup = true;
-//        /* This is to test a test bench. It will return 0 or 1 depending on if
-//         * the tests pass or not
-//         */
-//      } else
-//
-//
-//        if (arg.equals("-test-fpga-implementation")) {
-//        // already handled above
-//        i++;
-//        if (i >= args.length) printUsage();
-//
-//        ret.testCircuitImpPath = args[i];   // 1
-//        i++;
-//        if (i >= args.length) printUsage();
-//
-//        if (args[i].toUpperCase().endsWith("MAP.XML")) {
-//          ret.testCircuitImpMapFile = args[i];    // 2
-//          i++;
-//          if (i >= args.length) printUsage();
-//        }
-//
-//        ret.testCircuitImpName = args[i];   // 3
-//        i++;
-//
-//        if (i >= args.length) printUsage();
-//
-//        ret.testCircuitImpBoard = args[i];    // 4
-//        i++;
-//        if (i < args.length) {
-//          if (!args[i].startsWith("-")) {
-//            try {
-//              ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
-//              i++;
-//            } catch (NumberFormatException ignored) {
-//              // do nothing
-//            }
-//            if (i < args.length) {
-//              if (!args[i].startsWith("-")) {
-//                if (args[i].equalsIgnoreCase("HDLONLY")) ret.testCircuitHdlOnly = true;
-//                else printUsage();
-//              } else i--;
-//            }
-//          } else i--;
-//        }
-//        ret.doFpgaDownload = true;
-//        ret.showSplash = false;
-//        ret.filesToOpen.add(new File(ret.testCircuitImpPath));
-//      } else
-//
-//        if (arg.equals("-test-circuit")) {
-//        // already handled above
-//        i++;
-//        if (i >= args.length) printUsage();
-//
-//        ret.testCircuitPathInput = args[i];
-//        ret.filesToOpen.add(new File(ret.testCircuitPathInput));
-//        ret.showSplash = false;
-//        ret.exitAfterStartup = true;
-//      } else
-//
-//
-//        if (arg.equals("-test-circ-gen")) {
-//        /* This is to test the XML consistency over different version of
-//         * the Logisim */
-//        i++;
-//
-//        if (i >= args.length) printUsage();
-//
-//        /* This is the input path of the file to open */
-//        ret.testCircPathInput = args[i];
-//        i++;
-//        if (i >= args.length) printUsage();
-//
-//        /* This is the output file's path. The comparaison shall be
-//         * done between the  testCircPathInput and the testCircPathOutput*/
-//        ret.testCircPathOutput = args[i];
-//        ret.filesToOpen.add(new File(ret.testCircPathInput));
-//        ret.showSplash = false;
-//        ret.exitAfterStartup = true;
-//      } else
-//
-//
-//
-//
-//        if (arg.equals("-circuit")) {
-//        i++;
-//        if (i >= args.length) printUsage();
-//        ret.circuitToTest = args[i];
-//      } else
-//
-//
-//        if (arg.equals("-clearprefs") || arg.equals("-clearprops")) {
-//        // already handled above
-//      } else
-//
-//
-//        if (arg.equals("-analyze")) {
-//        Main.ANALYZE = true;
-//      } else
-//
-//
-//        if (arg.equals("-questa")) {
-//        i++;
-//        if (i >= args.length) {
-//          printUsage();
-//        }
-//        String a = args[i];
-//        if (a.equals("yes")) {
-//          AppPreferences.QUESTA_VALIDATION.setBoolean(true);
-//        } else if (a.equals("no")) {
-//          AppPreferences.QUESTA_VALIDATION.setBoolean(false);
-//        } else {
-//          logger.error("{}", S.get("argQuestaOptionError"));
-//          System.exit(-1);
-//        }
-//      } else
-
-//        if (arg.charAt(0) == '-') {
-//        printUsage();
-//        return null;
-//      } else {
-//        ret.filesToOpen.add(new File(arg));
-//      }
-//    }
-
-    if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
-      printUsage();
-    }
-    if (ret.isTty && ret.filesToOpen.isEmpty()) {
-      logger.error("{}", S.get("ttyNeedsFileError"));
-      return null;
-    }
-    if (ret.loadFile != null && !ret.isTty) {
       logger.error("{}", S.get("loadNeedsTtyError"));
       return null;
     }
