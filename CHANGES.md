@@ -34,7 +34,7 @@
   * Improved partial placement on FPGA-boards for multi-pin components
   * Fixed several small bugs
   * Completely rewritten command line argument parser:
-    * All options have both short and long version now, 
+    * All options have both short and long version now,
     * All long arguments require `--` prefix i.e. `--version`,
     * All long arguments require single `-` as prefix i.e. `-v`,
     * `-clearprefs` is now `--clear-prefs` or `-cp`,

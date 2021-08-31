@@ -309,7 +309,6 @@ public class Startup implements AWTEventListener {
     // for each detected argument.
     final var optionIter = cmd.iterator();
     while (optionIter.hasNext()) {
-
       final var opt = optionIter.next();
       System.out.println(opt.getLongOpt());
       final var optHandlerRc = switch (opt.getOpt()) {
@@ -385,7 +384,7 @@ public class Startup implements AWTEventListener {
     if (fmts.length > 0) {
       // FIXME: why we support multiple TTY typesw?
       for (final var singleFmt : fmts) {
-        final var val = switch(singleFmt.trim()) {
+        final var val = switch (singleFmt.trim()) {
           case "table" -> TtyInterface.FORMAT_TABLE;
           case "speed" -> TtyInterface.FORMAT_SPEED;
           case "tty" -> TtyInterface.FORMAT_TTY;
