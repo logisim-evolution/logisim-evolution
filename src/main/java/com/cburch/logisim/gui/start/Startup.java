@@ -259,24 +259,29 @@ public class Startup implements AWTEventListener {
    * @param stringBaseKey String localization base key.
    * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
-   * @param expectedArgsCount Number of required option arguments
-   * @return
+   * @param expectedArgsCount Number of required option arguments.
    */
-  protected static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int expectedArgsCount) {
+  protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
     if (expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
       builder.argName(S.get(argNameKey));
       builder.numberOfArgs(expectedArgsCount);
     }
-    return opts.addOption(builder.build());
+    opts.addOption(builder.build());
   }
 
   /**
-   * Add argument less Option to CLI parser options. See {@link addOption()} for argument description.
+   * Add argumentless Option to CLI parser options.
+   *
+   * @param opts Instance of {@link Options}.
+   * @param stringBaseKey String localization base key.
+   * @param shortKey Argument short key (i.e. "c" for "-c").
+   * @param longKey Argument ling key (i.e. "foo" for "--foo").
+   * @param expectedArgsCount Number of required option arguments.
    */
-  protected static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
-    return addOption(opts, stringBaseKey, shortKey, longKey, 0);
+  protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
+    addOption(opts, stringBaseKey, shortKey, longKey, 0);
   }
 
   /**
@@ -360,9 +365,8 @@ public class Startup implements AWTEventListener {
     final var optionIter = cmd.iterator();
     while (optionIter.hasNext()) {
       final var opt = optionIter.next();
-      // Note: you should have handler for each option. So number
-      // of `case`s here should equal number of calls to `addOption()`
-      // above.
+      // Note: you should have handler for each option. So number of `case`s
+      // here should equal number of calls to `addOption()` above.
       final var optHandlerRc = switch (opt.getOpt()) {
         case CMD_HELP -> printHelp(opts);
         case CMD_VERSION -> printVersion();
@@ -435,7 +439,7 @@ public class Startup implements AWTEventListener {
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
     if (fmts.length > 0) {
-      // FIXME: why we support multiple TTY typesw?
+      // FIXME: why we support multiple TTY types in one invocation? fallback?
       for (final var singleFmt : fmts) {
         final var val = switch (singleFmt.trim()) {
           case "table" -> TtyInterface.FORMAT_TABLE;
