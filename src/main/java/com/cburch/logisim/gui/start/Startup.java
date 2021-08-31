@@ -234,6 +234,7 @@ public class Startup implements AWTEventListener {
     System.out.println(S.get("appVersionBuildDate", BuildInfo.dateIso8601));
     System.out.println(S.get("appVersionBuildId", BuildInfo.buildId));
     System.out.println(S.get("appVersionUrl", Main.APP_URL));
+    System.out.println();
     return RC.QUIT;
   }
 
