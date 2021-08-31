@@ -444,8 +444,8 @@ public class ShiftRegister extends InstanceFactory {
     final var lenObj = painter.getAttributeValue(ATTR_LENGTH);
     final var len = lenObj == null ? 8 : lenObj;
     final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    final var negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
-    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negedge);
+    final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
 
     // In the case data is null we assume that the different value are null. This allow the user to
