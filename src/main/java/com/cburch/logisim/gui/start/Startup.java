@@ -317,7 +317,6 @@ public class Startup implements AWTEventListener {
     final var optionIter = cmd.iterator();
     while (optionIter.hasNext()) {
       final var opt = optionIter.next();
-      System.out.println(opt.getLongOpt());
       final var optHandlerRc = switch (opt.getOpt()) {
         case CMD_HELP -> printHelp(opts);
         case CMD_VERSION -> printVersion();
