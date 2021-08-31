@@ -51,6 +51,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.AWTEvent;
@@ -238,6 +239,19 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
+  public static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
+    return addOption(opts, stringBaseKey, shortKey, longKey, 0);
+  }
+  public static Options addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int args) {
+    final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
+    if (args > 0) {
+      final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
+      builder.argName(S.get(argNameKey));
+      builder.numberOfArgs(args);
+    }
+    return opts.addOption(builder.build());
+  }
+
   /**
    * Parses CLI arguments
    *
@@ -250,24 +264,24 @@ public class Startup implements AWTEventListener {
     opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
     opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
 
-    opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TTY_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
-    opts.addOption(Option.builder(CMD_TEST_FGPA_IMPL).longOpt(CMD_TEST_FGPA_IMPL_LONG).hasArgs().desc(S.get("argTestImplement")).build());
-    opts.addOption(Option.builder(CMD_CLEAR_PREFS).longOpt(CMD_CLEAR_PREFS_LONG).desc(S.get("argClearOption")).build());
-    opts.addOption(Option.builder(CMD_SUBSTITUTE).longOpt(CMD_SUBSTITUTE_LONG).numberOfArgs(2).desc(S.get("argSubOption")).build());
-    opts.addOption(Option.builder(CMD_LOAD).longOpt(CMD_LOAD_LONG).numberOfArgs(1).desc(S.get("argLoadOption")).build());
-    opts.addOption(Option.builder(CMD_EMPTY).longOpt(CMD_EMPTY_LONG).desc(S.get("argEmptyOption")).build());
-    opts.addOption(Option.builder(CMD_PLAIN).longOpt(CMD_PLAIN_LONG).desc(S.get("argPlainOption")).build());
-    opts.addOption(Option.builder(CMD_GATES).longOpt(CMD_GATES_LONG).numberOfArgs(1).desc(S.get("argGatesOption")).build());
-    opts.addOption(Option.builder(CMD_GEOMETRY).longOpt(CMD_GEOMETRY_LONG).numberOfArgs(1).desc(S.get("argGeometryOption")).build());
-    opts.addOption(Option.builder(CMD_LOCALE).longOpt(CMD_LOCALE_LONG).numberOfArgs(1).desc(S.get("argLocaleOption")).build());
-    opts.addOption(Option.builder(CMD_ACCENTS).longOpt(CMD_ACCENTS_LONG).numberOfArgs(1).desc(S.get("argAccentsOption")).build());
-    opts.addOption(Option.builder(CMD_TEMPLATE).longOpt(CMD_TEMPLATE_LONG).numberOfArgs(1).desc(S.get("argTemplateOption")).build());
-    opts.addOption(Option.builder(CMD_NO_SPLASH).longOpt(CMD_NO_SPLASH_LONG).desc(S.get("argNoSplashOption")).build());
-    opts.addOption(Option.builder(CMD_TEST_VECTOR).longOpt(CMD_TEST_VECTOR_LONG).desc(S.get("argTestVectorOption")).build());   // FIXME: NO LANG STR FOR IT!
-    opts.addOption(Option.builder(CMD_TEST_CIRCUIT).longOpt(CMD_TEST_CIRCUIT_LONG).numberOfArgs(1).desc(S.get("argTestCircuit")).build());  // FIXME add "Option" suffix to key name
-    opts.addOption(Option.builder(CMD_TEST_CIRC_GEN).longOpt(CMD_TEST_CIRC_GEN_LONG).numberOfArgs(2).desc(S.get("argTestCircGen")).build());  // FIXME add "Option" suffix to key name
-    opts.addOption(Option.builder(CMD_ANALYZE).longOpt(CMD_ANALYZE_LONG).numberOfArgs(1).desc(S.get("argAnalyzeOption")).build());
-    opts.addOption(Option.builder(CMD_QUESTA).longOpt(CMD_QUESTA_LONG).numberOfArgs(1).desc(S.get("argQuestaOption")).build());
+    addOption(opts, "argTtyOption", CMD_TTY, CMD_TTY_LONG, 1);
+    addOption(opts, "argTestImplement", CMD_TEST_FGPA_IMPL, CMD_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
+    addOption(opts, "argClearOption", CMD_CLEAR_PREFS, CMD_CLEAR_PREFS_LONG);
+    addOption(opts, "argSubOption", CMD_SUBSTITUTE, CMD_SUBSTITUTE_LONG, 2);
+    addOption(opts, "argLoadOption", CMD_LOAD, CMD_LOAD_LONG, 1);
+    addOption(opts, "argEmptyOption", CMD_EMPTY, CMD_EMPTY_LONG);
+    addOption(opts, "argPlainOption", CMD_PLAIN, CMD_PLAIN_LONG);
+    addOption(opts, "argGatesOption", CMD_GATES, CMD_GATES_LONG);
+    addOption(opts, "argGeometryOption", CMD_GEOMETRY, CMD_GEOMETRY_LONG, 1);
+    addOption(opts, "argLocaleOption", CMD_LOCALE, CMD_LOCALE_LONG, 1);
+    addOption(opts, "argAccentsOption", CMD_ACCENTS, CMD_ACCENTS_LONG, 1);
+    addOption(opts, "argTemplateOption", CMD_TEMPLATE, CMD_TEMPLATE_LONG, 1);
+    addOption(opts, "argNoSplashOption", CMD_NO_SPLASH, CMD_NO_SPLASH_LONG);
+    addOption(opts, "argTestVectorOption", CMD_TEST_VECTOR, CMD_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
+    addOption(opts, "argTestCircuit", CMD_TEST_CIRCUIT, CMD_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircGen", CMD_TEST_CIRC_GEN, CMD_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argAnalyzeOption", CMD_ANALYZE, CMD_ANALYZE_LONG);
+    addOption(opts, "argQuestaOption", CMD_QUESTA, CMD_QUESTA_LONG);
 
     CommandLine cmd;
     try {
@@ -463,13 +477,14 @@ public class Startup implements AWTEventListener {
     final var gateShape = opt.getValue();
     if (gateShape.equals("shaped")) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
+      return RC.OK;
     } else if (gateShape.equals("rectangular")) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
-    } else {
-      logger.error(S.get("argGatesOptionError"));
-      return RC.QUIT;
+      return RC.OK;
     }
-    return RC.OK;
+
+    logger.error(S.get("argGatesOptionError"));
+    return RC.QUIT;
   }
 
   private static RC cmdGeometry(Startup ret, Option opt) {
