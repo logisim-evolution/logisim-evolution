@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.start;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
@@ -62,7 +61,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Map;
 import javax.help.JHelp;
@@ -226,6 +224,24 @@ public class Startup implements AWTEventListener {
     throw new IllegalArgumentException("Invalid boolean flag. Use 'yes' or 'no'.");
   }
 
+
+  /**
+   * Prints available command line options.
+   * @param opts Configured CLI options.
+   */
+  protected static void printHelp(Options opts) {
+    final var header = Main.APP_DISPLAY_NAME;
+    final var footer = Main.APP_URL;
+    (new HelpFormatter()).printHelp(Main.APP_NAME, header, opts, footer, true);
+  }
+
+  /**
+   * Parses CLI arguments
+   *
+   * @param args CLI arguments
+   *
+   * @return Instance of Startup class.
+   */
   public static Startup parseArgs(String[] args) {
     final var opts = (new Options()).addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).build());
     opts.addOption(Option.builder(CMD_TTY).longOpt(CMD_TEST_FGPA_IMPL_LONG).numberOfArgs(1).desc(S.get("argTtyOption")).build());
@@ -295,9 +311,7 @@ public class Startup implements AWTEventListener {
 
     // CMD_HELP
     if (cmd.hasOption(CMD_HELP)) {
-      final var header = Main.APP_DISPLAY_NAME;
-      final var footer = Main.APP_URL;
-      (new HelpFormatter()).printHelp(Main.APP_NAME, header, opts, footer, true);
+      printHelp(opts);
       return null;
     } // End of CMD_HELP
 
@@ -572,7 +586,7 @@ public class Startup implements AWTEventListener {
 
     if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
       // FIXME: use CLI's method
-      printUsage();
+      printHelp(opts);
       return null;
     }
     if (ret.isTty && ret.filesToOpen.isEmpty()) {
@@ -587,40 +601,6 @@ public class Startup implements AWTEventListener {
     }
 
     return ret;
-  }
-
-  private static void printUsage() {
-    System.err.println(S.get("argUsage", Startup.class.getName()));
-    System.err.println();
-    System.err.println(S.get("argOptionHeader"));
-    String[] opts = {
-      "argGeometryOption",
-      "argAccentsOption",
-      "argClearOption",
-      "argEmptyOption",
-      "argAnalyzeOption",
-      "argTestOption",
-      "argGatesOption",
-      "argHelpOption",
-      "argLoadOption",
-      "argLocaleOption",
-      "argNoSplashOption",
-      "argPlainOption",
-      "argSubOption",
-      "argTemplateOption",
-      "argTtyOption",
-      "argQuestaOption",
-      "argVersionOption",
-      "argTestCircGen",
-      "argTestCircuit",
-      "argTestImplement",
-      "argCircuitOption",
-    };
-    for (final var opt : opts) {
-      System.err.println("   " + S.get(opt));
-    }
-
-    System.exit(0);
   }
 
   private static void registerHandler() {
