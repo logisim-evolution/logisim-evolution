@@ -162,12 +162,12 @@ public class XmlCircuitReader extends CircuitTransaction {
       /* Here we check the attribute circuitnamedbox for backwards compatibility */
       var hasNamedBox = false;
       var hasNamedBoxFixedSize = false;
-      var HasAppearAttr = false;
+      var hasAppearAttr = false;
       for (final var attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
         if (attrElt.hasAttribute("name")) {
           final var name = attrElt.getAttribute("name");
           hasNamedBox |= name.equals("circuitnamedbox");
-          HasAppearAttr |= name.equals("appearance");
+          hasAppearAttr |= name.equals("appearance");
           hasNamedBoxFixedSize |= name.equals("circuitnamedboxfixedsize");
         }
       }
@@ -177,7 +177,7 @@ public class XmlCircuitReader extends CircuitTransaction {
           /* This situation is clear, it is an older logisim-evolution file */
           dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
         } else {
-          if (!HasAppearAttr) {
+          if (!hasAppearAttr) {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
