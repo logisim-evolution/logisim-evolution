@@ -274,8 +274,7 @@ public class Startup implements AWTEventListener {
       cmd = parser.parse(opts, args);
     } catch (ParseException ex) {
       // FIXME: hardcoded string
-      // TODO: I think we can safely remove `"{}"` argument?
-      logger.error("{}", "Failed processing command line arguments.");
+      logger.error("Failed processing command line arguments.");
       return null;
     }
 
@@ -302,7 +301,7 @@ public class Startup implements AWTEventListener {
     final var ret = new Startup(isTty);
     startupTemp = ret;
     if (!isTty) {
-      registerHandler();
+      MacOsAdapter.addListeners();
     }
 
     if (shallClearPreferences) {
@@ -330,16 +329,14 @@ public class Startup implements AWTEventListener {
         for (final var singleFmt : fmts) {
           final var val = parseTtyFormat(singleFmt.trim());
           if (val == 0) {
-            // TODO: I think we can safely remove `"{}"` argument?
-            logger.error("{}", S.get("ttyFormatError"));
+            logger.error(S.get("ttyFormatError"));
             // FIXME: Shouldn't we exit here -> return null;
             continue;
           }
           ret.ttyFormat |= val;
         }
       } else {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("ttyFormatError"));
+        logger.error(S.get("ttyFormatError"));
         // FIXME: Shouldn't we exit here -> return null;
       }
     } // end of TTY format parsing
@@ -351,14 +348,13 @@ public class Startup implements AWTEventListener {
       final var a = new File(fileA);
       final var b = new File(fileB);
       if (ret.substitutions.containsKey(a)) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argDuplicateSubstitutionError"));
+        logger.error(S.get("argDuplicateSubstitutionError"));
         return null;
       } else {
         ret.substitutions.put(a, b);
       }
       // in case less than 2 args are given? but that's handled by cli
-//      logger.error("{}", S.get("argTwoSubstitutionError"));
+//      logger.error(S.get("argTwoSubstitutionError"));
 //      return null;
     } // End of SUB command args parsing
 
@@ -366,14 +362,13 @@ public class Startup implements AWTEventListener {
     if (cmd.hasOption(CMD_LOAD)) {
       final var fileName = cmd.getOptionValue(CMD_LOAD);
       if (ret.loadFile != null) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("loadMultipleError"));
+        logger.error(S.get("loadMultipleError"));
         // FIXME: shouldn't we quit here? -> return null;
       }
       ret.loadFile = new File(fileName);
 
       // TODO: remove this string as it should not be handled by us any more?
-//      logger.error("{}", S.get("loadNeedsFileError"));
+//      logger.error(S.get("loadNeedsFileError"));
 //      return null;
 
     } // End of LOAD file
@@ -381,8 +376,7 @@ public class Startup implements AWTEventListener {
     // EMPTY
     if (cmd.hasOption(CMD_EMPTY)) {
       if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argOneTemplateError"));
+        logger.error(S.get("argOneTemplateError"));
         return null;
       }
       ret.templEmpty = true;
@@ -391,8 +385,7 @@ public class Startup implements AWTEventListener {
     // PLAIN
     if (cmd.hasOption(CMD_PLAIN)) {
       if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argOneTemplateError"));
+        logger.error(S.get("argOneTemplateError"));
         return null;
       }
       ret.templPlain = true;
@@ -406,8 +399,7 @@ public class Startup implements AWTEventListener {
       } else if (gateShape.equals("rectangular")) {
         AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       } else {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argGatesOptionError"));
+        logger.error(S.get("argGatesOptionError"));
         return null;
       }
     } // End of GATES
@@ -417,7 +409,7 @@ public class Startup implements AWTEventListener {
       final var geometry = cmd.getOptionValue(CMD_GEOMETRY);
       final var wxh = geometry.split("[xX]");
       if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
-        logger.error("{}", S.get("argGeometryError"));
+        logger.error(S.get("argGeometryError"));
         return null;
       }
       final var p = wxh[1].indexOf('+', 1);
@@ -429,16 +421,14 @@ public class Startup implements AWTEventListener {
         wxh[1] = wxh[1].substring(0, p);
         final var xy = loc.split("\\+");
         if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
-          // TODO: I think we can safely remove `"{}"` argument?
-          logger.error("{}", S.get("argGeometryError"));
+          logger.error(S.get("argGeometryError"));
           return null;
         }
         try {
           x = Integer.parseInt(xy[0]);
           y = Integer.parseInt(xy[1]);
         } catch (NumberFormatException e) {
-          // TODO: I think we can safely remove `"{}"` argument?
-          logger.error("{}", S.get("argGeometryError"));
+          logger.error(S.get("argGeometryError"));
           return null;
         }
       }
@@ -448,13 +438,11 @@ public class Startup implements AWTEventListener {
         w = Integer.parseInt(wxh[0]);
         h = Integer.parseInt(wxh[1]);
       } catch (NumberFormatException e) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argGeometryError"));
+        logger.error(S.get("argGeometryError"));
         return null;
       }
       if (w <= 0 || h <= 0) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argGeometryError"));
+        logger.error(S.get("argGeometryError"));
         return null;
       }
       AppPreferences.WINDOW_WIDTH.set(w);
@@ -474,8 +462,7 @@ public class Startup implements AWTEventListener {
       try {
         AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
       } catch (IllegalArgumentException ex) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argAccentsOptionError"));
+        logger.error(S.get("argAccentsOptionError"));
         return null;
       }
     } // End of ACCENTS
@@ -483,18 +470,15 @@ public class Startup implements AWTEventListener {
     // TEMPLATE
     if (cmd.hasOption(CMD_TEMPLATE)) {
       if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argOneTemplateError"));
+        logger.error(S.get("argOneTemplateError"));
         return null;
       }
       final var file = cmd.getOptionValue(CMD_TEMPLATE);
       ret.templFile = new File(file);
       if (!ret.templFile.exists()) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("templateMissingError", file));
+        logger.error(S.get("templateMissingError", file));
       } else if (!ret.templFile.canRead()) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("templateCannotReadError", file));
+        logger.error(S.get("templateCannotReadError", file));
       }
     } // End of TEMPLATE
 
@@ -573,8 +557,7 @@ public class Startup implements AWTEventListener {
         final var flag = cmd.getOptionValue(CMD_QUESTA).toLowerCase();
         AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
       } catch (IllegalArgumentException ex) {
-        // TODO: I think we can safely remove `"{}"` argument?
-        logger.error("{}", S.get("argQuestaOptionError"));
+        logger.error(S.get("argQuestaOptionError"));
         return null;
       }
     } // End of CMD_QUESTA
@@ -590,21 +573,15 @@ public class Startup implements AWTEventListener {
       return null;
     }
     if (ret.isTty && ret.filesToOpen.isEmpty()) {
-      // TODO: I think we can safely remove `"{}"` argument?
-      logger.error("{}", S.get("ttyNeedsFileError"));
+      logger.error(S.get("ttyNeedsFileError"));
       return null;
     }
     if (ret.loadFile != null && !ret.isTty) {
-      // TODO: I think we can safely remove `"{}"` argument?
-      logger.error("{}", S.get("loadNeedsTtyError"));
+      logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
 
     return ret;
-  }
-
-  private static void registerHandler() {
-    MacOsAdapter.addListeners();
   }
 
   private static void setLocale(String lang) {
@@ -615,8 +592,8 @@ public class Startup implements AWTEventListener {
         return;
       }
     }
-    logger.warn("{}", S.get("invalidLocaleError"));
-    logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
+    logger.warn(S.get("invalidLocaleError"));
+    logger.warn(S.get("invalidLocaleOptionsHeader"));
 
     for (final var opt : opts) {
       logger.warn("   {}", opt.toString());
@@ -733,6 +710,7 @@ public class Startup implements AWTEventListener {
             + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
+      // FIXME: hardcoded string
       logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
@@ -798,9 +776,12 @@ public class Startup implements AWTEventListener {
             final var testB = new TestBench(testCircuitPathInput, monitor, substitutions);
 
             if (testB.startTestBench()) {
+              // FIXME: hardcoded string
               System.out.println("Test bench pass\n");
               System.exit(0);
             } else {
+              // FIXME: hardcoded string
+              // FIXME: I'd capitalize FAIL to make it stand out.
               System.out.println("Test bench fail\n");
               System.exit(-1);
             }
