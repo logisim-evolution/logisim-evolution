@@ -350,8 +350,8 @@ public class Startup implements AWTEventListener {
     }
 
     // Initialize startup object.
-    final var ret = new Startup(isTty);
-    startupTemp = ret;
+    final var startup = new Startup(isTty);
+    startupTemp = startup;
     if (!isTty) {
       MacOsAdapter.addListeners();
     }
@@ -370,24 +370,24 @@ public class Startup implements AWTEventListener {
       final var optHandlerRc = switch (opt.getOpt()) {
         case CMD_HELP -> printHelp(opts);
         case CMD_VERSION -> printVersion();
-        case CMD_TTY -> cmdTty(ret, opt);
-        case CMD_SUBSTITUTE -> cmdSubstitute(ret, opt);
-        case CMD_LOAD -> cmdLoad(ret, opt);
-        case CMD_EMPTY -> cmdEmpty(ret, opt);
-        case CMD_PLAIN -> cmdPlain(ret, opt);
-        case CMD_GATES -> cmdGates(ret, opt);
-        case CMD_GEOMETRY -> cmdGeometry(ret, opt);
-        case CMD_LOCALE -> cmdLocale(ret, opt);
-        case CMD_ACCENTS -> cmdAccents(ret, opt);
-        case CMD_TEMPLATE -> cmdTemplate(ret, opt);
-        case CMD_NO_SPLASH -> cmdNoSplash(ret, opt);
-        case CMD_TEST_VECTOR -> cmdTestVector(ret, opt);
-        case CMD_TEST_FGPA_IMPL -> cmdTestFpgaImpl(ret, opt);
-        case CMD_TEST_CIRCUIT -> cmdTestCircuit(ret, opt);
-        case CMD_TEST_CIRC_GEN -> cmdTestCircGen(ret, opt);
-        case CMD_CIRCUIT -> cmdCircuit(ret, opt);
-        case CMD_ANALYZE -> cmdAnalyze(ret, opt);
-        case CMD_QUESTA -> cmdQuesta(ret, opt);
+        case CMD_TTY -> cmdTty(startup, opt);
+        case CMD_SUBSTITUTE -> cmdSubstitute(startup, opt);
+        case CMD_LOAD -> cmdLoad(startup, opt);
+        case CMD_EMPTY -> cmdEmpty(startup, opt);
+        case CMD_PLAIN -> cmdPlain(startup, opt);
+        case CMD_GATES -> cmdGates(startup, opt);
+        case CMD_GEOMETRY -> cmdGeometry(startup, opt);
+        case CMD_LOCALE -> cmdLocale(startup, opt);
+        case CMD_ACCENTS -> cmdAccents(startup, opt);
+        case CMD_TEMPLATE -> cmdTemplate(startup, opt);
+        case CMD_NO_SPLASH -> cmdNoSplash(startup, opt);
+        case CMD_TEST_VECTOR -> cmdTestVector(startup, opt);
+        case CMD_TEST_FGPA_IMPL -> cmdTestFpgaImpl(startup, opt);
+        case CMD_TEST_CIRCUIT -> cmdTestCircuit(startup, opt);
+        case CMD_TEST_CIRC_GEN -> cmdTestCircGen(startup, opt);
+        case CMD_CIRCUIT -> cmdCircuit(startup, opt);
+        case CMD_ANALYZE -> cmdAnalyze(startup, opt);
+        case CMD_QUESTA -> cmdQuesta(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       if (optHandlerRc == RC.QUIT) return null;
@@ -395,23 +395,23 @@ public class Startup implements AWTEventListener {
 
     // positional argument being files to load
     for (final var arg : cmd.getArgs()) {
-      ret.filesToOpen.add(new File(arg));
+      startup.filesToOpen.add(new File(arg));
     }
 
-    if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
+    if (startup.exitAfterStartup && startup.filesToOpen.isEmpty()) {
       printHelp(opts);
       return null;
     }
-    if (ret.isTty && ret.filesToOpen.isEmpty()) {
+    if (startup.isTty && startup.filesToOpen.isEmpty()) {
       logger.error(S.get("ttyNeedsFileError"));
       return null;
     }
-    if (ret.loadFile != null && !ret.isTty) {
+    if (startup.loadFile != null && !startup.isTty) {
       logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
 
-    return ret;
+    return startup;
   }
 
   /* ********************************************************************************************* */
@@ -501,16 +501,16 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdPlain(Startup ret, Option opt) {
-    if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
+  private static RC cmdPlain(Startup startup, Option opt) {
+    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
     }
-    ret.templPlain = true;
+    startup.templPlain = true;
     return RC.OK;
   }
 
-  private static RC cmdGates(Startup ret, Option opt) {
+  private static RC cmdGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue();
     if (gateShape.equals("shaped")) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
@@ -524,7 +524,7 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-  private static RC cmdGeometry(Startup ret, Option opt) {
+  private static RC cmdGeometry(Startup startup, Option opt) {
     final var geometry = opt.getValue();
     final var wxh = geometry.split("[xX]");
 
@@ -575,12 +575,12 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdLocale(Startup ret, Option opt) {
+  private static RC cmdLocale(Startup startup, Option opt) {
     setLocale(opt.getValue());
     return RC.OK;
   }
 
-  private static RC cmdAccents(Startup ret, Option opt) {
+  private static RC cmdAccents(Startup startup, Option opt) {
     final var flag = opt.getValue().toLowerCase();
     try {
       AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
@@ -591,93 +591,93 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdTemplate(Startup ret, Option opt) {
-    if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
+  private static RC cmdTemplate(Startup startup, Option opt) {
+    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
     }
     final var file = opt.getValue();
-    ret.templFile = new File(file);
+    startup.templFile = new File(file);
     String errMsg = null;
-    if (!ret.templFile.exists()) errMsg = S.get("templateMissingError", file);
-    if (errMsg == null && !ret.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
+    if (!startup.templFile.exists()) errMsg = S.get("templateMissingError", file);
+    if (errMsg == null && !startup.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
     if (errMsg != null) return RC.WARN;  // FIXME: shouldn't we quit in such case?
     return RC.OK;
   }
 
-  private static RC cmdNoSplash(Startup ret, Option opt) {
-    ret.showSplash = false;
+  private static RC cmdNoSplash(Startup startup, Option opt) {
+    startup.showSplash = false;
     return RC.OK;
   }
 
-  private static RC cmdTestVector(Startup ret, Option opt) {
-    ret.circuitToTest = opt.getValues()[0];
-    ret.testVector = opt.getValues()[1];
-    ret.showSplash = false;
-    ret.exitAfterStartup = true;
+  private static RC cmdTestVector(Startup startup, Option opt) {
+    startup.circuitToTest = opt.getValues()[0];
+    startup.testVector = opt.getValues()[1];
+    startup.showSplash = false;
+    startup.exitAfterStartup = true;
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
     return RC.OK;
   }
 
-  private static RC cmdTestFpgaImpl(Startup ret, Option opt) {
+  private static RC cmdTestFpgaImpl(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
 
     // already handled above
-    ret.testCircuitImpPath = optArgs[0];
-    ret.testCircuitImpMapFile = optArgs[1];
-    ret.testCircuitImpName = optArgs[2];
-    ret.testCircuitImpBoard = optArgs[3];
+    startup.testCircuitImpPath = optArgs[0];
+    startup.testCircuitImpMapFile = optArgs[1];
+    startup.testCircuitImpName = optArgs[2];
+    startup.testCircuitImpBoard = optArgs[3];
 
     if (optArgs.length > 4) {
       try {
-        ret.testTickFrequency = Integer.parseUnsignedInt(optArgs[4]);
+        startup.testTickFrequency = Integer.parseUnsignedInt(optArgs[4]);
       } catch (NumberFormatException ignored) {
         // FIXME: do nothing, but that's not the best error handlong
       }
       if (optArgs.length > 5) {
-        ret.testCircuitHdlOnly = optArgs[5].equalsIgnoreCase("HDLONLY");
+        startup.testCircuitHdlOnly = optArgs[5].equalsIgnoreCase("HDLONLY");
       }
     }
 
-    ret.doFpgaDownload = true;
-    ret.showSplash = false;
-    ret.filesToOpen.add(new File(ret.testCircuitImpPath));
+    startup.doFpgaDownload = true;
+    startup.showSplash = false;
+    startup.filesToOpen.add(new File(startup.testCircuitImpPath));
     return RC.OK;
   }
 
-  private static RC cmdTestCircuit(Startup ret, Option opt) {
+  private static RC cmdTestCircuit(Startup startup, Option opt) {
     final var fileName = opt.getValue();
-    ret.testCircuitPathInput = fileName;
-    ret.filesToOpen.add(new File(fileName));
-    ret.showSplash = false;
-    ret.exitAfterStartup = true;
+    startup.testCircuitPathInput = fileName;
+    startup.filesToOpen.add(new File(fileName));
+    startup.showSplash = false;
+    startup.exitAfterStartup = true;
     return RC.OK;
   }
 
-  private static RC cmdTestCircGen(Startup ret, Option opt) {
+  private static RC cmdTestCircGen(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
     // This is to test the XML consistency over different version of the Logisim
     // This is the input path of the file to open
-    ret.testCircPathInput = optArgs[0];
-    ret.filesToOpen.add(new File(ret.testCircPathInput));
+    startup.testCircPathInput = optArgs[0];
+    startup.filesToOpen.add(new File(startup.testCircPathInput));
     // This is the output file's path. The comparaison shall be done between the  testCircPathInput and the testCircPathOutput
-    ret.testCircPathOutput = optArgs[1];
-    ret.showSplash = false;
-    ret.exitAfterStartup = true;
+    startup.testCircPathOutput = optArgs[1];
+    startup.showSplash = false;
+    startup.exitAfterStartup = true;
     return RC.OK;
   }
 
-  private static RC cmdCircuit(Startup ret, Option opt) {
-    ret.circuitToTest = opt.getValue();
+  private static RC cmdCircuit(Startup startup, Option opt) {
+    startup.circuitToTest = opt.getValue();
     return RC.OK;
   }
 
-  private static RC cmdAnalyze(Startup ret, Option opt) {
+  private static RC cmdAnalyze(Startup startup, Option opt) {
     Main.ANALYZE = true;
     return RC.OK;
   }
 
-  private static RC cmdQuesta(Startup ret, Option opt) {
+  private static RC cmdQuesta(Startup startup, Option opt) {
     try {
       final var flag = opt.getValue().toLowerCase();
       AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
