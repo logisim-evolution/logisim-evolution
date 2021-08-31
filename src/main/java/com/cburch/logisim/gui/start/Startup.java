@@ -288,10 +288,11 @@ public class Startup implements AWTEventListener {
    */
   public static Startup parseArgs(String[] args) {
     final var opts = new Options();
-    opts.addOption(Option.builder(CMD_HELP).longOpt(CMD_HELP_LONG).desc(S.get("argHelpOption")).build());
-    opts.addOption(Option.builder(CMD_VERSION).longOpt(CMD_VERSION_LONG).desc(S.get("argVersionOption")).build());
+    addOption(opts, "argHelpOption", CMD_HELP, CMD_HELP_LONG);
+    addOption(opts, "argVersionOption", CMD_VERSION, CMD_VERSION_LONG);
 
     // Set up supported arguments for the arg parser to look for.
+    // Note: you need to create handler for each option. See handler loop below.
     addOption(opts, "argTtyOption", CMD_TTY, CMD_TTY_LONG, 1);
     addOption(opts, "argTestImplement", CMD_TEST_FGPA_IMPL, CMD_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
     addOption(opts, "argClearOption", CMD_CLEAR_PREFS, CMD_CLEAR_PREFS_LONG);
@@ -359,6 +360,9 @@ public class Startup implements AWTEventListener {
     final var optionIter = cmd.iterator();
     while (optionIter.hasNext()) {
       final var opt = optionIter.next();
+      // Note: you should have handler for each option. So number
+      // of `case`s here should equal number of calls to `addOption()`
+      // above.
       final var optHandlerRc = switch (opt.getOpt()) {
         case CMD_HELP -> printHelp(opts);
         case CMD_VERSION -> printVersion();
@@ -385,9 +389,10 @@ public class Startup implements AWTEventListener {
       if (optHandlerRc == RC.QUIT) return null;
     }
 
-    // FIXME: not implemented yet
     // positional argument being files to load
-    // ret.filesToOpen.add(new File(arg));
+    for (final var arg : cmd.getArgs()) {
+      ret.filesToOpen.add(new File(arg));
+    }
 
     if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
       printHelp(opts);
