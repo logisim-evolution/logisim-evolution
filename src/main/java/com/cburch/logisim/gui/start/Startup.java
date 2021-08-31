@@ -155,49 +155,49 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  public static final String CMD_HELP = "h";
-  public static final String CMD_HELP_LONG = "help";
-  public static final String CMD_VERSION = "v";
-  public static final String CMD_VERSION_LONG = "version";
+  public static final String ARG_HELP = "h";
+  public static final String ARG_HELP_LONG = "help";
+  public static final String ARG_VERSION = "v";
+  public static final String ARG_VERSION_LONG = "version";
 
-  public static final String CMD_TTY = "t";
-  public static final String CMD_TTY_LONG = "tty";
-  public static final String CMD_TEST_FGPA_IMPL = "f";
-  public static final String CMD_TEST_FGPA_IMPL_LONG = "test-fpga";
-  public static final String CMD_CLEAR_PREFS = "r";
-  public static final String CMD_CLEAR_PREFS_LONG = "clear-prefs";
-  public static final String CMD_SUBSTITUTE = "s";
-  public static final String CMD_SUBSTITUTE_LONG = "substitute";
-  public static final String CMD_LOAD = "l";
-  public static final String CMD_LOAD_LONG = "load";
-  public static final String CMD_EMPTY = "e";
-  public static final String CMD_EMPTY_LONG = "empty";
-  public static final String CMD_PLAIN = "p";
-  public static final String CMD_PLAIN_LONG = "plain";
-  public static final String CMD_GATES = "g";
-  public static final String CMD_GATES_LONG = "gates";
-  public static final String CMD_GEOMETRY = "m";
-  public static final String CMD_GEOMETRY_LONG = "geometry";
-  public static final String CMD_LOCALE = "o";
-  public static final String CMD_LOCALE_LONG = "locale";
-  public static final String CMD_ACCENTS = "x";
-  public static final String CMD_ACCENTS_LONG = "accents";
-  public static final String CMD_TEMPLATE = "z";
-  public static final String CMD_TEMPLATE_LONG = "template";
-  public static final String CMD_NO_SPLASH = "n";
-  public static final String CMD_NO_SPLASH_LONG = "no-splash";
-  public static final String CMD_TEST_VECTOR = "tv";
-  public static final String CMD_TEST_VECTOR_LONG = "test-vector";
-  public static final String CMD_TEST_CIRCUIT = "tc";
-  public static final String CMD_TEST_CIRCUIT_LONG = "test-circuit";
-  public static final String CMD_TEST_CIRC_GEN = "tg";
-  public static final String CMD_TEST_CIRC_GEN_LONG = "test-circ-gen";
-  public static final String CMD_CIRCUIT = "c";
-  public static final String CMD_CIRCUIT_LONG = "circuit";
-  public static final String CMD_ANALYZE = "a";
-  public static final String CMD_ANALYZE_LONG = "analyze";
-  public static final String CMD_QUESTA = "q";
-  public static final String CMD_QUESTA_LONG = "questa";
+  public static final String ARG_TTY = "t";
+  public static final String ARG_TTY_LONG = "tty";
+  public static final String ARG_TEST_FGPA_IMPL = "f";
+  public static final String ARG_TEST_FGPA_IMPL_LONG = "test-fpga";
+  public static final String ARG_CLEAR_PREFS = "r";
+  public static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
+  public static final String ARG_SUBSTITUTE = "s";
+  public static final String ARG_SUBSTITUTE_LONG = "substitute";
+  public static final String ARG_LOAD = "l";
+  public static final String ARG_LOAD_LONG = "load";
+  public static final String ARG_EMPTY = "e";
+  public static final String ARG_EMPTY_LONG = "empty";
+  public static final String ARG_PLAIN = "p";
+  public static final String ARG_PLAIN_LONG = "plain";
+  public static final String ARG_GATES = "g";
+  public static final String ARG_GATES_LONG = "gates";
+  public static final String ARG_GEOMETRY = "m";
+  public static final String ARG_GEOMETRY_LONG = "geometry";
+  public static final String ARG_LOCALE = "o";
+  public static final String ARG_LOCALE_LONG = "locale";
+  public static final String ARG_ACCENTS = "x";
+  public static final String ARG_ACCENTS_LONG = "accents";
+  public static final String ARG_TEMPLATE = "z";
+  public static final String ARG_TEMPLATE_LONG = "template";
+  public static final String ARG_NO_SPLASH = "n";
+  public static final String ARG_NO_SPLASH_LONG = "no-splash";
+  public static final String ARG_TEST_VECTOR = "tv";
+  public static final String ARG_TEST_VECTOR_LONG = "test-vector";
+  public static final String ARG_TEST_CIRCUIT = "tc";
+  public static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
+  public static final String ARG_TEST_CIRC_GEN = "tg";
+  public static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
+  public static final String ARG_CIRCUIT = "c";
+  public static final String ARG_CIRCUIT_LONG = "circuit";
+  public static final String ARG_ANALYZE = "a";
+  public static final String ARG_ANALYZE_LONG = "analyze";
+  public static final String ARG_QUESTA = "q";
+  public static final String ARG_QUESTA_LONG = "questa";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -293,29 +293,29 @@ public class Startup implements AWTEventListener {
    */
   public static Startup parseArgs(String[] args) {
     final var opts = new Options();
-    addOption(opts, "argHelpOption", CMD_HELP, CMD_HELP_LONG);
-    addOption(opts, "argVersionOption", CMD_VERSION, CMD_VERSION_LONG);
+    addOption(opts, "argHelpOption", ARG_HELP, ARG_HELP_LONG);
+    addOption(opts, "argVersionOption", ARG_VERSION, ARG_VERSION_LONG);
 
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
-    addOption(opts, "argTtyOption", CMD_TTY, CMD_TTY_LONG, 1);
-    addOption(opts, "argTestImplement", CMD_TEST_FGPA_IMPL, CMD_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
-    addOption(opts, "argClearOption", CMD_CLEAR_PREFS, CMD_CLEAR_PREFS_LONG);
-    addOption(opts, "argSubOption", CMD_SUBSTITUTE, CMD_SUBSTITUTE_LONG, 2);
-    addOption(opts, "argLoadOption", CMD_LOAD, CMD_LOAD_LONG, 1);
-    addOption(opts, "argEmptyOption", CMD_EMPTY, CMD_EMPTY_LONG);
-    addOption(opts, "argPlainOption", CMD_PLAIN, CMD_PLAIN_LONG);
-    addOption(opts, "argGatesOption", CMD_GATES, CMD_GATES_LONG);
-    addOption(opts, "argGeometryOption", CMD_GEOMETRY, CMD_GEOMETRY_LONG, 1);
-    addOption(opts, "argLocaleOption", CMD_LOCALE, CMD_LOCALE_LONG, 1);
-    addOption(opts, "argAccentsOption", CMD_ACCENTS, CMD_ACCENTS_LONG, 1);
-    addOption(opts, "argTemplateOption", CMD_TEMPLATE, CMD_TEMPLATE_LONG, 1);
-    addOption(opts, "argNoSplashOption", CMD_NO_SPLASH, CMD_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", CMD_TEST_VECTOR, CMD_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
-    addOption(opts, "argTestCircuit", CMD_TEST_CIRCUIT, CMD_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argTestCircGen", CMD_TEST_CIRC_GEN, CMD_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argAnalyzeOption", CMD_ANALYZE, CMD_ANALYZE_LONG);
-    addOption(opts, "argQuestaOption", CMD_QUESTA, CMD_QUESTA_LONG);
+    addOption(opts, "argTtyOption", ARG_TTY, ARG_TTY_LONG, 1);
+    addOption(opts, "argTestImplement", ARG_TEST_FGPA_IMPL, ARG_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
+    addOption(opts, "argClearOption", ARG_CLEAR_PREFS, ARG_CLEAR_PREFS_LONG);
+    addOption(opts, "argSubOption", ARG_SUBSTITUTE, ARG_SUBSTITUTE_LONG, 2);
+    addOption(opts, "argLoadOption", ARG_LOAD, ARG_LOAD_LONG, 1);
+    addOption(opts, "argEmptyOption", ARG_EMPTY, ARG_EMPTY_LONG);
+    addOption(opts, "argPlainOption", ARG_PLAIN, ARG_PLAIN_LONG);
+    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG);
+    addOption(opts, "argGeometryOption", ARG_GEOMETRY, ARG_GEOMETRY_LONG, 1);
+    addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
+    addOption(opts, "argAccentsOption", ARG_ACCENTS, ARG_ACCENTS_LONG, 1);
+    addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
+    addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
+    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argAnalyzeOption", ARG_ANALYZE, ARG_ANALYZE_LONG);
+    addOption(opts, "argQuestaOption", ARG_QUESTA, ARG_QUESTA_LONG);
 
     CommandLine cmd;
     try {
@@ -334,11 +334,11 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     var isTty = false;
     var shallClearPreferences = false;
-    if (cmd.hasOption(CMD_TTY) || cmd.hasOption(CMD_TEST_FGPA_IMPL)) {
+    if (cmd.hasOption(ARG_TTY) || cmd.hasOption(ARG_TEST_FGPA_IMPL)) {
       isTty = true;
       Main.headless = true;
     } else {
-      shallClearPreferences = cmd.hasOption(CMD_CLEAR_PREFS);
+      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS);
     }
 
     if (!isTty) {
@@ -368,26 +368,26 @@ public class Startup implements AWTEventListener {
       // Note: you should have handler for each option. So number of `case`s
       // here should equal number of calls to `addOption()` above.
       final var optHandlerRc = switch (opt.getOpt()) {
-        case CMD_HELP -> printHelp(opts);
-        case CMD_VERSION -> printVersion();
-        case CMD_TTY -> cmdTty(startup, opt);
-        case CMD_SUBSTITUTE -> cmdSubstitute(startup, opt);
-        case CMD_LOAD -> cmdLoad(startup, opt);
-        case CMD_EMPTY -> cmdEmpty(startup, opt);
-        case CMD_PLAIN -> cmdPlain(startup, opt);
-        case CMD_GATES -> cmdGates(startup, opt);
-        case CMD_GEOMETRY -> cmdGeometry(startup, opt);
-        case CMD_LOCALE -> cmdLocale(startup, opt);
-        case CMD_ACCENTS -> cmdAccents(startup, opt);
-        case CMD_TEMPLATE -> cmdTemplate(startup, opt);
-        case CMD_NO_SPLASH -> cmdNoSplash(startup, opt);
-        case CMD_TEST_VECTOR -> cmdTestVector(startup, opt);
-        case CMD_TEST_FGPA_IMPL -> cmdTestFpgaImpl(startup, opt);
-        case CMD_TEST_CIRCUIT -> cmdTestCircuit(startup, opt);
-        case CMD_TEST_CIRC_GEN -> cmdTestCircGen(startup, opt);
-        case CMD_CIRCUIT -> cmdCircuit(startup, opt);
-        case CMD_ANALYZE -> cmdAnalyze(startup, opt);
-        case CMD_QUESTA -> cmdQuesta(startup, opt);
+        case ARG_HELP -> printHelp(opts);
+        case ARG_VERSION -> printVersion();
+        case ARG_TTY -> handleArgTty(startup, opt);
+        case ARG_SUBSTITUTE -> handleArgSubstitute(startup, opt);
+        case ARG_LOAD -> handleArgLoad(startup, opt);
+        case ARG_EMPTY -> handleArgEmpty(startup, opt);
+        case ARG_PLAIN -> handleArgPlain(startup, opt);
+        case ARG_GATES -> handleArgGates(startup, opt);
+        case ARG_GEOMETRY -> handleArgGeometry(startup, opt);
+        case ARG_LOCALE -> handleArgLocale(startup, opt);
+        case ARG_ACCENTS -> handleArgAccents(startup, opt);
+        case ARG_TEMPLATE -> handleArgTemplate(startup, opt);
+        case ARG_NO_SPLASH -> handleArgNoSplash(startup, opt);
+        case ARG_TEST_VECTOR -> handleArgTestVector(startup, opt);
+        case ARG_TEST_FGPA_IMPL -> handleArgTestFpgaImpl(startup, opt);
+        case ARG_TEST_CIRCUIT -> handleArgTestCircuit(startup, opt);
+        case ARG_TEST_CIRC_GEN -> handleArgTestCircGen(startup, opt);
+        case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
+        case ARG_ANALYZE -> handleArgAnalyze(startup, opt);
+        case ARG_QUESTA -> handleArgQuesta(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       if (optHandlerRc == RC.QUIT) return null;
@@ -434,7 +434,7 @@ public class Startup implements AWTEventListener {
     QUIT
   }
 
-  private static RC cmdTty(Startup startup, Option opt) {
+  private static RC handleArgTty(Startup startup, Option opt) {
     // TTY format parsing
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
@@ -468,7 +468,7 @@ public class Startup implements AWTEventListener {
     return RC.WARN;
   }
 
-  private static RC cmdSubstitute(Startup startup, Option opt) {
+  private static RC handleArgSubstitute(Startup startup, Option opt) {
     final var fileA = new File(opt.getValues()[0]);
     final var fileB = new File(opt.getValues()[1]);
     if (!startup.substitutions.containsKey(fileA)) {
@@ -481,7 +481,7 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-  private static RC cmdLoad(Startup startup, Option opt) {
+  private static RC handleArgLoad(Startup startup, Option opt) {
     if (startup.loadFile != null) {
       logger.error(S.get("loadMultipleError"));
       // FIXME: shouldn't we quit here? -> RC.QUIT;
@@ -492,7 +492,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdEmpty(Startup startup, Option opt) {
+  private static RC handleArgEmpty(Startup startup, Option opt) {
     if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
@@ -501,7 +501,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdPlain(Startup startup, Option opt) {
+  private static RC handleArgPlain(Startup startup, Option opt) {
     if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
@@ -510,7 +510,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdGates(Startup startup, Option opt) {
+  private static RC handleArgGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue();
     if (gateShape.equals("shaped")) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
@@ -524,7 +524,7 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-  private static RC cmdGeometry(Startup startup, Option opt) {
+  private static RC handleArgGeometry(Startup startup, Option opt) {
     final var geometry = opt.getValue();
     final var wxh = geometry.split("[xX]");
 
@@ -575,12 +575,12 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdLocale(Startup startup, Option opt) {
+  private static RC handleArgLocale(Startup startup, Option opt) {
     setLocale(opt.getValue());
     return RC.OK;
   }
 
-  private static RC cmdAccents(Startup startup, Option opt) {
+  private static RC handleArgAccents(Startup startup, Option opt) {
     final var flag = opt.getValue().toLowerCase();
     try {
       AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
@@ -591,7 +591,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdTemplate(Startup startup, Option opt) {
+  private static RC handleArgTemplate(Startup startup, Option opt) {
     if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
@@ -605,12 +605,12 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdNoSplash(Startup startup, Option opt) {
+  private static RC handleArgNoSplash(Startup startup, Option opt) {
     startup.showSplash = false;
     return RC.OK;
   }
 
-  private static RC cmdTestVector(Startup startup, Option opt) {
+  private static RC handleArgTestVector(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValues()[0];
     startup.testVector = opt.getValues()[1];
     startup.showSplash = false;
@@ -619,7 +619,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdTestFpgaImpl(Startup startup, Option opt) {
+  private static RC handleArgTestFpgaImpl(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
 
     // already handled above
@@ -645,7 +645,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdTestCircuit(Startup startup, Option opt) {
+  private static RC handleArgTestCircuit(Startup startup, Option opt) {
     final var fileName = opt.getValue();
     startup.testCircuitPathInput = fileName;
     startup.filesToOpen.add(new File(fileName));
@@ -654,7 +654,7 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdTestCircGen(Startup startup, Option opt) {
+  private static RC handleArgTestCircGen(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
     // This is to test the XML consistency over different version of the Logisim
     // This is the input path of the file to open
@@ -667,17 +667,17 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC cmdCircuit(Startup startup, Option opt) {
+  private static RC handleArgCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValue();
     return RC.OK;
   }
 
-  private static RC cmdAnalyze(Startup startup, Option opt) {
+  private static RC handleArgAnalyze(Startup startup, Option opt) {
     Main.ANALYZE = true;
     return RC.OK;
   }
 
-  private static RC cmdQuesta(Startup startup, Option opt) {
+  private static RC handleArgQuesta(Startup startup, Option opt) {
     try {
       final var flag = opt.getValue().toLowerCase();
       AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
