@@ -80,11 +80,13 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           "                     ELSE",
           "      CASE (Sel) IS");
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
-        contents.add("          WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
       }
-      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1,
-                   "      END CASE;", "   END IF;",
-                   "END PROCESS make_mux;");
+      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1);
+      contents.addLines(
+          "      END CASE;", 
+          "   END IF;",
+          "END PROCESS make_mux;");
     } else {
       contents.addLines(
           "assign MuxOut = s_selected_vector;",
