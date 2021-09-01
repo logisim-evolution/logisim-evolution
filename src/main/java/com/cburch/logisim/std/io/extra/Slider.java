@@ -74,7 +74,7 @@ public class Slider extends InstanceFactory {
     @Override
     public void mouseDragged(InstanceState state, MouseEvent e) {
       if (dragging) {
-        var data = (SliderValue)state.getData();
+        var data = (SliderValue) state.getData();
         if (data == null) {
           data = new SliderValue();
           state.setData(data);
@@ -86,13 +86,10 @@ public class Slider extends InstanceFactory {
 
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      var data = (SliderValue)state.getData();
-      if (data == null) {
-        data = new SliderValue();
-        state.setData(data);
-      }
+      final var data = (SliderValue) state.getData();
+      final var sliderPosition = (data == null) ? 0 : data.getSliderPosition();
       final var bounds = state.getInstance().getBounds();
-      final var slider = new Rectangle(bounds.getX() + data.getSliderPosition() + 5, 
+      final var slider = new Rectangle(bounds.getX() + sliderPosition + 5, 
           bounds.getY() + bounds.getHeight() - 16, 12, 12);
       // check if clicking slider rectangle
       if (slider.contains(e.getX(), e.getY())) dragging = true;
@@ -105,7 +102,7 @@ public class Slider extends InstanceFactory {
   }
 
   public static class SliderValue implements InstanceData, Cloneable {
-    private int nrOfBits = 8;
+    private int nrOfBits = MAXIMUM_NUMBER_OF_BITS;
     private int sliderPosition = 0;
     private boolean rightToLeft = false;
 
@@ -172,7 +169,7 @@ public class Slider extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          BitWidth.create(8),
+          BitWidth.create(MAXIMUM_NUMBER_OF_BITS),
           RadixOption.RADIX_2,
           Color.WHITE,
           "",
