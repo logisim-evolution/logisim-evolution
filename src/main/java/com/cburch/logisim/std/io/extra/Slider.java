@@ -53,7 +53,6 @@ import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
@@ -65,50 +64,50 @@ public class Slider extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Slider";
+  
+  private static final int MAXIMUM_NUMBER_OF_BITS = 8;
+  private static final int MAXIMUM_SLIDER_POSITION = (1 << MAXIMUM_NUMBER_OF_BITS) - 1;
 
   public static class Poker extends InstancePoker {
-    private SliderValue data;
     private boolean dragging = false;
-    private BitWidth b;
 
     @Override
     public void mouseDragged(InstanceState state, MouseEvent e) {
       if (dragging) {
-        byte sliderPosition = (byte) (e.getX() - state.getInstance().getBounds().getX() - 10);
-        if (sliderPosition < 0) sliderPosition = 0;
-        else if (sliderPosition > SliderWidth) sliderPosition = SliderWidth;
-        if (data.right_to_left) sliderPosition = (byte) (SliderWidth - sliderPosition);
-        long value =
-            Math.round(sliderPosition * (Math.pow(2, b.getWidth()) - 1) / SliderWidth);
-        data.setCurrentValue(value);
-        data.setCurrentX(sliderPosition);
-        state.getAttributeSet().setValue(ATTR_VALUE, value);
+        var data = (SliderValue)state.getData();
+        if (data == null) {
+          data = new SliderValue();
+          state.setData(data);
+        }
+        data.setSliderPosition(e.getX() - state.getInstance().getBounds().getX() - 10);
         state.fireInvalidated();
       }
     }
 
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      this.data = getValueState(state);
-      this.b = state.getAttributeValue(StdAttr.WIDTH);
-      Bounds bds = state.getInstance().getBounds();
-      Rectangle slider =
-          new Rectangle(
-              bds.getX() + data.getCurrentX() + 5, bds.getY() + bds.getHeight() - 16, 12, 12);
+      var data = (SliderValue)state.getData();
+      if (data == null) {
+        data = new SliderValue();
+        state.setData(data);
+      }
+      final var bounds = state.getInstance().getBounds();
+      final var slider = new Rectangle(bounds.getX() + data.getSliderPosition() + 5, 
+          bounds.getY() + bounds.getHeight() - 16, 12, 12);
       // check if clicking slider rectangle
-      if (slider.contains(e.getX(), e.getY())) this.dragging = true;
+      if (slider.contains(e.getX(), e.getY())) dragging = true;
     }
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      this.dragging = false;
+      dragging = false;
     }
   }
 
   public static class SliderValue implements InstanceData, Cloneable {
-    private long currentvalue = 0;
-    private byte bitwidth = 8, currentx = 0;
-    private boolean right_to_left = false;
+    private int nrOfBits = 8;
+    private int sliderPosition = 0;
+    private boolean rightToLeft = false;
 
     @Override
     public Object clone() {
@@ -118,46 +117,29 @@ public class Slider extends InstanceFactory {
         return null;
       }
     }
-
-    public long getCurrentValue() {
-      return this.currentvalue;
+    
+    public int getCurrentValue() {
+      final var completeValue = rightToLeft ? MAXIMUM_SLIDER_POSITION - sliderPosition : sliderPosition; 
+      return completeValue >> (MAXIMUM_NUMBER_OF_BITS - nrOfBits);
+    }
+    
+    public int getSliderPosition() {
+      return sliderPosition;
     }
 
-    public byte getCurrentX() {
-      return this.currentx;
+    public void setSliderPosition(int value) {
+      sliderPosition = (value < 0) ? 0 : (value > MAXIMUM_SLIDER_POSITION) ? MAXIMUM_SLIDER_POSITION : value; 
     }
 
-    public void setCurrentBitWidth(int b) {
-      if (b != this.bitwidth) {
-        this.bitwidth = (byte) b;
-        setCurrentX();
-      }
+    public void setCurrentBitWidth(int width) {
+      if ((width < 0) || (width > MAXIMUM_NUMBER_OF_BITS) || (width == nrOfBits)) return;
+      nrOfBits = width;
     }
 
-    public void setCurrentValue(long x) {
-      if (x != this.currentvalue) {
-        this.currentvalue = x;
-        setCurrentX();
-      }
-    }
-
-    private void setCurrentX() {
-      byte currentx =
-          (byte)
-              ((this.currentvalue & 0xffffffffL) * SliderWidth / (Math.pow(2, this.bitwidth) - 1));
-      if (!this.right_to_left) this.currentx = currentx;
-      else this.currentx = (byte) (SliderWidth - currentx);
-    }
-
-    public void setCurrentX(byte x) {
-      if (!this.right_to_left) this.currentx = x;
-      else this.currentx = (byte) (SliderWidth - x);
-    }
-
-    public void updateDir(boolean b) {
-      if (b != right_to_left) {
-        right_to_left = b;
-        setCurrentX();
+    public void setDirection(boolean value) {
+      if (value != rightToLeft) {
+        rightToLeft = value;
+        sliderPosition = MAXIMUM_SLIDER_POSITION - sliderPosition;
       }
     }
   }
@@ -171,47 +153,22 @@ public class Slider extends InstanceFactory {
           "Direction",
           new LocaleManager("resources/logisim", "circuit").getter("wireDirectionAttr"),
           new AttributeOption[] {RIGHT_TO_LEFT, LEFT_TO_RIGHT});
+  private static final   Attribute<BitWidth> WIDTH =
+      Attributes.forBitWidth("width", S.getter("stdDataWidthAttr"), 1, MAXIMUM_NUMBER_OF_BITS);
 
-  private static final Attribute<Long> ATTR_VALUE =
-      Attributes.forHexLong("value", S.getter("constantValueAttr"));
-
-  private static final byte SliderWidth = 100;
-
-  private static SliderValue getValueState(InstanceState state) {
-    SliderValue ret = (SliderValue) state.getData();
-    if (ret == null) {
-      ret = new SliderValue();
-      state.setData(ret);
-    } else {
-      byte width = (byte) state.getAttributeValue(StdAttr.WIDTH).getWidth();
-      long value = state.getAttributeValue(ATTR_VALUE);
-      long maxvalue = (long) (Math.pow(2, width) - 1);
-      // if old value is bigger than the max value for the selected bitwidth, set
-      // value to its max value
-      if (value > maxvalue) {
-        value = maxvalue;
-        state.getAttributeSet().setValue(ATTR_VALUE, value);
-      }
-      ret.updateDir(state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT);
-      ret.setCurrentValue(value);
-      ret.setCurrentBitWidth(width);
-    }
-    return ret;
-  }
 
   public Slider() {
     super(_ID, S.getter("Slider"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
-          StdAttr.WIDTH,
+          WIDTH,
           RadixOption.ATTRIBUTE,
           IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
-          ATTR_DIR,
-          ATTR_VALUE
+          ATTR_DIR
         },
         new Object[] {
           Direction.EAST,
@@ -221,8 +178,7 @@ public class Slider extends InstanceFactory {
           "",
           StdAttr.DEFAULT_LABEL_FONT,
           true,
-          LEFT_TO_RIGHT,
-            0L
+          LEFT_TO_RIGHT
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("slider.gif");
@@ -231,17 +187,13 @@ public class Slider extends InstanceFactory {
   }
 
   private void computeTextField(Instance instance) {
-    Object d = instance.getAttributeValue(StdAttr.FACING);
-    Bounds bds = instance.getBounds();
-    int x = bds.getX() - 3;
-    int y = bds.getY() + bds.getHeight() / 2 - 1;
-    int halign = GraphicsUtil.H_RIGHT;
-    int valign = GraphicsUtil.V_CENTER_OVERALL;
-    if (d == Direction.WEST) {
-      y = bds.getY();
-      valign = GraphicsUtil.V_BASELINE;
-    }
-    instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
+    final var isWestOrientated = instance.getAttributeValue(StdAttr.FACING) == Direction.WEST;
+    final var bounds = instance.getBounds();
+    instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, 
+        bounds.getX() - 3, 
+        (isWestOrientated) ? bounds.getY() : bounds.getY() + bounds.getHeight() / 2 - 1, 
+        GraphicsUtil.H_RIGHT, 
+        (isWestOrientated) ? GraphicsUtil.V_BASELINE : GraphicsUtil.V_CENTER_OVERALL);
   }
 
   @Override
@@ -253,8 +205,9 @@ public class Slider extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction facing = attrs.getValue(StdAttr.FACING);
-    byte width = SliderWidth + 20, height = 30;
+    final var facing = attrs.getValue(StdAttr.FACING);
+    final var width = MAXIMUM_SLIDER_POSITION + 20;
+    final var height = 30;
     if (facing == Direction.EAST) return Bounds.create(-width, -height / 2, width, height);
     else if (facing == Direction.WEST) return Bounds.create(0, -height / 2, width, height);
     else if (facing == Direction.NORTH) return Bounds.create(-width / 2, 0, width, height);
@@ -267,50 +220,56 @@ public class Slider extends InstanceFactory {
       instance.recomputeBounds();
       updateports(instance);
       computeTextField(instance);
-    } else if (attr == StdAttr.WIDTH) {
+    } else if (attr == WIDTH) {
       updateports(instance);
       instance.fireInvalidated();
-    } else if (attr == ATTR_VALUE) instance.fireInvalidated();
+    } else if (attr == ATTR_DIR) {
+      instance.fireInvalidated();
+    }
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
-    SliderValue data = getValueState(painter);
-    int x = bds.getX(), y = bds.getY();
+    final var gfx = painter.getGraphics();
+    final var bounds = painter.getBounds();
+    final var data = (SliderValue) painter.getData();
+    final var posX = bounds.getX();
+    final var posY = bounds.getY();
+    final var sliderPosition = (data == null) ? 0 : data.getSliderPosition();
     painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
-    GraphicsUtil.switchToWidth(g, 2);
+    GraphicsUtil.switchToWidth(gfx, 2);
     // slider line
-    g.drawLine(x + 10, y + bds.getHeight() - 10, x + bds.getWidth() - 10, y + bds.getHeight() - 10);
-    g.setColor(Color.DARK_GRAY);
+    gfx.drawLine(posX + 10, posY + bounds.getHeight() - 10, posX + bounds.getWidth() - 10, posY + bounds.getHeight() - 10);
+    gfx.setColor(Color.DARK_GRAY);
     // slider
-    g.fillRoundRect(x + data.getCurrentX() + 5, y + bds.getHeight() - 15, 10, 10, 4, 4);
-    g.setColor(Color.BLACK);
-    g.drawRoundRect(x + data.getCurrentX() + 5, y + bds.getHeight() - 15, 10, 10, 4, 4);
+    gfx.fillRoundRect(posX + sliderPosition + 5, posY + bounds.getHeight() - 15, 10, 10, 4, 4);
+    gfx.setColor(Color.BLACK);
+    gfx.drawRoundRect(posX + sliderPosition + 5, posY + bounds.getHeight() - 15, 10, 10, 4, 4);
     painter.drawPorts();
     painter.drawLabel();
     // paint current value
-    g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 9));
-    Value v = painter.getPortValue(0);
-    FontMetrics fm = g.getFontMetrics();
-    RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-    String vStr = radix.toString(v);
-    // if the string is too long, reduce its dimension
-    if (fm.stringWidth(vStr) > bds.getWidth() - 10)
-      g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 5));
-    GraphicsUtil.drawCenteredText(g, vStr, x + bds.getWidth() / 2, y + 6);
+    gfx.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 9));
+    final var v = painter.getPortValue(0);
+    final var fm = gfx.getFontMetrics();
+    final var radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+    final var vStr = radix.toString(v);
+    GraphicsUtil.drawCenteredText(gfx, vStr, posX + bounds.getWidth() / 2, posY + 6);
   }
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth b = state.getAttributeValue(StdAttr.WIDTH);
-    long value = state.getAttributeValue(ATTR_VALUE);
-    state.setPort(0, Value.createKnown(b, value), 1);
+    var data = (SliderValue) state.getData();
+    final var bitWidth = state.getAttributeValue(WIDTH);
+    if (data == null) {
+      data = new SliderValue();
+      state.setData(data);
+    }
+    data.setDirection(state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT);
+    data.setCurrentBitWidth(bitWidth.getWidth());
+    state.setPort(0, Value.createKnown(bitWidth, data.getCurrentValue()), 1);
   }
 
   private void updateports(Instance instance) {
-    BitWidth b = instance.getAttributeValue(StdAttr.WIDTH);
-    instance.setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, b)});
+    instance.setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, instance.getAttributeValue(WIDTH))});
   }
 }
