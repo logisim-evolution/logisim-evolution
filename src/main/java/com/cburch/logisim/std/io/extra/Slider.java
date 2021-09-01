@@ -52,7 +52,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
@@ -77,6 +76,8 @@ public class Slider extends InstanceFactory {
         var data = (SliderValue) state.getData();
         if (data == null) {
           data = new SliderValue();
+          data.setDirection(state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT);
+          data.setCurrentBitWidth(state.getAttributeValue(WIDTH).getWidth());
           state.setData(data);
         }
         data.setSliderPosition(e.getX() - state.getInstance().getBounds().getX() - 10);
@@ -87,12 +88,13 @@ public class Slider extends InstanceFactory {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
       final var data = (SliderValue) state.getData();
-      final var sliderPosition = (data == null) ? 0 : data.getSliderPosition();
+      final var sliderPosition = (data != null) ? data.getSliderPosition() :
+        state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT ? MAXIMUM_SLIDER_POSITION : 0;
       final var bounds = state.getInstance().getBounds();
       final var slider = new Rectangle(bounds.getX() + sliderPosition + 5, 
           bounds.getY() + bounds.getHeight() - 16, 12, 12);
       // check if clicking slider rectangle
-      if (slider.contains(e.getX(), e.getY())) dragging = true;
+      dragging = slider.contains(e.getX(), e.getY());
     }
 
     @Override
@@ -232,7 +234,8 @@ public class Slider extends InstanceFactory {
     final var data = (SliderValue) painter.getData();
     final var posX = bounds.getX();
     final var posY = bounds.getY();
-    final var sliderPosition = (data == null) ? 0 : data.getSliderPosition();
+    final var sliderPosition = (data != null) ? data.getSliderPosition() :
+      (painter.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT) ? MAXIMUM_SLIDER_POSITION : 0;
     painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
     GraphicsUtil.switchToWidth(gfx, 2);
     // slider line
@@ -246,24 +249,23 @@ public class Slider extends InstanceFactory {
     painter.drawLabel();
     // paint current value
     gfx.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 9));
-    final var v = painter.getPortValue(0);
-    final var fm = gfx.getFontMetrics();
+    final var value = painter.getPortValue(0);
     final var radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-    final var vStr = radix.toString(v);
-    GraphicsUtil.drawCenteredText(gfx, vStr, posX + bounds.getWidth() / 2, posY + 6);
+    final var valueString = radix.toString(value);
+    GraphicsUtil.drawCenteredText(gfx, valueString, posX + bounds.getWidth() / 2, posY + 6);
   }
 
   @Override
   public void propagate(InstanceState state) {
-    var data = (SliderValue) state.getData();
+    final var data = (SliderValue) state.getData();
     final var bitWidth = state.getAttributeValue(WIDTH);
-    if (data == null) {
-      data = new SliderValue();
-      state.setData(data);
+    var sliderValue = 0;
+    if (data != null) {
+      data.setDirection(state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT);
+      data.setCurrentBitWidth(bitWidth.getWidth());
+      sliderValue = data.getCurrentValue();
     }
-    data.setDirection(state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT);
-    data.setCurrentBitWidth(bitWidth.getWidth());
-    state.setPort(0, Value.createKnown(bitWidth, data.getCurrentValue()), 1);
+    state.setPort(0, Value.createKnown(bitWidth, sliderValue), 1);
   }
 
   private void updateports(Instance instance) {
