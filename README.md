@@ -78,7 +78,7 @@ The Logisim-evolution.app is not code-signed.
 
 When launching the application for the first time, you will have to start it via the "Open" entry in the
 application icon's context menu in the macOS Finder. This is either done by clicking the application
-icon with the right mouse button or holding down <kbd>CTRL</kbd> leu while clicking the icon with the
+icon with the right mouse button or holding down <kbd>CTRL</kbd> while clicking the icon with the
 left mouse button. This will open a panel asking you to verify that you wish to launch the application.
 
 Depending on your security settings, you may also get a panel asking if you wish to allow it to accept
