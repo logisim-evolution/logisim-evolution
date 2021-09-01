@@ -88,8 +88,8 @@ public class Slider extends InstanceFactory {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
       final var data = (SliderValue) state.getData();
-      final var sliderPosition = (data != null) ? data.getSliderPosition() :
-        state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT ? MAXIMUM_SLIDER_POSITION : 0;
+      final var sliderPosition = (data != null) ? data.getSliderPosition() : 
+          state.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT ? MAXIMUM_SLIDER_POSITION : 0;
       final var bounds = state.getInstance().getBounds();
       final var slider = new Rectangle(bounds.getX() + sliderPosition + 5, 
           bounds.getY() + bounds.getHeight() - 16, 12, 12);
@@ -235,7 +235,7 @@ public class Slider extends InstanceFactory {
     final var posX = bounds.getX();
     final var posY = bounds.getY();
     final var sliderPosition = (data != null) ? data.getSliderPosition() :
-      (painter.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT) ? MAXIMUM_SLIDER_POSITION : 0;
+        (painter.getAttributeValue(ATTR_DIR) == RIGHT_TO_LEFT) ? MAXIMUM_SLIDER_POSITION : 0;
     painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
     GraphicsUtil.switchToWidth(gfx, 2);
     // slider line
