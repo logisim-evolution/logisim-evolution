@@ -82,7 +82,7 @@ public class GraphicsUtil {
     drawText(g, text, x, y, H_CENTER, V_CENTER);
   }
 
-  public static void drawCenteredValue(Graphics2D gfx, Value value, RadixOption radix, int x , int y) {
+  public static void drawCenteredValue(Graphics2D gfx, Value value, RadixOption radix, int x, int y) {
     final var valueString = radix.toString(value);
     final var radixIdentifier = radix.GetIndexChar();
     final var fontMetrics = gfx.getFontMetrics();
