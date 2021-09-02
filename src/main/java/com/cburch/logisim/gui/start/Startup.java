@@ -243,7 +243,6 @@ public class Startup implements AWTEventListener {
     return RC.QUIT;
   }
 
-
   /**
    * Helper class that simplifies setup of parser argument option.
    * Note: it assumes that if option have arguments, then there's
@@ -279,6 +278,18 @@ public class Startup implements AWTEventListener {
    */
   protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);
+  }
+
+  /**
+   * Return code of last run argument handler.
+   */
+  private static RC lastHandlerRc;
+
+  /**
+   * Returns {@true} if last argument handler called requested app termination (w/o error).
+   */
+  public static boolean shallQuit() {
+    return lastHandlerRc == RC.QUIT;
   }
 
   /**
@@ -383,8 +394,14 @@ public class Startup implements AWTEventListener {
         case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
-      if (optHandlerRc == RC.QUIT) return null;
-    }
+      lastHandlerRc = optHandlerRc;
+      switch (optHandlerRc) {
+        case QUIT:
+          return startup;
+        default:
+          continue;
+        }
+      }
 
     // positional argument being files to load
     for (final var arg : cmd.getArgs()) {
@@ -414,7 +431,7 @@ public class Startup implements AWTEventListener {
    */
   public static enum RC {
     /**
-     * Handler completed succesfuly.
+     * Handler completed succesfuly. We can proceed with another argument.
      */
     OK,
     /**
